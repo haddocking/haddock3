@@ -1,0 +1,82 @@
+! module to separate the molecules in space
+! put molecules 50A away from each other
+!
+Module(Data;Toppar;)
+
+  evaluate ($spacing=50)
+  evaluate ($trdis=$spacing/2)
+  evaluate ($trc=sqrt($spacing**2 - $trdis**2))
+  evaluate ($trd=sqrt($spacing**2 - $trdis**2))
+   
+  evaluate ($ncount = 0)
+
+  while ($ncount < $data.ncomponents) loop nsloop1
+    evaluate ($ncount = $ncount + 1)
+    eval($watersegname_$ncount="WAT" + encode($ncount))
+    coor orient sele=(segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount) end
+    do (xcomp = x) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+    do (ycomp = y) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+    do (zcomp = z) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+  end loop nsloop1
+
+  do (x = xcomp) (not (resn DAN or resn ANI))
+  do (y = ycomp) (not (resn DAN or resn ANI))
+  do (z = zcomp) (not (resn DAN or resn ANI))
+
+  show max (x) (segid $Toppar.prot_segid_1 or segid $watersegname_1)
+  evaluate ($xt = -$trdis - $result )
+  coor trans sele=(segid $Toppar.prot_segid_1 or segid $watersegname_1) vector=($xt,0,0) end
+  show min (x) (segid $Toppar.prot_segid_2 or segid $watersegname_2)
+  evaluate ($xt = $trdis - $result )
+  coor trans sele=(segid $Toppar.prot_segid_2 or segid $watersegname_2) vector=($xt,0,0) end
+  if ($data.ncomponents>2) then
+    show min (y) (segid $Toppar.prot_segid_3 or segid $watersegname_3)
+    evaluate ($yt = $trc - $result )
+    coor trans sele=(segid $Toppar.prot_segid_3 or segid $watersegname_3) vector=(0,$yt,0) end
+  end if
+  if ($data.ncomponents>3) then
+    show min (y) (segid $Toppar.prot_segid_4 or segid $watersegname_4)
+    evaluate ($yt = 0.5 * ($trc - $result) )
+    show min (z) (segid $Toppar.prot_segid_4 or segid $watersegname_4)
+    evaluate ($zt = $trd - $result )
+    coor trans sele=(segid $Toppar.prot_segid_4 or segid $watersegname_4) vector=(0,$yt,$zt) end
+  end if
+  if ($data.ncomponents>4) then
+    show min (y) (segid $Toppar.prot_segid_5 or segid $watersegname_5)
+    evaluate ($yt = 0.5 * ($trc - $result) )
+    show min (z) (segid $Toppar.prot_segid_5 or segid $watersegname_5)
+    evaluate ($zt = -($trd - $result) )
+    coor trans sele=(segid $Toppar.prot_segid_5 or segid $watersegname_5) vector=(0,$yt,$zt) end
+  end if
+  if ($data.ncomponents>5) then
+    evaluate ($ncount = 0)
+    while ($ncount < $data.ncomponents) loop nsloop2
+      evaluate ($ncount = $ncount +1)
+      show ave (x) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+      evaluate ($xdis=-$result)
+      show ave (y) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+      evaluate ($ydis=-$result)
+      show ave (z) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+      evaluate ($zdis=-$result)
+      coor trans sele=(segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount) vector=($xdis,$ydis,$zdis) end
+    end loop nsloop2
+
+    show max (x) (segid $Toppar.prot_segid_1 or segid $watersegname_1)
+    evaluate ($xt = -$trdis - $result )
+    coor trans sele=(segid $Toppar.prot_segid_1 or segid $watersegname_1) vector=($xt,0,0) end
+    show min (x) (segid $Toppar.prot_segid_2 or segid $watersegname_2)
+    evaluate ($xt = $trdis - $result )
+    coor trans sele=(segid $Toppar.prot_segid_2 or segid $watersegname_2) vector=($xt,0,0) end
+    show max (y) (segid $Toppar.prot_segid_3 or segid $watersegname_3)
+    evaluate ($yt = -$trdis - $result )
+    coor trans sele=(segid $Toppar.prot_segid_3 or segid $watersegname_3) vector=(0,$yt,0) end
+    show min (y) (segid $Toppar.prot_segid_4 or segid $watersegname_4)
+    evaluate ($yt = $trdis - $result )
+    coor trans sele=(segid $Toppar.prot_segid_4 or segid $watersegname_4) vector=(0,$yt,0) end
+    show max (z) (segid $Toppar.prot_segid_5 or segid $watersegname_5)
+    evaluate ($zt = -$trdis - $result )
+    coor trans sele=(segid $Toppar.prot_segid_5 or segid $watersegname_5) vector=(0,0,$zt) end
+    show min (z) (segid $Toppar.prot_segid_6 or segid $watersegname_6)
+    evaluate ($zt = $trdis - $result )
+    coor trans sele=(segid $Toppar.prot_segid_6 or segid $watersegname_6) vector=(0,0,$zt) end
+  end if

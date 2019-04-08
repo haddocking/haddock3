@@ -76,3 +76,10 @@ ENV/
 env.bak/
 venv.bak/
 
+# PyCharm related
+.idea
+
+# Scoring output files
+haddock/workflows/scoring/*out
+haddock/workflows/scoring/*fcc_matrix
+haddock/workflows/scoring/structures.ranking

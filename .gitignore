@@ -79,6 +79,9 @@ venv.bak/
 # PyCharm related
 .idea
 
+# macOS
+.DS_Store
+
 # Scoring output files
 haddock/workflows/scoring/*out
 haddock/workflows/scoring/*fcc_matrix

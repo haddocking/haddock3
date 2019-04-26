@@ -86,3 +86,7 @@ venv.bak/
 haddock/workflows/scoring/*out
 haddock/workflows/scoring/*fcc_matrix
 haddock/workflows/scoring/structures.ranking
+
+# Docker containers
+docker/*.gz
+

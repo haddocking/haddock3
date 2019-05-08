@@ -1,0 +1,35 @@
+Bootstrap: shub
+From: truatpasteurdotfr/singularity-alpine
+
+%environment
+        HADDOCK="/software/haddock"
+        HADDOCKTOOLS="$HADDOCK/tools"
+        PYTHONPATH="${PYTHONPATH}:$HADDOCK"
+        NACCESS=`which naccess`
+        PALES=`which pales`
+        PROFIT=`which profit`
+        TENSOR2=`which tensor2`
+
+        export HADDOCK HADDOCKTOOLS PYTHONPATH NACCESS PALES PROFIT TENSOR2
+
+%post
+        echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+        apk update
+        apk add python git gawk tcsh g++ openssh make
+
+        mkdir /software
+        cd /software
+        scp -r rodrigo@alcazar.science.uu.nl:/home/software/science/cns/cns_solve_1.31-UU . >/dev/null
+        git clone https://github.com/haddocking/haddock.git
+
+        cd /software/haddock
+        echo "set CNSTMP=/software/cns_solve_1.31-UU/intel-x86_64bit-linux/bin" > config.singularity
+        echo "set QUEUETMP=/bin/csh" >> config.singularity
+        echo "set NUMJOB=2" >> config.singularity
+        echo "set QUEUESUB=QueueSubmit_concat.py" >> config.singularity
+        echo "set POSTPROCESS=results_processing-orig.tgz" >> config.singularity
+        csh install.csh config.singularity
+
+
+%runscript
+        exec /usr/bin/python /software/haddock/Haddock/RunHaddock.py

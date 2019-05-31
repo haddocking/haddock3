@@ -88,5 +88,5 @@ haddock/workflows/scoring/*fcc_matrix
 haddock/workflows/scoring/structures.ranking
 
 # Docker containers
-docker/*.gz
-docker/*.tar
+containers/docker/*.gz
+containers/docker/*.tar

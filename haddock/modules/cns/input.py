@@ -146,7 +146,6 @@ class InputGenerator(InputComposer):
         with open(self.cns_input_file, 'w') as f:
             f.write(self.cmd)
             f.write('\nstop')
-        f.close()
 
     def execute(self):
 

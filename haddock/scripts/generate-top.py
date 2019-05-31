@@ -1,14 +1,8 @@
 import sys
-
-try:
-    from haddock.modules.cns.input import InputGenerator
-except ModuleNotFoundError:
-    print('ERROR: Modules could not be found')
-    print('Make sure haddock3 is in your $PYTHONPATH')
-    sys.exit(1)
+from haddock.modules.cns.input import InputGenerator
 
 
-def main():
+def topology():
 
     if len(sys.argv) != 2:
         print("Usage: python generate-top.py protein.pdb")
@@ -25,4 +19,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    topology()

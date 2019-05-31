@@ -154,8 +154,8 @@ class InputGenerator(InputComposer):
         self.sanity_check()
 
         cns = CNS()
-        inp = open(self.cns_input_file)
-        cns.commit(inp)
+        #inp = open(self.cns_input_file)
+        cns.commit(self.cns_input_file)
 
     def sanity_check(self):
 

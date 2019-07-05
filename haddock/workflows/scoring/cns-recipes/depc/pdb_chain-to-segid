@@ -1,0 +1,35 @@
+#!/usr/bin/gawk -f
+#
+# pdb_segid-to-chain script
+#
+# This script copies the CNS segid to the chainid
+#
+# Usage: see usage statement (type 'pdb_segid-to-chain' without arguments)
+#
+# Example:
+# input lines:
+# ATOM     32  CD1 LEU A   2      -6.002  10.544   9.006  1.00  0.00         
+#  output lines:
+# ATOM     32  CD1 LEU A   2      -6.002  10.544   9.006  1.00  0.00      A   
+# 
+# Remarks: 
+#  - Only ATOM and HETATM records are affected.
+#  - Only the first character of the segid can be stored in the chainid. 
+
+BEGIN {
+    if ( ARGC == 1 ) {
+	print "Usage: pdb_chain-to-segid inputfile > outputfile"
+	print "Action:"
+	print "the chainID given in column 22 is copied to the segid in column 73"
+	exit
+    }
+}
+
+$1 == "ATOM" || $1 == "HETATM" {
+    printf( "%s%s%s\n", substr($0,1,72), substr($0,22,1), substr($0,74) )
+    next
+}
+
+{
+    print $0
+}

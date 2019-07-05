@@ -1,0 +1,58 @@
+remarks file toppar/protein_break.top
+remarks   patches to remove peptide linkages
+
+! Paul Adams 28th June 1999
+! Yale University
+
+set echo=false end
+
+! checkversion 1.1
+
+PRESidue DPEP { delete PEPTide bond link, for all 
+                amino acids ...*(-)     (+)*...
+                                 \ PEPT /
+
+                except the  *(-) - (+)PRO link }
+
+ DELEte BOND -C +N 
+
+ DELEte ANGLE -CA -C +N
+ DELEte ANGLE -O  -C +N
+ DELEte ANGLE -C  +N +CA
+ DELEte ANGLE -C  +N +H
+
+ DELEte DIHEdral  -C +N +CA +C
+ DELEte DIHEdral  -N -CA -C +N
+ DELEte DIHEdral  -CA -C +N +CA
+
+ DELEte IMPRoper  -C -CA +N -O
+ DELEte IMPRoper  +N -C +CA +H
+
+END {DPEP}
+
+!----------------------------------------------------------------------
+
+PRESidue DPPP  { for  ...*(-) - (+)PRO  link deletion
+                 same as DPEP except replacement H by CD
+                 and improper +N +CA +CD -C }
+
+ DELEte BOND -C +N 
+
+ DELEte ANGLE -CA -C +N
+ DELEte ANGLE -O  -C +N
+ DELEte ANGLE -C  +N +CA
+ DELEte ANGLE -C  +N +CD
+
+ DELEte DIHEdral  -C +N +CA +C
+ DELEte DIHEdral  -N -CA -C +N
+ DELEte DIHEdral  -CA -C +N +CA
+
+ DELEte IMPRoper  -C -CA +N -O
+ DELEte IMPRoper  +N +CA +CD -C
+
+END {DPPP}
+
+!------------------------------------------------------------------
+
+set echo=true end
+

@@ -1,0 +1,6 @@
+set ii=1
+while ($ii < 11) 
+ sed s/filelist\.list/filelist$ii\.list/ scoring.inp >scoring$ii.inp
+ sed s/scoring/scoring$ii/ run_scoring.csh >run_scoring$ii.csh
+ @ ii+=1
+end

@@ -8,10 +8,11 @@ from haddock.workflows.scoring.config import load_parameters
 param_dic = load_parameters()
 dcomplex_exe = param_dic['third-party']['dcomplex_exe']
 
-
-# TODO: create Dfire symbolic links and correct locations
+# FIXME: create Dfire symbolic links and correct locations
 # def setup_dfire():
 
+
+# TODO: Implement parallelism
 def dfire(pdb_f):
 
 	prot_dic = load_structure(pdb_f)

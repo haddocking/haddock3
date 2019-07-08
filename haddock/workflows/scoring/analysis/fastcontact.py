@@ -9,6 +9,7 @@ param_dic = load_parameters()
 fastcontact_exe = param_dic['third-party']['fastcontact_exe']
 
 
+# TODO: Implement parallelism
 def fastcontact(pdb_f):
 
     felecv = .0

@@ -33,34 +33,24 @@ def run_analysis():
 	ana = Ana()
 
 	ana.retrieve_structures()
+
 	ana.extract_energies()
+
 	ana.calculate_haddock_score()
-	# print('-> Running fastcontact')
-	# ana.run_fastcontact()
-	# print('-> Running dfire')
-	# ana.run_dfire()
-	print('-> Creating contact matrix')
-	ana.calculate_contact_matrix()
-	print('-> Clustering')
-	ana.cluster()
 
-	# ana.calculate_rmsd()
-	print(ana)
-	pass
+	ana.run_fastcontact()
 
-	# 4. Analyze
-	#   4.1 Calculate HADDOCK Score
-	#   4.2 Retrieve contacts
-	#       4.2.1 Calculate FCC
-	#       4.2.2 Cluster
-	#   4.2 Run third-party software
-	#       4.2 Profit (i-RMSD/l-RMSD/i-l-RMSD)
-	#       4.3 Fastcontact
-	#       4.4 Dfire
-	#       4.5 Molprobity
-	#       4.6 DockQ
+	ana.run_dfire()
 
-	# 5. Output
+	ana.run_dockq()
+
+	ana.cluster(cutoff=0.75, threshold=1)
+	ana.cluster(cutoff=0.75, threshold=2)
+	ana.cluster(cutoff=0.75, threshold=4)
+
+	ana.cluster(cutoff=0.65, threshold=1)
+	ana.cluster(cutoff=0.65, threshold=2)
+	ana.cluster(cutoff=0.65, threshold=4)
 
 
 if __name__ == '__main__':

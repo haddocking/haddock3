@@ -1,14 +1,17 @@
 import glob
 # import operator
+# import itertools
 import re
 import os
 
-from haddock.workflows.scoring.analysis.contact import run_contacts
+from haddock.workflows.scoring.analysis.contact import Contacts
 from haddock.workflows.scoring.analysis.dfire import dfire
+from haddock.workflows.scoring.analysis.dockq import dockq
 from haddock.workflows.scoring.analysis.fastcontact import fastcontact
 # from haddock.workflows.scoring.src import calc_fcc_matrix, cluster_fcc
-from haddock.workflows.scoring.analysis.profit import profit_rmsd
-from haddock.workflows.scoring.src import calc_fcc_matrix
+# from haddock.workflows.scoring.analysis.profit import profit_rmsd
+# from haddock.workflows.scoring.src import calc_fcc_matrix
+from haddock.workflows.scoring.config import load_parameters
 
 
 class Ana:
@@ -16,10 +19,11 @@ class Ana:
 	def __init__(self):
 		self.structure_dic = {}
 		self.contact_filelist = []
-		if not os.path.isdir('contacts'):
-			os.system('mkdir contacts')
-
+		self.structure_haddockscore_list = []
 		self.fcc_matrix_f = 'fcc.matrix'
+		self.fcc_matrix = []
+		self.con_list = None
+		self.param_dic = load_parameters()
 
 	def retrieve_structures(self):
 		""" Retrieve structures that have been trough the CNS recipe """
@@ -59,6 +63,7 @@ class Ana:
 				if 'REMARK energies' in line:
 					# dirty fix to account for 8.754077E-02 notation and the eventual $DANI or $NOE
 					energy_v = re.findall(vdw_elec_air_regex, line)
+
 					temp_v = []
 					for v in energy_v:
 						v = v[0]
@@ -104,6 +109,8 @@ class Ana:
 	def calculate_haddock_score(self):
 		""" Calculate the HADDOCK Score of the PDB file using its appropriate weight """
 
+		print(f'+ Calculating HADDOCK score for {len(self.structure_dic)} structures')
+
 		for pdb in self.structure_dic:
 			vdw = self.structure_dic[pdb]['vdw']
 			elec = self.structure_dic[pdb]['elec']
@@ -118,6 +125,9 @@ class Ana:
 
 	def run_fastcontact(self):
 		""" Run fastcontact on all scored PDBs """
+
+		print('+ Running FASTCONTACT')
+
 		for pdb in self.structure_dic:
 			fast_elec, fast_desol = fastcontact(pdb)
 			self.structure_dic[pdb]['fastelec'] = fast_elec
@@ -125,31 +135,190 @@ class Ana:
 
 	def run_dfire(self):
 		""" Run dfire on all scored PDBs """
+
+		print('+ Running DFIRE')
+
 		for pdb in self.structure_dic:
 			d_binding, d_score = dfire(pdb)
 			self.structure_dic[pdb]['dfire-ebinding'] = d_binding
 			self.structure_dic[pdb]['dfire-score'] = d_score
 
+	def cluster(self, cutoff, strictness=0.75, threshold=4):
+		""" Cluster scored models using FCC, output a sorted text file containing clusters and mean scores """
+
+		print(f'+ Clustering with cutoff: {cutoff} and threshold: {threshold}')
+
+		self.calculate_contacts()
+		self.calc_fcc_matrix()
+
+		cutoff = float(cutoff)
+		partner_cutoff = float(cutoff) * float(strictness)
+
+		elements = {}
+
+		for e in self.fcc_matrix:
+			ref, mobi, dRM, dMR = e.split()
+			ref = int(ref)
+			mobi = int(mobi)
+			dRM = float(dRM)
+			dMR = float(dMR)
+
+			# Create or Retrieve Elements
+			if ref not in elements:
+				r = Element(ref)
+				elements[ref] = r
+			else:
+				r = elements[ref]
+
+			if mobi not in elements:
+				m = Element(mobi)
+				elements[mobi] = m
+			else:
+				m = elements[mobi]
+
+			# Assign neighbors
+			if dRM >= cutoff and dMR >= partner_cutoff:
+				r.add_neighbor(m)
+			if dMR >= cutoff and dRM >= partner_cutoff:
+				m.add_neighbor(r)
+
+		clusters = []
+		threshold -= 1  # Account for center
+		# ep = element_pool
+		ep = elements
+		cn = 1  # Cluster Number
+		while 1:
+			# Clusterable elements
+			ce = [e for e in ep if not ep[e].cluster]
+			if not ce:  # No more elements to cluster
+				break
+
+			# Select Cluster Center
+			# Element with largest neighbor list
+			ctr_nlist, ctr = sorted([(len([se for se in ep[e].neighbors if not se.cluster]), e) for e in ce])[-1]
+
+			# Cluster until length of remaining elements lists are above threshold
+			if ctr_nlist < threshold:
+				break
+
+			# Create Cluster
+			c = Cluster(cn, ep[ctr])
+			cn += 1
+			clusters.append(c)
+
+		cluster_dic = {}
+		for c in clusters:
+			clustered_models_list = []
+			for model in [m.name for m in c.members]:
+				model_str = '0' * (6 - len(str(model - 1))) + str(model - 1)
+				name = f'structures/{model_str}_conv.pdb'
+				haddock_score = self.structure_dic[name]['haddock-score']
+				clustered_models_list.append((model, haddock_score))
+
+			# sort cluster elements by haddock score
+			model_list = sorted(clustered_models_list, key=lambda x: x[1])
+			score_list = [e[1] for e in clustered_models_list]
+			mean_score = sum(score_list) / len(score_list)
+			# top4_mean_score = sum(score_list[:4]) / len(score_list[:4])
+			tbw = f"Cluster {c.name} -> ({c.center.name}) "
+			for m in model_list:
+				tbw += f'{m[0]} '
+			tbw += '\n'
+			cluster_dic[c.name] = (tbw, mean_score)
+
+		# sort clusters by mean haddock score
+		sorted_cluster_list = sorted([(x, cluster_dic[x][1]) for x in list(cluster_dic.keys())], key=lambda x: x[1])
+
+		# output
+		with open(f'cluster_{cutoff}_{threshold + 1}.out', 'w') as out:
+			for c in sorted_cluster_list:
+				cluster_name, cluster_mean = c
+				tbw_l = cluster_dic[cluster_name][0].split('->')
+				tbw = f'{tbw_l[0]}[{cluster_mean:.3f}] ->{tbw_l[1]}'
+				out.write(tbw)
+		out.close()
+
 	def calculate_contacts(self):
 		""" Calculate atomic contacts """
 
-		for pdb in self.structure_dic:
-			contact_out = run_contacts(pdb)
-			self.contact_filelist.append(contact_out)
+		pdb_list = list(self.structure_dic.keys())
 
-	# TODO: Implement FCC clustering
+		con = Contacts()
+		con.calculate_contacts(pdb_list, cutoff=5.0)
+
+		self.con_list = con.contact_file_list
+
 	def calc_fcc_matrix(self):
-		pass
+		""" Calculate the FCC matrix (extracted and adapted from calc_fcc_matrix.py """
 
-	def calculate_rmsd(self):
-		""" Calculate RMSD using lowest HADDOCK-score structure as reference """
+		if not os.path.isfile(self.fcc_matrix_f) and not self.fcc_matrix:
 
-		hs_list = [(k, self.structure_dic[k]['haddock-score']) for k in self.structure_dic]
-		sorted_hs_list = sorted(hs_list, key=lambda x: (-x[1], x[0]))
-		sorted_hs_list.reverse()
-		sorted_pdb_list = [e[0] for e in sorted_hs_list]
+			# print('+ Creating FCC matrix')
 
-		rmsd_dic = profit_rmsd(sorted_pdb_list)
+			self.con_list.sort()  # very important!
+			contacts = [set([int(l) for l in open(f)]) for f in self.con_list if f.strip()]
+
+			# get the pairwise matrix
+			for i in range(len(contacts)):
+				for j in range(i+1, len(contacts)):
+					con_a = contacts[i]
+					con_b = contacts[j]
+
+					cc = float(len(con_a.intersection(con_b)))
+					# cc_v = float(len(con_b.intersection(con_a)))
+
+					fcc, fcc_v = cc * 1.0/len(con_a), cc * 1.0/len(con_b)
+					self.fcc_matrix.append(f'{i + 1} {j + 1} {fcc:.3f} {fcc_v:.3f}')
+
+			with open(self.fcc_matrix_f,'w') as out:
+				out.write('\n'.join(self.fcc_matrix))
+			out.close()
+		elif not self.fcc_matrix:
+
+			# print('+ Loading FCC matrix')
+
+			with open(self.fcc_matrix_f) as f:
+				for l in f.readlines():
+					self.fcc_matrix.append(l)
+			f.close()
+		else:
+
+			# print('+ Using previously loaded FCC matrix')
+
+			pass
+
+	# def calculate_rmsd(self):
+	# 	""" Calculate RMSD using lowest HADDOCK-score structure as reference """
+	#
+	# 	hs_list = [(k, self.structure_dic[k]['haddock-score']) for k in self.structure_dic]
+	# 	sorted_hs_list = sorted(hs_list, key=lambda x: (-x[1], x[0]))
+	# 	sorted_hs_list.reverse()
+	# 	sorted_pdb_list = [e[0] for e in sorted_hs_list]
+	#
+	# 	rmsd_dic = profit_rmsd(sorted_pdb_list)
+
+	def run_dockq(self):
+
+		print('+ Running DockQ')
+
+		if self.param_dic['input']['reference'] == 'lowest':
+			score_list = []
+			for pdb in self.structure_dic:
+				score_list.append((pdb, self.structure_dic[pdb]['haddock-score']))
+			sorted_score_list = sorted(score_list, key=lambda x: x[1])
+			reference_pdb = sorted_score_list[0][0]
+			reference_score = sorted_score_list[0][1]
+
+			print(f'++ Using {reference_pdb} as reference structure, lowest haddock score: {reference_score:.3f}')
+
+		else:
+			reference_pdb = self.param_dic['input']['reference']
+
+			print(f'++ Using {reference_pdb} as reference structure, user input')
+
+		for pdb in self.structure_dic:
+			result_dic = dockq(reference_pdb, pdb)
+			self.structure_dic[pdb]['dockq'] = result_dic
 
 
 class Cluster(object):

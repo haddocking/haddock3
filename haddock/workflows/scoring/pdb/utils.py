@@ -95,6 +95,12 @@ def chain2segid(pdbf):
     os.system(f'mv oo {pdbf}')
 
 
+def segid2chain(pdbf):
+    path = os.path.dirname(__file__).replace('pdb', 'src')
+    os.system(f'{path}/pdb_chain-segid {pdbf} > oo')
+    os.system(f'mv oo {pdbf}')
+
+
 _to_remove = ['REMAR', 'CTERB', 'CTERA', 'NTERA', 'NTERB', 'CONECT']
 _to_rename = {'WAT ': 'TIP3', 'HSD': 'HIS', 'HSE': 'HIS', 'HID': 'HIS', 'HIE': 'HIS',
               ' 0.00969': ' 0.00   '}

@@ -16,6 +16,7 @@ class CNS:
 		# self.cns_exec = CNS_bin
 		self.param_dic = load_parameters()
 		self.cns_exec = self.param_dic['input']['cns_executable']
+		self.nproc = self.param_dic['input']['nproc']
 		# if not os.path.exists(host_data_folder):
 		# 	os.mkdir(os.path.abspath(host_data_folder))
 

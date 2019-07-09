@@ -10,7 +10,7 @@
 !     ************************************
 
 !move molecules far apart
-@separate.cns(Data=$Data; Toppar=$Toppar)
+@cns-recipes/separate.cns(Data=$Data; Toppar=$Toppar)
 
 igroup
   interaction (not (resname ANI or resname DAN)) (not (resname ANI or resname DAN))
@@ -27,7 +27,7 @@ evaluate ($eintfree = $bond + $angl + $impr + $dihe + $vdw + $elec)
 display FREE MOLECULES INTERNAL ENERGY = $eintfree
 
 {====>} {* define ASA-based solvation parameters *}
-inline @def_solv_param.cns
+inline @cns-recipes/def_solv_param.cns
 
 {====>} {* buried surface area *}
 evaluate ($esolfree = 0)

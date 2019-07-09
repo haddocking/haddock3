@@ -1,0 +1,170 @@
+remarks file toppar/water-allhdg5-4.top  
+remarks
+remarks  TOPH19.SOL
+remarks  ==========
+remarks  topology file for solvent molecules
+remarks  water models available: TIP3P model
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+checkversion 1.3
+
+!!the acceptor and donor terms are just for analysis
+!!==================================================
+
+{* default masses *}
+MASS   HT     1.00800! TIPS3P water hydrogen
+MASS   OT    15.99940 ! TIPS3P water oxygen
+MASS   OM    15.99940 ! oxygen in O2 and CO
+MASS   CM    12.01100 ! carbon in CO
+MASS   CH2E  14.02700!   
+MASS   CH3E  15.03500!   
+MASS   OH1   15.99940! hydroxy oxygen
+MASS   H      1.00800! hydrogen which can h-bond to neutral atom
+MASS   CDMS  15.03500! DMSO methyl group
+MASS   ODMS  15.99940! DMSO oxygen
+MASS   SDMS  32.06000! DMSO sulfur
+
+
+
+AUTOGENERATE ANGLES=TRUE END   
+ 
+!------------------------------------------------------------------
+
+RESIdue WAT      { TIPS3P WATER MODEL }
+ GROUp
+  ATOM OH2  TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND OH2  H1
+ BOND OH2  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue HOH      { alias of WAT, but with O instead of OH2 }
+ GROUp
+  ATOM O    TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND O  H1
+ BOND O  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue TIP3      { alias of WAT }
+ GROUp
+  ATOM OH2  TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND OH2  H1
+ BOND OH2  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue TIP      { alias of WAT }
+ GROUp
+  ATOM OH2  TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND OH2  H1
+ BOND OH2  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue DOD      { deuterated water }
+ GROUp
+  ATOM O    TYPE=OT   CHARge= -0.834  END
+  ATOM D1   TYPE=HT   CHARge=  0.417  END
+  ATOM D2   TYPE=HT   CHARge=  0.417  END
+
+ BOND O  D1
+ BOND O  D2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue O2  {* oxygen *}
+ GROUp
+  ATOM O1  TYPE=OM   CHARGE= 0.021  END
+  ATOM O2  TYPE=OM   CHARGE=-0.021  END
+ BOND O1 O2
+END {* O2 *}
+
+!-------------------------------------------------------------------
+
+RESIdue COM  {* carbon monoxide *}
+ GROUp
+  ATOM C  TYPE=CM  CHARGE=0.021   END
+  ATOM O  TYPE=OM  CHARGE=-0.021  END
+ BOND C  O
+END {* CO *}
+
+!-------------------------------------------------------------------
+
+RESIdue ETH  {* ethylene *}
+ GROUp
+  ATOM C2   TYPE=CH3E    CHARge= 0.00  END
+ GROUp
+  ATOM C1   TYPE=CH2E    CHARge= 0.25  END  !#
+  ATOM O    TYPE=OH1     CHARge=-0.65  END  !#
+  ATOM H    TYPE=H       CHARge= 0.40  END  !#
+
+ BOND C2   C1
+ BOND C1   O
+ BOND O    H
+
+ DIHEdral C2   C1   O    H
+
+ DONOr    H   O
+
+ ACCEptor O  " "
+
+END {* ETH *}
+
+!----------------------------------------------------------------------
+
+RESIdue COH
+ GROUp
+  ATOM C  TYPE=CH3E   CHARge= 0.25  END
+  ATOM O  TYPE=OH1    CHARge=-0.65  END
+  ATOM H  TYPE=H      CHARge=0.40   END
+ BOND C  O      BOND O  H
+ DONOr H  O
+ ACCEptor O  " "
+END  {* COH *}
+
+!----------------------------------------------------------------------
+
+RESIdue DMS  {* DMSO *} ! Added Jan. 2002 Alexandre Bonvin
+ GROUp
+  ATOM SD   TYPE=SDMS    CHARge= 0.139 END
+  ATOM CD1  TYPE=CDMS    CHARge= 0.16  END 
+  ATOM OD   TYPE=ODMS    CHARge=-0.459 END 
+  ATOM CD2  TYPE=CDMS    CHARge= 0.16  END 
+
+ BOND CD1   SD
+ BOND CD2   SD
+ BOND SD    OD
+
+ ACCEptor OD  " "
+
+END {* ETH *}
+
+!----------------------------------------------------------------------
+
+set message=$old_message echo=$old_echo end
+

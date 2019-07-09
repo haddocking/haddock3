@@ -18,7 +18,7 @@ class CNS:
         """Pass the input defined in input_file to CNS"""
         shutil.copyfile(input_file, os.path.join(host_data_folder, os.path.basename(input_file)))
         p = subprocess.Popen([self.cns_exec.replace('input_file', os.path.join(container_data_folder, input_file))],
-                             #stdin=os.path.join(container_data_folder, input_file), 
+                             # stdin=os.path.join(container_data_folder, input_file),
                              stdout=self.stdout, 
                              close_fds=True)
         out, error = p.communicate()

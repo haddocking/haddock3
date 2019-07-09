@@ -17,3 +17,4 @@ set numstr=`wc -l file.nam |awk '{print $1}'`
 cd rmsds
 $HADDOCKTOOLS/make_rmsd_matrix.csh A B $numstr target26
 
+

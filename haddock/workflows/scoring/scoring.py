@@ -13,7 +13,6 @@ def run_scoring():
 	# input_f = param_dic['input']['ensemble']
 	# md5_dictionary = extract_md5()
 	model_list = split_models()
-	model_list = model_list
 	sanitize(model_list)
 
 	recipe = RecipeGenerator()
@@ -38,19 +37,21 @@ def run_analysis():
 
 	ana.calculate_haddock_score()
 
-	ana.run_fastcontact()
-
-	ana.run_dfire()
-
-	ana.run_dockq()
-
-	ana.cluster(cutoff=0.75, threshold=1)
-	ana.cluster(cutoff=0.75, threshold=2)
+	# ana.cluster(cutoff=0.75, threshold=1)
+	# ana.cluster(cutoff=0.75, threshold=2)
 	ana.cluster(cutoff=0.75, threshold=4)
 
-	ana.cluster(cutoff=0.65, threshold=1)
-	ana.cluster(cutoff=0.65, threshold=2)
+	# ana.cluster(cutoff=0.65, threshold=1)
+	# ana.cluster(cutoff=0.65, threshold=2)
 	ana.cluster(cutoff=0.65, threshold=4)
+
+	ana.run_fastcontact()
+
+	# ana.run_dfire()
+
+	# ana.run_dockq()
+
+	ana.output()
 
 
 if __name__ == '__main__':

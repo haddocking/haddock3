@@ -1,17 +1,12 @@
 import glob
-# import operator
-# import itertools
 import re
 import os
+from haddock.workflows.scoring.config import load_parameters
 
 from haddock.workflows.scoring.analysis.contact import Contacts
 from haddock.workflows.scoring.analysis.dfire import dfire
 from haddock.workflows.scoring.analysis.dockq import dockq
 from haddock.workflows.scoring.analysis.fastcontact import fastcontact
-# from haddock.workflows.scoring.src import calc_fcc_matrix, cluster_fcc
-# from haddock.workflows.scoring.analysis.profit import profit_rmsd
-# from haddock.workflows.scoring.src import calc_fcc_matrix
-from haddock.workflows.scoring.config import load_parameters
 
 
 class Ana:
@@ -21,6 +16,7 @@ class Ana:
 		self.contact_filelist = []
 		self.structure_haddockscore_list = []
 		self.fcc_matrix_f = 'fcc.matrix'
+		self.output_f = 'scoring.stat'
 		self.fcc_matrix = []
 		self.con_list = None
 		self.param_dic = load_parameters()
@@ -61,7 +57,7 @@ class Ana:
 			for line in f:
 
 				if 'REMARK energies' in line:
-					# dirty fix to account for 8.754077E-02 notation and the eventual $DANI or $NOE
+					# dirty account for 8.754077E-02 notation and the eventual $DANI or $NOE
 					energy_v = re.findall(vdw_elec_air_regex, line)
 
 					temp_v = []
@@ -73,23 +69,22 @@ class Ana:
 							v = .0
 						temp_v.append(v)
 					energy_v = temp_v
-					###
+
 					total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, sani, vean, dani = energy_v
 					vdw = float(vdw)
 					elec = float(elec)
 					air = float(elec)
 
 				if 'REMARK Desolvation' in line:
-					# print(line)
 					desolv = float(re.findall(desolv_regex, line)[0])
 
 				if 'REMARK buried surface area' in line:
-					# print(line)
 					bsa = float(re.findall(bsa_regex, line)[0])
 					break
 
 			f.close()
 
+			self.structure_dic[pdb]['haddock-score'] = None
 			self.structure_dic[pdb]['total'] = total
 			self.structure_dic[pdb]['bonds'] = bonds
 			self.structure_dic[pdb]['angles'] = angles
@@ -154,14 +149,20 @@ class Ana:
 		cutoff = float(cutoff)
 		partner_cutoff = float(cutoff) * float(strictness)
 
+		# populate internal data structure with cluster info
+		for pdb in self.structure_dic:
+			self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_name"] = float('nan')
+			self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_internal_ranking"] = float('nan')
+			self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_overall_ranking"] = float('nan')
+
 		elements = {}
 
 		for e in self.fcc_matrix:
-			ref, mobi, dRM, dMR = e.split()
+			ref, mobi, d_rm, d_mr = e.split()
 			ref = int(ref)
 			mobi = int(mobi)
-			dRM = float(dRM)
-			dMR = float(dMR)
+			d_rm = float(d_rm)
+			d_mr = float(d_mr)
 
 			# Create or Retrieve Elements
 			if ref not in elements:
@@ -177,13 +178,13 @@ class Ana:
 				m = elements[mobi]
 
 			# Assign neighbors
-			if dRM >= cutoff and dMR >= partner_cutoff:
+			if d_rm >= cutoff and d_mr >= partner_cutoff:
 				r.add_neighbor(m)
-			if dMR >= cutoff and dRM >= partner_cutoff:
+			if d_mr >= cutoff and d_rm >= partner_cutoff:
 				m.add_neighbor(r)
 
 		clusters = []
-		threshold -= 1  # Account for center
+		# threshold -= 1  # Account for center
 		# ep = element_pool
 		ep = elements
 		cn = 1  # Cluster Number
@@ -209,11 +210,21 @@ class Ana:
 		cluster_dic = {}
 		for c in clusters:
 			clustered_models_list = []
+
+			# add cluster center to internal structure
+			cluster_center_str = '0' * (6 - len(str(c.center.name - 1))) + str(c.center.name - 1)
+			cluster_center_name = f'structures/{cluster_center_str}_conv.pdb'
+			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_name"] = c.name
+			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = 0
+
 			for model in [m.name for m in c.members]:
 				model_str = '0' * (6 - len(str(model - 1))) + str(model - 1)
 				name = f'structures/{model_str}_conv.pdb'
 				haddock_score = self.structure_dic[name]['haddock-score']
 				clustered_models_list.append((model, haddock_score))
+
+				# add cluster info to internal structure
+				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_name"] = c.name
 
 			# sort cluster elements by haddock score
 			model_list = sorted(clustered_models_list, key=lambda x: x[1])
@@ -221,16 +232,28 @@ class Ana:
 			mean_score = sum(score_list) / len(score_list)
 			# top4_mean_score = sum(score_list[:4]) / len(score_list[:4])
 			tbw = f"Cluster {c.name} -> ({c.center.name}) "
-			for m in model_list:
+			for i, m in enumerate(model_list):
 				tbw += f'{m[0]} '
+				model_str = '0' * (6 - len(str(m[0] - 1))) + str(m[0] - 1)
+				name = f'structures/{model_str}_conv.pdb'
+				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = i
+
 			tbw += '\n'
 			cluster_dic[c.name] = (tbw, mean_score)
 
 		# sort clusters by mean haddock score
 		sorted_cluster_list = sorted([(x, cluster_dic[x][1]) for x in list(cluster_dic.keys())], key=lambda x: x[1])
 
+		cluster_ranking = dict([(e[0], i + 1) for i, e in enumerate(sorted_cluster_list)])
+		# add overall cluster ranking to data structure
+		for pdb in self.structure_dic:
+			cluster_name = self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_name"]
+			if cluster_name == cluster_name:  # means it is not NaN
+				overall_ranking = cluster_ranking[cluster_name]
+				self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_overall_ranking"] = overall_ranking
+
 		# output
-		with open(f'cluster_{cutoff}_{threshold + 1}.out', 'w') as out:
+		with open(f'cluster_{cutoff}_{threshold}.out', 'w') as out:
 			for c in sorted_cluster_list:
 				cluster_name, cluster_mean = c
 				tbw_l = cluster_dic[cluster_name][0].split('->')
@@ -260,17 +283,17 @@ class Ana:
 
 			# get the pairwise matrix
 			for i in range(len(contacts)):
-				for j in range(i+1, len(contacts)):
+				for j in range(i + 1, len(contacts)):
 					con_a = contacts[i]
 					con_b = contacts[j]
 
 					cc = float(len(con_a.intersection(con_b)))
 					# cc_v = float(len(con_b.intersection(con_a)))
 
-					fcc, fcc_v = cc * 1.0/len(con_a), cc * 1.0/len(con_b)
+					fcc, fcc_v = cc * 1.0 / len(con_a), cc * 1.0 / len(con_b)
 					self.fcc_matrix.append(f'{i + 1} {j + 1} {fcc:.3f} {fcc_v:.3f}')
 
-			with open(self.fcc_matrix_f,'w') as out:
+			with open(self.fcc_matrix_f, 'w') as out:
 				out.write('\n'.join(self.fcc_matrix))
 			out.close()
 		elif not self.fcc_matrix:
@@ -286,16 +309,6 @@ class Ana:
 			# print('+ Using previously loaded FCC matrix')
 
 			pass
-
-	# def calculate_rmsd(self):
-	# 	""" Calculate RMSD using lowest HADDOCK-score structure as reference """
-	#
-	# 	hs_list = [(k, self.structure_dic[k]['haddock-score']) for k in self.structure_dic]
-	# 	sorted_hs_list = sorted(hs_list, key=lambda x: (-x[1], x[0]))
-	# 	sorted_hs_list.reverse()
-	# 	sorted_pdb_list = [e[0] for e in sorted_hs_list]
-	#
-	# 	rmsd_dic = profit_rmsd(sorted_pdb_list)
 
 	def run_dockq(self):
 
@@ -319,6 +332,31 @@ class Ana:
 		for pdb in self.structure_dic:
 			result_dic = dockq(reference_pdb, pdb)
 			self.structure_dic[pdb]['dockq'] = result_dic
+
+	def output(self):
+
+		print(f'+ Saving results to {self.output_f}')
+
+		# sort by haddock score!
+		score_list = [(pdb, self.structure_dic[pdb]['haddock-score']) for pdb in self.structure_dic]
+		sorted_score_list = sorted(score_list, key=lambda x: x[1])
+		k = sorted_score_list[0][0]
+		header = 'model ranking ' + ' '.join(list(self.structure_dic[k])) + '\n'
+
+		with open(self.output_f, 'w') as out:
+			out.write(header)
+
+			for i, e in enumerate(sorted_score_list):
+				pdb = e[0]
+				tbw = f'{pdb} {i+1} '
+				for v in self.structure_dic[pdb].values():
+					if isinstance(v, float):
+						tbw += f'{v:.3f} '
+					else:
+						tbw += f'{v} '
+				tbw += '\n'
+				out.write(tbw)
+		out.close()
 
 
 class Cluster(object):

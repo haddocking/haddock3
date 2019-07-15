@@ -1,4 +1,5 @@
-from haddock.workflows.scoring.config import load_parameters
+# from haddock.workflows.scoring.config import load_parameters
+import haddock.workflows.scoring.config as config
 
 
 class RecipeGenerator:

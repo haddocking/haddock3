@@ -1,8 +1,7 @@
 import glob
 import re
 import os
-from haddock.workflows.scoring.config import load_parameters
-
+import haddock.workflows.scoring.config as config
 from haddock.workflows.scoring.analysis.contact import Contacts
 from haddock.workflows.scoring.analysis.dfire import dfire
 from haddock.workflows.scoring.analysis.dockq import dockq
@@ -19,7 +18,8 @@ class Ana:
 		self.output_f = 'scoring.stat'
 		self.fcc_matrix = []
 		self.con_list = None
-		self.param_dic = load_parameters()
+		# self.reference = config.param_dic['']
+		# self.param_dic = load_parameters()
 
 	def retrieve_structures(self):
 		""" Retrieve structures that have been trough the CNS recipe """

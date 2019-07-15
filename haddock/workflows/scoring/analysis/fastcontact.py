@@ -2,11 +2,13 @@ import itertools
 import subprocess
 import os
 
-from haddock.workflows.scoring.pdb.utils import load_structure
-from haddock.workflows.scoring.config import load_parameters
+from haddock.workflows.scoring.pdb.utils import PDB
+# from haddock.workflows.scoring.config import load_parameters
+import haddock.workflows.scoring.config as config
 
-param_dic = load_parameters()
-fastcontact_exe = param_dic['third-party']['fastcontact_exe']
+# param_dic = load_parameters()
+load_structure = PDB.load_structure
+fastcontact_exe = config.ini.get('third party', 'fastcontact_exe')
 
 
 # TODO: Implement parallelism

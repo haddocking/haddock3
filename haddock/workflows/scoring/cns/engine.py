@@ -1,7 +1,8 @@
 import multiprocessing
 # import os
 import subprocess
-from haddock.workflows.scoring.config import load_parameters
+# from haddock.workflows.scoring.config import load_parameters
+import haddock.workflows.scoring.config as config
 # import shutil
 # from haddock.modules.error import CNSError
 # from haddock.workflows.scoring.config import CNS_bin, host_data_folder, container_data_folder
@@ -14,19 +15,20 @@ class CNS:
 	def __init__(self):
 		self.stdout = None
 		# self.cns_exec = CNS_bin
-		self.param_dic = load_parameters()
-		self.cns_exec = self.param_dic['input']['cns_executable']
-		self.nproc = self.param_dic['input']['nproc']
+		# self.param_dic = load_parameters()
+		self.cns_exec = config.ini.get('cns', 'cns_exe')
+		self.nproc = config.param_dic['input']['nproc']
+		self.run_scheme = config.param_dic['input']['run_scheme']
 		# if not os.path.exists(host_data_folder):
 		# 	os.mkdir(os.path.abspath(host_data_folder))
 
 	def run(self, jobs):
 		"""Pass the input defined in input_file to CNS"""
-		if self.param_dic['input']['run_scheme'] == 'serial':
+		if self.run_scheme == 'serial':
 			self.run_serial(jobs)
-		elif self.param_dic['input']['run_scheme'] == 'alcazar':
+		elif self.run_scheme == 'alcazar':
 			self.run_alcazar(jobs)
-		elif self.param_dic['input']['run_scheme'] == 'parallel':
+		elif self.run_scheme == 'parallel':
 			self.run_parallel(jobs)
 		else:
 			print('ERROR: run_scheme not recognized')

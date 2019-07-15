@@ -1,11 +1,15 @@
 import itertools
 import subprocess
 
-from haddock.workflows.scoring.config import load_parameters
-from haddock.workflows.scoring.pdb.utils import segid2chain, identify_chains
+import haddock.workflows.scoring.config as config
 
-param_dic = load_parameters()
-dockq_exec = param_dic['third-party']['dockq_exe']
+from haddock.workflows.scoring.pdb.utils import PDB
+
+segid2chain = PDB.segid2chain
+identify_chains = PDB.identify_chains
+
+# param_dic = load_parameters()
+dockq_exec = config.ini.get('third party', 'dockq_exe')
 
 
 # TODO: Implement parallelism

@@ -2,11 +2,14 @@ import itertools
 import subprocess
 import os
 
-from haddock.workflows.scoring.pdb.utils import load_structure
-from haddock.workflows.scoring.config import load_parameters
+from haddock.workflows.scoring.pdb.utils import PDB
+# from haddock.workflows.scoring.config import load_parameters
+import haddock.workflows.scoring.config as config
 
-param_dic = load_parameters()
-dcomplex_exe = param_dic['third-party']['dcomplex_exe']
+load_structure = PDB.load_structure
+# param_dic = load_parameters()
+# dcomplex_exe = config.ini['third-party']['dcomplex_exe']
+dcomplex_exe = config.ini.get('third party', 'dcomplex_exe')
 
 # FIXME: create Dfire symbolic links and correct locations
 # def setup_dfire():

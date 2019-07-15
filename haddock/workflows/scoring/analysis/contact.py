@@ -1,15 +1,14 @@
 import multiprocessing
 import os
 import subprocess
-from haddock.workflows.scoring.config import load_parameters
+import haddock.workflows.scoring.config as config
 
 
 class Contacts:
 
     def __init__(self):
-        self.param_dic = load_parameters()
-        self.nproc = self.param_dic['input']['nproc']
-        self.con_exec = self.param_dic['third-party']['contacts_exe']
+        self.nproc = config.param_dic['input']['nproc']
+        self.con_exec = config.param_dic['third-party']['contacts_exe']
         self.arg_list = []
         self.contact_file_list = []
 

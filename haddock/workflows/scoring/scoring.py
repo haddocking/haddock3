@@ -1,30 +1,36 @@
 # convert the analysis scripts to python
+import os
 from haddock.workflows.scoring.analysis.ana import Ana
 from haddock.workflows.scoring.cns.engine import CNS
 from haddock.workflows.scoring.cns.input import RecipeGenerator
-from haddock.workflows.scoring.pdb.utils import extract_md5, split_models, sanitize
+from haddock.workflows.scoring.pdb.utils import PDB
 from haddock.workflows.scoring.worker.distribution import JobCreator
+import haddock.workflows.scoring.config as config
 # from haddock.workflows.scoring.config import load_parameters
 
 
-def run_scoring():
+def run_scoring(ensamble_f):
 
 	# param_dic = load_parameters()
 	# input_f = param_dic['input']['ensemble']
 	# md5_dictionary = extract_md5()
-	model_list = split_models()
-	sanitize(model_list)
-
+	pdb = PDB()
 	recipe = RecipeGenerator()
 	jobs = JobCreator()
 	cns = CNS()
+
+	# model_list = split_models()
+	# sanitize(model_list)
+
+	# Prepare PDBs
+	pdb.prepare(ensamble_f)
 
 	recipe.initialize()
 	recipe.load()  # load the recipe defined in json
 
 	jobs.delegate(recipe, model_list)
 
-	cns.run(jobs)
+	# cns.run(jobs)
 
 
 def run_analysis():
@@ -55,5 +61,6 @@ def run_analysis():
 
 
 if __name__ == '__main__':
-	# run_scoring()
-	run_analysis()
+	input_f = config.param_dic['input']['ensemble']
+	run_scoring(input_f)
+	# run_analysis()

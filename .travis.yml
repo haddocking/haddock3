@@ -2,6 +2,9 @@ language: python
 python:
   - "3.6"
 
+env:
+  - HADDOCK3=$TRAVIS_BUILD_DIR
+
 before_script:
  - chmod +x haddock/src/*
 

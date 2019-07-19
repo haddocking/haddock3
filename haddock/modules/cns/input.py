@@ -31,7 +31,7 @@ class RecipeComposer:
 		""" Load the CNS recipe identify which modules need to be loaded and compose the recipe body """
 		module_regex = r'.*(\@|/)(.*\.cns)'
 
-		_ = self.list_dependencies(self.recipe)
+		# _ = self.list_dependencies(self.recipe)
 
 		with open(self.recipe) as f:
 			target = f.readlines()

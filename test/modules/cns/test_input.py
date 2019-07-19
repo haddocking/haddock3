@@ -1,9 +1,10 @@
 """ Test the Input generator """
 import unittest
 from unittest.mock import patch
-import os
+from utils.files import get_full_path
 
-data_path = os.path.join(os.path.dirname(__file__), '../../test_data')
+data_path = get_full_path('test', 'test_data')
+param_path = get_full_path('haddock', 'toppar')
 
 with patch("sys.argv", ['', f'{data_path}/scoring.json']):
 	from haddock.modules.cns.input import HeaderComposer, RecipeComposer, RecipeGenerator
@@ -18,14 +19,15 @@ class TestStringMethods(unittest.TestCase):
 
 	def test_load_ff_parameters(self):
 		param = self.hc.load_ff_parameters()
-		param_header_str = 'parameter\n  @@/home/rodrigo/haddock3/haddock/toppar/protein-allhdg5-4.param\n  @@/home/rodrigo/haddock3/haddock/toppar/water-allhdg5-4.param\n  @@/home/rodrigo/haddock3/haddock/toppar/ion.param\n  @@/home/rodrigo/haddock3/haddock/toppar/ligand.param\nend\n'
-
+		param_header_str = f'parameter\n  @@{param_path}/protein-allhdg5-4.param\n  @@{param_path}/water-allhdg5-4.param\n  @@{param_path}ion.param\n  @@{param_path}/ligand.param\nend\n'
+		
 		self.assertEqual(param, param_header_str)
 
 	def test_load_ff_topology(self):
 
 		top = self.hc.load_ff_topology()
-		top_header_str = 'topology\n  @@/home/rodrigo/haddock3/haddock/toppar/protein-allhdg5-4.top\n  @@/home/rodrigo/haddock3/haddock/toppar/water-allhdg5-4.top\n  @@/home/rodrigo/haddock3/haddock/toppar/protein_break.top\n  @@/home/rodrigo/haddock3/haddock/toppar/ion.top\n  @@/home/rodrigo/haddock3/haddock/toppar/ligand.top\nend\n'
+
+		top_header_str = f'topology\n  @@{param_path}/protein-allhdg5-4.top\n  @@{param_path}/water-allhdg5-4.top\n  @@{param_path}/protein_break.top\n  @@{param_path}/ion.top\n  @@{param_path}/ligand.top\nend\n'
 
 		self.assertEqual(top, top_header_str)
 
@@ -40,7 +42,7 @@ class TestStringMethods(unittest.TestCase):
 	def test_load_link(self):
 
 		link = self.hc.load_link()
-		link_header_str = 'evaluate ($link_file = "/home/rodrigo/haddock3/haddock/toppar/protein-allhdg5-4-noter.link" )'
+		link_header_str = f'evaluate ($link_file = "{param_path}/protein-allhdg5-4-noter.link" )'
 
 		self.assertEqual(link, link_header_str)
 

@@ -3,7 +3,8 @@ python:
   - "3.6"
 
 install: 
-  skip
+  chmod +x haddock/src/pdb_chain-segid
+  chmod +x haddock/src/pdb_chain-to-segid
 
 script:
   python -m unittest discover -v

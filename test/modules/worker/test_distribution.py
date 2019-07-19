@@ -15,7 +15,7 @@ class TestStringMethods(unittest.TestCase):
 
 		delegate_dic = self.jobs.delegate('recipe-as-string', ['structures/00000.pdb'])
 
-		dic = {0: ('/home/rodrigo/haddock3/test/modules/worker/jobs/00000.inp', '/home/rodrigo/haddock3/test/modules/worker/out/00000.out')}
+		dic = {0: ('/home/rodrigo/haddock3/jobs/00000.inp', '/home/rodrigo/haddock3/out/00000.out')}
 
 		self.assertEqual(delegate_dic, dic)
 		self.assertTrue(filecmp.cmp(f'{data_path}/delegate-test.inp', delegate_dic[0][0]))

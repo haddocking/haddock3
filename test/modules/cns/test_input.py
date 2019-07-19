@@ -19,7 +19,7 @@ class TestStringMethods(unittest.TestCase):
 
 	def test_load_ff_parameters(self):
 		param = self.hc.load_ff_parameters()
-		param_header_str = f'parameter\n  @@{param_path}/protein-allhdg5-4.param\n  @@{param_path}/water-allhdg5-4.param\n  @@{param_path}ion.param\n  @@{param_path}/ligand.param\nend\n'
+		param_header_str = f'parameter\n  @@{param_path}/protein-allhdg5-4.param\n  @@{param_path}/water-allhdg5-4.param\n  @@{param_path}/ion.param\n  @@{param_path}/ligand.param\nend\n'
 		
 		self.assertEqual(param, param_header_str)
 
@@ -85,7 +85,10 @@ class TestStringMethods(unittest.TestCase):
 
 		recipe = ''.join(recipe)
 
-		self.assertEqual(recipe_str, recipe)
+		# skip header
+		self.assertEqual(recipe_str[13:], recipe[13:])
+		self.assertEqual(recipe_str[0], recipe[0])
+		self.assertEqual(recipe_str[6], recipe[6])
 
 
 if __name__ == '__main__':

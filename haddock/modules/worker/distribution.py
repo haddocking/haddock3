@@ -18,7 +18,7 @@ class JobCreator:
 
 		# recipe_str = input_script.recipe
 		for i, model in enumerate(input_model_list):
-			model_name = model.split('/')[1].split('.')[0]
+			model_name = model.split('/')[-1].split('.')[0]
 
 			input_f = f'{self.wd}/jobs/{model_name}.inp'
 			output_f = f'{self.wd}/out/{model_name}.out'

@@ -1,4 +1,5 @@
 import os
+import re
 import haddock.workflows.scoring.config as config
 
 
@@ -28,25 +29,39 @@ class RecipeComposer:
 
 	def compose(self):
 		""" Load the CNS recipe identify which modules need to be loaded and compose the recipe body """
-		module_list = self.list_dependencies(self.recipe)
+		module_regex = r'.*(\@|/)(.*\.cns)'
+
+		_ = self.list_dependencies(self.recipe)
+
 		with open(self.recipe) as f:
 			target = f.readlines()
 		f.close()
-		# target = .readlines()
+
 		new = []
-		while module_list:
-			for m in module_list:
-				for idx, line in enumerate(target):
-					if m in line:
-						with open(f'{self.protocol_path}/{m}') as f:
-							target[idx] = ''.join(f.readlines())
-						f.close()
-						new = ''.join(target).split('\n')
-						break
+		check = True
+		module_check = [(i, e) for i, e in enumerate(target) if '.cns' in e if '!' not in e]
+		while check:
 
-				module_list.remove(m)
+			for idx, m in module_check:
 
-		return '\n'.join(new)
+				# module found, get name and load
+				m = re.findall(module_regex, target[idx])[0][-1]
+				with open(f'{self.protocol_path}/{m}') as f:
+					module = f.readlines()
+				f.close()
+
+				new = target[:idx] + module + target[idx+1:]
+
+				break
+
+			target = new
+			module_check = [(i, e) for i, e in enumerate(target) if '.cns' in e if not '!' in e]
+			if module_check:
+				check = True
+			else:
+				check = False
+
+		return ''.join(new)
 
 	@staticmethod
 	def identify_modules(cns_file):

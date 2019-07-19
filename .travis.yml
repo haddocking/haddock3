@@ -2,4 +2,8 @@ language: python
 python:
   - "3.6"
 
-install: skip
+before_script:
+ - chmod +x haddock/src/*
+
+script:
+  python -m unittest discover -v

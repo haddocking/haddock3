@@ -13,10 +13,10 @@ class JobCreator:
 		if not os.path.isdir(f'{self.wd}/out'):
 			os.system(f'mkdir {self.wd}/out')
 
-	def delegate(self, input_script, input_model_list):
+	def delegate(self, recipe_str, input_model_list):
 		""" Give one recipe to each Model """
 
-		recipe_str = input_script.recipe
+		# recipe_str = input_script.recipe
 		for i, model in enumerate(input_model_list):
 			model_name = model.split('/')[1].split('.')[0]
 
@@ -29,3 +29,5 @@ class JobCreator:
 			f.close()
 
 			self.job_dic[i] = (input_f, output_f)
+
+		return self.job_dic

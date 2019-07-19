@@ -1,174 +1,198 @@
 import os
-from haddock.modules.cns.engine import CNS
+import haddock.workflows.scoring.config as config
 
 
-class InputComposer(object):
+class RecipeGenerator:
 
-    def __init__(self):
-        """Initialize the composer
+	def __init__(self):
+		self.recipe = ''
 
-        define legacy_protocls and toppar loc"""
+	def generate(self):
+		# return a file
+		h = HeaderComposer()
+		header_string = h.create_header()
 
-        self.cmd = ''
-        self.legacy_protocol_path = '/'.join(
-            os.path.dirname(os.path.realpath(__file__)).split('/')[:-2]) + '/legacy_protocols'
-        self.toppar_path = '/'.join(
-            os.path.dirname(os.path.realpath(__file__)).split('/')[:-2]) + '/toppar'
+		r = RecipeComposer()
+		body_string = r.compose()
 
-    def load_topology(self, topology_file):
+		self.recipe = header_string + '\n' + body_string
 
-        """Load topology"""
-
-        self.cmd += '\n'
-        self.cmd += 'topology\n'
-        self.cmd += f'  @@{self.toppar_path}/{topology_file}\n'
-        self.cmd += 'end\n'
-
-    def load_parameter(self, parameter_file):
-
-        """Load parameters"""
-
-        self.cmd += '\n'
-        self.cmd += 'parameter\n'
-        self.cmd += f'  @@{self.toppar_path}/{parameter_file}\n'
-        self.cmd += 'end\n'
-
-    def load_coordinates(self, coordinate_file):
-
-        """Define a segment and load coordinates"""
-
-        self.cmd += '\n'
-        self.cmd += 'segment\n'
-        self.cmd += '  chain\n'
-        self.cmd += f'    coordinates @@{coordinate_file}\n'
-        self.cmd += '  end\n'
-        self.cmd += 'end\n'
-
-    def save_psf(self, output_file):
-
-        """Output the resulting coordinates as psf"""
-
-        self.cmd += '\n'
-        self.cmd += f'write structure output={output_file} end\n'
-
-    def patch_types_cg(self):
-
-        """Change chemical types based on sidechain"""
-
-        self.cmd += self.load_cns_protocol(f'{self.legacy_protocol_path}/patch-types-cg.cns')
-
-    def patch_bb_cg(self):
-
-        """Apply patch for CG beads"""
-
-        self.cmd += self.load_cns_protocol(f'{self.legacy_protocol_path}/patch-bb-cg.cns')
-
-    def build_missing_atoms(self):
-
-        """Build missing atoms
-
-        WARNING: The full protocol is not yet supported
-        """
-
-        self.cmd += self.load_cns_protocol(f'{self.legacy_protocol_path}/build-missing.cns')
-
-    def apply_protein_break(self):
-
-        """Detect protein chain breaks"""
-
-        self.cmd += self.load_cns_protocol(f'{self.legacy_protocol_path}/prot_break.cns')
-
-    def minimize(self, steps):
-
-        """Run minimization"""
-
-        self.cmd += f'minimize powell nstep={steps} drop=10.0 nprint=10 end\n'
-
-    @staticmethod
-    def load_cns_protocol(protocol_file):
-
-        """Load legacy cns protocols"""
-
-        cmd = ''
-        with open(protocol_file) as f:
-            for line in f.read():
-                cmd += line
-        return cmd
+		return self.recipe
 
 
-class InputGenerator(InputComposer):
+class RecipeComposer:
 
-    """Generate input files"""
+	def __init__(self):
+		self.recipe = config.param_dic['input']['recipe']
+		self.protocol_path = os.path.join(os.path.dirname(__file__), '../../protocols')
 
-    def __init__(self):
-        super().__init__()
-        self.cns_input_file = None
+	def compose(self):
+		""" Load the CNS recipe identify which modules need to be loaded and compose the recipe body """
+		module_list = self.list_dependencies(self.recipe)
+		with open(self.recipe) as f:
+			target = f.readlines()
+		f.close()
+		# target = .readlines()
+		new = []
+		while module_list:
+			for m in module_list:
+				for idx, line in enumerate(target):
+					if m in line:
+						with open(f'{self.protocol_path}/{m}') as f:
+							target[idx] = ''.join(f.readlines())
+						f.close()
+						new = ''.join(target).split('\n')
+						break
 
-    def build_missing(self, coordinate_file, parameter_file, topology_file, output_file):
-        self.cns_input_file = output_file
+				module_list.remove(m)
 
-        super().load_topology(topology_file)
-        super().load_parameter(parameter_file)
-        super().load_coordinates(coordinate_file)
-        super().apply_protein_break()
-        super().build_missing_atoms()
-        super().minimize(steps=100)
-        super().save_psf(coordinate_file.replace('.pdb', '.psf'))
+		return '\n'.join(new)
 
-        self.save_input()
+	@staticmethod
+	def identify_modules(cns_file):
+		""" Find all modules in this CNS file """
+		module_list = []
+		cns_file_name = cns_file.split('/')[-1]
 
-    def generate_cg_psf(self, coordinate_file, parameter_file, topology_file, output_file):
-        self.cns_input_file = output_file
+		if not os.path.isfile(cns_file):
+			print(f'+ ERROR: Module {cns_file_name} not found')
+			exit()
 
-        super().load_topology(topology_file)
-        super().load_parameter(parameter_file)
-        super().load_coordinates(coordinate_file)
-        super().patch_types_cg()
-        super().patch_bb_cg()
-        super().save_psf(coordinate_file.replace('.pdb', '.psf'))
+		with open(cns_file) as f:
+			for pos, l in enumerate(f.readlines()):
+				if '@' in l:
+					if '.cns' in l:
+						# module detected
+						module = l.split('@')[-1].split('/')[-1].split('\n')[0]
+						# module_name = f'{self.protocol_path}/{module}'
+						module_list.append(module)
+		return module_list
 
-        self.save_input()
+	def list_dependencies(self, target_f):
+		""" List the CNS modular dependency of the target file """
 
-    def generate_psf(self, coordinate_file, parameter_file, topology_file, output_file):
-        self.cns_input_file = output_file
+		output_list = []
 
-        super().load_topology(topology_file)
-        super().load_parameter(parameter_file)
-        super().load_coordinates(coordinate_file)
-        super().save_psf(coordinate_file.replace('.pdb', '.psf'))
+		target_f_name = target_f.split('/')[-1]
 
-        self.save_input()
+		print(f'+ Creating dependency tree of {target_f_name}')
+		print(f'> {target_f_name}')
 
-    def save_input(self):
+		# Lvl 1  Identify modules
+		module_list = self.identify_modules(target_f)
+		if module_list:
+			tbw = ''
+			for module in module_list:
+				output_list.append(module)
+				module_path = f'{self.protocol_path}/{module}'
+				tbw += f'  |_ {module} \n'
 
-        """Save the input file"""
+				# Lvl 2 Dependencies
+				dependency_list = self.identify_modules(module_path)
+				if dependency_list:
+					for dependency in dependency_list:
+						output_list.append(dependency)
+						dependency_path = f'{self.protocol_path}/{dependency}'
+						tbw += f'     |_ {dependency} \n'
 
-        with open(self.cns_input_file, 'w') as f:
-            f.write(self.cmd)
-            f.write('\nstop')
+						# Lvl 3 Co-dependency
+						co_dependency_list = self.identify_modules(dependency_path)
+						if co_dependency_list:
+							for co_dependency in co_dependency_list:
+								output_list.append(co_dependency)
+								co_dependency_path = f'{self.protocol_path}/{co_dependency}'
+								tbw += f'        |_ {co_dependency} \n'
 
-    def execute(self):
+								# Lvl 4 Co-co-dependency
+								co_co_dependency_list = self.identify_modules(co_dependency_path)
+								if co_co_dependency_list:
+									for co_co_dependency in co_co_dependency_list:
+										output_list.append(co_co_dependency)
+										co_co_dependency_path = f'{self.protocol_path}/{co_co_dependency}'
+										print(f'          |_ {co_co_dependency}')
 
-        """Execute this input in CNS"""
+										# Lvl 5 Co-co-co-dependency
+										# You have gone too far...
+										co_co_co_dependency_list = self.identify_modules(co_co_dependency_path)
+										if co_co_co_dependency_list:
+											for co_co_co_dependency in co_co_co_dependency_list:
+												print(f'+ ERROR: Too many dependency levels {target_f_name} > '
+												      f'{dependency} > {co_dependency} > {co_co_dependency} > {co_co_co_dependency}')
+			print(tbw)
+		return output_list
 
-        self.sanity_check()
 
-        cns = CNS()
-        #inp = open(self.cns_input_file)
-        cns.commit(self.cns_input_file)
+class HeaderComposer:
+	""" Each recipe has a Header with parameters and scoring definitions """
 
-    def sanity_check(self):
+	def __init__(self):
+		self.input_header = ''
+		self.ff_param_header = ''
+		self.ff_top_header = ''
+		self.scoring_header = ''
+		self.link_header = ''
 
-        """Check for multi-layer CNS scripting"""
+		self.header = ''
 
-        with open(self.cns_input_file) as f:
-            data = f.read()
-            for line in data.split('\n'):
-                if '.cns' in line:
-                    if '!' not in line:
-                        print(f'ERROR: Multi-layer CNS scripting detected in {self.cns_input_file}, not supported.')
-                        exit()
-                    else:
-                        pass
-                else:
-                    pass
+		self.protein_param = config.ini.get('parameters', 'protein_param')
+		self.solvent_param = config.ini.get('parameters', 'solvent_param')
+		self.ion_param = config.ini.get('parameters', 'ion_param')
+		self.ligand_param = config.ini.get('parameters', 'ligand_param')
+
+		self.protein_top = config.ini.get('topology', 'protein_top')
+		self.solvent_top = config.ini.get('topology', 'solvent_top')
+		self.break_top = config.ini.get('topology', 'break_top')
+		self.ion_top = config.ini.get('topology', 'ion_top')
+		self.ligand_top = config.ini.get('topology', 'ligand_top')
+
+		self.link = config.ini.get('link', 'link')
+
+	def create_header(self):
+		param = self.load_ff_parameters()
+		top = self.load_ff_topology()
+		scoring_param = self.load_scoring_parameters()
+		link = self.load_link()
+
+		self.header = param + top + scoring_param + link
+
+		return self.header
+
+	def load_ff_parameters(self):
+		""" Add force-field specific parameters to its appropriate places in the scoring recipe """
+		self.ff_param_header = 'parameter\n'
+		self.ff_param_header += f'  @@{self.protein_param}\n'
+		self.ff_param_header += f'  @@{self.solvent_param}\n'
+		self.ff_param_header += f'  @@{self.ion_param}\n'
+		self.ff_param_header += f'  @@{self.ligand_param}\n'
+		self.ff_param_header += 'end\n'
+
+		return self.ff_param_header
+
+	def load_ff_topology(self):
+		""" Add force-field specific topology to its appropriate places in the scoring recipe """
+		self.ff_top_header = 'topology\n'
+		self.ff_top_header += f'  @@{self.protein_top}\n'
+		self.ff_top_header += f'  @@{self.solvent_top}\n'
+		self.ff_top_header += f'  @@{self.break_top}\n'
+		self.ff_top_header += f'  @@{self.ion_top}\n'
+		self.ff_top_header += f'  @@{self.ligand_top}\n'
+		self.ff_top_header += 'end\n'
+
+		return self.ff_top_header
+
+	def load_scoring_parameters(self):
+		self.scoring_header = ''
+		for flag in config.param_dic['scoring-parameters']['flags']:
+			v = str(config.param_dic['scoring-parameters']['flags'][flag]).upper()
+			self.scoring_header += f'evaluate($Data.flags.{flag} = {v})\n'
+
+		for value in config.param_dic['scoring-parameters']['values']:
+			v = config.param_dic['scoring-parameters']['values'][value]
+			self.scoring_header += f'evaluate(${value}={v})\n'
+
+		return self.scoring_header
+
+	def load_link(self):
+		self.link_header = f'evaluate ($link_file = "{self.link}" )'
+
+		return self.link_header

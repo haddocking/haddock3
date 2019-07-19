@@ -2,9 +2,9 @@
 import filecmp
 import os
 import unittest
-from haddock.workflows.scoring.pdb.utils import PDB
+from haddock.modules.structure.utils import PDB
 
-data_path = os.path.join(os.path.dirname(__file__), '../test_data')
+data_path = os.path.join(os.path.dirname(__file__), '../../test_data')
 
 
 class TestStringMethods(unittest.TestCase):
@@ -67,10 +67,6 @@ class TestStringMethods(unittest.TestCase):
 		clean_list = self.PDB.sanitize(input_l)
 		clean_pdb = clean_list[0]
 		self.assertTrue(filecmp.cmp(f'{data_path}/1f3g-sanitized.pdb', clean_pdb))
-
-	def tearDown(self):
-		""" Cleanup """
-		pass
 
 
 if __name__ == '__main__':

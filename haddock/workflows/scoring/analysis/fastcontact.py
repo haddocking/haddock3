@@ -2,7 +2,7 @@ import itertools
 import subprocess
 import os
 
-from haddock.workflows.scoring.pdb.utils import PDB
+from haddock.modules.structure.utils import PDB
 # from haddock.workflows.scoring.config import load_parameters
 import haddock.workflows.scoring.config as config
 

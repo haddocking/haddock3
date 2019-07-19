@@ -1,5 +1,7 @@
 import os
 
+src_path = os.path.join(os.path.dirname(__file__), '../../src')
+
 
 class PDB:
 
@@ -11,10 +13,13 @@ class PDB:
         self.to_remove = ['REMAR', 'CTERB', 'CTERA', 'NTERA', 'NTERB', 'CONECT']
         self.to_rename = {'WAT ': 'TIP3', 'HSD': 'HIS', 'HSE': 'HIS', 'HID': 'HIS', 'HIE': 'HIS',
                       ' 0.00969': ' 0.00   '}
+        self.model_list = []
 
     def prepare(self, ensamble_f):
-        model_list = self.split_models(ensamble_f)
-        self.sanitize(model_list)
+        split_model_list = self.split_models(ensamble_f)
+        clean_model_list = self.sanitize(split_model_list)
+
+        self.model_list = clean_model_list
 
     @staticmethod
     def load_structure(pdb_f):
@@ -109,20 +114,18 @@ class PDB:
     @staticmethod
     def chain2segid(pdbf):
         """ Save a backup of the original file and move chainID to segID in a new file """
-        path = os.path.dirname(__file__).replace('pdb', 'src')
         new_pdb = pdbf.replace('.pdb', '_+sid.pdb')
         # os.system(f'cp {pdbf} {ori}')
-        os.system(f'{path}/pdb_chain-to-segid {pdbf} > oo')
+        os.system(f'{src_path}/pdb_chain-to-segid {pdbf} > oo')
         os.system(f'mv oo {new_pdb}')
         return new_pdb
 
     @staticmethod
     def segid2chain(pdbf):
         """ Save a backup of the original file and move segID to chainID in a new file """
-        path = os.path.dirname(__file__).replace('pdb', 'src')
         new_pdb = pdbf.replace('.pdb', '_+cid.pdb')
         # os.system(f'cp {pdbf} {ori}')
-        os.system(f'{path}/pdb_chain-segid {pdbf} > oo')
+        os.system(f'{src_path}/pdb_chain-segid {pdbf} > oo')
         os.system(f'mv oo {new_pdb}')
         return new_pdb
 

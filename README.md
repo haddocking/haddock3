@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/rvhonorato/haddock3.svg?token=LnEGJuvVoTKKetBbUj4A&branch=master)](https://travis-ci.com/rvhonorato/haddock3)
+
 ![HADDOCK3](docs/media/HADDOCK3-logo.png)
 
 The official repo of the new modular BioExcel2 version of HADDOCK.

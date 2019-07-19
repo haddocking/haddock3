@@ -65,7 +65,9 @@ class TestStringMethods(unittest.TestCase):
 
 	def test_identify_modules(self):
 		# is it possible to test static methods?
-		pass
+		module_list = self.rc.identify_modules(f'{data_path}/dependency.cns')
+
+		self.assertEqual(module_list, ['def_solv_param.cns'])
 
 	def test_list_dependencies(self):
 		dependency_list = self.rc.list_dependencies(f'{data_path}/dependency.cns')

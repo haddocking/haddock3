@@ -67,10 +67,9 @@ class RecipeComposer:
 	def identify_modules(cns_file):
 		""" Find all modules in this CNS file """
 		module_list = []
-		cns_file_name = cns_file.split('/')[-1]
 
 		if not os.path.isfile(cns_file):
-			print(f'+ ERROR: Module {cns_file_name} not found')
+			print(f'+ ERROR: Module {cns_file} not found')
 			exit()
 
 		with open(cns_file) as f:

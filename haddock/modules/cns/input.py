@@ -1,6 +1,7 @@
 import os
 import re
 import haddock.workflows.scoring.config as config
+from utils.files import get_full_path
 
 
 class RecipeGenerator:
@@ -24,14 +25,14 @@ class RecipeGenerator:
 class RecipeComposer:
 
 	def __init__(self):
-		self.recipe = config.param_dic['input']['recipe']
-		self.protocol_path = os.path.join(os.path.dirname(__file__), '../../protocols')
+		self.recipe = get_full_path('haddock', 'workflows', 'scoring', 'cns-recipes') + '/' + config.param_dic['input']['recipe']
+		self.protocol_path = get_full_path('haddock', 'protocols')
 
 	def compose(self):
 		""" Load the CNS recipe identify which modules need to be loaded and compose the recipe body """
 		module_regex = r'.*(\@|/)(.*\.cns)'
 
-		# _ = self.list_dependencies(self.recipe)
+		_ = self.list_dependencies(self.recipe)
 
 		with open(self.recipe) as f:
 			target = f.readlines()
@@ -55,7 +56,7 @@ class RecipeComposer:
 				break
 
 			target = new
-			module_check = [(i, e) for i, e in enumerate(target) if '.cns' in e if not '!' in e]
+			module_check = [(i, e) for i, e in enumerate(target) if '.cns' in e if '!' not in e]
 			if module_check:
 				check = True
 			else:

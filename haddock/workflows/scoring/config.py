@@ -1,23 +1,20 @@
 """Handles configuration of the library"""
 import json
-import os
 import configparser
-import argparse
 import sys
-# from pathlib import PosixPath
-# from haddock.modules.error import HaddockError
+from utils.files import get_full_path
+import os
 
 # Locate folder and configuration files
-etc_folder = os.path.join(os.path.dirname(__file__), 'etc')
+
+etc_folder = get_full_path('haddock', 'etc')
+
+
 config_file = os.path.join(etc_folder, 'scoring.ini')
 
 environment = 'alcazar'
-ini = configparser.ConfigParser()
+ini = configparser.ConfigParser(os.environ)
 ini.read(config_file, encoding='utf-8')
-
-# parser = argparse.ArgumentParser()
-# parser.add_argument("json_file", help="your json file")
-# args = parser.parse_args()
 
 scoring_json = open(sys.argv[1])
 

@@ -1,9 +1,9 @@
 import filecmp
-import os
 import unittest
 from haddock.modules.worker.distribution import JobCreator
+from utils.files import get_full_path
 
-data_path = os.path.join(os.path.dirname(__file__), '../../test_data')
+data_path = get_full_path('test', 'test_data')
 
 
 class TestStringMethods(unittest.TestCase):
@@ -17,7 +17,7 @@ class TestStringMethods(unittest.TestCase):
 		# local_path = os.path.dirname(__file__)
 		dic = {0: ('jobs/00000.inp', 'out/00000.out')}
 
-		# FIXME: Implement proper path parsing
+		# FIXME: Implement proper working directory path parsing
 		k = list(delegate_dic.keys())[0]
 		delegate_dic[k] = [('/'.join(a[0].split('/')[-2:]), '/'.join(a[1].split('/')[-2:])) for a in [delegate_dic[d] for d in delegate_dic]][0]
 

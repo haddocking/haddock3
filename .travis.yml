@@ -2,9 +2,8 @@ language: python
 python:
   - "3.6"
 
-install: 
-  chmod +x haddock/src/pdb_chain-segid
-  chmod +x haddock/src/pdb_chain-to-segid
+before_script:
+ - chmod +x haddock/src/*
 
 script:
   python -m unittest discover -v

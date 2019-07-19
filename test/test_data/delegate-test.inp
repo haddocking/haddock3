@@ -1,0 +1,2 @@
+eval($file="structures/00000.pdb")
+recipe-as-string

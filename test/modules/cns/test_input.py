@@ -78,12 +78,11 @@ class TestStringMethods(unittest.TestCase):
 
 	def test_generate(self):
 		recipe_str = self.rg.generate()
+		recipe_str = recipe_str.split()
 
 		with open(f'{data_path}/recipe.cns') as f:
 			recipe = f.readlines()
 		f.close()
-
-		recipe = ''.join(recipe)
 
 		# skip header
 		self.assertEqual(recipe_str[13:], recipe[13:])

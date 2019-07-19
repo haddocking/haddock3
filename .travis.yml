@@ -2,4 +2,10 @@ language: python
 python:
   - "3.6"
 
-install: skip
+install: 
+  skip
+
+script:
+  python -m unittest test/modules/cns/test_input.py
+  python -m unittest test/modules/structure/test_utils.py
+  python -m unittest test/modules/worker/test_distribution.py

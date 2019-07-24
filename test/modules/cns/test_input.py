@@ -41,8 +41,16 @@ class TestHeaderComposer(unittest.TestCase):
 
 		self.assertEqual(link, link_header_str)
 
+	def test_protonation_dic(self):
+		dummy_dic = {'A': {42: 'HISE'}, 'B': {1: 'HISD', 2: 'HISE'}}
+		protonation_str = self.hc.load_protonation_state(dummy_dic)
+
+		expected_str = 'evaluate ($toppar.hise_resid_1_1 = 42)\nevaluate ($toppar.hisd_resid_2_1 = 1)\nevaluate ($toppar.hise_resid_2_2 = 2)\n'
+		self.assertEqual(protonation_str, expected_str)
+
 	def test_create_header(self):
-		header = self.hc.create_header()
+		dummy_dic = {}
+		header = self.hc.create_header(dummy_dic)
 
 		self.assertEqual(header.split()[0], 'parameter')
 		self.assertEqual(header.split()[6], 'topology')
@@ -84,7 +92,8 @@ class TestRecipeGenerator(unittest.TestCase):
 
 	def test_generate(self):
 
-		generated_recipe_str = self.rg.generate()
+		dummy_dic = {}
+		generated_recipe_str = self.rg.generate(dummy_dic)
 
 		generated_recipe_list = generated_recipe_str.split('\n')
 

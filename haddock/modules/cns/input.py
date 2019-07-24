@@ -9,10 +9,10 @@ class RecipeGenerator:
 	def __init__(self):
 		self.recipe = ''
 
-	def generate(self):
+	def generate(self, protonation_dic):
 		# return a file
 		h = HeaderComposer()
-		header_string = h.create_header()
+		header_string = h.create_header(protonation_dic)
 
 		r = RecipeComposer()
 		body_string = r.compose()
@@ -146,6 +146,7 @@ class HeaderComposer:
 		self.ff_top_header = ''
 		self.scoring_header = ''
 		self.link_header = ''
+		self.protonation_header = ''
 
 		self.header = ''
 
@@ -162,15 +163,25 @@ class HeaderComposer:
 
 		self.link = config.ini.get('link', 'link')
 
-	def create_header(self):
+	def create_header(self, protonation_dic):
 		param = self.load_ff_parameters()
 		top = self.load_ff_topology()
 		scoring_param = self.load_scoring_parameters()
 		link = self.load_link()
+		protonation = self.load_protonation_state(protonation_dic)
 
-		self.header = param + top + scoring_param + link
+		self.header = param + top + scoring_param + link + protonation
 
 		return self.header
+
+	def load_protonation_state(self, protonation_dic):
+		""" Add protonation states to the recipe """
+		for i, chain in enumerate(protonation_dic):
+			for j, res in enumerate(protonation_dic[chain]):
+				state = protonation_dic[chain][res].lower()
+				self.protonation_header += f'evaluate ($toppar.{state}_resid_{i+1}_{j+1} = {res})\n'
+
+		return self.protonation_header
 
 	def load_ff_parameters(self):
 		""" Add force-field specific parameters to its appropriate places in the scoring recipe """

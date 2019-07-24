@@ -1,10 +1,10 @@
 """ Test the PDB utilities """
 import filecmp
-import os
 import unittest
 from haddock.modules.structure.utils import PDB
+from utils.files import get_full_path
 
-data_path = os.path.join(os.path.dirname(__file__), '../../test_data')
+data_path = get_full_path('test', 'test_data')
 
 
 class TestPDB(unittest.TestCase):

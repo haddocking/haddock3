@@ -15,15 +15,14 @@ def run_scoring(ensamble_f):
 	cns = CNS()
 
 	# Prepare PDBs
-	# pdb.prepare(ensamble_f)
+	pdb.prepare(ensamble_f)
 
 	# Generate the Recipe
-	recipe = recipe_gen.generate()
+	recipe = recipe_gen.generate(pdb.protonation_dic)
 
 	jobs.delegate(recipe, pdb.model_list)
 
 	cns.run(jobs)
-
 
 
 def run_analysis():

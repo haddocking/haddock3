@@ -1,6 +1,9 @@
 import os
 
-src_path = os.path.join(os.path.dirname(__file__), '../../src')
+from haddock.tools.reduce import analyze_protonation_state
+from utils.files import get_full_path
+
+src_path = get_full_path('haddock', 'src')
 
 
 class PDB:
@@ -14,10 +17,15 @@ class PDB:
         self.to_rename = {'WAT ': 'TIP3', 'HSD': 'HIS', 'HSE': 'HIS', 'HID': 'HIS', 'HIE': 'HIS',
                       ' 0.00969': ' 0.00   '}
         self.model_list = []
+        self.protonation_dic = {}
 
     def prepare(self, ensamble_f):
         split_model_list = self.split_models(ensamble_f)
         clean_model_list = self.sanitize(split_model_list)
+
+        first_model = clean_model_list[0]
+        # WARNING: We assume all models are the same...!
+        self.protonation_dic = analyze_protonation_state(first_model)
 
         self.model_list = clean_model_list
 

@@ -1,5 +1,7 @@
 import os
+import re
 import haddock.workflows.scoring.config as config
+from utils.files import get_full_path
 
 
 class RecipeGenerator:
@@ -7,10 +9,10 @@ class RecipeGenerator:
 	def __init__(self):
 		self.recipe = ''
 
-	def generate(self):
+	def generate(self, protonation_dic):
 		# return a file
 		h = HeaderComposer()
-		header_string = h.create_header()
+		header_string = h.create_header(protonation_dic)
 
 		r = RecipeComposer()
 		body_string = r.compose()
@@ -23,39 +25,52 @@ class RecipeGenerator:
 class RecipeComposer:
 
 	def __init__(self):
-		self.recipe = config.param_dic['input']['recipe']
-		self.protocol_path = os.path.join(os.path.dirname(__file__), '../../protocols')
+		self.recipe = get_full_path('haddock', 'workflows', 'scoring', 'cns-recipes') + '/' + config.param_dic['input']['recipe']
+		self.protocol_path = get_full_path('haddock', 'protocols')
 
 	def compose(self):
 		""" Load the CNS recipe identify which modules need to be loaded and compose the recipe body """
-		module_list = self.list_dependencies(self.recipe)
+		module_regex = r'.*(\@|/)(.*\.cns)'
+
+		_ = self.list_dependencies(self.recipe)
+
 		with open(self.recipe) as f:
 			target = f.readlines()
 		f.close()
-		# target = .readlines()
+
 		new = []
-		while module_list:
-			for m in module_list:
-				for idx, line in enumerate(target):
-					if m in line:
-						with open(f'{self.protocol_path}/{m}') as f:
-							target[idx] = ''.join(f.readlines())
-						f.close()
-						new = ''.join(target).split('\n')
-						break
+		check = True
+		module_check = [(i, e) for i, e in enumerate(target) if '.cns' in e if '!' not in e]
+		while check:
 
-				module_list.remove(m)
+			for idx, m in module_check:
 
-		return '\n'.join(new)
+				# module found, get name and load
+				m = re.findall(module_regex, target[idx])[0][-1]
+				with open(f'{self.protocol_path}/{m}') as f:
+					module = f.readlines()
+				f.close()
+
+				new = target[:idx] + module + target[idx+1:]
+
+				break
+
+			target = new
+			module_check = [(i, e) for i, e in enumerate(target) if '.cns' in e if '!' not in e]
+			if module_check:
+				check = True
+			else:
+				check = False
+
+		return ''.join(new)
 
 	@staticmethod
 	def identify_modules(cns_file):
 		""" Find all modules in this CNS file """
 		module_list = []
-		cns_file_name = cns_file.split('/')[-1]
 
 		if not os.path.isfile(cns_file):
-			print(f'+ ERROR: Module {cns_file_name} not found')
+			print(f'+ ERROR: Module {cns_file} not found')
 			exit()
 
 		with open(cns_file) as f:
@@ -131,6 +146,7 @@ class HeaderComposer:
 		self.ff_top_header = ''
 		self.scoring_header = ''
 		self.link_header = ''
+		self.protonation_header = ''
 
 		self.header = ''
 
@@ -147,15 +163,25 @@ class HeaderComposer:
 
 		self.link = config.ini.get('link', 'link')
 
-	def create_header(self):
+	def create_header(self, protonation_dic):
 		param = self.load_ff_parameters()
 		top = self.load_ff_topology()
 		scoring_param = self.load_scoring_parameters()
 		link = self.load_link()
+		protonation = self.load_protonation_state(protonation_dic)
 
-		self.header = param + top + scoring_param + link
+		self.header = param + top + scoring_param + link + protonation
 
 		return self.header
+
+	def load_protonation_state(self, protonation_dic):
+		""" Add protonation states to the recipe """
+		for i, chain in enumerate(protonation_dic):
+			for j, res in enumerate(protonation_dic[chain]):
+				state = protonation_dic[chain][res].lower()
+				self.protonation_header += f'evaluate ($toppar.{state}_resid_{i+1}_{j+1} = {res})\n'
+
+		return self.protonation_header
 
 	def load_ff_parameters(self):
 		""" Add force-field specific parameters to its appropriate places in the scoring recipe """
@@ -193,6 +219,6 @@ class HeaderComposer:
 		return self.scoring_header
 
 	def load_link(self):
-		self.link_header = f'evaluate ($link_file = "{self.link}" )'
+		self.link_header = f'evaluate ($link_file = "{self.link}" )\n'
 
 		return self.link_header

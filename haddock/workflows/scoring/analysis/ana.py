@@ -1,7 +1,7 @@
 import glob
 import re
 import os
-import haddock.workflows.scoring.config as config
+# import haddock.workflows.scoring.config as config
 from haddock.workflows.scoring.analysis.contact import Contacts
 from haddock.workflows.scoring.analysis.dfire import dfire
 from haddock.workflows.scoring.analysis.dockq import dockq

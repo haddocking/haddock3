@@ -1,7 +1,7 @@
 {
   "input": {
     "ensemble": "/home/rodrigo/work/scoring/Target146.pdb",
-    "recipe": "/home/rodrigo/haddock3/haddock/workflows/scoring/cns-recipes/simple-scoring.inp",
+    "recipe": "simple-scoring.inp",
     "run_scheme": "parallel",
     "nproc": 4,
     "reference": "lowest"

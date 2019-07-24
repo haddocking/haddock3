@@ -1,12 +1,6 @@
 import multiprocessing
-# import os
 import subprocess
-# from haddock.workflows.scoring.config import load_parameters
 import haddock.workflows.scoring.config as config
-# import shutil
-# from haddock.modules.error import CNSError
-# from haddock.workflows.scoring.config import CNS_bin, host_data_folder, container_data_folder
-# from haddock.workflows.scoring.config import load_parameters
 
 
 class CNS:
@@ -14,22 +8,21 @@ class CNS:
 
 	def __init__(self):
 		self.stdout = None
-		# self.cns_exec = CNS_bin
-		# self.param_dic = load_parameters()
 		self.cns_exec = config.ini.get('cns', 'cns_exe')
 		self.nproc = config.param_dic['input']['nproc']
 		self.run_scheme = config.param_dic['input']['run_scheme']
-		# if not os.path.exists(host_data_folder):
-		# 	os.mkdir(os.path.abspath(host_data_folder))
 
 	def run(self, jobs):
 		"""Pass the input defined in input_file to CNS"""
 		if self.run_scheme == 'serial':
 			self.run_serial(jobs)
+
 		elif self.run_scheme == 'alcazar':
 			self.run_alcazar(jobs)
+
 		elif self.run_scheme == 'parallel':
 			self.run_parallel(jobs)
+
 		else:
 			print('ERROR: run_scheme not recognized')
 			exit()
@@ -59,16 +52,16 @@ class CNS:
 	def run_alcazar(self, jobs):
 		pass
 
-	def run_parallel(self, jobs, nproc=48):
+	def run_parallel(self, jobs):
 		""" Execute the jobs in parallel """
-		print(f'+ Running parallel, {nproc} cores')
+		print(f'+ Running parallel, {self.nproc} cores')
 		arg_list = []
 		for job_id in jobs.job_dic:
 			inp_f = jobs.job_dic[job_id][0]
 			out_f = jobs.job_dic[job_id][1]
 			arg_list.append((self.cns_exec, inp_f, out_f))
 
-		with multiprocessing.Pool(processes=nproc) as pool:
+		with multiprocessing.Pool(processes=self.nproc) as pool:
 			_ = pool.starmap(self.execute, arg_list)
 
 	@staticmethod

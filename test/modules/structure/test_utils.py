@@ -7,7 +7,7 @@ from haddock.modules.structure.utils import PDB
 data_path = os.path.join(os.path.dirname(__file__), '../../test_data')
 
 
-class TestStringMethods(unittest.TestCase):
+class TestPDB(unittest.TestCase):
 
 	def setUp(self):
 		self.PDB = PDB()

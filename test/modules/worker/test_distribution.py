@@ -6,7 +6,7 @@ from utils.files import get_full_path
 data_path = get_full_path('test', 'test_data')
 
 
-class TestStringMethods(unittest.TestCase):
+class TestJobCreator(unittest.TestCase):
 
 	def setUp(self):
 		self.jobs = JobCreator()

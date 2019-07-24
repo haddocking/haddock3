@@ -2,7 +2,7 @@ language: python
 python:
   - "3.6"
 install:
-    - pip install codecove
+    - pip install codecov
 
 env:
   - HADDOCK3=$TRAVIS_BUILD_DIR

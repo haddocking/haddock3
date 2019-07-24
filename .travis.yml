@@ -1,12 +1,18 @@
 language: python
 python:
   - "3.6"
+install:
+    - pip install codecove
 
 env:
   - HADDOCK3=$TRAVIS_BUILD_DIR
+  - CODECOV_TOKEN=b51067a7-d71a-4400-a5ce-888e957c6ec3
 
 before_script:
  - chmod +x haddock/src/*
 
 script:
   python -m unittest discover -v
+
+after_success:
+  - codecov

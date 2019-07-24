@@ -37,7 +37,7 @@ class TestHeaderComposer(unittest.TestCase):
 
 	def test_load_link(self):
 		link = self.hc.load_link()
-		link_header_str = f'evaluate ($link_file = "{param_path}/protein-allhdg5-4-noter.link" )'
+		link_header_str = f'evaluate ($link_file = "{param_path}/protein-allhdg5-4-noter.link" )\n'
 
 		self.assertEqual(link, link_header_str)
 

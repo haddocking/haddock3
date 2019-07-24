@@ -219,6 +219,6 @@ class HeaderComposer:
 		return self.scoring_header
 
 	def load_link(self):
-		self.link_header = f'evaluate ($link_file = "{self.link}" )'
+		self.link_header = f'evaluate ($link_file = "{self.link}" )\n'
 
 		return self.link_header

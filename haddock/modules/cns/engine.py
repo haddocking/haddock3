@@ -52,16 +52,16 @@ class CNS:
 	def run_alcazar(self, jobs):
 		pass
 
-	def run_parallel(self, jobs, nproc=48):
+	def run_parallel(self, jobs):
 		""" Execute the jobs in parallel """
-		print(f'+ Running parallel, {nproc} cores')
+		print(f'+ Running parallel, {self.nproc} cores')
 		arg_list = []
 		for job_id in jobs.job_dic:
 			inp_f = jobs.job_dic[job_id][0]
 			out_f = jobs.job_dic[job_id][1]
 			arg_list.append((self.cns_exec, inp_f, out_f))
 
-		with multiprocessing.Pool(processes=nproc) as pool:
+		with multiprocessing.Pool(processes=self.nproc) as pool:
 			_ = pool.starmap(self.execute, arg_list)
 
 	@staticmethod

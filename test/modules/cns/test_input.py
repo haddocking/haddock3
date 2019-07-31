@@ -13,48 +13,46 @@ with patch("sys.argv", ['', f'{data_path}/scoring.json']):
 class TestHeaderComposer(unittest.TestCase):
 
 	def setUp(self):
-		self.hc = HeaderComposer()
+		prot_dic = {'A': {42: 'HISE'}, 'B': {1: 'HISD', 2: 'HISE'}}
+		self.hc = HeaderComposer(prot_dic, '')
 
 	def test_load_ff_parameters(self):
 		param = self.hc.load_ff_parameters()
-		param_header_str = f'parameter\n  @@{param_path}/protein-allhdg5-4.param\n  @@{param_path}/water-allhdg5-4.param\n  @@{param_path}/ion.param\n  @@{param_path}/ligand.param\nend\n'
+		param_header_str = f'\n! FF parameters\nparameter\n  @@{param_path}/protein-allhdg5-4.param\n  @@{param_path}/water-allhdg5-4.param\n  @@{param_path}/ion.param\n  @@{param_path}/ligand.param\nend\n'
 
 		self.assertEqual(param, param_header_str)
 
 	def test_load_ff_topology(self):
 		top = self.hc.load_ff_topology()
 
-		top_header_str = f'topology\n  @@{param_path}/protein-allhdg5-4.top\n  @@{param_path}/water-allhdg5-4.top\n  @@{param_path}/protein_break.top\n  @@{param_path}/ion.top\n  @@{param_path}/ligand.top\nend\n'
+		top_header_str = f'\n! Toplogy\ntopology\n  @@{param_path}/protein-allhdg5-4.top\n  @@{param_path}/water-allhdg5-4.top\n  @@{param_path}/protein_break.top\n  @@{param_path}/ion.top\n  @@{param_path}/ligand.top\nend\n'
 
 		self.assertEqual(top, top_header_str)
 
 	def test_load_scoring_parameters(self):
 		scoring = self.hc.load_scoring_parameters()
 
-		scoring_header_str = 'evaluate($Data.flags.dihed = FALSE)\nevaluate($Data.flags.sani = FALSE)\nevaluate($Data.flags.coup = FALSE)\nevaluate($Data.flags.vean = FALSE)\nevaluate($Data.flags.cdih = FALSE)\nevaluate($Data.flags.noe = TRUE)\nevaluate($Data.flags.sym = FALSE)\nevaluate($Data.flags.ncs = FALSE)\nevaluate($Data.flags.noecv = FALSE)\nevaluate($Data.flags.auto_break = TRUE)\nevaluate($Data.flags.waterdock = TRUE)\nevaluate($break_cutoff=2.5)\nevaluate($hydrogen_build=all)\nevaluate($disulphide_dist=3)\nevaluate($log_level=verbose)\nevaluate($epsilon=1)\n'
-
-		self.assertEqual(scoring, scoring_header_str)
+		self.assertEqual(scoring.split('\n')[2], 'eval ($Data.flags.dihed = FALSE)')
+		self.assertEqual(scoring.split('\n')[15], 'eval ($disulphide_dist=3)')
 
 	def test_load_link(self):
 		link = self.hc.load_link()
-		link_header_str = f'evaluate ($link_file = "{param_path}/protein-allhdg5-4-noter.link" )\n'
+		link_header_str = f'\n! Link file\neval ($link_file = "{param_path}/protein-allhdg5-4-noter.link" )\n'
 
 		self.assertEqual(link, link_header_str)
 
 	def test_protonation_dic(self):
-		dummy_dic = {'A': {42: 'HISE'}, 'B': {1: 'HISD', 2: 'HISE'}}
-		protonation_str = self.hc.load_protonation_state(dummy_dic)
+		protonation_str = self.hc.load_protonation_state()
 
-		expected_str = 'evaluate ($toppar.hise_resid_1_1 = 42)\nevaluate ($toppar.hisd_resid_2_1 = 1)\nevaluate ($toppar.hise_resid_2_2 = 2)\n'
-		self.assertEqual(protonation_str, expected_str)
+		self.assertEqual(protonation_str.split('\n')[2], 'eval ($toppar.hise_resid_1_1 = 42)')
+		self.assertEqual(protonation_str.split('\n')[13], 'eval ($toppar.hisd_resid_1_2 = 0)')
 
 	def test_create_header(self):
-		dummy_dic = {}
-		header = self.hc.create_header(dummy_dic)
+		header = self.hc.create_header()
 
-		self.assertEqual(header.split()[0], 'parameter')
-		self.assertEqual(header.split()[6], 'topology')
-		self.assertEqual(header.split()[-4], '($link_file')
+		self.assertEqual(header.split('\n')[3], 'eval ($psfname= $file - ".pdb" + ".psf")')
+		self.assertEqual(header.split('\n')[42], 'eval ($Toppar.prot_segid_2="B")')
+		self.assertEqual(header.split('\n')[50], 'eval ($toppar.hise_resid_1_1 = 42)')
 
 
 class TestRecipeComposer(unittest.TestCase):
@@ -93,13 +91,13 @@ class TestRecipeGenerator(unittest.TestCase):
 	def test_generate(self):
 
 		dummy_dic = {}
-		generated_recipe_str = self.rg.generate(dummy_dic)
+		generated_recipe_str = self.rg.generate(dummy_dic, '')
 
 		generated_recipe_list = generated_recipe_str.split('\n')
 
-		self.assertEqual(generated_recipe_list[0], 'parameter')
-		self.assertEqual(generated_recipe_list[6], 'topology')
-		self.assertEqual(generated_recipe_list[28], 'evaluate($epsilon=1)')
+		self.assertEqual(generated_recipe_list[2], 'eval ($filename= $file - ".pdb" + ".pdb")')
+		self.assertEqual(generated_recipe_list[6], 'parameter')
+		self.assertEqual(generated_recipe_list[31], 'eval ($Data.flags.ncs = FALSE)')
 
 
 if __name__ == '__main__':

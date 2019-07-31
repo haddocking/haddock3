@@ -1,7 +1,7 @@
-import glob
+# import glob
 import re
 import os
-# import haddock.workflows.scoring.config as config
+import haddock.workflows.scoring.config as config
 from haddock.workflows.scoring.analysis.contact import Contacts
 from haddock.workflows.scoring.analysis.dfire import dfire
 from haddock.workflows.scoring.analysis.dockq import dockq
@@ -10,7 +10,7 @@ from haddock.workflows.scoring.analysis.fastcontact import fastcontact
 
 class Ana:
 
-	def __init__(self):
+	def __init__(self, pdb_l):
 		self.structure_dic = {}
 		self.contact_filelist = []
 		self.structure_haddockscore_list = []
@@ -18,14 +18,8 @@ class Ana:
 		self.output_f = 'scoring.stat'
 		self.fcc_matrix = []
 		self.con_list = None
-		# self.reference = config.param_dic['']
-		# self.param_dic = load_parameters()
 
-	def retrieve_structures(self):
-		""" Retrieve structures that have been trough the CNS recipe """
-
-		conv_l = glob.glob('structures/*conv.pdb')
-		for pdb in conv_l:
+		for pdb in pdb_l:
 			self.structure_dic[pdb] = {}
 
 	def extract_energies(self):
@@ -69,11 +63,11 @@ class Ana:
 							v = .0
 						temp_v.append(v)
 					energy_v = temp_v
-
-					total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, sani, vean, dani = energy_v
+					# WARNING: This is highly dependent on the values printed by the recipe, refer to print_coorheader.cns
+					total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, rdcs, vean, dani, xpcs, rg = energy_v
 					vdw = float(vdw)
 					elec = float(elec)
-					air = float(elec)
+					air = float(air)
 
 				if 'REMARK Desolvation' in line:
 					desolv = float(re.findall(desolv_regex, line)[0])
@@ -105,6 +99,12 @@ class Ana:
 		""" Calculate the HADDOCK Score of the PDB file using its appropriate weight """
 
 		print(f'+ Calculating HADDOCK score for {len(self.structure_dic)} structures')
+
+		try:
+			for pdb in self.structure_dic:
+				_ = self.structure_dic[pdb]['vdw']
+		except KeyError:
+			self.extract_energies()
 
 		for pdb in self.structure_dic:
 			vdw = self.structure_dic[pdb]['vdw']
@@ -314,7 +314,7 @@ class Ana:
 
 		print('+ Running DockQ')
 
-		if self.param_dic['input']['reference'] == 'lowest':
+		if config.param_dic['input']['reference'] == 'lowest':
 			score_list = []
 			for pdb in self.structure_dic:
 				score_list.append((pdb, self.structure_dic[pdb]['haddock-score']))
@@ -325,13 +325,20 @@ class Ana:
 			print(f'++ Using {reference_pdb} as reference structure, lowest haddock score: {reference_score:.3f}')
 
 		else:
-			reference_pdb = self.param_dic['input']['reference']
+			reference_pdb = config.param_dic['input']['reference']
 
 			print(f'++ Using {reference_pdb} as reference structure, user input')
 
+		# pdb_list = list(self.structure_dic.keys())
+		#
+		# dockq = DockQ()
+		# d = dockq.run(pdb_list, reference_pdb)
+
+		#
 		for pdb in self.structure_dic:
 			result_dic = dockq(reference_pdb, pdb)
-			self.structure_dic[pdb]['dockq'] = result_dic
+			for k in result_dic:
+				self.structure_dic[pdb][k] = result_dic[k]
 
 	def output(self):
 

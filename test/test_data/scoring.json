@@ -1,24 +1,23 @@
 {
   "input": {
-    "ensemble": "/home/rodrigo/work/scoring/Target146.pdb",
-    "recipe": "simple-scoring.inp",
+    "ensemble": "/home/rodrigo/work/scoring/Target146-100.pdb",
+    "recipe": "scoring.inp",
     "run_scheme": "parallel",
     "nproc": 4,
     "reference": "lowest"
   },
-  "components": {
-    "number": 4,
+  "scoring-parameters": {
+    "ncomp": 4,
     "segids": [
       "A",
       "B",
       "C",
       "D"
-    ]
-  },
-  "scoring-parameters": {
+    ],
     "flags": {
       "dihed": false,
       "sani": false,
+      "dani": false,
       "coup": false,
       "vean": false,
       "cdih": false,
@@ -26,7 +25,6 @@
       "sym": false,
       "ncs": false,
       "noecv": false,
-      "auto_break": true,
       "waterdock": true
     },
     "values": {
@@ -34,6 +32,7 @@
       "hydrogen_build": "all",
       "disulphide_dist": 3,
       "log_level": "verbose",
+      "auto_break": true,
       "epsilon": 1
     }
   }

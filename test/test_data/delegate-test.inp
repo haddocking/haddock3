@@ -1,2 +1,3 @@
-eval($file="structures/00000.pdb")
+! Input structure
+eval ($file="structures/00000.pdb")
 recipe-as-string

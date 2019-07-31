@@ -1,6 +1,7 @@
 """ Test the PDB utilities """
 import filecmp
 import unittest
+import os
 from haddock.modules.structure.utils import PDB
 from utils.files import get_full_path
 
@@ -48,24 +49,29 @@ class TestPDB(unittest.TestCase):
 	def test_chain2segid(self):
 
 		segless_pdb = f'{data_path}/1crn-chain.pdb'
+		os.system(f'cp {segless_pdb} temp.pdb')
 
-		fname = self.PDB.chain2segid(segless_pdb)
+		fname = self.PDB.chain2segid('temp.pdb')
 
 		self.assertTrue(filecmp.cmp(f'{data_path}/1crn-chain+segid.pdb', fname))
 
 	def test_segid2chain(self):
 		chainless_pdb = f'{data_path}/1crn-segid.pdb'
 
-		fname = self.PDB.segid2chain(chainless_pdb)
+		os.system(f'cp {chainless_pdb} temp.pdb')
+
+		fname = self.PDB.segid2chain('temp.pdb')
 
 		self.assertTrue(filecmp.cmp(f'{data_path}/1crn-segid+chain.pdb', fname))
 
 	def test_sanitize(self):
 
-		input_l = [f'{data_path}/1f3g-dirty.pdb']
+		model_name = f'{data_path}/1f3g-dirty.pdb'
+		os.system(f'cp {model_name} temp.pdb')
 
-		clean_list = self.PDB.sanitize(input_l)
+		clean_list = self.PDB.sanitize(['temp.pdb'])
 		clean_pdb = clean_list[0]
+
 		self.assertTrue(filecmp.cmp(f'{data_path}/1f3g-sanitized.pdb', clean_pdb))
 
 

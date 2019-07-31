@@ -16,6 +16,8 @@ class JobCreator:
 	def delegate(self, recipe_str, input_model_list):
 		""" Give one recipe to each Model """
 
+		# FIXME: Need to identify what will be the name of the final structure.
+
 		# recipe_str = input_script.recipe
 		for i, model in enumerate(input_model_list):
 			model_name = model.split('/')[-1].split('.')[0]
@@ -23,7 +25,8 @@ class JobCreator:
 			input_f = f'{self.wd}/jobs/{model_name}.inp'
 			output_f = f'{self.wd}/out/{model_name}.out'
 
-			tbw = f'eval($file="{model}")\n' + recipe_str
+			tbw = '! Input structure\n'
+			tbw += f'eval ($file="{model}")\n' + recipe_str
 			with open(input_f, 'w') as f:
 				f.write(tbw)
 			f.close()

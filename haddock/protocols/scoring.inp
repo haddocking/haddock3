@@ -4,18 +4,17 @@
 ! Do not change below this line unless you know what you are doing
 !=================================================================!
 
+fileexist $filename end
+
 eval($OT1_becomes="O")
 eval($OT2_becomes="OXT")
 eval($ile_CD_becomes="CD1")
 
 evaluate ($count = 0)
 
-!for $file in ( @@$filelist ) loop readpdb
 eval($count=$count+1)
-evaluate ($filename= $file - ".pdb" + "_conv.pdb")
-evaluate ($psfname= $file - ".pdb" + "_conv.psf")
 
-fileexist $filename end
+
 evaluate ($convfileexist=$result)
 if ($convfileexist eq false) then
 dele sele=(all) end
@@ -122,7 +121,38 @@ if ( $auto_break = true ) then
 
 end if
 
-eval($nchain = 0)
+
+! Histidine protonation
+  eval($nchain = 0)
+
+  while ($nchain < $data.ncomponents) loop nloop1
+    eval($nchain = $nchain + 1)
+
+    !for the histidine patches:
+    evaluate($hisd_counter=1)
+    while ($hisd_counter le 10) loop hisd
+      if ($Toppar.hisd_resid_$nchain_$hisd_counter > 0) then
+        show (resn) (tag and resid $Toppar.hisd_resid_$nchain_$hisd_counter and segid $Toppar.prot_segid_$nchain)
+	if ($result eq "HIS") then
+           patch hisd reference=nil=(resid $Toppar.hisd_resid_$nchain_$hisd_counter
+	                             and segid $Toppar.prot_segid_$nchain) end
+        end if
+      end if
+      evaluate($hisd_counter=$hisd_counter + 1)
+    end loop hisd
+
+    evaluate($hise_counter=1)
+    while ($hise_counter le 10) loop hise
+      if ($Toppar.hise_resid_$nchain_$hise_counter > 0) then
+        show (resn) (tag and resid $Toppar.hise_resid_$nchain_$hise_counter and segid $Toppar.prot_segid_$nchain)
+	if ($result eq "HIS") then
+          patch hise reference=nil=(resid $Toppar.hise_resid_$nchain_$hise_counter
+	                            and segid $Toppar.prot_segid_$nchain) end
+        end if
+      end if
+      evaluate($hise_counter=$hise_counter + 1)
+    end loop hise
+  end loop nloop1
 
 evaluate ($disu=0)
 
@@ -494,7 +524,7 @@ do (b=10) (all)
 
 
 
-coor sele= (segid $Toppar.prot_segid_1) orient end
+!coor sele= (segid $Toppar.prot_segid_1) orient end
 write coordinates sele= (all) output =$filename end
 write structure output =$psfname end
 

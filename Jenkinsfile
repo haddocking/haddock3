@@ -14,7 +14,7 @@ pipeline {
     stage('Test') {
       steps {
         sh '''export HADDOCK3=`pwd`
-chmod +x haddock/src/*
+chmod +x `pwd`/haddock/src/*
 python -m coverage run -m unittest discover'''
       }
     }

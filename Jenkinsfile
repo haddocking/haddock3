@@ -1,14 +1,16 @@
 pipeline {
   agent {
     docker {
-      image 'python:3'
+      image 'ubuntu:latest'
     }
 
   }
   stages {
     stage('Install') {
       steps {
-        sh 'pip install codecov'
+        sh '''pip install codecov
+apt-get update
+apt-get install gawk'''
       }
     }
     stage('Test') {

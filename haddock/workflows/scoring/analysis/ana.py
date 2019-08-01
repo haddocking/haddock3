@@ -1,7 +1,7 @@
-import glob
+# import glob
 import re
 import os
-# import haddock.workflows.scoring.config as config
+import haddock.workflows.scoring.config as config
 from haddock.workflows.scoring.analysis.contact import Contacts
 from haddock.workflows.scoring.analysis.dfire import dfire
 from haddock.workflows.scoring.analysis.dockq import dockq
@@ -10,7 +10,7 @@ from haddock.workflows.scoring.analysis.fastcontact import fastcontact
 
 class Ana:
 
-	def __init__(self):
+	def __init__(self, pdb_l):
 		self.structure_dic = {}
 		self.contact_filelist = []
 		self.structure_haddockscore_list = []
@@ -18,14 +18,8 @@ class Ana:
 		self.output_f = 'scoring.stat'
 		self.fcc_matrix = []
 		self.con_list = None
-		# self.reference = config.param_dic['']
-		# self.param_dic = load_parameters()
 
-	def retrieve_structures(self):
-		""" Retrieve structures that have been trough the CNS recipe """
-
-		conv_l = glob.glob('structures/*conv.pdb')
-		for pdb in conv_l:
+		for pdb in pdb_l:
 			self.structure_dic[pdb] = {}
 
 	def extract_energies(self):
@@ -69,11 +63,11 @@ class Ana:
 							v = .0
 						temp_v.append(v)
 					energy_v = temp_v
-
-					total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, sani, vean, dani = energy_v
+					# WARNING: This is highly dependent on the values printed by the recipe, refer to print_coorheader.cns
+					total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, rdcs, vean, dani, xpcs, rg = energy_v
 					vdw = float(vdw)
 					elec = float(elec)
-					air = float(elec)
+					air = float(air)
 
 				if 'REMARK Desolvation' in line:
 					desolv = float(re.findall(desolv_regex, line)[0])
@@ -105,6 +99,12 @@ class Ana:
 		""" Calculate the HADDOCK Score of the PDB file using its appropriate weight """
 
 		print(f'+ Calculating HADDOCK score for {len(self.structure_dic)} structures')
+
+		try:
+			for pdb in self.structure_dic:
+				_ = self.structure_dic[pdb]['vdw']
+		except KeyError:
+			self.extract_energies()
 
 		for pdb in self.structure_dic:
 			vdw = self.structure_dic[pdb]['vdw']
@@ -142,6 +142,9 @@ class Ana:
 		""" Cluster scored models using FCC, output a sorted text file containing clusters and mean scores """
 
 		print(f'+ Clustering with cutoff: {cutoff} and threshold: {threshold}')
+
+		wd = os.getcwd()
+		output_f = f'{wd}/cluster_{cutoff}_{threshold}.out'
 
 		self.calculate_contacts()
 		self.calc_fcc_matrix()
@@ -207,35 +210,49 @@ class Ana:
 			cn += 1
 			clusters.append(c)
 
+		path = '/'.join(list(self.structure_dic.items())[0][0].split('/')[:-1])
 		cluster_dic = {}
 		for c in clusters:
 			clustered_models_list = []
 
 			# add cluster center to internal structure
-			cluster_center_str = '0' * (6 - len(str(c.center.name - 1))) + str(c.center.name - 1)
-			cluster_center_name = f'structures/{cluster_center_str}_conv.pdb'
+			# cluster_center_str = '0' * (6 - len(str(c.center.name - 1))) + str(c.center.name - 1)
+			cluster_center_str = '0' * (6 - len(str(c.center.name))) + str(c.center.name)
+			cluster_center_name = f'{path}/{cluster_center_str}_conv.pdb'
 			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_name"] = c.name
 			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = 0
 
+			sort_tag = True
 			for model in [m.name for m in c.members]:
-				model_str = '0' * (6 - len(str(model - 1))) + str(model - 1)
-				name = f'structures/{model_str}_conv.pdb'
-				haddock_score = self.structure_dic[name]['haddock-score']
+				# model_str = '0' * (6 - len(str(model - 1))) + str(model - 1)
+				model_str = '0' * (6 - len(str(model))) + str(model)
+				name = f'{path}/{model_str}_conv.pdb'
+				try:
+					haddock_score = self.structure_dic[name]['haddock-score']
+				except KeyError:
+					# No haddock score...
+					haddock_score = float('nan')
+					sort_tag = False
+
 				clustered_models_list.append((model, haddock_score))
 
 				# add cluster info to internal structure
 				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_name"] = c.name
-
-			# sort cluster elements by haddock score
-			model_list = sorted(clustered_models_list, key=lambda x: x[1])
+			if sort_tag:
+				# sort cluster elements by haddock score
+				model_list = sorted(clustered_models_list, key=lambda x: x[1])
+			else:
+				# sort by model number
+				model_list = sorted(clustered_models_list, key=lambda x: x[0])
 			score_list = [e[1] for e in clustered_models_list]
 			mean_score = sum(score_list) / len(score_list)
 			# top4_mean_score = sum(score_list[:4]) / len(score_list[:4])
 			tbw = f"Cluster {c.name} -> ({c.center.name}) "
 			for i, m in enumerate(model_list):
 				tbw += f'{m[0]} '
-				model_str = '0' * (6 - len(str(m[0] - 1))) + str(m[0] - 1)
-				name = f'structures/{model_str}_conv.pdb'
+				# model_str = '0' * (6 - len(str(m[0] - 1))) + str(m[0] - 1)
+				model_str = '0' * (6 - len(str(m[0]))) + str(m[0])
+				name = f'{path}/{model_str}_conv.pdb'
 				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = i
 
 			tbw += '\n'
@@ -253,13 +270,15 @@ class Ana:
 				self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_overall_ranking"] = overall_ranking
 
 		# output
-		with open(f'cluster_{cutoff}_{threshold}.out', 'w') as out:
+		with open(output_f, 'w') as out:
 			for c in sorted_cluster_list:
 				cluster_name, cluster_mean = c
 				tbw_l = cluster_dic[cluster_name][0].split('->')
 				tbw = f'{tbw_l[0]}[{cluster_mean:.3f}] ->{tbw_l[1]}'
 				out.write(tbw)
 		out.close()
+
+		return output_f
 
 	def calculate_contacts(self):
 		""" Calculate atomic contacts """
@@ -274,47 +293,57 @@ class Ana:
 	def calc_fcc_matrix(self):
 		""" Calculate the FCC matrix (extracted and adapted from calc_fcc_matrix.py """
 
-		if not os.path.isfile(self.fcc_matrix_f) and not self.fcc_matrix:
+		# if not os.path.isfile(self.fcc_matrix_f) and not self.fcc_matrix:
 
-			# print('+ Creating FCC matrix')
+		# print('+ Creating FCC matrix')
+		if not self.con_list:
+			self.calculate_contacts()
 
-			self.con_list.sort()  # very important!
-			contacts = [set([int(l) for l in open(f)]) for f in self.con_list if f.strip()]
+		# very important!
+		self.con_list.sort()
 
-			# get the pairwise matrix
-			for i in range(len(contacts)):
-				for j in range(i + 1, len(contacts)):
-					con_a = contacts[i]
-					con_b = contacts[j]
-
-					cc = float(len(con_a.intersection(con_b)))
-					# cc_v = float(len(con_b.intersection(con_a)))
-
-					fcc, fcc_v = cc * 1.0 / len(con_a), cc * 1.0 / len(con_b)
-					self.fcc_matrix.append(f'{i + 1} {j + 1} {fcc:.3f} {fcc_v:.3f}')
-
-			with open(self.fcc_matrix_f, 'w') as out:
-				out.write('\n'.join(self.fcc_matrix))
-			out.close()
-		elif not self.fcc_matrix:
-
-			# print('+ Loading FCC matrix')
-
-			with open(self.fcc_matrix_f) as f:
+		contacts = []
+		for con_f in self.con_list:
+			t = []
+			with open(con_f) as f:
 				for l in f.readlines():
-					self.fcc_matrix.append(l)
+					t.append(int(l))
 			f.close()
-		else:
+			contacts.append(set(t))
 
-			# print('+ Using previously loaded FCC matrix')
+		# get the pairwise matrix
+		for i in range(len(contacts)):
+			for j in range(i + 1, len(contacts)):
+				con_a = contacts[i]
+				con_b = contacts[j]
 
-			pass
+				cc = float(len(con_a.intersection(con_b)))
+				# cc_v = float(len(con_b.intersection(con_a)))
+
+				fcc, fcc_v = cc * 1.0 / len(con_a), cc * 1.0 / len(con_b)
+				self.fcc_matrix.append(f'{i + 1} {j + 1} {fcc:.3f} {fcc_v:.3f}')
+		#
+		# 	with open(self.fcc_matrix_f, 'w') as out:
+		# 		out.write('\n'.join(self.fcc_matrix))
+		# 	out.close()
+		# elif not self.fcc_matrix:
+		#
+		# 	# print('+ Loading FCC matrix')
+		#
+		# 	with open(self.fcc_matrix_f) as f:
+		# 		for l in f.readlines():
+		# 			self.fcc_matrix.append(l)
+		# 	f.close()
+		# else:
+		#
+		# 	# print('+ Using previously loaded FCC matrix')
+		# 	pass
 
 	def run_dockq(self):
 
 		print('+ Running DockQ')
 
-		if self.param_dic['input']['reference'] == 'lowest':
+		if config.param_dic['input']['reference'] == 'lowest':
 			score_list = []
 			for pdb in self.structure_dic:
 				score_list.append((pdb, self.structure_dic[pdb]['haddock-score']))
@@ -325,13 +354,20 @@ class Ana:
 			print(f'++ Using {reference_pdb} as reference structure, lowest haddock score: {reference_score:.3f}')
 
 		else:
-			reference_pdb = self.param_dic['input']['reference']
+			reference_pdb = config.param_dic['input']['reference']
 
 			print(f'++ Using {reference_pdb} as reference structure, user input')
 
+		# pdb_list = list(self.structure_dic.keys())
+		#
+		# dockq = DockQ()
+		# d = dockq.run(pdb_list, reference_pdb)
+
+		#
 		for pdb in self.structure_dic:
 			result_dic = dockq(reference_pdb, pdb)
-			self.structure_dic[pdb]['dockq'] = result_dic
+			for k in result_dic:
+				self.structure_dic[pdb][k] = result_dic[k]
 
 	def output(self):
 

@@ -17,7 +17,6 @@ class TestJobCreator(unittest.TestCase):
 		# local_path = os.path.dirname(__file__)
 		dic = {0: ('jobs/00000.inp', 'out/00000.out')}
 
-		# FIXME: Implement proper working directory path parsing
 		k = list(delegate_dic.keys())[0]
 		delegate_dic[k] = [('/'.join(a[0].split('/')[-2:]), '/'.join(a[1].split('/')[-2:])) for a in [delegate_dic[d] for d in delegate_dic]][0]
 

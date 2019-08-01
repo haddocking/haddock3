@@ -9,10 +9,9 @@ class RecipeGenerator:
 	def __init__(self):
 		self.recipe = ''
 
-	def generate(self, protonation_dic):
-		# return a file
-		h = HeaderComposer()
-		header_string = h.create_header(protonation_dic)
+	def generate(self, protonation_dic, out_suffix):
+		h = HeaderComposer(protonation_dic, out_suffix)
+		header_string = h.create_header()
 
 		r = RecipeComposer()
 		body_string = r.compose()
@@ -25,8 +24,8 @@ class RecipeGenerator:
 class RecipeComposer:
 
 	def __init__(self):
-		self.recipe = get_full_path('haddock', 'workflows', 'scoring', 'cns-recipes') + '/' + config.param_dic['input']['recipe']
 		self.protocol_path = get_full_path('haddock', 'protocols')
+		self.recipe = self.protocol_path + '/' + config.param_dic['input']['recipe']
 
 	def compose(self):
 		""" Load the CNS recipe identify which modules need to be loaded and compose the recipe body """
@@ -140,7 +139,7 @@ class RecipeComposer:
 class HeaderComposer:
 	""" Each recipe has a Header with parameters and scoring definitions """
 
-	def __init__(self):
+	def __init__(self, prot_dic, out_suffix):
 		self.input_header = ''
 		self.ff_param_header = ''
 		self.ff_top_header = ''
@@ -163,62 +162,106 @@ class HeaderComposer:
 
 		self.link = config.ini.get('link', 'link')
 
-	def create_header(self, protonation_dic):
+		self.scoring_params = config.param_dic['scoring-parameters']
+
+		self.protonation_dic = prot_dic
+		self.out_suffix = out_suffix
+
+	def create_header(self):
 		param = self.load_ff_parameters()
 		top = self.load_ff_topology()
 		scoring_param = self.load_scoring_parameters()
 		link = self.load_link()
-		protonation = self.load_protonation_state(protonation_dic)
+		protonation = self.load_protonation_state()
+		output = self.prepare_output()
 
-		self.header = param + top + scoring_param + link + protonation
+		self.header = output + param + top + scoring_param + link + protonation
 
 		return self.header
 
-	def load_protonation_state(self, protonation_dic):
-		""" Add protonation states to the recipe """
-		for i, chain in enumerate(protonation_dic):
-			for j, res in enumerate(protonation_dic[chain]):
-				state = protonation_dic[chain][res].lower()
-				self.protonation_header += f'evaluate ($toppar.{state}_resid_{i+1}_{j+1} = {res})\n'
+	def prepare_output(self):
+		""" Tell the recipe wich should be the output file """
+		output = '\n! Output structure\n'
+		output += f'eval ($filename= $file - ".pdb" + "{self.out_suffix}.pdb")\n'
+		output += f'eval ($psfname= $file - ".pdb" + "{self.out_suffix}.psf")\n'
 
-		return self.protonation_header
+		return output
+
+	def load_protonation_state(self):
+		""" Add protonation states to the recipe """
+		protonation_header = '\n! Protonation states\n'
+
+		for i, chain in enumerate(self.protonation_dic):
+			hise_l = [0] * 10
+			hisd_l = [0] * 10
+			hisd_counter = 0
+			hise_counter = 0
+			for res in self.protonation_dic[chain]:
+				state = self.protonation_dic[chain][res].lower()
+				if state == 'hise':
+					hise_l[hise_counter] = res
+					hise_counter += 1
+				if state == 'hisd':
+					hisd_l[hisd_counter] = res
+					hisd_counter += 1
+
+			hise_str = ''
+			for e in [(i+1, c+1, r) for c, r in enumerate(hise_l)]:
+				hise_str += f'eval ($toppar.hise_resid_{e[0]}_{e[1]} = {e[2]})\n'
+			hisd_str = ''
+			for e in [(i+1, c+1, r) for c, r in enumerate(hisd_l)]:
+				hisd_str += f'eval ($toppar.hisd_resid_{e[0]}_{e[1]} = {e[2]})\n'
+
+			protonation_header += hise_str
+			protonation_header += hisd_str
+
+		return protonation_header
 
 	def load_ff_parameters(self):
 		""" Add force-field specific parameters to its appropriate places in the scoring recipe """
-		self.ff_param_header = 'parameter\n'
-		self.ff_param_header += f'  @@{self.protein_param}\n'
-		self.ff_param_header += f'  @@{self.solvent_param}\n'
-		self.ff_param_header += f'  @@{self.ion_param}\n'
-		self.ff_param_header += f'  @@{self.ligand_param}\n'
-		self.ff_param_header += 'end\n'
+		ff_param_header = '\n! FF parameters\n'
+		ff_param_header += 'parameter\n'
+		ff_param_header += f'  @@{self.protein_param}\n'
+		ff_param_header += f'  @@{self.solvent_param}\n'
+		ff_param_header += f'  @@{self.ion_param}\n'
+		ff_param_header += f'  @@{self.ligand_param}\n'
+		ff_param_header += 'end\n'
 
-		return self.ff_param_header
+		return ff_param_header
 
 	def load_ff_topology(self):
 		""" Add force-field specific topology to its appropriate places in the scoring recipe """
-		self.ff_top_header = 'topology\n'
-		self.ff_top_header += f'  @@{self.protein_top}\n'
-		self.ff_top_header += f'  @@{self.solvent_top}\n'
-		self.ff_top_header += f'  @@{self.break_top}\n'
-		self.ff_top_header += f'  @@{self.ion_top}\n'
-		self.ff_top_header += f'  @@{self.ligand_top}\n'
-		self.ff_top_header += 'end\n'
+		ff_top_header = '\n! Toplogy\n'
+		ff_top_header += 'topology\n'
+		ff_top_header += f'  @@{self.protein_top}\n'
+		ff_top_header += f'  @@{self.solvent_top}\n'
+		ff_top_header += f'  @@{self.break_top}\n'
+		ff_top_header += f'  @@{self.ion_top}\n'
+		ff_top_header += f'  @@{self.ligand_top}\n'
+		ff_top_header += 'end\n'
 
-		return self.ff_top_header
+		return ff_top_header
 
 	def load_scoring_parameters(self):
-		self.scoring_header = ''
-		for flag in config.param_dic['scoring-parameters']['flags']:
-			v = str(config.param_dic['scoring-parameters']['flags'][flag]).upper()
-			self.scoring_header += f'evaluate($Data.flags.{flag} = {v})\n'
+		scoring_header = '\n! Scoring parameters\n'
+		for flag in self.scoring_params['flags']:
+			v = str(self.scoring_params['flags'][flag]).upper()
+			scoring_header += f'eval ($Data.flags.{flag} = {v})\n'
 
-		for value in config.param_dic['scoring-parameters']['values']:
-			v = config.param_dic['scoring-parameters']['values'][value]
-			self.scoring_header += f'evaluate(${value}={v})\n'
+		for value in self.scoring_params['values']:
+			v = self.scoring_params['values'][value]
+			scoring_header += f'eval (${value}={v})\n'
 
-		return self.scoring_header
+		ncomp = self.scoring_params['ncomp']
+		scoring_header += f'eval ($data.ncomponents={ncomp})\n'
+
+		for i, segid in enumerate(self.scoring_params['segids']):
+			scoring_header += f'eval ($Toppar.prot_segid_{i+1}="{segid}")\n'
+
+		return scoring_header
 
 	def load_link(self):
-		self.link_header = f'evaluate ($link_file = "{self.link}" )\n'
+		self.link_header = '\n! Link file\n'
+		self.link_header += f'eval ($link_file = "{self.link}" )\n'
 
 		return self.link_header

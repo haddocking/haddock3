@@ -1,5 +1,4 @@
 import os
-
 from haddock.tools.reduce import analyze_protonation_state
 from utils.files import get_full_path
 
@@ -9,10 +8,6 @@ src_path = get_full_path('haddock', 'src')
 class PDB:
 
     def __init__(self):
-        # wd = os.getcwd()
-        # if not os.path.isdir(f'{wd}/structures'):
-        #     os.system(f'mkdir {wd}/structures')
-
         self.to_remove = ['REMAR', 'CTERB', 'CTERA', 'NTERA', 'NTERB', 'CONECT']
         self.to_rename = {'WAT ': 'TIP3', 'HSD': 'HIS', 'HSE': 'HIS', 'HID': 'HIS', 'HIE': 'HIS',
                       ' 0.00969': ' 0.00   '}
@@ -24,7 +19,13 @@ class PDB:
         clean_model_list = self.sanitize(split_model_list)
 
         first_model = clean_model_list[0]
-        # WARNING: We assume all models are the same...!
+
+        # TODO: Numbering issue
+        #  For this tthe automatic protonation detection work as expected
+        #    all models should have the same numbering
+        #  Relevant for SCORING
+
+        # FIXME: Add option to skip this and use auto-his.cns
         self.protonation_dic = analyze_protonation_state(first_model)
 
         self.model_list = clean_model_list
@@ -90,7 +91,7 @@ class PDB:
         """Splits the contents of the PDB file into new files, each containing a
         MODEL in the original file
         """
-        path = '/'.join(ensamble_f.split('/')[:-1]) + '/structures'
+        path = os.getcwd() + '/structures'
 
         if not os.path.isdir(path):
             os.system(f'mkdir {path}')
@@ -102,7 +103,8 @@ class PDB:
         with open(ensamble_f) as f:
             for line in f.readlines():
                 if line.startswith('MODEL'):
-                    model_no = int(line[10:14].strip())
+                    # model_no = int(line[10:14].strip())
+                    model_no = int(line.split()[1])
                     model_str = '0' * (6 - len(str(model_no))) + str(model_no)
                     model_name = f'{path}/{model_str}.pdb'
                     model_list.append(model_name)
@@ -122,20 +124,18 @@ class PDB:
     @staticmethod
     def chain2segid(pdbf):
         """ Save a backup of the original file and move chainID to segID in a new file """
-        new_pdb = pdbf.replace('.pdb', '_+sid.pdb')
-        # os.system(f'cp {pdbf} {ori}')
         os.system(f'{src_path}/pdb_chain-to-segid {pdbf} > oo')
-        os.system(f'mv oo {new_pdb}')
-        return new_pdb
+        os.system(f'mv oo {pdbf}')
+        return pdbf
 
     @staticmethod
     def segid2chain(pdbf):
         """ Save a backup of the original file and move segID to chainID in a new file """
-        new_pdb = pdbf.replace('.pdb', '_+cid.pdb')
+        # new_pdb = pdbf.replace('.pdb', '_+cid.pdb')
         # os.system(f'cp {pdbf} {ori}')
         os.system(f'{src_path}/pdb_chain-segid {pdbf} > oo')
-        os.system(f'mv oo {new_pdb}')
-        return new_pdb
+        os.system(f'mv oo {pdbf}')
+        return pdbf
 
     def sanitize(self, model_list):
         """ Remove problematic portions of a PDB file """
@@ -161,7 +161,9 @@ class PDB:
 
             # add segid, expect models to have CHAIN
             clean_pdb = self.chain2segid(new_pdb)
-            clean_model_list.append(clean_pdb)
+
+            os.system(f'mv {clean_pdb} {pdb}')
+            clean_model_list.append(pdb)
 
         return clean_model_list
 

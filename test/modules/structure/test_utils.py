@@ -1,6 +1,7 @@
 """ Test the PDB utilities """
 import filecmp
 import unittest
+import os
 from haddock.modules.structure.utils import PDB
 from utils.files import get_full_path
 
@@ -13,7 +14,7 @@ class TestPDB(unittest.TestCase):
 		self.PDB = PDB()
 
 	def test_load_structure(self):
-		pdb = f'{data_path}/000042.pdb'
+		pdb = f'{data_path}/test_pdbs/000042.pdb'
 		prot_dic = self.PDB.load_structure(pdb)
 
 		line_a = 'ATOM      1  N   MET A   1      -5.983  45.471  12.068  1.00  0.00A\n'
@@ -27,7 +28,7 @@ class TestPDB(unittest.TestCase):
 		self.assertEqual(prot_dic['D'][0], line_d)
 
 	def test_identify_chains(self):
-		pdb = f'{data_path}/000042.pdb'
+		pdb = f'{data_path}/test_pdbs/000042.pdb'
 
 		chain_list = ['A', 'B', 'C', 'D']
 
@@ -35,38 +36,43 @@ class TestPDB(unittest.TestCase):
 
 	def test_split_models(self):
 
-		ensamble_f = f'{data_path}/T146-ensamble-5.pdb'
+		ensamble_f = f'{data_path}/test_pdbs/T146-ensamble-5.pdb'
 
 		model_list = self.PDB.split_models(ensamble_f)
 
-		self.assertTrue(filecmp.cmp(f'{data_path}/000000.pdb', model_list[0]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/000001.pdb', model_list[1]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/000002.pdb', model_list[2]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/000003.pdb', model_list[3]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/000004.pdb', model_list[4]))
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000000.pdb', model_list[0]))
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000001.pdb', model_list[1]))
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000002.pdb', model_list[2]))
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000003.pdb', model_list[3]))
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000004.pdb', model_list[4]))
 
 	def test_chain2segid(self):
 
-		segless_pdb = f'{data_path}/1crn-chain.pdb'
+		segless_pdb = f'{data_path}/test_pdbs/1crn-chain.pdb'
+		os.system(f'cp {segless_pdb} temp.pdb')
 
-		fname = self.PDB.chain2segid(segless_pdb)
+		fname = self.PDB.chain2segid('temp.pdb')
 
-		self.assertTrue(filecmp.cmp(f'{data_path}/1crn-chain+segid.pdb', fname))
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/1crn-chain+segid.pdb', fname))
 
 	def test_segid2chain(self):
-		chainless_pdb = f'{data_path}/1crn-segid.pdb'
+		chainless_pdb = f'{data_path}/test_pdbs/1crn-segid.pdb'
 
-		fname = self.PDB.segid2chain(chainless_pdb)
+		os.system(f'cp {chainless_pdb} temp.pdb')
 
-		self.assertTrue(filecmp.cmp(f'{data_path}/1crn-segid+chain.pdb', fname))
+		fname = self.PDB.segid2chain('temp.pdb')
+
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/1crn-segid+chain.pdb', fname))
 
 	def test_sanitize(self):
 
-		input_l = [f'{data_path}/1f3g-dirty.pdb']
+		model_name = f'{data_path}/test_pdbs/1f3g-dirty.pdb'
+		os.system(f'cp {model_name} temp.pdb')
 
-		clean_list = self.PDB.sanitize(input_l)
+		clean_list = self.PDB.sanitize(['temp.pdb'])
 		clean_pdb = clean_list[0]
-		self.assertTrue(filecmp.cmp(f'{data_path}/1f3g-sanitized.pdb', clean_pdb))
+
+		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/1f3g-sanitized.pdb', clean_pdb))
 
 
 if __name__ == '__main__':

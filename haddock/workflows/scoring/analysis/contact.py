@@ -8,18 +8,20 @@ class Contacts:
 
     def __init__(self):
         self.nproc = config.param_dic['input']['nproc']
-        self.con_exec = config.param_dic['third-party']['contacts_exe']
+        self.con_exec = config.ini.get('third party', 'contacts_exe')
         self.arg_list = []
         self.contact_file_list = []
 
-        if not os.path.isdir('contacts'):
-            os.system('mkdir contacts')
+        self.path = os.getcwd() + '/contacts'
+
+        if not os.path.isdir(self.path):
+            os.system(f'mkdir {self.path}')
 
     def calculate_contacts(self, pdb_list, cutoff):
 
         for input_pdb in pdb_list:
-            model_name = input_pdb.split('_')[0].split('/')[1]
-            output_name = f'contacts/{model_name}.con'
+            model_id = input_pdb.split('/')[-1].split('_')[0]
+            output_name = f'{self.path}/{model_id}.con'
             self.contact_file_list.append(output_name)
 
             if not os.path.isfile(output_name):
@@ -28,7 +30,7 @@ class Contacts:
         with multiprocessing.Pool(processes=self.nproc) as pool:
             _ = pool.starmap(self.execute, self.arg_list)
 
-        # return self.contact_file_list
+        return self.contact_file_list
 
     @staticmethod
     def execute(contact_exec, input_f, output_f, d_cutoff):

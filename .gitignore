@@ -90,3 +90,10 @@ haddock/workflows/scoring/structures.ranking
 # Docker containers
 containers/docker/*.gz
 containers/docker/*.tar
+test/structures/000000.pdb
+test/structures/000001.pdb
+test/structures/000002.pdb
+test/structures/000003.pdb
+test/structures/000004.pdb
+test/jobs/00000.inp
+test/modules/worker/jobs/00000.inp

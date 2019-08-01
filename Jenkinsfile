@@ -9,7 +9,7 @@ pipeline {
     stage('Install') {
       steps {
         sh '''apt-get update
-apt-get install gawk'''
+apt-get install -y gawk'''
       }
     }
     stage('Test') {

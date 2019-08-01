@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.com/rvhonorato/haddock3.svg?token=LnEGJuvVoTKKetBbUj4A&branch=master)](https://travis-ci.com/rvhonorato/haddock3) 
-[![Code Coverage](https://codecov.io/gh/rvhonorato/haddock3/branch/master/graph/badge.svg?token=Hxoy5aDaxV)](https://codecov.io/gh/rvhonorato/haddock3)
+[![Build Status](http://alembick.science.uu.nl:8080/job/haddock3/job/master/badge/icon)](http://alembick.science.uu.nl:8080/job/haddock3/job/master/)
 
 ![HADDOCK3](docs/media/HADDOCK3-logo.png)
 

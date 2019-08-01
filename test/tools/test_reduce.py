@@ -11,7 +11,7 @@ with patch("sys.argv", ['', f'{data_path}/scoring.json']):
 class TestReduce(unittest.TestCase):
 
 	def test_run_reduce(self):
-		pdbf = f'{data_path}/1f3g-sanitized.pdb'
+		pdbf = f'{data_path}/test_pdbs/1f3g-sanitized.pdb'
 		out, err = run_reduce(pdbf)
 
 		out = out.decode('utf-8').split('\n')
@@ -21,7 +21,7 @@ class TestReduce(unittest.TestCase):
 		self.assertEqual(out[200], 'ATOM      0  H   GLU A  29      31.237  44.661  46.431  1.00 37.69      A    H   new')
 
 	def test_analyze_protonation_state(self):
-		pdbf = f'{data_path}/1f3g-sanitized.pdb'
+		pdbf = f'{data_path}/test_pdbs/1f3g-sanitized.pdb'
 		protonation_dic = analyze_protonation_state(pdbf)
 
 		expected_dic = {'A': {75: 'HISE', 90: 'HISD'}}

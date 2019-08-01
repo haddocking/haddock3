@@ -124,7 +124,7 @@ class PDB:
     @staticmethod
     def chain2segid(pdbf):
         """ Save a backup of the original file and move chainID to segID in a new file """
-        os.system(f'{src_path}/pdb_chain-to-segid {pdbf} > oo')
+        os.system(f'{src_path}/pdb_chain-too-segid {pdbf} > oo')
         os.system(f'mv oo {pdbf}')
         return pdbf
 

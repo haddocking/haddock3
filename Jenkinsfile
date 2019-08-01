@@ -8,8 +8,7 @@ pipeline {
   stages {
     stage('Install') {
       steps {
-        sh '''pip install codecov
-apt-get update
+        sh '''apt-get update
 apt-get install gawk'''
       }
     }

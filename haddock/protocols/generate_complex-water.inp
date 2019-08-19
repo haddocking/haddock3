@@ -1,0 +1,95 @@
+! generate_complex-water.inp
+!    Merge the coordinates and topologies of a complex for solvated docking
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+! a maximum number of structures to be written to avoid
+! filling the disk space
+evalute ($maxstruc = 5000)
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@RUN:begin/iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+Data      =$Data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;)
+
+! Read in topologies
+eval($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop cloop1
+  eval($nchain1 = $nchain1 + 1)
+  evaluate($psf_infile_$nchain1= "RUN:begin/" + $Toppar.prot_root_$nchain1 + ".psf")
+  structure
+    @@$psf_infile_$nchain1
+  end
+end loop cloop1
+
+! Read in water topology
+evaluate($sol_topology_infile="RUN:/toppar/water-allhdg5-4.top")
+topology
+  @@$sol_topology_infile
+end
+
+evaluate ($nstruc = 1)
+evaluate ($nline = 0)
+for $molecule in ( @@RUN:begin/combinations.list ) loop write_complexes
+  evaluate ($nline = $nline + 1)
+  evaluate ($nummod = mod($nline, $data.ncomponents))
+
+  coor @@$molecule
+
+  ! Use modulo to get chain number  
+  if ($nummod = 0) then
+    evaluate ($watersegname = "WA" + encode($data.ncomponents))
+  else
+    evaluate ($watersegname = "WA" + encode($nummod))
+  end if
+
+  display LINE $nline AND REMOVING $watersegname
+  
+  dele sele=(segid $watersegname) end
+  evaluate ($waterfilename = $molecule - ".pdb" + "_water.pdbw")
+  segment
+   name=$watersegname
+   chain 
+    coor @@$waterfilename
+   end
+  end
+  coor @@$waterfilename
+
+  if ($nummod = 0) then
+    if ($saprotocol.rebuildcplx eq true) then
+      do (store9=0) (all)
+      do (store9=1) (attr q=0.0)
+      @@RUN:protocols/rebuild-unknown.cns
+    end if
+    
+    evaluate ($coorfile_$nstruc = "RUN:begin/" + $Filenames.fileroot + "_" + encode($nstruc) + ".pdb")
+    write coor sele= (not (resn WAT or resn HOH or resn TIP3)) output=$coorfile_$nstruc end
+    evaluate ($watercoorfile_$nstruc = "RUN:begin/" + $Filenames.fileroot + "_" + encode($nstruc) + "_water.pdbw")
+    write coor sele= ((resn WAT or resn HOH or resn TIP3)) output=$watercoorfile_$nstruc end
+    evaluate ($nstruc = $nstruc + 1)
+    
+  end if
+
+end loop write_complexes
+
+evaluate ($structurefile = "RUN:begin/" + $Filenames.fileroot + ".psf")
+dele sele=((resn WAT or resn HOH or resn TIP3)) end
+write structure output=$structurefile end     
+
+stop

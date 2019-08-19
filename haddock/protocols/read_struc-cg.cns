@@ -1,0 +1,24 @@
+!
+! Change segid of CG structure and read AA topology file
+!
+if ($iteration = 2) then
+  evaluate ($nchain=0)
+  while ($nchain < $data.ncomponents) loop nloop1
+    evaluate ($nchain = $nchain + 1)
+    if ($toppar.cg_$nchain eq true) then
+      evaluate ($newseg = $Toppar.prot_segid_$nchain + "CG")
+      do (segid = $newseg) (segid $Toppar.prot_segid_$nchain)
+      evaluate($psf_infile_$nchain= "RUN:begin-aa/" + $Toppar.prot_root_$nchain + ".psf")
+      structure @@$psf_infile_$nchain end
+    end if
+  end loop nloop1
+end if
+
+igroup
+  interaction  (not (resn ANI or resn DAN or resn XAN))
+               (not (resn ANI or resn DAN or resn XAN)) weight * 1 end
+  interaction  (resn ANI or resn DAN or resn XAN)
+               (resn ANI or resn DAN or resn XAN) weight * 1 vdw 0.0 elec 0.0 end
+end
+
+inline @RUN:protocols/charge-beads-interactions.cns

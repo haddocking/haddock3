@@ -1,0 +1,134 @@
+! mini_tensor_dani.cns
+!    Optimize the tensor orientation for diffusion anisotropy restraints
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+{* Optimize tensor orientation *}
+{* ADJ van Dijk*}
+{* copied from mini_tensor.cns *}
+
+{* first randomize the tensor orientation because of some CNS problems *}
+{* possible resulting in infinite gradient and a failure of the EM     *}
+
+eval ($edani = 999999999.0)
+eval ($ncount = 0)
+while ($ncount < 4) loop trial
+  eval ($ncount = $ncount + 1)
+  do (xcomp = x) (resn DAN)
+  do (ycomp = y) (resn DAN)
+  do (zcomp = z) (resn DAN)
+
+  !random rotation of tensor
+
+  show aver (x) (resn DAN)
+  evaluate ($xc = $result)
+  show aver (y) (resn DAN)
+  evaluate ($yc = $result)
+  show aver (z) (resn DAN)
+  evaluate ($zc = $result)
+
+  evaluate ($xr = ran ())
+  {* rotate around z axis *}
+  evaluate ($xr = $xr * 360)
+  evaluate ($x1 = cos($xr))
+  evaluate ($x2 = -sin($xr))
+  evaluate ($x3 = 0 )
+  evaluate ($y1 = sin($xr))
+  evaluate ($y2 = cos($xr))
+  evaluate ($y3 = 0 )
+  evaluate ($z1 = 0 )
+  evaluate ($z2 = 0 )
+  evaluate ($z3 = 1 )
+  coor
+    center=($xc $yc $zc)
+    rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
+    sele=(resn DAN)
+  end
+  
+  {* rotate around x axis *}
+  evaluate ($xr = ran ())
+  evaluate ($xr = $xr * 360)
+  evaluate ($x1 = 1 )
+  evaluate ($x2 = 0 )
+  evaluate ($x3 = 0 )
+  evaluate ($y1 = 0 )
+  evaluate ($y2 = cos($xr))
+  evaluate ($y3 = -sin($xr))
+  evaluate ($z1 = 0 )
+  evaluate ($z2 = sin($xr))
+  evaluate ($z3 = cos($xr))
+  coor
+    center=($xc $yc $zc)
+    rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
+    sele=(resn DAN)
+  end
+  {* rotate around y axis *}
+  evaluate ($xr = ran ())
+  evaluate ($xr = $xr * 360)
+  evaluate ($x1 = cos($xr))
+  evaluate ($x2 = 0 )
+  evaluate ($x3 = -sin($xr))
+  evaluate ($y1 = 0 )
+  evaluate ($y2 = 1 )
+  evaluate ($y3 = 0 )
+  evaluate ($z1 = sin($xr))
+  evaluate ($z2 = 0 )
+  evaluate ($z3 = cos($xr))
+  coor
+    center=($xc $yc $zc)
+    rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
+    sele=(resn DAN)
+  end
+
+  energy end
+
+  if ($ncount = 1) then
+    eval ($edani=$dani)
+  end if
+  if ($dani < $edani) then
+    eval ($edani=$dani)
+    do (xcomp = x) (resn DAN)
+    do (ycomp = y) (resn DAN)
+    do (zcomp = z) (resn DAN)
+  else
+    do (x = xcomp) (resn DAN)
+    do (y = ycomp) (resn DAN)
+    do (z = zcomp) (resn DAN)
+  end if
+              
+end loop trial
+
+fix sele=(not all) end
+fix sele=(name OO) end
+minimize rigid
+  group (not resn DAN)
+  translation=false
+  for $id in id (resn DAN and name OO) loop minidan
+    group (byres(id $id))
+    translation=false
+  end loop minidan
+  nstep 500
+  nprint 10
+end
+minimize rigid
+  eval($nchain1= 1)
+  while ($nchain1 <= $data.ncomponents) loop cloop1
+    group (segid $Toppar.prot_segid_$nchain1)
+    eval($nchain1 = $nchain1 + 1)
+    translation=false
+  end loop cloop1
+  for $id in id (resn DAN and name OO) loop minidan
+    group (byres(id $id))
+    translation=false
+  end loop minidan
+  nstep 500
+  nprint 10
+end
+

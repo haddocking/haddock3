@@ -1,0 +1,123 @@
+module (Toppar; 
+        Data; 
+        Saprotocol; 
+        lcc;
+        )
+    {*The module calculates the local cross-correlation coefficient (lcc) between
+    the targetmap and the atomic model. 
+
+    Parameters
+    ----------
+    Toppar
+	Toppar object
+
+    Data
+	Data object
+        
+    Saprotocol
+	Saprotocol object
+
+    lcc : float (output)
+	The local cross correlation value in the interval [-1, 1]
+
+    Examples
+    --------
+    >>> ! lcc calculation requires that the cryoEM data is read
+    >>> @RUN:protocols/em_read_data.cns(Data=$Data;)
+    >>> @RUN:protocols/em_calc_lcc.cns(Toppar=$Toppar; Data=$Data; Saprotocol=$Saprotocol;
+    >>>                                lcc=$lcc;)
+    >>> display Local cross correlation-coefficient: $lcc
+    
+    Notes
+    -----
+    This module uses the "b" atomobject.
+    *}
+
+    ! get the time
+    evaluate($time0 = $CPU)
+
+    ! check whether the arrays that are required for the lcc calculation exist
+    xray
+        query name=modelmap domain=real end
+        if ($OBJECT_EXIST = false) then
+            declare name=modelmap domain=real end
+            do (modelmap = 0) (all)
+        end if
+
+        query name=map_tmp domain=real end
+        if ($OBJECT_EXIST = false) then
+            declare name=map_tmp domain=real end
+            do (map_tmp = 0) (all)
+        end if
+
+        query name=modelmask domain=real end
+        if ($OBJECT_EXIST = false) then
+            declare name=modelmask domain=real end
+            do (modelmask = 0) (all)
+        end if
+    end 
+
+    do (b = 0) (all)
+    evaluate($nchain1 = 0)
+    while ($nchain1 < &Data.ncomponents) loop nloop1
+        evaluate($nchain1 = $nchain1 + 1)
+        
+        !if ($Saprotocol.init_placement.prot_segid_$nchain1.fixed = False) then
+            do (b = 1) (segid &Toppar.prot_segid_$nchain1 and not resn DUM)
+        !end if
+    end loop nloop1
+
+    ! Create the modelmap up to a certain resolution. We need to do 
+    ! this via reciprocal space, by first creating the structure factors
+    ! and afters performing an inverse FFT to get the density.
+    xray
+        predict
+            mode=reciprocal
+            to=fcalc
+            atomselectiom=(attr b > 0)
+            selection=(all)
+        end
+
+        do (modelmap=real(ft(fcalc))) (all)
+    end
+
+    ! create mask around the model
+    xray
+        mask
+            to=modelmask
+            selection=(attr b > 0)
+            averaging_mode=False
+            mode=sigma
+            proberadius=3
+        end
+    
+        ! normalize modelmap and map within the modelmask
+        show average(modelmap) (modelmask=0)
+        evaluate($ave_modelmap = $RESULT)
+        do (modelmap = modelmap - $ave_modelmap) (modelmask=0)
+
+        show sum(modelmap*modelmap) (modelmask=0)
+        evaluate($std_modelmap = sqrt($RESULT))
+        do (modelmap = modelmap / $std_modelmap) (modelmask=0)
+
+        ! normalize map within range of modelmask 
+        show average(map) (modelmask=0)
+        evaluate($ave_map = $RESULT)
+        do (map_tmp = map - $ave_map) (modelmask=0)
+
+        show sum(map_tmp*map_tmp) (modelmask=0)
+        evaluate($std_map = sqrt($RESULT))
+        ! check if the std of the targetmap is larger than zero, else lcc is undefined.
+        if ($std_map > 0) then
+            do (map_tmp = map_tmp / $std_map) (modelmask=0)
+            ! now calculate the local cross correlation coefficient
+            show sum(modelmap * map_tmp) (modelmask=0)
+            evaluate(&lcc = $RESULT)
+        else 
+            evaluate(&lcc = 0)
+       end if
+    end
+
+    evaluate($time0 = $CPU - $time0)
+    display Local cross correlation coefficient: &lcc
+    display Time used for local cross correlation calculation: $time0 s

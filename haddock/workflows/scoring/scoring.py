@@ -4,7 +4,8 @@ from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import RecipeGenerator
 from haddock.modules.structure.utils import PDB
 from haddock.modules.worker.distribution import JobCreator
-import haddock.workflows.scoring.config as config
+# import haddock.workflows.scoring.config as config
+import config
 import glob
 
 

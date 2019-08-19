@@ -29,9 +29,9 @@ class CNS:
 
 	def run_serial(self, jobs):
 
-		for job_id in jobs.job_dic:
-			input_f = jobs.job_dic[job_id][0]
-			output_f = jobs.job_dic[job_id][1]
+		for job_id in jobs.dic:
+			input_f = jobs.dic[job_id][0]
+			output_f = jobs.dic[job_id][1]
 
 			with open(input_f) as inp:
 				with open(output_f, 'w+') as outf:
@@ -56,9 +56,9 @@ class CNS:
 		""" Execute the jobs in parallel """
 		print(f'+ Running parallel, {self.nproc} cores')
 		arg_list = []
-		for job_id in jobs.job_dic:
-			inp_f = jobs.job_dic[job_id][0]
-			out_f = jobs.job_dic[job_id][1]
+		for job_id in jobs.dic:
+			inp_f = jobs.dic[job_id][0]
+			out_f = jobs.dic[job_id][1]
 			arg_list.append((self.cns_exec, inp_f, out_f))
 
 		with multiprocessing.Pool(processes=self.nproc) as pool:

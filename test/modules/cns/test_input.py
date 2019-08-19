@@ -30,7 +30,7 @@ class TestHeaderComposer(unittest.TestCase):
 		self.assertEqual(top, top_header_str)
 
 	def test_load_scoring_parameters(self):
-		scoring = self.hc.load_scoring_parameters()
+		scoring = self.hc.load_recipe_params()
 
 		self.assertEqual(scoring.split('\n')[2], 'eval ($Data.flags.dihed = FALSE)')
 		self.assertEqual(scoring.split('\n')[15], 'eval ($disulphide_dist=3)')

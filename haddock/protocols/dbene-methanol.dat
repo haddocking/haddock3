@@ -1,0 +1,105 @@
+! dbmethene-methanol.dat
+!    amino-acids - bases free energies of interaction in methanol from
+!    de Ruiter, A., & Zagrovic, B. (2015). 
+!    Absolute binding-free energies between standard RNA/DNA nucleobases 
+!    and amino-acid sidechain analogs in different environments. 
+!    Nucleic Acids Research, 43(2), 708-718. http://doi.org/10.1093/nar/gku1344
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+eval ($dbmethene.ALA_ADE = 1.2 )
+eval ($dbmethene.ALA_CYT = 2.5 )
+eval ($dbmethene.ALA_GUA = 3.0 )
+eval ($dbmethene.ALA_URI = 1.3 )
+eval ($dbmethene.ALA_THY = 0.9 )
+eval ($dbmethene.ARG_ADE = 2.8 )
+eval ($dbmethene.ARG_CYT = 0.8 )
+eval ($dbmethene.ARG_GUA = -1.7 )
+eval ($dbmethene.ARG_URI = 1.1 )
+eval ($dbmethene.ARG_THY = 0.9 )
+eval ($dbmethene.ASN_ADE = 0.5 )
+eval ($dbmethene.ASN_CYT = 0.8 )
+eval ($dbmethene.ASN_GUA = 2.0 )
+eval ($dbmethene.ASN_URI = 1.4 )
+eval ($dbmethene.ASN_THY = 1.2 )
+eval ($dbmethene.ASP_ADE = 1.8 )
+eval ($dbmethene.ASP_CYT = -1.9 )
+eval ($dbmethene.ASP_GUA = -6.4 )
+eval ($dbmethene.ASP_URI = 3.0 )
+eval ($dbmethene.ASP_THY = 5.3 )
+eval ($dbmethene.CYS_ADE = 0.4 )
+eval ($dbmethene.CYS_CYT = 0.8 )
+eval ($dbmethene.CYS_GUA = 1.7 )
+eval ($dbmethene.CYS_URI = 1.1 )
+eval ($dbmethene.CYS_THY = 1.5 )
+eval ($dbmethene.GLN_ADE = 0.8 )
+eval ($dbmethene.GLN_CYT = 0.8 )
+eval ($dbmethene.GLN_GUA = 1.4 )
+eval ($dbmethene.GLN_URI = 0.8 )
+eval ($dbmethene.GLN_THY = 1.4 )
+eval ($dbmethene.GLU_ADE = 2.3 )
+eval ($dbmethene.GLU_CYT = -1.6 )
+eval ($dbmethene.GLU_GUA = -7.0 )
+eval ($dbmethene.GLU_URI = 3.2 )
+eval ($dbmethene.GLU_THY = 4.7 )
+eval ($dbmethene.HIS_ADE = 0.8 ) !HISH value
+eval ($dbmethene.HIS_CYT = -1.7) !HISH value
+eval ($dbmethene.HIS_GUA = -1.9 )!HISH value
+eval ($dbmethene.HIS_URI = 0.5 ) !HISH value
+eval ($dbmethene.HIS_THY = 1.0 ) !HISH value
+eval ($dbmethene.ILE_ADE = 0.7 )
+eval ($dbmethene.ILE_CYT = 1.3 )
+eval ($dbmethene.ILE_GUA = 1.2 )
+eval ($dbmethene.ILE_URI = -0.3 )
+eval ($dbmethene.ILE_THY = 0.0 )
+eval ($dbmethene.LEU_ADE = 0.1 )
+eval ($dbmethene.LEU_CYT = 0.2 )
+eval ($dbmethene.LEU_GUA = 1.7 )
+eval ($dbmethene.LEU_URI = 0.8 )
+eval ($dbmethene.LEU_THY = 0.1 )
+eval ($dbmethene.LYS_ADE = 3.0 )
+eval ($dbmethene.LYS_CYT = -0.1 )
+eval ($dbmethene.LYS_GUA = -1.0 )
+eval ($dbmethene.LYS_URI = 1.7 )
+eval ($dbmethene.LYS_THY = 2.2 )
+eval ($dbmethene.MET_ADE = -0.3 )
+eval ($dbmethene.MET_CYT = 1.2 )
+eval ($dbmethene.MET_GUA = -1.0 )
+eval ($dbmethene.MET_URI = -0.3 )
+eval ($dbmethene.MET_THY = -0.9 )
+eval ($dbmethene.PHE_ADE = -0.7 )
+eval ($dbmethene.PHE_CYT = 0.8 )
+eval ($dbmethene.PHE_GUA = -0.1 )
+eval ($dbmethene.PHE_URI = -0.6 )
+eval ($dbmethene.PHE_THY = 1.8 )
+eval ($dbmethene.SER_ADE = 1.1 )
+eval ($dbmethene.SER_CYT = 2.4 )
+eval ($dbmethene.SER_GUA = 3.2 )
+eval ($dbmethene.SER_URI = 2.0 )
+eval ($dbmethene.SER_THY = 3.0 )
+eval ($dbmethene.THR_ADE = 0.4 )
+eval ($dbmethene.THR_CYT = 1.8 )
+eval ($dbmethene.THR_GUA = 2.6 )
+eval ($dbmethene.THR_URI = 1.5 )
+eval ($dbmethene.THR_THY = 2.8 )
+eval ($dbmethene.TRP_ADE = -1.2 )
+eval ($dbmethene.TRP_CYT = 0.2 )
+eval ($dbmethene.TRP_GUA = -0.6 )
+eval ($dbmethene.TRP_URI = 0.1 )
+eval ($dbmethene.TRP_THY = -0.9 )
+eval ($dbmethene.TYR_ADE = 0.1 )
+eval ($dbmethene.TYR_CYT = -0.3 )
+eval ($dbmethene.TYR_GUA = -0.1 )
+eval ($dbmethene.TYR_URI = -0.7 )
+eval ($dbmethene.TYR_THY = -1.0 )
+eval ($dbmethene.VAL_ADE = 0.1 )
+eval ($dbmethene.VAL_CYT = 1.3 )
+eval ($dbmethene.VAL_GUA = 1.9 )
+eval ($dbmethene.VAL_URI = 0.0 )
+eval ($dbmethene.VAL_THY = 0.0 )

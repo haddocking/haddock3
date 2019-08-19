@@ -1,0 +1,143 @@
+! mini_tensor_para.cns
+!    Optimize the tensor orientation for PCS restraints
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+!set message on echo on end
+
+display STARTing mini_tensor_para.cns 
+
+!write coordinates sele=(resn XAN) output="trial.pdb" end
+
+
+{* minimize tensor position *}
+display STARTing minimization of OO-LA distance
+
+!flag excl * include noe end
+flag excl xpcs include noe end
+fix sele=(not resn XAN) end
+
+  
+igroup
+  interaction (not all) (not all)
+end
+
+
+minimize rigid
+  group (resname XAN)
+  translation=true
+  nstep 1000
+  tole 0.1
+  nprint 10
+end
+
+!write coordinates sele=(resn XAN) output="position.pdb" end
+
+display ENDing minimization of OO-LA distance
+
+display STARTing minimization of orientation
+
+{* minimize tensor orientation *}
+
+evaluate ($protocol = 0)
+
+
+if ($protocol = 0) then {* powell minimization protocol together *}
+
+  display protocol 0
+!  flag excl * include noe xpcs bond end
+  flag  include noe xpcs bond end
+  
+  igroup
+    interaction (not all) (not all)
+    interaction ( resn XAN ) ( resn XAN ) weight * 0 bond 1.0 end
+  end
+
+  fix sele=(not (resn XAN)) end
+  
+  minimize powell
+    nstep=5000
+    drop=10
+    nprint=10
+    tolgradient=0.01
+  end
+elseif ($protocol = 1) then {* powell minimization protocol *}
+
+  display protocol 1
+  flag excl * include noe xpcs bond end
+  
+  for $id in id (resn XAN and name OO) loop miniani
+    igroup
+      interaction (not all) (not all)
+      interaction ( (byres(id $id)) ) ( (byres(id $id)) ) weight * 0 bond 1.0 end
+    end
+
+    fix sele=(not ( (byres(id $id)) )) end
+  
+    minimize powell
+      nstep=500
+      drop=10
+      nprint=10
+      tolgradient=0.01
+    end
+  end loop miniani
+
+elseif ($protocol = 4) then {* powell minimization protocol simultaneously *}
+
+  display protocol 4
+  flag excl * include noe xpcs end
+  
+  fix sele=(not ( resname XAN )) end
+  
+  minimize powell
+    nstep=5000
+    drop=10
+    nprint=10
+    tolgradient=0.01
+  end
+
+elseif ($protocol = 2) then  {* rigid body minimization protocol *}
+
+  display protocol 2
+  flag excl * include noe xpcs end
+  for $id in id (resn XAN and name OO) loop miniani
+    minimize rigid
+      group (byres(id $id))
+      translation=true
+      nstep 500
+      nprint 10
+      drop=10
+    end
+  end loop miniani
+
+elseif ($protocol = 3) then {* original rigid body minimization protocol *}
+  display protocol 3
+  flag excl * include noe xpcs end
+  fix sele=(not resname XAN) end
+  minimize rigid
+    group (not resname XAN)
+    translation=true
+    for $id in id (resn XAN and name OO) loop miniani
+      group (byres(id $id))
+      translation=true
+    end loop miniani
+    translation=true
+    nstep 5000
+
+    nprint 10
+  end
+  display XPCS_ENERGY $xpcs
+  fix sele=(not all) end
+
+end if
+
+fix sele=(not all) end
+
+display ENDing minimization of orientation 

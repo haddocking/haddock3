@@ -1,0 +1,128 @@
+! print_xpcs.inp
+!    Analyze and print Pseudo Contact Shift restraints statistics
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+@RUN:protocols/read_struc-cg.cns
+
+@PREVIT:file.cns(filenames=$filenames)
+evaluate ($file = $filenames.bestfile_1)
+coor @@$file
+
+delete sele=(not(known)) end
+
+flags exclude * include xpcs end
+
+xpcs reset nres=5000 end
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!pseudo contact shifts:
+evaluate ($npcs=1)
+while ($npcs <= $data.numpcs) loop pcs
+  evaluate ($sum_rms_pcs$npcs = 0)
+  evaluate ($sumsq_rms_pcs$npcs = 0)
+  evaluate ($cln = "pc" + encode($npcs) )
+  evaluate ($restfile="RUN:data/pcs/pcs"+encode($npcs)+".tbl")
+  if ($data.pcs_choice_$npcs eq "XPCS") then
+    evaluate ($data.flags.xpcs = true)
+    xpcs
+      class $cln
+      force 1.0
+      coeff $Data.pcs_d_$npcs $Data.pcs_r_$npcs
+      @@$restfile
+    end
+  end if
+  evaluate ($npcs = $npcs + 1)
+end loop pcs
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+set display=NEWIT:analysis/xpcs.disp end
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($TotalNstruct = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count=$count+1)
+   evaluate ($file = $filenames.bestfile_$count)
+   if ($file ne "") then
+      evaluate ($TotalNstruct = $TotalNstruct + 1)
+   end if
+end loop main
+
+if ($Iterations.anastruc > $TotalNstruct) then
+  evaluate ($Iterations.anastruc = $ToTalNstruct)
+end if
+
+display #filename rms_xpcs #viol>1ppm #viol>0.5ppm #viol>0.2ppm
+
+evaluate ($count = 0)
+evaluate ($nstruc1 = 0)
+while ($count le $Iterations.anastruc) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then
+     coor @@$file
+     evaluate ($nstruc1 = $nstruc1 + 1)
+
+     evaluate ($npcs=1)
+     while ($npcs <= $data.numpcs) loop pcs
+       evaluate ($violations = 0)
+       evaluate ($result = 0)
+       evaluate ($cln = "pc" + encode($npcs) )
+       if ($Data.pcs_choice_$npcs eq "XPCS") then
+         xpcs print thresh=1.0 class $cln end
+         evaluate ($violations1 = $violations)
+         xpcs print thresh=0.5 class $cln end
+         evaluate ($violations2 = $violations)
+         xpcs print thresh=0.2 class $cln end
+         evaluate ($violations3 = $violations)
+         evaluate ($rms_pcs$npcs = $result)
+         evaluate ($sum_rms_pcs$npcs = $sum_rms_pcs$npcs + $rms_pcs$npcs)
+         evaluate ($sumsq_rms_pcs$npcs = $sumsq_rms_pcs$npcs + $rms_pcs$npcs**2)
+         display # pcs$npcs $file $rms_pcs$npcs $violations1 $violations2 $violations3
+       end if
+       evaluate ($npcs = $npcs + 1)
+     end loop pcs
+
+   end if
+end loop main
+
+
+evaluate ($npcs=1)
+while ($npcs <= $data.numpcs) loop pcs
+  if ($Data.pcs_choice_$npcs eq "XPCS") then
+  evaluate ($mean_rms_pcs$npcs = $sum_rms_pcs$npcs / $nstruc1)
+  evaluate ($stdev_rms_pcs$npcs = sqrt(($sumsq_rms_pcs$npcs - $nstruc1*$mean_rms_pcs$npcs**2)/ $nstruc1))
+  display # mean values pcs(xpcs) class pcs$npcs
+  display # xpcs $mean_rms_pcs$npcs (+/- $stdev_rms_pcs$npcs )
+  end if
+  evaluate ($npcs = $npcs + 1)
+end loop pcs
+
+stop

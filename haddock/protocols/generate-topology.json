@@ -1,0 +1,33 @@
+{
+  "seed": "random",
+  "values": {
+    "autohis": "true",
+    "delenph": "false",
+    "randorien": "true",
+    "log_level": "verbose"
+  },
+  "output":{
+    "folder": "begin",
+    "psf": true,
+    "pdb": true
+  },
+
+  "chain": {
+    "mol_1": {
+      "segid": "A",
+      "fix_origin": "false",
+      "dna": "false",
+      "shape": "false",
+      "cg": "false",
+      "cyclicpept": "false"
+    },
+    "mol_2": {
+      "segid": "B",
+      "fix_origin": "false",
+      "dna": "false",
+      "shape": "false",
+      "cg": "false",
+      "cyclicpept": "false"
+    }
+  }
+}

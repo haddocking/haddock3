@@ -1,0 +1,82 @@
+! set_noe_scale.cns
+!    Set the distance restraint force constant
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+evaluate ($enoe   = 0.0 )
+evaluate ($vdw    = 0.0 )
+evaluate ($elec   = 0.0 )
+evaluate ($einter = 0.0 )
+evaluate ($noescale = 1.0 )
+
+if ($Data.flags.sym ne true) then
+  print threshold=0.5 noe
+  evaluate ($numnoe=$violations)
+
+  if ($Data.totnoe_amb > 0) then
+    evaluate ($ambcorr = min(1.0,max(0.0,($numnoe / $Data.totnoe_amb))))
+    if ($ambcorr = 0) then
+      evaluate ($ambcorr = 1)
+    end if
+  else
+    evaluate ($ambcorr = 1)
+  end if
+
+  if ($Data.totnoe_unamb > 0) then
+    evaluate ($unambcorr = min(1.0,max(0.0,($numnoe / $Data.totnoe_unamb))))
+    if ($unambcorr = 0) then
+      evaluate ($unambcorr = 1)
+    end if
+  else
+    evaluate ($unambcorr = 1)
+  end if
+else
+  evaluate ($unambcorr = 1)
+  evaluate ($ambcorr = 1)
+end if
+
+eval ($nchain1 = 0)
+igroup
+  while ($nchain1 < $data.ncomponents) loop nloop1
+    eval($nchain1 = $nchain1 + 1)
+    eval($nchain2 = $nchain1)
+    while ($nchain2 < $data.ncomponents) loop nloop2
+      eval($nchain2 = $nchain2 + 1)
+      interaction  (segid $Toppar.prot_segid_$nchain1)
+                   (segid $Toppar.prot_segid_$nchain2) weights * 1 end
+    end loop nloop2
+  end loop nloop1
+  interaction (resn DUM) (not resn DUM) weight * 0.0 end
+  interaction (resn SHA) (not resn SHA) weight * 0.0 end
+end
+
+energy end
+igroup
+    interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) 
+                 (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
+end
+
+evaluate ($einter = abs($vdw + $elec))
+evaluate ($enoe   = $noe)
+
+if ($enoe ne 0) then
+  evaluate ($noescale = min(5000, (2 * $einter / $enoe)))
+  if ($noescale ne 0) then
+    evaluate ($Data.unamb_hot   = $Data.unamb_hot   * $noescale * $unambcorr)
+    evaluate ($Data.amb_hot     = $Data.amb_hot     * $noescale * $ambcorr)
+    evaluate ($Data.unamb_cool1 = $Data.unamb_cool1 * $noescale * $unambcorr)
+    evaluate ($Data.amb_cool1   = $Data.amb_cool1   * $noescale * $ambcorr)
+    evaluate ($Data.unamb_cool2 = $Data.unamb_cool2 * $noescale * $unambcorr)
+    evaluate ($Data.amb_cool2   = $Data.amb_cool2   * $noescale * $ambcorr)
+    evaluate ($Data.unamb_cool3 = $Data.unamb_cool3 * $noescale * $unambcorr)
+    evaluate ($Data.amb_cool3   = $Data.amb_cool3   * $noescale * $ambcorr)
+  end if
+end if
+

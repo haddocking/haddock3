@@ -1,0 +1,12 @@
+{
+  "input": {
+    "molecules": {
+      "mol_1": "p1.pdb",
+      "mol_2": "p2.pdb"
+    },
+    "run": 1,
+    "nproc": 2,
+    "run_scheme": "parallel"
+  },
+  "topology_recipe": "generate-topology.cns"
+}

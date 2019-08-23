@@ -14,6 +14,11 @@ class PDB:
         self.model_list = []
         self.protonation_dic = {}
 
+    def clean_pdbs(self, pdb_list):
+        clean_model_list = self.sanitize(pdb_list)
+
+        return clean_model_list
+
     def prepare(self, ensamble_f):
         split_model_list = self.split_models(ensamble_f)
         clean_model_list = self.sanitize(split_model_list)

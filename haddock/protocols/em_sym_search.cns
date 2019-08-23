@@ -1,0 +1,74 @@
+module (Data; 
+        Saprotocol; 
+        Toppar;)
+    {*Module determines the correct orientation for symmetric complexes
+
+    Parameters
+    ----------
+    Data
+        Data object
+
+    Saprotocol
+        Saprotocol object
+    
+    Toppar
+        Toppar object
+
+    Notes
+    -----
+    Only C-symmetry is supported.
+    Module uses the COMP coordinate set.
+    Module might change the MAIN coordinate set
+    *}
+
+    ! get the local cross correlation of the current orientation
+    @RUN:protocols/em_calc_lcc.cns(Toppar=&Toppar;
+                                   Data=&Data;
+                                   Saprotocol=&Saprotocol;
+                                   lcc=$lcc;
+                                   )
+
+    ! calculate the mid point of the centroids
+    show average(x) (name MAP)
+    evaluate($center.x = $result)
+    show average(y) (name MAP)
+    evaluate($center.y = $result)
+    show average(z) (name MAP)
+    evaluate($center.z = $result)
+
+    ! determine the vector going from the first centroid to the midpoint
+    ! of the centroids. this represents the axis of rotation
+    show (x) (name MAP and segid &Toppar.prot_segid_1)
+    evaluate($map.x = $result)
+    show (y) (name MAP and segid &Toppar.prot_segid_1)
+    evaluate($map.y = $result)
+    show (z) (name MAP and segid &Toppar.prot_segid_1)
+    evaluate($map.z = $result)
+
+    evaluate($rot_axis.x = $center.x - $map.x)
+    evaluate($rot_axis.y = $center.y - $map.y)
+    evaluate($rot_axis.z = $center.z - $map.z)
+
+    ! store the current coordinates in the COMP coordinate set
+    coor copy selection=(all) end
+
+    ! rotate around the previous determined axis with 180 degrees.
+    coor rotate
+        center=($center.x $center.y $center.z)
+        selection=(not name MAP)
+        axis ($rot_axis.x $rot_axis.y $rot_axis.z) 180.0
+    end
+
+    ! calculate the local cross correlation for the rotated orientation
+    @RUN:protocols/em_calc_lcc.cns(Toppar=&Toppar;
+                                   Data=&Data;
+                                   Saprotocol=&Saprotocol;
+                                   lcc=$newlcc;
+                                   )
+
+    ! if the lcc of the initial orientation is better, swap the COMP 
+    ! coordinate set to the MAIN coordinate set
+    if ($lcc > $newlcc) then
+        coor swap selection=(all) end
+    end if    
+

@@ -1,0 +1,3939 @@
+remarks file toppar/ion.top
+remarks topology and masses for common ions
+remarks Dingle atom ion residues are given the name of the element.
+remarks By default the atom will be uncharged (eg. the residue MG will
+remarks contain the atom called MG with zero charge).
+remarks To use the charged species the charge state is appended to
+remarks the atom name (eg to use MG2+ the residue name is MG2, and the
+remarks atom name is MG+2 and has charge +2.0).
+remarks NOTE: not all ionic species are represented
+remarks PDA 02/09/99
+
+set echo=false end
+
+! checkversion 1.1
+
+autogenerate  angles=true  end
+
+MASS  LI      6.9410   ! lithium
+MASS   F     18.9984   ! fluorine
+MASS  NA     22.9898   ! sodium   
+MASS  MG     24.3050   ! magnesium
+MASS  AL     26.9815   ! aluminum
+MASS  CL     35.4530   ! chlorine 
+MASS   K     39.0980   ! potassium
+MASS  AR     39.9480   ! argon
+MASS  CA     40.0800   ! calcium  
+MASS   V     50.9415   ! vanadium
+MASS  CR     51.9960   ! chromium
+MASS  MN     54.9380   ! manganese
+MASS  FE     55.8470   ! iron     
+MASS  NI     58.6900   ! nickel
+MASS  CO     58.9332   ! cobalt
+MASS  CU     63.5460   ! copper   
+MASS  ZN     65.3700   ! zinc     
+MASS  AS     74.9216   ! arsenic
+MASS  BR     79.9040   ! bromine
+MASS  KR     83.8000   ! krypton
+MASS  SR     87.6200   ! strontium
+MASS  MO     95.9400   ! molybdenum
+MASS  AG    107.8680   ! silver
+MASS  CD    112.4100   ! cadmium
+MASS   I    126.9045   ! iodine
+MASS  XE    131.2900   ! xenon
+MASS  CS    132.9054   ! cesium
+MASS  HO    164.9304   ! holmium
+MASS  YB    173.0400   ! ytterbium
+MASS  OS    190.2000   ! osmium
+MASS  IR    192.2200   ! iridium
+MASS  PT    195.0800   ! platinum 
+MASS  AU    196.9665   ! gold     
+MASS  HG    200.5900   ! mercury
+MASS  PB    207.2000   ! lead
+MASS   U    238.0289   ! uranium
+
+MASS  LI+1    6.9410   ! lithium 1+
+MASS   F-1   18.9984   ! fluorine 1-
+MASS  NA+1   22.9898   ! sodium 1+
+MASS  MG+2   24.3050   ! magnesium 2+
+MASS  AL+3   26.9815   ! aluminum 3+
+MASS  CL-1   35.4530   ! chloride 1-
+MASS   K+1   39.0980   ! potassium 1+
+MASS  CA+2   40.0800   ! calcium 2+
+MASS   V+2   50.9415   ! vanadium 2+
+MASS   V+3   50.9415   ! vanadium 3+
+MASS  CR+2   51.9960   ! chromium 2+
+MASS  CR+3   51.9960   ! chromium 3+
+MASS  MN+2   54.9380   ! manganese 2+
+MASS  MN+3   54.9380   ! manganese 3+
+MASS  FE+2   55.8470   ! iron 2+
+MASS  FE+3   55.8470   ! iron 3+  
+MASS  NI+2   58.6900   ! nickel 2+
+MASS  CO+2   58.9332   ! cobalt 2+
+MASS  CO+3   58.9332   ! cobalt 3+
+MASS  CU+1   63.5460   ! copper 1+
+MASS  CU+2   63.5460   ! copper 2+
+MASS  ZN+2   65.3700   ! zinc 2+
+MASS  BR-1   79.9040   ! bromine 1-
+MASS  SR+2   87.6200   ! strontium 2+
+MASS  MO+3   95.9400   ! molybdenum 3+
+MASS  AG+1  107.8680   ! silver 1+
+MASS  CD+2  112.4100   ! cadmium 2+
+MASS   I-1  126.9045   ! iodine 1-
+MASS  CS+1  132.9054   ! cesium 1+
+MASS  HO+3  164.9304   ! holmium 3+
+MASS  YB+2  173.0400   ! ytterbium 2+
+MASS  YB+3  173.0400   ! ytterbium 3+
+MASS  OS+4  190.2000   ! osmium 4+
+MASS  IR+3  192.2200   ! iridium 3+
+MASS  PT+2  195.0800   ! platinum 2+
+MASS  AU+1  196.9665   ! gold 1+    
+MASS  AU+3  196.9665   ! gold 3+    
+MASS  HG+1  200.5900   ! mercury 1+
+MASS  HG+2  200.5900   ! mercury 2+
+MASS  PB+2  207.2000   ! lead 2+
+MASS   U+3  238.0289   ! uranium 3+
+MASS   U+4  238.0289   ! uranium 4+
+
+MASS  SUF    32.0600   ! sulphate anion sulphur 
+MASS  OUF    15.9994   ! sulphate anion oxygen
+MASS  PHF    30.9740   ! phosphate anion phosphorus
+MASS  OHF    15.9994   ! phosphate anion oxygen
+MASS  W     184.0000   ! tungstate anion tungsten
+MASS  OWF    15.9994   ! tungstate anion oxygen
+
+{- ========================== uncharged states ============================ -}
+
+RESIdue F {fluorine}
+  GROUp
+    ATOM F TYPE=F CHARge=0.0 END
+END {F}
+
+RESIdue NA {sodium}
+  GROUp
+    ATOM NA TYPE=NA CHARge=0.0 END
+END {NA}
+
+RESIdue MG {magnesium}
+  GROUp
+    ATOM MG TYPE=MG CHARge=0.0 END
+END {MG}
+
+RESIdue AL {aluminum}
+  GROUp
+    ATOM AL TYPE=AL CHARge=0.0 END
+END {AL}
+
+RESIdue CL {chlorine}
+  GROUp
+    ATOM CL TYPE=CL CHARge=0.0 END
+END {CL}
+
+RESIdue K {potassium}
+  GROUp
+    ATOM K TYPE=K CHARge=0.0 END
+END {K}
+
+RESIdue AR {argon}
+  GROUp
+    ATOM AR TYPE=AR CHARge=0.0 END
+END {AR}
+
+RESIdue CA {calcium}
+  GROUp
+    ATOM CA TYPE=CA CHARge=0.0 END
+END {CA}
+
+RESIdue V {vanadium}
+  GROUp
+    ATOM V TYPE=V CHARge=0.0 END
+END {V}
+
+RESIdue CR {chromium}
+  GROUp
+    ATOM CR TYPE=CR CHARge=0.0 END
+END {CR}
+
+RESIdue MN {manganese}
+  GROUp
+    ATOM MN TYPE=MN CHARge=0.0 END
+END {MN}
+
+RESIdue FE {iron}
+  GROUp
+    ATOM FE TYPE=FE CHARge=0.0 END
+END {FE}
+
+RESIdue NI {nickel}
+  GROUp
+    ATOM NI TYPE=NI CHARge=0.0 END
+END {NI}
+
+RESIdue CO {cobalt}
+  GROUp
+    ATOM CO TYPE=CO CHARge=0.0 END
+END {CO}
+
+RESIdue CU {copper}
+  GROUp
+    ATOM CU TYPE=CU CHARge=0.0 END
+END {CU}
+
+RESIdue ZN {zinc}
+  GROUp
+    ATOM ZN TYPE=ZN CHARge=0.0 END
+END {ZN}
+
+RESIdue AS {arsenic}
+  GROUp
+    ATOM AS TYPE=AS CHARge=0.0 END
+END {AS}
+
+RESIdue BR {bromine}
+  GROUp
+    ATOM BR TYPE=BR CHARge=0.0 END
+END {BR}
+
+RESIdue KR {krypton}
+  GROUp
+    ATOM KR TYPE=KR CHARge=0.0 END
+END {KR}
+
+RESIdue SR {strontium}
+  GROUp
+    ATOM SR TYPE=SR CHARge=0.0 END
+END {SR}
+
+RESIdue MO {molybdenum}
+  GROUp
+    ATOM MO TYPE=MO CHARge=0.0 END
+END {MO}
+
+RESIdue AG {silver}
+  GROUp
+    ATOM AG TYPE=AG CHARge=0.0 END
+END {AG}
+
+RESIdue CD {cadmium}
+  GROUp
+    ATOM CD TYPE=CD CHARge=0.0 END
+END {CD}
+
+RESIdue I {iodine}
+  GROUp
+    ATOM I TYPE=I CHARge=0.0 END
+END {I}
+
+RESIdue XE {xenon}
+  GROUp
+    ATOM XE TYPE=XE CHARge=0.0 END
+END {XE}
+
+RESIdue CS {cesium}
+  GROUp
+    ATOM CS TYPE=CS CHARge=0.0 END
+END {CS}
+
+RESIdue HO {holmium}
+  GROUp
+    ATOM HO TYPE=HO CHARge=0.0 END
+END {HO}
+
+RESIdue YB {ytterbium}
+  GROUp
+    ATOM YB TYPE=YB CHARge=0.0 END
+END {YB}
+
+RESIdue OS {osmium}
+  GROUp
+    ATOM OS TYPE=OS CHARge=0.0 END
+END {OS}
+
+RESIdue IR {iridium}
+  GROUp
+    ATOM IR TYPE=IR CHARge=0.0 END
+END {IR}
+
+RESIdue PT {platinum}
+  GROUp
+    ATOM PT TYPE=PT CHARge=0.0 END
+END {PT}
+
+RESIdue AU {gold}
+  GROUp
+    ATOM AU TYPE=AU CHARge=0.0 END
+END {AU}
+
+RESIdue HG {mercury}
+  GROUp
+    ATOM HG TYPE=HG CHARge=0.0 END
+END {HG}
+
+RESIdue PB {lead}
+  GROUp
+    ATOM PB TYPE=PB CHARge=0.0 END
+END {PB}
+
+RESIdue U {uranium}
+  GROUp
+    ATOM U TYPE=U CHARge=0.0 END
+END {U}
+
+{- ============================ ionic states ============================== -}
+
+RESIdue LI1 {lithium 1+}
+  GROUp
+    ATOM LI+1 TYPE=LI+1 CHARge=+1.0 END
+END {LI1}
+
+RESIdue F1 {fluorine 1-}
+  GROUp
+    ATOM F-1 TYPE=F-1 CHARge=-1.0 END
+END {F1}
+
+RESIdue NA1 {sodium 1+}
+  GROUp
+    ATOM NA+1 TYPE=NA+1 CHARge=+1.0 END
+END {NA1}
+
+RESIdue MG2 {magnesium 2+}
+  GROUp
+    ATOM MG+2 TYPE=MG+2 CHARge=+2.0 END
+END {MG2}
+
+RESIdue AL3 {aluminum 3+}
+  GROUp
+    ATOM AL+3 TYPE=AL+3 CHARge=+3.0 END
+END {AL3}
+
+RESIdue CL1 {chloride 1-}
+  GROUp
+    ATOM CL-1 TYPE=CL-1 CHARge=-1.0 END
+END {CL1}
+
+RESIdue K1 {potassium 1+}
+  GROUp
+    ATOM K+1 TYPE=K+1 CHARge=+1.0 END
+END {K1}
+
+RESIdue CA2 {calcium 2+}
+  GROUp
+    ATOM CA+2 TYPE=CA+2 CHARge=+2.0 END
+END {CA2}
+
+RESIdue V2 {vanadium 2+}
+  GROUp
+    ATOM V+2 TYPE=V+2 CHARge=+2.0 END
+END {V2}
+
+RESIdue V3 {vanadium 3+}
+  GROUp
+    ATOM V+3 TYPE=V+3 CHARge=+3.0 END
+END {V3}
+
+RESIdue CR2 {chromium 2+}
+  GROUp
+    ATOM CR+2 TYPE=CR+2 CHARge=+2.0 END
+END {CR2}
+
+RESIdue CR3 {chromium 3+}
+  GROUp
+    ATOM CR+3 TYPE=CR+3 CHARge=+3.0 END
+END {CR3}
+
+RESIdue MN2 {manganese 2+}
+  GROUp
+    ATOM MN+2 TYPE=MN+2 CHARge=+2.0 END
+END {MN2}
+
+RESIdue MN3 {manganese 3+}
+  GROUp
+    ATOM MN+3 TYPE=MN+3 CHARge=+3.0 END
+END {MN3}
+
+RESIdue FE2 {iron 2+}
+  GROUp
+    ATOM FE+2 TYPE=FE+2 CHARge=+2.0 END
+END {FE2}
+
+RESIdue FE3 {iron 3+}
+  GROUp
+    ATOM FE+3 TYPE=FE+3 CHARge=+3.0 END
+END {FE3}
+
+RESIdue NI2 {nickel 2+}
+  GROUp
+    ATOM NI+2 TYPE=NI+2 CHARge=+2.0 END
+END {NI2}
+
+RESIdue CO2 {cobalt 2+}
+  GROUp
+    ATOM CO+2 TYPE=CO+2 CHARge=+2.0 END
+END {CO2}
+
+RESIdue CO3 {cobalt 3+}
+  GROUp
+    ATOM CO+3 TYPE=CO+3 CHARge=+3.0 END
+END {CO3}
+
+RESIdue CU1 {copper 1+}
+  GROUp
+    ATOM CU+1 TYPE=CU+1 CHARge=+1.0 END
+END {CU1}
+
+RESIdue CU2 {copper 2+}
+  GROUp
+    ATOM CU+2 TYPE=CU+2 CHARge=+2.0 END
+END {CU2}
+
+RESIdue ZN2 {zinc 2+}
+  GROUp
+    ATOM ZN+2 TYPE=ZN+2 CHARge=+0.96 END ! changed AB for better ZN coordination by CYF
+END {ZN2}
+
+RESIdue BR1 {bromine 1-}
+  GROUp
+    ATOM BR-1 TYPE=BR-1 CHARge=-1.0 END
+END {BR1}
+
+RESIdue SR2 {strontium 2+}
+  GROUp
+    ATOM SR+2 TYPE=SR+2 CHARge=+2.0 END
+END {SR2}
+
+RESIdue MO3 {molybdenum 3+}
+  GROUp
+    ATOM MO+3 TYPE=MO+3 CHARge=+3.0 END
+END {MO3}
+
+RESIdue AG1 {silver 1+}
+  GROUp
+    ATOM AG+1 TYPE=AG+1 CHARge=+1.0 END
+END {AG1}
+
+RESIdue CD2 {cadmium 2+}
+  GROUp
+    ATOM CD+2 TYPE=CD+2 CHARge=+2.0 END
+END {CD2}
+
+RESIdue I1 {iodine 1-}
+  GROUp
+    ATOM I-1 TYPE=I-1 CHARge=-1.0 END
+END {I1}
+
+RESIdue CS1 {cesium 1+}
+  GROUp
+    ATOM CS+1 TYPE=CS+1 CHARge=+1.0 END
+END {CS1}
+
+RESIdue HO3 {holmium 3+}
+  GROUp
+    ATOM HO+3 TYPE=HO+3 CHARge=+3.0 END
+END {HO3}
+
+RESIdue YB2 {ytterbium 2+}
+  GROUp
+    ATOM YB+2 TYPE=YB+2 CHARge=+2.0 END
+END {YB2}
+
+RESIdue YB3 {ytterbium 3+}
+  GROUp
+    ATOM YB+3 TYPE=YB+3 CHARge=+3.0 END
+END {YB3}
+
+RESIdue OS4 {osmium 4+}
+  GROUp
+    ATOM OS+4 TYPE=OS+4 CHARge=+4.0 END
+END {OS4}
+
+RESIdue IR3 {iridium 3+}
+  GROUp
+    ATOM IR+3 TYPE=IR+3 CHARge=+3.0 END
+END {IR3}
+
+RESIdue PT2 {platinum 2+}
+  GROUp
+    ATOM PT+2 TYPE=PT+2 CHARge=+2.0 END
+END {PT2}
+
+RESIdue AU1 {gold 1+}
+  GROUp
+    ATOM AU+1 TYPE=AU+1 CHARge=+1.0 END
+END {AU1}
+
+RESIdue AU3 {gold 3+}
+  GROUp
+    ATOM AU+3 TYPE=AU+3 CHARge=+3.0 END
+END {AU3}
+
+RESIdue HG1 {mercury 1+}
+  GROUp
+    ATOM HG+1 TYPE=HG+1 CHARge=+1.0 END
+END {HG1}
+
+RESIdue HG2 {mercury 2+}
+  GROUp
+    ATOM HG+2 TYPE=HG+2 CHARge=+2.0 END
+END {HG2}
+
+RESIdue PB2 {lead 2+}
+  GROUp
+    ATOM PB+2 TYPE=PB+2 CHARge=+2.0 END
+END {PB2}
+
+RESIdue U3 {uranium 3+}
+  GROUp
+    ATOM U+3 TYPE=U+3 CHARge=+3.0 END
+END {U3}
+
+RESIdue U4 {uranium 4+}
+  GROUp
+    ATOM U+4 TYPE=U+4 CHARge=+4.0 END
+END {U4}
+
+{- ========================= multi-atom species =========================== -}
+
+RESIdue SO4 {Sulphate}
+  GROUP
+    ATOM S  TYPE=SUF CHARGE=+2.0 END
+    ATOM O1 TYPE=OUF CHARGE=-1.0 END
+    ATOM O2 TYPE=OUF CHARGE=-1.0 END
+    ATOM O3 TYPE=OUF CHARGE=-1.0 END
+    ATOM O4 TYPE=OUF CHARGE=-1.0 END
+
+  BOND S  O1
+  BOND S  O2
+  BOND S  O3
+  BOND S  O4
+
+END {SO4}
+
+RESIdue PO4 {Phosphate}
+  GROUP
+    ATOM P  TYPE=PHF CHARGE=+2.0 END
+    ATOM O1 TYPE=OHF CHARGE=-1.0 END
+    ATOM O2 TYPE=OHF CHARGE=-1.0 END
+    ATOM O3 TYPE=OHF CHARGE=-1.0 END
+    ATOM O4 TYPE=OHF CHARGE=-1.0 END
+
+  BOND P  O1
+  BOND P  O2
+  BOND P  O3
+  BOND P  O4
+
+END {PO4}
+
+RESIdue WO4 {Tungstate}
+  GROUP
+    ATOM W  TYPE=W   CHARGE=+2.0 END
+    ATOM O1 TYPE=OWF CHARGE=-1.0 END
+    ATOM O2 TYPE=OWF CHARGE=-1.0 END
+    ATOM O3 TYPE=OWF CHARGE=-1.0 END
+    ATOM O4 TYPE=OWF CHARGE=-1.0 END
+
+  BOND W  O1
+  BOND W  O2
+  BOND W  O3
+  BOND W  O4
+
+END {WO4}
+
+set echo=true end
+! Put in this file your ligand topology if needed
+remarks file toppar/protein-allhdg5-4.top
+remarks
+remarks   file topallhdg.pro  version 5.4  date 07-July-10
+remarks      for file parallhdg.pro version 5.4 date 07-July-10 or later
+remarks   Geometric energy function parameters for distance geometry and
+remarks      simulated annealing.
+remarks   Author: Michael Nilges, EMBL Heidelberg; Institut Pasteur, Paris
+remarks   This file contains modifications from M. Williams, UCL London
+remarks   and multiple modifications for HADDOCK from A. Bonvin, Utrecht University
+remarks   Last modification 24-09-2014 
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+checkversion 1.3
+
+!***********************************************************************!
+! Copyright (C) 1995,1996 by Michael Nilges. All rights reserved.       !
+! Copying and redistribution of this files is authorized only if etiher !
+! (1) you make absolutely no changes to your copy, including name, or   !
+! (2) if you do make changes, you name it something other than          !
+! topallhdg.pro and topallhdg.x.xx.pro, and clearly mark the changes.   ! 
+! The information in this software is subject to change without notice  !
+! and should not be construed as a commitment by the EMBL or by the     !
+! authors. Neither the EMBL, Yale University, nor the authors assume    !
+! responsibility for the use or reliability of this software.           !
+! We do hope, however, to get responses from users, especially when     !
+! errors have been found.                                               !
+!***********************************************************************!
+! Description:                                                          !
+! This parameter file was originally derived from the  CHARMM parameter !
+! file PARMALLH6. It was designed specifically for the initial stages   ! 
+! of calculating structures from NMR restraints.                        !
+!***********************************************************************!
+! History:
+! HADDOCK2.2, additions for CFE (CYS with iron cluster)
+! CNS v1.3, revision 7, 1-10-2012, added improper NE2 CE1 CD2 HE2 for HIS residue
+! CNS V1.3, revision 7, 11-08-2011, changed changes in CYF residue for CB and SG
+! CNS v1.3, revision 6, 8-19-2011, added MSE residue
+! CNS v1.3, revision 2, 12-Aug-10, modified impropers to maintain Arg planarity, proper stereochemical NH1, NH2 assignments without causing singularities.
+! CNS v1.3 (27-Feb-10): changed OT1, OT2 to O, OXT, respectively
+! version 5.3  (13-Feb-02) : merged UCL version with EMBL version
+! version UCL  (07-JUL-01) : added new MULT disulphide/sidechain COO dihedral parameters
+! version UCL  (03-JUL-01) : added new MULT phi/psi dihedral related parameters
+! version UCL  (14-MAR-00) : modified peptide bond parameters for flexible omega
+! version UCL  (12-MAR-00) : added C and N terminus and disulphide dihedrals
+! version UCL  (09-MAR-00) : TYR O-H planarity & LYS NH3 stagger 
+!                            & HIS dihedrals modified
+! version 5.2  (18-Jun-99) : new cis peptide patch
+! version 4.03 (04-APR-99) : THR CB atom type corrected
+! version 4.02 (17-DEC-97) : Histidine hbond acceptor/donor corrected
+! version 4.01 (29-Jul-96) : all covalent parameters
+! version 4.00  (19-Jul-96) : all atom types from CSDX implemented
+! version 3.00 (24-Oct-95) : mapped CSDX parmameters on parallhdg, 
+!                            no changes in topallhdg
+! previous modifications:
+! proline residue modified, puckering enforced (MN)
+! added hbond acceptor and donor definitions for analysis (MN)
+! all references to internal coordinates (IC's) removed (MN) 
+! added stereospecific impropers for all pro-chiral centers (ATB, JK)
+! all dihedrals defining planarity converted to impropers (MN, PK)
+! additional impropers at planar centers (MN)
+!***********************************************************************!
+
+autogenerate 
+  angles=true
+  dihedrals=false
+end
+
+mass DD 100.000
+mass H    1.008
+mass HC   1.008
+mass HA   1.008
+mass C   12.011
+mass CCIS  12.011
+mass CH1E  12.011
+mass CH2E  12.011
+mass CH3E  12.011
+mass CH2G  12.011
+mass CH1P  12.011
+mass CH2P  12.011
+mass C5W  12.011
+mass CW  12.011
+
+mass CR1E  12.011
+mass C5  12.011
+mass CRH  12.011
+mass CR1H  12.011
+mass CR1W  12.011
+mass CRHH  12.011
+mass CF  12.011
+mass CY  12.011
+mass CY2 12.011
+mass N   14.007
+mass NR  14.007
+mass NH1 14.007
+mass NH2 14.007
+mass NH3 14.007
+mass NC2 14.007
+mass NC3 14.007
+mass NC4 14.007
+mass O   15.999
+mass OP1 15.999
+mass OR3 15.999
+mass OC  15.999
+mass OH1 15.999
+mass OHP 15.999
+mass OUF 15.999
+mass PP  30.97400
+mass SH1E  32.060
+mass SM  32.060
+mass S   32.060
+mass SF  32.060
+mass SUF 32.060
+mass FS  55.847 ! iron (for CFE - iron sulfur cluster)
+mass SE  78.960 ! selenium (for MSE)
+
+MASS  CHAC  15.0350   ! equivalent to   CH3
+MASS  CHAS  12.0110   ! equivalent to   CH0
+MASS  CHAD  15.0350   ! equivalent to   CH3
+MASS  NHAQ  14.0067   ! equivalent to    NL
+MASS  OHAH  15.9994   ! equivalent to    OA
+MASS  HHAA   1.0080   ! equivalent to    HO
+MASS  CHAR  12.0110   ! equivalent to   CH0
+MASS  CHAA  15.0350   ! equivalent to   CH3
+MASS  CHAB  15.0350   ! equivalent to   CH3
+MASS  CHAI  13.0190   ! equivalent to  CR51
+MASS  CHAO  12.0110   ! equivalent to    CB
+MASS  CHAJ  14.0270   ! equivalent to   CH2
+MASS  SHAL  32.0600   ! equivalent to     S
+MASS  SHAM  32.0600   ! equivalent to     S
+MASS  CHB   14.0270   ! equivalent to   CH2
+MASS  CHA   13.0190   ! equivalent to   CH1
+MASS  CH_Y  12.0110   ! equivalent to     C
+MASS  OHXT  15.9994   ! equivalent to    OM
+MASS  OH_Y  15.9994   ! equivalent to    OM
+MASS  NH_Y  14.0067   ! equivalent to    NL
+MASS  HHAC   1.0080   ! equivalent to     H
+MASS  HHAD   1.0080   ! equivalent to     H
+MASS  HHAB   1.0080   ! equivalent to     H
+
+MASS  CD28  12.0110   ! equivalent to   CH2
+MASS  HD28   1.0080   ! equivalent to    HC
+MASS  HD29   1.0080   ! equivalent to    HC
+MASS  CD29  12.0110   ! equivalent to   CH0
+MASS  CD30  12.0110   ! equivalent to   CH3
+MASS  HD31   1.0080   ! equivalent to    HC
+MASS  HD32   1.0080   ! equivalent to    HC
+MASS  HD30   1.0080   ! equivalent to    HC
+MASS  CD31  12.0110   ! equivalent to   CH3
+MASS  HD34   1.0080   ! equivalent to    HC
+MASS  HD35   1.0080   ! equivalent to    HC
+MASS  HD33   1.0080   ! equivalent to    HC
+MASS  CD32  12.0110   ! equivalent to   CH1
+MASS  HD36   1.0080   ! equivalent to    HC
+MASS  OD33  15.9994   ! equivalent to    OA
+MASS  HD46   1.0080   ! equivalent to     H
+MASS  CD34  12.0110   ! equivalent to     C
+MASS  OD35  15.9994   ! equivalent to     O
+MASS  ND36  14.0067   ! equivalent to     N
+MASS  HD48   1.0080   ! equivalent to     H
+MASS  CD37  12.0110   ! equivalent to   CH2
+MASS  HD37   1.0080   ! equivalent to    HC
+MASS  HD38   1.0080   ! equivalent to    HC
+MASS  CD38  12.0110   ! equivalent to   CH2
+MASS  HD39   1.0080   ! equivalent to    HC
+MASS  HD4A   1.0080   ! equivalent to    HC
+MASS  CD39  12.0110   ! equivalent to     C
+MASS  OD40  15.9994   ! equivalent to     O
+MASS  ND41  14.0067   ! equivalent to     N
+MASS  HD41   1.0080   ! equivalent to     H
+MASS  CD42  12.0110   ! equivalent to   CH2
+MASS  HD42   1.0080   ! equivalent to    HC
+MASS  HD43   1.0080   ! equivalent to    HC
+MASS  CD43  12.0110   ! equivalent to   CH2
+MASS  HD44   1.0080   ! equivalent to    HC
+MASS  HD45   1.0080   ! equivalent to    HC
+MASS  SD44  32.0600   ! equivalent to     S
+MASS  HD47   1.0080   ! equivalent to     H
+
+!----------------------------------------------------------------------
+
+residue CYM
+GROUP
+  ATOM CAC  TYPE= CHAC CHARGE= 0.000 END
+  ATOM CAS  TYPE= CHAS CHARGE= 0.000 END
+  ATOM CAD  TYPE= CHAD CHARGE= 0.000 END
+  ATOM NAQ  TYPE= NHAQ CHARGE= 0.265 END
+  ATOM OAH  TYPE= OHAH CHARGE=-0.700 END
+  ATOM HAA  TYPE= HHAA CHARGE= 0.435 END
+  ATOM CAR  TYPE= CHAR CHARGE= 0.000 END
+  ATOM CAA  TYPE= CHAA CHARGE= 0.000 END
+  ATOM CAB  TYPE= CHAB CHARGE= 0.000 END
+  ATOM CAI  TYPE= CHAI CHARGE= 0.000 END
+  ATOM CAO  TYPE= CHAO CHARGE= 0.000 END
+  ATOM CAJ  TYPE= CHAJ CHARGE= 0.080 END
+  ATOM SAL  TYPE= SHAL CHARGE=-0.080 END
+  atom N   type=NH1    charge=-0.570 end
+  atom HN  type=H      charge= 0.370 end
+  atom CA  type=CH1E   charge= 0.200 end
+  atom HA  type=HA     charge= 0.000 end
+  atom CB  type=CH2E   charge= 0.080 end
+  atom HB1 type=HA     charge= 0.000 end
+  atom HB2 type=HA     charge= 0.000 end
+  atom SG  type=S      charge=-0.080 end
+  atom C   type=C      charge= 0.500 end
+  atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB SG     bond SG HG 
+  bond CA C
+  bond C  O
+
+  BOND CAC  CAS 
+  BOND CAS  CAD 
+  BOND CAS  NAQ 
+  BOND CAS  CAO 
+  BOND NAQ  OAH 
+  BOND NAQ  CAR 
+  BOND OAH  HAA 
+  BOND CAR  CAA 
+  BOND CAR  CAB 
+  BOND CAR  CAI 
+  BOND CAI  CAO 
+  BOND CAO  CAJ 
+  BOND CAJ  SAL 
+  BOND SAL  SG 
+
+  ANGLE CAC  CAS  CAD 
+  ANGLE CAC  CAS  NAQ 
+  ANGLE CAC  CAS  CAO 
+  ANGLE CAD  CAS  NAQ 
+  ANGLE CAD  CAS  CAO 
+  ANGLE NAQ  CAS  CAO 
+  ANGLE CAS  NAQ  OAH 
+  ANGLE CAS  NAQ  CAR 
+  ANGLE OAH  NAQ  CAR 
+  ANGLE NAQ  OAH  HAA 
+  ANGLE NAQ  CAR  CAA 
+  ANGLE NAQ  CAR  CAB 
+  ANGLE NAQ  CAR  CAI 
+  ANGLE CAA  CAR  CAB 
+  ANGLE CAA  CAR  CAI 
+  ANGLE CAB  CAR  CAI 
+  ANGLE CAR  CAI  CAO 
+  ANGLE CAS  CAO  CAI 
+  ANGLE CAS  CAO  CAJ 
+  ANGLE CAI  CAO  CAJ 
+  ANGLE CAO  CAJ  SAL 
+  ANGLE CAJ  SAL  SG 
+  ANGLE SAL  SG  CB  
+
+
+  improper HA N C CB   !chirality CA
+  improper HB1 HB2 CA SG  !stereo CB
+  IMPROPER CAO  CAS  CAI  CAJ 
+  IMPROPER CAS  CAC  NAQ  CAD 
+  IMPROPER NAQ  CAS  OAH  CAR 
+  IMPROPER CAR  NAQ  CAB  CAA 
+
+  dihedral SG  CB  CA  N
+  DIHEDRAL CAC  CAS  NAQ  CAR 
+  DIHEDRAL CAC  CAS  CAO  CAJ 
+  DIHEDRAL CAS  NAQ  OAH  HAA 
+  DIHEDRAL CAI  CAR  NAQ  CAS 
+  DIHEDRAL NAQ  CAR  CAI  CAO 
+  DIHEDRAL CAR  CAI  CAO  CAJ 
+  DIHEDRAL CAS  CAO  CAJ  SAL 
+  DIHEDRAL SG  SAL  CAJ  CAO 
+  DIHEDRAL CB   SG  SAL  CAJ 
+  DIHEDRAL SAL  SG  CB   CA  
+
+  DONO HN   N
+  DONO HG  SG
+  !!! ACCE SG    !REMOVED, ATB
+  ACCE O    C
+
+END
+
+!----------------------------------------------------------------------
+
+residue ALA
+  group
+    atom N   type=NH1     charge=-0.570 end
+    atom HN  type=H       charge= 0.370 end
+    atom CA  type=CH1E    charge= 0.200 end
+    atom HA  type=HA      charge= 0.000 end
+    atom CB  type=CH3E    charge= 0.000 end
+    atom HB1 type=HA      charge= 0.000 end
+    atom HB2 type=HA      charge= 0.000 end
+    atom HB3 type=HA      charge= 0.000 end
+    atom C   type=C       charge= 0.500 end
+    atom O   type=O       charge=-0.500 end
+
+  bond N  HN       
+  bond N  CA    bond CA  HA   
+  bond CA  CB   bond CB  HB1   bond CB  HB2     bond CB  HB3
+  bond CA  C       
+  bond C   O
+
+  improper HA  N   C   CB  ! chirality CA
+  improper HB1 HB2 CA HB3  ! methyl CB
+
+  dihedral HB1 CB  CA  C   ! methyl stagger UCL 12-MAR-00 
+
+  DONO HN   N
+  ACCE O    C
+end
+ 
+!----------------------------------------------------------------------
+
+residue ARG
+  group
+    atom N    type=NH1    charge=-0.570 end
+    atom HN   type=H      charge= 0.370 end
+    atom CA   type=CH1E   charge= 0.200 end
+    atom HA   type=HA     charge= 0.000 end
+    atom CB   type=CH2E   charge= 0.000 end
+    atom HB1  type=HA     charge= 0.000 end
+    atom HB2  type=HA     charge= 0.000 end
+    atom CG   type=CH2E   charge= 0.070 end
+    atom HG1  type=HA     charge= 0.000 end
+    atom HG2  type=HA     charge= 0.000 end
+    atom CD   type=CH2E   charge= 0.310 end
+    atom HD1  type=HA     charge= 0.000 end
+    atom HD2  type=HA     charge= 0.000 end
+    atom NE   type=NH1    charge=-0.700 end
+    atom HE   type=H      charge= 0.440 end
+    atom CZ   type=C      charge= 0.640 end
+    atom NH1  type=NC2    charge=-0.800 end
+    atom HH11 type=HC     charge= 0.460 end
+    atom HH12 type=HC     charge= 0.460 end
+    atom NH2   type=NC2   charge=-0.800 end
+    atom HH21  type=HC    charge= 0.460 end
+    atom HH22  type=HC    charge= 0.460 end
+    atom C     type=C     charge= 0.500 end
+    atom O     type=O     charge=-0.500 end
+ 
+  bond N  HN
+  bond N  CA     bond CA  HA
+  bond CA CB     bond CB  HB1     bond CB  HB2
+  bond CB CG     bond CG  HG1     bond CG  HG2
+  bond CG CD     bond CD  HD1     bond CD  HD2
+  bond CD NE     bond NE  HE
+  bond NE CZ
+  bond CZ NH1    bond NH1 HH11    bond NH1 HH12
+  bond CZ NH2    bond NH2 HH21    bond NH2 HH22
+  bond CA C
+  bond C  O
+
+  improper HA  N  C    CB  !chirality CA
+  improper NE  CD CZ   HE  
+
+! modified impropers for Arg planarity to reduce chances of reaching singularity, ATB 8/12/10
+! improper CZ  NE NH1  NH2
+  improper CZ   NH1  NH2  NE !planar CZ
+
+  improper NH1 CZ HH11 HH12
+  improper NH2 CZ HH21 HH22
+  improper NE  CZ NH1  HH11
+  improper NE  CZ NH2  HH21
+
+! modified impropers for Arg planarity to reduce chances of reaching singularity, ATB 8/12/10
+!!  improper CZ  NH2 HE NE  ! planar CZ ! commented out and replaced with improper that does not involve a hydrogen
+  improper CD   NE   CZ   NH1 ! note: this one is defined as a dihedral in the protein.top file
+
+! added impropers for Arg planarity to reduce chances of reaching singularity, ATB 8/12/10
+  improper NE   CZ   NH1  HH11 !note: one improper for each hydrogen ! these are defined as dihedrals in the protein.top file
+  improper NE   CZ   NH2  HH21 !
+  improper NE   CZ   NH1  HH12 !
+  improper NE   CZ   NH2  HH22 !
+
+
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+  improper HD1 HD2 CG NE  !stereo CD
+
+  
+  dihedral CG  CB  CA  N
+  dihedral CD  CG  CB  CA
+  dihedral NE  CD  CG  CB
+  dihedral CZ  NE  CD  CG
+  
+  DONO HN   N
+  DONO HE   NE
+  DONO HH11 NH1
+  DONO HH12 NH1
+  DONO HH21 NH2
+  DONO HH22 NH2
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue ASN
+  group
+    atom N    type=NH1    charge=-0.570 end
+    atom HN   type=H      charge= 0.370 end
+    atom CA   type=CH1E   charge= 0.200 end
+    atom HA   type=HA     charge= 0.000 end
+    atom CB   type=CH2E   charge=-0.000 end
+    atom HB1  type=HA     charge= 0.000 end
+    atom HB2  type=HA     charge= 0.000 end
+    atom CG   type=C      charge= 0.500 end
+    atom OD1  type=O      charge=-0.500 end
+    atom ND2  type=NH2    charge=-0.850 end
+    atom HD21 type=H      charge= 0.425 end
+    atom HD22 type=H      charge= 0.425 end
+    atom C    type=C      charge= 0.500 end
+    atom O    type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA  HA
+  bond CA CB     bond CB  HB1     bond CB  HB2
+  bond CB CG
+  bond CG OD1
+  bond CG ND2    bond ND2 HD21    bond ND2 HD22
+  bond CA C
+  bond C  O
+
+  improper HA  N  C    CB  ! chirality CA
+  improper CG  CB OD1  ND2
+  improper ND2 CG HD21 HD22
+  improper CB  CG ND2  HD21
+  improper HB1 HB2 CA CG  ! stereo CB
+
+  dihedral CG  CB  CA  N
+  dihedral OD1 CG  CB  CA ! mult 2 ! UCL
+
+  DONO HN   N
+  DONO HD21 ND2
+  DONO HD22 ND2
+  ACCE OD1  CG
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue ASP
+  group
+    atom N   type=NH1   charge=-0.570 end
+    atom HN  type=H     charge= 0.370 end
+    atom CA  type=CH1E  charge= 0.200 end
+    atom HA  type=HA    charge= 0.000 end
+    atom CB  type=CH2E  charge=-0.100 end
+    atom HB1 type=HA    charge= 0.000 end
+    atom HB2 type=HA    charge= 0.000 end
+    atom CG  type=C     charge= 0.700 end
+    atom OD1 type=OC    charge=-0.800 end
+    atom OD2 type=OC    charge=-0.800 end
+    atom C   type=C     charge= 0.500 end
+    atom O   type=O     charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG
+  bond CG OD1
+  bond CG OD2
+  bond CA C
+  bond C  O
+
+  improper HA N  C   CB   !chirality CA
+  improper CG CB OD1 OD2
+  improper HB1 HB2 CA CG  !stereo CB
+
+  dihedral CG  CB  CA  N
+
+  dihedral OD1 CG  CB  CA
+
+  DONO HN   N
+  ACCE OD1  CG
+  ACCE OD2  CG
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue ASH
+  group
+    atom N   type=NH1   charge=-0.570 end
+    atom HN  type=H     charge= 0.370 end
+    atom CA  type=CH1E  charge= 0.200 end
+    atom HA  type=HA    charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA    charge= 0.000 end
+    atom HB2 type=HA    charge= 0.000 end
+    atom CG  type=C     charge= 0.500 end
+    atom OD1 type=OC    charge=-0.500 end
+    atom OD2 type=OH1   charge=-0.450 end
+    atom HD2 type=H     charge= 0.450 end
+    atom C   type=C     charge= 0.500 end
+    atom O   type=O     charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG
+  bond CG OD1
+  bond CG OD2    bond OD2 HD2
+  bond CA C
+  bond C  O
+
+  improper HA N  C   CB   !chirality CA
+  improper CG CB OD1 OD2
+  improper HB1 HB2 CA CG  !stereo CB
+
+  dihedral CG  CB  CA  N
+
+  dihedral OD1 CG  CB  CA
+
+  DONO HN   N
+  DONO HD2  OD2
+  ACCE OD1  CG
+  ACCE OD2  CG
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue CSP
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.080 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom SG  type=SM     charge=-0.440 end
+    atom P   type=PP     charge= 0.520 end
+    atom O1P type=OP1    charge=-0.720 end
+    atom O2P type=OP1    charge=-0.720 end
+    atom O3P type=OR3    charge=-0.720 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB SG     bond SG P 
+  bond P   O1P
+  bond P   O2P
+  bond P   O3P
+  bond CA C
+  bond C  O
+
+  improper HA N C CB   !chirality CA
+  improper HB1 HB2 CA SG  !stereo CB
+  improper SG  P O3P O1P 
+
+  dihedral SG  CB  CA  N
+  dihedral CB  SG  P   O3P
+
+  DONO HN   N
+  ACCE O    C
+  ACCE O1P  P
+  ACCE O2P  P
+  ACCE O3P  P
+
+end
+
+!----------------------------------------------------------------------
+
+residue CFE
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge=-0.020 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom SG  type=SH1E   charge=-0.720 end
+    atom FE1 type=FS     charge= 0.870 end
+    atom SF1 type=SF     charge=-0.560 end
+    atom FE2 type=FS     charge= 0.870 end
+    atom SF2 type=SF     charge=-0.560 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB SG     bond SG FE1     
+  bond FE1 SF1   bond SF1 FE2
+  bond FE1 SF2   bond SF2 FE2
+  bond CA C
+  bond C  O
+
+  improper HA N C CB   !chirality CA
+  improper HB1 HB2 CA SG  !stereo CB
+
+  dihedral SG  CB  CA  N
+
+  DONO HN   N
+  !!! ACCE SG    !REMOVED, ATB
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue CYC  ! special for covalent docking - vdw of Sulphur reduced
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.000 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom SG  type=SH1C   charge= 0.000 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB SG
+  bond CA C
+  bond C  O
+
+  improper HA N C CB   !chirality CA
+  improper HB1 HB2 CA SG  !stereo CB
+
+  dihedral SG  CB  CA  N
+
+  DONO HN   N
+  !!! ACCE SG    !REMOVED, ATB
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue CYF
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge=-0.020 end ! charged AB for better Zn coordination
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom SG  type=SH1E   charge=-0.720 end ! charged AB for better Zn coordination
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB SG
+  bond CA C
+  bond C  O
+
+  improper HA N C CB   !chirality CA
+  improper HB1 HB2 CA SG  !stereo CB
+
+  dihedral SG  CB  CA  N
+
+  DONO HN   N
+  !!! ACCE SG    !REMOVED, ATB
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue CYS
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.180 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom SG  type=SH1E   charge=-0.450 end
+    atom HG  type=H      charge= 0.270 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB SG     bond SG HG 
+  bond CA C
+  bond C  O
+
+  improper HA N C CB   !chirality CA
+  improper HB1 HB2 CA SG  !stereo CB
+
+  dihedral SG  CB  CA  N
+
+  DONO HN   N
+  DONO HG  SG
+  !!! ACCE SG    !REMOVED, ATB
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue GLN
+  group
+    atom N    type=NH1     charge=-0.570 end
+    atom HN   type=H       charge= 0.370 end
+    atom CA   type=CH1E    charge= 0.200 end
+    atom HA   type=HA      charge= 0.000 end
+    atom CB   type=CH2E    charge= 0.000 end
+    atom HB1  type=HA      charge= 0.000 end
+    atom HB2  type=HA      charge= 0.000 end
+    atom CG   type=CH2E    charge= 0.000 end
+    atom HG1  type=HA      charge= 0.000 end
+    atom HG2  type=HA      charge= 0.000 end
+    atom CD   type=C       charge= 0.500 end
+    atom OE1  type=O       charge=-0.500 end
+    atom NE2  type=NH2     charge=-0.850 end
+    atom HE21 type=H       charge= 0.425 end
+    atom HE22 type=H       charge= 0.425 end
+    atom C    type=C       charge= 0.500 end
+    atom O    type=O       charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA  HA
+  bond CA CB     bond CB  HB1     bond CB  HB2
+  bond CB CG     bond CG  HG1     bond CG  HG2
+  bond CG CD
+  bond CD OE1
+  bond CD NE2    bond NE2 HE21    bond NE2 HE22
+  bond CA C
+  bond C  O
+
+  improper HA  N  C    CB  !chirality CA
+  improper CD  CG OE1  NE2
+  improper NE2 CD HE21 HE22
+  improper CG  CD NE2  HE21
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+
+  dihedral CG  CB  CA  N
+  dihedral CD  CG  CB  CA
+  dihedral OE1 CD  CG  CB 
+
+  DONO HN   N
+  DONO HE21 NE2
+  DONO HE22 NE2
+  ACCE OE1  CD
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue GLU
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.000 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom CG  type=CH2E   charge=-0.100 end
+    atom HG1 type=HA     charge= 0.000 end
+    atom HG2 type=HA     charge= 0.000 end
+    atom CD  type=C      charge= 0.700 end
+    atom OE1 type=OC     charge=-0.800 end
+    atom OE2 type=OC     charge=-0.800 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD
+  bond CD OE1
+  bond CD OE2
+  bond CA C
+  bond C  O
+
+  improper HA N  C   CB    !chirality CA
+  improper CD CG OE1 OE2
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+
+  dihedral CG  CB  CA  N
+  dihedral CD  CG  CB  CA
+  dihedral OE1 CD  CG  CB ! mult 2 ! UCL
+
+  DONO HN   N
+  ACCE OE1  CD
+  ACCE OE2  CD
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue GLH
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.000 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom CG  type=CH2E   charge= 0.000 end
+    atom HG1 type=HA     charge= 0.000 end
+    atom HG2 type=HA     charge= 0.000 end
+    atom CD  type=C      charge= 0.500 end
+    atom OE1 type=OC     charge=-0.500 end
+    atom OE2 type=OH1    charge=-0.450 end
+    atom HE2 type=H      charge= 0.450 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD
+  bond CD OE1
+  bond CD OE2    bond OE2 HE2
+  bond CA C
+  bond C  O
+
+  improper HA N  C   CB    !chirality CA
+  improper CD CG OE1 OE2
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+
+  dihedral CG  CB  CA  N
+  dihedral CD  CG  CB  CA
+  dihedral OE1 CD  CG  CB ! mult 2 ! UCL
+
+  DONO HN   N
+  DONO HE2  OE2
+  ACCE OE1  CD
+  ACCE OE2  CD
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue GLY
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH2G   charge= 0.200 end
+    atom HA1 type=HA     charge= 0.000 end
+    atom HA2 type=HA     charge= 0.000 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA1     bond CA HA2
+  bond CA C
+  bond C  O
+
+  DONO HN   N
+  ACCE O    C
+
+  improper HA1 HA2 N C  !stereo CA
+end
+
+!----------------------------------------------------------------------
+
+residue NEP
+  group
+    atom N   type=NH1     charge=-0.570 end
+    atom HN  type=H       charge= 0.370 end
+    atom CA  type=CH1E    charge= 0.200 end
+    atom HA  type=HA      charge= 0.000 end
+    atom CB  type=CH2E    charge= 0.000 end
+    atom HB1 type=HA      charge= 0.000 end
+    atom HB2 type=HA      charge= 0.000 end
+    atom CG  type=C5      charge= 0.330 end
+    atom ND1 type=NH1     charge=-0.540 end
+    atom HD1 type=H       charge= 0.460 end
+    atom CD2 type=CR1H    charge= 0.330 end
+    atom HD2 type=HA      charge= 0.000 end
+    atom CE1 type=CRHH    charge= 0.500 end
+    atom HE1 type=HA      charge= 0.000 end
+    atom NE2 type=NR      charge=-0.440 end
+    atom P   type=PP      charge= 0.520 end
+    atom O1P type=OP1     charge=-0.720 end
+    atom O2P type=OP1     charge=-0.720 end
+    atom O3P type=OR3     charge=-0.720 end
+    atom C   type=C       charge= 0.500 end
+    atom O   type=O       charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  ND1    bond ND1 HD1
+  bond ND1 CE1    bond CE1 HE1
+  bond CG  CD2    bond CD2 HD2
+  bond CD2 NE2    bond NE2 P  
+  bond CE1 NE2
+  bond P   O1P  
+  bond P   O2P    
+  bond P   O3P    
+  bond CA  C
+  bond C   O
+
+  improper HA  N   C   CB  !chirality CA
+  improper CG  CB  ND1 CD2
+  improper ND1 CE1 CG  HD1
+  improper CD2 NE2 CG  HD2
+  improper CE1 ND1 NE2 HE1
+  improper CG  ND1 CE1 NE2
+  improper ND1 CE1 NE2 CD2
+  improper CE1 NE2 CD2 CG
+  improper NE2 CD2 CG  ND1
+  improper CD2 CG  ND1 CE1
+  improper HB1 HB2 CA CG  !stereo CB
+  improper NE2   P     CD2   CE1  
+
+  dihedral CG  CB  CA  N
+  dihedral ND1 CG  CB  CA
+  dihedral CD2 CG  CB  CA
+  dihedral O3P P   NE2 CE1  
+
+  DONO HN   N
+  DONO HD1  ND1
+  DONO HE2  NE2
+  ACCE O    C
+  ACCE O1P  P
+  ACCE O2P  P
+  ACCE O3P  P
+end
+
+!----------------------------------------------------------------------
+
+residue HIS  ! doubly protonated HIS
+  group
+    atom N   type=NH1     charge=-0.570 end
+    atom HN  type=H       charge= 0.370 end
+    atom CA  type=CH1E    charge= 0.200 end
+    atom HA  type=HA      charge= 0.000 end
+    atom CB  type=CH2E    charge= 0.000 end
+    atom HB1 type=HA      charge= 0.000 end
+    atom HB2 type=HA      charge= 0.000 end
+    atom CG  type=C5      charge= 0.330 end
+    atom ND1 type=NH1     charge=-0.540 end
+    atom HD1 type=H       charge= 0.460 end
+    atom CD2 type=CR1H    charge= 0.330 end
+    atom HD2 type=HA      charge= 0.000 end
+    atom CE1 type=CRHH    charge= 0.500 end
+    atom HE1 type=HA      charge= 0.000 end
+    atom NE2 type=NH1     charge=-0.540 end
+    atom HE2 TYPE=H       charge= 0.460 end
+    atom C   type=C       charge= 0.500 end
+    atom O   type=O       charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  ND1    bond ND1 HD1
+  bond ND1 CE1    bond CE1 HE1
+  bond CG  CD2    bond CD2 HD2
+  bond CD2 NE2    bond NE2 HE2
+  bond CE1 NE2
+  bond CA  C
+  bond C   O
+
+  improper HA  N   C   CB  !chirality CA
+  improper CG  CB  ND1 CD2
+  improper NE2 CE1 CD2 HE2 ! added 1/10/2012 Pieter Hendrickx
+  improper ND1 CE1 CG  HD1
+  improper CD2 NE2 CG  HD2
+  improper CE1 ND1 NE2 HE1
+  improper CG  ND1 CE1 NE2
+  improper ND1 CE1 NE2 CD2
+  improper CE1 NE2 CD2 CG
+  improper NE2 CD2 CG  ND1
+  improper CD2 CG  ND1 CE1
+  improper HB1 HB2 CA CG  !stereo CB
+
+  dihedral CG  CB  CA  N
+  dihedral ND1 CG  CB  CA
+  dihedral CD2 CG  CB  CA ! UCL added 09-MAR-00
+
+  DONO HN   N
+  DONO HD1  ND1
+  DONO HE2  NE2
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue ILE
+  group
+    atom N    type=NH1     charge=-0.570 end
+    atom HN   type=H       charge= 0.370 end
+    atom CA   type=CH1E    charge= 0.200 end
+    atom HA   type=HA      charge= 0.000 end
+    atom CB   type=CH1E    charge= 0.000 end
+    atom HB   type=HA      charge= 0.000 end
+    atom CG1  type=CH2E    charge= 0.000 end
+    atom HG11 type=HA      charge= 0.000 excl = (HG21 HG22 HG23 HD11 HD12 HD13) end
+    atom HG12 type=HA      charge= 0.000 excl = (HG21 HG22 HG23 HD11 HD12 HD13) end
+    atom CG2  type=CH3E    charge= 0.000 end
+    atom HG21 type=HA      charge= 0.000 excl = (HG11 HG12 HD11 HD12 HD13) end
+    atom HG22 type=HA      charge= 0.000 excl = (HG11 HG12 HD11 HD12 HD13) end
+    atom HG23 type=HA      charge= 0.000 excl = (HG11 HG12 HD11 HD12 HD13) end
+    atom CD1  type=CH3E    charge= 0.000 end
+    atom HD11 type=HA      charge= 0.000 excl = (HG21 HG22 HG23 HG11 HG12) end
+    atom HD12 type=HA      charge= 0.000 excl = (HG21 HG22 HG23 HG11 HG12) end
+    atom HD13 type=HA      charge= 0.000 excl = (HG21 HG22 HG23 HG11 HG12) end
+    atom C    type=C       charge= 0.500 end
+    atom O    type=O       charge=-0.500 end
+  
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB
+  bond CB  CG1    bond CG1 HG11    bond CG1 HG12
+  bond CB  CG2    bond CG2 HG21    bond CG2 HG22    bond CG2 HG23
+  bond CG1 CD1    bond CD1 HD11    bond CD1 HD12    bond CD1 HD13
+  bond CA  C
+  bond C   O
+
+  improper HA N  C   CB   !chirality CA
+  improper HB CA CG2 CG1  !chirality CB
+  
+  improper HG11 HG12 CB CD1  !stereo CG1
+  improper HG21 HG22 CB HG23   !methyl CG2
+  improper HD11 HD12 CG1 HD13  !methyl CD1
+
+  dihedral CG1 CB  CA  N
+  dihedral CD1 CG1 CB  CA
+  dihedral HD11 CD1 CG1 CB   ! UCL methyl stagger 12-MAR-00 
+  dihedral HG21 CG2 CB  CA   ! UCL methyl stagger 12-MAR-00 
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue LEU
+  group
+    atom N    type=NH1    charge=-0.570 end
+    atom HN   type=H      charge= 0.370 end
+    atom CA   type=CH1E   charge= 0.200 end
+    atom HA   type=HA     charge= 0.000 end
+    atom CB   type=CH2E   charge= 0.000 end
+    atom HB1  type=HA     charge= 0.000 end
+    atom HB2  type=HA     charge= 0.000 end
+    atom CG   type=CH1E   charge= 0.000 end
+    atom HG   type=HA     charge= 0.000 end
+    atom CD1  type=CH3E   charge= 0.000 end
+    atom HD11 type=HA     charge= 0.000 excl = (HD21 HD22 HD23 HG) end
+    atom HD12 type=HA     charge= 0.000 excl = (HD21 HD22 HD23 HG) end
+    atom HD13 type=HA     charge= 0.000 excl = (HD21 HD22 HD23 HG) end
+    atom CD2  type=CH3E   charge= 0.000 end
+    atom HD21 type=HA     charge= 0.000 excl = (HD11 HD12 HD13 HG) end
+    atom HD22 type=HA     charge= 0.000 excl = (HD11 HD12 HD13 HG) end
+    atom HD23 type=HA     charge= 0.000 excl = (HD11 HD12 HD13 HG) end
+    atom C    type=C      charge= 0.500 end
+    atom O    type=O      charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG     bond CG  HG
+  bond CG  CD1    bond CD1 HD11    bond CD1 HD12    bond CD1 HD13
+  bond CG  CD2    bond CD2 HD21    bond CD2 HD22    bond CD2 HD23
+  bond CA  C
+  bond C   O
+
+  improper HA   N    C   CB    !chirality CA
+  improper HG   CB   CD1 CD2   !stereo CG
+  improper HB1 HB2 CA CG       !stereo CB
+  improper HD11 HD12 CG HD13   !methyl CD1
+  improper HD21 HD22 CG HD23   !methyl CD2
+    
+  dihedral CG  CB  CA  N
+  dihedral CD1 CG  CB  CA
+  dihedral HD11 CD1 CG  CB   ! UCL methyl stagger 12-MAR-00 
+  dihedral HD21 CD2 CG  CB   ! UCL methyl stagger 12-MAR-00 
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue LYS
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.000 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom CG  type=CH2E   charge= 0.000 end
+    atom HG1 type=HA     charge= 0.000 end
+    atom HG2 type=HA     charge= 0.000 end
+    atom CD  type=CH2E   charge= 0.000 end
+    atom HD1 type=HA     charge= 0.000 end
+    atom HD2 type=HA     charge= 0.000 end
+    atom CE  type=CH2E   charge= 0.310 end
+    atom HE1 type=HA     charge= 0.000 end
+    atom HE2 type=HA     charge= 0.000 end
+    atom NZ  type=NH3    charge=-0.300 end
+    atom HZ1 type=HC     charge= 0.330 end
+    atom HZ2 type=HC     charge= 0.330 end
+    atom HZ3 type=HC     charge= 0.330 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD CE     bond CE HE1     bond CE HE2
+  bond CE NZ     bond NZ HZ1     bond NZ HZ2     bond NZ HZ3
+  bond CA C
+  bond C  O
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+  improper HD1 HD2 CG CE  !stereo CD
+  improper HE1 HE2 CD NZ  !stereo CE
+  improper HZ1 HZ2 CE HZ3 !methyl NZ
+
+  dihedral CG  CB  CA  N
+  dihedral CD  CG  CB  CA
+  dihedral CE  CD  CG  CB
+  dihedral NZ  CE  CD  CG
+  dihedral HZ1 NZ  CE  CD ! UCL stagger NH3 group 12-MAR-00
+
+  DONO HN   N
+  DONO HZ1  NZ
+  DONO HZ2  NZ
+  DONO HZ3  NZ
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue HLY ! hydroxyproline
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.000 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom CG  type=CH2E   charge= 0.000 end
+    atom HG1 type=HA     charge= 0.000 end
+    atom HG2 type=HA     charge= 0.000 end
+    atom CD  type=CH2E   charge= 0.000 end
+    atom HD1 type=HA     charge= 0.000 end
+    atom HD2 type=HA     charge= 0.000 end
+    atom CE  type=CH1E   charge= 0.475 end
+    atom HE1 type=HA     charge= 0.000 end
+    atom OZ  type=OH1    charge=-0.600 end
+    atom HOZ type=H      charge= 0.435 end
+    atom NZ  type=NH3    charge=-0.300 end
+    atom HZ1 type=HC     charge= 0.330 end
+    atom HZ2 type=HC     charge= 0.330 end
+    atom HZ3 type=HC     charge= 0.330 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD CE     bond CE HE1     bond CE OZ     bond OZ HOZ
+  bond CE NZ     bond NZ HZ1     bond NZ HZ2    bond NZ HZ3
+  bond CA C
+  bond C  O
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+  improper HD1 HD2 CG CE  !stereo CD
+  improper HE1 OZ  CD NZ  !stereo CE
+  improper HZ1 HZ2 CE HZ3 !methyl NZ
+
+  dihedral CG  CB  CA  N
+  dihedral CD  CG  CB  CA
+  dihedral CE  CD  CG  CB
+  dihedral NZ  CE  CD  CG
+  dihedral OZ  CE  CD  CG
+
+  DONO HN   N
+  DONO HZ1  NZ
+  DONO HZ2  NZ
+  DONO HZ3  NZ
+  DONO HOZ  OZ
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue ALY
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.000 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom CG  type=CH2E   charge= 0.000 end
+    atom HG1 type=HA     charge= 0.000 end
+    atom HG2 type=HA     charge= 0.000 end
+    atom CD  type=CH2E   charge= 0.000 end
+    atom HD1 type=HA     charge= 0.000 end
+    atom HD2 type=HA     charge= 0.000 end
+    atom CE  type=CH2E   charge= 0.200 end
+    atom HE1 type=HA     charge= 0.000 end
+    atom HE2 type=HA     charge= 0.000 end
+    atom NZ  type=NH1    charge=-0.570 end
+    atom HZ1 type=H      charge= 0.370 end
+    atom CZ  type=C      charge= 0.500 end
+    atom OZ  type=O      charge=-0.500 end
+    atom CM  type=CH3E   charge= 0.000 end
+    atom HM1 type=HA     charge= 0.000 end
+    atom HM2 type=HA     charge= 0.000 end
+    atom HM3 type=HA     charge= 0.000 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD CE     bond CE HE1     bond CE HE2
+  bond CE NZ     bond NZ HZ1     bond NZ CZ     bond CZ OZ   bond CZ CM
+  bond CM HM1    bond CM HM2     bond CM HM3
+  bond CA C
+  bond C  O
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+  improper HD1 HD2 CG CE  !stereo CD
+  improper HE1 HE2 CD NZ  !stereo CE
+  improper HM1 HM2 CZ HM3 !methyl CM
+  improper CZ  CM  NZ OZ  !planar CZ
+  improper NZ  CZ  CM HZ1 !planar NZ
+  improper CE  NZ  CZ CM  !side-chain peptide plane
+
+  dihedral CG  CB  CA  N
+  dihedral CD  CG  CB  CA
+  dihedral CE  CD  CG  CB
+  dihedral NZ  CE  CD  CG
+  dihedral HZ1 NZ  CE  CD ! UCL stagger NH3 group 12-MAR-00
+!  dihedral CE  NZ  CZ  OZ
+
+  DONO HN   N
+  DONO HZ1  NZ
+  ACCE O    C
+  ACCE OZ   CZ
+end
+
+!----------------------------------------------------------------------
+
+residue MLZ ! monomethyl lysine, added 30-04-2009 A. Bonvin
+  group
+    atom N    type=NH1   charge=-0.570 end
+    atom HN   type=H     charge= 0.370 end
+    atom CA   type=CH1E  charge= 0.200 end
+    atom HA   type=HA    charge= 0.000 end
+    atom CB   type=CH2E  charge= 0.000 end
+    atom HB1  type=HA    charge= 0.000 end
+    atom HB2  type=HA    charge= 0.000 end
+    atom CG   type=CH2E  charge= 0.000 end
+    atom HG1  type=HA    charge= 0.000 end
+    atom HG2  type=HA    charge= 0.000 end
+    atom CD   type=CH2E  charge= 0.000 end
+    atom HD1  type=HA    charge= 0.000 end
+    atom HD2  type=HA    charge= 0.000 end
+    atom CE   type=CH2E  charge=-0.157 end
+    atom HE1  type=HA    charge= 0.250 end
+    atom HE2  type=HA    charge= 0.250 end
+    atom NZ   type=NC2   charge=-0.400 end
+    atom HZ1  type=HC    charge= 0.320 end
+    atom HZ2  type=HC    charge= 0.320 end
+    atom CM3  type=CH3E  charge=-0.333 end
+    atom HM31 type=HA    charge= 0.250 end
+    atom HM32 type=HA    charge= 0.250 end
+    atom HM33 type=HA    charge= 0.250 end
+    atom C    type=C     charge= 0.500 end
+    atom O    type=O     charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD CE     bond CE HE1     bond CE HE2
+  bond CE NZ     bond NZ HZ1     bond NZ HZ2     bond NZ CM3
+  bond CM3 HM31  bond CM3 HM32   bond CM3 HM33
+  bond CA C
+  bond C  O
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue MLY ! Dimethyl lysine, added 30-04-2009 A. Bonvin
+  group
+    atom N    type=NH1   charge=-0.570 end
+    atom HN   type=H     charge= 0.370 end
+    atom CA   type=CH1E  charge= 0.200 end
+    atom HA   type=HA    charge= 0.000 end
+    atom CB   type=CH2E  charge= 0.000 end
+    atom HB1  type=HA    charge= 0.000 end
+    atom HB2  type=HA    charge= 0.000 end
+    atom CG   type=CH2E  charge= 0.000 end
+    atom HG1  type=HA    charge= 0.000 end
+    atom HG2  type=HA    charge= 0.000 end
+    atom CD   type=CH2E  charge= 0.000 end
+    atom HD1  type=HA    charge= 0.000 end
+    atom HD2  type=HA    charge= 0.000 end
+    atom CE   type=CH2E  charge=-0.154 end
+    atom HE1  type=HA    charge= 0.250 end
+    atom HE2  type=HA    charge= 0.250 end
+    atom NZ   type=NC3   charge=-0.510 end
+    atom HZ1  type=HC    charge= 0.330 end
+    atom CM2  type=CH3E  charge=-0.333 end
+    atom HM21 type=HA    charge= 0.250 end
+    atom HM22 type=HA    charge= 0.250 end
+    atom HM23 type=HA    charge= 0.250 end
+    atom CM3  type=CH3E  charge=-0.333 end
+    atom HM31 type=HA    charge= 0.250 end
+    atom HM32 type=HA    charge= 0.250 end
+    atom HM33 type=HA    charge= 0.250 end
+    atom C    type=C     charge= 0.500 end
+    atom O    type=O     charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD CE     bond CE HE1     bond CE HE2
+  bond CE NZ     bond NZ HZ1     bond NZ CM2     bond NZ CM3
+  bond CM2 HM21  bond CM2 HM22   bond CM2 HM23
+  bond CM3 HM31  bond CM3 HM32   bond CM3 HM33
+  bond CA C
+  bond C  O
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue M3L ! trimethyl lysine
+  group
+    atom N    type=NH1   charge=-0.570 end
+    atom HN   type=H     charge= 0.370 end
+    atom CA   type=CH1E  charge= 0.200 end
+    atom HA   type=HA    charge= 0.000 end
+    atom CB   type=CH2E  charge= 0.000 end
+    atom HB1  type=HA    charge= 0.000 end
+    atom HB2  type=HA    charge= 0.000 end
+    atom CG   type=CH2E  charge= 0.000 end
+    atom HG1  type=HA    charge= 0.000 end
+    atom HG2  type=HA    charge= 0.000 end
+    atom CD   type=CH2E  charge= 0.000 end
+    atom HD1  type=HA    charge= 0.000 end
+    atom HD2  type=HA    charge= 0.000 end
+    atom CE   type=CH2E  charge=-0.151 end
+    atom HE1  type=HA    charge= 0.250 end
+    atom HE2  type=HA    charge= 0.250 end
+    atom NZ   type=NC4   charge=-0.600 end
+    atom CM1  type=CH3E  charge=-0.333 end
+    atom HM11 type=HA    charge= 0.250 end
+    atom HM12 type=HA    charge= 0.250 end
+    atom HM13 type=HA    charge= 0.250 end
+    atom CM2  type=CH3E  charge=-0.333 end
+    atom HM21 type=HA    charge= 0.250 end
+    atom HM22 type=HA    charge= 0.250 end
+    atom HM23 type=HA    charge= 0.250 end
+    atom CM3  type=CH3E  charge=-0.333 end
+    atom HM31 type=HA    charge= 0.250 end
+    atom HM32 type=HA    charge= 0.250 end
+    atom HM33 type=HA    charge= 0.250 end
+    atom C    type=C     charge= 0.500 end
+    atom O    type=O     charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD CE     bond CE HE1     bond CE HE2
+  bond CE NZ     bond NZ CM1     bond NZ CM2     bond NZ CM3
+  bond CM1 HM11  bond CM1 HM12   bond CM1 HM13
+  bond CM2 HM21  bond CM2 HM22   bond CM2 HM23
+  bond CM3 HM31  bond CM3 HM32   bond CM3 HM33
+  bond CA C
+  bond C  O
+
+!  improper HA N C CB         !chirality CA
+!  improper HB1 HB2 CA CG     !stereo CB
+!  improper HG1 HG2 CB CD     !stereo CG
+!  improper HD1 HD2 CG CE     !stereo CD
+!  improper HE1 HE2 CD NZ     !stereo CE
+!  improper CM1 CM2 CE CM3    !methyl NZ
+!  improper HM11 HM12 NZ HM13 !methyl CM1
+!  improper HM21 HM22 NZ HM23 !methyl CM1
+!  improper HM31 HM32 NZ HM33 !methyl CM1
+
+!  dihedral CG  CB  CA  N
+!  dihedral CD  CG  CB  CA
+!  dihedral CE  CD  CG  CB
+!  dihedral NZ  CE  CD  CG
+!  dihedral CM1 NZ  CE  CD ! UCL stagger NH3 group 12-MAR-00
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue MET
+  group
+    atom N   type=NH1     charge=-0.570 end
+    atom HN  type=H       charge= 0.370 end
+    atom CA  type=CH1E    charge= 0.200 end
+    atom HA  type=HA      charge= 0.000 end
+    atom CB  type=CH2E    charge=-0.000 end
+    atom HB1 type=HA      charge= 0.000 end
+    atom HB2 type=HA      charge= 0.000 end
+    atom CG  type=CH2E    charge= 0.235 end
+    atom HG1 type=HA      charge= 0.000 end
+    atom HG2 type=HA      charge= 0.000 end
+    atom SD  type=SM      charge=-0.470 end
+    atom CE  type=CH3E    charge= 0.235 end
+    atom HE1 type=HA      charge= 0.000 end
+    atom HE2 type=HA      charge= 0.000 end
+    atom HE3 type=HA      charge= 0.000 end
+    atom C   type=C       charge= 0.500 end
+    atom O   type=O       charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG SD
+  bond SD CE     bond CE HE1     bond CE HE2     bond CE HE3
+  bond CA C
+  bond C  O
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB SD  !stereo CG
+  improper HE1 HE2 SD HE3 !methyl CE
+
+  dihedral CG  CB  CA  N
+  dihedral SD  CG  CB  CA
+  dihedral CE  SD  CG  CB
+  dihedral HE1 CE  SD  CG ! UCL methyl stagger 12-MAR-00
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue MSE ! SeMET ! added 8-19-2011, ATB
+  group
+    atom N   type=NH1     charge=-0.570 end
+    atom HN  type=H       charge= 0.370 end
+    atom CA  type=CH1E    charge= 0.200 end
+    atom HA  type=HA      charge= 0.000 end
+    atom CB  type=CH2E    charge=-0.000 end
+    atom HB1 type=HA      charge= 0.000 end
+    atom HB2 type=HA      charge= 0.000 end
+    atom CG  type=CH2E    charge= 0.235 end
+    atom HG1 type=HA      charge= 0.000 end
+    atom HG2 type=HA      charge= 0.000 end
+    atom SE  type=SE      charge=-0.470 end
+    atom CE  type=CH3E    charge= 0.235 end
+    atom HE1 type=HA      charge= 0.000 end
+    atom HE2 type=HA      charge= 0.000 end
+    atom HE3 type=HA      charge= 0.000 end
+    atom C   type=C       charge= 0.500 end
+    atom O   type=O       charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG SE
+  bond SE CE     bond CE HE1     bond CE HE2     bond CE HE3
+  bond CA C
+  bond C  O
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB SE  !stereo CG
+  improper HE1 HE2 SE HE3 !methyl CE
+
+  dihedral CG  CB  CA  N
+  dihedral SE  CG  CB  CA
+  dihedral CE  SE  CG  CB
+  dihedral HE1 CE  SE  CG ! UCL methyl stagger 12-MAR-00
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue PHE
+  group
+    atom N   type=NH1     charge=-0.570 end
+    atom HN  type=H       charge= 0.370 end
+    atom CA  type=CH1E    charge= 0.200 end
+    atom HA  type=HA      charge= 0.000 end
+    atom CB  type=CH2E    charge= 0.000 end
+    atom HB1 type=HA      charge= 0.000 end
+    atom HB2 type=HA      charge= 0.000 end
+    atom CG  type=CF      charge= 0.000 exclude=(CZ) end
+    atom CD1 type=CR1E    charge= 0.000 exclude=(CE2) end
+    atom HD1 type=HA      charge= 0.000 end
+    atom CD2 type=CR1E    charge= 0.000 exclude=(CE1) end
+    atom HD2 type=HA      charge= 0.000 end
+    atom CE1 type=CR1E    charge= 0.000 exclude=(CD2) end
+    atom HE1 type=HA      charge= 0.000 end
+    atom CE2 type=CR1E    charge= 0.000 exclude=(CD1) end
+    atom HE2 type=HA      charge= 0.000 end
+    atom CZ  type=CR1E    charge= 0.000 exclude=(CG) end
+    atom HZ  type=HA      charge= 0.000 end
+    atom C   type=C       charge= 0.500 end
+    atom O   type=O       charge=-0.500 end
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  CD1    bond CD1 HD1
+  bond CG  CD2    bond CD2 HD2
+  bond CD1 CE1    bond CE1 HE1
+  bond CD2 CE2    bond CE2 HE2
+  bond CE1 CZ     bond CZ  HZ
+  bond CE2 CZ
+  bond CA  C
+  bond C   O
+
+  improper HA  N   C   CB !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+
+! Hs and CB around the ring
+  improper HD2 CD2 CE2 CZ
+  improper HE2 CE2 CZ  CE1
+  improper HZ  CZ  CE1 CD1
+  improper HE1 CE1 CD1 CG
+  improper HD1 CD1 CG  CD2
+  improper CB  CG  CD2 CE2
+
+! around the ring
+  improper CG  CD1 CE1 CZ 
+  improper CD1 CE1 CZ  CE2
+  improper CE1 CZ  CE2 CD2
+  improper CZ  CE2 CD2 CG
+  improper CE2 CD2 CG  CD1
+  improper CD2 CG  CD1 CE1
+
+  dihedral CG  CB  CA  N
+  dihedral CD1 CG  CB  CA
+
+  DONO HN   N
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue PRO
+  group
+    atom N   type=N     charge=-0.570 end
+    atom CA  type=CH1E  charge= 0.285 end
+    atom HA  type=HA    charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA    charge= 0.000 end
+    atom HB2 type=HA    charge= 0.000 end
+    atom CG  type=CH2P  charge= 0.000 end
+    atom HG1 type=HA    charge= 0.000 end
+    atom HG2 type=HA    charge= 0.000 end
+    atom CD  type=CH2P  charge= 0.285 end
+    atom HD1 type=HA    charge= 0.000 end   
+    atom HD2 type=HA    charge= 0.000 end   
+    atom C   type=C     charge= 0.500 end   
+    atom O   type=O     charge=-0.500 end
+
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG HG1     bond CG HG2
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD N
+  bond CA C
+  bond C  O
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG1 HG2 CB CD  !stereo CG
+  improper HD1 HD2 CG N   !stereo CD
+
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue HYP  ! 4R-hydroxyproline
+  group
+    atom N   type=N     charge=-0.570 end
+    atom CA  type=CH1E  charge= 0.285 end
+    atom HA  type=HA    charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA    charge= 0.000 end
+    atom HB2 type=HA    charge= 0.000 end
+    atom CG  type=CH1P  charge= 0.485 end
+    atom OG1 type=OH1   charge=-0.700 end   
+    atom HG1 type=H     charge= 0.500 end   
+    atom HG2 type=HA    charge= 0.000 end   
+    atom CD  type=CH2P  charge= 0.000 end
+    atom HD1 type=HA    charge= 0.000 end
+    atom HD2 type=HA    charge= 0.000 end
+    atom C   type=C     charge= 0.500 end   
+    atom O   type=O     charge=-0.500 end
+
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG OG1     bond CG HG2
+  bond OG1 HG1
+  bond CG CD     bond CD HD1     bond CD HD2
+  bond CD N
+  bond CA C
+  bond C  O
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper OG1 HG2 CB CD  !stereo CG
+  improper HD1 HD2 CG N   !stereo CD
+
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue SER
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.265 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom OG  type=OH1    charge=-0.700 end
+    atom HG  type=H      charge= 0.435 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB OG     bond OG HG
+  bond O  C
+  bond C  CA
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA OG  !stereo CB
+
+  dihedral OG  CB  CA  N
+
+  DONO HN   N
+  DONO HG   OG
+  ACCE OG  " "
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue SEP !phosphorylated Serine, AB-2008-11
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.265 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom OG  type=OHP    charge=-0.625 end
+    atom P   type=PP     charge= 0.520 end
+    atom O1P type=OP1    charge=-0.720 end
+    atom O2P type=OP1    charge=-0.720 end
+    atom O3P type=OR3    charge=-0.720 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB OG     bond OG  P
+  bond P   O1P
+  bond P   O2P
+  bond P   O3P
+  bond O  C
+  bond C  CA
+
+  angle CB OG P
+  angle OG P O3P
+  angle O3P P O1P
+  angle O3P P O2P
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA OG  !stereo CB
+
+  dihedral OG  CB  CA  N
+  dihedral CB  OG  P   O3P
+
+  DONO HN   N
+  DONO HG   OG
+  ACCE OG  " "
+  ACCE O    C
+  ACCE O1P  P
+  ACCE O2P  P
+  ACCE O3P  P
+end
+
+!----------------------------------------------------------------------
+
+residue PNS !phosphopanthetine Serine, ANGGAL-2016-02
+  group
+    atom N   type=NH1    charge=-0.570 end
+    atom HN  type=H      charge= 0.370 end
+    atom CA  type=CH1E   charge= 0.200 end
+    atom HA  type=HA     charge= 0.000 end
+    atom CB  type=CH2E   charge= 0.265 end
+    atom HB1 type=HA     charge= 0.000 end
+    atom HB2 type=HA     charge= 0.000 end
+    atom OG  type=OHP    charge=-0.118 end
+    atom P   type=PP     charge= 0.722 end
+    atom O1P type=OP1    charge=-0.364 end
+    atom O2P type=OP1    charge=-0.364 end
+    atom O3P type=OR3    charge=-0.117 end
+    atom C   type=C      charge= 0.500 end
+    atom O   type=O      charge=-0.500 end
+    ATOM C28 TYPE=CD28   CHARGE= 0.070 END
+    ATOM H28 TYPE=HD28   CHARGE=-0.013 END
+    ATOM H29 TYPE=HD29   CHARGE=-0.013 END
+    ATOM C29 TYPE=CD29   CHARGE= 0.087 END
+    ATOM C30 TYPE=CD30   CHARGE= 0.069 END
+    ATOM H31 TYPE=HD31   CHARGE=-0.013 END
+    ATOM H32 TYPE=HD32   CHARGE=-0.012 END
+    ATOM H30 TYPE=HD30   CHARGE=-0.013 END
+    ATOM C31 TYPE=CD31   CHARGE= 0.069 END
+    ATOM H34 TYPE=HD34   CHARGE=-0.013 END
+    ATOM H35 TYPE=HD35   CHARGE=-0.013 END
+    ATOM H33 TYPE=HD33   CHARGE=-0.013 END
+    ATOM C32 TYPE=CD32   CHARGE= 0.088 END
+    ATOM H36 TYPE=HD36   CHARGE=-0.013 END
+    ATOM O33 TYPE=OD33   CHARGE=-0.124 END
+    ATOM H46 TYPE=HD46   CHARGE= 0.019 END
+    ATOM C34 TYPE=CD34   CHARGE= 0.208 END
+    ATOM O35 TYPE=OD35   CHARGE=-0.430 END
+    ATOM N36 TYPE=ND36   CHARGE= 0.070 END
+    ATOM H48 TYPE=HD48   CHARGE=-0.008 END
+    ATOM C37 TYPE=CD37   CHARGE= 0.070 END
+    ATOM H37 TYPE=HD37   CHARGE=-0.012 END
+    ATOM H38 TYPE=HD38   CHARGE=-0.013 END
+    ATOM C38 TYPE=CD38   CHARGE= 0.070 END
+    ATOM H39 TYPE=HD39   CHARGE=-0.013 END
+    ATOM H4A TYPE=HD4A   CHARGE=-0.013 END
+    ATOM C39 TYPE=CD39   CHARGE= 0.208 END
+    ATOM O40 TYPE=OD40   CHARGE=-0.431 END
+    ATOM N41 TYPE=ND41   CHARGE= 0.070 END
+    ATOM H41 TYPE=HD41   CHARGE=-0.008 END
+    ATOM C42 TYPE=CD42   CHARGE= 0.070 END
+    ATOM H42 TYPE=HD42   CHARGE=-0.013 END
+    ATOM H43 TYPE=HD43   CHARGE=-0.013 END
+    ATOM C43 TYPE=CD43   CHARGE= 0.070 END
+    ATOM H44 TYPE=HD44   CHARGE=-0.013 END
+    ATOM H45 TYPE=HD45   CHARGE=-0.013 END
+    ATOM S44 TYPE=SD44   CHARGE= 0.031 END
+    ATOM H47 TYPE=HD47   CHARGE=-0.046 END
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB OG     bond OG  P
+  bond P   O1P
+  bond P   O2P
+  bond P   O3P
+  bond O  C
+  bond C  CA
+  BOND C28  O3P
+  BOND C28  H28
+  BOND C28  H29
+  BOND C29  C28
+  BOND C29  C30
+  BOND C29  C31
+  BOND C29  C32
+  BOND C30  H31
+  BOND C30  H32
+  BOND C30  H30
+  BOND C31  H34
+  BOND C31  H35
+  BOND C31  H33
+  BOND C32  H36
+  BOND C32  O33
+  BOND C32  C34
+  BOND O33  H46
+  BOND C34  O35
+  BOND C34  N36
+  BOND N36  H48
+  BOND C37  N36
+  BOND C37  H37
+  BOND C37  H38
+  BOND C37  C38
+  BOND C38  H39
+  BOND C38  H4A
+  BOND C39  C38
+  BOND C39  O40
+  BOND C39  N41
+  BOND N41  H41
+  BOND C42  N41
+  BOND C42  H42
+  BOND C42  H43
+  BOND C42  C43
+  BOND C43  H44
+  BOND C43  H45
+  BOND C43  S44
+  BOND S44  H47
+
+
+  angle CB OG P
+  angle OG P O3P
+  angle O3P P O1P
+  angle O3P P O2P
+  ANGLE P24  O27  C28
+  ANGLE O27  C28  H28
+  ANGLE O27  C28  H29
+  ANGLE O27  C28  C29
+  ANGLE H28  C28  H29
+  ANGLE H28  C28  C29
+  ANGLE H29  C28  C29
+  ANGLE C28  C29  C30
+  ANGLE C28  C29  C31
+  ANGLE C28  C29  C32
+  ANGLE C30  C29  C31
+  ANGLE C30  C29  C32
+  ANGLE C31  C29  C32
+  ANGLE C29  C30  H31
+  ANGLE C29  C30  H32
+  ANGLE C29  C30  H30
+  ANGLE H31  C30  H32
+  ANGLE H31  C30  H30
+  ANGLE H32  C30  H30
+  ANGLE C29  C31  H34
+  ANGLE C29  C31  H35
+  ANGLE C29  C31  H33
+  ANGLE H34  C31  H35
+  ANGLE H34  C31  H33
+  ANGLE H35  C31  H33
+  ANGLE C29  C32  H36
+  ANGLE C29  C32  O33
+  ANGLE C29  C32  C34
+  ANGLE H36  C32  O33
+  ANGLE H36  C32  C34
+  ANGLE O33  C32  C34
+  ANGLE C32  O33  H46
+  ANGLE C32  C34  O35
+  ANGLE C32  C34  N36
+  ANGLE O35  C34  N36
+  ANGLE C34  N36  H48
+  ANGLE C34  N36  C37
+  ANGLE H48  N36  C37
+  ANGLE N36  C37  H37
+  ANGLE N36  C37  H38
+  ANGLE N36  C37  C38
+  ANGLE H37  C37  H38
+  ANGLE H37  C37  C38
+  ANGLE H38  C37  C38
+  ANGLE C37  C38  H39
+  ANGLE C37  C38  H4A
+  ANGLE C37  C38  C39
+  ANGLE H39  C38  H4A
+  ANGLE H39  C38  C39
+  ANGLE H4A  C38  C39
+  ANGLE C38  C39  O40
+  ANGLE C38  C39  N41
+  ANGLE O40  C39  N41
+  ANGLE C39  N41  H41
+  ANGLE C39  N41  C42
+  ANGLE H41  N41  C42
+  ANGLE N41  C42  H42
+  ANGLE N41  C42  H43
+  ANGLE N41  C42  C43
+  ANGLE H42  C42  H43
+  ANGLE H42  C42  C43
+  ANGLE H43  C42  C43
+  ANGLE C42  C43  H44
+  ANGLE C42  C43  H45
+  ANGLE C42  C43  S44
+  ANGLE H44  C43  H45
+  ANGLE H44  C43  S44
+  ANGLE H45  C43  S44
+  ANGLE C43  S44  H47
+
+  improper HA N C CB      !chirality CA
+  improper HB1 HB2 CA OG  !stereo CB
+  IMPROPER C28  O3P  H28  H29
+  IMPROPER C29  C28  C30  C31
+  IMPROPER C30  C29  H31  H32
+  IMPROPER C31  C29  H34  H35
+  IMPROPER C32  C29  C34  O33
+  IMPROPER C34  C32  O35  N36
+  IMPROPER N36  C34  H48  C37
+  IMPROPER C37  N36  H37  H38
+  IMPROPER C38  C37  H39  H4A
+  IMPROPER C39  C38  O40  N41
+  IMPROPER N41  C39  H41  C42
+  IMPROPER C42  N41  H42  H43
+  IMPROPER C43  C42  H44  H45
+
+  dihedral OG  CB  CA  N
+  dihedral CB  OG  P   O3P
+  DIHEDRAL C28  O27  P24  OG
+  DIHEDRAL C29  C28  O27  P24
+  DIHEDRAL C32  C29  C28  O27
+  DIHEDRAL H30  C30  C29  C28
+  DIHEDRAL H33  C31  C29  C28
+  DIHEDRAL C34  C32  C29  C28
+  DIHEDRAL C29  C32  O33  H46
+  DIHEDRAL C29  C32  C34  N36
+  DIHEDRAL C32  C34  N36  C37
+  DIHEDRAL C38  C37  N36  C34
+  DIHEDRAL C39  C38  C37  N36
+  DIHEDRAL C37  C38  C39  N41
+  DIHEDRAL C38  C39  N41  C42
+  DIHEDRAL C43  C42  N41  C39
+  DIHEDRAL S44  C43  C42  N41
+  DIHEDRAL C42  C43  S44  H47
+  
+  DONO HN   N
+  DONO HG   OG
+  ACCE OG  " "
+  ACCE O    C
+  ACCE O1P  P
+  ACCE O2P  P
+end
+
+
+residue THR
+  group
+    atom N    type=NH1 charge=-0.570 end
+    atom HN   type=H   charge= 0.370 end
+    atom CA   type=CH1E  charge= 0.200 end
+    atom HA   type=HA  charge= 0.000 end
+    atom CB   type=CH1E  charge= 0.265 end
+    atom HB   type=HA  charge= 0.000 end
+    atom OG1  type=OH1  charge=-0.700 end
+    atom HG1  type=H   charge= 0.435 end
+    atom CG2  type=CH3E  charge=-0.000 end
+    atom HG21 type=HA  charge= 0.000 end
+    atom HG22 type=HA  charge= 0.000 end
+    atom HG23 type=HA  charge= 0.000 end
+    atom C    type=C   charge= 0.500 end
+    atom O    type=O   charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB
+  bond CB OG1    bond OG1 HG1
+  bond CB CG2    bond CG2 HG21    bond CG2 HG22    bond CG2 HG23
+  bond CA C
+  bond C  O
+
+  improper HA N  C   CB        !chirality CA
+  improper HB CA OG1 CG2       !stereo CB
+  improper HG21 HG22 CB HG23   !methyl CG2
+
+  dihedral OG1 CB  CA  N
+  dihedral HG21 CG2 CB  CA   ! UCL methyl stagger 12-MAR-00 
+
+  DONO HN   N
+  DONO HG1  OG1
+  ACCE OG1 " "
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue TOP
+  group
+    atom N    type=NH1 charge=-0.570 end
+    atom HN   type=H   charge= 0.370 end
+    atom CA   type=CH1E  charge= 0.200 end
+    atom HA   type=HA  charge= 0.000 end
+    atom CB   type=CH1E  charge= 0.265 end
+    atom HB   type=HA  charge= 0.000 end
+    atom OG1  type=OHP    charge=-0.625 end
+    atom P    type=PP     charge= 0.520 end
+    atom O1P  type=OP1    charge=-0.720 end
+    atom O2P  type=OP1    charge=-0.720 end
+    atom O3P  type=OR3    charge=-0.720 end
+    atom CG2  type=CH3E  charge=-0.000 end
+    atom HG21 type=HA  charge= 0.000 end
+    atom HG22 type=HA  charge= 0.000 end
+    atom HG23 type=HA  charge= 0.000 end
+    atom C    type=C   charge= 0.500 end
+    atom O    type=O   charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB
+  bond CB OG1    bond OG1 P
+  bond P   O1P
+  bond P   O2P
+  bond P   O3P
+
+  bond CB CG2    bond CG2 HG21    bond CG2 HG22    bond CG2 HG23
+  bond CA C
+  bond C  O
+
+  angle CB OG P
+  angle OG P O3P
+  angle O3P P O1P
+  angle O3P P O2P
+
+  improper HA N  C   CB        !chirality CA
+  improper HB CA OG1 CG2       !stereo CB
+  improper HG21 HG22 CB HG23   !methyl CG2
+
+  dihedral OG1 CB  CA  N
+  dihedral CB  OG1 P   O3P
+  dihedral HG21 CG2 CB  CA   ! UCL methyl stagger 12-MAR-00 
+
+  DONO HN   N
+  DONO HG1  OG1
+  ACCE OG1 " "
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue TRP
+  group
+    atom N   type=NH1 charge=-0.570 end
+    atom HN  type=H   charge= 0.370 end
+    atom CA  type=CH1E  charge= 0.200 end
+    atom HA  type=HA  charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA  charge= 0.000 end
+    atom HB2 type=HA  charge= 0.000 end
+    atom CG  type=C5W  charge=-0.055 end
+    atom CD1 type=CR1E  charge= 0.130 end
+    atom HD1 type=HA  charge= 0.000 end
+    atom CD2 type=CW  charge=-0.055 exclude=(CH2) end
+    atom NE1 type=NH1 charge=-0.570 end
+    atom HE1 type=H   charge= 0.420 end
+    atom CE2 type=CW  charge= 0.130 exclude=(CZ3) end
+    atom CE3 type=CR1E  charge= 0.000 exclude=(CZ2) end
+    atom HE3 type=HA  charge= 0.000 end
+    atom CZ2 type=CR1W charge= 0.000 exclude=(CE3) end
+    atom HZ2 type=HA  charge= 0.000 end
+    atom CZ3 type=CR1E  charge= 0.000 exclude=(CE2) end
+    atom HZ3 type=HA  charge= 0.000 end
+    atom CH2 type=CR1W charge= 0.000 exclude=(CD2) end
+    atom HH2 type=HA  charge= 0.000 end
+    atom C   type=C   charge= 0.500 end
+    atom O   type=O   charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  CD1    bond CD1 HD1
+  bond CG  CD2
+  bond CD1 NE1    bond NE1 HE1
+  bond NE1 CE2
+  bond CD2 CE2
+  bond CD2 CE3    bond CE3 HE3
+  bond CE2 CZ2    bond CZ2 HZ2
+  bond CE3 CZ3    bond CZ3 HZ3
+  bond CZ2 CH2    bond CH2 HH2
+  bond CZ3 CH2
+  bond CA  C
+  bond C   O
+
+! chirality
+  improper HA  N   C   CB !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+
+! around the 6-ring
+  improper CD2 CE2 CZ2 CH2
+  improper CE2 CZ2 CH2 CZ3
+  improper CZ2 CH2 CZ3 CE3
+  improper CH2 CZ3 CE3 CD2
+  improper CZ3 CE3 CD2 CE2
+  improper CE3 CD2 CE2 CZ2
+
+! link 5-ring to 6-ring
+  improper CD1 NE1 CE2 CZ2
+  improper CD1 CG  CD2 CE3
+  improper NE1 CE2 CZ2 CH2
+  improper NE1 CE2 CD2 CE3
+  improper CG  CD2 CE3 CZ3
+  improper CG  CD2 CE2 CZ2
+
+! 6-ring hydrogens
+  improper HZ2 CZ2 CH2 CZ3
+  improper HH2 CH2 CZ3 CE3
+  improper HZ3 CZ3 CH2 CZ2
+  improper HE3 CE3 CZ3 CH2
+
+! 5-ring hydrogens and CB
+  improper HE1 NE1 CE2 CD2
+  improper HD1 CD1 NE1 CE2
+  improper CB  CG  CD2 CE2
+
+  dihedral CG  CB  CA  N
+  dihedral CD1 CG  CB  CA
+
+  DONO HN   N
+  DONO HE1  NE1
+  ACCE O    C
+end
+
+residue TYR
+  group
+    atom N   type=NH1 charge=-0.570 end
+    atom HN  type=H   charge= 0.370 end
+    atom CA  type=CH1E  charge= 0.200 end
+    atom HA  type=HA  charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA  charge= 0.000 end
+    atom HB2 type=HA  charge= 0.000 end
+    atom CG  type=CY  charge= 0.000 exclude=(CZ) end
+    atom CD1 type=CR1E  charge= 0.000 exclude=(CE2) end
+    atom HD1 type=HA  charge= 0.000 end
+    atom CD2 type=CR1E  charge= 0.000 exclude=(CE1) end
+    atom HD2 type=HA  charge= 0.000 end
+    atom CE1 type=CR1E  charge= 0.000 exclude=(CD2) end
+    atom HE1 type=HA  charge= 0.000 end
+    atom CE2 type=CR1E  charge= 0.000 exclude=(CD1) end
+    atom HE2 type=HA  charge= 0.000 end
+    atom CZ  type=CY2   charge= 0.265 exclude=(CG) end
+    atom OH  type=OH1  charge=-0.700 end
+    atom HH  type=H   charge= 0.435 end
+    atom C   type=C   charge= 0.500 end
+    atom O   type=O   charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  CD1    bond CD1 HD1
+  bond CG  CD2    bond CD2 HD2
+  bond CD1 CE1    bond CE1 HE1
+  bond CD2 CE2    bond CE2 HE2
+  bond CE1 CZ
+  bond CE2 CZ
+  bond CZ  OH     bond OH  HH
+  bond CA  C
+  bond C   O
+
+! chirality
+  improper HA  N   C   CB !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+
+! Hs, OH, and CB around the ring
+  improper HD2 CD2 CE2 CZ
+  improper HE2 CE2 CZ  CE1
+  improper OH  CZ  CE1 CD1
+  improper HE1 CE1 CD1 CG
+  improper HD1 CD1 CG  CD2
+  improper CB  CG  CD2 CE2
+
+! around the ring
+  improper CG  CD1 CE1 CZ 
+  improper CD1 CE1 CZ  CE2
+  improper CE1 CZ  CE2 CD2
+  improper CZ  CE2 CD2 CG
+  improper CE2 CD2 CG  CD1
+  improper CD2 CG  CD1 CE1
+
+  dihedral CG  CB  CA  N
+  dihedral CD1 CG  CB  CA
+  dihedral CE2 CZ  OH  HH   ! UCL Added 12-MAR-00
+
+  DONO HN   N
+  DONO HH   OH
+  ACCE OH  " "
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue TYP
+  group
+    atom N   type=NH1 charge=-0.570 end
+    atom HN  type=H   charge= 0.370 end
+    atom CA  type=CH1E  charge= 0.200 end
+    atom HA  type=HA  charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA  charge= 0.000 end
+    atom HB2 type=HA  charge= 0.000 end
+    atom CG  type=CY  charge= 0.000 exclude=(CZ) end
+    atom CD1 type=CR1E  charge= 0.000 exclude=(CE2) end
+    atom HD1 type=HA  charge= 0.000 end
+    atom CD2 type=CR1E  charge= 0.000 exclude=(CE1) end
+    atom HD2 type=HA  charge= 0.000 end
+    atom CE1 type=CR1E  charge= 0.000 exclude=(CD2) end
+    atom HE1 type=HA  charge= 0.000 end
+    atom CE2 type=CR1E  charge= 0.000 exclude=(CD1) end
+    atom HE2 type=HA  charge= 0.000 end
+    atom CZ  type=CY2   charge= 0.265 exclude=(CG) end
+    atom OH  type=OHP  charge=-0.625 end
+    atom P   type=PP    charge= 0.520 end
+    atom O1P type=OP1   charge=-0.720 end
+    atom O2P type=OP1   charge=-0.720 end
+    atom O3P type=OR3   charge=-0.720 end
+    atom C   type=C   charge= 0.500 end
+    atom O   type=O   charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  CD1    bond CD1 HD1
+  bond CG  CD2    bond CD2 HD2
+  bond CD1 CE1    bond CE1 HE1
+  bond CD2 CE2    bond CE2 HE2
+  bond CE1 CZ
+  bond CE2 CZ
+  bond CZ  OH     bond OH  P
+  bond P   O1P
+  bond P   O2P
+  bond P   O3P
+  bond CA  C
+  bond C   O
+
+  angle CZ OH P
+  angle OH P O3P
+  angle O3P P O1P
+  angle O3P P O2P
+  
+! chirality
+  improper HA  N   C   CB !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+
+! Hs, OH, and CB around the ring
+  improper HD2 CD2 CE2 CZ
+  improper HE2 CE2 CZ  CE1
+  improper OH  CZ  CE1 CD1
+  improper HE1 CE1 CD1 CG
+  improper HD1 CD1 CG  CD2
+  improper CB  CG  CD2 CE2
+
+! around the ring
+  improper CG  CD1 CE1 CZ 
+  improper CD1 CE1 CZ  CE2
+  improper CE1 CZ  CE2 CD2
+  improper CZ  CE2 CD2 CG
+  improper CE2 CD2 CG  CD1
+  improper CD2 CG  CD1 CE1
+  !improper OH P O3P O1P ! chirality or flatness improper   -37.36
+     
+  dihedral CG  CB  CA  N
+  dihedral CD1 CG  CB  CA
+  dihedral CE2 CZ  OH  P   
+  dihedral CZ  OH  P   O3P
+  
+  DONO HN   N
+  DONO HH   OH
+  ACCE OH  " "
+  ACCE O    C
+  ACCE O1P  P
+  ACCE O2P  P
+  ACCE O3P  P
+  
+end
+
+!----------------------------------------------------------------------
+
+residue TYS
+  group
+    atom N   type=NH1 charge=-0.570 end
+    atom HN  type=H   charge= 0.370 end
+    atom CA  type=CH1E  charge= 0.200 end
+    atom HA  type=HA  charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA  charge= 0.000 end
+    atom HB2 type=HA  charge= 0.000 end
+    atom CG  type=CY  charge= 0.000 exclude=(CZ) end
+    atom CD1 type=CR1E  charge= 0.000 exclude=(CE2) end
+    atom HD1 type=HA  charge= 0.000 end
+    atom CD2 type=CR1E  charge= 0.000 exclude=(CE1) end
+    atom HD2 type=HA  charge= 0.000 end
+    atom CE1 type=CR1E  charge= 0.000 exclude=(CD2) end
+    atom HE1 type=HA  charge= 0.000 end
+    atom CE2 type=CR1E  charge= 0.000 exclude=(CD1) end
+    atom HE2 type=HA  charge= 0.000 end
+    atom CZ  type=CY2   charge= 0.265 exclude=(CG) end
+    atom OH  type=OUF   charge=-0.625 end
+    atom S   type=SUF   charge= 0.520 end
+    atom O1S type=OUF   charge=-0.720 end
+    atom O2S type=OUF   charge=-0.720 end
+    atom O3S type=OUF   charge=-0.720 end
+    atom C   type=C   charge= 0.500 end
+    atom O   type=O   charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  CD1    bond CD1 HD1
+  bond CG  CD2    bond CD2 HD2
+  bond CD1 CE1    bond CE1 HE1
+  bond CD2 CE2    bond CE2 HE2
+  bond CE1 CZ
+  bond CE2 CZ
+  bond CZ  OH     bond OH  S
+  bond S   O1S
+  bond S   O2S
+  bond S   O3S
+  bond CA  C
+  bond C   O
+
+  angle CZ OH S
+  angle OH S O1S
+  angle OH S O2S
+  angle OH S O3S
+  angle O3S S O1S
+  angle O3S S O2S
+  angle O2S S O1S
+  
+! chirality
+  improper HA  N   C   CB !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+
+! Hs, OH, and CB around the ring
+  improper HD2 CD2 CE2 CZ
+  improper HE2 CE2 CZ  CE1
+  improper OH  CZ  CE1 CD1
+  improper HE1 CE1 CD1 CG
+  improper HD1 CD1 CG  CD2
+  improper CB  CG  CD2 CE2
+
+! around the ring
+  improper CG  CD1 CE1 CZ 
+  improper CD1 CE1 CZ  CE2
+  improper CE1 CZ  CE2 CD2
+  improper CZ  CE2 CD2 CG
+  improper CE2 CD2 CG  CD1
+  improper CD2 CG  CD1 CE1
+  improper OH P O3P O1P ! chirality improper   -37.36
+     
+  dihedral CG  CB  CA  N
+  dihedral CD1 CG  CB  CA
+  dihedral CE2 CZ  OH  S   
+  dihedral CZ  OH  S   O3S
+  
+  DONO HN   N
+  DONO HH   OH
+  ACCE OH  " "
+  ACCE O    C
+  ACCE O1S  S
+  ACCE O2S  S
+  ACCE O3S  S
+  
+end
+
+!----------------------------------------------------------------------
+
+residue PTR
+  group
+    atom N   type=NH1 charge=-0.570 end
+    atom HN  type=H   charge= 0.370 end
+    atom CA  type=CH1E  charge= 0.200 end
+    atom HA  type=HA  charge= 0.000 end
+    atom CB  type=CH2E  charge= 0.000 end
+    atom HB1 type=HA  charge= 0.000 end
+    atom HB2 type=HA  charge= 0.000 end
+    atom CG  type=CY  charge= 0.000 exclude=(CZ) end
+    atom CD1 type=CR1E  charge= 0.000 exclude=(CE2) end
+    atom HD1 type=HA  charge= 0.000 end
+    atom CD2 type=CR1E  charge= 0.000 exclude=(CE1) end
+    atom HD2 type=HA  charge= 0.000 end
+    atom CE1 type=CR1E  charge= 0.000 exclude=(CD2) end
+    atom HE1 type=HA  charge= 0.000 end
+    atom CE2 type=CR1E  charge= 0.000 exclude=(CD1) end
+    atom HE2 type=HA  charge= 0.000 end
+    atom CZ  type=CY2   charge= 0.265 exclude=(CG) end
+    atom OH  type=OHP  charge=-0.625 end
+    atom P   type=PP    charge= 0.520 end
+    atom O1P type=OP1   charge=-0.720 end
+    atom O2P type=OP1   charge=-0.720 end
+    atom O3P type=OR3   charge=-0.720 end
+    atom C   type=C   charge= 0.500 end
+    atom O   type=O   charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB1     bond CB  HB2
+  bond CB  CG
+  bond CG  CD1    bond CD1 HD1
+  bond CG  CD2    bond CD2 HD2
+  bond CD1 CE1    bond CE1 HE1
+  bond CD2 CE2    bond CE2 HE2
+  bond CE1 CZ
+  bond CE2 CZ
+  bond CZ  OH     bond OH  P
+  bond P   O1P
+  bond P   O2P
+  bond P   O3P
+  bond CA  C
+  bond C   O
+
+  angle CZ OH P
+  angle OH P O3P
+  angle O3P P O1P
+  angle O3P P O2P
+  
+! chirality
+  improper HA  N   C   CB !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+
+! Hs, OH, and CB around the ring
+  improper HD2 CD2 CE2 CZ
+  improper HE2 CE2 CZ  CE1
+  improper OH  CZ  CE1 CD1
+  improper HE1 CE1 CD1 CG
+  improper HD1 CD1 CG  CD2
+  improper CB  CG  CD2 CE2
+
+! around the ring
+  improper CG  CD1 CE1 CZ 
+  improper CD1 CE1 CZ  CE2
+  improper CE1 CZ  CE2 CD2
+  improper CZ  CE2 CD2 CG
+  improper CE2 CD2 CG  CD1
+  improper CD2 CG  CD1 CE1
+  !improper OH P O3P O1P ! chirality or flatness improper   -37.36
+     
+  dihedral CG  CB  CA  N
+  dihedral CD1 CG  CB  CA
+  dihedral CE2 CZ  OH  P   
+  dihedral CZ  OH  P   O3P
+  
+  DONO HN   N
+  DONO HH   OH
+  ACCE OH  " "
+  ACCE O    C
+  ACCE O1P  P
+  ACCE O2P  P
+  ACCE O3P  P
+  
+end
+
+!----------------------------------------------------------------------
+
+residue VAL
+  group
+    atom N    type=NH1 charge=-0.570 end
+    atom HN   type=H   charge= 0.370 end
+    atom CA   type=CH1E  charge= 0.200 end
+    atom HA   type=HA  charge= 0.000 end
+    atom CB   type=CH1E  charge= 0.000 end
+    atom HB   type=HA  charge= 0.000 end
+    atom CG1  type=CH3E  charge= 0.000 end
+    atom HG11 type=HA  charge= 0.000 excl = (HG21 HG22 HG23) end
+    atom HG12 type=HA  charge= 0.000 excl = (HG21 HG22 HG23) end
+    atom HG13 type=HA  charge= 0.000 excl = (HG21 HG22 HG23) end
+    atom CG2  type=CH3E  charge=-0.000 end
+    atom HG21 type=HA  charge= 0.000 excl = (HG11 HG12 HG13) end
+    atom HG22 type=HA  charge= 0.000 excl = (HG11 HG12 HG13) end
+    atom HG23 type=HA  charge= 0.000 excl = (HG11 HG12 HG13) end
+    atom C    type=C   charge= 0.500 end
+    atom O    type=O   charge=-0.500 end
+
+  bond N   HN
+  bond N   CA     bond CA  HA
+  bond CA  CB     bond CB  HB
+  bond CB  CG1    bond CG1 HG11    bond CG1 HG12    bond CG1 HG13
+  bond CB  CG2    bond CG2 HG21    bond CG2 HG22    bond CG2 HG23
+  bond CA  C
+  bond C   O
+
+  improper HA N C CB         !chirality CA
+  improper HB   CA   CG1 CG2 !stereo CB
+  improper HG11 HG12 CB HG13    !methyl G1
+  improper HG21 HG22 CB HG23    !methyl G2
+
+  dihedral CG1 CB  CA  N
+  dihedral HG11 CG1 CB  CA   ! UCL methyl stagger 12-MAR-00 
+  dihedral HG21 CG2 CB  CA   ! UCL methyl stagger 12-MAR-00 
+
+  DONO HN   N
+  ACCE O    C
+end
+
+
+!----------------------------------------------------------------------
+
+residue CHX  !! ADDED BY MN
+  group
+    atom N   type=NH1 charge=-0.360 end
+    atom HN  type=H   charge= 0.260 end
+    atom CA  type=CH1E  charge= 0.000 end
+    atom HA  type=HA  charge= 0.100 end
+    atom CB  type=CH2E  charge=-0.200 end
+    atom HB1 type=HA  charge= 0.100 end
+    atom HB2 type=HA  charge= 0.100 end
+    atom CG  type=CH1E  charge=-0.200 end
+    atom HG  type=HA  charge= 0.100 end
+    atom CD1  type=CH2E  charge=-0.200 end
+    atom HD11 type=HA  charge= 0.100 end
+    atom HD12 type=HA  charge= 0.100 end
+    atom CD2  type=CH2E  charge=-0.200 end
+    atom HD21 type=HA  charge= 0.100 end
+    atom HD22 type=HA  charge= 0.100 end
+    atom CE1  type=CH2E  charge=-0.200 end
+    atom HE11 type=HA  charge= 0.100 end
+    atom HE12 type=HA  charge= 0.100 end
+    atom CE2  type=CH2E  charge=-0.200 end
+    atom HE21 type=HA  charge= 0.100 end
+    atom HE22 type=HA  charge= 0.100 end
+    atom CZ  type=CH2E  charge=-0.200 end
+    atom HZ1 type=HA  charge= 0.100 end
+    atom HZ2 type=HA  charge= 0.100 end
+    atom C   type=C   charge= 0.480 end
+    atom O   type=O   charge=-0.480 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB1     bond CB HB2
+  bond CB CG     bond CG CD1     bond CG CD2     bond CG HG    
+  bond CD1 CE1   bond CD1 HD11    bond CD1 HD12   
+  bond CD2 CE2   bond CD2 HD21    bond CD2 HD22
+  bond CE1 CZ    bond CE1 HE11    bond CE1 HE12
+  bond CE2 CZ    bond CE2 HE21    bond CE2 HE22
+  bond CZ HZ1    bond CZ  HZ2
+  bond CA C
+  bond C  O
+
+  improper HA N C CB          !chirality CA
+  improper HB1 HB2 CA CG  !stereo CB
+  improper HG CB CD1 CD2      !stereo CG
+  improper HD11 HD12 CG CE1      !stereo CD1
+  improper HD21 HD22 CG CE2      !stereo CD2
+  improper HE11 HE12 CE1 CZ      !stereo CE1
+  improper HE11 HE22 CE2 CZ      !stereo CE2
+  improper HZ1 HZ2 CE1 CE2  !stereo CZ
+
+  dihedral CG  CB  CA  N
+  dihedral CD1  CG  CB  CA
+
+  DONO HN   N
+  ACCE O    C
+end
+
+
+!----------------------------------------------------------------------
+
+residue ACE
+  group
+    atom CA  type=CH3E charge= 0.000 end
+    atom HA1 type=HA charge= 0.000 end
+    atom HA2 type=HA charge= 0.000 end
+    atom HA3 type=HA charge= 0.000 end
+    atom C   type=C  charge= 0.500 end
+    atom O   type=O  charge=-0.500 end
+
+  bond C  CA     bond CA HA1     bond CA HA2     bond CA HA3
+  bond C  O
+
+  improper HA1 HA2 C HA3  !methyl CA
+
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue CTN     ! C-terminal for all, CONH2 at end "* - CTN"
+  group
+    atom N   type=NH2    charge=-0.520 end
+    atom H1  type=H      charge= 0.260 end
+    atom H2  type=H      charge= 0.260 end
+ 
+  bond N  H1
+  bond N  H2 
+
+  DONO H1   N
+  DONO H2   N
+
+end
+
+!----------------------------------------------------------------------
+
+residue DUM
+  group
+    atom DUM type=DD charge= 0.000 end
+    atom MAP type=DD charge= 0.000 end
+end
+
+!----------------------------------------------------------------------
+
+residue DDZ  ! THR with CH3 replaced by OH
+  group
+    atom N    type=NH1 charge=-0.570 end
+    atom HN   type=H   charge= 0.370 end
+    atom CA   type=CH1E  charge= 0.200 end
+    atom HA   type=HA  charge= 0.000 end
+    atom CB   type=CH1E  charge= 0.330 end
+    atom HB   type=HA  charge= 0.000 end
+    atom OG1  type=OH1 charge=-0.600 end
+    atom HG1  type=H   charge= 0.435 end
+    atom OG2  type=OH1 charge=-0.600 end
+    atom HG2  type=H   charge= 0.435 end
+    atom C    type=C   charge= 0.500 end
+    atom O    type=O   charge=-0.500 end
+
+  bond N  HN
+  bond N  CA     bond CA HA
+  bond CA CB     bond CB HB
+  bond CB OG1    bond OG1 HG1
+  bond CB OG2    bond OG2 HG2
+  bond CA C
+  bond C  O
+
+  improper HA N  C   CB        !chirality CA
+
+  dihedral OG1 CB  CA  N
+
+  DONO HN   N
+  DONO HG1  OG1
+  ACCE OG1 " "
+  DONO HG2  OG2
+  ACCE OG2 " "
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+
+presidue NTER                      ! patch as "NTER - *" to any except PRO
+  group
+    modify    atom +N   type=NH3 charge=-0.300 end
+    delete    atom +HN                        end
+    add       atom +HT1 type=HC  charge= 0.330 end
+    add       atom +HT2 type=HC  charge= 0.330 end
+    add       atom +HT3 type=HC  charge= 0.330 end
+    modify    atom +CA           charge= 0.310 end
+
+  add bond +HT1 +N
+  add bond +HT2 +N
+  add bond +HT3 +N
+
+  add angle +HT1 +N +HT2
+  add angle +HT2 +N +HT3
+  add angle +HT2 +N +CA
+  add angle +HT1 +N +HT3
+  add angle +HT1 +N +CA
+  add angle +HT3 +N +CA
+  add improper +HT1 +HT2 +CA +HT3  !methyl N ???
+
+  add dihedral +C  +CA  +N  +HT1      ! UCL (12-MAR-00)
+
+  ADD DONOr +HT1  +N
+  ADD DONOr +HT2  +N
+  ADD DONOr +HT3  +N
+end
+
+!----------------------------------------------------------------------
+
+presidue PROP                        ! N-terminal for PRO: "PROP - PRO"
+! the charges are guessed from making the residue have charge +1
+! and keeping the same charge on N as in NTER (Michael Nilges)
+  modify    atom +CD           charge= 0.320 end
+  modify    atom +CA           charge= 0.320 end
+  modify    atom +N   type=NH3 charge=-0.300 end
+  add       atom +HT1 type=HC  charge= 0.330 end
+  add       atom +HT2 type=HC  charge= 0.330 end
+
+  add bond +HT1 +N
+  add bond +HT2 +N
+
+  add angle +HT1 +N +HT2
+  add angle +HT2 +N +CA
+  add angle +HT1 +N +CD
+  add angle +HT1 +N +CA
+  add angle +CD  +N +HT2
+  add improper +HT1 +HT2 +CA +CD  !stereo N 
+ 
+  ADD DONOr +HT1  +N
+  ADD DONOr +HT2  +N
+end
+ 
+!----------------------------------------------------------------------
+
+presidue CTER               ! C-terminal for all amino acids "* - CTER"
+! charge on -C changed from 0.700 to make group -1, Michael Nilges
+  group
+    modify    atom -CA            charge= 0.100  end
+    modify    atom -C             charge= 0.700  end
+    modify    atom -O   type=OC   charge=-0.800  end
+    add       atom -OXT type=OC   charge=-0.800  end
+
+  add bond -C -OXT
+
+  add angle -CA  -C -OXT
+  add angle -O -C -OXT
+
+  add improper -C -CA -OXT -O
+ 
+  add dihedral -N -CA -C -O      ! UCL (12-MAR-00)
+
+  ADD ACCEptor -OXT -C
+end
+
+!----------------------------------------------------------------------
+
+presidue PCTN                  ! peptide bond patch for explitic C-terminal CTN residue
+  add bond -C +N
+
+  add angle -CA -C +N
+  add angle -O  -C +N
+  add angle -C  +N +H1
+  add angle -C  +N +H2
+
+  add improper  -C -CA +N -O                 ! planar -C
+  add improper  +N -C +H1 +H2                ! planar +N
+  add improper -CA -C  +N  +H1               ! angle across peptide plane
+
+  ADD DONOR  -H1 -NT
+  ADD DONOR  -H2 -NT
+end
+
+!----------------------------------------------------------------------
+
+presidue CTN                  ! C-terminal for all, CONH2 at end "* - CTN"
+! charges not consistent with rest, Michael Nilges
+  group
+    modify    atom -C           charge= 0.48 end
+    modify    atom -O           charge=-0.48 end
+    add       atom -NT type=NH2 charge=-0.52 end
+    add       atom -H1 type=H   charge= 0.26 end
+    add       atom -H2 type=H   charge= 0.26 end
+
+  add bond -C  -NT
+  add bond -NT -H1
+  add bond -NT -H2
+
+  add angle -CA -C  -NT
+  add angle -O  -C  -NT
+  add angle -CA -C  -O
+  add angle -C  -NT -H1
+  add angle -C  -NT -H2
+  add angle -H1 -NT -H2
+
+  add improper -C  -CA -NT -O
+  add improper -C  -NT -O  -H1
+  add improper -NT -H1 -H2 -C
+
+  add dihedral -N -CA -C -NT      ! UCL (12-MAR-00)
+
+  ADD DONOR  -H1 -NT
+  ADD DONOR  -H2 -NT
+end
+
+!----------------------------------------------------------------------
+
+
+presidue PEPT     ! PEPTide bond link, for all except the  *(-) - (+)PRO link
+                  ! "*(-) - PEPT - (+)*:
+  add bond -C +N
+
+  add angle -CA -C +N
+  add angle -O  -C +N
+  add angle -C  +N +CA
+  add angle -C  +N +HN
+
+  add improper  -C -CA +N -O                 ! planar -C
+  add improper  +N -C +CA +HN                ! planar +N
+  add improper -CA -C  +N  +CA               ! angle across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add dihedral  -C +N +CA +C  mult 6
+  add dihedral  -C +N +CA +CB mult 6
+  add dihedral  -CB -CA -C +N mult 6
+  add dihedral  -CB -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+ 
+!----------------------------------------------------------------------
+
+presidue DPEP     ! delete PEPTide bond link, for all except the  *(-) - (+)PRO link
+                  ! "*(-) - PEPT - (+)*:, ATB 07/10/10
+                  ! This will also work for peptide links involving GLY except that
+                  ! harmless error messages will be produced about not finding certain dihedrals.
+  delete bond -C +N
+
+  delete angle -CA -C +N
+  delete angle -O  -C +N
+  delete angle -C  +N +CA
+  delete angle -C  +N +HN
+
+  delete improper  -C -CA +N -O                 ! planar -C
+  delete improper  +N -C +CA +HN                ! planar +N
+  delete improper -CA -C  +N  +CA               ! angle across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  delete dihedral  -C +N +CA +C  mult 6
+  delete dihedral  -C +N +CA +CB mult 6
+  delete dihedral  -CB -CA -C +N mult 6
+  delete dihedral  -CB -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+
+!----------------------------------------------------------------------
+
+presidue PEPP     ! for  ...*(-) - (+)PRO  link, same as PEPT except
+                  ! replacement H by CD and improper +N +CA +CD -C
+  add bond -C +N
+
+  add angle -CA -C +N
+  add angle -O  -C +N
+  add angle -C  +N +CA
+  add angle -C  +N +CD
+
+!  ADD DIHEdral  -C +N +CA +C  ! taken out since related to phi MN 18-MAR-02
+!  ADD DIHEdral  -N -CA -C +N  ! taken out since equivalent below MN 18-MAR-02
+!  ADD DIHEdral  -CA -C +N +CA ! taken out since improper below MN 18-MAR-02
+
+  add improper  -C  -CA +N  -O               ! planar -C
+  add improper  +N  -C +CA +CD               ! planar +N
+  add improper -CA  -C  +N  +CA              ! angle across peptide plane
+
+! psi related topology N.B. phi is fixed by ring bonding 05-JUL-01
+
+  add dihedral  -CB -CA -C +N mult 6
+  add dihedral  -CB -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+
+!----------------------------------------------------------------------
+
+presidue DPPP     ! delete peptide bond link for  ...*(-) - (+)PRO  link, same as PEPT except
+                  ! replacement H by CD and improper +N +CA +CD -C, ATB 07/10/10
+                  ! This will also work for peptide links involving GLY except that
+                  ! harmless error messages will be produced about not finding certain dihedrals.
+  delete bond -C +N
+
+  delete angle -CA -C +N
+  delete angle -O  -C +N
+  delete angle -C  +N +CA
+  delete angle -C  +N +CD
+
+!  DELETE DIHEdral  -C +N +CA +C  ! taken out since related to phi MN 18-MAR-02
+!  DELETE DIHEdral  -N -CA -C +N  ! taken out since equivalent below MN 18-MAR-02
+!  DELETE DIHEdral  -CA -C +N +CA ! taken out since improper below MN 18-MAR-02
+
+  delete improper  -C  -CA +N  -O               ! planar -C
+  delete improper  +N  -C +CA +CD               ! planar +N
+  delete improper -CA  -C  +N  +CA              ! angle across peptide plane
+
+! psi related topology N.B. phi is fixed by ring bonding 05-JUL-01
+
+  delete dihedral  -CB -CA -C +N mult 6
+  delete dihedral  -CB -CA -C -O mult 6         ! corrected from +O 16-Sept-02
+end
+
+!----------------------------------------------------------------------
+
+presidue PPGP     ! for  GLY(-) - (+)PRO  link, same as PEPT except
+                  ! replacement H by CD and improper +N +CA +CD -C
+  add bond -C +N
+
+  add angle -CA -C +N
+  add angle -O  -C +N
+  add angle -C  +N +CA
+  add angle -C  +N +CD
+
+!  ADD DIHEdral  -C +N +CA +C  ! taken out since related to phi MN 18-MAR-02
+!  ADD DIHEdral  -N -CA -C +N  ! taken out since equivalent below MN 18-MAR-02
+!  ADD DIHEdral  -CA -C +N +CA ! taken out since improper below MN 18-MAR-02
+
+  add improper  -C  -CA +N  -O               ! planar -C
+  add improper  +N  -C +CA +CD               ! planar +N
+  add improper -CA  -C  +N  +CA              ! angle across peptide plane
+
+end
+
+!----------------------------------------------------------------------
+
+PRESidue PPGG { for GLY (-) - (+) GLY LINK }
+
+  add bond -C +N
+
+  add angle -CA -C +N
+  add angle -O  -C +N
+  add angle -C  +N +CA
+  add angle -C  +N +HN
+
+  add improper  -C -CA +N -O                 ! planar -C
+  add improper  +N -C +CA +HN                ! planar +N
+  add improper -CA -C  +N  +CA               ! angle across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add dihedral  -C +N +CA +C  mult 6
+end
+
+!----------------------------------------------------------------------
+
+PRESidue PPG1 { for ...*(-) - (+) GLY LINK }
+
+  add bond -C +N
+
+  add angle -CA -C +N
+  add angle -O  -C +N
+  add angle -C  +N +CA
+  add angle -C  +N +HN
+
+  add improper  -C -CA +N -O                 ! planar -C
+  add improper  +N -C +CA +HN                ! planar +N
+  add improper -CA -C  +N  +CA               ! angle across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add dihedral  -C +N +CA +C  mult 6
+  add dihedral  -CB -CA -C +N mult 6
+  add dihedral  -CB -CA -C -O mult 6          ! corrected from +O 16-Sept-02
+
+end
+
+!----------------------------------------------------------------------
+
+PRESidue PPG2 { for ... GLY(-) - (+) * LINK }
+  add bond -C +N
+
+  add angle -CA -C +N
+  add angle -O  -C +N
+  add angle -C  +N +CA
+  add angle -C  +N +HN
+
+  add improper  -C -CA +N -O                  ! planar -C
+  add improper  +N -C +CA +HN                 ! planar +N
+  add improper -CA -C  +N  +CA                ! angle across peptide plane
+
+! phi/psi related topology UCL 05-JUL-01
+
+  add dihedral  -C +N +CA +C  mult 6
+  add dihedral  -C +N +CA +CB mult 6
+end
+
+!----------------------------------------------------------------------
+
+presidue DISU                ! disulfide bridge  ...CYS - DISU - CYS...
+  group
+    delete    atom 1HG               end
+    modify    atom 1CB              charge= 0.300 end
+    MODIfy    ATOM 1SG  TYPE=S      charge=-0.300 end
+  group
+    delete    atom 2HG               end
+    modify    atom 2CB              charge= 0.300 end
+    MODIfy    ATOM 2SG  TYPE=S      charge=-0.300 end
+
+  add bond 1SG 2SG
+
+  add angle 1CB 1SG 2SG
+  add angle 1SG 2SG 2CB
+
+  add dihedral 1CB 1SG 2SG 2CB mult 6   ! UCL modified 12-MAR-00 & 07-JUL-01
+end
+
+!----------------------------------------------------------------------
+
+presidue DISN                ! disulfide bridge  ...CYS - DISU - CYS...
+                             ! w/o the actual bond
+  group
+    delete    atom 1HG               end
+    modify    atom 1CB              charge= 0.300 end
+    MODIfy    ATOM 1SG  TYPE=S      charge=-0.300 end
+  group
+    delete    atom 2HG               end
+    modify    atom 2CB              charge= 0.300 end
+    MODIfy    ATOM 2SG  TYPE=S      charge=-0.300 end
+end
+
+!----------------------------------------------------------------------
+
+presidue CYNH                ! deprotonated CYS
+
+  group
+    delete    atom 1HG               end
+    modify    atom 1CB              charge= 0.000 end
+    MODIfy    ATOM 1SG  TYPE=S      charge=-0.500 end
+end
+
+!----------------------------------------------------------------------
+
+presidue LTOD                        ! change from L to D amino acid
+  delete improper HA N C CB
+  add    improper HA C N CB
+end
+
+!----------------------------------------------------------------------
+
+presidue DTOL                        ! change from L to D amino acid
+  delete improper HA C N CB
+  add    improper HA N C CB
+end
+
+!----------------------------------------------------------------------
+
+presidue CISP                        ! change from trans to cis peptide bond
+  modify atom C type=CCIS end
+end
+
+!----------------------------------------------------------------------
+
+presidue CIPP                        ! change from trans to cis peptide bond. not necessary to have separate patch
+  modify atom C type=CCIS end
+end
+
+!--------------------------------------------------------------------------
+
+PRESidue HISE   ! Patch to change doubly protonated HIS to singly protonated histidine (HE2)
+                ! has to be patched as REFErence=NIL=<selection>
+  DELETE DONOR  ND1 HD1
+  MODIFY ATOM  CB   TYPE=CH2E    CHARge= 0.000  END
+  MODIFY ATOM  CG   TYPE=C5      CHARge= 0.130  END !#
+  MODIFY ATOM  ND1  TYPE=NR      CHARge=-0.490  END !#
+  MODIFY ATOM  CE1  TYPE=CRH     CHARge= 0.410  END !#
+  MODIFY ATOM  CD2  TYPE=CR1E    CHARge= 0.100  END
+  MODIFY ATOM  NE2  TYPE=NH1     CHARge=-0.570  END !#
+  MODIFY ATOM  HE2  TYPE=H       CHARge= 0.420  END !#
+  DELETE ATOM  HD1                              END
+
+  ADD ACCEPTOR  ND1 " "
+END {HISE}
+
+!--------------------------------------------------------------------------
+
+PRES HISD   ! Patch to change doubly protonated HIS to singly protonated histidine (HD1)
+            ! has to be patched as REFErence=NIL=<selection>
+  DELETE DONOR HE2 NE2
+  MODIFY ATOM  CB   TYPE=CH2E    CHARge= 0.000  END
+  MODIFY ATOM  CG   TYPE=C5      CHARge= 0.130  END !#
+  MODIFY ATOM  ND1  TYPE=NH1     CHARge=-0.570  END  !#
+  MODIFY ATOM  HD1  TYPE=H       CHARge= 0.420  END  !#
+  MODIFY ATOM  CD2  TYPE=CR1E    CHARge= 0.100  END  !#
+  MODIFY ATOM  NE2  TYPE=NR      CHARge=-0.490  END  !#
+  MODIFY ATOM  CE1  TYPE=CRH     CHARge= 0.410  END  !#
+  DELETE ATOM  HE2                              END
+
+  ADD ACCEPTOR NE2 " "
+
+END {HISD}
+
+!----------------------------------------------------------------------
+
+PRESidue DCA2   ! Patch to add a single bond from an ASP COO- group to a calcium ion
+
+  ADD BOND 1OD1 2CA+2
+
+END
+
+!----------------------------------------------------------------------
+
+PRESidue ECA2   ! Patch to add a single bond from a GLU COO- group to a calcium ion
+
+  ADD BOND 1OE1 2CA+2
+
+END
+
+!----------------------------------------------------------------------
+
+PRESidue SEF1   ! Patch for iron-sulphur cluster
+
+  ADD BOND 1FE1 2SG
+  ADD ANGLE 1SF1 1FE1 2SG
+  ADD ANGLE 1SF2 1FE1 2SG
+  ADD ANGLE 1FE1 2SG 2CB
+
+END
+
+!----------------------------------------------------------------------
+
+PRESidue SEF2   ! Patch for iron-sulphur cluster
+
+  ADD BOND 1FE2 2SG
+  ADD ANGLE 1SF1 1FE2 2SG
+  ADD ANGLE 1SF2 1FE2 2SG
+  ADD ANGLE 1FE2 2SG 2CB
+
+END
+
+!----------------------------------------------------------------------
+
+PRESidue CLYS     ! patch for isoPEPTide bond link between the Cter and a Lys side-chain
+
+  group
+    delete    atom 1OXT                     end
+    modify    atom 1O   type=O charge=-0.48 end
+    modify    atom 1C   type=C charge= 0.48 end
+  group
+    delete    atom 2HZ2               end
+    delete    atom 2HZ3               end
+    modify    atom 2NZ   type=NH1 charge=-0.36 end
+    modify    atom 2HZ1  type=H   charge= 0.26 end
+    modify    atom 2CE   charge=-0.20 end
+    modify    atom 2HE1  charge= 0.10 end
+    modify    atom 2HE2  charge= 0.10 end
+
+  add bond 1C 2NZ
+
+  add angle 1CA 1C 2NZ
+  add angle 1O  1C 2NZ
+  add angle 1C  2NZ 2CE
+  add angle 1C  2NZ 2HZ1
+
+  add improper  1C 1CA 2NZ 1O                ! planar -C
+  add improper  2NZ 1C 2CE 2HZ1              ! planar +N
+  add improper  1CA 1C 2NZ 2CE               ! angle across peptide plane
+
+end
+
+!----------------------------------------------------------------------
+
+presidue ACCY                ! patch for connecting an acetylated Nter to a CYS SG
+  group
+    delete    atom 1HA3             end
+    MODIfy    ATOM 1CA  TYPE=CH2E   charge=0.235 end
+  group
+    delete    atom 2HG              end
+    modify    atom 2CB              charge= 0.235 end
+    MODIfy    ATOM 2SG  TYPE=SM     charge=-0.470 end
+
+  add bond 1CA 2SG
+
+  add angle 1C  1CA 2SG
+  add angle 1CA 2SG 2CB
+  add angle 1HA1 1CA 2SG
+  add angle 1HA2 1CA 2SG
+  add angle 1HA2 1CA 1HA1
+
+  improper 1HA1 1HA2 1CA 2SG 
+
+  add dihedral 1C  1CA 2SG 2CB 
+  add dihedral 1CA 2SG 2CB 2CA 
+end
+
+
+
+set message=$old_message echo=$old_echo end
+remarks file toppar/protein_break.top
+remarks   patches to remove peptide linkages
+
+! Paul Adams 28th June 1999
+! Yale University
+
+set echo=false end
+
+! checkversion 1.1
+
+PRESidue DPEP { delete PEPTide bond link, for all 
+                amino acids ...*(-)     (+)*...
+                                 \ PEPT /
+
+                except the  *(-) - (+)PRO link }
+
+ DELEte BOND -C +N 
+
+ DELEte ANGLE -CA -C +N
+ DELEte ANGLE -O  -C +N
+ DELEte ANGLE -C  +N +CA
+ DELEte ANGLE -C  +N +H
+
+ DELEte DIHEdral  -C +N +CA +C
+ DELEte DIHEdral  -N -CA -C +N
+ DELEte DIHEdral  -CA -C +N +CA
+
+ DELEte IMPRoper  -C -CA +N -O
+ DELEte IMPRoper  +N -C +CA +H
+
+END {DPEP}
+
+!----------------------------------------------------------------------
+
+PRESidue DPPP  { for  ...*(-) - (+)PRO  link deletion
+                 same as DPEP except replacement H by CD
+                 and improper +N +CA +CD -C }
+
+ DELEte BOND -C +N 
+
+ DELEte ANGLE -CA -C +N
+ DELEte ANGLE -O  -C +N
+ DELEte ANGLE -C  +N +CA
+ DELEte ANGLE -C  +N +CD
+
+ DELEte DIHEdral  -C +N +CA +C
+ DELEte DIHEdral  -N -CA -C +N
+ DELEte DIHEdral  -CA -C +N +CA
+
+ DELEte IMPRoper  -C -CA +N -O
+ DELEte IMPRoper  +N +CA +CD -C
+
+END {DPPP}
+
+!------------------------------------------------------------------
+
+set echo=true end
+
+remarks file toppar/water-allhdg5-4.top  
+remarks
+remarks  TOPH19.SOL
+remarks  ==========
+remarks  topology file for solvent molecules
+remarks  water models available: TIP3P model
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+checkversion 1.3
+
+!!the acceptor and donor terms are just for analysis
+!!==================================================
+
+{* default masses *}
+MASS   HT     1.00800! TIPS3P water hydrogen
+MASS   OT    15.99940 ! TIPS3P water oxygen
+MASS   OM    15.99940 ! oxygen in O2 and CO
+MASS   CM    12.01100 ! carbon in CO
+MASS   CH2E  14.02700!   
+MASS   CH3E  15.03500!   
+MASS   OH1   15.99940! hydroxy oxygen
+MASS   H      1.00800! hydrogen which can h-bond to neutral atom
+MASS   CDMS  15.03500! DMSO methyl group
+MASS   ODMS  15.99940! DMSO oxygen
+MASS   SDMS  32.06000! DMSO sulfur
+
+
+
+AUTOGENERATE ANGLES=TRUE END   
+ 
+!------------------------------------------------------------------
+
+RESIdue WAT      { TIPS3P WATER MODEL }
+ GROUp
+  ATOM OH2  TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND OH2  H1
+ BOND OH2  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue HOH      { alias of WAT, but with O instead of OH2 }
+ GROUp
+  ATOM O    TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND O  H1
+ BOND O  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue TIP3      { alias of WAT }
+ GROUp
+  ATOM OH2  TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND OH2  H1
+ BOND OH2  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue TIP      { alias of WAT }
+ GROUp
+  ATOM OH2  TYPE=OT   CHARge= -0.834  END
+  ATOM H1   TYPE=HT   CHARge=  0.417  END
+  ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+ BOND OH2  H1
+ BOND OH2  H2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue DOD      { deuterated water }
+ GROUp
+  ATOM O    TYPE=OT   CHARge= -0.834  END
+  ATOM D1   TYPE=HT   CHARge=  0.417  END
+  ATOM D2   TYPE=HT   CHARge=  0.417  END
+
+ BOND O  D1
+ BOND O  D2
+
+END {* WAT *}
+
+!------------------------------------------------------------------
+
+RESIdue O2  {* oxygen *}
+ GROUp
+  ATOM O1  TYPE=OM   CHARGE= 0.021  END
+  ATOM O2  TYPE=OM   CHARGE=-0.021  END
+ BOND O1 O2
+END {* O2 *}
+
+!-------------------------------------------------------------------
+
+RESIdue COM  {* carbon monoxide *}
+ GROUp
+  ATOM C  TYPE=CM  CHARGE=0.021   END
+  ATOM O  TYPE=OM  CHARGE=-0.021  END
+ BOND C  O
+END {* CO *}
+
+!-------------------------------------------------------------------
+
+RESIdue ETH  {* ethylene *}
+ GROUp
+  ATOM C2   TYPE=CH3E    CHARge= 0.00  END
+ GROUp
+  ATOM C1   TYPE=CH2E    CHARge= 0.25  END  !#
+  ATOM O    TYPE=OH1     CHARge=-0.65  END  !#
+  ATOM H    TYPE=H       CHARge= 0.40  END  !#
+
+ BOND C2   C1
+ BOND C1   O
+ BOND O    H
+
+ DIHEdral C2   C1   O    H
+
+ DONOr    H   O
+
+ ACCEptor O  " "
+
+END {* ETH *}
+
+!----------------------------------------------------------------------
+
+RESIdue COH
+ GROUp
+  ATOM C  TYPE=CH3E   CHARge= 0.25  END
+  ATOM O  TYPE=OH1    CHARge=-0.65  END
+  ATOM H  TYPE=H      CHARge=0.40   END
+ BOND C  O      BOND O  H
+ DONOr H  O
+ ACCEptor O  " "
+END  {* COH *}
+
+!----------------------------------------------------------------------
+
+RESIdue DMS  {* DMSO *} ! Added Jan. 2002 Alexandre Bonvin
+ GROUp
+  ATOM SD   TYPE=SDMS    CHARge= 0.139 END
+  ATOM CD1  TYPE=CDMS    CHARge= 0.16  END 
+  ATOM OD   TYPE=ODMS    CHARge=-0.459 END 
+  ATOM CD2  TYPE=CDMS    CHARge= 0.16  END 
+
+ BOND CD1   SD
+ BOND CD2   SD
+ BOND SD    OD
+
+ ACCEptor OD  " "
+
+END {* ETH *}
+
+!----------------------------------------------------------------------
+
+set message=$old_message echo=$old_echo end
+

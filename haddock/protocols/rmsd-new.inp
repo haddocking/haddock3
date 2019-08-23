@@ -1,0 +1,186 @@
+! rmsd.inp
+!    Calculate the pairwise RMSD matrix by fitting on all contacting residues
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+set timing=on end
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+
+delete sele=(resn ANI) end
+delete sele=(resn DAN) end
+delete sele=(resn XAN) end
+
+!check if automatic flexible segment option is on
+evaluate($nchain1 = 0)
+evaluate($autoflex = 0)
+while ($nchain1 < $data.ncomponents) loop nloop0
+  evaluate($nchain1 = $nchain1 + 1)
+  evaluate($Toppar.nseg_$nchain1 = -1)
+  if ($Toppar.nseg_$nchain1 < 0) then
+    evaluate ($autoflex = 1)
+  end if
+end loop nloop0
+
+if ($autoflex = 1) then
+
+  @PREVIT:file.cns(filenames=$filenames)
+
+  evaluate ($count = 1)
+  evaluate ($nstruc1 = 0)
+  do (store1 = 0) (all)
+  while ($count le $Iterations.anastruc) loop loop1
+    evaluate ($file = $filenames.bestfile_$count)
+    coor init end
+    if ($file ne "") then
+      coor @@$file
+      evaluate ($nstruc1 = $nstruc1 + 1)
+      eval($nchain1 = 0)
+      while ($nchain1 < $data.ncomponents) loop nloop2
+        eval($nchain1 = $nchain1 + 1)
+        do (store1 = 1) (byres (segid $Toppar.prot_segid_$nchain1 and
+                               (not segid $Toppar.prot_segid_$nchain1) around 5.0))
+      end loop nloop2
+    end if
+    evaluate ($count = $count + 1)
+  end loop loop1
+end if
+
+do (store7 = 0) (all) 
+do (store6 = 0) (all)
+
+{* define part for fitting and RMS calculations: flexible interface*}
+evaluate($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop3
+  evaluate($nchain1 = $nchain1 + 1)
+  evaluate($fcounter=0)
+  do (store6 = 0) (all)
+  if ($Toppar.nseg_$nchain1 = 0) then
+    display NO FLEXIBLE SEGMENTS for molecule $nchain1 USING ALL BACKBONE
+    do (store7 = $nchain1) ((name CA or name C#) and segid $Toppar.prot_segid_$nchain1)
+    do (store6 = 1) ((name CA or name C#) and segid $Toppar.prot_segid_$nchain1)
+    show sum (store6) (segid $Toppar.prot_segid_$nchain1)
+    evaluate ($nata=$result)
+    if ($nata < 3) then
+      display not enough backbone atoms recognized for molecule $nchain1 USING ALL ATOMS for RMS calculation
+      do (store7 = $nchain1) (segid $Toppar.prot_segid_$nchain1)
+      do (store6 = 1) (segid $Toppar.prot_segid_$nchain1)
+    end if
+  else
+    if ($Toppar.nseg_$nchain1 < 0) then
+      display AUTOMATIC DEFINITION OF INTERFACE REGION FROM CONTACT ANALYSIS
+      do (store7 = $nchain1) (attr store1 = 1 and (name CA or name C#) and segid $Toppar.prot_segid_$nchain1)
+      do (store6 = 1) (attr store1 = 1 and (name CA or name C#) and segid $Toppar.prot_segid_$nchain1)
+      show sum (store6) (segid $Toppar.prot_segid_$nchain1)
+      evaluate ($nata=$result)
+      if ($nata < 3) then
+        display not enough backbone atoms recognized for molecule $nchain1 USING ALL ATOMS for RMS calculation
+        do (store7 = $nchain1) (segid $Toppar.prot_segid_$nchain1)
+        do (store6 = 1) (segid $Toppar.prot_segid_$nchain1)
+      end if
+    else
+      display FLEXIBLE SEGMENTS for molecule $nchain1
+      while ($fcounter < $Toppar.nseg_$nchain1) loop Xflex
+        evaluate($fcounter=$fcounter + 1)
+        do (store7 = $nchain1) ( resid $Toppar.start_seg_$nchain1_$fcounter : $Toppar.end_seg_$nchain1_$fcounter
+                                 and segid $Toppar.prot_segid_$nchain1 and (name CA or name C#))
+        do (store6 = 1) ( resid $Toppar.start_seg_$nchain1_$fcounter : $Toppar.end_seg_$nchain1_$fcounter
+                          and segid $Toppar.prot_segid_$nchain1 and (name CA or name C#))
+      end loop Xflex
+      show sum (store6) (segid $Toppar.prot_segid_$nchain1)
+      evaluate ($nata=$result)
+      if ($nata < 3) then
+        display not enough backbone atoms recognized for molecule $nchain1 USING ALL ATOMS for RMS calculation
+        do (store7 = $nchain1) (segid $Toppar.prot_segid_$nchain1)
+        do (store6 = 1) (segid $Toppar.prot_segid_$nchain1)
+      end if
+    end if
+  end if
+  show sum (store6) (segid $Toppar.prot_segid_$nchain1)
+  display CHAIN $nchain1 HAS $result ATOMS FOR FITTING
+end loop nloop3
+
+evaluate ($nstruc_total = 0)
+for $filename in ( @@NEWIT:file.list ) loop fitt
+   evaluate ($nstruc_total = $nstruc_total + 1)
+end loop fitt
+evaluate ($nstruc_total = min($nstruc_total,$iterations.anastruc))
+
+{* filenames *}
+evaluate ($outroot  = "NEWIT:analysis/" + $Filenames.fileroot)
+evaluate ($trajfile=$outroot+"-reduced.crd")
+evaluate ($dispfile=$outroot+"_rmsd.disp")
+
+set display=$dispfile end
+
+evaluate ($nstruc_i = 0)
+while ($nstruc_i < $nstruc_total) loop fiti
+
+  evaluate ($nstruc_i = $nstruc_i + 1)
+
+  read trajectory
+     ascii true
+     input= $trajfile
+     begin $nstruc_i skip 1 stop $nstruc_i
+  end
+  coor copy end
+
+  if ($data.ncomponents > 1) then
+    eval($nrms=$data.ncomponents-1)
+  else
+    eval($nrms=1)
+  end if
+
+  evaluate ($nstruc_j = $nstruc_i)
+  while ($nstruc_j <  $nstruc_total) loop fitj
+    evaluate ($nstruc_j = $nstruc_j + 1)
+    read trajectory
+      ascii true
+      input= $trajfile
+      begin $nstruc_j skip 1 stop $nstruc_j
+    end
+    ! fit on flexible interface of first molecule
+    coor sele= (attr store7 = 1) fit end
+    ! rms on flexible interface of remaining molecules
+    eval($nchain = 1)
+    eval($rmsdist = 0)
+    while ($nchain < $data.ncomponents) loop nloop3
+      eval($nchain = $nchain + 1)
+      coor sele= (attr store7 = $nchain) rms end
+      eval($rmsdist=$rmsdist+$result**2)
+    end loop nloop3
+    eval($rmsdist=sqrt($rmsdist)/$nrms)
+    display $nstruc_i $nstruc_j $rmsdist
+  end loop fitj
+  
+end loop fiti
+
+evaluate ($outdis  = "NEWIT:analysis/MTX_DONE")
+set display=$outdis end
+display DONE
+
+stop

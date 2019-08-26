@@ -96,10 +96,10 @@ class PDB:
         """Splits the contents of the PDB file into new files, each containing a
         MODEL in the original file
         """
-        path = os.getcwd() + '/structures'
+        # path = os.getcwd() + '/structures'
 
-        if not os.path.isdir(path):
-            os.system(f'mkdir {path}')
+        # if not os.path.isdir(path):
+        #     os.system(f'mkdir {path}')
 
         # model_lines = []
         model_list = []
@@ -110,8 +110,9 @@ class PDB:
                 if line.startswith('MODEL'):
                     # model_no = int(line[10:14].strip())
                     model_no = int(line.split()[1])
-                    model_str = '0' * (6 - len(str(model_no))) + str(model_no)
-                    model_name = f'{path}/{model_str}.pdb'
+                    # model_str = '0' * (6 - len(str(model_no))) + str(model_no)
+                    # model_name = f'{path}/{model_str}.pdb'
+                    model_name = ensamble_f.split('_')[0] + f'_{model_no}.pdb'
                     model_list.append(model_name)
                     fh = open(model_name, 'w')
                     model_lines = []

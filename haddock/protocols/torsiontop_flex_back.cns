@@ -13,11 +13,12 @@
 !
 evaluate ($nfletot = 150)
 !define flexible segments:
-display CALLING flex_segment_back.cns FOR SEMI-FLEXIBLE SA WITH BACKBONE
+!display CALLING flex_segment_back.cns FOR SEMI-FLEXIBLE SA WITH BACKBONE
 inline @RUN:protocols/flex_segment_back.cns
 
 evaluate ($numtrees=$data.ncomponents)
-@RUN:protocols/numtrees.cns(numtrees=$numtrees; Data; Toppar;)
+!@RUN:protocols/numtrees.cns(numtrees=$numtrees; Data; Toppar;)
+@RUN:protocols/numtrees.cns
 
 DISPLAY NUMTREES set to $numtrees
 

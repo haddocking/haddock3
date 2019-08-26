@@ -81,7 +81,7 @@ parameter
    end if
 end
 
-! Read in topologies
+! Read in topologies, one per MOL (psf)
 eval($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop cloop1
   eval($nchain1 = $nchain1 + 1)

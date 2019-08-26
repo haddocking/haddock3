@@ -22,12 +22,12 @@ module (Data;
     *}
 
     ! get the local cross correlation of the current orientation
-    @RUN:protocols/em_calc_lcc.cns(Toppar=&Toppar;
-                                   Data=&Data;
-                                   Saprotocol=&Saprotocol;
-                                   lcc=$lcc;
-                                   )
-
+!    @RUN:protocols/em_calc_lcc.cns(Toppar=&Toppar;
+!                                   Data=&Data;
+!                                   Saprotocol=&Saprotocol;
+!                                   lcc=$lcc;
+!                                   )
+    @RUN:protocols/em_calc_lcc.cns
     ! calculate the mid point of the centroids
     show average(x) (name MAP)
     evaluate($center.x = $result)
@@ -60,12 +60,12 @@ module (Data;
     end
 
     ! calculate the local cross correlation for the rotated orientation
-    @RUN:protocols/em_calc_lcc.cns(Toppar=&Toppar;
-                                   Data=&Data;
-                                   Saprotocol=&Saprotocol;
-                                   lcc=$newlcc;
-                                   )
-
+!    @RUN:protocols/em_calc_lcc.cns(Toppar=&Toppar;
+!                                   Data=&Data;
+!                                   Saprotocol=&Saprotocol;
+!                                   lcc=$newlcc;
+!                                   )
+    @RUN:protocols/em_calc_lcc.cns
     ! if the lcc of the initial orientation is better, swap the COMP 
     ! coordinate set to the MAIN coordinate set
     if ($lcc > $newlcc) then

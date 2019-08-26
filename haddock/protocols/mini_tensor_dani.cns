@@ -12,7 +12,7 @@
 !
 {* Optimize tensor orientation *}
 {* ADJ van Dijk*}
-{* copied from mini_tensor.cns *}
+!{* copied from mini_tensor.cns *}
 
 {* first randomize the tensor orientation because of some CNS problems *}
 {* possible resulting in infinite gradient and a failure of the EM     *}

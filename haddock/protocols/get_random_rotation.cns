@@ -31,14 +31,14 @@
        
    Example:
    >>>> ! $rand_rot does NOT have to exist currently
-   >>>> @RUN:protocols/get_random_rotation.cns(Rotation=$rand_rot;)
+   !>>>> @RUN:protocols/get_random_rotation.cns(Rotation=$rand_rot;)
    >>>> coor rotate
    >>>>    quaternion $rand_rot.q0 $rand_rot.q1 $rand_rot.q2 $rand_rot.q3
    >>>>    selection=(all)
    >>>> end
 
    Example using a rotation matrix:
-   >>>> @RUN:protocols/get_random_rotation.cns(Rotation=$rr; Type='Matrix';)
+   !>>>> @RUN:protocols/get_random_rotation.cns(Rotation=$rr; Type='Matrix';)
    >>>> coor rotate
    >>>>    matrix $rr.a11 $rr.a12 $rr.a13 
    >>>>           $rr.a21 $rr.a22 $rr.a23 

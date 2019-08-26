@@ -1,5 +1,6 @@
 import multiprocessing
 import subprocess
+import os
 import haddock.workflows.scoring.config as config
 
 
@@ -59,7 +60,8 @@ class CNS:
 		for job_id in jobs.dic:
 			inp_f = jobs.dic[job_id][0]
 			out_f = jobs.dic[job_id][1]
-			arg_list.append((self.cns_exec, inp_f, out_f))
+			if not os.path.isfile(out_f):
+				arg_list.append((self.cns_exec, inp_f, out_f))
 
 		with multiprocessing.Pool(processes=self.nproc) as pool:
 			_ = pool.starmap(self.execute, arg_list)

@@ -12,7 +12,7 @@
 !
 !set message on echo on end
 
-display STARTing mini_tensor_para.cns 
+!display STARTing mini_tensor_para.cns
 
 !write coordinates sele=(resn XAN) output="trial.pdb" end
 

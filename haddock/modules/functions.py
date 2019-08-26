@@ -2,6 +2,8 @@
 import os
 import config as config
 
+from haddock.modules.structure.utils import PDB
+
 
 def init():
 	# move input molecules to correct places
@@ -15,8 +17,8 @@ def init():
 	if not os.path.isdir(run_dir):
 		os.system(f'mkdir {run_dir}')
 	else:
-		print(f'ERROR: {run_dir} already present')
-		# exit()
+		print(f'+ WARNING: {run_dir} already present')
+	# exit()
 
 	if not os.path.isdir(data_dir):
 		os.system(f'mkdir {data_dir}')
@@ -24,11 +26,13 @@ def init():
 		molecule = config.param_dic['input']['molecules'][mol_id]
 
 		if molecule == mol_id + '.pdb':
-			print("ERROR: Name mol_X.pdb not supported, please rename your molecule.")
+			print("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
 			exit()
 
-		os.system(f'cp {molecule} {run_dir}/data/{mol_id}.pdb')
-		config.param_dic['input']['molecules'][mol_id] = f'data/{mol_id}.pdb'
+		# ensembles will be treated later
+		os.system(f'cp {molecule} {run_dir}/data/{mol_id}_1.pdb')
+
+		config.param_dic['input']['molecules'][mol_id] = f'data/{mol_id}_1.pdb'
 
 	if not os.path.isdir(begin_dir):
 		os.system(f'mkdir {begin_dir}')
@@ -42,6 +46,44 @@ def init():
 	os.chdir(run_dir)
 
 
+def treat_ensemble(pdb_dic):
+	check = False
+	new_d = {}
+	for mol in pdb_dic:
+		new_d[mol] = []
+		pdb = pdb_dic[mol]
+		with open(pdb) as f:
+			reversed_list = reversed(f.readlines())
+			for line in reversed_list:
+				if 'ENDMDL' in line:
+					check = True
+					break
+			if check:
+				split_models = PDB.split_models(pdb)
+				for model in split_models:
+					new_d[mol].append(model)
+				continue
+			else:
+				new_d[mol].append(pdb)
+
+		f.close()
+	return new_d
+
+
+def molecularize(dic):
+	out_dic = {}
+	for e in dic:
+		root = dic[e][0].split('/')[1].split('_')[0]
+		try:
+			_ = out_dic[root]
+		except:
+			out_dic[root] = []
+
+		out_dic[root].append(tuple(dic[e]))
+
+	return out_dic
+
+
 def retrieve_output(jobs):
 	# First attempt, parse .out and identify the tag
 	output_dic = {}
@@ -50,6 +92,6 @@ def retrieve_output(jobs):
 		output_dic[j] = []
 		for line in reversed(list(open(out))):
 			if 'OUTPUT:' in line and not 'CNS' in line:
-				v = line.rstrip().split(':')[-1]
+				v = line.strip().split(':')[1][1:]
 				output_dic[j].append(v)
 	return output_dic

@@ -25,7 +25,7 @@ module (Data;)
     Examples
     --------
     >>> ! Use the XREF energy term
-    >>> @RUN:protocols/em_read_data.cns(Data=&Data;)
+    !>>> @RUN:protocols/em_read_data.cns(Data=&Data;)
     >>> flags include XREF end
     *}
 

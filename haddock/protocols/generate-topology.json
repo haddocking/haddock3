@@ -1,6 +1,6 @@
 {
   "seed": "random",
-  "values": {
+  "params": {
     "autohis": "true",
     "delenph": "false",
     "randorien": "true",
@@ -13,16 +13,16 @@
   },
 
   "chain": {
-    "mol_1": {
-      "segid": "A",
+    "mol1": {
+      "prot_segid": "A",
       "fix_origin": "false",
       "dna": "false",
       "shape": "false",
       "cg": "false",
       "cyclicpept": "false"
     },
-    "mol_2": {
-      "segid": "B",
+    "mol2": {
+      "prot_segid": "B",
       "fix_origin": "false",
       "dna": "false",
       "shape": "false",

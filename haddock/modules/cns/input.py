@@ -12,8 +12,9 @@ class RecipeGenerator:
 	def __init__(self):
 		self.recipe = ''
 
-	def generate(self, recipe_file, molecule_id, protonation_dic, prefix_folder, out_suffix):
-		h = HeaderComposer(recipe_file, molecule_id, protonation_dic, prefix_folder, out_suffix)
+	def generate(self, recipe_file, molecule_id, protonation_dic, prefix_folder, output_name):
+
+		h = HeaderComposer(recipe_file, molecule_id, protonation_dic, prefix_folder, output_name)
 		header_string = h.create_header()
 
 		r = RecipeComposer(recipe_file)
@@ -22,6 +23,19 @@ class RecipeGenerator:
 		self.recipe = header_string + '\n' + body_string
 
 		return self.recipe
+
+	# def generate_it0(self, recipe_file, molecule_id, protonation_dic, prefix_folder, out_suffix):
+	#
+	# 	h = HeaderComposer(recipe_file, molecule_id, protonation_dic, prefix_folder, out_suffix)
+	#
+	# 	header_string = h.create_header_it0()
+	#
+	# 	r = RecipeComposer(recipe_file)
+	# 	body_string = r.compose()
+	#
+	# 	self.recipe = header_string + '\n' + body_string
+	#
+	# 	return self.recipe
 
 
 class RecipeComposer:
@@ -49,7 +63,11 @@ class RecipeComposer:
 			for idx, m in module_check:
 
 				# module found, get name and load
-				m = re.findall(module_regex, target[idx])[0][-1]
+				try:
+					m = re.findall(module_regex, target[idx])[0][-1]
+				except IndexError:
+					print(target[idx])
+					exit()
 				with open(f'{self.protocol_path}/{m}') as f:
 					module = f.readlines()
 				f.close()
@@ -85,6 +103,7 @@ class RecipeComposer:
 							module = l.split('@')[-1].split('/')[-1].split('\n')[0]
 							# module_name = f'{self.protocol_path}/{module}'
 							module_list.append(module)
+							# print(pos, module)
 		return module_list
 
 	def list_dependencies(self, target_f):
@@ -94,8 +113,8 @@ class RecipeComposer:
 
 		target_f_name = target_f.split('/')[-1]
 
-		print(f'+ Creating dependency tree of {target_f_name}')
-		print(f'> {target_f_name}')
+		# print(f'+ Creating dependency tree of {target_f_name}')
+		# print(f'> {target_f_name}')
 
 		# Lvl 1  Identify modules
 		module_list = self.identify_modules(target_f)
@@ -107,6 +126,7 @@ class RecipeComposer:
 				tbw += f'  |_ {module} \n'
 
 				# Lvl 2 Dependencies
+				# print(module)
 				dependency_list = self.identify_modules(module_path)
 				if dependency_list:
 					for dependency in dependency_list:
@@ -137,14 +157,14 @@ class RecipeComposer:
 											for co_co_co_dependency in co_co_co_dependency_list:
 												print(f'+ ERROR: Too many dependency levels {target_f_name} > '
 												      f'{dependency} > {co_dependency} > {co_co_dependency} > {co_co_co_dependency}')
-			print(tbw)
+			# print(tbw)
 		return output_list
 
 
 class HeaderComposer:
 	""" Each recipe has a Header with parameters and scoring definitions """
 
-	def __init__(self, recipe_f, molecule_id, prot_dic, prefix_folder, out_suffix):
+	def __init__(self, recipe_f, molecule_id, prot_dic, prefix_folder, output_name):
 		self.protocol_path = get_full_path('haddock', 'protocols')
 
 		self.input_header = ''
@@ -171,6 +191,10 @@ class HeaderComposer:
 
 		self.link = config.ini.get('link', 'link')
 
+		self.trans_vectors = {}
+		for i in range(51):
+			self.trans_vectors[i] = config.ini.get('translation_vectors', f'trans_vector_{i}')
+
 		# self.scoring_params = config.param_dic['scoring-parameters']
 		recipe_params = self.protocol_path + '/' + recipe_f.split('.')[0] + '.json'
 		self.recipe_params = json.load(open(recipe_params))
@@ -178,7 +202,7 @@ class HeaderComposer:
 		self.mol_id = molecule_id
 
 		self.protonation_dic = prot_dic
-		self.out_suffix = out_suffix
+		self.output_name = output_name
 		self.folder = prefix_folder
 
 	def create_header(self):
@@ -187,30 +211,59 @@ class HeaderComposer:
 		recipe_params = self.load_recipe_params()
 		link = self.load_link()
 		protonation = self.load_protonation_state()
+		trans_vec = self.load_trans_vectors()
 		output = self.prepare_output()
 
-		self.header = output + param + top + recipe_params + link + protonation
+		self.header = output + param + top + recipe_params + link + protonation + trans_vec
 
 		return self.header
+
+	# def create_header_it0(self):
+	# 	param = self.load_ff_parameters()
+	# 	top = self.load_ff_topology()
+	# 	recipe_params = self.load_recipe_params_it0()
+	# 	link = self.load_link()
+	# 	protonation = self.load_protonation_state()
+	# 	output = self.prepare_output(output_f='dbg')
+	#
+	# 	self.header = output + param + top + recipe_params + link + protonation
+	#
+	# 	return self.header
 
 	def prepare_output(self):
 		""" Tell the recipe wich should be the output file """
 		output_filename = ''
 		folder = ''
 
+		if 'output' in self.recipe_params:
+			if 'folder' in self.recipe_params['output']:
+				folder = self.recipe_params['output']['folder'] + '/'
+				if not os.path.isdir(folder):
+					os.mkdir(folder)
+
 		output = '\n! Output structure\n'
-		if 'folder' in self.recipe_params['output']:
-			folder = self.recipe_params['output']['folder'] + '/'
+		if self.output_name:
+			output += f"eval ($output_pdb_filename= \"{folder}\" + \"{self.output_name}\" + \".pdb\")\n"
+		else:
+			if 'output' in self.recipe_params:
+				if 'folder' in self.recipe_params['output']:
+					folder = self.recipe_params['output']['folder'] + '/'
 
-		# 	output_filename += f"{self.recipe_params['output']['folder']}/"
-			# if not os.path.isdir(self.recipe_params['output']['folder']):
-			# 	os.system(f"mkdir {self.recipe_params['output']['folder']}")
+					if not os.path.isdir(folder):
+						os.system(f'mkdir {folder}')
 
-		output_filename += '$file'
-		if 'psf' in self.recipe_params['output']:
-			output += f"eval ($output_psf_filename= \"{folder}\" + $file_root - \".pdb\" + \".psf\")\n"
-		if 'pdb' in self.recipe_params['output']:
-			output += f"eval ($output_pdb_filename= \"{folder}\" + $file_root + \".pdb\")\n"
+			# 	output_filename += f"{self.recipe_params['output']['folder']}/"
+				# if not os.path.isdir(self.recipe_params['output']['folder']):
+				# 	os.system(f"mkdir {self.recipe_params['output']['folder']}")
+
+				output_filename += '$file'
+				if 'psf' in self.recipe_params['output']:
+					output += f"eval ($output_psf_filename= \"{folder}\" + $file_root - \".pdb\" + \".psf\")\n"
+				if 'pdb' in self.recipe_params['output']:
+					output += f"eval ($output_pdb_filename= \"{folder}\" + $file_root + \".pdb\")\n"
+			else:
+				print('+ ERROR: No output defined for this recipe')
+				exit()
 
 		return output
 
@@ -272,40 +325,85 @@ class HeaderComposer:
 		return ff_top_header
 
 	def load_recipe_params(self):
-		# This function must account for ALL different syntaxes
 
-		scoring_header = '\n! Scoring parameters\n'
+		recipe_param_header = '\n! Parameters\n'
 
-		if 'flag' in self.recipe_params:
-			for flag in self.recipe_params['flags']:
-				v = str(self.recipe_params['flags'][flag]).upper()
-				scoring_header += f'eval ($Data.flags.{flag} = {v})\n'
+		for param in self.recipe_params['params']:
+			v = self.recipe_params['params'][param]
+			if not v:
+				# either 0 or empty string
+				if isinstance(v, str):
+					v = '\"\"'
+				if isinstance(v, int):
+					v = 0.0
+			recipe_param_header += f'eval (${param}={v})\n'
 
-		if 'values' in self.recipe_params:
-			for value in self.recipe_params['values']:
-				v = self.recipe_params['values'][value]
-				scoring_header += f'eval (${value}={v})\n'
+		if 'chain' in self.recipe_params:
+			# load molecule specific things
+			for mol in self.recipe_params['chain']:
+				for param in self.recipe_params['chain'][mol]:
+					v = self.recipe_params['chain'][mol][param]
+					# this are LOGICAL, which means no quotes
+					recipe_param_header += f'eval (${param}_{mol}={v})\n'
 
-		if 'ncomp' in self.recipe_params:
-			ncomp = self.recipe_params['ncomp']
-			scoring_header += f'eval ($data.ncomponents={ncomp})\n'
+			# evaluate($toppar.prot_segid_$nmol = $prot_segid_mol$nmol)
+			# evaluate($toppar.fix_origin_$nmol =$fix_origin_mol$nmol)
+			# evaluate($toppar.dna_$nmol =$dna_mol$nmol)
+			# evaluate($toppar.cyclicpept_$nmol = $cyclicpept_mol$nmol)
+			# evaluate($toppar.shape_$nmol = $shape_mol$nmol)
+			# evaluate($toppar.cg_$nmol = $cg_mol$nmol)
 
-		if 'segids' in self.recipe_params:
-			for i, segid in enumerate(self.recipe_params['segids']):
-				scoring_header += f'eval ($Toppar.prot_segid_{i+1}="{segid}")\n'
+			pass
 
-		if 'seed' in self.recipe_params:
-			seed = random.randint(100, 999)
-			scoring_header += f'set seed={seed} end\n'
+		seed = random.randint(100, 999)
+		recipe_param_header += f'set seed={seed} end\n'
 
-		for chain_key in self.recipe_params["chain"][self.mol_id]:
-			chain_value = self.recipe_params["chain"][self.mol_id][chain_key]
-			scoring_header += f'eval (${chain_key}={chain_value})\n'
+		return recipe_param_header
 
-		return scoring_header
+	# def load_recipe_params(self):
+	# 	# This function must account for ALL different syntaxes
+	#
+	# 	scoring_header = '\n! Parameters\n'
+	#
+	# 	if 'flag' in self.recipe_params:
+	# 		for flag in self.recipe_params['flags']:
+	# 			v = str(self.recipe_params['flags'][flag]).upper()
+	# 			scoring_header += f'eval ($Data.flags.{flag} = {v})\n'
+	#
+	# 	if 'values' in self.recipe_params:
+	# 		for value in self.recipe_params['values']:
+	# 			v = self.recipe_params['values'][value]
+	# 			scoring_header += f'eval (${value}={v})\n'
+	#
+	# 	if 'ncomp' in self.recipe_params:
+	# 		ncomp = self.recipe_params['ncomp']
+	# 		scoring_header += f'eval ($data.ncomponents={ncomp})\n'
+	#
+	# 	if 'segids' in self.recipe_params:
+	# 		for i, segid in enumerate(self.recipe_params['segids']):
+	# 			scoring_header += f'eval ($Toppar.prot_segid_{i+1}="{segid}")\n'
+	#
+	# 	if 'seed' in self.recipe_params:
+	# 		seed = random.randint(100, 999)
+	# 		scoring_header += f'set seed={seed} end\n'
+	#
+	# 	if 'chain' in self.recipe_params:
+	# 		for chain_key in self.recipe_params["chain"][self.mol_id]:
+	# 			chain_value = self.recipe_params["chain"][self.mol_id][chain_key]
+	# 			scoring_header += f'eval (${chain_key}={chain_value})\n'
+	#
+	# 	return scoring_header
 
 	def load_link(self):
 		self.link_header = '\n! Link file\n'
 		self.link_header += f'eval ($link_file = "{self.link}" )\n'
 
 		return self.link_header
+
+	def load_trans_vectors(self):
+		trans_header = '\n! Translation vectors\n'
+		for vector_id in self.trans_vectors:
+			vector_file = self.trans_vectors[vector_id]
+			trans_header += f'eval ($trans_vector_{vector_id} = "{vector_file}" )\n'
+
+		return trans_header

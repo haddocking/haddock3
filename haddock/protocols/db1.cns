@@ -72,9 +72,11 @@ while ($nchain1 < $data.ncomponents) loop nloop1
 end loop nloop1
 
 if ($data.db_method eq 'statistical') then
-  inline @RUN:protocols/db_statistical.dat
+!  inline @RUN:protocols/db_statistical.dat
+  inline @protocols/db_statistical.dat
 else
-  inline @RUN:protocols/db_kyte-doolittle.dat
+!  inline @RUN:protocols/db_kyte-doolittle.dat
+  inline @protocols/db_kyte-doolittle.dat
 end if
 
 ! First pass, all interactions except those with DNA/RNA Phosphate groups

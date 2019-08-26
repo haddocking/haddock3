@@ -91,7 +91,8 @@ if ($place_molecules_in_plane = true) then
 else
     ! random rotation of the whole system around origin to reduce bias 
     ! for volume data fitting
-    @RUN:protocols/get_random_rotation.cns(Rotation=$rr;)
+!    @RUN:protocols/get_random_rotation.cns(Rotation=$rr;)
+    @RUN:protocols/get_random_rotation.cns
     eval($nchain1 = 0)
     while ($nchain1 < $Data.ncomponents) loop nloop1
         eval($nchain1 = $nchain1 + 1)

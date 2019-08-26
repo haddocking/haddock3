@@ -29,8 +29,10 @@ set_occupancy=true;
 occupancy=1.0;
 )
 
- evaluate ($chain = 1)
- evaluate($coor_infile= $file)
+
+!evaluate ($Data.flags.)
+evaluate ($chain = 1)
+evaluate($coor_infile= $file)
 
  segment
    chain
@@ -179,7 +181,7 @@ $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
    evaluate ($counter=$counter+1)
  end loop disu
 
- Cyclic peptide business
+ ! Cyclic peptide business
  if (cyclicpept eq TRUE ) then
    evaluate ($cycp=0)
    for $id1 in id ( tag and name N ) loop cyp1

@@ -92,7 +92,8 @@
 
     ! get the local cross-correlation for cryo-EM data
     if ($data.flags.em = true) then
-        @RUN:protocols/em_calc_lcc.cns(Toppar=$toppar; Data=$data; Saprotocol=$saprotocol; lcc=$lcc;)
+!        @RUN:protocols/em_calc_lcc.cns(Toppar=$toppar; Data=$data; Saprotocol=$saprotocol; lcc=$lcc;)
+        @RUN:protocols/em_calc_lcc.cns
     end if
 
     evaluate ($etot = $iterations.w_vdw  * $vdw)

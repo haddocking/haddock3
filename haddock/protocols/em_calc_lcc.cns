@@ -23,8 +23,8 @@ module (Toppar;
     Examples
     --------
     >>> ! lcc calculation requires that the cryoEM data is read
-    >>> @RUN:protocols/em_read_data.cns(Data=$Data;)
-    >>> @RUN:protocols/em_calc_lcc.cns(Toppar=$Toppar; Data=$Data; Saprotocol=$Saprotocol;
+    !>>> @RUN:protocols/em_read_data.cns(Data=$Data;)
+    !>>> @RUN:protocols/em_calc_lcc.cns(Toppar=$Toppar; Data=$Data; Saprotocol=$Saprotocol;
     >>>                                lcc=$lcc;)
     >>> display Local cross correlation-coefficient: $lcc
     

@@ -23,24 +23,25 @@ end
 display reading NEWIT:unambig.tbl in iteration &iteration with option &data.unamb_firstit
 
 
-if (&data.amb_firstit le &iteration)   then 
-     evaluate ($filenam0 = "NEWIT:ambig.tbl_" + encode($count)) 
-     fileexist $filenam0 end
-     if ($result eq false) then
-       evaluate ($filenam0 = "NEWIT:ambig.tbl")
-     end if
-     noe class ambi @@$filenam0 end 
-end if
-
-if (&data.unamb_firstit le &iteration) then 
-     noe class dist @@NEWIT:unambig.tbl end 
-end if
-
-if (&data.hbond_firstit le &iteration) then
-   if (&data.hbonds_on eq true) then 
-      noe @@RUN:data/hbonds/hbonds.tbl end
-   end if
-end if
+! TEMPORARY
+!if (&data.amb_firstit le &iteration)   then
+!     evaluate ($filenam0 = "NEWIT:ambig.tbl_" + encode($count))
+!     fileexist $filenam0 end
+!     if ($result eq false) then
+!       evaluate ($filenam0 = "NEWIT:ambig.tbl")
+!     end if
+!     noe class ambi @@$filenam0 end
+!end if
+!
+!if (&data.unamb_firstit le &iteration) then
+!     noe class dist @@NEWIT:unambig.tbl end
+!end if
+!
+!if (&data.hbond_firstit le &iteration) then
+!   if (&data.hbonds_on eq true) then
+!      noe @@RUN:data/hbonds/hbonds.tbl end
+!   end if
+!end if
 
 noe
   averaging  * sum

@@ -1,12 +1,17 @@
 {
   "input": {
     "molecules": {
-      "mol_1": "p1.pdb",
-      "mol_2": "p2.pdb"
+      "mol1": "p1.pdb",
+      "mol2": "p2_ens.pdb",
+      "mol3": "p3_ens.pdb"
     },
     "run": 1,
     "nproc": 2,
     "run_scheme": "parallel"
   },
-  "topology_recipe": "generate-topology.cns"
+  "topology_recipe": "generate-topology.cns",
+  "it0": {
+    "recipe": "it0.cns",
+    "sampling": 10
+  }
 }

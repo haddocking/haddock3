@@ -37,6 +37,13 @@
 !eval ($toppar.dna_1=false)
 !eval ($toppar.dna_2=false)
 eval ($iteration = 0)
+
+noe
+  reset
+  nrestraints = 12000000     ! allocate space for NOEs
+  ceiling 1000
+end
+
 !==================================================================!
 evaluate ($saprotocol.crossdock=$crossdock)
 evaluate ($saprotocol.randorien=$randorien)
@@ -622,6 +629,9 @@ evaluate ($data.em.xlength =$xlength)
 evaluate ($data.em.ylength =$ylength)
 evaluate ($data.em.zlength =$zlength)
 
+! Restraints
+evaluate ($npart = $ncvpart)
+
 !==================================================================!
 
 if ( $log_level = verbose ) then
@@ -629,6 +639,35 @@ if ( $log_level = verbose ) then
 else
    set message=off echo=off end
 end if
+
+noe
+  averaging  * sum
+  potential  * soft
+  scale      * 1.0
+  sqconstant * 1.0
+  sqexponent * 2
+  soexponent * 1
+  rswitch    * 1.0
+  sqoffset   * 0.0
+  asymptote  * 2.0
+  msoexponent * 1
+  masymptote  * -0.1
+  mrswitch    * 1.0
+  avexpo hbond 20
+end
+
+!fileexist $errfile end
+!      if ($result eq false) then
+!
+!fileexist $ambig_fname end
+!if ($result eq true) then
+!    noe class ambi @@$ambig_fname end
+!end if
+!
+!fileexist $unambig_fname end
+!if ($result eq true) then
+!    noe class dist @@$unambig_fname end
+!end if
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !The next line will be changed automatically from python:
@@ -662,27 +701,32 @@ do (mass=1000) (resn xan)
 do (mass=1000) (resn dan)
 
 !evaluate ($end_count = $iterations.ini_count + $iterations.structures - 1)
-evaluate ($end_count = $iterations.ini_count + $structures_0)
+!evaluate ($end_count = $iterations.ini_count + $structures_0)
 
-if ($Data.noecv eq true) then
-  evaluate ($npart = 1 + mod($count,$Data.ncvpart))
+! What is the purpose of this?
+!if ($Data.noecv eq true) then
+!  evaluate ($npart = 1 + mod($count,$Data.ncvpart))
 !    evaluate ($fileseed="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".seed")
 !  evaluate ($fileseed="NEWIT:complex" + "_" + encode($count) + ".seed")
-  evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
-  evaluate ($seed = max($iteration,1)*$count*$Saprotocol.iniseed)
-  set display=$fileseed end
-  display module(seed;npart)
-  display define (
-  display currentseed = $seed;
-  display currentpart = $npart;
-  display )
-  display evaluate (&seed=currentseed)
-  display evaluate (&npart=currentpart)
-  close $fileseed end
+
+!  evaluate ($seed = max($iteration,1)*$count*$Saprotocol.iniseed)
+evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
+set display=$fileseed end
+display module(seed;npart)
+display define (
+display currentseed = $seed;
+display currentpart = $npart;
+display )
+display evaluate (&seed=currentseed)
+display evaluate (&npart=currentpart)
+close $fileseed end
+
 !else
 !  evaluate ($seed = max($iteration,1)*$count*$Saprotocol.iniseed)
-end if
-!set seed $seed end
+!end if
+
+!display $seed
+set seed $seed end
 
 !coor init end
 !coor @@$file
@@ -692,11 +736,6 @@ if ($Data.flags.centroids = true) then
     if ($iteration = 0) then
         @RUN:protocols/centroids_initialize.cns
     end if
-end if
-
-! check for the presence of ions and add covalent bond
-if ($iteration = 1) then
-  @RUN:protocols/covalions.cns
 end if
 
 {* Find CoM of protein *}
@@ -919,7 +958,7 @@ end loop nloop1
 evaluate ($numnoe = 0)
 
 {*======================= random orientations and rigid body minimisation *}
-if ($iteration = 0) then
+!if ($iteration = 0) then
   if ($SaProtocol.rigidmini eq true) then
     !Make sure that at least as many distance restraints are successfully
     !read as the number of partitions for cross-validation
@@ -1687,6 +1726,8 @@ if ($iteration = 0) then
 
   write coordinates sele=(not resn DUM) output=$output_pdb_filename end
 
+ display OUTPUT: $output_pdb_filename
 
+! no identation, this marks the end of the recipe
 stop
 

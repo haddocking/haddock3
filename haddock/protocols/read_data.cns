@@ -22,22 +22,38 @@ end
 
 if ($Data.amb_lastit ge $Iteration) then
   if ($Data.amb_firstit le $Iteration)   then
-     evaluate ($filenam0 = "NEWIT:ambig.tbl_" + encode($count)) 
+!     evaluate ($filenam0 = "NEWIT:ambig.tbl_" + encode($count))
+     evaluate ($filenam0 = $ambig_fname + "_" + encode($count))
+
      fileexist $filenam0 end
      if ($result eq false) then
-       evaluate ($filenam0 = "NEWIT:ambig.tbl")
+!       evaluate ($filenam0 = "NEWIT:ambig.tbl")
+       evaluate ($filenam0 = $ambig_fname)
      end if
-     noe class ambi @@$filenam0 end 
+
+     fileexist $filenam0 end
+     if ($result eq true) then
+        noe class ambi @@$filenam0 end
+     end if
+
      if ($Data.noecv eq true) then
        noe part $Data.ncvpart end
      end if
   end if
 end if
 
-if ($Data.unamb_lastit ge $Iteration) then 
-  if ($Data.unamb_firstit le $Iteration) then 
-     noe class dist @@NEWIT:unambig.tbl end 
+if ($Data.unamb_lastit ge $Iteration) then
+
+  if ($Data.unamb_firstit le $Iteration) then
+!     noe class dist @@NEWIT:unambig.tbl end
+
+     fileexist $unambig_fname end
+     if ($result eq true) then
+        noe class dist @@$unambig_fname end
+     end if
+
   end if
+
 end if
 
 if ($Data.hbond_lastit ge $Iteration) then

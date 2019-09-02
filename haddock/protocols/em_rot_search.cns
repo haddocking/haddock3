@@ -1,27 +1,27 @@
-module(Data; 
-       Saprotocol; 
-       Toppar;
-       )
-    {*Module optimizes the orientation of binary systems in the EM-density
-
-    The orientation is optimized by a fine rotation search of the axis that is
-    formed by the line that joins the two centroids. The XREF energy is
-    calculated at every orientation to differentiate.
-
-    Parameters
-    ----------
-    Data
-        The Data object
-
-    Toppar
-        The Toppar object
-
-    Notes
-    -----
-    The module uses the COMP coordinate set
-    The MAIN coordinate set are set to the orientation with the lowest XREF energy
-
-    *}
+!module(Data;
+!       Saprotocol;
+!       Toppar;
+!       )
+!    {*Module optimizes the orientation of binary systems in the EM-density
+!
+!    The orientation is optimized by a fine rotation search of the axis that is
+!    formed by the line that joins the two centroids. The XREF energy is
+!    calculated at every orientation to differentiate.
+!
+!    Parameters
+!    ----------
+!    Data
+!        The Data object
+!
+!    Toppar
+!        The Toppar object
+!
+!    Notes
+!    -----
+!    The module uses the COMP coordinate set
+!    The MAIN coordinate set are set to the orientation with the lowest XREF energy
+!
+!    *}
 
     eval($time0 = $CPU)
 

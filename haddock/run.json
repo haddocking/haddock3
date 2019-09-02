@@ -1,12 +1,14 @@
 {
   "input": {
     "molecules": {
-      "mol1": "p1.pdb",
-      "mol2": "p2_ens.pdb",
-      "mol3": "p3_ens.pdb"
+      "mol1": "1AY7_r_u.pdb",
+      "mol2": "1AY7_l_u.pdb"
+    },
+    "restraints": {
+      "ambig": "ambig-ti.tbl"
     },
     "run": 1,
-    "nproc": 2,
+    "nproc": 8,
     "run_scheme": "parallel"
   },
   "topology_recipe": "generate-topology.cns",

@@ -29,8 +29,6 @@ set_occupancy=true;
 occupancy=1.0;
 )
 
-
-!evaluate ($Data.flags.)
 evaluate ($chain = 1)
 evaluate($coor_infile= $file)
 
@@ -500,6 +498,7 @@ end if
  display OUTPUT: $output_pdb_filename
  display OUTPUT: $output_psf_filename
 
- stop
+! no identation, this marks the end of the recipe
+stop
 
 

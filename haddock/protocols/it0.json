@@ -3,7 +3,6 @@
     "folder": "it0",
     "pdb": true
   },
-  "structure": 10,
   "chain": {
     "mol1": {
       "fix_origin": false,
@@ -220,8 +219,8 @@
     "clust_cutoff": 0.60,
     "clust_meth": "FCC",
     "clust_size": 4,
-    "cmrest": true,
-    "cmtight": true,
+    "cmrest": false,
+    "cmtight": false,
     "cns_exe_9": "",
     "cool1_steps": 500,
     "cool2_steps": 1000,
@@ -705,7 +704,7 @@
     "ini_cen_hot_3": 0.25,
     "ini_cen_hot_4": 0.25,
     "ini_cen_hot_5": 0.25,
-    "iniseed": 917,
+    "iniseed": 42,
     "init_cool2": 0.001,
     "init_cool3": 0.05,
     "initiosteps": 500,
@@ -1172,7 +1171,7 @@
     "nfle_7": 0,
     "nfle_8": 0,
     "nfle_9": 0,
-    "noecv": true,
+    "noecv": false,
     "nseg_10": -1,
     "nseg_1": -1,
     "nseg_11": -1,

@@ -7,12 +7,9 @@ from haddock.modules.structure.utils import PDB
 
 def init():
 	# move input molecules to correct places
-	wd = os.getcwd()
 	run_dir = f"run{config.param_dic['input']['run']}"
 	data_dir = f'{run_dir}/data'
 	begin_dir = f'{run_dir}/begin'
-	job_dir = f'{run_dir}/jobs'
-	output_dir = f'{run_dir}/output'
 
 	if not os.path.isdir(run_dir):
 		os.system(f'mkdir {run_dir}')
@@ -37,11 +34,32 @@ def init():
 	if not os.path.isdir(begin_dir):
 		os.system(f'mkdir {begin_dir}')
 
-	if not os.path.isdir(job_dir):
-		os.system(f'mkdir {job_dir}')
+	try:
+		ambig_fname = config.param_dic['input']['restraints']['ambig']
+		os.system(f'cp {ambig_fname} {run_dir}/data/ambig.tbl')
+		config.param_dic['input']['restraints']['ambig'] = 'data/ambig.tbl'
+	except KeyError:
+		pass
 
-	if not os.path.isdir(output_dir):
-		os.system(f'mkdir {output_dir}')
+	try:
+		unambig_fname = config.param_dic['input']['restraints']['unambig']
+		os.system(f'cp {unambig_fname} {run_dir}/data/unambig.tbl')
+		config.param_dic['input']['restraints']['unambig'] = 'data/unambig.tbl'
+	except KeyError:
+		pass
+
+	try:
+		hbond_fname = config.param_dic['input']['restraints']['hbond']
+		os.system(f'cp {hbond_fname} {run_dir}/data/hbond.tbl')
+		config.param_dic['input']['restraints']['hbond'] = 'data/hbond.tbl'
+	except KeyError:
+		pass
+	try:
+		dihe_fname = config.param_dic['input']['restraints']['dihedrals']
+		os.system(f'cp {dihe_fname} {run_dir}/data/dihe.tbl')
+		config.param_dic['input']['restraints']['dihe_fname'] = 'data/dihe.tbl'
+	except KeyError:
+		pass
 
 	os.chdir(run_dir)
 
@@ -85,13 +103,23 @@ def molecularize(dic):
 
 
 def retrieve_output(jobs):
-	# First attempt, parse .out and identify the tag
+	# FIXME: This must read the output file and retrieve OUTPUT: and identify if the job was successful or not
 	output_dic = {}
+	complete_check = None
 	for j in jobs.dic:
-		_, out = jobs.dic[j]
+		inp, out = jobs.dic[j]
 		output_dic[j] = []
-		for line in reversed(list(open(out))):
-			if 'OUTPUT:' in line and not 'CNS' in line:
+		for i, line in enumerate(reversed(list(open(out)))):
+			if 'OUTPUT:' in line and 'CNS' not in line:
 				v = line.strip().split(':')[1][1:]
 				output_dic[j].append(v)
+			if 'CNSsolve>stop' in line:
+				# passed ok
+				complete_check = True
+			if not complete_check and 'ABORT' in line:
+				# job has failed!
+				print(f'+ ERROR: Job {inp} has failed, please check the output {out}')
+				exit()
+			if i == 50:
+				break
 	return output_dic

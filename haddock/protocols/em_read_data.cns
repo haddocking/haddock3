@@ -1,4 +1,4 @@
-module (Data;)
+!module (Data;)
     {*
     Module reads in the cryoEM data, supposed to be the CryoEM map. Since CNS
     is mainly build for X-ray Crystallography and thus reciprocal space,

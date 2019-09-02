@@ -263,7 +263,7 @@ set remarks=reset end
 set remarks=accumulate end
 remarks ===============================================================
 remarks HADDOCK run for $Filenames.fileroot
-remarks initial structure: $initialstruct
+!remarks initial structure: $initialstruct
 !remarks final NOE weights: unambig $Data.unamb_cool3 amb: $Data.amb_cool3
 remarks ===============================================================
 remarks            total,bonds,angles,improper,dihe,vdw,elec,air,cdih,coup,rdcs,vean,dani,xpcs,rg

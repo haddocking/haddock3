@@ -208,6 +208,7 @@
             evaluate ($maxid = $ncount)
           end if
         end loop selectmol
+        display $maxid
         if ($Toppar.fix_origin_$maxid eq false) then
           coor trans 
 	       sele=(segid $Toppar.prot_segid_$maxid or segid $watersegname_$maxid) 

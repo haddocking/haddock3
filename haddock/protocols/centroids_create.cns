@@ -1,4 +1,4 @@
-module (ncomponents; Toppar;)
+!module (ncomponents; Toppar;)
     {Create and initialize Dummy residues for each segid
 
     Parameters

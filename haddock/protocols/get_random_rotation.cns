@@ -47,9 +47,9 @@
    >>>> end
 *}
 
-module {random_rotation} (Rotation;
-                          Type='Quaternion';
-                          )
+!module {random_rotation} (Rotation;
+!                          Type='Quaternion';
+!                          )
 
     !1. Generate random e1 e2 e3 and e4 in [-1, 1] so that e1^2 + e2^2 < 1 and e3^2+e4^2 < 1
     evaluate ($RRM_e1 = random() * 2 - 1)

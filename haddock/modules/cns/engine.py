@@ -1,6 +1,7 @@
 import multiprocessing
 import subprocess
 import os
+# import tqdm
 import haddock.workflows.scoring.config as config
 
 
@@ -55,7 +56,13 @@ class CNS:
 
 	def run_parallel(self, jobs):
 		""" Execute the jobs in parallel """
-		print(f'+ Running parallel, {self.nproc} cores')
+		job_n = len(jobs.dic)
+		if self.nproc > job_n:
+			self.nproc = job_n
+		if self.nproc > multiprocessing.cpu_count():
+			self.nproc = multiprocessing.cpu_count()
+
+		print(f'+ Running parallel, {self.nproc} cores {job_n} jobs')
 		arg_list = []
 		for job_id in jobs.dic:
 			inp_f = jobs.dic[job_id][0]
@@ -64,17 +71,14 @@ class CNS:
 				arg_list.append((self.cns_exec, inp_f, out_f))
 
 		with multiprocessing.Pool(processes=self.nproc) as pool:
-			_ = pool.starmap(self.execute, arg_list)
+			# _ = list(tqdm.tqdm(pool.imap(self.execute, arg_list), total=len(arg_list)))
+			_ = pool.imap(self.execute, arg_list)
 
 	@staticmethod
-	def execute(cns_exec, input_f, output_f):
+	def execute(args):
+		cns_exec, input_f, output_f = args
 		with open(input_f) as inp:
 			with open(output_f, 'w+') as outf:
 				p = subprocess.Popen(cns_exec, stdin=inp, stdout=outf, close_fds=True)
 				_, _ = p.communicate()
 				p.kill()
-
-
-
-
-

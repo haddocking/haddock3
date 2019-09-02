@@ -1,8 +1,8 @@
-module (Toppar; 
-        Data; 
-        Saprotocol; 
-        lcc;
-        )
+!module (Toppar;
+!        Data;
+!        Saprotocol;
+!        lcc;
+!        )
     {*The module calculates the local cross-correlation coefficient (lcc) between
     the targetmap and the atomic model. 
 

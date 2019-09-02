@@ -1,3 +1,6 @@
+import random
+import sys
+from datetime import datetime
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import RecipeGenerator
 from haddock.modules.docking.it0 import RigidBody
@@ -7,10 +10,30 @@ from haddock.modules.functions import *
 import config
 
 
+def logo():
+	now = datetime.now().replace(second=0, microsecond=0)
+	version = sys.version
+	print(f'''##############################################
+#                                            #
+#         Starting HADDOCK v3.0beta1         #
+#                                            #
+#             EXPERIMENTAL BUILD             #
+#                                            #                               
+##############################################
+
+Starting HADDOCK on {now}
+
+HADDOCK version: 3.0 beta 1
+Python {version}
+''')
+
+
 def pre_process():
 	molecule_dic = config.param_dic['input']['molecules']
 
 	p = PDB()
+
+	# TODO: Edit chainID/segID
 	treated_dic = treat_ensemble(molecule_dic)
 
 	# update data structure ?
@@ -24,6 +47,7 @@ def pre_process():
 
 
 def generate_topology(molecule_dictionary):
+	print('++ Generating topologies')
 	recipe_gen = RecipeGenerator()
 	jobs = JobCreator()
 	cns = CNS()
@@ -31,16 +55,19 @@ def generate_topology(molecule_dictionary):
 	job_counter = 1
 	for mol in molecule_dictionary:
 		for input_strc in molecule_dictionary[mol]:
+			output_strct = input_strc.split('/')[1].split('.')[0]
 			recipe = recipe_gen.generate(recipe_file=config.param_dic['topology_recipe'],
 			                             molecule_id=mol,
 			                             protonation_dic={},
 			                             prefix_folder='begin/',
-			                             output_name='')
+			                             pdb=input_strc,
+			                             psf=None,
+			                             output_name=output_strct)
 
 			jobs.delegate(job_num=job_counter,
 			              job_id='generate',
 			              recipe_str=recipe,
-			              input_model=input_strc)
+			              job_folder='begin/')
 			job_counter += 1
 
 	cns.run(jobs)
@@ -50,8 +77,10 @@ def generate_topology(molecule_dictionary):
 
 
 def run_it0(model_dic):
+	print('\n++ Running it0')
 	supported_modules = []
 	recipe = config.param_dic['it0']['recipe']
+	print(f'+ Recipe: {recipe}')
 	complex_list = None
 
 	if '.cns' not in recipe:
@@ -59,16 +88,13 @@ def run_it0(model_dic):
 		if recipe not in supported_modules:
 			print(f'+ ERROR: {recipe} not supported.')
 			exit()
-	# else:
-	# 	exec =
+
 	else:
 		# Its a HADDOCK recipe
+		it0 = RigidBody()
+		job_dic = it0.init(model_dic)
+		complex_list = it0.run(job_dic)
 
-		it0 = RigidBody(model_dic)
-		it0.init()
-		it0.run()
-		complex_list = it0.retrieve()
-	#
 	# recipe_gen = RecipeGenerator()
 	# jobs = JobCreator()
 	# cns = CNS()
@@ -76,7 +102,15 @@ def run_it0(model_dic):
 	return complex_list
 
 
+def bye():
+	salutations = ['Tot ziens!', 'Good bye!', 'Ate logo!', 'Ciao!', 'Au revoir!']
+
+	return '\n' + random.choice(salutations)
+
+
 if __name__ == '__main__':
+	logo()
+
 	# 0 Initialize
 	init()
 
@@ -104,5 +138,8 @@ if __name__ == '__main__':
 	# ['complex_42.pdb', 'complex_10.pdb', 'complex_23.pdb']
 
 	rigid_complexes = run_it0(begin_models)
-# semi_flexible_complexes = run_it1(begin_models)
-# water_refined_complexes = run_itw(begin_models)
+	# semi_flexible_complexes = run_it1(begin_models)
+	# water_refined_complexes = run_itw(begin_models)
+	# md_models = run_md(models)
+
+	print(bye())

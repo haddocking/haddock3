@@ -1,5 +1,5 @@
 import os
-from haddock.tools.reduce import analyze_protonation_state
+from haddock.modules.structure.reduce import analyze_protonation_state
 from utils.files import get_full_path
 
 src_path = get_full_path('haddock', 'src')

@@ -157,7 +157,7 @@ while ($nmol <= $data.ncomponents) loop mol
   end loop fle
 !
 !  !histidine patches
-!  evaluate ($toppar.autohis = $autohis)
+  evaluate ($toppar.autohis = $autohis)
 !  evaluate ($toppar.nhisd_$nmol = $numhisd_$nmol)
 !  evaluate ($ncc=1)
 !  while ($ncc <=$toppar.nhisd_$nmol) loop hisd

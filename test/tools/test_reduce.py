@@ -5,7 +5,7 @@ from utils.files import get_full_path
 data_path = get_full_path('test', 'test_data')
 
 with patch("sys.argv", ['', f'{data_path}/scoring.json']):
-	from haddock.tools.reduce import run_reduce, analyze_protonation_state
+	from haddock.modules.structure.reduce import run_reduce, analyze_protonation_state
 
 
 class TestReduce(unittest.TestCase):

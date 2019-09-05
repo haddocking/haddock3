@@ -1,7 +1,7 @@
 import multiprocessing
 import subprocess
 import os
-# import tqdm
+import tqdm
 import haddock.workflows.scoring.config as config
 
 
@@ -71,8 +71,8 @@ class CNS:
 				arg_list.append((self.cns_exec, inp_f, out_f))
 
 		with multiprocessing.Pool(processes=self.nproc) as pool:
-			# _ = list(tqdm.tqdm(pool.imap(self.execute, arg_list), total=len(arg_list)))
-			_ = pool.imap(self.execute, arg_list)
+			_ = list(tqdm.tqdm(pool.imap(self.execute, arg_list), total=len(arg_list)))
+			# _ = pool.imap(self.execute, arg_list)
 
 	@staticmethod
 	def execute(args):

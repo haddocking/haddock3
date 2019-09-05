@@ -67,7 +67,7 @@ def generate_topology(molecule_dictionary):
 			jobs.delegate(job_num=job_counter,
 			              job_id='generate',
 			              recipe_str=recipe,
-			              job_folder='begin/')
+			              job_folder='begin')
 			job_counter += 1
 
 	cns.run(jobs)
@@ -94,6 +94,7 @@ def run_it0(model_dic):
 		it0 = RigidBody()
 		job_dic = it0.init(model_dic)
 		complex_list = it0.run(job_dic)
+		file_list = it0.output(complex_list)
 
 	# recipe_gen = RecipeGenerator()
 	# jobs = JobCreator()
@@ -103,8 +104,7 @@ def run_it0(model_dic):
 
 
 def bye():
-	salutations = ['Tot ziens!', 'Good bye!', 'Ate logo!', 'Ciao!', 'Au revoir!']
-
+	salutations = ['Tot ziens!', 'Good bye!', 'Até logo!', 'Ciao!', 'Au revoir!', 'Adéu-siau!', 'Agur!']
 	return '\n' + random.choice(salutations)
 
 

@@ -8,7 +8,7 @@
       "ambig": "ambig-ti.tbl"
     },
     "run": 1,
-    "nproc": 8,
+    "nproc": 24,
     "run_scheme": "parallel"
   },
   "topology_recipe": "generate-topology.cns",

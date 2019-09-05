@@ -1,5 +1,7 @@
 # placeholder
 import os
+import re
+
 import config as config
 
 from haddock.modules.structure.utils import PDB
@@ -15,10 +17,13 @@ def init():
 		os.system(f'mkdir {run_dir}')
 	else:
 		print(f'+ WARNING: {run_dir} already present')
-	# exit()
+
+	if not os.path.isdir(begin_dir):
+		os.system(f'mkdir {begin_dir}')
 
 	if not os.path.isdir(data_dir):
 		os.system(f'mkdir {data_dir}')
+
 	for mol_id in config.param_dic['input']['molecules']:
 		molecule = config.param_dic['input']['molecules'][mol_id]
 
@@ -31,11 +36,12 @@ def init():
 
 		config.param_dic['input']['molecules'][mol_id] = f'data/{mol_id}_1.pdb'
 
-	if not os.path.isdir(begin_dir):
-		os.system(f'mkdir {begin_dir}')
+
 
 	try:
 		ambig_fname = config.param_dic['input']['restraints']['ambig']
+		# if os.path.isfile(f'{run_dir}/data/ambig.tbl'):
+		# 	os.system(f'\rm {run_dir}/data/ambig.tbl')
 		os.system(f'cp {ambig_fname} {run_dir}/data/ambig.tbl')
 		config.param_dic['input']['restraints']['ambig'] = 'data/ambig.tbl'
 	except KeyError:
@@ -123,3 +129,63 @@ def retrieve_output(jobs):
 			if i == 50:
 				break
 	return output_dic
+
+
+def extract_energies(pdb_file):
+	""" Extract energies from the header of the PDB file, according to HADDOCK formatting """
+	vdw = .0
+	elec = .0
+	desolv = .0
+	air = .0
+	bsa = .0
+
+	vdw_elec_air_regex = r"\s(\-?\d*\.?\d{1,}(E-\d{1,}|)|0\b|\$\w{1,})"
+	desolv_regex = r"(\-?\d*\.?\d*)$"
+	bsa_regex = r"(\-?\d*\.?\d*)$"
+
+	f = open(pdb_file, 'r')
+	for line in f:
+
+		if 'REMARK energies' in line:
+			# dirty account for 8.754077E-02 notation and the eventual $DANI or $NOE
+			energy_v = re.findall(vdw_elec_air_regex, line)
+
+			temp_v = []
+			for v in energy_v:
+				v = v[0]
+				try:
+					v = float(v)
+				except ValueError:
+					v = .0
+				temp_v.append(v)
+			energy_v = temp_v
+			# WARNING: This is highly dependent on the values printed by the recipe, refer to print_coorheader.cns
+			total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, rdcs, vean, dani, xpcs, rg = energy_v
+			vdw = float(vdw)
+			elec = float(elec)
+			air = float(air)
+
+		if 'REMARK Desolvation' in line:
+			desolv = float(re.findall(desolv_regex, line)[0])
+
+		if 'REMARK buried surface area' in line:
+			bsa = float(re.findall(bsa_regex, line)[0])
+			break
+
+	f.close()
+
+	return vdw, elec, desolv, air, bsa
+
+
+def calculate_haddock_score(pdb_file, stage):
+	""" Calculate the HADDOCK Score of the PDB file using its appropriate weight """
+
+	weight_dic = dict(it0=(0.01, 1.0, 1.0, 0.01, 0.01),
+	                  it1=(1.0, 1.0, 1.0, 0.1, 0.01),
+	                  itw=(1.0, 0.2, 1.0, 0.1, 0.0))
+
+	vdw, elec, desolv, air, bsa = extract_energies(pdb_file)
+	w = weight_dic[stage]
+	haddock_score = w[0] * vdw + w[1] * elec + w[2] * desolv + w[3] * air - w[4] * bsa
+
+	return haddock_score

@@ -1,7 +1,15 @@
+import configparser
 import subprocess
-import haddock.workflows.scoring.config as config
+import os
+from utils.files import get_full_path
 
-reduce_exec = config.ini.get('third party', 'reduce_exe')
+etc_folder = get_full_path('haddock', 'etc')
+config_file = os.path.join(etc_folder, 'haddock3.ini')
+
+ini = configparser.ConfigParser(os.environ)
+ini.read(config_file, encoding='utf-8')
+
+reduce_exec = ini.get('third party', 'reduce_exe')
 
 
 class ReduceError(Exception):

@@ -1,8 +1,12 @@
+import configparser
 import multiprocessing
 import subprocess
 import os
+import toml
 import tqdm
-import haddock.workflows.scoring.config as config
+# import haddock.workflows.scoring.config as config
+import config
+# from utils.files import get_full_path
 
 
 class CNS:
@@ -11,8 +15,9 @@ class CNS:
 	def __init__(self):
 		self.stdout = None
 		self.cns_exec = config.ini.get('cns', 'cns_exe')
-		self.nproc = config.param_dic['input']['nproc']
-		self.run_scheme = config.param_dic['input']['run_scheme']
+
+		self.run_param = toml.load('data/run.toml')
+		self.run_scheme = self.run_param['execution_parameters']['scheme']
 
 	def run(self, jobs):
 		"""Pass the input defined in input_file to CNS"""
@@ -57,12 +62,16 @@ class CNS:
 	def run_parallel(self, jobs):
 		""" Execute the jobs in parallel """
 		job_n = len(jobs.dic)
-		if self.nproc > job_n:
-			self.nproc = job_n
-		if self.nproc > multiprocessing.cpu_count():
-			self.nproc = multiprocessing.cpu_count()
+		nproc = self.run_param['execution_parameters']['nproc']
+		if not nproc:
+			print('+ERROR: With run_scheme parallel you must define nproc')
+			exit()
+		if nproc > job_n:
+			nproc = job_n
+		if nproc > multiprocessing.cpu_count():
+			nproc = multiprocessing.cpu_count()
 
-		print(f'+ Running parallel, {self.nproc} cores {job_n} jobs')
+		print(f'+ Running parallel, {nproc} cores {job_n} jobs')
 		arg_list = []
 		for job_id in jobs.dic:
 			inp_f = jobs.dic[job_id][0]
@@ -70,7 +79,7 @@ class CNS:
 			if not os.path.isfile(out_f):
 				arg_list.append((self.cns_exec, inp_f, out_f))
 
-		with multiprocessing.Pool(processes=self.nproc) as pool:
+		with multiprocessing.Pool(processes=nproc) as pool:
 			_ = list(tqdm.tqdm(pool.imap(self.execute, arg_list), total=len(arg_list)))
 			# _ = pool.imap(self.execute, arg_list)
 

@@ -1,86 +1,79 @@
+import glob
 import random
 import sys
+import toml
+import os
 from datetime import datetime
 from haddock.modules.cns.engine import CNS
-from haddock.modules.cns.input import RecipeGenerator
+from haddock.modules.cns.input import InputGenerator
 from haddock.modules.docking.it0 import RigidBody
-from haddock.modules.structure.utils import PDB
+# from haddock.modules.structure.utils import PDB
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
-import config
 
 
-def logo():
+# import config
+
+
+def greeting():
 	now = datetime.now().replace(second=0, microsecond=0)
-	version = sys.version
-	print(f'''##############################################
+	python_version = sys.version
+	return (f'''##############################################
 #                                            #
 #         Starting HADDOCK v3.0beta1         #
 #                                            #
 #             EXPERIMENTAL BUILD             #
-#                                            #                               
+#                                            #
 ##############################################
 
 Starting HADDOCK on {now}
 
 HADDOCK version: 3.0 beta 1
-Python {version}
+Python {python_version}
 ''')
 
 
-def pre_process():
-	molecule_dic = config.param_dic['input']['molecules']
-
-	p = PDB()
-
-	# TODO: Edit chainID/segID
-	treated_dic = treat_ensemble(molecule_dic)
-
-	# update data structure ?
-	config.param_dic['input']['molecules'] = treated_dic
-
-	for mol in treated_dic:
-		pdb_list = treated_dic[mol]
-		p.sanitize(pdb_list)
-
-	return treated_dic
-
-
-def generate_topology(molecule_dictionary):
+def generate_topology(mol_dic, run_param):
 	print('++ Generating topologies')
-	recipe_gen = RecipeGenerator()
-	jobs = JobCreator()
-	cns = CNS()
+
+	recipe = 'topology/template/' + run_param['stage']['topology']['recipe']
+	if not os.path.isfile(recipe):
+		print('+ ERROR: Template recipe for topology not found')
+
+	topo_gen = InputGenerator(recipe_file=recipe,
+	                          input_folder='topology')
+
+	jobs = JobCreator(job_id='generate',
+	                  job_folder='topology')
 
 	job_counter = 1
-	for mol in molecule_dictionary:
-		for input_strc in molecule_dictionary[mol]:
+	for mol in mol_dic:
+		for input_strc in mol_dic[mol]:
 			output_strct = input_strc.split('/')[1].split('.')[0]
-			recipe = recipe_gen.generate(recipe_file=config.param_dic['topology_recipe'],
-			                             molecule_id=mol,
-			                             protonation_dic={},
-			                             prefix_folder='begin/',
-			                             pdb=input_strc,
-			                             psf=None,
-			                             output_name=output_strct)
+			input_f = topo_gen.generate(protonation_dic={},
+			                            pdb=True,
+			                            psf=True,
+			                            input_data=input_strc,
+			                            output_fname=output_strct)
 
 			jobs.delegate(job_num=job_counter,
-			              job_id='generate',
-			              recipe_str=recipe,
-			              job_folder='begin')
+			              recipe_str=input_f)
+
 			job_counter += 1
 
+	cns = CNS()
 	cns.run(jobs)
 	output = retrieve_output(jobs)
 	topology_dic = molecularize(output)
 	return topology_dic
 
 
-def run_it0(model_dic):
+def run_it0(model_dic, run_param):
 	print('\n++ Running it0')
 	supported_modules = []
-	recipe = config.param_dic['it0']['recipe']
-	print(f'+ Recipe: {recipe}')
+	# recipe = config.param_dic['it0']['recipe']
+	recipe = 'topology/template/' + run_param['stage']['rigid_body']['recipe']
+	# print(f'+ Recipe: {recipe}')
 	complex_list = None
 
 	if '.cns' not in recipe:
@@ -103,22 +96,20 @@ def run_it0(model_dic):
 	return complex_list
 
 
-def bye():
-	salutations = ['Tot ziens!', 'Good bye!', 'Até logo!', 'Ciao!', 'Au revoir!', 'Adéu-siau!', 'Agur!']
-	return '\n' + random.choice(salutations)
-
-
 if __name__ == '__main__':
-	logo()
+	print(greeting())
 
-	# 0 Initialize
-	init()
+	# 0 Identify input
+	#
 
-	# 1 Pre-process initial structures
-	mol_dic = pre_process()
+	# TODO: Add USAGE
+	run_parameters = toml.load('data/run.toml')
 
-	# 2 Generate topologies
-	begin_models = generate_topology(mol_dic)
+	molecules = get_begin_molecules('data/')
+
+
+	# 1 Generate topologies
+	begin_models = generate_topology(molecules, run_parameters)
 
 	# 3 Docking
 
@@ -137,7 +128,8 @@ if __name__ == '__main__':
 	#   example:
 	# ['complex_42.pdb', 'complex_10.pdb', 'complex_23.pdb']
 
-	rigid_complexes = run_it0(begin_models)
+	rigid_complexes = run_it0(begin_models, run_parameters)
+	# rigid_complexes = run_lightdock(begin_models)
 	# semi_flexible_complexes = run_it1(begin_models)
 	# water_refined_complexes = run_itw(begin_models)
 	# md_models = run_md(models)

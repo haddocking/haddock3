@@ -14,6 +14,30 @@ class PDB:
         self.model_list = []
         self.protonation_dic = {}
 
+    @staticmethod
+    def treat_ensemble(pdb_dic):
+        check = False
+        new_d = {}
+        for mol in pdb_dic:
+            new_d[mol] = []
+            pdb = pdb_dic[mol]
+            with open(pdb) as f:
+                reversed_list = reversed(f.readlines())
+                for line in reversed_list:
+                    if 'ENDMDL' in line:
+                        check = True
+                        break
+                if check:
+                    split_models = PDB.split_models(pdb)
+                    for model in split_models:
+                        new_d[mol].append(model)
+                    continue
+                else:
+                    new_d[mol].append(pdb)
+
+            f.close()
+        return new_d
+
     def clean_pdbs(self, pdb_list):
         clean_model_list = self.sanitize(pdb_list)
 

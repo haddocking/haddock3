@@ -1,7 +1,7 @@
 import itertools
 import math
 from haddock.modules.cns.engine import CNS
-from haddock.modules.cns.input import RecipeGenerator
+from haddock.modules.cns.input import InputGenerator
 from haddock.modules.functions import retrieve_output, calculate_haddock_score
 from haddock.modules.worker.distribution import JobCreator
 import config

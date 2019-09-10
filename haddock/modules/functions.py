@@ -1,74 +1,10 @@
-# placeholder
-import os
 import re
-
-import config as config
-
+import random
+import configparser
+import os
+import glob
 from haddock.modules.structure.utils import PDB
-
-
-def init():
-	# move input molecules to correct places
-	run_dir = f"run{config.param_dic['input']['run']}"
-	data_dir = f'{run_dir}/data'
-	begin_dir = f'{run_dir}/begin'
-
-	if not os.path.isdir(run_dir):
-		os.system(f'mkdir {run_dir}')
-	else:
-		print(f'+ WARNING: {run_dir} already present')
-
-	if not os.path.isdir(begin_dir):
-		os.system(f'mkdir {begin_dir}')
-
-	if not os.path.isdir(data_dir):
-		os.system(f'mkdir {data_dir}')
-
-	for mol_id in config.param_dic['input']['molecules']:
-		molecule = config.param_dic['input']['molecules'][mol_id]
-
-		if molecule == mol_id + '.pdb':
-			print("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
-			exit()
-
-		# ensembles will be treated later
-		os.system(f'cp {molecule} {run_dir}/data/{mol_id}_1.pdb')
-
-		config.param_dic['input']['molecules'][mol_id] = f'data/{mol_id}_1.pdb'
-
-
-
-	try:
-		ambig_fname = config.param_dic['input']['restraints']['ambig']
-		# if os.path.isfile(f'{run_dir}/data/ambig.tbl'):
-		# 	os.system(f'\rm {run_dir}/data/ambig.tbl')
-		os.system(f'cp {ambig_fname} {run_dir}/data/ambig.tbl')
-		config.param_dic['input']['restraints']['ambig'] = 'data/ambig.tbl'
-	except KeyError:
-		pass
-
-	try:
-		unambig_fname = config.param_dic['input']['restraints']['unambig']
-		os.system(f'cp {unambig_fname} {run_dir}/data/unambig.tbl')
-		config.param_dic['input']['restraints']['unambig'] = 'data/unambig.tbl'
-	except KeyError:
-		pass
-
-	try:
-		hbond_fname = config.param_dic['input']['restraints']['hbond']
-		os.system(f'cp {hbond_fname} {run_dir}/data/hbond.tbl')
-		config.param_dic['input']['restraints']['hbond'] = 'data/hbond.tbl'
-	except KeyError:
-		pass
-	try:
-		dihe_fname = config.param_dic['input']['restraints']['dihedrals']
-		os.system(f'cp {dihe_fname} {run_dir}/data/dihe.tbl')
-		config.param_dic['input']['restraints']['dihe_fname'] = 'data/dihe.tbl'
-	except KeyError:
-		pass
-
-	os.chdir(run_dir)
-
+from utils.files import get_full_path
 
 def treat_ensemble(pdb_dic):
 	check = False
@@ -189,3 +125,31 @@ def calculate_haddock_score(pdb_file, stage):
 	haddock_score = w[0] * vdw + w[1] * elec + w[2] * desolv + w[3] * air - w[4] * bsa
 
 	return haddock_score
+
+
+def bye():
+	salutations = ['Tot ziens!', 'Good bye!', 'Até logo!', 'Ciao!', 'Au revoir!', 'Adéu-siau!', 'Agur!', 'Dovidenia!']
+	return '\n'.join(random.sample(salutations, k=3))
+
+
+def get_begin_molecules(folder):
+	# {'mol1': ['run-debug/data/mol1_1.pdb'], 'mol2': ['run-debug/data/mol2_1.pdb']}
+	mol_dic = {}
+	for pdb in glob.glob(f'{folder}/*pdb'):
+		root = pdb.split('/')[1].split('_')[0]
+		try:
+			mol_dic[root].append(pdb)
+		except KeyError:
+			mol_dic[root] = [pdb]
+
+	return mol_dic
+
+
+def load_ini(ini_file):
+	etc_folder = get_full_path('haddock', 'etc')
+	config_file = os.path.join(etc_folder, ini_file)
+
+	ini = configparser.ConfigParser(os.environ)
+	ini.read(config_file, encoding='utf-8')
+
+	return ini

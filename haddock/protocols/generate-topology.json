@@ -1,33 +1,58 @@
 {
-  "seed": "random",
   "params": {
-    "autohis": "true",
-    "delenph": "false",
-    "randorien": "true",
+    "autohis": true,
+    "delenph": true,
+    "randorien": true,
     "log_level": "verbose"
   },
-  "output":{
-    "folder": "begin",
-    "psf": true,
-    "pdb": true
-  },
-
-  "chain": {
+  "input": {
     "mol1": {
       "prot_segid": "A",
-      "fix_origin": "false",
-      "dna": "false",
-      "shape": "false",
-      "cg": "false",
-      "cyclicpept": "false"
+      "fix_origin": false,
+      "dna": false,
+      "shape": false,
+      "cg": false,
+      "cyclicpept": false
     },
     "mol2": {
       "prot_segid": "B",
-      "fix_origin": "false",
-      "dna": "false",
-      "shape": "false",
-      "cg": "false",
-      "cyclicpept": "false"
+      "fix_origin": false,
+      "dna": false,
+      "shape": false,
+      "cg": false,
+      "cyclicpept": false
+    },
+    "mol3": {
+      "prot_segid": "C",
+      "fix_origin": false,
+      "dna": false,
+      "shape": false,
+      "cg": false,
+      "cyclicpept": false
+    },
+    "mol4": {
+      "prot_segid": "D",
+      "fix_origin": false,
+      "dna": false,
+      "shape": false,
+      "cg": false,
+      "cyclicpept": false
+    },
+    "mol5": {
+      "prot_segid": "E",
+      "fix_origin": false,
+      "dna": false,
+      "shape": false,
+      "cg": false,
+      "cyclicpept": false
+    },
+    "mol6": {
+      "prot_segid": "F",
+      "fix_origin": false,
+      "dna": false,
+      "shape": false,
+      "cg": false,
+      "cyclicpept": false
     }
   }
 }

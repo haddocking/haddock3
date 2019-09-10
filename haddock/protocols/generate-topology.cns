@@ -46,11 +46,12 @@ evaluate($coor_infile= $file)
 !     if ( &BLANK%cofac_link_infile = false ) then
 !       @@&cofac_link_infile
 !     end if
+     @@$link_file
      coordinates @@$coor_infile
    end
  end
 
- coordinates @@$coor_infile end
+ coordinates @@$coor_infile
 
  if ( &BLANK%ile_CD_becomes = false ) then
    do (name=&ile_CD_becomes) (resn ILE and name CD)
@@ -62,30 +63,30 @@ evaluate($coor_infile= $file)
    do (name=&OT2_becomes) (name OT2)
  end if
 
-! !for the histidine patches:
-! if (autohis = false) then
-!   evaluate($hisd_counter=1)
-!   while ($hisd_counter le $Toppar.nhisd_$chain) loop hisd
-!     if ($Toppar.hisd_resid_$chain_$hisd_counter > 0) then
-!       show (resn) (tag and resid $Toppar.hisd_resid_$chain_$hisd_counter)
-!       if ($result eq "HIS") then
-!         patch hisd reference=nil=(resid $Toppar.hisd_resid_$chain_$hisd_counter) end
-!       end if
-!     end if
-!     evaluate($hisd_counter=$hisd_counter + 1)
-!   end loop hisd
-!
-!   evaluate($hise_counter=1)
-!   while ($hise_counter le $Toppar.nhise_$chain) loop hise
-!     if ($Toppar.hise_resid_$chain_$hise_counter > 0) then
-!       show (resn) (tag and resid $Toppar.hise_resid_$chain_$hise_counter)
-!       if ($result eq "HIS") then
-!         patch hise reference=nil=(resid $Toppar.hise_resid_$chain_$hise_counter) end
-!       end if
-!     end if
-!     evaluate($hise_counter=$hise_counter + 1)
-!   end loop hise
-! end if
+ !for the histidine patches:
+ if ($autohis = false) then
+   evaluate($hisd_counter=1)
+   while ($hisd_counter le $Toppar.nhisd_$chain) loop hisd
+     if ($Toppar.hisd_resid_$chain_$hisd_counter > 0) then
+       show (resn) (tag and resid $Toppar.hisd_resid_$chain_$hisd_counter)
+       if ($result eq "HIS") then
+         patch hisd reference=nil=(resid $Toppar.hisd_resid_$chain_$hisd_counter) end
+       end if
+     end if
+     evaluate($hisd_counter=$hisd_counter + 1)
+   end loop hisd
+
+   evaluate($hise_counter=1)
+   while ($hise_counter le $Toppar.nhise_$chain) loop hise
+     if ($Toppar.hise_resid_$chain_$hise_counter > 0) then
+       show (resn) (tag and resid $Toppar.hise_resid_$chain_$hise_counter)
+       if ($result eq "HIS") then
+         patch hise reference=nil=(resid $Toppar.hise_resid_$chain_$hise_counter) end
+       end if
+     end if
+     evaluate($hise_counter=$hise_counter + 1)
+   end loop hise
+ end if
 
 ! The following patches would define covalent bond between a CA+2 and oxygen ligands
 ! from Asp and Glu (first selection is amino-acid, second is ion)
@@ -108,7 +109,7 @@ evaluate($coor_infile= $file)
  inline @RUN:protocols/patch-types-cg.cns
  inline @RUN:protocols/patch-bb-cg.cns
 
- if (delenph = true) then
+ if ($delenph = true) then
    delete sele=(name H* and attr charge = 0) end
  end if
 
@@ -399,7 +400,7 @@ evaluate ($ironclus=0)
 
  inline @RUN:protocols/build-missing.cns
 
-if (autohis = true) then
+if ($autohis = true) then
  inline @RUN:protocols/auto-his.cns
 end if
 

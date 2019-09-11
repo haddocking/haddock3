@@ -1,12 +1,11 @@
-import configparser
 import multiprocessing
 import subprocess
 import os
 import toml
 import tqdm
-# import haddock.workflows.scoring.config as config
-import config
-# from utils.files import get_full_path
+from haddock.modules.functions import load_ini
+
+ini = load_ini('haddock3.ini')
 
 
 class CNS:
@@ -14,7 +13,7 @@ class CNS:
 
 	def __init__(self):
 		self.stdout = None
-		self.cns_exec = config.ini.get('cns', 'cns_exe')
+		self.cns_exec = ini.get('cns', 'cns_exe')
 
 		self.run_param = toml.load('data/run.toml')
 		self.run_scheme = self.run_param['execution_parameters']['scheme']
@@ -64,7 +63,7 @@ class CNS:
 		job_n = len(jobs.dic)
 		nproc = self.run_param['execution_parameters']['nproc']
 		if not nproc:
-			print('+ERROR: With run_scheme parallel you must define nproc')
+			print('+ ERROR: With run_scheme parallel you must define nproc')
 			exit()
 		if nproc > job_n:
 			nproc = job_n

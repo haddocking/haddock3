@@ -149,22 +149,37 @@ class RecipeComposer:
 		for param in self.default_params['params']:
 
 			try:
-				v = self.custom_params[param]
+				v = self.custom_params['params'][param]
 			except KeyError:
 				# custom definition not found, use default
 				v = self.default_params['params'][param]
 
 			if isinstance(v, bool):
 				v = str(v).lower()
+				param_header += f'eval (${param}={v})\n'
+
+			elif isinstance(v, str):
+				param_header += f'eval (${param}="{v}")\n'
+
+			elif isinstance(v, int):
+				param_header += f'eval (${param}={v})\n'
+
+			elif isinstance(v, float):
+				param_header += f'eval (${param}={v})\n'
 
 			elif not v:
 				# either 0 or empty string
 				if isinstance(v, str):
 					v = '\"\"'
+					param_header += f'eval (${param}={v})\n'
 				if isinstance(v, int):
 					v = 0.0
+					param_header += f'eval (${param}={v})\n'
 
-			param_header += f'eval (${param}={v})\n'
+			# if isinstance(v, int):
+			# 	param_header += f'eval (${param}={v})\n'
+			# elif isinstance(v, str):
+			# 	param_header += f'eval (${param}="{v}")\n'
 
 		if 'chain' in self.default_params:
 			# load molecule specific things

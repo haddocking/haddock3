@@ -2,7 +2,8 @@ import glob
 import random
 import sys
 import toml
-import os
+import json
+# import os
 from datetime import datetime
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
@@ -10,9 +11,12 @@ from haddock.modules.docking.it0 import RigidBody
 # from haddock.modules.structure.utils import PDB
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
-
-
 # import config
+
+etc_folder = get_full_path('haddock', 'etc')
+with open(f'{etc_folder}/default.json', 'r') as fh:
+	default_recipes = json.load(fh)
+fh.close()
 
 
 def greeting():
@@ -36,7 +40,11 @@ Python {python_version}
 def generate_topology(mol_dic, run_param):
 	print('++ Generating topologies')
 
-	recipe = 'topology/template/' + run_param['stage']['topology']['recipe']
+	recipe_name = run_param['stage']['topology']['recipe']
+	if recipe_name == 'default':
+		recipe_name = default_recipes['topology']
+
+	recipe = f'topology/template/{recipe_name}'
 	if not os.path.isfile(recipe):
 		print('+ ERROR: Template recipe for topology not found')
 
@@ -51,13 +59,14 @@ def generate_topology(mol_dic, run_param):
 		for input_strc in mol_dic[mol]:
 			output_strct = input_strc.split('/')[1].split('.')[0]
 			input_f = topo_gen.generate(protonation_dic={},
-			                            pdb=True,
-			                            psf=True,
-			                            input_data=input_strc,
+			                            output_pdb=True,
+			                            output_psf=True,
+			                            input_pdb=input_strc,
+			                            input_psf=None,
 			                            output_fname=output_strct)
 
 			jobs.delegate(job_num=job_counter,
-			              recipe_str=input_f)
+			              input_file_str=input_f)
 
 			job_counter += 1
 
@@ -70,11 +79,16 @@ def generate_topology(mol_dic, run_param):
 
 def run_it0(model_dic, run_param):
 	print('\n++ Running it0')
+	file_list = []
 	supported_modules = []
-	# recipe = config.param_dic['it0']['recipe']
-	recipe = 'topology/template/' + run_param['stage']['rigid_body']['recipe']
-	# print(f'+ Recipe: {recipe}')
-	complex_list = None
+
+	recipe_name = run_param['stage']['rigid_body']['recipe']
+	if recipe_name == 'default':
+		recipe_name = default_recipes['rigid_body']
+
+	recipe = f'rigid_body/template/{recipe_name}'
+	if not os.path.isfile(recipe):
+		print('+ ERROR: Template recipe for topology not found')
 
 	if '.cns' not in recipe:
 		# Its a module, look for it
@@ -85,33 +99,26 @@ def run_it0(model_dic, run_param):
 	else:
 		# Its a HADDOCK recipe
 		it0 = RigidBody()
-		job_dic = it0.init(model_dic)
+		job_dic = it0.init(recipe, model_dic, run_param)
 		complex_list = it0.run(job_dic)
 		file_list = it0.output(complex_list)
 
-	# recipe_gen = RecipeGenerator()
-	# jobs = JobCreator()
-	# cns = CNS()
-
-	return complex_list
+	return file_list
 
 
 if __name__ == '__main__':
-	print(greeting())
 
-	# 0 Identify input
-	#
+	print(greeting())
 
 	# TODO: Add USAGE
 	run_parameters = toml.load('data/run.toml')
 
 	molecules = get_begin_molecules('data/')
 
-
 	# 1 Generate topologies
 	begin_models = generate_topology(molecules, run_parameters)
 
-	# 3 Docking
+	# 2 Dock
 
 	# Input:
 	#  molecule dictionary, keys=molecule, values=list of tuples containing .psf and .pdb

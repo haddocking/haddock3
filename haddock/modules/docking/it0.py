@@ -4,7 +4,6 @@ from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.functions import retrieve_output, calculate_haddock_score
 from haddock.modules.worker.distribution import JobCreator
-import config
 
 
 class RigidBody:
@@ -13,15 +12,19 @@ class RigidBody:
 		pass
 
 	@staticmethod
-	def init(molecule_dic):
-		jobs = JobCreator()
-		recipe_gen = RecipeGenerator()
+	def init(recipe, molecule_dic, run_params):
+
+		rigid_body_gen = InputGenerator(recipe_file=recipe,
+		                                input_folder='rigid_body')
+
+		jobs = JobCreator(job_id='complex_it0',
+		                  job_folder='rigid_body')
 
 		combinations = []
 		pdb_list = []
 		psf_list = []
 		for mol in molecule_dic:
-			psf = f'begin/{mol}_1.psf'
+			psf = f'topology/{mol}_1.psf'
 			psf_list.append(psf)
 
 			for e in molecule_dic[mol]:
@@ -36,7 +39,7 @@ class RigidBody:
 			if len(root_list) == len(set(root_list)):
 				combinations.append(comb)
 
-		sampling = config.param_dic['it0']['sampling']
+		sampling = run_params['stage']['rigid_body']['sampling']
 		if sampling % len(combinations):
 			# increase sampling to make sure all models are sampled equally
 			sampling = len(combinations) * math.ceil(sampling / len(combinations))
@@ -46,20 +49,17 @@ class RigidBody:
 			sampling = int(sampling / len(combinations))
 
 		# TODO: get folder from recipe parameters
-		models = combinations * int(sampling/len(combinations))
+		models = combinations * int(sampling / len(combinations))
 		for i, pdb_list in enumerate(models):
 			i_str = '0' * (6 - len(str(i))) + str(i)
-			recipe = recipe_gen.generate(recipe_file=config.param_dic['it0']['recipe'],
-			                             molecule_id=None,
-			                             protonation_dic={},
-			                             prefix_folder='it0',
-			                             output_name=f'complex_it0_{i_str}',
-			                             pdb=pdb_list,
-			                             psf=psf_list)
+			input_f = rigid_body_gen.generate(protonation_dic={},
+			                                  output_pdb=True,
+			                                  output_psf=False,
+			                                  input_pdb=pdb_list,
+			                                  input_psf=psf_list,
+			                                  output_fname=f'complex_it0_{i_str}')
 			jobs.delegate(job_num=i,
-			              job_id='complex_it0',
-			              recipe_str=recipe,
-			              job_folder='it0')
+			              input_file_str=input_f)
 
 		return jobs
 
@@ -82,7 +82,7 @@ class RigidBody:
 		sorted_file_list = sorted(file_list, key=lambda x: x[1])
 
 		# FIXME: dynamically assign the folder (?)
-		folder = 'it0'
+		folder = 'rigid_body'
 
 		with open(f'{folder}/file.list', 'w') as f:
 			for e in sorted_file_list:
@@ -108,4 +108,3 @@ class RigidBody:
 		f.close()
 
 		return [e[0] for e in sorted_file_list]
-

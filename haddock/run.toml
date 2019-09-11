@@ -2,7 +2,6 @@
 title = "HADDOCK3 Setup file"
 #===========================================================#
 [molecules]
-# Add molecules to your simulations
 mol1 = '1AY7_r_u.pdb'
 mol2 = '1AY7_l_u.pdb'
 
@@ -10,38 +9,31 @@ mol2 = '1AY7_l_u.pdb'
 ambig = 'ambig-ti.tbl'
 
 [identifier]
-# Assign a name or number to your simulation
-#ex: run = 'benchmark-ti'
 run = 1
 
 [execution_parameters]
-# Serial, parallel, HPC, GRID, etc
 scheme = 'parallel'
 nproc = 24
 
 [stage]
-#=======#
-[stage.topology]
-recipe='generate-topology.cns'
-log_level='quiet'
-#params.autohis=false
-#input.mol1.prot_segid='A'
-#input.mol1.cg=false
-#input.mol2.prot_segid='B'
-#input.mol2.cg=false
+# Stage specific parameters
 
-#=======#
+[stage.topology]
+recipe='default'
+
+params.log_level="quiet"
 
 [stage.rigid_body]
-recipe='it0.cns'
+recipe='default'
 sampling = 10
-params.auto_his = true
 
-#=======#
+params.auto_his = true
 
 #[stage.semi_flexible]
 #recipe='default'
+#sampling = 200
 
 #[stage.water_refinement]
 #recipe='default'
+#sampling = 200
 #===========================================================#

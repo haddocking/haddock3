@@ -6,9 +6,9 @@ from haddock.modules.functions import *
 from haddock.modules.setup import Setup
 
 
-
 def greeting():
-	start = datetime.now().replace(second=0, microsecond=0)
+	# start = datetime.now().replace(second=0, microsecond=0)
+	start = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 	python_version = sys.version
 	print(f'''##############################################
 #                                            #
@@ -26,7 +26,7 @@ def greeting():
 
 
 def adieu():
-	end = datetime.now().replace(second=0, microsecond=0)
+	end = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 	salut = bye()
 	print(f'''
  Your HADDOCK Run: {s.run_dir} has been correctly setup
@@ -41,11 +41,7 @@ def pre_process(molecule_dic):
 
 	p = PDB()
 
-	# TODO: Edit chainID/segID
 	treated_dic = p.treat_ensemble(molecule_dic)
-
-	# update data structure ?
-	# config.param_dic['input']['molecules'] = treated_dic
 
 	for mol in treated_dic:
 		pdb_list = treated_dic[mol]

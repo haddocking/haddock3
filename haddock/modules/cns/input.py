@@ -1,11 +1,9 @@
-# import json
 import os
 import random
 import glob
-# import re
-# import haddock.workflows.scoring.config as config
-# from utils.files import get_full_path
-import config
+from haddock.modules.functions import load_ini
+
+ini = load_ini('haddock3.ini')
 
 
 class InputGenerator:
@@ -18,24 +16,24 @@ class InputGenerator:
 
 		self.folder = input_folder + '/'
 
-	def generate(self, protonation_dic, pdb, psf, input_data, output_fname):
+	def generate(self, protonation_dic, output_pdb, output_psf, input_pdb, input_psf, output_fname):
 
-		forcefield_parameters = config.ini.get('parameters', 'param_file')
+		forcefield_parameters = ini.get('parameters', 'param_file')
 		param = self.load_ff_parameters(forcefield_parameters)
 
-		forcefield_topology = config.ini.get('topology', 'top_file')
+		forcefield_topology = ini.get('topology', 'top_file')
 		top = self.load_ff_topology(forcefield_topology)
 
-		molecule_linkage = config.ini.get('link', 'link')
+		molecule_linkage = ini.get('link', 'link')
 		link = self.load_link(molecule_linkage)
 
 		protonation = self.load_protonation_state(protonation_dic)
 
-		translation_vectors = dict([(i, config.ini.get('translation_vectors', f'trans_vector_{i}')) for i in range(51)])
+		translation_vectors = dict([(i, ini.get('translation_vectors', f'trans_vector_{i}')) for i in range(51)])
 		trans_vec = self.load_trans_vectors(translation_vectors)
 
-		output = self.prepare_output(pdb, psf, output_fname)
-		input_str = self.prepare_input(input_data)
+		output = self.prepare_output(output_pdb, output_psf, output_fname)
+		input_str = self.prepare_input(input_pdb, input_psf)
 
 		inp = param + top + input_str + output + link + protonation + trans_vec + self.recipe_str
 

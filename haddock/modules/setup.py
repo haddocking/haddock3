@@ -4,12 +4,18 @@ import json
 from utils.files import get_full_path
 from haddock.modules.worker.recipe import RecipeComposer
 
+etc_folder = get_full_path('haddock', 'etc')
+
 
 class Setup:
 
 	def __init__(self, setup_dic):
 		self.setup_dic = setup_dic
 		self.protocol_path = get_full_path('haddock', 'protocols')
+
+		with open(f'{etc_folder}/default.json', 'r') as fh:
+			self.default_recipes = json.load(fh)
+		fh.close()
 
 		run_id = self.setup_dic['identifier']['run']
 		self.run_dir = None
@@ -33,8 +39,8 @@ class Setup:
 		if not os.path.isdir(self.run_dir):
 			os.system(f'mkdir {self.run_dir}')
 		else:
-			print(f'+ WARNING: {self.run_dir} already present')
-		# Exit?
+			print(f'+ ERROR: {self.run_dir} already present')
+			exit()
 
 		data_dir = f'{self.run_dir}/data'
 		if not os.path.isdir(data_dir):
@@ -83,15 +89,12 @@ class Setup:
 	def configure_recipes(self):
 		""" Prepare recipes with parameters from setup dictionary """
 
-		# default_recipes = {'topology': 'generate-topology.cns',
-		#                    'rigid_body': 'it0.cns'}
-
 		stage_dic = self.setup_dic['stage']
 		for stage in stage_dic:
 			recipe_id = stage_dic[stage]['recipe']
-			# check if recipe is valid
-			# if recipe_id == 'default':
-			# 	recipe_id = default_recipes[stage]
+			# TODO: check if recipe is valid
+			if recipe_id == 'default':
+				recipe_id = self.default_recipes[stage]
 
 			recipe_params_file = self.protocol_path + '/' + recipe_id.split('.')[0] + '.json'
 			if os.path.isfile(recipe_params_file):

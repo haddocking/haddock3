@@ -1,0 +1,10 @@
+AMBIG_TBL=./e2a-hpr_air.tbl
+HADDOCK_DIR=../../
+N_COMP=2
+PDB_FILE1=./e2aP_1F3G.pdb
+PDB_FILE2=./hpr/hpr_1.pdb
+PDB_LIST2=./hpr-files.list
+PROJECT_DIR=./
+PROT_SEGID_1=A
+PROT_SEGID_2=B
+RUN_NUMBER=1

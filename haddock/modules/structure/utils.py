@@ -153,19 +153,37 @@ class PDB:
 
     @staticmethod
     def chain2segid(pdbf):
-        """ Save a backup of the original file and move chainID to segID in a new file """
         os.system(f'{src_path}/pdb_chain-to-segid {pdbf} > oo')
         os.system(f'mv oo {pdbf}')
         return pdbf
 
     @staticmethod
     def segid2chain(pdbf):
-        """ Save a backup of the original file and move segID to chainID in a new file """
-        # new_pdb = pdbf.replace('.pdb', '_+cid.pdb')
-        # os.system(f'cp {pdbf} {ori}')
         os.system(f'{src_path}/pdb_chain-segid {pdbf} > oo')
         os.system(f'mv oo {pdbf}')
         return pdbf
+
+    @staticmethod
+    def add_chainseg(pdbf, ident):
+        os.system(f'{src_path}/pdb_chain -{ident} {pdbf} > oo')
+        os.system(f'mv oo {pdbf}')
+        os.system(f'{src_path}/pdb_chain-to-segid {pdbf} > oo')
+        os.system(f'mv oo {pdbf}')
+        pass
+
+    @staticmethod
+    def identify_chainseg(pdb):
+        with open(pdb) as fh:
+            for line in fh.readlines():
+                if 'ATOM' in line[:4]:
+                    segid = line[72:76].strip()[:1]
+                    chainid = line[21].strip()[:1]
+                    if segid:
+                        return segid
+                    elif chainid:
+                        return chainid
+                    else:
+                        return False
 
     def sanitize(self, model_list):
         """ Remove problematic portions of a PDB file """

@@ -2,16 +2,16 @@
 title = "HADDOCK3 Setup file"
 #===========================================================#
 [molecules]
-mol1 = '1AY7_r_u.pdb'
-#mol1.segid = "A"
-mol2 = '1AY7_l_u.pdb'
-#mol2.segid = "B"
+mol1 = "e2aP_1F3G.pdb"
+segid1 = "A"
+
+mol2 = "hpr_ensemble.pdb"
 
 [restraints]
-ambig = 'ambig-ti.tbl'
+ambig = 'e2a-hpr_air.tbl'
 
 [identifier]
-run = 1
+run = 'protein-protein-example'
 
 [execution_parameters]
 scheme = 'parallel'
@@ -22,20 +22,8 @@ nproc = 24
 
 [stage.topology]
 recipe='default'
-
 params.log_level="quiet"
 
 [stage.rigid_body]
 recipe='default'
 sampling = 10
-
-params.auto_his = true
-
-#[stage.semi_flexible]
-#recipe='default'
-#sampling = 200
-
-#[stage.water_refinement]
-#recipe='default'
-#sampling = 200
-#===========================================================#

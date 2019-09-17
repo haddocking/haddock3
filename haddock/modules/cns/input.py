@@ -74,6 +74,7 @@ class InputGenerator:
 
 		input_str += f'eval ($ncomponents={ncomp})\n'
 
+		# FIXME: Add Chain/SegID according to run parameters or default to 1=A,2=B,3=C, etc
 		for i in range(ncomp):
 			input_str += f'eval ($prot_segid_mol{i+1}="{string[i]}")\n'
 

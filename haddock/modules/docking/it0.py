@@ -41,14 +41,14 @@ class RigidBody:
 
 		sampling = run_params['stage']['rigid_body']['sampling']
 		if sampling % len(combinations):
-			# increase sampling to make sure all models are sampled equally
+			# This will result in unbalanced sampling
+			old_sampling = sampling
 			sampling = len(combinations) * math.ceil(sampling / len(combinations))
-			print(f'+ WARNING: it0 sampling was increased to {sampling} to balance ensamble composition')
-		else:
-			# divide it between combinations
+			print(f'+ WARNING: it0 sampling was increased to {sampling} to balance ensamble composition, previously {old_sampling}')
+
+		elif sampling != len(combinations):
 			sampling = int(sampling / len(combinations))
 
-		# TODO: get folder from recipe parameters
 		models = combinations * int(sampling / len(combinations))
 		for i, pdb_list in enumerate(models):
 			i_str = '0' * (6 - len(str(i))) + str(i)

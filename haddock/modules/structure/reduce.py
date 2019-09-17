@@ -35,8 +35,6 @@ def run_reduce(pdb_f):
 
 	cmd = [reduce_exec, '-BUILD', '-Xplor', '-quiet', pdb_f]
 
-	# TODO: Investigate this ERROR CTab(/usr/local/reduce_wwPDB_het_dict.txt): could not open
-
 	try:
 		process_handle = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
 		                                  stderr=subprocess.PIPE, close_fds=False)

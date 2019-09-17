@@ -1,6 +1,9 @@
 import os
 import sys
 import json
+import string
+
+from haddock.modules.structure.utils import PDB
 from utils.files import get_full_path
 from haddock.modules.worker.recipe import RecipeComposer
 
@@ -29,7 +32,7 @@ class Setup:
 			exit()
 
 	def prepare_folders(self):
-		""" Create folder structure and copy significant input files """
+		""" Create folder structure and copy/edit significant input files """
 
 		if len(self.setup_dic['molecules']) >= 20:
 			print('+ ERROR: Too many molecules')
@@ -40,15 +43,49 @@ class Setup:
 			os.system(f'mkdir {self.run_dir}')
 		else:
 			print(f'+ ERROR: {self.run_dir} already present')
-			exit()
+			# exit()
 
 		data_dir = f'{self.run_dir}/data'
 		if not os.path.isdir(data_dir):
 			os.system(f'mkdir {data_dir}')
 
-		os.system(f'cp {sys.argv[1]} {self.run_dir}/data/')
+		os.system(f'cp {sys.argv[1]} {self.run_dir}/data/run.toml')
 
-		for mol_id in self.setup_dic['molecules']:
+		# Separate by mol and assign segids
+		segid_dic = dict([(int(e.split('mol')[1]), {'mol': None, 'segid': None}) for e in self.setup_dic['molecules'] if 'mol' in e])
+		for e in self.setup_dic['molecules']:
+			if 'mol' in e:
+				ident = int(e.split('mol')[1])
+				molecule = self.setup_dic['molecules'][e]
+				segid_dic[ident]['mol'] = molecule
+			if 'segid' in e:
+				ident = int(e.split('segid')[1])
+				segid = self.setup_dic['molecules'][e]
+				segid_dic[ident]['segid'] = segid
+
+		# If segid has not been assigned, check if PDB already has one
+		for e in segid_dic:
+			structure = segid_dic[e]['mol']
+			custom_segid = segid_dic[e]['segid']
+
+			if not custom_segid:
+				# Segid not defined in setup, check if it is already present
+				molecule_chainseg = PDB.identify_chainseg(structure)
+
+				if molecule_chainseg:
+					# keep it
+					_ = PDB.add_chainseg(structure, molecule_chainseg)
+
+				if not molecule_chainseg:
+					# define sequentially
+					molecule_chainseg = string.ascii_uppercase[e-1]
+					_ = PDB.add_chainseg(structure, molecule_chainseg)
+
+			if custom_segid:
+				_ = PDB.add_chainseg(structure, custom_segid)
+
+		mol_dic = dict([(e, self.setup_dic['molecules'][e]) for e in self.setup_dic['molecules'] if 'mol' in e])
+		for mol_id in mol_dic:
 			molecule = self.setup_dic['molecules'][mol_id]
 
 			if molecule == mol_id + '.pdb':

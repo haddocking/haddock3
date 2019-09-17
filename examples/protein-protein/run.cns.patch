@@ -1,0 +1,56 @@
+--- run.cns	2019-03-11 14:23:46.307280643 +0100
++++ ../run_ref_for_patch.cns	2019-03-11 14:23:41.065724353 +0100
+@@ -567,7 +567,7 @@
+ 
+ {==================== histidine patches =====================}
+ {* Automatically define histidine protonation state based on energetics *}
+-{===>} autohis=true;
++{===>} autohis=false;
+ 
+ {* Patch to change doubly protonated HIS to singly protonated histidine (HD1) *}
+ {* just give the residue number of the histidines for the HISD patch, set them to zero if you don't want them *}
+@@ -602,9 +602,9 @@
+ {===>} hisd_1_25=0;
+ 
+ {* Number of HISD for molecule 2 *}
+-{===>} numhisd_2=0;
++{===>} numhisd_2=1;
+ 
+-{===>} hisd_2_1=0;
++{===>} hisd_2_1=76;
+ {===>} hisd_2_2=0;
+ {===>} hisd_2_3=0;
+ {===>} hisd_2_4=0;
+@@ -1156,9 +1156,9 @@
+ {* just give the residue number of the histidines for the HISD patch, set them to zero if you don't want them *}
+ 
+ {* Number of HISE for molecule 1 *}
+-{===>} numhise_1=0;
++{===>} numhise_1=1;
+ 
+-{===>} hise_1_1=0;
++{===>} hise_1_1=75;
+ {===>} hise_1_2=0;
+ {===>} hise_1_3=0;
+ {===>} hise_1_4=0;
+@@ -1185,9 +1185,9 @@
+ {===>} hise_1_25=0;
+ 
+ {* Number of hise for molecule 2 *}
+-{===>} numhise_2=0;
++{===>} numhise_2=1;
+ 
+-{===>} hise_2_1=0;
++{===>} hise_2_1=15;
+ {===>} hise_2_2=0;
+ {===>} hise_2_3=0;
+ {===>} hise_2_4=0;
+@@ -4543,7 +4543,7 @@
+ {* Build explicit solvent shell? (Can be turned off the large molecules or when morphing CG to AA models) *}
+ {* Only EM will then be performed                                                                         *}
+ {+ choice: true false +}
+-{===>} solvshell=false;
++{===>} solvshell=true;
+ 
+ {* Which solvent do you want to use? *}
+ {+ choice: "water" "dmso" +}

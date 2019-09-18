@@ -1,9 +1,6 @@
 import os
 import sys
 import json
-import string
-
-from haddock.modules.structure.utils import PDB
 from utils.files import get_full_path
 from haddock.modules.worker.recipe import RecipeComposer
 
@@ -43,46 +40,13 @@ class Setup:
 			os.system(f'mkdir {self.run_dir}')
 		else:
 			print(f'+ ERROR: {self.run_dir} already present')
-			# exit()
+			exit()
 
 		data_dir = f'{self.run_dir}/data'
 		if not os.path.isdir(data_dir):
 			os.system(f'mkdir {data_dir}')
 
 		os.system(f'cp {sys.argv[1]} {self.run_dir}/data/run.toml')
-
-		# Separate by mol and assign segids
-		segid_dic = dict([(int(e.split('mol')[1]), {'mol': None, 'segid': None}) for e in self.setup_dic['molecules'] if 'mol' in e])
-		for e in self.setup_dic['molecules']:
-			if 'mol' in e:
-				ident = int(e.split('mol')[1])
-				molecule = self.setup_dic['molecules'][e]
-				segid_dic[ident]['mol'] = molecule
-			if 'segid' in e:
-				ident = int(e.split('segid')[1])
-				segid = self.setup_dic['molecules'][e]
-				segid_dic[ident]['segid'] = segid
-
-		# If segid has not been assigned, check if PDB already has one
-		for e in segid_dic:
-			structure = segid_dic[e]['mol']
-			custom_segid = segid_dic[e]['segid']
-
-			if not custom_segid:
-				# Segid not defined in setup, check if it is already present
-				molecule_chainseg = PDB.identify_chainseg(structure)
-
-				if molecule_chainseg:
-					# keep it
-					_ = PDB.add_chainseg(structure, molecule_chainseg)
-
-				if not molecule_chainseg:
-					# define sequentially
-					molecule_chainseg = string.ascii_uppercase[e-1]
-					_ = PDB.add_chainseg(structure, molecule_chainseg)
-
-			if custom_segid:
-				_ = PDB.add_chainseg(structure, custom_segid)
 
 		mol_dic = dict([(e, self.setup_dic['molecules'][e]) for e in self.setup_dic['molecules'] if 'mol' in e])
 		for mol_id in mol_dic:
@@ -91,12 +55,12 @@ class Setup:
 			if molecule == mol_id + '.pdb':
 				print("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
 				exit()
-
-			# ensembles will be treated later
+			# Ensembles will be treated later
 			os.system(f'cp {molecule} {self.run_dir}/data/{mol_id}_1.pdb')
 
 			self.setup_dic['molecules'][mol_id] = f'{self.run_dir}/data/{mol_id}_1.pdb'
 
+		# ENHANCEMENT: Check if SegIDs defined in tbl files are on the structures/input
 		try:
 			ambig_fname = self.setup_dic['restraints']['ambig']
 			os.system(f'cp {ambig_fname} {self.run_dir}/data/ambig.tbl')
@@ -120,7 +84,7 @@ class Setup:
 		except KeyError:
 			pass
 
-		# FIXME: What should this function return?
+		# Q: What should this function return?
 		return True
 
 	def configure_recipes(self):
@@ -145,6 +109,7 @@ class Setup:
 			custom_parameter_dic = dict([(a, stage_dic[stage][a]) for a in stage_dic[stage] if a != 'recipe'])
 
 			# TODO: Save the custom json file alongside the template
+			#  find a way to combine default_parameter_dic with custom_parameter_dic and save it for reproductibility
 			# parameter_dic = self.merge_parameters(default_parameter_dic, custom_parameter_dic)
 
 			# Generate the recipe and place it in the appropriate place
@@ -160,5 +125,5 @@ class Setup:
 				fh.write(complete_recipe)
 			fh.close()
 
-		# FIXME: What should this function return?
+		# Q: What should this function return?
 		return True

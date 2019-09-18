@@ -1,17 +1,13 @@
-import glob
-import random
 import sys
 import toml
 import json
-# import os
 from datetime import datetime
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.docking.it0 import RigidBody
-# from haddock.modules.structure.utils import PDB
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
-# import config
+import argparse
 
 etc_folder = get_full_path('haddock', 'etc')
 with open(f'{etc_folder}/default.json', 'r') as fh:
@@ -110,8 +106,11 @@ if __name__ == '__main__':
 
 	print(greeting())
 
-	# TODO: Add USAGE
-	run_parameters = toml.load('data/run.toml')
+	run_f = 'data/run.toml'
+	if not os.path.isfile(run_f):
+		print('+ ERROR: data/run.toml not found, make sure you are in the correct folder.')
+		exit()
+	run_parameters = toml.load(run_f)
 
 	molecules = get_begin_molecules('data/')
 

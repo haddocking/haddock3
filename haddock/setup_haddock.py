@@ -1,13 +1,13 @@
 # setup the simulation
 import sys
 import toml
+import argparse
 from datetime import datetime
 from haddock.modules.functions import *
 from haddock.modules.setup import Setup
 
 
 def greeting():
-	# start = datetime.now().replace(second=0, microsecond=0)
 	start = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 	python_version = sys.version
 	print(f'''##############################################
@@ -37,20 +37,31 @@ def adieu():
 ''')
 
 
-def pre_process(molecule_dic):
+def pre_process(raw_molecule_dic):
 
 	p = PDB()
 
-	treated_dic = p.treat_ensemble(molecule_dic)
+	# 1. Add or assign ChainID/SegID
+	chainseg_dic = p.fix_chainseg(raw_molecule_dic)
 
-	for mol in treated_dic:
-		pdb_list = treated_dic[mol]
-		p.sanitize(pdb_list)
+	# 2. Check if it is an ensemble and split it
+	ensemble_dic = p.treat_ensemble(chainseg_dic)
 
-	return treated_dic
+	# 3. Clean problematic parts
+	clean_molecule_dic = p.sanitize(ensemble_dic)
+
+	return clean_molecule_dic
 
 
 if __name__ == '__main__':
+
+	parser = argparse.ArgumentParser(description='Setup your HADDOCK run')
+	parser.add_argument("run_file", help="The run file containing the parameters of your run (.toml)")
+	args = parser.parse_args()
+
+	if len(sys.argv) < 2:
+		parser.print_usage()
+		exit()
 
 	setup_dictionary = toml.load(sys.argv[1])
 
@@ -60,8 +71,6 @@ if __name__ == '__main__':
 	s.prepare_folders()
 	s.configure_recipes()
 
-	_ = pre_process(setup_dictionary['molecules'])
+	processed_molecules = pre_process(setup_dictionary['molecules'])
 
 	adieu()
-
-

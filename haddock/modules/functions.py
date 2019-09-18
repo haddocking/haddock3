@@ -25,7 +25,6 @@ def treat_ensemble(pdb_dic):
 				continue
 			else:
 				new_d[mol].append(pdb)
-
 		f.close()
 	return new_d
 
@@ -45,7 +44,7 @@ def molecularize(dic):
 
 
 def retrieve_output(jobs):
-	# FIXME: This must read the output file and retrieve OUTPUT: and identify if the job was successful or not
+	"""" Read the output file and look for < OUTPUT: > to identify if the job was sucessful """
 	output_dic = {}
 	complete_check = None
 	for j in jobs.dic:
@@ -117,8 +116,8 @@ def calculate_haddock_score(pdb_file, stage):
 	""" Calculate the HADDOCK Score of the PDB file using its appropriate weight """
 
 	weight_dic = dict(it0=(0.01, 1.0, 1.0, 0.01, 0.01),
-	                  it1=(1.0, 1.0, 1.0, 0.1, 0.01),
-	                  itw=(1.0, 0.2, 1.0, 0.1, 0.0))
+	                  it1=(1.0 , 1.0, 1.0, 0.1 , 0.01),
+	                  itw=(1.0 , 0.2, 1.0, 0.1 , 0.0))
 
 	vdw, elec, desolv, air, bsa = extract_energies(pdb_file)
 	w = weight_dic[stage]

@@ -23,6 +23,21 @@ class TestPDB(unittest.TestCase):
 	# def extract_md5(self):
 	# 	pass
 
+	def test_treat_ensemble(self):
+		copyfile(f'{data_path}/mini_ens.pdb', f'{data_path}/temp_ens.pdb')
+		input_pdb_dic = {'mol1': f'{data_path}/temp_ens.pdb'}
+
+		treated_dic = self.PDB.treat_ensemble(input_pdb_dic)
+		expected_treated_dic = {'mol1': [f'{data_path}/temp_1.pdb', f'{data_path}/temp_2.pdb']}
+
+		self.assertEqual(treated_dic, expected_treated_dic)
+		self.assertTrue(filecmp.cmp(f'{data_path}/temp_1.pdb', f'{data_path}/mini_ens1.pdb'))
+		self.assertTrue(filecmp.cmp(f'{data_path}/temp_2.pdb', f'{data_path}/mini_ens2.pdb'))
+
+		os.remove(f'{data_path}/temp_1.pdb')
+		os.remove(f'{data_path}/temp_2.pdb')
+		os.remove(f'{data_path}/temp_ens.pdb')
+
 	def test_split_models(self):
 		ensamble_f = f'{data_path}/mini_ens.pdb'
 		model_list = self.PDB.split_models(ensamble_f)

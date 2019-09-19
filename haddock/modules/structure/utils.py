@@ -104,15 +104,13 @@ class PDB:
 		# """" adapted """"  from pdb-tools (:
 		model_list = []
 		records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
-
+		path = '/'.join(ensamble_f.split('/')[:-1])
 		with open(ensamble_f) as f:
 			for line in f.readlines():
 				if line.startswith('MODEL'):
-					# model_no = int(line[10:14].strip())
 					model_no = int(line.split()[1])
-					# model_str = '0' * (6 - len(str(model_no))) + str(model_no)
-					# model_name = f'{path}/{model_str}.pdb'
-					model_name = ensamble_f.split('_')[0] + f'_{model_no}.pdb'
+					name = ensamble_f.split('/')[-1].split('_')[0]
+					model_name = f'{path}/{name}_{model_no}.pdb'
 					model_list.append(model_name)
 					fh = open(model_name, 'w')
 					model_lines = []

@@ -2,10 +2,11 @@
 import filecmp
 import unittest
 import os
+from shutil import copyfile
 from haddock.modules.structure.utils import PDB
 from utils.files import get_full_path
 
-data_path = get_full_path('test', 'test_data')
+data_path = get_full_path('test', 'data')
 
 
 class TestPDB(unittest.TestCase):
@@ -13,66 +14,74 @@ class TestPDB(unittest.TestCase):
 	def setUp(self):
 		self.PDB = PDB()
 
-	def test_load_structure(self):
-		pdb = f'{data_path}/test_pdbs/000042.pdb'
-		prot_dic = self.PDB.load_structure(pdb)
+	# def test_load_structure(self):
+	# 	pass
 
-		line_a = 'ATOM      1  N   MET A   1      -5.983  45.471  12.068  1.00  0.00A\n'
-		line_b = 'ATOM   5673  N   MET B   1      22.877  38.418   1.799  1.00  0.00B\n'
-		line_c = 'ATOM   2837  N   MET C   1      -0.321 -40.801 -19.269  1.00  0.00C\n'
-		line_d = 'ATOM   5741  N   MET D   1     -19.701 -37.908   5.445  1.00  0.00D\n'
+	# def test_identify_chains(self):
+	# 	pass
 
-		self.assertEqual(prot_dic['A'][0], line_a)
-		self.assertEqual(prot_dic['B'][0], line_b)
-		self.assertEqual(prot_dic['C'][0], line_c)
-		self.assertEqual(prot_dic['D'][0], line_d)
-
-	def test_identify_chains(self):
-		pdb = f'{data_path}/test_pdbs/000042.pdb'
-
-		chain_list = ['A', 'B', 'C', 'D']
-
-		self.assertEqual(self.PDB.identify_chains(pdb), chain_list)
+	# def extract_md5(self):
+	# 	pass
 
 	def test_split_models(self):
-
-		ensamble_f = f'{data_path}/test_pdbs/T146-ensamble-5.pdb'
-
+		ensamble_f = f'{data_path}/mini_ens.pdb'
 		model_list = self.PDB.split_models(ensamble_f)
+		expected_list = [f'{data_path}/mini_1.pdb', f'{data_path}/mini_2.pdb']
 
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000000.pdb', model_list[0]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000001.pdb', model_list[1]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000002.pdb', model_list[2]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000003.pdb', model_list[3]))
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/000004.pdb', model_list[4]))
+		self.assertEqual(model_list, expected_list, 'Name of list elements differ')
+		self.assertTrue(filecmp.cmp(f'{data_path}/mini_1.pdb', f'{data_path}/mini_1.gold'))
+		self.assertTrue(filecmp.cmp(f'{data_path}/mini_2.pdb', f'{data_path}/mini_2.gold'))
 
-	def test_chain2segid(self):
+		for f in model_list:
+			os.remove(f)
 
-		segless_pdb = f'{data_path}/test_pdbs/1crn-chain.pdb'
-		os.system(f'cp {segless_pdb} temp.pdb')
+	def test_add_chainseg(self):
 
-		fname = self.PDB.chain2segid('temp.pdb')
+		copyfile(f'{data_path}/mini.pdb', f'{data_path}/temp.pdb')
 
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/1crn-chain+segid.pdb', fname))
+		check = self.PDB.add_chainseg(f'{data_path}/temp.pdb', 'A')
 
-	def test_segid2chain(self):
-		chainless_pdb = f'{data_path}/test_pdbs/1crn-segid.pdb'
+		self.assertTrue(check)
+		self.assertTrue(filecmp.cmp(f'{data_path}/temp.pdb', f'{data_path}/miniA.pdb'))
 
-		os.system(f'cp {chainless_pdb} temp.pdb')
+		os.remove(f'{data_path}/temp.pdb')
 
-		fname = self.PDB.segid2chain('temp.pdb')
+	def test_identify_chainseg(self):
 
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/1crn-segid+chain.pdb', fname))
+		pdbf = f'{data_path}/miniA.pdb'
+
+		chainseg = self.PDB.identify_chainseg(pdbf)
+
+		self.assertEqual(chainseg, 'A')
+
+	def test_fix_chainseg(self):
+		copyfile(f'{data_path}/mini_1.gold', f'{data_path}/mol1.pdb')
+		copyfile(f'{data_path}/mini_2.gold', f'{data_path}/mol2.pdb')
+
+		input_pdb_dic = {'mol1': f'{data_path}/mol1.pdb', 'segid1': 'X', 'mol2': f'{data_path}/mol2.pdb'}
+
+		return_pdb_dic = self.PDB.fix_chainseg(input_pdb_dic)
+		expected_return_dic = {'mol1': f'{data_path}/mol1.pdb', 'mol2': f'{data_path}/mol2.pdb'}
+
+		self.assertEqual(return_pdb_dic, expected_return_dic)
+		self.assertTrue(filecmp.cmp(f'{data_path}/mol1.pdb', f'{data_path}/miniX.pdb'))
+
+		os.remove(f'{data_path}/mol1.pdb')
+		os.remove(f'{data_path}/mol2.pdb')
 
 	def test_sanitize(self):
+		copyfile(f'{data_path}/mini.dirty.pdb', f'{data_path}/temp.pdb')
 
-		model_name = f'{data_path}/test_pdbs/1f3g-dirty.pdb'
-		os.system(f'cp {model_name} temp.pdb')
+		input_pdb_dic = {'mol1': [f'{data_path}/temp.pdb']}
 
-		clean_list = self.PDB.sanitize(['temp.pdb'])
-		clean_pdb = clean_list[0]
+		model_list = self.PDB.sanitize(input_pdb_dic)
 
-		self.assertTrue(filecmp.cmp(f'{data_path}/test_pdbs/1f3g-sanitized.pdb', clean_pdb))
+		expected_model_list = [f'{data_path}/temp.pdb']
+
+		self.assertEqual(model_list, expected_model_list)
+		self.assertTrue(filecmp.cmp(f'{data_path}/temp.pdb', f'{data_path}/mini.clean.pdb'))
+
+		os.remove(f'{data_path}/temp.pdb')
 
 
 if __name__ == '__main__':

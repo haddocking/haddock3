@@ -97,3 +97,4 @@ test/structures/000003.pdb
 test/structures/000004.pdb
 test/jobs/00000.inp
 test/modules/worker/jobs/00000.inp
+*.swp

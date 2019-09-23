@@ -8,8 +8,7 @@ pipeline {
   stages {
     stage('Install') {
       steps {
-        sh '''apt-get update
-pip install codecov'''
+        sh '''pip install -r requirements.txt'''
       }
     }
     stage('Test') {

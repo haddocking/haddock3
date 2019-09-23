@@ -23,7 +23,7 @@ class JobCreator:
 		input_f = f'{path}/{self.id}_{job_str}.inp'
 		output_f = f'{path}/{self.id}_{job_str}.out'
 
-		# Would it be a good idea to change this to a paralel implementation? or would it stress the I/O too much?
+		# Q: Would it be a good idea to change this to a paralel implementation? or would it stress the I/O too much?
 		#  For example for it0 the input file is ~11000 lines and ~350K
 		with open(input_f, 'w') as f:
 			f.write(input_file_str)

@@ -1,6 +1,6 @@
 import os
-import sys
 import json
+import toml
 from utils.files import get_full_path
 from haddock.modules.worker.recipe import RecipeComposer
 
@@ -11,13 +11,24 @@ class Setup:
 
 	def __init__(self, setup_dic):
 		self.setup_dic = setup_dic
+
+		if not self.check_setup_dic(setup_dic):
+			print('+ ERROR: Please configure your setup file')
+			exit()
+
 		self.protocol_path = get_full_path('haddock', 'protocols')
 
 		with open(f'{etc_folder}/default.json', 'r') as fh:
 			self.default_recipes = json.load(fh)
 		fh.close()
 
-		run_id = self.setup_dic['identifier']['run']
+		run_id = None
+		try:
+			run_id = self.setup_dic['identifier']['run']
+		except KeyError:
+			print('+ ERROR: Run identifier not provided')
+			exit()
+
 		self.run_dir = None
 		if type(run_id) == int:
 			self.run_dir = f"run{run_id}"
@@ -27,6 +38,14 @@ class Setup:
 		else:
 			print('+ ERROR: Run identifier can only be string or integer')
 			exit()
+
+	@staticmethod
+	def check_setup_dic(sdic):
+		# Check if setup dic meets minimal requirements
+		#  stage
+		#  identifier
+		#  molecules
+		return True
 
 	def prepare_folders(self):
 		""" Create folder structure and copy/edit significant input files """
@@ -39,14 +58,16 @@ class Setup:
 		if not os.path.isdir(self.run_dir):
 			os.system(f'mkdir {self.run_dir}')
 		else:
-			print(f'+ ERROR: {self.run_dir} already present')
-			exit()
+			print(f'+ WARNING: {self.run_dir} already present')
+			# exit()
 
 		data_dir = f'{self.run_dir}/data'
 		if not os.path.isdir(data_dir):
 			os.system(f'mkdir {data_dir}')
 
-		os.system(f'cp {sys.argv[1]} {self.run_dir}/data/run.toml')
+		with open(f'{self.run_dir}/data/run.toml', 'w') as setup_fh:
+			_ = toml.dump(self.setup_dic, setup_fh)
+		setup_fh.close()
 
 		mol_dic = dict([(e, self.setup_dic['molecules'][e]) for e in self.setup_dic['molecules'] if 'mol' in e])
 		for mol_id in mol_dic:
@@ -56,6 +77,10 @@ class Setup:
 				print("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
 				exit()
 			# Ensembles will be treated later
+			if not os.path.isfile(molecule):
+				print(f'+ ERROR: {molecule} not found!')
+				exit()
+
 			os.system(f'cp {molecule} {self.run_dir}/data/{mol_id}_1.pdb')
 
 			self.setup_dic['molecules'][mol_id] = f'{self.run_dir}/data/{mol_id}_1.pdb'

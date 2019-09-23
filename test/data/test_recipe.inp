@@ -1,0 +1,2 @@
+@RUN:protocols/auto-his.cns
+stop

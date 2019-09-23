@@ -141,6 +141,9 @@ class Setup:
 			r = RecipeComposer(recipe_id, default_parameter_dic, custom_parameter_dic)
 			complete_recipe = r.compose()
 
+			if not os.path.isdir(f'{self.run_dir}'):
+				os.mkdir(f'{self.run_dir}')
+				
 			if not os.path.isdir(f'{self.run_dir}/{stage}'):
 				os.mkdir(f'{self.run_dir}/{stage}')
 				if not os.path.isdir(f'{self.run_dir}/{stage}/template'):

@@ -1,4 +1,5 @@
 {
   "topology": "generate-topology.cns",
-  "rigid_body": "it0.cns"
+  "rigid_body": "it0.cns",
+  "scoring": "scoring.json"
 }

@@ -1,4 +1,10 @@
 # convert the analysis scripts to python
+import os
+import sys
+from datetime import datetime
+import toml
+
+from haddock.modules.functions import get_begin_molecules
 from haddock.workflows.scoring.analysis.ana import Ana
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import RecipeGenerator
@@ -58,8 +64,46 @@ def run_analysis(pdb_l):
 	ana.output()
 
 
-if __name__ == '__main__':
-	input_f = config.param_dic['input']['ensemble']
+def greeting():
+	now = datetime.now().replace(second=0, microsecond=0)
+	python_version = sys.version
+	return (f'''##############################################
+#                                            #
+#         Starting HADDOCK v3.0beta1         #
+#                                            #
+#             EXPERIMENTAL BUILD             #
+#                                            #
+#              Scoring Workflow              #
+#                                            #
+##############################################
 
-	converted_pdb_list = run_scoring(input_f, '_conv')
-	run_analysis(converted_pdb_list)
+Starting HADDOCK on {now}
+
+HADDOCK version: 3.0 beta 1
+Python {python_version}
+''')
+
+
+def score_models(mol_dic, run_params):
+	pass
+
+
+if __name__ == '__main__':
+
+	print(greeting())
+
+	run_f = 'data/scoring.toml'
+	if not os.path.isfile(run_f):
+		print('+ ERROR: data/run.toml not found, make sure you are in the correct folder.')
+		exit()
+
+	run_parameters = toml.load(run_f)
+	models = get_begin_molecules('data/')
+
+	# TODO: Refactor scoring CNS script
+
+	#
+	# input_f = config.param_dic['input']['ensemble']
+	#
+	# converted_pdb_list = run_scoring(input_f, '_conv')
+	# run_analysis(converted_pdb_list)

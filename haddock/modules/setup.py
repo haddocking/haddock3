@@ -29,6 +29,12 @@ class Setup:
 			print('+ ERROR: Run identifier not provided')
 			exit()
 
+		for mol in self.setup_dic['molecules']:
+			target_mol = self.setup_dic['molecules'][mol]
+			if not os.path.isfile(target_mol):
+				print(f'+ ERROR: Molecule {target_mol} not found')
+				exit()
+
 		self.run_dir = None
 		if type(run_id) == int:
 			self.run_dir = f"run{run_id}"

@@ -10,4 +10,4 @@ echo `pwd`
 setenv PYTHONPATH $PYTHONPATH\:/home/rodrigo/haddock3
 setenv PYTHONPATH $PYTHONPATH\:/home/rodrigo/haddock3/haddock/workflows/scoring
 cd /home/rodrigo/work/scoring
-/home/rodrigo/miniconda3/bin/python /home/rodrigo/haddock3/haddock/workflows/scoring/scoring.py /home/rodrigo/work/scoring/scoring.json
+/home/rodrigo/miniconda3/bin/python /home/rodrigo/haddock3/haddock/workflows/scoring/run_scoring.py /home/rodrigo/work/scoring/scoring.json

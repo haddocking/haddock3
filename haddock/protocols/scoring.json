@@ -1,0 +1,23 @@
+{"output": {
+    "folder": "scored",
+    "pdb": true
+  },
+  "params": {
+    "dihed": false,
+    "sani": false,
+    "coup": false,
+    "vean": false,
+    "cdih": false,
+    "noe": true,
+    "sym": false,
+    "ncs": false,
+    "noecv": false,
+    "auto_break": true,
+    "waterdock": true,
+    "break_cutoff": 2.5,
+    "hydrogen_build": "all",
+    "disulphide_dist": 3,
+    "log_level": "verbose",
+    "epsilon": 1
+  }
+}

@@ -11,8 +11,7 @@ class Contacts:
 
     def __init__(self):
         # self.nproc = config.param_dic['input']['nproc']
-        self.con_exec = ini.get('cns', 'cns_exe')
-        # self.con_exec = config.ini.get('third party', 'contacts_exe')
+        self.con_exec = ini.get('third party', 'contacts_exe')
         self.run_param = toml.load('data/run.toml')
         self.nproc = self.run_param['execution_parameters']['nproc']
         self.arg_list = []

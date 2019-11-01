@@ -1,4 +1,0 @@
-#!/bin/csh
-#
-set dir=`pwd`
-ls -l *.pdb | awk -v stdir=$dir '{print "\""stdir"/"$9"\""}' >filelist.list

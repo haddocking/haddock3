@@ -38,7 +38,7 @@ def run_analysis(pdb_l):
 
     # ana.run_dfire()
 
-    ana.run_dockq()
+    # ana.run_dockq()
 
     ana.output()
 
@@ -128,12 +128,4 @@ if __name__ == '__main__':
 
     rescored = score_models(run_parameters)
 
-    ana = run_analysis(rescored)
-
-    print(rescored)
-
-#
-# input_f = config.param_dic['input']['ensemble']
-#
-# converted_pdb_list = run_scoring(input_f, '_conv')
-# run_analysis(converted_pdb_list)
+    run_analysis(rescored)

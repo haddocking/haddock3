@@ -210,23 +210,26 @@ class Ana:
 			cn += 1
 			clusters.append(c)
 
-		path = '/'.join(list(self.structure_dic.items())[0][0].split('/')[:-1])
+		# Important: guess the root, this might change according to the worflow
+		first_model_name = list(self.structure_dic.items())[0][0]
+		path_regex = r"(.*)/"
+		root_regex = r"/(.*)_\d*\.pdb"
+
+		path = re.findall(path_regex, first_model_name)[0]
+		root = re.findall(root_regex, first_model_name)[0]
+
 		cluster_dic = {}
+
 		for c in clusters:
 			clustered_models_list = []
 
-			# add cluster center to internal structure
-			# cluster_center_str = '0' * (6 - len(str(c.center.name - 1))) + str(c.center.name - 1)
-			cluster_center_str = '0' * (6 - len(str(c.center.name))) + str(c.center.name)
-			cluster_center_name = f'{path}/{cluster_center_str}_conv.pdb'
+			cluster_center_name = f'{path}/{root}_{c.center.name}.pdb'
 			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_name"] = c.name
 			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = 0
 
 			sort_tag = True
 			for model in [m.name for m in c.members]:
-				# model_str = '0' * (6 - len(str(model - 1))) + str(model - 1)
-				model_str = '0' * (6 - len(str(model))) + str(model)
-				name = f'{path}/{model_str}_conv.pdb'
+				name = f'{path}/{root}_{model}.pdb'
 				try:
 					haddock_score = self.structure_dic[name]['haddock-score']
 				except KeyError:
@@ -250,9 +253,7 @@ class Ana:
 			tbw = f"Cluster {c.name} -> ({c.center.name}) "
 			for i, m in enumerate(model_list):
 				tbw += f'{m[0]} '
-				# model_str = '0' * (6 - len(str(m[0] - 1))) + str(m[0] - 1)
-				model_str = '0' * (6 - len(str(m[0]))) + str(m[0])
-				name = f'{path}/{model_str}_conv.pdb'
+				name = f'{path}/{root}_{m[0]}.pdb'
 				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = i
 
 			tbw += '\n'

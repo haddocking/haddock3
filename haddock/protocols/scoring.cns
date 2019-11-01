@@ -4,7 +4,197 @@
 ! Do not change below this line unless you know what you are doing
 !=================================================================!
 
-fileexist $filename end
+eval ($Data.flags.dihed = $dihed)
+eval ($Data.flags.sani = $sani)
+eval ($Data.flags.dani = $dani)
+eval ($Data.flags.coup = $coup)
+eval ($Data.flags.vean = $vean)
+eval ($Data.flags.cdih = $cdih)
+eval ($Data.flags.noe = $noe)
+eval ($Data.flags.sym = $sym)
+eval ($Data.flags.ncs = $ncs)
+eval ($Data.noecv = $noecv)
+eval ($Data.waterdock = $waterdock)
+
+eval($Data.flags.xrdc = $xrdc)
+eval($Data.flags.xpcs = $xpcs)
+eval($Data.flags.rg = $rg)
+eval($Data.flags.zres = $zres)
+eval($Data.flags.em = $em)
+
+evaluate ($data.ncomponents = $ncomponents)
+
+evaluate ($nmol=1)
+while ($nmol <= $data.ncomponents) loop mol
+  evaluate ($toppar.prot_segid_$nmol = $prot_segid_mol$nmol)
+  evaluate ($nmol = $nmol + 1)
+end loop mol
+
+evaluate ($data.ksym=1.0)
+evaluate ($data.numc2sym=0)
+evaluate (&toppar.c2sym_sta1_1="")
+evaluate (&toppar.c2sym_sta1_2="")
+evaluate (&toppar.c2sym_sta1_3="")
+evaluate (&toppar.c2sym_sta1_4="")
+evaluate (&toppar.c2sym_sta1_5="")
+evaluate (&toppar.c2sym_sta1_6="")
+evaluate (&toppar.c2sym_sta1_7="")
+evaluate (&toppar.c2sym_sta1_8="")
+evaluate (&toppar.c2sym_sta1_9="")
+evaluate (&toppar.c2sym_sta1_10="")
+evaluate (&toppar.c2sym_end1_1="")
+evaluate (&toppar.c2sym_end1_2="")
+evaluate (&toppar.c2sym_end1_3="")
+evaluate (&toppar.c2sym_end1_4="")
+evaluate (&toppar.c2sym_end1_5="")
+evaluate (&toppar.c2sym_end1_6="")
+evaluate (&toppar.c2sym_end1_7="")
+evaluate (&toppar.c2sym_end1_8="")
+evaluate (&toppar.c2sym_end1_9="")
+evaluate (&toppar.c2sym_end1_10="")
+evaluate (&toppar.c2sym_seg1_1="")
+evaluate (&toppar.c2sym_seg1_2="")
+evaluate (&toppar.c2sym_seg1_3="")
+evaluate (&toppar.c2sym_seg1_4="")
+evaluate (&toppar.c2sym_seg1_5="")
+evaluate (&toppar.c2sym_seg1_6="")
+evaluate (&toppar.c2sym_seg1_7="")
+evaluate (&toppar.c2sym_seg1_8="")
+evaluate (&toppar.c2sym_seg1_9="")
+evaluate (&toppar.c2sym_seg1_10="")
+evaluate (&toppar.c2sym_sta2_1="")
+evaluate (&toppar.c2sym_sta2_2="")
+evaluate (&toppar.c2sym_sta2_3="")
+evaluate (&toppar.c2sym_sta2_4="")
+evaluate (&toppar.c2sym_sta2_5="")
+evaluate (&toppar.c2sym_sta2_6="")
+evaluate (&toppar.c2sym_sta2_7="")
+evaluate (&toppar.c2sym_sta2_8="")
+evaluate (&toppar.c2sym_sta2_9="")
+evaluate (&toppar.c2sym_sta2_10="")
+evaluate (&toppar.c2sym_end2_1="")
+evaluate (&toppar.c2sym_end2_2="")
+evaluate (&toppar.c2sym_end2_3="")
+evaluate (&toppar.c2sym_end2_4="")
+evaluate (&toppar.c2sym_end2_5="")
+evaluate (&toppar.c2sym_end2_6="")
+evaluate (&toppar.c2sym_end2_7="")
+evaluate (&toppar.c2sym_end2_8="")
+evaluate (&toppar.c2sym_end2_9="")
+evaluate (&toppar.c2sym_end2_10="")
+evaluate (&toppar.c2sym_seg2_1="")
+evaluate (&toppar.c2sym_seg2_2="")
+evaluate (&toppar.c2sym_seg2_3="")
+evaluate (&toppar.c2sym_seg2_4="")
+evaluate (&toppar.c2sym_seg2_5="")
+evaluate (&toppar.c2sym_seg2_6="")
+evaluate (&toppar.c2sym_seg2_7="")
+evaluate (&toppar.c2sym_seg2_8="")
+evaluate (&toppar.c2sym_seg2_9="")
+evaluate (&toppar.c2sym_seg2_10="")
+
+evaluate ($data.numc3sym=0)
+evaluate ($toppar.c3sym_sta1_1="")
+evaluate ($toppar.c3sym_end1_1="")
+evaluate ($toppar.c3sym_seg1_1="")
+evaluate ($toppar.c3sym_sta2_1="")
+evaluate ($toppar.c3sym_end2_1="")
+evaluate ($toppar.c3sym_seg2_1="")
+evaluate ($toppar.c3sym_sta3_1="")
+evaluate ($toppar.c3sym_end3_1="")
+evaluate ($toppar.c3sym_seg3_1="")
+
+evaluate ($data.numc5sym=0)
+
+evaluate ($toppar.hisd_resid_1_1=0)
+evaluate ($toppar.hisd_resid_1_2=0)
+evaluate ($toppar.hisd_resid_1_3=0)
+evaluate ($toppar.hisd_resid_1_4=0)
+evaluate ($toppar.hisd_resid_1_5=0)
+evaluate ($toppar.hisd_resid_1_6=0)
+evaluate ($toppar.hisd_resid_1_7=0)
+evaluate ($toppar.hisd_resid_1_8=0)
+evaluate ($toppar.hisd_resid_1_9=0)
+evaluate ($toppar.hisd_resid_1_10=0)
+
+evaluate ($toppar.hise_resid_1_1=0)
+evaluate ($toppar.hise_resid_1_2=0)
+evaluate ($toppar.hise_resid_1_3=0)
+evaluate ($toppar.hise_resid_1_4=0)
+evaluate ($toppar.hise_resid_1_5=0)
+evaluate ($toppar.hise_resid_1_6=0)
+evaluate ($toppar.hise_resid_1_7=0)
+evaluate ($toppar.hise_resid_1_8=0)
+evaluate ($toppar.hise_resid_1_9=0)
+evaluate ($toppar.hise_resid_1_10=0)
+
+evaluate ($toppar.hisd_resid_2_1=0)
+evaluate ($toppar.hisd_resid_2_2=0)
+evaluate ($toppar.hisd_resid_2_3=0)
+evaluate ($toppar.hisd_resid_2_4=0)
+evaluate ($toppar.hisd_resid_2_5=0)
+evaluate ($toppar.hisd_resid_2_6=0)
+evaluate ($toppar.hisd_resid_2_7=0)
+evaluate ($toppar.hisd_resid_2_8=0)
+evaluate ($toppar.hisd_resid_2_9=0)
+evaluate ($toppar.hisd_resid_2_10=0)
+
+evaluate ($toppar.hise_resid_2_1=0)
+evaluate ($toppar.hise_resid_2_2=0)
+evaluate ($toppar.hise_resid_2_3=0)
+evaluate ($toppar.hise_resid_2_4=0)
+evaluate ($toppar.hise_resid_2_5=0)
+evaluate ($toppar.hise_resid_2_6=0)
+evaluate ($toppar.hise_resid_2_7=0)
+evaluate ($toppar.hise_resid_2_8=0)
+evaluate ($toppar.hise_resid_2_9=0)
+evaluate ($toppar.hise_resid_2_10=0)
+
+evaluate ($toppar.hisd_resid_3_1=0)
+evaluate ($toppar.hisd_resid_3_2=0)
+evaluate ($toppar.hisd_resid_3_3=0)
+evaluate ($toppar.hisd_resid_3_4=0)
+evaluate ($toppar.hisd_resid_3_5=0)
+evaluate ($toppar.hisd_resid_3_6=0)
+evaluate ($toppar.hisd_resid_3_7=0)
+evaluate ($toppar.hisd_resid_3_8=0)
+evaluate ($toppar.hisd_resid_3_9=0)
+evaluate ($toppar.hisd_resid_3_10=0)
+
+evaluate ($toppar.hise_resid_3_1=0)
+evaluate ($toppar.hise_resid_3_2=0)
+evaluate ($toppar.hise_resid_3_3=0)
+evaluate ($toppar.hise_resid_3_4=0)
+evaluate ($toppar.hise_resid_3_5=0)
+evaluate ($toppar.hise_resid_3_6=0)
+evaluate ($toppar.hise_resid_3_7=0)
+evaluate ($toppar.hise_resid_3_8=0)
+evaluate ($toppar.hise_resid_3_9=0)
+evaluate ($toppar.hise_resid_3_10=0)
+
+evaluate ($toppar.hisd_resid_4_1=0)
+evaluate ($toppar.hisd_resid_4_2=0)
+evaluate ($toppar.hisd_resid_4_3=0)
+evaluate ($toppar.hisd_resid_4_4=0)
+evaluate ($toppar.hisd_resid_4_5=0)
+evaluate ($toppar.hisd_resid_4_6=0)
+evaluate ($toppar.hisd_resid_4_7=0)
+evaluate ($toppar.hisd_resid_4_8=0)
+evaluate ($toppar.hisd_resid_4_9=0)
+evaluate ($toppar.hisd_resid_4_10=0)
+
+evaluate ($toppar.hise_resid_4_1=0)
+evaluate ($toppar.hise_resid_4_2=0)
+evaluate ($toppar.hise_resid_4_3=0)
+evaluate ($toppar.hise_resid_4_4=0)
+evaluate ($toppar.hise_resid_4_5=0)
+evaluate ($toppar.hise_resid_4_6=0)
+evaluate ($toppar.hise_resid_4_7=0)
+evaluate ($toppar.hise_resid_4_8=0)
+evaluate ($toppar.hise_resid_4_9=0)
+evaluate ($toppar.hise_resid_4_10=0)
+
+!fileexist $filename end
 
 eval($OT1_becomes="O")
 eval($OT2_becomes="OXT")
@@ -15,8 +205,8 @@ evaluate ($count = 0)
 eval($count=$count+1)
 
 
-evaluate ($convfileexist=$result)
-if ($convfileexist eq false) then
+!evaluate ($convfileexist=$result)
+!if ($convfileexist eq false) then
 dele sele=(all) end
 struc reset end
 noe reset end
@@ -455,19 +645,22 @@ fix selection=(not all) end
 
 parameter nbonds eps=1.0 end end
 
-! DISABLED in SIMPLE SCORING
 {* ===================== calculate symmetry energy *}
-!noe reset nres=10000 end
-!@symmultimer.cns
-!flag incl noe end
-!noe
-!  scale symm $Data.ksym
-!end
-!energy end
-!evaluate ($esym = $noe)
+noe reset nres=10000 end
+@symmultimer.cns
+flag incl noe end
+noe
+  scale symm $Data.ksym
+end
+energy end
+evaluate ($esym = $noe)
 
-! DISABLED in SIMPLE SCORING
-{* ===================== calculate air energy *}
+!! PENDING !!
+!
+! Need to account for the possible UNAMBIG.tbl file at python level
+!
+!
+!{* ===================== calculate air energy *}
 !noe
 !      reset
 !      nrestraints = 1000000   ! allocate space for NOEs
@@ -493,12 +686,12 @@ parameter nbonds eps=1.0 end end
 !
 !      avexpo hbond 20
 !end
-!
-!energy end
-!evaluate ($air = $noe)
-!print threshold=0.3 noe
-!evaluate ($rms_noe=$result)
-!evaluate ($violations_noe=$violations)
+
+energy end
+evaluate ($air = $noe)
+print threshold=0.3 noe
+evaluate ($rms_noe=$result)
+evaluate ($violations_noe=$violations)
 
 {* ===================== calculate complex internal energy *}
 evaluate ($kinter = 1.0)
@@ -522,12 +715,11 @@ do (q=1.0) (all)
 do (b=10) (all)
 @print_coorheader.cns
 
+!==================================================================!
+! Output section, do not modify
+!==================================================================!
 
-
-!coor sele= (segid $Toppar.prot_segid_1) orient end
-write coordinates sele= (all) output =$filename end
-write structure output =$psfname end
-
-end if
+write coordinates output=$output_pdb_filename end
+display OUTPUT: $output_pdb_filename
 
 stop

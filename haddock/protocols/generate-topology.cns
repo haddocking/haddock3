@@ -413,7 +413,7 @@ end if
  if ($bonded > 10000) then
    energy end
    evaluate ($bonded = $bond + $angl + $impr)
-   evaluate ($dispfile = $coor_outfile - ".pdb" + "_" + encode($nstruc) + ".warn")
+   evaluate ($dispfile = $output_pdb_filename - ".pdb" + "_" + encode($nstruc) + ".warn")
    set display=$dispfile end
    display WARNING: the bonded energy is very high:
    display Ebonded-total=$bonded Ebond=$bond Eangl=$angl Eimpr=$impr
@@ -490,8 +490,8 @@ end if
  buffer message reset end
 
 
- do (segid = "    ") (all)
- do (segid = $segid) (all)
+! do (segid = "    ") (all)
+! do (segid = $segid) (all)
 
  write structure output=$output_psf_filename end
  write coordinates output=$output_pdb_filename end

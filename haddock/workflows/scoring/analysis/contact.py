@@ -1,14 +1,20 @@
 import multiprocessing
 import os
 import subprocess
-import haddock.workflows.scoring.config as config
+import toml
+from haddock.modules.functions import load_ini
+
+ini = load_ini('haddock3.ini')
 
 
 class Contacts:
 
     def __init__(self):
-        self.nproc = config.param_dic['input']['nproc']
-        self.con_exec = config.ini.get('third party', 'contacts_exe')
+        # self.nproc = config.param_dic['input']['nproc']
+        self.con_exec = ini.get('cns', 'cns_exe')
+        # self.con_exec = config.ini.get('third party', 'contacts_exe')
+        self.run_param = toml.load('data/run.toml')
+        self.nproc = self.run_param['execution_parameters']['nproc']
         self.arg_list = []
         self.contact_file_list = []
 
@@ -20,8 +26,9 @@ class Contacts:
     def calculate_contacts(self, pdb_list, cutoff):
 
         for input_pdb in pdb_list:
-            model_id = input_pdb.split('/')[-1].split('_')[0]
-            output_name = f'{self.path}/{model_id}.con'
+            # model_id = input_pdb.split('/')[-1].split('_')[0]
+            # output_name = f'{self.path}/{model_id}.con'
+            output_name = input_pdb.replace('.pdb', '.con')
             self.contact_file_list.append(output_name)
 
             if not os.path.isfile(output_name):

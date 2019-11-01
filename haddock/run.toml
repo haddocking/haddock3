@@ -8,7 +8,7 @@ mol2 = '1AY7_l_u.pdb'
 #mol2.segid = "B"
 
 [restraints]
-ambig = 'ambig-ti.tbl'
+ambig = 'ambig.tbl'
 
 [identifier]
 run = 1
@@ -23,17 +23,15 @@ nproc = 24
 [stage.topology]
 recipe='default'
 
-params.log_level="quiet"
-
 [stage.rigid_body]
 recipe='default'
 sampling = 10
 
 params.auto_his = true
 
-#[stage.semi_flexible]
-#recipe='default'
-#sampling = 200
+[stage.semi_flexible]
+recipe='default'
+sampling = 200
 
 #[stage.water_refinement]
 #recipe='default'

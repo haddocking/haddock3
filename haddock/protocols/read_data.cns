@@ -57,9 +57,16 @@ if ($Data.unamb_lastit ge $Iteration) then
 end if
 
 if ($Data.hbond_lastit ge $Iteration) then
+
   if ($Data.hbond_firstit le $Iteration) then
-    if ($Data.hbonds_on eq true) then 
-      noe @@RUN:data/hbonds/hbonds.tbl end
+    if ($Data.hbonds_on eq true) then
+
+      fileexist $hbond_fname end
+      if ($result eq true) then
+!        noe @@RUN:data/hbonds/hbonds.tbl end
+        noe @@$hbond_fname end
+      end if
+
     end if
   end if
 end if
@@ -88,9 +95,13 @@ restraints dihedral
    nassign 10000 
 end
 if ($Data.cdih.on eq true) then
-  restraints dihedral
-    @@RUN:data/dihedrals/dihedrals.tbl
-  end
+  fileexist $dihe_fname end
+  if ($result eq true) then
+    restraints dihedral
+!      @@RUN:data/dihedrals/dihedrals.tbl
+      @@$dihe_fname
+    end
+  end if
 end if
 
 restraints dihedral ? end

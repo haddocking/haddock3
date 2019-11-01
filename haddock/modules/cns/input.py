@@ -2,6 +2,7 @@ import os
 import random
 import glob
 from haddock.modules.functions import load_ini
+from haddock.modules.structure.utils import PDB
 
 ini = load_ini('haddock3.ini')
 
@@ -49,12 +50,6 @@ class InputGenerator:
 
 		string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 		ncomp = None
-		if type(pdb_input) == str:
-			ncomp = 1
-			input_str += f'coor @@{pdb_input}\n'
-
-			# $file variable is still used by some CNS recipes, need refactoring!
-			input_str += f'eval ($file=\"{pdb_input}\")\n'
 
 		if psf_input:
 			if type(psf_input) == str:
@@ -67,16 +62,29 @@ class InputGenerator:
 					input_str += f'  @@{psf}\n'
 				input_str += 'end\n'
 
+		if type(pdb_input) == str:
+			ncomp = 1
+			if psf_input:
+				input_str += f'coor @@{pdb_input}\n'
+			else:
+				pass
+
+			# $file variable is still used by some CNS recipes, need refactoring!
+			input_str += f'eval ($file=\"{pdb_input}\")\n'
+
 		if type(pdb_input) == list or type(pdb_input) == tuple:
 			ncomp = len(pdb_input)
 			for pdb in pdb_input:
 				input_str += f'coor @@{pdb}\n'
 
-		input_str += f'eval ($ncomponents={ncomp})\n'
+		chainsegs = PDB.identify_chainseg(pdb_input)
 
-		# FIXME: Add Chain/SegID according to run parameters or default to 1=A,2=B,3=C, etc
-		for i in range(ncomp):
-			input_str += f'eval ($prot_segid_mol{i+1}="{string[i]}")\n'
+		ncomponents = len(chainsegs)
+
+		input_str += f'eval ($ncomponents={ncomponents})\n'
+
+		for i, segid in enumerate(chainsegs):
+			input_str += f'eval ($prot_segid_mol{i+1}="{segid}")\n'
 
 		try:
 			ambig_fname = glob.glob('data/ambig.tbl')[0]

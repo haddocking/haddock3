@@ -27,7 +27,7 @@
 !analysis  =$analysis;)
 
 !evaluate ($log_level=quiet)
-!evaluate ($log_level=verbose)
+evaluate ($log_level=verbose)
 !eval ($toppar.prot_segid_1="A")
 !eval ($toppar.prot_segid_2="B")
 !eval ($toppar.fix_origin_1=false)
@@ -182,7 +182,7 @@ evaluate ($toppar.par_nonbonded = $par_nonbonded)
 evaluate ($Data.flags.zres = $zres_on)
 evaluate ($data.numzres = $numzres)
 evaluate ($ncc=1)
-while ($ncc <=numzres) loop zres
+while ($ncc <= $numzres) loop zres
   evaluate ($toppar.zres_sta_$ncc = $zres_sta_$ncc)
   evaluate ($toppar.zres_end_$ncc = $zres_end_$ncc)
   evaluate ($toppar.zres_seg_$ncc = $zres_seg_$ncc)
@@ -195,7 +195,7 @@ evaluate ($data.kncs = $kncs)
 evaluate ($Data.flags.ncs = $ncs_on)
 evaluate ($data.numncs = $numncs)
 evaluate ($ncc=1)
-while ($ncc <=numncs) loop ncs
+while ($ncc <= $numncs) loop ncs
   evaluate ($toppar.ncs_sta1_$ncc = $ncs_sta1_$ncc)
   evaluate ($toppar.ncs_end1_$ncc = $ncs_end1_$ncc)
   evaluate ($toppar.ncs_seg1_$ncc = $ncs_seg1_$ncc)
@@ -222,7 +222,7 @@ end loop sym
 
 evaluate ($data.numc3sym = $numc3sym)
 evaluate ($nsym=1)
-while ($nsym <=$numc3sym) loop sym
+while ($nsym <= $numc3sym) loop sym
   evaluate ($toppar.c3sym_sta1_$nsym = $c3sym_sta1_$nsym)
   evaluate ($toppar.c3sym_end1_$nsym = $c3sym_end1_$nsym)
   evaluate ($toppar.c3sym_seg1_$nsym = $c3sym_seg1_$nsym)
@@ -235,9 +235,9 @@ while ($nsym <=$numc3sym) loop sym
   evaluate ($nsym = $nsym + 1)
 end loop sym
 
-evaluate ($data.nums3sym=$nums3sym)
+evaluate ($data.nums3sym= $nums3sym)
 evaluate ($nsym=1)
-while ($nsym <=$nums3sym) loop sym
+while ($nsym <= $nums3sym) loop sym
   evaluate ($toppar.s3sym_sta1_$nsym = $s3sym_sta1_$nsym)
   evaluate ($toppar.s3sym_end1_$nsym = $s3sym_end1_$nsym)
   evaluate ($toppar.s3sym_seg1_$nsym = $s3sym_seg1_$nsym)
@@ -250,9 +250,9 @@ while ($nsym <=$nums3sym) loop sym
   evaluate ($nsym = $nsym + 1)
 end loop sym
 
-evaluate ($data.numc4sym=$numc4sym)
+evaluate ($data.numc4sym = $numc4sym)
 evaluate ($nsym=1)
-while ($nsym <=$numc4sym) loop sym
+while ($nsym <= $numc4sym) loop sym
   evaluate ($toppar.c4sym_sta1_$nsym = $c4sym_sta1_$nsym)
   evaluate ($toppar.c4sym_end1_$nsym = $c4sym_end1_$nsym)
   evaluate ($toppar.c4sym_seg1_$nsym = $c4sym_seg1_$nsym)
@@ -270,7 +270,7 @@ end loop sym
 
 evaluate ($data.numc5sym=$numc5sym)
 evaluate ($nsym=1)
-while ($nsym <=$numc5sym) loop sym
+while ($nsym <= $numc5sym) loop sym
   evaluate ($toppar.c5sym_sta1_$nsym = $c5sym_sta1_$nsym)
   evaluate ($toppar.c5sym_end1_$nsym = $c5sym_end1_$nsym)
   evaluate ($toppar.c5sym_seg1_$nsym = $c5sym_seg1_$nsym)
@@ -292,7 +292,7 @@ end loop sym
 
 evaluate ($data.numc6sym=$numc6sym)
 evaluate ($nsym=1)
-while ($nsym <=$numc6sym) loop sym
+while ($nsym <= $numc6sym) loop sym
   evaluate ($toppar.c6sym_sta1_$nsym = $c6sym_sta1_$nsym)
   evaluate ($toppar.c6sym_end1_$nsym = $c6sym_end1_$nsym)
   evaluate ($toppar.c6sym_seg1_$nsym = $c6sym_seg1_$nsym)
@@ -1039,7 +1039,11 @@ evaluate ($numnoe = 0)
     if (&data.hbond_lastit ge &iteration) then
       if (&data.hbond_firstit le &iteration) then
         if (&data.hbonds_on eq true) then
-          noe @@RUN:data/hbonds/hbonds.tbl end
+          fileexist $hbond_fname end
+          if ($result eq true) then
+!            noe @@RUN:data/hbonds/hbonds.tbl end
+            noe @@$hbond_fname end
+          end if
         end if
       end if
     end if

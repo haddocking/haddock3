@@ -3,9 +3,9 @@ import re
 import os
 import haddock.workflows.scoring.config as config
 from haddock.workflows.scoring.analysis.contact import Contacts
-from haddock.workflows.scoring.analysis.dfire import dfire
-from haddock.workflows.scoring.analysis.dockq import dockq
-from haddock.workflows.scoring.analysis.fastcontact import fastcontact
+# from haddock.workflows.scoring.analysis.dfire import dfire
+# from haddock.workflows.scoring.analysis.dockq import dockq
+# from haddock.workflows.scoring.analysis.fastcontact import fastcontact
 
 
 class Ana:

@@ -1,0 +1,6 @@
+evaluate ($x_1 = $spacing * 0.792331 )
+evaluate($y_1 = $spacing * -0.526604 )
+evaluate($z_1 = $spacing   * -0.308059 )
+evaluate ($x_2 = $spacing * -0.792331 )
+evaluate($y_2 = $spacing * 0.526604 )
+evaluate($z_2 = $spacing   * 0.308059 )

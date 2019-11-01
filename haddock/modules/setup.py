@@ -9,155 +9,155 @@ etc_folder = get_full_path('haddock', 'etc')
 
 class Setup:
 
-	def __init__(self, setup_dic):
-		self.setup_dic = setup_dic
+    def __init__(self, setup_dic):
+        self.setup_dic = setup_dic
 
-		if not self.check_setup_dic(setup_dic):
-			print('+ ERROR: Please configure your setup file')
-			exit()
+        if not self.check_setup_dic(setup_dic):
+            print('+ ERROR: Please configure your setup file')
+            exit()
 
-		self.protocol_path = get_full_path('haddock', 'protocols')
+        self.protocol_path = get_full_path('haddock', 'protocols')
 
-		with open(f'{etc_folder}/default.json', 'r') as fh:
-			self.default_recipes = json.load(fh)
-		fh.close()
+        with open(f'{etc_folder}/default.json', 'r') as fh:
+            self.default_recipes = json.load(fh)
+        fh.close()
 
-		run_id = None
-		try:
-			run_id = self.setup_dic['identifier']['run']
-		except KeyError:
-			print('+ ERROR: Run identifier not provided')
-			exit()
+        run_id = None
+        try:
+            run_id = self.setup_dic['identifier']['run']
+        except KeyError:
+            print('+ ERROR: Run identifier not provided')
+            exit()
 
-		for mol in self.setup_dic['molecules']:
-			target_mol = self.setup_dic['molecules'][mol]
-			if not os.path.isfile(target_mol):
-				print(f'+ ERROR: Molecule {target_mol} not found')
-				exit()
+        for mol in self.setup_dic['molecules']:
+            target_mol = self.setup_dic['molecules'][mol]
+            if not os.path.isfile(target_mol):
+                print(f'+ ERROR: Molecule {target_mol} not found')
+                exit()
 
-		self.run_dir = None
-		if type(run_id) == int:
-			self.run_dir = f"run{run_id}"
-		elif type(run_id) == str:
-			run_id = run_id.replace(' ', '-')
-			self.run_dir = f"run-{run_id}"
-		else:
-			print('+ ERROR: Run identifier can only be string or integer')
-			exit()
+        self.run_dir = None
+        if type(run_id) == int:
+            self.run_dir = f"run{run_id}"
+        elif type(run_id) == str:
+            run_id = run_id.replace(' ', '-')
+            self.run_dir = f"run-{run_id}"
+        else:
+            print('+ ERROR: Run identifier can only be string or integer')
+            exit()
 
-	@staticmethod
-	def check_setup_dic(sdic):
-		# Check if setup dic meets minimal requirements
-		#  stage
-		#  identifier
-		#  molecules
-		return True
+    @staticmethod
+    def check_setup_dic(sdic):
+        # Check if setup dic meets minimal requirements
+        #  stage
+        #  identifier
+        #  molecules
+        return True
 
-	def prepare_folders(self):
-		""" Create folder structure and copy/edit significant input files """
+    def prepare_folders(self):
+        """ Create folder structure and copy/edit significant input files """
 
-		if len(self.setup_dic['molecules']) >= 20:
-			print('+ ERROR: Too many molecules')
-			exit()
+        if len(self.setup_dic['molecules']) >= 20:
+            print('+ ERROR: Too many molecules')
+            exit()
 
-		# move input molecules to correct places
-		if not os.path.isdir(self.run_dir):
-			os.system(f'mkdir {self.run_dir}')
-		else:
-			print(f'+ WARNING: {self.run_dir} already present')
-			# exit()
+        # move input molecules to correct places
+        if not os.path.isdir(self.run_dir):
+            os.system(f'mkdir {self.run_dir}')
+        else:
+            print(f'+ WARNING: {self.run_dir} already present')
+        # exit()
 
-		data_dir = f'{self.run_dir}/data'
-		if not os.path.isdir(data_dir):
-			os.system(f'mkdir {data_dir}')
+        data_dir = f'{self.run_dir}/data'
+        if not os.path.isdir(data_dir):
+            os.system(f'mkdir {data_dir}')
 
-		with open(f'{self.run_dir}/data/run.toml', 'w') as setup_fh:
-			_ = toml.dump(self.setup_dic, setup_fh)
-		setup_fh.close()
+        with open(f'{self.run_dir}/data/run.toml', 'w') as setup_fh:
+            _ = toml.dump(self.setup_dic, setup_fh)
+        setup_fh.close()
 
-		mol_dic = dict([(e, self.setup_dic['molecules'][e]) for e in self.setup_dic['molecules'] if 'mol' in e])
-		for mol_id in mol_dic:
-			molecule = self.setup_dic['molecules'][mol_id]
+        mol_dic = dict([(e, self.setup_dic['molecules'][e]) for e in self.setup_dic['molecules'] if 'mol' in e])
+        for mol_id in mol_dic:
+            molecule = self.setup_dic['molecules'][mol_id]
 
-			if molecule == mol_id + '.pdb':
-				print("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
-				exit()
-			# Ensembles will be treated later
-			if not os.path.isfile(molecule):
-				print(f'+ ERROR: {molecule} not found!')
-				exit()
+            if molecule == mol_id + '.pdb':
+                print("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
+                exit()
+            # Ensembles will be treated later
+            if not os.path.isfile(molecule):
+                print(f'+ ERROR: {molecule} not found!')
+                exit()
 
-			os.system(f'cp {molecule} {self.run_dir}/data/{mol_id}_1.pdb')
+            os.system(f'cp {molecule} {self.run_dir}/data/{mol_id}_1.pdb')
 
-			self.setup_dic['molecules'][mol_id] = f'{self.run_dir}/data/{mol_id}_1.pdb'
+            self.setup_dic['molecules'][mol_id] = f'{self.run_dir}/data/{mol_id}_1.pdb'
 
-		# ENHANCEMENT: Check if SegIDs defined in tbl files are on the structures/input
-		try:
-			ambig_fname = self.setup_dic['restraints']['ambig']
-			os.system(f'cp {ambig_fname} {self.run_dir}/data/ambig.tbl')
-		except KeyError:
-			pass
+        # ENHANCEMENT: Check if SegIDs defined in tbl files are on the structures/input
+        try:
+            ambig_fname = self.setup_dic['restraints']['ambig']
+            os.system(f'cp {ambig_fname} {self.run_dir}/data/ambig.tbl')
+        except KeyError:
+            pass
 
-		try:
-			unambig_fname = self.setup_dic['restraints']['unambig']
-			os.system(f'cp {unambig_fname} {self.run_dir}/data/unambig.tbl')
-		except KeyError:
-			pass
+        try:
+            unambig_fname = self.setup_dic['restraints']['unambig']
+            os.system(f'cp {unambig_fname} {self.run_dir}/data/unambig.tbl')
+        except KeyError:
+            pass
 
-		try:
-			hbond_fname = self.setup_dic['restraints']['hbond']
-			os.system(f'cp {hbond_fname} {self.run_dir}/data/hbond.tbl')
-		except KeyError:
-			pass
-		try:
-			dihe_fname = self.setup_dic['restraints']['dihedrals']
-			os.system(f'cp {dihe_fname} {self.run_dir}/data/dihe.tbl')
-		except KeyError:
-			pass
+        try:
+            hbond_fname = self.setup_dic['restraints']['hbond']
+            os.system(f'cp {hbond_fname} {self.run_dir}/data/hbond.tbl')
+        except KeyError:
+            pass
+        try:
+            dihe_fname = self.setup_dic['restraints']['dihedrals']
+            os.system(f'cp {dihe_fname} {self.run_dir}/data/dihe.tbl')
+        except KeyError:
+            pass
 
-		# Q: What should this function return?
-		return True
+        # Q: What should this function return?
+        return True
 
-	def configure_recipes(self):
-		""" Prepare recipes with parameters from setup dictionary """
+    def configure_recipes(self):
+        """ Prepare recipes with parameters from setup dictionary """
 
-		stage_dic = self.setup_dic['stage']
-		for stage in stage_dic:
-			recipe_id = stage_dic[stage]['recipe']
-			# TODO: check if recipe is valid
-			if recipe_id == 'default':
-				recipe_id = self.default_recipes[stage]
+        stage_dic = self.setup_dic['stage']
+        for stage in stage_dic:
+            recipe_id = stage_dic[stage]['recipe']
+            # TODO: check if recipe is valid
+            if recipe_id == 'default':
+                recipe_id = self.default_recipes[stage]
 
-			recipe_params_file = self.protocol_path + '/' + recipe_id.split('.')[0] + '.json'
-			if os.path.isfile(recipe_params_file):
-				with open(recipe_params_file, 'r') as f:
-					default_parameter_dic = json.load(f)
-				f.close()
-			else:
-				print(f'+ ERROR: Default parameters not found for {recipe_id}')
-				exit()
+            recipe_params_file = self.protocol_path + '/' + recipe_id.split('.')[0] + '.json'
+            if os.path.isfile(recipe_params_file):
+                with open(recipe_params_file, 'r') as f:
+                    default_parameter_dic = json.load(f)
+                f.close()
+            else:
+                print(f'+ ERROR: Default parameters not found for {recipe_id}')
+                exit()
 
-			custom_parameter_dic = dict([(a, stage_dic[stage][a]) for a in stage_dic[stage] if a != 'recipe'])
+            custom_parameter_dic = dict([(a, stage_dic[stage][a]) for a in stage_dic[stage] if a != 'recipe'])
 
-			# TODO: Save the custom json file alongside the template
-			#  find a way to combine default_parameter_dic with custom_parameter_dic and save it for reproductibility
-			# parameter_dic = self.merge_parameters(default_parameter_dic, custom_parameter_dic)
+            # TODO: Save the custom json file alongside the template
+            #  find a way to combine default_parameter_dic with custom_parameter_dic and save it for reproductibility
+            # parameter_dic = self.merge_parameters(default_parameter_dic, custom_parameter_dic)
 
-			# Generate the recipe and place it in the appropriate place
-			r = RecipeComposer(recipe_id, default_parameter_dic, custom_parameter_dic)
-			complete_recipe = r.compose()
+            # Generate the recipe and place it in the appropriate place
+            r = RecipeComposer(recipe_id, default_parameter_dic, custom_parameter_dic)
+            complete_recipe = r.compose()
 
-			if not os.path.isdir(f'{self.run_dir}'):
-				os.mkdir(f'{self.run_dir}')
-				
-			if not os.path.isdir(f'{self.run_dir}/{stage}'):
-				os.mkdir(f'{self.run_dir}/{stage}')
-				if not os.path.isdir(f'{self.run_dir}/{stage}/template'):
-					os.mkdir(f'{self.run_dir}/{stage}/template')
+            if not os.path.isdir(f'{self.run_dir}'):
+                os.mkdir(f'{self.run_dir}')
 
-			with open(f'{self.run_dir}/{stage}/template/{recipe_id}', 'w') as fh:
-				fh.write(complete_recipe)
-			fh.close()
+            if not os.path.isdir(f'{self.run_dir}/{stage}'):
+                os.mkdir(f'{self.run_dir}/{stage}')
+                if not os.path.isdir(f'{self.run_dir}/{stage}/template'):
+                    os.mkdir(f'{self.run_dir}/{stage}/template')
 
-		# Q: What should this function return?
-		return True
+            with open(f'{self.run_dir}/{stage}/template/{recipe_id}', 'w') as fh:
+                fh.write(complete_recipe)
+            fh.close()
+
+        # Q: What should this function return?
+        return True

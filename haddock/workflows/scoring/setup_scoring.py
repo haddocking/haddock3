@@ -71,8 +71,6 @@ if __name__ == '__main__':
 
     setup_dictionary = toml.load(sys.argv[1])
 
-    greeting()
-
     s = Setup(setup_dictionary)
     s.prepare_folders()
     s.configure_recipes()

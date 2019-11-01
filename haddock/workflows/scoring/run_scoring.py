@@ -1,73 +1,52 @@
 # convert the analysis scripts to python
-import os
+# import os
 import sys
-from datetime import datetime
 import toml
-
-from haddock.modules.functions import get_begin_molecules
+import json
+from datetime import datetime
 from haddock.workflows.scoring.analysis.ana import Ana
 from haddock.modules.cns.engine import CNS
-from haddock.modules.cns.input import RecipeGenerator
-from haddock.modules.structure.utils import PDB
+from haddock.modules.cns.input import InputGenerator
 from haddock.modules.worker.distribution import JobCreator
-# import haddock.workflows.scoring.config as config
-import config
-import glob
+from haddock.modules.functions import *
+from haddock.run_haddock import generate_topology
 
-
-def run_scoring(ensamble_f, suffix):
-
-	pdb = PDB()
-	recipe_gen = RecipeGenerator()
-	jobs = JobCreator()
-	cns = CNS()
-
-	# Prepare PDBs
-	pdb.prepare(ensamble_f)
-
-	# Generate the Recipe
-	#  - Protonation dictionary
-	#
-	recipe = recipe_gen.generate(protonation_dic=pdb.protonation_dic, out_suffix=suffix)
-
-	jobs.delegate(recipe, pdb.model_list)
-
-	cns.run(jobs)
-
-	return glob.glob(f'structures/*{suffix}.pdb')
+etc_folder = get_full_path('haddock', 'etc')
+with open(f'{etc_folder}/default.json', 'r') as fh:
+    default_recipes = json.load(fh)
+fh.close()
 
 
 def run_analysis(pdb_l):
+    ana = Ana(pdb_l)
 
-	ana = Ana(pdb_l)
+    # ana.retrieve_structures()
 
-	# ana.retrieve_structures()
+    ana.extract_energies()
 
-	ana.extract_energies()
+    ana.calculate_haddock_score()
 
-	ana.calculate_haddock_score()
+    # ana.cluster(cutoff=0.75, threshold=1)
+    # ana.cluster(cutoff=0.75, threshold=2)
+    ana.cluster(cutoff=0.75, threshold=4)
 
-	# ana.cluster(cutoff=0.75, threshold=1)
-	# ana.cluster(cutoff=0.75, threshold=2)
-	ana.cluster(cutoff=0.75, threshold=4)
+    # ana.cluster(cutoff=0.65, threshold=1)
+    # ana.cluster(cutoff=0.65, threshold=2)
+    ana.cluster(cutoff=0.65, threshold=4)
 
-	# ana.cluster(cutoff=0.65, threshold=1)
-	# ana.cluster(cutoff=0.65, threshold=2)
-	ana.cluster(cutoff=0.65, threshold=4)
+    # ana.run_fastcontact()
 
-	# ana.run_fastcontact()
+    # ana.run_dfire()
 
-	# ana.run_dfire()
+    ana.run_dockq()
 
-	ana.run_dockq()
-
-	ana.output()
+    ana.output()
 
 
 def greeting():
-	now = datetime.now().replace(second=0, microsecond=0)
-	python_version = sys.version
-	return (f'''##############################################
+    now = datetime.now().replace(second=0, microsecond=0)
+    python_version = sys.version
+    return (f'''##############################################
 #                                            #
 #         Starting HADDOCK v3.0beta1         #
 #                                            #
@@ -84,26 +63,77 @@ Python {python_version}
 ''')
 
 
-def score_models(mol_dic, run_params):
-	pass
+def score_models(run_param):
+    print('++ Running scoring workflow')
+
+    recipe_name = run_param['stage']['scoring']['recipe']
+    if recipe_name == 'default':
+        recipe_name = default_recipes['scoring']
+
+    recipe = f'scoring/template/{recipe_name}'
+    if not os.path.isfile(recipe):
+        print('+ ERROR: Template recipe for scoring not found')
+
+    scoring_gen = InputGenerator(recipe_file=recipe,
+                                 input_folder='scoring')
+
+    jobs = JobCreator(job_id='scoring',
+                      job_folder='scoring')
+
+    input_list = []
+    # match pdbs and psfs
+    for pdbf in glob.glob('topology/*pdb'):
+        psff = pdbf.replace('.pdb', '.psf')
+        if os.path.isfile(psff):
+            input_list.append((pdbf, psff))
+
+    job_counter = 1
+    for mol in input_list:
+        pdb_struct = mol[0]
+        psf_struct = mol[1]
+        output_struct = pdb_struct.split('/')[1].split('.')[0]
+        input_f = scoring_gen.generate(protonation_dic={},
+                                       output_pdb=True,
+                                       output_psf=True,
+                                       input_pdb=pdb_struct,
+                                       input_psf=psf_struct,
+                                       output_fname=output_struct)
+
+        jobs.delegate(job_num=job_counter,
+                      input_file_str=input_f)
+
+        job_counter += 1
+
+    cns = CNS()
+    cns.run(jobs)
+    output = retrieve_output(jobs)
+    pdb_list = [e[0] for e in output.values()]
+    return pdb_list
 
 
 if __name__ == '__main__':
 
-	print(greeting())
+    print(greeting())
 
-	run_f = 'data/scoring.toml'
-	if not os.path.isfile(run_f):
-		print('+ ERROR: data/run.toml not found, make sure you are in the correct folder.')
-		exit()
+    run_f = 'data/run.toml'
+    if not os.path.isfile(run_f):
+        print('+ ERROR: data/run.toml not found, make sure you are in the correct folder.')
+        exit()
 
-	run_parameters = toml.load(run_f)
-	models = get_begin_molecules('data/')
+    run_parameters = toml.load(run_f)
+    molecules = get_begin_molecules('data/')
 
-	# TODO: Refactor scoring CNS script
+    # 1 Generate topologies
+    begin_models = generate_topology(molecules, run_parameters)
 
-	#
-	# input_f = config.param_dic['input']['ensemble']
-	#
-	# converted_pdb_list = run_scoring(input_f, '_conv')
-	# run_analysis(converted_pdb_list)
+    rescored = score_models(run_parameters)
+
+    ana = run_analysis(rescored)
+
+    print(rescored)
+
+#
+# input_f = config.param_dic['input']['ensemble']
+#
+# converted_pdb_list = run_scoring(input_f, '_conv')
+# run_analysis(converted_pdb_list)

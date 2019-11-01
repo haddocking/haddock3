@@ -102,6 +102,35 @@ def run_it0(model_dic, run_param):
     return file_list
 
 
+def run_it1(model_list, run_param):
+    print('\n++ Running it1')
+    file_list = []
+    supported_modules = []
+
+    recipe_name = run_param['stage']['semi_flexible']['recipe']
+    if recipe_name == 'default':
+        recipe_name = default_recipes['semi_flexible']
+
+    recipe = f'rigid_body/template/{recipe_name}'
+    if not os.path.isfile(recipe):
+        print('+ ERROR: Template recipe for topology not found')
+
+    if '.cns' not in recipe:
+        # Its a module, look for it
+        if recipe not in supported_modules:
+            print(f'+ ERROR: {recipe} not supported.')
+            exit()
+
+    else:
+        # Its a HADDOCK recipe
+        it1 = RigidBody()
+        job_dic = it1.init(recipe, model_list, run_param)
+        complex_list = it1.run(job_dic)
+        file_list = it1.output(complex_list)
+
+    return file_list
+
+
 if __name__ == '__main__':
 
     print(greeting())
@@ -136,7 +165,7 @@ if __name__ == '__main__':
 
     rigid_complexes = run_it0(begin_models, run_parameters)
     # rigid_complexes = run_lightdock(begin_models)
-    # semi_flexible_complexes = run_it1(begin_models)
+    semi_flexible_complexes = run_it1(rigid_complexes, run_parameters)
     # water_refined_complexes = run_itw(begin_models)
     # md_models = run_md(models)
 

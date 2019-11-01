@@ -1,10 +1,7 @@
-{"output": {
-    "folder": "scored",
-    "pdb": true
-  },
-  "params": {
+{"params": {
     "dihed": false,
     "sani": false,
+    "dani": false,
     "coup": false,
     "vean": false,
     "cdih": false,
@@ -12,6 +9,11 @@
     "sym": false,
     "ncs": false,
     "noecv": false,
+    "xrdc": false,
+    "xpcs": false,
+    "rg": false,
+    "zres": false,
+    "em": false,
     "auto_break": true,
     "waterdock": true,
     "break_cutoff": 2.5,

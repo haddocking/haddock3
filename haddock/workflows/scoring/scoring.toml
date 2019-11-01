@@ -11,12 +11,13 @@ run = 1
 scheme = 'parallel'
 nproc = 24
 
+
 [stage]
-# Stage specific parameters
+
+[stage.topology]
+recipe='default'
 
 [stage.scoring]
 recipe='default'
-
-params.log_level="quiet"
 
 #===========================================================#

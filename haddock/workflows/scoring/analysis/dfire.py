@@ -6,7 +6,7 @@ from haddock.modules.structure.utils import PDB
 # from haddock.workflows.scoring.config import load_parameters
 import haddock.workflows.scoring.config as config
 
-load_structure = PDB.load_structure
+# load_structure = PDB.load_structure
 # param_dic = load_parameters()
 # dcomplex_exe = config.ini['third-party']['dcomplex_exe']
 dcomplex_exe = config.ini.get('third party', 'dcomplex_exe')

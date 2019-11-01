@@ -154,20 +154,23 @@ class PDB:
             return new_pdb
 
     @staticmethod
-    def identify_chainseg(pdb):
+    def identify_chainseg(pdb_inp):
         """" Read PDB structure and return segID OR chainID """
+        if type(pdb_inp) == str:
+            pdb_inp = [pdb_inp]
         segid_l = []
-        with open(pdb) as fh:
-            for line in fh.readlines():
-                if 'ATOM' in line[:4]:
-                    segid = line[72:76].strip()[:1]
-                    chainid = line[21].strip()[:1]
-                    if segid:
-                        segid_l.append(segid)
-                        # return segid
-                    elif chainid:
-                        segid_l.append(segid)
-                        # return chainid
+        for pdb in pdb_inp:
+            with open(pdb) as fh:
+                for line in fh.readlines():
+                    if 'ATOM' in line[:4]:
+                        segid = line[72:76].strip()[:1]
+                        chainid = line[21].strip()[:1]
+                        if segid:
+                            segid_l.append(segid)
+                            # return segid
+                        elif chainid:
+                            segid_l.append(segid)
+                            # return chainid
 
         segid_l = list(set(segid_l))
         # WARNING: This expects chains to be sequential!

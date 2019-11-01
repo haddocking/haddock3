@@ -118,26 +118,6 @@ class Ana:
 
 			self.structure_dic[pdb]['haddock-score'] = haddock_score
 
-	def run_fastcontact(self):
-		""" Run fastcontact on all scored PDBs """
-
-		print('+ Running FASTCONTACT')
-
-		for pdb in self.structure_dic:
-			fast_elec, fast_desol = fastcontact(pdb)
-			self.structure_dic[pdb]['fastelec'] = fast_elec
-			self.structure_dic[pdb]['fastdesol'] = fast_desol
-
-	def run_dfire(self):
-		""" Run dfire on all scored PDBs """
-
-		print('+ Running DFIRE')
-
-		for pdb in self.structure_dic:
-			d_binding, d_score = dfire(pdb)
-			self.structure_dic[pdb]['dfire-ebinding'] = d_binding
-			self.structure_dic[pdb]['dfire-score'] = d_score
-
 	def cluster(self, cutoff, strictness=0.75, threshold=4):
 		""" Cluster scored models using FCC, output a sorted text file containing clusters and mean scores """
 
@@ -369,6 +349,26 @@ class Ana:
 			result_dic = dockq(reference_pdb, pdb)
 			for k in result_dic:
 				self.structure_dic[pdb][k] = result_dic[k]
+
+	def run_fastcontact(self):
+		""" Run fastcontact on all scored PDBs """
+
+		print('+ Running FASTCONTACT')
+
+		for pdb in self.structure_dic:
+			fast_elec, fast_desol = fastcontact(pdb)
+			self.structure_dic[pdb]['fastelec'] = fast_elec
+			self.structure_dic[pdb]['fastdesol'] = fast_desol
+
+	def run_dfire(self):
+		""" Run dfire on all scored PDBs """
+
+		print('+ Running DFIRE')
+
+		for pdb in self.structure_dic:
+			d_binding, d_score = dfire(pdb)
+			self.structure_dic[pdb]['dfire-ebinding'] = d_binding
+			self.structure_dic[pdb]['dfire-score'] = d_score
 
 	def output(self):
 

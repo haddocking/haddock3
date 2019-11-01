@@ -1,5 +1,3 @@
-# convert the analysis scripts to python
-# import os
 import sys
 import toml
 import json
@@ -19,8 +17,6 @@ fh.close()
 
 def run_analysis(pdb_l):
     ana = Ana(pdb_l)
-
-    # ana.retrieve_structures()
 
     ana.extract_energies()
 
@@ -123,7 +119,6 @@ if __name__ == '__main__':
     run_parameters = toml.load(run_f)
     molecules = get_begin_molecules('data/')
 
-    # 1 Generate topologies
     begin_models = generate_topology(molecules, run_parameters)
 
     rescored = score_models(run_parameters)

@@ -69,11 +69,11 @@ class RigidBody:
         cns = CNS()
         cns.run(jobs)
         output = retrieve_output(jobs)
-
         return output
 
     @staticmethod
     def output(pdb_dic):
+    # def output(pdb_dic, folder, stage):
         pdb_list = [pdb_dic[e][0] for e in pdb_dic]
         file_list = []
         for pdb in pdb_list:
@@ -89,7 +89,7 @@ class RigidBody:
             for e in sorted_file_list:
                 pdb_name, haddock_score = e
                 pdb_name = pdb_name.split('/')[1]
-                tbw = f'"PREVIT:{pdb_name}  {{ {haddock_score} }}\n'
+                tbw = f'"PREVIT:{pdb_name}  {{ {haddock_score:.4f} }}\n'
                 f.write(tbw)
         f.close()
 

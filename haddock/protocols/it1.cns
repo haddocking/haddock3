@@ -1002,10 +1002,10 @@ evaluate ($numnoe = 0)
   end if
 
   {*== check first for failed structures ==*}
-  evaluate ($failure = false)
-  evaluate ($filefail="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".fail")
-  fileexist $filefail end
-  evaluate ($failure = $result)
+!  evaluate ($failure = false)
+!  evaluate ($filefail="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".fail")
+!  fileexist $filefail end
+!  evaluate ($failure = $result)
 
   parameter
     bond  (resn WAT ) (resn WAT ) 1000 TOKEN
@@ -1538,11 +1538,11 @@ while ($nlcount < $rotiter) loop rotloop2
     !read all the experimental Data:
 !    @@RUN:protocols/read_noes.cns(Iteration=$Iteration; Data=$Data; count=$count)
     @@RUN:protocols/read_noes.cns
-    if ( $log_level = verbose ) then
-      set message=normal echo=on end
-    else
-      set message=off echo=off end
-    end if
+!    if ( $log_level = verbose ) then
+!      set message=normal echo=on end
+!    else
+!      set message=off echo=off end
+!    end if
   else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
@@ -1587,13 +1587,18 @@ while ($nlcount < $rotiter) loop rotloop2
   end if
 
   if ($data.waterdock eq true) then
-    write coordinates sele=(not (resn WAT or resn HOH or resn TIP*)) output=$filename end
+!    write coordinates sele=(not (resn WAT or resn HOH or resn TIP*)) output=$filename end
+    write coordinates sele=(not (resn WAT or resn HOH or resn TIP*)) output=$output_pdb_filename end
     inline @RUN:protocols/waterdock_out1.cns
   else
-    write coordinates output=$filename end
+!    write coordinates output=$filename end
+    write coordinates output=$output_pdb_filename end
   end if
 
   coor swap end
 
 end loop rotloop2
+
+ display OUTPUT: $output_pdb_filename
+
 stop

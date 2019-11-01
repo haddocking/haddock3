@@ -5,6 +5,7 @@ from datetime import datetime
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.docking.it0 import RigidBody
+from haddock.modules.docking.it1 import SemiFlexible
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
 import argparse
@@ -84,7 +85,7 @@ def run_it0(model_dic, run_param):
 
     recipe = f'rigid_body/template/{recipe_name}'
     if not os.path.isfile(recipe):
-        print('+ ERROR: Template recipe for topology not found')
+        print('+ ERROR: Template recipe for rigid-body not found')
 
     if '.cns' not in recipe:
         # Its a module, look for it
@@ -111,9 +112,9 @@ def run_it1(model_list, run_param):
     if recipe_name == 'default':
         recipe_name = default_recipes['semi_flexible']
 
-    recipe = f'rigid_body/template/{recipe_name}'
+    recipe = f'semi_flexible/template/{recipe_name}'
     if not os.path.isfile(recipe):
-        print('+ ERROR: Template recipe for topology not found')
+        print('+ ERROR: Template recipe for semi-flexible not found')
 
     if '.cns' not in recipe:
         # Its a module, look for it
@@ -123,8 +124,8 @@ def run_it1(model_list, run_param):
 
     else:
         # Its a HADDOCK recipe
-        it1 = RigidBody()
-        job_dic = it1.init(recipe, model_list, run_param)
+        it1 = SemiFlexible()
+        job_dic = it1.init(recipe, model_list)
         complex_list = it1.run(job_dic)
         file_list = it1.output(complex_list)
 
@@ -159,12 +160,22 @@ if __name__ == '__main__':
     #   }
 
     # Output:
-    #  List of complexes, sorted according to ranking
+    #  List of complexes, SORTED according to ranking!
     #   example:
     # ['complex_42.pdb', 'complex_10.pdb', 'complex_23.pdb']
+    rigid_sampling = run_parameters['stage']['rigid_body']['sampling']
 
     rigid_complexes = run_it0(begin_models, run_parameters)
     # rigid_complexes = run_lightdock(begin_models)
+
+    semiflex_sampling = run_parameters['stage']['semi_flexible']['sampling']
+
+    if semiflex_sampling > rigid_sampling:
+        print(f'+ WARNING: Semi Flexible sampling ({semiflex_sampling}) is higher than Rigid-body sampling ({rigid_sampling})')
+        print(f'++ Passing {rigid_sampling} complexes to Semi Flexible stage')
+
+    semi_flexible_input_complexes = rigid_complexes[:semiflex_sampling]
+
     semi_flexible_complexes = run_it1(rigid_complexes, run_parameters)
     # water_refined_complexes = run_itw(begin_models)
     # md_models = run_md(models)

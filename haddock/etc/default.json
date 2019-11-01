@@ -1,5 +1,6 @@
 {
   "topology": "generate-topology.cns",
   "rigid_body": "it0.cns",
+  "semi_flexible": "it1.cns",
   "scoring": "scoring.cns"
 }

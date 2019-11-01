@@ -14,7 +14,8 @@ do (store1 = 0) (all)
 do (store1 = 1) ((resn WAT or resn HOH) and not store3)
 show sum (store1) (all)
 if ($result > 0) then
-  write coordinates sele= ((resn WAT or resn HOH) and not store3) output =$filename end
+!  write coordinates sele= ((resn WAT or resn HOH) and not store3) output =$filename end
+  write coordinates sele= ((resn WAT or resn HOH) and not store3) output =$output_pdb_filename end
 else
   set display=$filename end
   display REMARK no water kept

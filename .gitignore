@@ -91,6 +91,7 @@ haddock/workflows/scoring/structures.ranking
 containers/docker/*.gz
 containers/docker/*.tar
 
+test/run1/
 test/structures/000000.pdb
 test/structures/000001.pdb
 test/structures/000002.pdb

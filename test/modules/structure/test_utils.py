@@ -67,7 +67,7 @@ class TestPDB(unittest.TestCase):
 
 		chainseg = self.PDB.identify_chainseg(pdbf)
 
-		self.assertEqual(chainseg, 'A')
+		self.assertEqual(chainseg, ['A'])
 
 	def test_fix_chainseg(self):
 		copyfile(f'{data_path}/mini_1.gold', f'{data_path}/mol1.pdb')

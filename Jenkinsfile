@@ -1,14 +1,14 @@
 pipeline {
   agent {
     docker {
-      image 'python:3'
+      image 'continuumio/anaconda3'
     }
 
   }
   stages {
     stage('Install') {
       steps {
-        sh '''pip install -r requirements.txt'''
+        sh 'conda env create -f haddock3_env.yml'
       }
     }
     stage('Test') {

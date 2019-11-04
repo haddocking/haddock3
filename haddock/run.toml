@@ -17,23 +17,24 @@ run = 1
 scheme = 'parallel'
 nproc = 24
 
-[stage]
 # Stage specific parameters
+[stage]
+
 
 [stage.topology]
 recipe='default'
 
 [stage.rigid_body]
 recipe='default'
-sampling = 10
+sampling = 200
 
 params.auto_his = true
 
 [stage.semi_flexible]
 recipe='default'
-sampling = 200
+sampling = 20
 
-#[stage.water_refinement]
-#recipe='default'
-#sampling = 200
+[stage.water_refinement]
+recipe='default'
+sampling = 20
 #===========================================================#

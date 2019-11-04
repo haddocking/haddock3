@@ -1,7 +1,7 @@
 # import glob
 import re
 import os
-import haddock.workflows.scoring.config as config
+# import haddock.workflows.scoring.config as config
 from haddock.modules.analysis.contact import Contacts
 # from haddock.workflows.scoring.analysis.dfire import dfire
 # from haddock.workflows.scoring.analysis.dockq import dockq
@@ -202,18 +202,26 @@ class Ana:
 
 		for c in clusters:
 			clustered_models_list = []
-
 			cluster_center_name = f'{path}/{root}_{c.center.name}.pdb'
+			if not os.path.isfile(cluster_center_name):
+				cluster_center_name_wzeros = f'{path}/{root}_{str(c.center.name).zfill(6)}.pdb'
+				if os.path.isfile(cluster_center_name_wzeros):
+					cluster_center_name = cluster_center_name_wzeros
+
 			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_name"] = c.name
 			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = 0
 
 			sort_tag = True
 			for model in [m.name for m in c.members]:
 				name = f'{path}/{root}_{model}.pdb'
+				if not os.path.isfile(name):
+					name_wzeros = f'{path}/{root}_{str(model).zfill(6)}.pdb'
+					if os.path.isfile(name_wzeros):
+						name = name_wzeros
 				try:
 					haddock_score = self.structure_dic[name]['haddock-score']
 				except KeyError:
-					# No haddock score...
+					# No haddock score...?
 					haddock_score = float('nan')
 					sort_tag = False
 
@@ -234,6 +242,10 @@ class Ana:
 			for i, m in enumerate(model_list):
 				tbw += f'{m[0]} '
 				name = f'{path}/{root}_{m[0]}.pdb'
+				if not os.path.isfile(name):
+					name_wzeros = f'{path}/{root}_{str(m[0]).zfill(6)}.pdb'
+					if os.path.isfile(name_wzeros):
+						name = name_wzeros
 				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = i
 
 			tbw += '\n'

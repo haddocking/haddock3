@@ -2,13 +2,15 @@ import sys
 import toml
 import json
 from datetime import datetime
+
+from haddock.modules.analysis.ana import Ana
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.docking.it0 import RigidBody
 from haddock.modules.docking.it1 import SemiFlexible
+from haddock.modules.docking.itw import WaterRefinement
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
-import argparse
 
 etc_folder = get_full_path('haddock', 'etc')
 with open(f'{etc_folder}/default.json', 'r') as fh:
@@ -132,6 +134,51 @@ def run_it1(model_list, run_param):
     return file_list
 
 
+def run_itw(model_list, run_param):
+    print('\n++ Running itw')
+    file_list = []
+    supported_modules = []
+
+    recipe_name = run_param['stage']['water_refinement']['recipe']
+    if recipe_name == 'default':
+        recipe_name = default_recipes['water_refinement']
+
+    recipe = f'water_refinement/template/{recipe_name}'
+    if not os.path.isfile(recipe):
+        print('+ ERROR: Template recipe for semi-flexible not found')
+
+    if '.cns' not in recipe:
+        # Its a module, look for it
+        if recipe not in supported_modules:
+            print(f'+ ERROR: {recipe} not supported.')
+            exit()
+
+    else:
+        # Its a HADDOCK recipe
+        itw = WaterRefinement()
+        job_dic = itw.init(recipe, model_list)
+        complex_list = itw.run(job_dic)
+        file_list = itw.output(complex_list)
+
+    return file_list
+
+
+def run_analysis(pdb_l):
+    ana = Ana(pdb_l)
+
+    ana.extract_energies()
+
+    ana.calculate_haddock_score()
+
+    ana.cluster(cutoff=0.60, threshold=4)
+
+    # ana.run_fastcontact()
+    # ana.run_dfire()
+    # ana.run_dockq()
+
+    ana.output()
+
+
 if __name__ == '__main__':
 
     print(greeting())
@@ -144,10 +191,10 @@ if __name__ == '__main__':
 
     molecules = get_begin_molecules('data/')
 
-    # 1 Generate topologies
+    # 1. Generate topologies ==========================================================================================#
     begin_models = generate_topology(molecules, run_parameters)
 
-    # 2 Dock
+    # 2. Dock =========================================================================================================#
 
     # Input:
     #  molecule dictionary, keys=molecule, values=list of tuples containing .psf and .pdb
@@ -163,21 +210,46 @@ if __name__ == '__main__':
     #  List of complexes, SORTED according to ranking!
     #   example:
     # ['complex_42.pdb', 'complex_10.pdb', 'complex_23.pdb']
+
+    # Rigid-body (it0)
+    # > Get sampling parameters
     rigid_sampling = run_parameters['stage']['rigid_body']['sampling']
 
+    # > Run rigid-body docking
     rigid_complexes = run_it0(begin_models, run_parameters)
     # rigid_complexes = run_lightdock(begin_models)
 
+    # Semi-flexible (it1)
     semiflex_sampling = run_parameters['stage']['semi_flexible']['sampling']
 
     if semiflex_sampling > rigid_sampling:
         print(f'+ WARNING: Semi Flexible sampling ({semiflex_sampling}) is higher than Rigid-body sampling ({rigid_sampling})')
         print(f'++ Passing {rigid_sampling} complexes to Semi Flexible stage')
 
+    # > Select top N models
     semi_flexible_input_complexes = rigid_complexes[:semiflex_sampling]
 
-    semi_flexible_complexes = run_it1(rigid_complexes, run_parameters)
-    # water_refined_complexes = run_itw(begin_models)
-    # md_models = run_md(models)
+    # > Run semi-flexible refinement
+    semi_flexible_complexes = run_it1(semi_flexible_input_complexes, run_parameters)
+
+    # Water refinement (itw)
+    waterref_sampling = run_parameters['stage']['water_refinement']['sampling']
+
+    # > Select top N models
+    if semiflex_sampling > rigid_sampling:
+        print(f'+ WARNING: Water refinement n ({waterref_sampling}) is higher than Semi-flexible sampling {semiflex_sampling}')
+        print(f'++ Passing {semiflex_sampling} complexes to Water refinement')
+
+    water_refinement_input_complexes = semi_flexible_complexes[:waterref_sampling]
+
+    water_refinement_complexes = run_itw(water_refinement_input_complexes, run_parameters)
+
+    # 3. Analysis =====================================================================================================#
+
+    run_analysis(water_refinement_complexes)
+
+    # 4. Done! ========================================================================================================#
 
     print(bye())
+
+    # =================================================================================================================#

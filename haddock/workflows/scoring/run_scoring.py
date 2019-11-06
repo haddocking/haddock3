@@ -2,12 +2,13 @@ import sys
 import toml
 import json
 from datetime import datetime
-from haddock.modules.analysis import Ana
+from haddock.modules.analysis.ana import Ana
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
 from haddock.run_haddock import generate_topology
+from haddock.version import CURRENT_VERSION
 
 etc_folder = get_full_path('haddock', 'etc')
 with open(f'{etc_folder}/default.json', 'r') as fh:
@@ -40,21 +41,19 @@ def run_analysis(pdb_l):
 
 
 def greeting():
-    now = datetime.now().replace(second=0, microsecond=0)
+    now = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     python_version = sys.version
     return (f'''##############################################
 #                                            #
-#         Starting HADDOCK v3.0beta1         #
-#                                            #
+#              Starting HADDOCK              #
 #             EXPERIMENTAL BUILD             #
 #                                            #
 #              Scoring Workflow              #
 #                                            #
 ##############################################
 
-Starting HADDOCK on {now}
+Starting HADDOCK {CURRENT_VERSION} on {now}
 
-HADDOCK version: 3.0 beta 1
 Python {python_version}
 ''')
 

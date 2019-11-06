@@ -11,6 +11,7 @@ from haddock.modules.docking.it1 import SemiFlexible
 from haddock.modules.docking.itw import WaterRefinement
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
+from haddock.version import CURRENT_VERSION
 
 etc_folder = get_full_path('haddock', 'etc')
 with open(f'{etc_folder}/default.json', 'r') as fh:
@@ -23,15 +24,13 @@ def greeting():
     python_version = sys.version
     return (f'''##############################################
 #                                            #
-#         Starting HADDOCK v3.0beta1         #
-#                                            #
+#              Starting HADDOCK               #
 #             EXPERIMENTAL BUILD             #
 #                                            #
 ##############################################
 
-Starting HADDOCK on {now}
+Starting HADDOCK {CURRENT_VERSION} on {now}
 
-HADDOCK version: 3.0 beta 1
 Python {python_version}
 ''')
 
@@ -164,6 +163,7 @@ def run_itw(model_list, run_param):
 
 
 def run_analysis(pdb_l):
+    print('\n++ Running analysis')
     ana = Ana(pdb_l)
 
     ana.extract_energies()

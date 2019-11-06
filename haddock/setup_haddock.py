@@ -5,6 +5,7 @@ import argparse
 from datetime import datetime
 from haddock.modules.functions import *
 from haddock.modules.setup import Setup
+from haddock.version import CURRENT_VERSION
 
 
 def greeting():
@@ -12,15 +13,13 @@ def greeting():
     python_version = sys.version
     print(f'''##############################################
 #                                            #
-#           Setup HADDOCK v3.0beta1          #
-#                                            #
+#               Setup HADDOCK                #
 #             EXPERIMENTAL BUILD             #
 #                                            #                               
 ##############################################
 
- Starting HADDOCK on {start}
+ Starting HADDOCK {CURRENT_VERSION} on {start}
 
- HADDOCK version: 3.0 beta 1
  Python {python_version}
 ''')
 

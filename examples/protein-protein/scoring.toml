@@ -1,0 +1,22 @@
+#===========================================================#
+title = "HADDOCK3 Scoring Workflow Setup file"
+#===========================================================#
+[molecules]
+mol1 = 'traj_ensemble.pdb'
+
+[identifier]
+run = 'scoring-example'
+
+[execution_parameters]
+scheme = 'parallel'
+nproc = 2
+
+[stage]
+
+[stage.topology]
+recipe='default'
+
+[stage.scoring]
+recipe='default'
+
+#===========================================================#

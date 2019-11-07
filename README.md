@@ -27,10 +27,10 @@
 $ git clone https://github.com/haddocking/haddock3.git
 $ cd haddock3
 $ setenv PYTHONPATH ${PYTHONPATH}:`pwd`
-$ pip install -r requirements.txt
+$ pip install -r requirements.txt --user
 $ cd haddock/src
 $ make
-$ chmod +x haddock/src/*
+$ chmod +x contact_fcc
 $ cd ../../
 
 # Edit "cns_exe" and "haddock3" in the ini script
@@ -41,9 +41,9 @@ $ vim haddock/etc/haddock3.ini
 
 ```bash
 $ cd examples/protein-protein
-$ python ../../haddock/setup_haddock.py run.toml
+$ python3 ../../haddock/setup_haddock.py run.toml
 $ cd run1
-$ python ../../../haddock/run_haddock.py
+$ python3 ../../../haddock/run_haddock.py
 ```
 
 # Scoring

@@ -201,6 +201,8 @@ class Ana:
 		cluster_dic = {}
 
 		for c in clusters:
+			# FIXME: Does the cluster center start at 0 or at 1?
+			c.center.name -= 1
 			clustered_models_list = []
 			cluster_center_name = f'{path}/{root}_{c.center.name}.pdb'
 			if not os.path.isfile(cluster_center_name):

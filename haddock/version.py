@@ -1,6 +1,6 @@
 """This software version"""
 
-MAJOR = "1"
+MAJOR = "3"
 MINOR = "0"
 PATCH = "0"
 RELEASE = "alpha1"

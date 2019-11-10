@@ -1,3 +1,4 @@
+import argparse
 import sys
 import toml
 import json
@@ -9,6 +10,7 @@ from haddock.modules.cns.input import InputGenerator
 from haddock.modules.docking.it0 import RigidBody
 from haddock.modules.docking.it1 import SemiFlexible
 from haddock.modules.docking.itw import WaterRefinement
+from haddock.modules.setup import Setup
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
 from haddock.version import CURRENT_VERSION
@@ -22,7 +24,7 @@ fh.close()
 def greeting():
     now = datetime.now().replace(second=0, microsecond=0)
     python_version = sys.version
-    return (f'''##############################################
+    print(f'''##############################################
 #                                            #
 #              Starting HADDOCK               #
 #             EXPERIMENTAL BUILD             #
@@ -35,8 +37,19 @@ Python {python_version}
 ''')
 
 
+def adieu():
+    end = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    salut = bye()
+    print(f'''
+ Your HADDOCK Run: {s.run_dir} has been correctly setup
+
+ Finished at {end}
+
+{salut}
+''')
+
 def generate_topology(mol_dic, run_param):
-    print('++ Generating topologies')
+    print('\n++ Generating topologies')
 
     recipe_name = run_param['stage']['topology']['recipe']
     if recipe_name == 'default':
@@ -179,9 +192,53 @@ def run_analysis(pdb_l):
     ana.output()
 
 
+def pre_process(raw_molecule_dic):
+
+    p = PDB()
+
+    # 1. Add or assign ChainID/SegID
+    chainseg_dic = p.fix_chainseg(raw_molecule_dic)
+
+    # 2. Check if it is an ensemble and split it
+    ensemble_dic = p.treat_ensemble(chainseg_dic)
+
+    # 3. Clean problematic parts
+    clean_molecule_dic = p.sanitize(ensemble_dic)
+
+    return clean_molecule_dic
+
+
 if __name__ == '__main__':
 
-    print(greeting())
+    # if option --setup, only setup and do not run
+    # else setup and run
+
+    parser = argparse.ArgumentParser(description='Setup your HADDOCK run')
+    parser.add_argument("run_file", help="The run file containing the parameters of your run (.toml)")
+    parser.add_argument("--setup", help="Only setup the run, do not execute", action="store_true", default=False)
+    args = parser.parse_args()
+
+    greeting()
+
+    setup_dictionary = toml.load(args.run_file)
+
+    s = Setup(setup_dictionary)
+    s.prepare_folders()
+    s.configure_recipes()
+
+    processed_molecules = pre_process(setup_dictionary['molecules'])
+
+    if args.setup:
+        print(f'+ Running Setup only mode (--setup), exiting now')
+        exit()
+    else:
+        run_id = setup_dictionary['identifier']['run']
+        if type(run_id) == int:
+            run_folder = f'run{run_id}'
+        else:
+            run_folder = f'run-{run_id}'
+        print(f'+ Executing {run_folder}')
+        os.chdir(run_folder)
 
     run_f = 'data/run.toml'
     if not os.path.isfile(run_f):
@@ -250,6 +307,6 @@ if __name__ == '__main__':
 
     # 4. Done! ========================================================================================================#
 
-    print(bye())
+    adieu()
 
     # =================================================================================================================#

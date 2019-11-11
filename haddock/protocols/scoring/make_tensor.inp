@@ -1,0 +1,41 @@
+! make_tensor.inp
+!    Create a tensor file and topology for RDCs
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+remarks generate.inp (ARIA)
+remarks creates tensor.psf and tensor.pdb for residual dipolar coupling refinement
+remarks Niklas Blomberg & Jens Linge, June 1999
+
+topology
+   @@top_axis.pro
+end
+
+segment
+   name="ANI"
+   chain
+      sequence "ANI"  END
+   end
+end
+
+do (resid = encode (999)) (all)
+do (x = 0) (all)
+do (y = 0) (all)
+do (z = 0) (all)
+do (x = 3 ) (name X)
+do (y = 3 ) (name Y)
+do (z = 3 ) (name Z)
+
+!write psf file:
+write structure output=tensor.psf end
+write coor output=tensor.pdb end
+
+stop

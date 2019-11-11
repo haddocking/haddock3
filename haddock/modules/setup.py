@@ -128,7 +128,9 @@ class Setup:
             if recipe_id == 'default':
                 recipe_id = self.default_recipes[stage]
 
-            recipe_params_file = self.protocol_path + '/' + recipe_id.split('.')[0] + '.json'
+            recipe_name = recipe_id.split('.')[0]
+            recipe_params_file = f'{self.protocol_path}/{recipe_name}/{recipe_name}.json'
+
             if os.path.isfile(recipe_params_file):
                 with open(recipe_params_file, 'r') as f:
                     default_parameter_dic = json.load(f)

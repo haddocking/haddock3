@@ -1,0 +1,126 @@
+! torsiontop_flex.cns
+!    Set the topology for torsion angle MD with semi-flexible side-chains
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+evaluate ($nfletot = 150)
+!define flexible segments:
+!display CALLING flex_segment_side.cns FOR SEMI-FLEXIBLE SA WITH SIDE-CHAINS
+inline @RUN:protocols/flex_segment_side.cns
+
+evaluate ($numtrees=$data.ncomponents)
+!@RUN:protocols/numtrees.cns(numtrees=$numtrees; Data; Toppar;)
+@RUN:protocols/numtrees.cns
+
+DISPLAY NUMTREES set to $numtrees
+
+dyna tors
+   topology
+      maxtree $numtrees
+      kdihmax = 23.
+      evaluate ($N_atom_id = 0)             
+      evaluate ($atom_id = 0)   
+   
+      for $atom_id in id ( (name CA or name BB) ) loop main
+         if ( $N_atom_id > 0 ) then
+            fix group   
+            (( byresidue ( id $N_atom_id ) and
+                (name C or name O {or (name CA or name BB)} ))
+             or ( byresidue ( id $atom_id ) and
+                (((name N or name HN {or (name CA or name BB)}) {and not resn pro})
+                {or (( name N or name CD or (name CA or name BB) ) and resn pro)})))
+         end if
+         evaluate ($N_atom_id = $atom_id)   
+      end loop main
+      if ( $atom_id > 0 ) then
+        fix group   
+         ( byresidue ( id $atom_id ) 
+            and (name c or name ot1 or name ot2 {or (name CA or name BB)} )) 
+      end if
+
+      for $atom_id in id ( name BB and not (resn PHE or resn TYR or resn TRP or resn HIS or resn ARG or resn LYS)) loop main
+         if ( $atom_id > 0 ) then
+            fix group ( byresidue ( id $atom_id ))
+         end if
+      end loop main
+  
+      for $atom_id in id 
+     ( (name CA or name BB) and (resn phe or resn trp or resn his or resn asp or resn asn or resn nep))
+      loop main	  
+         fix group   
+               ( byresidue ( id $atom_id ) 
+                     and ({name CB or} name CG or name %D* or 
+                          name %Z* or name %E* or name %H* or name SC# ))
+      end loop main
+      for $atom_id in id 
+        ( (name CA or name BB) and (resn tyr))
+      loop main	  
+         fix group  
+               ( byresidue ( id $atom_id ) 
+                     and ({name CB or} name CG or name %D* or 
+                 name %Z* or name %E* or name OH or name SC# )) 
+      end loop main
+      for $atom_id in id 
+        ( (name CA or name BB) and (resn gln or resn glu))
+      loop main	  
+            fix group  
+               ( byresidue ( id $atom_id ) 
+                 and ({name CG or} name %D* or name %E*)) 
+      end loop main
+      for $atom_id in id 
+        ( (name CA or name BB) and (resn arg))
+      loop main	  
+      fix group  
+        ( byresidue ( id $atom_id ) 
+          and ({name CD or} name %E* or name %Z* or name %H* or name SC# ))
+      end loop main
+      fix group ( resn PRO and not (name c or name o) )
+
+      !next loop is for all sugars defined in glycans-uu.top
+      for $atom_id in id 
+        ( name c1 and (resn GCP or resn GCF or resn GTP or resn GTF or resn MNP 
+	  or resn MNF or resn ALP or resn ALF or resn ARP or resn ARF or resn GLP 
+	  or resn GLF or resn IDP or resn IDF or resn TLP or resn TLF or resn PCP 
+	  or resn PCF or resn FTP or resn FTF or resn SBP or resn SBF or resn TTP 
+	  or resn TTF or resn NAA or resn RBP or resn RBF or resn ANF or resn XLF 
+	  or resn LXF or resn RLF or resn LLF))
+      loop main	  
+        fix group  
+          ( byresidue ( id $atom_id ) 
+          and (name %1 or name %2 or name %3 or name %4 or name %5 or name O5))
+      end loop main
+
+      for $id in id (name C1') loop freeribose
+        free bond (id $id) (byresid (id $id) and name C2')
+      end loop freeribose
+
+      fix group ( resn HEC and (name C1* or name C2* or name C3* or name C4* or name N* or name CH*))
+
+      fix group ( resn CYM and not (name CA or name BB or name C or name O or name OXT or 
+                  name N or name HN or name HA or name CB or name HB1 or name HB2 or 
+                  name SG or name SAL or name CA or name BBJ))
+
+      fix group ( byresidue (resn WAT))
+      fix group ( byresidue (resn HOH))
+      fix group ( byresidue (resn TIP*))
+      fix group ( byresidue (resn ANI))
+      fix group ( byresidue (resn DAN))
+      fix group ( byresidue (resn XAN))
+      fix group (resn SHA)
+
+      eval($nchain1=0)
+      while ($nchain1 < $data.ncomponents) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+        fix group (segid $Toppar.prot_segid_$nchain1 and
+                   not (attribute store5 = $nchain1)
+		   and not ((resn WAT or resn HOH or resn TIP*)))
+      end loop nloop1
+   end
+end

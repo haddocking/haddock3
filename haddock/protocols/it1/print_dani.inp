@@ -1,0 +1,134 @@
+! print_dani.inp
+!    Analyse and print diffusion anisotropy restraints statistics
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+@RUN:protocols/read_struc-cg.cns
+
+@PREVIT:file.cns(filenames=$filenames)
+evaluate ($file = $filenames.bestfile_1)
+coor @@$file
+
+delete sele=(not(known)) end
+
+flags exclude * include dani end
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!DANI restraints:
+
+evaluate ($ndani=1)
+dani reset nres=5000 end
+while ($ndani <= $data.numdani) loop dani
+  evaluate ($sum_rms_dan$ndani = 0)
+  evaluate ($sumsq_rms_dan$ndani = 0)
+  evaluate ($cln = "da" + encode($ndani) )
+  evaluate ($restfile="RUN:data/dani/dani"+encode($ndani)+".tbl")
+  if ($data.dan_choice_$ndani eq "DANI") then
+    evaluate ($data.flags.dani = true)
+    dani
+      class $cln
+      force 1.0
+      coeff $Data.dan_tc_$ndani $Data.dan_anis_$ndani $Data.dan_r_$ndani $Data.dan_wh_$ndani $Data.dan_wn_$ndani
+      potential square
+      @@$restfile
+    end
+  end if
+  evaluate ($ndani = $ndani + 1)
+end loop dani
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+set display=NEWIT:analysis/dani.disp end
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($TotalNstruct = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count=$count+1)
+   evaluate ($file = $filenames.bestfile_$count)
+   if ($file ne "") then
+      evaluate ($TotalNstruct = $TotalNstruct + 1)
+   end if
+end loop main
+
+if ($Iterations.anastruc > $TotalNstruct) then
+  evaluate ($Iterations.anastruc = $ToTalNstruct)
+end if
+
+display #filename rms_dani #viol>1Hz #viol>0.5Hz #viol>0.2Hz
+
+evaluate ($count = 0)
+evaluate ($nstruc1 = 0)
+!NB: for some reason, the dani print thresh statement only gives back 'result;
+!when first sani has done this....
+!and then it keeps 0.0
+!so probably it does not work at all??
+sani print thresh=100.0 all end
+while ($count le $Iterations.anastruc) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then
+     coor @@$file
+     evaluate ($nstruc1 = $nstruc1 + 1)
+
+     evaluate ($ndani=1)
+     while ($ndani <= $data.numdani) loop dani
+       evaluate ($violations = 0)
+       evaluate ($result = 0)
+       evaluate ($cln = "da" + encode($ndani) )
+       if ($data.dan_choice_$ndani eq "DANI") then
+         dani print thresh=1.0 class $cln end
+         evaluate ($violations1 = $violations)
+         dani print thresh=0.5 class $cln end
+         evaluate ($violations2 = $violations)
+         dani print thresh=0.2 class $cln end
+         evaluate ($violations3 = $violations)
+         evaluate ($rms_dan$ndani = $rms)
+         evaluate ($sum_rms_dan$ndani = $sum_rms_dan$ndani + $rms_dan$ndani)
+         evaluate ($sumsq_rms_dan$ndani = $sumsq_rms_dan$ndani + $rms_dan$ndani**2)
+         display # dan$ndani $file $rms_dan$ndani $violations1 $violations2 $violations3
+       end if
+       evaluate ($ndani = $ndani + 1)
+     end loop dani
+   end if
+end loop main
+
+evaluate ($ndani=1)
+while ($ndani <= $data.numdani) loop dani
+  if ($data.dan_choice_$ndani eq "DANI") then
+    evaluate ($mean_rms_dan$ndani = $sum_rms_dan$ndani / $nstruc1)
+    evaluate ($stdev_rms_dan$ndani = sqrt(($sumsq_rms_dan$ndani - $nstruc1*$mean_rms_dan$ndani**2)/ $nstruc$ndani))
+    display # mean values dan(dani) class dan$ndani
+    display # dani $mean_rms_dan$ndani (+/- $stdev_rms_dan$ndani )
+  end if
+  evaluate ($ndani = $ndani + 1)
+end loop dani
+
+stop

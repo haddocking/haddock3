@@ -9,7 +9,8 @@ class RecipeComposer:
 
     def __init__(self, recipe_file, default_params, custom_params):
         self.protocol_path = get_full_path('haddock', 'protocols')
-        self.recipe = self.protocol_path + '/' + recipe_file
+        self.recipe_name = recipe_file.split('.')[0]
+        self.recipe = f'{self.protocol_path}/{self.recipe_name}/{recipe_file}'
 
         # recipe_params = self.protocol_path + '/' + recipe_file.split('.')[0] + '.json'
         # if os.path.isfile(recipe_params):
@@ -46,7 +47,7 @@ class RecipeComposer:
                 except IndexError:
                     print(target[idx])
                     exit()
-                with open(f'{self.protocol_path}/{m}') as f:
+                with open(f'{self.protocol_path}/{self.recipe_name}/{m}') as f:
                     module = f.readlines()
                 f.close()
 
@@ -104,7 +105,7 @@ class RecipeComposer:
             tbw = ''
             for module in module_list:
                 output_list.append(module)
-                module_path = f'{self.protocol_path}/{module}'
+                module_path = f'{self.protocol_path}/{self.recipe_name}/{module}'
                 tbw += f'  |_ {module} \n'
 
                 # Lvl 2 Dependencies
@@ -113,7 +114,7 @@ class RecipeComposer:
                 if dependency_list:
                     for dependency in dependency_list:
                         output_list.append(dependency)
-                        dependency_path = f'{self.protocol_path}/{dependency}'
+                        dependency_path = f'{self.protocol_path}/{self.recipe_name}/{dependency}'
                         tbw += f'     |_ {dependency} \n'
 
                         # Lvl 3 Co-dependency
@@ -121,7 +122,7 @@ class RecipeComposer:
                         if co_dependency_list:
                             for co_dependency in co_dependency_list:
                                 output_list.append(co_dependency)
-                                co_dependency_path = f'{self.protocol_path}/{co_dependency}'
+                                co_dependency_path = f'{self.protocol_path}/{self.recipe_name}/{co_dependency}'
                                 tbw += f'        |_ {co_dependency} \n'
 
                                 # Lvl 4 Co-co-dependency
@@ -129,7 +130,7 @@ class RecipeComposer:
                                 if co_co_dependency_list:
                                     for co_co_dependency in co_co_dependency_list:
                                         output_list.append(co_co_dependency)
-                                        co_co_dependency_path = f'{self.protocol_path}/{co_co_dependency}'
+                                        co_co_dependency_path = f'{self.protocol_path}/{self.recipe_name}/{co_co_dependency}'
                                         print(f'          |_ {co_co_dependency}')
 
                                         # Lvl 5 Co-co-co-dependency

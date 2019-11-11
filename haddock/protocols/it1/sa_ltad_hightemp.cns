@@ -1,0 +1,109 @@
+! sa_ltad_hightemp.cns
+!    Perform the high-temperature rigid-body MD of it1
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+! module sa_ltad_hightemp.cns
+! torsion dynamics high temperature phase
+
+module(SaProtocol;Data;Toppar)
+
+evaluate ($calcsteps= $SaProtocol.initiosteps)
+evaluate ($printsteps= max(int($calcsteps/10),1))
+
+noe 
+    rswitch ambi &Data.Rswi_hot 
+    rswitch dist &Data.Rswi_hot
+    rswitch hbon &Data.Rswi_hot
+
+    mrswitch ambi &Data.mRswi_hot 
+    mrswitch dist &Data.mRswi_hot
+    mrswitch hbon &Data.mRswi_hot
+
+    asym ambi &Data.asy_hot 
+    asym dist &Data.asy_hot
+    asym hbon &Data.asy_hot
+
+    masym ambi &Data.masy_hot 
+    masym dist &Data.masy_hot
+    masym hbon &Data.masy_hot
+end
+
+evaluate ($bath = &SaPRotocol.tadhigh_t)
+evaluate ($timestep = &SaProtocol.timestep*&SaProtocol.tadfactor)
+
+do (vx = maxwell($bath)) (all)
+do (vy = maxwell($bath)) (all)
+do (vz = maxwell($bath)) (all)
+
+
+restraints dihedral scale &Data.dihedrals_hot end 
+
+evaluate ($nrdc=1)
+while ($nrdc <= $data.numrdc) loop rdc
+  !for the vean statement:
+  evaluate( $k_cen_$nrdc = &data.ini_cen_hot_$nrdc)
+  evaluate( $k_bor_$nrdc = &data.ini_bor_hot_$nrdc)
+  evaluate( $cln = "rd" + encode($nrdc) )
+  if ($Data.flags.sani eq true) then
+    sani class $cln force $Data.rdc_hot_$nrdc end
+  end if
+  if ($Data.flags.vean eq true) then
+    vean class $cln force $k_bor_$nrdc $k_cen_$nrdc end
+  end if
+  if ($Data.flags.xrdc eq true) then
+    xrdc class $cln force $Data.rdc_hot_$nrdc  end
+  end if
+  evaluate ($nrdc = $nrdc + 1)
+end loop rdc
+
+evaluate ($ndani=1)
+while ($ndani <= $data.numdani) loop dani
+  if ($Data.flags.dani eq true) then
+    evaluate( $cln = "da" + encode($ndani) )
+    dani class $cln force $Data.dan_hot_$ndani end
+  end if
+  evaluate ($ndani = $ndani + 1)
+end loop dani
+
+evaluate ($npcs=1)
+while ($npcs <= $data.numpcs) loop pcs
+  if ($Data.flags.xpcs eq true) then
+    evaluate( $cln = "pc" + encode($npcs) )
+    xpcs class $cln force $Data.pcs_hot_$npcs end
+  end if
+  evaluate ($npcs= $npcs + 1)
+end loop pcs
+
+evaluate ($reassign = TRUE)
+
+if ($Data.scaling eq TRUE) then 
+  inline @RUN:protocols/set_noe_scale.cns
+end if
+
+noe 
+  scale dist  &Data.unamb_hot 
+  scale ambi  &Data.amb_hot
+  scale hbon  &Data.hbond_hot
+end
+      
+evaluate ($kinter = &SaProtocol.inter_init_rigid)
+inline @RUN:protocols/scale_inter.cns
+
+dyna tors
+  reassign $reassign
+  timestep=$timestep
+  nstep=$calcsteps
+  nprint=$printsteps
+  ntrfrq=0
+  tcoupling = true  temperature = $bath
+end
+
+evaluate ($reassign = FALSE)

@@ -1,0 +1,418 @@
+! get_average.inp
+!    Calculate the average structure using interface residues for fitting
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+remarks  get_average.inp: calculate average structure using 
+remarks                   the interface definition for fitting
+remarks  HADDOCK
+remarks  Alexandre Bonvin, Utrecht University
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+@RUN:protocols/read_struc-cg.cns
+
+@PREVIT:file.cns(filenames=$filenames)
+evaluate ($file = $filenames.bestfile_1)
+coor @@$file
+
+delete sele=(resname ANI or resname XAN or resname DAN or resname TIP3 or resname WAT or resname HOH) end
+delete sele=(not(known)) end
+
+!defines interface
+do (store5 = 0) (all)
+
+eval($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  eval($nchain=$nchain + 1)
+  if ($Toppar.shape_$nchain eq false) then
+    evaluate($fcounter=0)
+    do (store6 = 0) (all)
+    while ($fcounter < $Toppar.nseg_$nchain) loop Xflex
+      evaluate($fcounter=$fcounter + 1)
+      display $Toppar.start_seg_$nchain_$fcounter $Toppar.end_seg_$nchain_$fcounter
+      do (store5 = $nchain) ( resid $Toppar.start_seg_$nchain_$fcounter : $Toppar.end_seg_$nchain_$fcounter
+                               and segid $Toppar.prot_segid_$nchain
+			       and (name CA or name BB or name C or name N or name P or name C#))
+      do (store6 = 1) ( resid $Toppar.start_seg_$nchain_$fcounter : $Toppar.end_seg_$nchain_$fcounter
+                        and segid $Toppar.prot_segid_$nchain 
+	              and (name CA or name BB or name C or name N or name P or name C#))
+    end loop Xflex
+    show sum (store6) (all)
+    if ($result < 3) then
+      do (store5 = $nchain) ( segid $Toppar.prot_segid_$nchain and (name CA or name BB or name C or name N or name P or name C#))
+      do (store6 = 1) ( segid $Toppar.prot_segid_$nchain and (name CA or name BB or name C or name N or name P or name C#))
+    end if
+    show sum (store6) (all)
+    if ($result < 3) then
+      do (store5 = $nchain) ( segid $Toppar.prot_segid_$nchain and not name H*)
+    endif
+    if ($Toppar.nseg_$nchain = 0) then
+      display NO FLEXIBLE SEGMENTS for molecule $nchain USING ALL BACKBONE
+      do (store5 = $nchain) ((name CA or name BB or name P or name C#) and segid $Toppar.prot_segid_$nchain)
+      do (store6 = 1) ((name CA or name BB or name P or name C#) and segid $Toppar.prot_segid_$nchain)
+    end if
+
+    show sum (store6) (attr store5 = $nchain)
+    if ($result < 3) then
+      do (store5 = $nchain) ( segid $Toppar.prot_segid_$nchain )
+    end if
+
+  end if
+
+end loop nloop1
+
+do (store8 = 0) (all)
+eval($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  eval($nchain=$nchain + 1)
+  if ($Toppar.shape_$nchain eq false) then
+    do (store8 = 1) (attr store5 = $nchain)
+  end if
+end loop nloop1
+
+{* filenames *}
+evaluate ($outroot  = "NEWIT:analysis/" + $Filenames.fileroot)
+evaluate ($trajfile=$outroot+".crd")
+evaluate ($trajfilered=$outroot+"-reduced.crd")
+evaluate ($dispfile=$outroot+".prt")
+
+{* ==================================== *}
+{* part 1: generate a pseudo trajectory *}
+{* ==================================== *}
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($nstruc = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then 
+      coor @@$file
+      evaluate ($nstruc = $nstruc + 1)
+      if ($nstruc = 1) then coor copy end end if
+
+      show aver (x) (all)
+      evaluate ($xc = $result)
+      show aver (y) (all)
+      evaluate ($yc = $result)
+      show aver (z) (all)
+      evaluate ($zc = $result)
+
+      @RUN:protocols/get_random_rotation.cns(Rotation=$rand_rot;)
+      coor 
+        center=($xc $yc $zc)
+        rotate quaternion $rand_rot.q0 $rand_rot.q1 $rand_rot.q2 $rand_rot.q3
+        sele=(all)
+      end
+
+      coor sele= (store8) fit end
+
+      if ($nstruc eq 1) then
+         write trajectory
+            ascii true
+            output= $trajfile
+         end
+      else
+         write traj next end
+      end if
+   end if
+end loop main
+
+evaluate ($TotalNstruct = $nstruc) 
+
+close $trajfile end
+
+{* ============================================ *}
+{* part 2: generate a reduced pseudo trajectory *}
+{* ============================================ *}
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($nstruc = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then 
+      coor @@$file
+      evaluate ($nstruc = $nstruc + 1)
+      show aver (x) (all)
+      evaluate ($xc = $result)
+      show aver (y) (all)
+      evaluate ($yc = $result)
+      show aver (z) (all)
+      evaluate ($zc = $result)
+{
+      @RUN:protocols/get_random_rotation.cns(Rotation=$rand_rot;)
+      coor 
+        center=($xc $yc $zc)
+        rotate quaternion $rand_rot.q0 $rand_rot.q1 $rand_rot.q2 $rand_rot.q3
+        sele=(all)
+      end
+}
+      if ($nstruc eq 1) then
+         write trajectory
+            reset
+            ascii = true
+            output = $trajfilered
+            sele = (attr store8 = 1 and not (name N or name O))
+         end
+      else
+         write traj next end
+      end if
+   end if
+end loop main
+
+evaluate ($TotalNstruct = $nstruc) 
+
+close $trajfilered end
+
+if ($Iterations.anastruc < $TotalNstruct) then
+  evaluate ($FittedStructures = $Iterations.anastruc)
+else
+  evaluate ($FittedStructures = $TotalNstruct)
+end if
+
+{* ====================================== *}
+{* part 3: generate the average structure *}
+{* ====================================== *}
+
+do (store1 = 0) (all)
+do (store2 = 0) (all)
+do (store3 = 0) (all)
+do (store4 = 0) (all)
+evaluate ($nstruc = 0)
+
+!read trajectory:
+while ($nstruc lt $FittedStructures) loop fitt 
+   evaluate ($nstruc = $nstruc + 1)
+   if ($nstruc eq 1) then
+      read trajectory
+         ascii true
+         input= $trajfile
+         begin 1 skip 1 stop $FittedStructures
+      end
+   else
+      read traj next end
+   end if
+   coor sele= (store8) fit end
+   do (store1 = store1 + x) (all)
+   do (store2 = store2 + y) (all)
+   do (store3 = store3 + z) (all)
+   do (store4 = store4 + x**2 + y**2 + z**2) (all)
+end loop fitt
+
+do (xcomp = store1/$nstruc) (all)
+do (ycomp = store2/$nstruc) (all)
+do (zcomp = store3/$nstruc) (all)
+do (b = sqrt(store4/$nstruc - (xcomp**2 + ycomp**2 + zcomp**2))) (all)
+
+! calcuate mean rms fluctuation and sigma
+
+show ave (b) (attr store5 > 0)
+evaluate ($mean_inter = $result)
+show rms (b) (attr store5 > 0)
+evaluate ($stdev_inter = $result)
+
+show ave (b) (name CA or name BB or name C or name O or name C#)
+evaluate ($mean_all = $result)
+show rms (b) (name CA or name BB or name C or name O or name C#)
+evaluate ($stdev_all = $result)
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents ) loop nloop1
+  evaluate ($nchain=$nchain + 1)
+  evaluate ($mean_$nchain=0)
+  evaluate ($stdev_$nchain=0)
+end loop nloop1
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  evaluate ($nchain=$nchain + 1)
+  if ($Toppar.shape_$nchain eq false) then
+    show ave (b) (attr store5 = $nchain)
+    evaluate ($mean_$nchain = $result)
+    show rms (b) (attr store5 = $nchain)
+    evaluate ($stdev_$nchain = $result)
+  end if
+end loop nloop1
+
+set remarks=reset end
+
+remark HADDOCK average structure from fit on interface
+remark Average rms difference backbone interface all $mean_inter +- $stdev_inter
+remark Average rms difference backbone all           $mean_all +- $stdev_all
+
+set remark accumulate end
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop rmsdif
+  evaluate ($nchain = $nchain +1)
+  remark Average rms difference backbone interface $Toppar.prot_segid_$nchain  $mean_$nchain +- $stdev_$nchain
+end loop rmsdif
+
+do (bcomp = b) (all)
+do (qcomp = 0) (all)
+do (qcomp = 1) (store8)
+
+evaluate ($filename = $outroot + "_ave.pdb")
+write coor from=comp sele= (all) output= $filename end
+
+
+{* ============================================= *}
+{* part 4: sequence dependend rms difference     *}
+{* ============================================= *}
+
+evaluate ($filename = $outroot + "_ave.pdb")
+coor @@$filename
+
+set display NEWIT:analysis/rmsdseq.disp end 
+display # sequential rms differences
+display resid	rmsback3	rmsback5	rmsside	rmsall
+for $id in id (tag) loop rmss
+    show element (resid) (id $id)
+    evaluate ($resid = $result)
+    show element (segid) (id $id)
+    evaluate ($segid = $result)
+    show norm (b) 
+      (byres(id $id) and (name c or name CA or name BB or name cb or name n or name o or name C#))
+    evaluate ($rmsback5 = $result)
+    show norm (b) 
+      (byres(id $id) and (name c or name CA or name BB or name n or name C#))
+    evaluate ($rmsback3 = $result)
+    show norm (b) 
+      (byres(id $id) and not hydro and not 
+      (name c or name CA or name BB or name cb or name n or name o or name C#))
+    evaluate ($rmsside = $result)
+    show norm (b) 
+      (byres(id $id) and not hydro)
+    evaluate ($rmsall = $result)
+
+    display $resid	$segid	$rmsback3	$rmsback5	$rmsside	$rmsall
+end loop rmss
+
+set display NEWIT:analysis/rmsave.disp end 
+
+display # HADDOCK average structure from fit on interface
+display # Average rms difference backbone interface all   $mean_inter +- $stdev_inter
+display # Average rms difference backbone all             $mean_all +- $stdev_all
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop rmsdif
+  evaluate ($nchain = $nchain +1)
+  display # Average rms difference backbone interface $Toppar.prot_segid_$nchain  $mean_$nchain +- $stdev_$nchain
+end loop rmsdif
+
+{* ============================================= *}
+{* part 5: fit the ensemble to the average       *}
+{* ============================================= *}
+
+evaluate ($nchain = 0)
+while ($nchain < $data.ncomponents) loop rmsdif
+  evaluate ($nchaini=$nchain)
+  evaluate ($nchain = $nchain +1)
+  if ($nchaini eq 0 ) then 
+     evaluate ($meani_name = "rms_back_" + $Toppar.prot_segid_$nchain )
+  else 
+     evaluate ($meani_name = $meani_name + " " + "rms_back_" + $Toppar.prot_segid_$nchain )
+  end if
+end loop rmsdif
+
+display #       
+display # RMSD from average structure 
+display # filename rms_back_inter rms_back_all $meani_name
+
+evaluate ($nstruc = 0)
+
+!fit structures to average structure and write pdb files:
+while ($nstruc < $FittedStructures) loop fitt 
+   evaluate ($nstruc = $nstruc + 1)
+
+   if ($nstruc eq 1) then
+      read trajectory
+         ascii true
+         input= $trajfile
+         begin 1 skip 1 stop $FittedStructures
+      end
+   else
+      read traj next end
+   end if
+
+   coor sele= (store8) fit end
+
+   coor sele= (store8) rms end
+   evaluate ($mean_inter = $result)
+
+   coor sele= (name CA or name BB or name C or name N or name C#) rms end
+   evaluate ($mean_all = $result)
+
+   evaluate ($nchain=0)
+   while ($nchain < $data.ncomponents) loop nloop1
+     evaluate ($nchaini=$nchain)
+     evaluate ($nchain=$nchain + 1)
+     
+     coor sele= ( attr store5 = $nchain ) rms end
+     evaluate ($mean_$nchain = $result )
+     
+     if ($nchaini eq 0 ) then 
+        evaluate ($meani = encode($mean_$nchain) )
+     else 
+        evaluate ($meani = $meani + " " + encode($mean_$nchain) )
+     end if
+   
+   end loop nloop1
+
+   do (b=bcomp) (all)
+   do (q=1.0) (all)
+
+   evaluate ($filename =  $outroot + "fit" + "_" + encode($nstruc) + ".pdb" )
+
+   set remarks=reset end
+   remark HADDOCK best fit to average 
+   remark fitted on interface
+   remark rms from average on interface $mean_inter
+   remark rms from average backbone all $mean_all
+   set remark accumulate end
+
+   evaluate ($nchain=0)
+   while ($nchain < $data.ncomponents) loop rmsdif
+      evaluate ($nchain = $nchain +1)
+      remark rms from average backbone interface $Toppar.prot_segid_$nchain  $mean_$nchain
+   end loop rmsdif
+   write coor output= $filename sele= (all) end
+   set remarks=reset end
+   display $filename $mean_inter $mean_all $meani
+   
+end loop fitt
+
+evaluate ($outdis  = "NEWIT:analysis/AVE_DONE")
+set display=$outdis end
+display DONE
+
+stop

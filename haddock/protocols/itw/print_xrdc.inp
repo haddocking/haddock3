@@ -1,0 +1,127 @@
+! print_xrdc.inp
+!    Analyze and print RDC restraints (para code) statistics
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+@RUN:protocols/read_struc-cg.cns
+
+@PREVIT:file.cns(filenames=$filenames)
+evaluate ($file = $filenames.bestfile_1)
+coor @@$file
+
+delete sele=(not(known)) end
+
+flags exclude * include xrdc end
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!XRDC restraints:
+xrdc reset nres=5000 end
+evaluate ($nrdc=1)
+while ($nrdc <= $data.numrdc) loop rdc
+  evaluate ($sum_rms_rdc$nrdc = 0)
+  evaluate ($sumsq_rms_rdc$nrdc = 0)
+  evaluate ($cln = "rd" + encode($nrdc) )
+  evaluate ($restfile="RUN:data/rdcs/rdc"+encode($nrdc)+".tbl")
+  if ($data.rdc_choice_$nrdc eq "XRDC") then
+    evaluate ($data.flags.xrdc = true)
+    evaluate ($inixrdc=1)
+    xrdc
+      class $cln
+      force 1.0
+      coeff $Data.rdc_d_$nrdc $Data.rdc_r_$nrdc
+      @@$restfile
+    end
+  end if
+  evaluate ($nrdc = $nrdc + 1)
+end loop rdc
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+set display=NEWIT:analysis/xrdc.disp end
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($TotalNstruct = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count=$count+1)
+   evaluate ($file = $filenames.bestfile_$count)
+   if ($file ne "") then
+      evaluate ($TotalNstruct = $TotalNstruct + 1)
+   end if
+end loop main
+
+if ($Iterations.anastruc > $TotalNstruct) then
+  evaluate ($Iterations.anastruc = $ToTalNstruct)
+end if
+
+display #filename rms_xrdc #viol>1Hz #viol>0.5Hz #viol>0.2Hz
+
+evaluate ($count = 0)
+evaluate ($nstruc1 = 0)
+while ($count le $Iterations.anastruc) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then
+     coor @@$file
+     evaluate ($nstruc1 = $nstruc1 + 1)
+
+     evaluate ($nrdc=1)
+     while ($nrdc <= $data.numrdc) loop rdc
+       evaluate ($violations = 0)
+       evaluate ($result = 0)
+       evaluate ($cln = "rd" + encode($nrdc) )
+       if ($Data.rdc_choice_$nrdc eq "XRDC") then
+         xrdc print thresh=1.0 class $cln end
+         evaluate ($violations1 = $violations)
+         xrdc print thresh=0.5 class $cln end
+         evaluate ($violations2 = $violations)
+         xrdc print thresh=0.2 class $cln end
+         evaluate ($violations3 = $violations)
+         evaluate ($rms_rdc$nrdc = $result)
+         evaluate ($sum_rms_rdc$nrdc = $sum_rms_rdc$nrdc + $rms_rdc$nrdc)
+         evaluate ($sumsq_rms_rdc$nrdc = $sumsq_rms_rdc$nrdc + $rms_rdc$nrdc**2)
+         display # rdc$nrdc $file $rms_rdc$nrdc $violations1 $violations2 $violations3
+       end if
+       evaluate ($nrdc = $nrdc + 1)
+     end loop rdc
+
+   end if
+end loop main
+
+evaluate ($nrdc=1)
+while ($nrdc <= $data.numrdc) loop rdc
+  if ($Data.rdc_choice_$nrdc eq "XRDC") then
+    evaluate ($mean_rms_rdc$nrdc = $sum_rms_rdc$nrdc / $nstruc1)
+    evaluate ($stdev_rms_rdc$nrdc = sqrt(($sumsq_rms_rdc$nrdc - $nstruc1*$mean_rms_rdc$nrdc**2)/ $nstruc1))
+    display # mean values RDC(xrdc) class rdc$nrdc
+    display # xrdc $mean_rms_rdc$nrdc (+/- $stdev_rms_rdc$nrdc )
+  end if
+  evaluate ($nrdc = $nrdc + 1)
+end loop rdc
+
+stop

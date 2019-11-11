@@ -1,0 +1,93 @@
+! setflags.cns
+!    Defines energy flags
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+if ($Data.cdih.on eq true) then
+   evaluate ($Data.flags.cdih =  true)
+end if
+
+evaluate ($nrdc=1)
+while ($nrdc <= $Data.numrdc) loop rdc
+  if ($Data.rdc_choice_$nrdc eq "SANI") then
+    evaluate ($Data.flags.sani = true)
+  end if
+  if ($Data.rdc_choice_$nrdc eq "VANGLE") then
+    evaluate ($Data.flags.vean = true)
+  end if
+  if ($Data.rdc_choice_$nrdc eq "XRDC") then
+    evaluate ($Data.flags.xrdc = true)
+  end if
+  evaluate ($nrdc=$nrdc+1)
+end loop rdc
+
+evaluate ($ndani=1)
+while ($ndani <= $Data.numdani) loop dani
+  if ($Data.dan_choice_$ndani eq "DANI") then
+     evaluate ($Data.flags.DANI = true)
+  end if
+  evaluate ($ndani=$ndani+1)
+end loop dani
+
+evaluate ($npcs=1)
+while ($npcs <= $Data.numpcs) loop pcs
+  if ($Data.pcs_choice_$npcs eq "XPCS") then
+     evaluate ($Data.flags.XPCS = true)
+  end if
+  evaluate ($npcs=$npcs+1)
+end loop pcs
+
+if ($Data.flags.sani eq TRUE) then
+  evaluate ($Data.flags.harm = true)
+end if
+if ($Data.flags.dani eq TRUE) then
+  evaluate ($Data.flags.harm = true)
+end if
+
+if ($Data.flags.noe  =  TRUE) then
+   flags include noe end
+elseif ($Data.flags.centroids = true) then
+    flags include noe end
+end if 
+
+if ($Data.flags.cdih =  TRUE) then
+   flags include cdih end
+end if 
+if ($Data.flags.vean =  TRUE) then
+   flags include vean end
+end if 
+if ($Data.flags.sani =  TRUE) then
+   flags include sani end
+end if 
+if ($Data.flags.xrdc =  TRUE) then
+   flags include xrdc end
+end if 
+if ($Data.flags.xpcs =  TRUE) then
+   flags include xpcs end
+end if 
+if ($Data.flags.dani =  TRUE) then
+   flags include dani end
+end if 
+
+if ($Data.flags.plan =  TRUE) then
+   flags include plan end
+end if 
+if ($Data.flags.ncs  =  TRUE) then
+   flags include ncs end
+end if
+
+if ($Data.flags.rg = TRUE) then
+  if ($data.rgtarg > 0) then
+    flags include coll end
+  else
+    evaluate ($Data.flags.rg = false)
+  end if
+end if

@@ -1,0 +1,105 @@
+! dbwatene-water.dat
+!    amino-acids - bases free energies of interaction in water from
+!    de Ruiter, A., & Zagrovic, B. (2015). 
+!    Absolute binding-free energies between standard RNA/DNA nucleobases 
+!    and amino-acid sidechain analogs in different environments. 
+!    Nucleic Acids Research, 43(2), 708-718. http://doi.org/10.1093/nar/gku1344
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+eval ($dbwatene.ALA_ADE = 0.2 )
+eval ($dbwatene.ALA_CYT = 0.9 )
+eval ($dbwatene.ALA_GUA = 1.0 )
+eval ($dbwatene.ALA_URI = 0.4 )
+eval ($dbwatene.ALA_THY = 0.3 )
+eval ($dbwatene.ARG_ADE = -0.8 )
+eval ($dbwatene.ARG_CYT = -1.1 )
+eval ($dbwatene.ARG_GUA = -1.2 )
+eval ($dbwatene.ARG_URI = -0.5 )
+eval ($dbwatene.ARG_THY = 0.3 )
+eval ($dbwatene.ASN_ADE = -1.0 )
+eval ($dbwatene.ASN_CYT = -0.7 )
+eval ($dbwatene.ASN_GUA = -0.6 )
+eval ($dbwatene.ASN_URI = -0.7 )
+eval ($dbwatene.ASN_THY = -0.7 )
+eval ($dbwatene.ASP_ADE = 0.5 )
+eval ($dbwatene.ASP_CYT = 2.5 )
+eval ($dbwatene.ASP_GUA = 1.0 )
+eval ($dbwatene.ASP_URI = 2.8 )
+eval ($dbwatene.ASP_THY = 3.7 )
+eval ($dbwatene.CYS_ADE = -1.2 )
+eval ($dbwatene.CYS_CYT = -0.2 )
+eval ($dbwatene.CYS_GUA = -0.9 )
+eval ($dbwatene.CYS_URI = -0.8 )
+eval ($dbwatene.CYS_THY = -0.6 )
+eval ($dbwatene.GLN_ADE = -2.0 )
+eval ($dbwatene.GLN_CYT = -0.5 )
+eval ($dbwatene.GLN_GUA = -2.2 )
+eval ($dbwatene.GLN_URI = -1.5 )
+eval ($dbwatene.GLN_THY = -1.9 )
+eval ($dbwatene.GLU_ADE = 2.0 )
+eval ($dbwatene.GLU_CYT = 1.6 )
+eval ($dbwatene.GLU_GUA = -0.3 )
+eval ($dbwatene.GLU_URI = 2.2 )
+eval ($dbwatene.GLU_THY = 3.7 )
+eval ($dbwatene.HIS_ADE = -0.7 ) !HISH value
+eval ($dbwatene.HIS_CYT = 0.0) !HISH value
+eval ($dbwatene.HIS_GUA = -0.6 )!HISH value
+eval ($dbwatene.HIS_URI = 0.5 ) !HISH value
+eval ($dbwatene.HIS_THY = 0.2 ) !HISH value
+eval ($dbwatene.ILE_ADE = -2.8 )
+eval ($dbwatene.ILE_CYT = -1.9 )
+eval ($dbwatene.ILE_GUA = -2.6 )
+eval ($dbwatene.ILE_URI = -1.5 )
+eval ($dbwatene.ILE_THY = -1.6 )
+eval ($dbwatene.LEU_ADE = -2.0 )
+eval ($dbwatene.LEU_CYT = -1.9 )
+eval ($dbwatene.LEU_GUA = -2.6 )
+eval ($dbwatene.LEU_URI = -1.8 )
+eval ($dbwatene.LEU_THY = -1.7 )
+eval ($dbwatene.LYS_ADE = 0.9 )
+eval ($dbwatene.LYS_CYT = 1.4 )
+eval ($dbwatene.LYS_GUA = -0.5 )
+eval ($dbwatene.LYS_URI = 0.6 )
+eval ($dbwatene.LYS_THY = 0.9 )
+eval ($dbwatene.MET_ADE = -2.5 )
+eval ($dbwatene.MET_CYT = -1.4 )
+eval ($dbwatene.MET_GUA = -2.2 )
+eval ($dbwatene.MET_URI = -2.1 )
+eval ($dbwatene.MET_THY = -2.3 )
+eval ($dbwatene.PHE_ADE = -3.3 )
+eval ($dbwatene.PHE_CYT = -2.7 )
+eval ($dbwatene.PHE_GUA = -3.6 )
+eval ($dbwatene.PHE_URI = -3.1 )
+eval ($dbwatene.PHE_THY = -3.9 )
+eval ($dbwatene.SER_ADE = 0.3 )
+eval ($dbwatene.SER_CYT = 1.1 )
+eval ($dbwatene.SER_GUA = 1.1 )
+eval ($dbwatene.SER_URI = 0.5 )
+eval ($dbwatene.SER_THY = -0.4 )
+eval ($dbwatene.THR_ADE = -0.5 )
+eval ($dbwatene.THR_CYT = 0.6 )
+eval ($dbwatene.THR_GUA = 0.2 )
+eval ($dbwatene.THR_URI = -0.2 )
+eval ($dbwatene.THR_THY = -0.7 )
+eval ($dbwatene.TRP_ADE = -3.8 )
+eval ($dbwatene.TRP_CYT = -3.6)
+eval ($dbwatene.TRP_GUA = -4.8 )
+eval ($dbwatene.TRP_URI = -4.8 )
+eval ($dbwatene.TRP_THY = -6.1 )
+eval ($dbwatene.TYR_ADE = -3.9 )
+eval ($dbwatene.TYR_CYT = -3.3 )
+eval ($dbwatene.TYR_GUA = -5.1 )
+eval ($dbwatene.TYR_URI = -3.3 )
+eval ($dbwatene.TYR_THY = -4.3 )
+eval ($dbwatene.VAL_ADE = -1.5 )
+eval ($dbwatene.VAL_CYT = -1.2 )
+eval ($dbwatene.VAL_GUA = -1.4 )
+eval ($dbwatene.VAL_URI = -1.0 )
+eval ($dbwatene.VAL_THY = -1.1 )

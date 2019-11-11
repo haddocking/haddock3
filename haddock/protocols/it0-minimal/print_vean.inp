@@ -1,0 +1,133 @@
+! print_vean.inp
+!    Analyze and print RDC restraints (VEAN) statistics
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+@RUN:protocols/read_struc-cg.cns
+
+@PREVIT:file.cns(filenames=$filenames)
+evaluate ($file = $filenames.bestfile_1)
+coor @@$file
+
+delete sele=(not(known)) end
+
+!set the energy flags:
+
+flags exclude * include vean end
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!residual dipolar couplings - vean restraints:
+vean nrestraints=10000 end
+set echo off message on end
+
+evaluate ($nrdc=1)
+while ($nrdc <= $data.numrdc) loop rdc
+  evaluate ($sum_rms_rdc$nrdc = 0)
+  evaluate ($sumsq_rms_rdc$nrdc = 0)
+  evaluate ($sum_viol_rdc$nrdc = 0)
+  evaluate ($sumsq_viol_rdc$nrdc = 0)
+  evaluate ($cln = "rd" + encode($nrdc) )
+  evaluate ($restfile="RUN:data/rdcs/rdc"+encode($nrdc)+".tbl")
+  if ($Data.rdc_choice_$nrdc eq "VANGLE") then
+    vean
+      class $cln
+      force 1.0 1.0
+      @@$restfile
+    end
+  end if
+  evaluate ($nrdc = $nrdc + 1)
+end loop rdc
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+set display=NEWIT:analysis/vean.disp end
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($TotalNstruct = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count=$count+1)
+   evaluate ($file = $filenames.bestfile_$count)
+   if ($file ne "") then
+      evaluate ($TotalNstruct = $TotalNstruct + 1)
+   end if
+end loop main
+
+if ($Iterations.anastruc > $TotalNstruct) then
+  evaluate ($Iterations.anastruc = $ToTalNstruct)
+end if
+
+display #rdcset filename RMSvean #viol>5
+evaluate ($count = 0)
+evaluate ($nstruc1 = 0)
+while ($count le $Iterations.anastruc) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then
+     coor @@$file
+     evaluate ($nstruc1 = $nstruc1 + 1)
+     
+     evaluate ($nrdc=1)
+     while ($nrdc <= $data.numrdc) loop rdc
+       evaluate ($violations = 0)
+       evaluate ($result = 0)
+       evaluate ($cln = "rd" + encode($nrdc) )
+       if ($Data.rdc_choice_$nrdc eq "VANGLE") then
+         vean print threshold=5.0 class $cln end
+         evaluate ($rms_rdc$nrdc = $result)
+         evaluate ($sum_rms_rdc$nrdc = $sum_rms_rdc$nrdc + $rms_rdc$nrdc)
+         evaluate ($sumsq_rms_rdc$nrdc = $sumsq_rms_rdc$nrdc + $rms_rdc$nrdc**2)
+         evaluate ($sum_viol_rdc$nrdc = $sum_viol_rdc$nrdc + $violations)
+         evaluate ($sumsq_viol_rdc$nrdc = $sumsq_viol_rdc$nrdc + $violations**2)
+         display # rdc$nrdc $file $rms_rdc$nrdc $violations
+       end if
+       evaluate ($nrdc = $nrdc + 1)
+     end loop rdc
+
+   end if
+end loop main
+
+
+evaluate ($nrdc=1)
+while ($nrdc <= $data.numrdc) loop rdc
+  if ($Data.rdc_choice_$nrdc eq "VANGLE") then
+    evaluate ($mean_rms_rdc$nrdc = $sum_rms_rdc$nrdc / $nstruc1)
+    evaluate ($stdev_rms_rdc$nrdc = sqrt(($sumsq_rms_rdc$nrdc - $nstruc1*$mean_rms_rdc$nrdc**2)/ $nstruc1))
+    evaluate ($mean_viol_rdc$nrdc = $sum_viol_rdc$nrdc / $nstruc1)
+    evaluate ($stdev_viol_rdc$nrdc = sqrt(($sumsq_viol_rdc$nrdc - $nstruc1*$mean_viol_rdc$nrdc**2)/ $nstruc1))
+    display # mean values RDC(VANGLE) class vea$nrdc
+    display # VANGLE-RMS $mean_rms_rdc$nrdc (+/- $stdev_rms_rdc$nrdc )
+    display # VANGLE-VIOLATIONS $mean_viol_rdc$nrdc (+/- $stdev_viol_rdc$nrdc )
+  end if
+  evaluate ($nrdc = $nrdc + 1)
+end loop rdc
+
+stop
+

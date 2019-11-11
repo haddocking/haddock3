@@ -1,0 +1,138 @@
+! print_hbonds.inp
+!    Analyze and print intermolecular hydrogen bond statistics
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+@RUN:protocols/read_struc-cg.cns
+
+@PREVIT:file.cns(filenames=$filenames)
+evaluate ($file = $filenames.bestfile_1)
+coor @@$file
+
+delete sele=(not(known)) end
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($TotalNstruct = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count=$count+1)
+   evaluate ($file = $filenames.bestfile_$count)
+   if ($file ne "") then
+     coor init end
+     coor @@$file
+     dele sele=(not known) end
+     evaluate ($TotalNstruct = $TotalNstruct + 1)
+   end if
+end loop main
+
+if ($Iterations.anastruc > $TotalNstruct) then
+  evaluate ($Iterations.anastruc = $ToTalNstruct)
+end if
+
+! define hydrogen bond donors
+do (store1 = 0) (all)
+do (store1 = 1) (name HN or name HT*)
+do (store1 = 1) (resn ARG and (name HE or name HH*))
+do (store1 = 1) (resn ASN and name HD*)
+do (store1 = 1) (resn CYS and name HG)
+do (store1 = 1) (resn GLN and name HE*)
+do (store1 = 1) (resn HIS* and (name HD1 or name HE2))
+do (store1 = 1) (resn LYS and name HZ*)
+do (store1 = 1) (resn SER and name HG)
+do (store1 = 1) (resn THR and name HG1)
+do (store1 = 1) (resn DDZ and name HG*)
+do (store1 = 1) (resn TRP and name HE1)
+do (store1 = 1) (resn TYR and name HH)
+do (store1 = 1) (name HO2')
+do (store1 = 1) ((resn ADE or resn A or resn DA) and name H6*)
+do (store1 = 1) ((resn GUA or resn G or resn DG) and (name H2* or name H1))
+do (store1 = 1) ((resn CYT or resn C or resn DC) and name H4*)
+do (store1 = 1) ((resn THY or resn T or resn DT) and name H3)
+do (store1 = 1) (resn URI and name H3)
+do (store1 = 1) ((resn WAT or resn HOH or resn TIP*) and name H1)
+do (store1 = 1) ((resn WAT or resn HOH or resn TIP*) and name H2)
+
+! define hydrogen bond acceptors
+do (store2 = 0) (all)
+do (store2 = 1) (name O or name OXT or name OT1 or name OT2)
+do (store2 = 1) (resn ASN and name OD1)
+do (store2 = 1) (resn ASP and name OD*)
+do (store2 = 1) (resn GLN and name OE1)
+do (store2 = 1) (resn GLU and name OE*)
+do (store2 = 1) (resn SER and name OG)
+do (store2 = 1) (resn THR and name OG1)
+do (store2 = 1) (resn DDZ and name OG*)
+do (store2 = 1) (resn TYR and name OH)
+do (store2 = 1) (name O1P or name OP1 or name OP2 or name O2P)
+do (store2 = 1) (name O2' or name O3' or name O4' or name O5')
+do (store2 = 1) ((resn ADE or resn A or resn DA) and (name N1 or name N3 or name N7))
+do (store2 = 1) ((resn GUA or resn G or resn DG) and (name O6 or name N3 or name N7))
+do (store2 = 1) ((resn CYT or resn C or resn DC) and (name O2 or name N3))
+do (store2 = 1) ((resn THY or resn T or resn DT) and (name O2 or name O4))
+do (store2 = 1) ((resn URI or resn U) and (name O2 or name O4))
+do (store2 = 1) ((resn WAT or resn HOH or resn TIP*) and name OH2)
+
+if ($Data.ncomponents > 1) then
+  evaluate ($kinter = 1.0)
+  @RUN:protocols/scale_inter_only.cns
+end if
+
+set message off echo off end
+evaluate ($count = 0)
+evaluate ($nstruc = 0)
+
+set display=NEWIT:analysis/hbonds.disp end
+
+while ($count lt $Iterations.anastruc) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then 
+     coor @@$file
+     evaluate ($nstruc = $nstruc + 1)
+     
+     display $file
+
+     dist
+       from (attr store1=1)
+       to (attr store2=1)
+       cuton  = 1.0
+       cutoff = $Data.hb_dist
+       disp = print
+       output =  NEWIT:analysis/hbonds.disp
+     end
+
+   end if
+end loop main
+
+evaluate ($outdis  = "NEWIT:analysis/HBONDS_DONE")
+set display=$outdis end
+display DONE
+
+stop
+

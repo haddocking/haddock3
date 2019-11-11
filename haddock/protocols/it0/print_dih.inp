@@ -1,0 +1,114 @@
+! print_dih.inp
+!    Analyze and print dihedral angle restraints statistics
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+@RUN:protocols/read_struc-cg.cns
+
+@PREVIT:file.cns(filenames=$filenames)
+evaluate ($file = $filenames.bestfile_1)
+coor @@$file
+
+delete sele=(not(known)) end
+
+evaluate ($cutdih = 5.0)
+
+set display=NEWIT:analysis/dihedrals.disp end
+
+display # dihedral restraints
+!read tbl file
+evaluate ($filename = "RUN:data/dihedrals/dihedrals.tbl")
+restraints dihedral nass=2000 @@$filename scale = $data.dihedrals_cool3 end
+
+flags exclude * include cdih end
+
+evaluate ($sum_rms_dih = 0)
+evaluate ($sumsq_rms_dih = 0)
+evaluate ($svio_dih = 0)	! sum violations
+evaluate ($ssvio_dih = 0)	! square sum of violations
+
+@PREVIT:file.cns(filenames=$filenames)
+
+evaluate ($count = 0)
+evaluate ($TotalNstruct = 0)
+while ($count lt $Iterations.Structures) loop main
+   evaluate ($count=$count+1)
+   evaluate ($file = $filenames.bestfile_$count)
+   if ($file ne "") then
+      evaluate ($TotalNstruct = $TotalNstruct + 1)
+   end if
+end loop main
+
+if ($Iterations.anastruc > $TotalNstruct) then
+  evaluate ($Iterations.anastruc = $ToTalNstruct)
+end if
+
+evaluate ($count = 1)
+evaluate ($nstruc1 = 0)
+while ($count le $Iterations.anastruc) loop main
+   evaluate ($count = $count + 1)
+   evaluate ($file = $filenames.bestfile_$count)
+   coor init end
+   if ($file ne "") then
+     coor @@$file
+     evaluate ($nstruc1 = $nstruc1 + 1)
+
+     print thresh=$cutdih cdih  
+     evaluate ($rms_dih = $result)
+     evaluate ($sum_rms_dih = $sum_rms_dih + $rms_dih )
+     evaluate ($sumsq_rms_dih = $sumsq_rms_dih + $rms_dih**2 )
+
+     evaluate ($vio_dih = $violations)
+     evaluate ($svio_dih = $svio_dih +$vio_dih)
+     evaluate ($ssvio_dih = $ssvio_dih +$vio_dih**2)
+
+     display # DIH $file rmsd: $rms_dih    vio: $vio_dih
+
+   end if
+end loop main
+
+
+evaluate ($m_rms_dih = $sum_rms_dih / $nstruc1)
+evaluate ($m_vio_dih = $svio_dih / $nstruc1)
+evaluate ($sd_rms_dih =
+          sqrt(($sumsq_rms_dih - $nstruc1*$m_rms_dih**2)/ $nstruc1))
+evaluate ($sd_vio_dih =
+          sqrt(($ssvio_dih - $nstruc1*$m_vio_dih**2)/ $nstruc1))
+
+display # mean values $filename
+display # DIH rmsd (deg) $m_rms_dih ($sd_rms_dih) 
+display # DIH vio > $cutdih deg: $m_vio_dih ($sd_vio_dih)
+display m_rms_dih	sd_rms_dih	cutdih	m_vio_dih	sd_vio_dih
+display $m_rms_dih	$sd_rms_dih	$cutdih	$m_vio_dih	$sd_vio_dih
+display #
+
+evaluate ($outdis  = "NEWIT:analysis/DIH_DONE")
+set display=$outdis end
+display DONE
+
+stop

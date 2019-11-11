@@ -101,3 +101,4 @@ test/jobs/00000.inp
 test/modules/worker/jobs/00000.inp
 *.swp
 haddock/src/contact_fcc
+examples/protein-protein/run1

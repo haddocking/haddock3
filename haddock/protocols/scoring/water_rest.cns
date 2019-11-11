@@ -1,0 +1,46 @@
+! water_rest.cns
+!    Define restraints between interfacial water molecules and highly solvated
+!    amino-acids
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+! This script define distance restraints between water molecule and amino-acids
+! often found to be involved in water-mediated contacts
+! See van Dijk and Bonvin, Bioinformatics 2006
+!
+
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  evaluate ($nchain = $nchain + 1)
+  evaluate ($watersegname_$nchain="WA" + encode($nchain))
+end loop nloop1
+
+
+if ($data.waterdock eq true) then
+
+  if ($data.solvate_method eq "restraints") then
+    evaluate ($nchain=0)
+    while ($nchain < $data.ncomponents) loop nloop2
+      evaluate ($nchain = $nchain + 1)
+      noe class amwa end
+      for $atom_id in id ((resn WAT or resn HOH) and name OH2 and segid $watersegname_$nchain and not store5) loop waterrestraint
+        noe
+          assi (segid $toppar.prot_segid_$nchain and 
+	        (resn arg or resn asn or resn asp or resn gln or resn glu or resn his* 
+		 or resn lys or resn pro or resn ser or resn thr or resn tyr) 
+	        and ((id $atom_id) around $data.water_restraint_cutoff))
+               (id $atom_id) $data.water_restraint_cutoff $data.water_restraint_cutoff 0.0
+        end
+      end loop waterrestraint
+    end loop nloop2
+    evaluate($amwa_scale = $data.water_restraint_scale)
+    noe scale amwa $amwa_scale end
+  end if
+
+end if

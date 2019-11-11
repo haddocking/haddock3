@@ -1,0 +1,157 @@
+! bestener.cns
+!   Store best score model from rigid-body dokcing (it0)
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+    eval ($kinter = 1.0)
+    @RUN:protocols/scale_inter_mini.cns
+
+    evaluate ($unamb_scale = $Data.unamb_cool3)
+    evaluate ($ambig_scale = $Data.amb_cool3)
+    evaluate ($hbond_scale = $Data.hbond_cool3)
+
+    noe 
+      scale dist $unamb_scale 
+      scale ambi $ambig_scale
+      scale hbon $hbond_scale
+      scale symm 0.0
+    end
+
+    evaluate ($nrdc=1)
+    while ($nrdc <= $data.numrdc) loop rdc
+      evaluate ($cln = "rd" + encode($nrdc) )
+      if ($Data.flags.sani eq true) then
+        sani class $cln force $Data.rdc_cool3_$nrdc end
+      end if
+      if ($Data.flags.xrdc eq true) then
+        xrdc class $cln force $Data.rdc_cool3_$nrdc end
+      end if
+      if ($Data.flags.vean eq true) then
+        vean class $cln force $Data.fin_bor_cool3_$nrdc $Data.fin_cen_cool3_$nrdc end
+      end if
+      evaluate ($nrdc = $nrdc + 1)
+    end loop rdc
+
+    evaluate ($ndani=1)
+    while ($ndani <= $data.numdani) loop dani
+      evaluate ($cln = "da" + encode($ndani) )
+      if ($Data.flags.dani eq true) then
+        dani class $cln force $Data.dan_cool3_$ndani end
+      end if
+      evaluate ($ndani = $ndani + 1)
+    end loop dani
+
+    evaluate ($npcs=1)
+    while ($npcs <= $data.numpcs) loop pcs
+      evaluate ($cln = "pc" + encode($ndani) )
+      if ($Data.flags.xpcs eq true) then
+        xpcs class $cln force $Data.pcs_cool3_$npcs end
+      end if
+      evaluate ($npcs = $npcs + 1)
+    end loop pcs
+ 
+    evaluate ($ener = 0)
+    evaluate ($vdw  = 0)
+    evaluate ($elec = 0)
+    evaluate ($noe  = 0)
+    evaluate ($coll = 0)
+    evaluate ($eair = 0)
+    evaluate ($cdih = 0)
+    evaluate ($vean = 0)
+    evaluate ($sani = 0)
+    evaluate ($xrdc = 0)
+    evaluate ($xpcs = 0)
+    evaluate ($dani = 0)
+    evaluate ($esym = 0)
+    evaluate ($zhar = 0)
+    evaluate ($bsa  = 0)
+    evaluate ($desolv = 0.0)
+    evaluate ($lcc = 0.0)
+
+    energy end
+    evaluate ($eair = $noe)
+
+    if ($Data.flags.sym eq true) then
+      noe
+        scale * 0.0
+        scale symm $Data.ksym
+      end
+      energy end
+      evaluate ($esym = $noe)
+    end if
+
+    if ($SaProtocol.rigidtrans eq true) then
+      inline @RUN:protocols/bsa.cns
+    end if
+
+    ! get the local cross-correlation for cryo-EM data
+    if ($data.flags.em = true) then
+!        @RUN:protocols/em_calc_lcc.cns(Toppar=$toppar; Data=$data; Saprotocol=$saprotocol; lcc=$lcc;)
+        @RUN:protocols/em_calc_lcc.cns
+    end if
+
+    evaluate ($etot = $iterations.w_vdw  * $vdw)
+    evaluate ($etot = $etot + $iterations.w_elec * $elec)
+    evaluate ($etot = $etot + $iterations.w_dist * $eair)
+    evaluate ($etot = $etot + $iterations.w_rg *   $coll)
+    evaluate ($etot = $etot + $iterations.w_cdih * $cdih)
+    evaluate ($etot = $etot + $iterations.w_sani * $sani)
+    evaluate ($etot = $etot + $iterations.w_xrdc * $xrdc)
+    evaluate ($etot = $etot + $iterations.w_xpcs * $xpcs)
+    evaluate ($etot = $etot + $iterations.w_dani * $dani)
+    evaluate ($etot = $etot + $iterations.w_vean * $vean)
+    evaluate ($etot = $etot + $iterations.w_sym  * $esym)
+    evaluate ($etot = $etot + $iterations.w_zres * $zhar)
+    evaluate ($etot = $etot + $iterations.w_bsa  * $bsa)
+    evaluate ($etot = $etot + $iterations.w_desolv * $desolv)
+    evaluate ($etot = $etot + $iterations.w_lcc * $lcc)
+
+    if ($nfirst = 1) then
+      evaluate ($bestener = $etot)
+      evaluate ($bestair = $eair)
+      evaluate ($ncvbest = $npart)
+      do (refx = x) (all)
+      do (refy = y) (all)
+      do (refz = z) (all)
+      evaluate ($nfirst = 0)
+      if ($data.waterdock eq true) then
+       ident (store3) (not all)
+       ident (store3) (store5)
+      else
+       ident (store3) (not all)
+      end if
+    else
+      if ($etot < $bestener) then
+        evaluate ($bestener = $etot)
+        evaluate ($bestair = $eair)
+        evaluate ($ncvbest = $npart)
+        do (refx = x) (all)
+        do (refy = y) (all)
+        do (refz = z) (all)
+        if ($data.waterdock eq true) then
+         ident (store3) (not all)
+         ident (store3) (store5)
+        end if
+      end if
+    end if
+
+    evaluate ($kinter = $SaProtocol.inter_rigid)
+    @RUN:protocols/scale_inter_mini.cns
+
+    evaluate ($unamb_scale = $unamb_scale_store)
+    evaluate ($ambig_scale = $ambig_scale_store)
+    evaluate ($hbond_scale = $hbond_scale_store)
+    evaluate ($symm_scale = $symm_scale_store)
+
+    noe 
+      scale dist $unamb_scale 
+      scale ambi $ambig_scale
+      scale hbon $hbond_scale
+      scale symm $symm_scale
+    end

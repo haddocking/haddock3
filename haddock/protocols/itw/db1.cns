@@ -1,0 +1,323 @@
+! db1.cns
+!    Used in the removal of interfacial waters in solvated docking
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+eval ($rmultfact=1.0)
+eval($testcutoff=3.5)
+eval($enercutoff=0.0)
+
+show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1) and (not (name P or name O*P* or name "O3'" or name "O5'") around $testcutoff))
+eval ($watercount=$result)
+show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1) and ((name P or name O*P* or name "O3'" or name "O5'") around $testcutoff))
+eval ($dnapwatercount=$result)
+
+display SOLVATED-DOCKING: info: watercount $watercount
+
+evaluate ($icount = 1)
+do (store4 = 0) (all)
+
+for $atom_id in id ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1)) loop count
+  do (store4 = $icount) (id $atom_id)
+  evaluate ($icount = $icount + 1)
+end loop count
+display SOLVATED-DOCKING: info: watercount $icount
+
+show min(store4) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
+evaluate ($rmin = $result)
+show max(store4) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
+evaluate ($rmax = $result)
+
+evaluate ($nres = $rmax - $rmin + 1)
+display SOLVATED-DOCKING: $nres WATERS SELECTED FOR DATABASE-STATISTICS BASED RANDOM REMOVAL
+if ($nres < 1) then
+  display SOLVATED-DOCKING: NO WATER IN DEFINED WATERS
+  display SOLVATED-DOCKING: DB WATER REMOVAL FAILED
+  display SOLVATED-DOCKING: STOPPING...
+  stop
+end if
+
+! initialize water-mediated contact probabilities to average
+! value of the protein-protein matrix (0.22 for statistical and 0.33 for Kyte-Doolittle)
+!
+if ($data.db_method eq 'statistical') then
+  evaluate ($dbave = 0.22)
+else
+  eval ($dbave = 0.33)
+end if
+eval($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+  evaluate($nchain1 = $nchain1 + 1)
+  eval($nchain2 = 0)
+  while ($nchain2 < $data.ncomponents) loop nloop2
+    evaluate ($nchain2 = $nchain2 + 1)
+    if ($nchain1 ne $nchain2) then
+      for $at1_id in id ( tag and segid $Toppar.prot_segid_$nchain1 ) loop atm1
+        show (resn) (id $at1_id)
+        evaluate ($rsn1 = $result)
+        for $at2_id in id ( tag and segid $Toppar.prot_segid_$nchain2 ) loop atm2
+           show (resn) (id $at2_id)
+           evaluate ($rsn2 = $result)
+           evaluate ($db.$rsn1_$rsn2 = $dbave)
+        end loop atm2
+      end loop atm1
+    end if
+  end loop nloop2
+end loop nloop1
+
+if ($data.db_method eq 'statistical') then
+!  inline @RUN:protocols/db_statistical.dat
+  inline @protocols/db_statistical.dat
+else
+!  inline @RUN:protocols/db_kyte-doolittle.dat
+  inline @protocols/db_kyte-doolittle.dat
+end if
+
+! First pass, all interactions except those with DNA/RNA Phosphate groups
+evaluate ($done = 0)
+evaluate ($counttrial = 0)
+evaluate ($maxcounttrial = 1000)
+while ($done = 0)  loop trial
+  eval($counttrial = $counttrial+1)
+  if ($counttrial > $maxcounttrial) then
+   eval($done = 1)
+  end if
+  evaluate ($iselres1 = 0)
+  evaluate ($iselres1 = int(ran() * $rmax) + 1)
+  
+  eval($founda=0)
+  eval($foundb=0)
+  eval($closesta=1000)
+  eval($closestb=1000)
+
+  !find first closest residue of all chains
+  eval($nchain1 = 0)
+  eval($closechain = 0)
+  while ($nchain1 < $data.ncomponents) loop nloop1
+    eval($nchain1 = $nchain1 + 1)
+    for $atom_ida in id (segid $Toppar.prot_segid_$nchain1 and (not (name P or name O*P* or name "O3'" or name "O5'")) and (attr store4 = $iselres1) around $testcutoff) loop seg1loop
+      pick bond (attr store4 = $iselres1) (id $atom_ida) geometry
+      eval ($dist=$result)
+      if ($dist<$closesta) then
+        eval($founda=$founda+1)
+        eval($closesta=$dist)
+        show element (resn) (id $atom_ida)
+        eval($restypea=$result)
+        eval($closechain=$nchain1)
+      end if
+    end loop seg1loop
+  end loop nloop1
+
+  ! do not consider if close to a phosphate group
+  eval($nchain1 = 0)
+  while ($nchain1 < $data.ncomponents) loop nloop1
+    eval($nchain1 = $nchain1 + 1)
+    for $atom_ida in id (segid $Toppar.prot_segid_$nchain1 and (name P or name O*P* or name "O3'" or name "O5'") and (attr store4 = $iselres1) around $testcutoff) loop seg1loop
+      eval($founda=0)
+    end loop seg1loop
+  end loop nloop1
+
+  eval($nchain1 = 0)
+  !find second closest residue from all other chains than the closest residue selected above
+  while ($nchain1 < $data.ncomponents) loop nloop2
+    eval($nchain1 = $nchain1 + 1)
+    if ($nchain1 ne $closechain) then
+      for $atom_idb in id (segid $Toppar.prot_segid_$nchain1 and (not (name P or name O*P* or name "O3'" or name "O5'")) and (attr store4 = $iselres1) around $testcutoff) loop seg2loop
+        pick bond (attr store4 = $iselres1) (id $atom_idb) geometry
+        eval ($dist=$result)
+        if ($dist<$closestb) then
+          eval($foundb=$foundb+1)
+          eval($closestb=$dist)
+          show element (resn) (id $atom_idb)
+          eval($restypeb=$result)
+        end if
+      end loop seg2loop
+    end if
+  end loop nloop2
+
+  if ($founda > 0) then 
+   if($foundb > 0) then
+    display SOLVATED-DOCKING: $iselres1 $closesta $restypea $closestb $restypeb $db.$restypea_$restypeb
+    eval ($r = random(1.0)) 
+!    display SOLVATED-DOCKING: info: r-value $r
+    eval ($r = $r*$rmultfact)
+    if ($r > $db.$restypea_$restypeb) then
+!     display SOLVATED-DOCKING: $r bigger than $db.$restypea_$restypeb for $iselres1 with $restypea - $restypeb
+     !so this one is 'deleted'
+     do (store5=1) (attr store4 = $iselres1)
+    else
+!     display SOLVATED-DOCKING: $r smaller than $db.$restypea_$restypeb for $iselres1 with $restypea - $restypeb
+    end if
+   else
+!    display SOLVATED-DOCKING: nothing found for $iselres1
+    do (store5=1) (attr store4 = $iselres1)
+   end if
+  else
+!   display SOLVATED-DOCKING: nothing found for $iselres1
+   do (store5=1) (attr store4 = $iselres1)
+  end if
+   
+  show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
+  if ($watercount > 0) then
+    eval($fractionleft = $result/$watercount)
+  else
+   eval($fractionleft = 0.0)
+  end if
+  display SOLVATED-DOCKING: FRACTION LEFT $fractionleft
+  if ($fractionleft < $data.water_tokeep) then
+    evaluate ($done = 1)
+  end if
+end loop trial
+
+
+! Second pass, all interactions with DNA/RNA Phosphate groups
+evaluate ($done = 0)
+evaluate ($counttrial = 0)
+evaluate ($maxcounttrial = 1000)
+while ($done = 0)  loop ptrial
+  eval($counttrial = $counttrial+1)
+  if ($counttrial > $maxcounttrial) then
+   eval($done = 1)
+  end if
+  evaluate ($iselres1 = 0)
+  evaluate ($iselres1 = int(ran() * $rmax) + 1)
+  
+  eval($founda=0)
+  eval($foundb=0)
+  eval($closesta=1000)
+  eval($closestb=1000)
+
+  !find first closest residue of all chains
+  eval($nchain1 = 0)
+  eval($closechain = 0)
+  while ($nchain1 < $data.ncomponents) loop nloop1
+    eval($nchain1 = $nchain1 + 1)
+    for $atom_ida in id (segid $Toppar.prot_segid_$nchain1 and (name P or name O*P* or name "O3'" or name "O5'") and (attr store4 = $iselres1) around $testcutoff) loop seg1loop
+      pick bond (attr store4 = $iselres1) (id $atom_ida) geometry
+      eval ($dist=$result)
+      if ($dist<$closesta) then
+        eval($founda=$founda+1)
+        eval($closesta=$dist)
+        show element (resn) (id $atom_ida)
+        eval($restypea=$result)
+        eval($closechain=$nchain1)
+      end if
+    end loop seg1loop
+  end loop nloop1
+
+  eval($nchain1 = 0)
+  !find second closest residue from all other chains than the closest residue selected above
+  while ($nchain1 < $data.ncomponents) loop nloop2
+    eval($nchain1 = $nchain1 + 1)
+    if ($nchain1 ne $closechain) then
+      for $atom_idb in id (segid $Toppar.prot_segid_$nchain1 and (attr store4 = $iselres1) around $testcutoff) loop seg2loop
+        pick bond (attr store4 = $iselres1) (id $atom_idb) geometry
+        eval ($dist=$result)
+        if ($dist<$closestb) then
+          eval($foundb=$foundb+1)
+          eval($closestb=$dist)
+          show element (resn) (id $atom_idb)
+          eval($restypeb=$result)
+        end if
+      end loop seg2loop
+    end if
+  end loop nloop2
+
+  if ($founda > 0) then 
+   if($foundb > 0) then
+    display SOLVATED-DOCKING DNA PHOSPHATE: $iselres1 $closesta $restypea $closestb $restypeb $db.$restypea_$restypeb
+    eval ($r = random(1.0)) 
+!    display SOLVATED-DOCKING: info: r-value $r
+    eval ($r = $r*$rmultfact)
+    if ($r > $db.DP_$restypea_$restypeb) then
+!     display SOLVATED-DOCKING: $r bigger than $db.DP_$restypea_$restypeb for $iselres1 with $restypea - $restypeb
+     !so this one is 'deleted'
+     do (store5=1) (attr store4 = $iselres1)
+    else
+!     display SOLVATED-DOCKING: $r smaller than $db.DP_$restypea_$restypeb for $iselres1 with $restypea - $restypeb
+    end if
+   else
+!    display SOLVATED-DOCKING: nothing found for $iselres1
+    do (store5=1) (attr store4 = $iselres1)
+   end if
+  else
+!   display SOLVATED-DOCKING: nothing found for $iselres1
+   do (store5=1) (attr store4 = $iselres1)
+  end if
+   
+  show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
+  if ($dnapwatercount > 0) then
+    eval($fractionleft = $result/$dnapwatercount)
+  else
+   eval($fractionleft = 0.0)
+  end if
+  display SOLVATED-DOCKING: FRACTION LEFT AROUND DNA PHOSPHATE $fractionleft
+  if ($fractionleft < $data.dnap_water_tokeep) then
+    evaluate ($done = 1)
+  end if
+end loop ptrial
+
+
+
+show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
+if ($watercount > 0) then
+  eval($fractionleft = $result/$watercount)
+else
+  eval($fractionleft = 0.0)
+end if
+display SOLVATED-DOCKING: FINAL FRACTION LEFT BEFORE ENERGY FILTER $fractionleft ($result WATERS)
+
+for $wat_id in id ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1)) loop dbloop
+ igroup interaction (not all) (not all) end
+ igroup interaction (all) (byres(id $wat_id)) end
+ energy end
+ eval($waterenergy=$vdw + $elec)
+ if ($waterenergy>$enercutoff) then
+ !energy too high --> 'deleted'
+  do (store5=1) (id $wat_id)
+!  display SOLVATED-DOCKING: energy of id $wat_id is $waterenergy which is higher than cutoff $enercutoff
+ else
+!  display SOLVATED-DOCKING: energy of id $wat_id is $waterenergy which is lower than cutoff $enercutoff
+ end if
+end loop dbloop
+
+show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
+if ($watercount > 0) then
+  eval($fractionleft = $result/$watercount)
+else
+  eval($fractionleft = 0.0)
+end if
+display SOLVATED-DOCKING: FINAL FRACTION LEFT AFTER ENERGY FILTER $fractionleft ($result WATERS)
+
+
+do (store5 = 1) (byres(attr store5 =1 ))
+
+!"removing" of water: interaction weight 0
+igroup interaction (not all) (not all) end
+
+igroup
+  eval($nchain1 = 0)
+
+while ($nchain1 < $data.ncomponents) loop nloop1
+    eval($nchain1 = $nchain1 + 1)
+    eval($nchain2 = $nchain1 )
+    while ($nchain2 < $data.ncomponents) loop nloop2
+      eval($nchain2 = $nchain2 + 1)
+      interaction (segid $Toppar.prot_segid_$nchain1)
+                  (segid $Toppar.prot_segid_$nchain2) weight * 1.0 vdw $kinter elec $kinter end
+    end loop nloop2
+    interaction ((resn WAT or resn HOH or resn TIP*) and (attr store5 ne 1)) (segid $Toppar.prot_segid_$nchain1) weight * 1.0 end
+end loop nloop1
+
+  interaction ((resn WAT or resn HOH or resn TIP*) and (attr store5 ne 1))
+	           ((resn WAT or resn HOH or resn TIP*) and (attr store5 ne 1)) weight * 1.0 end
+  interaction (attr store5 = 1) (all) weight * 0.0 end
+  interaction (resn SHA) (not resn SHA) weight * 0.0 end
+end
+

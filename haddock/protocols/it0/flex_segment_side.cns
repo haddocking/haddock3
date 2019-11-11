@@ -1,0 +1,92 @@
+! flex_segment_side.cns
+!     Define semi-flexible segments (side-chains only) 
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+do (store5 = 0) (all)
+do (store6 = 0) (all)
+do (store7 = 0) (all)
+
+!first flexible segments for docking
+evaluate($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+  evaluate($nchain1 = $nchain1 + 1)
+  evaluate($nf=0)
+  if ($Toppar.nseg_$nchain1 = 0) then
+    display NO FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1
+  else
+    if ($Toppar.nseg_$nchain1 < 0) then
+      display AUTOMATIC DEFINITION OF FLEXIBLE SEGMENTS BASED ON INTERMOLECULAR PROXIMITY FOR MOLECULE $nchain1
+      inline @RUN:protocols/flexauto-neighbors.cns
+      do (store5 = 0) (name CA or name BB or name C or name N or name O)
+    else
+      display FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1
+      while ($nf < $Toppar.nseg_$nchain1) loop Xflex
+        evaluate($nf=$nf + 1)
+        do (store5 = $nchain1) ( resid $Toppar.start_seg_$nchain1_$nf : $Toppar.end_seg_$nchain1_$nf
+                                 and segid $Toppar.prot_segid_$nchain1
+                                 and not(name CA or name BB or name C or name N or name O) )
+        do (store7 = $nchain1) ( resid $Toppar.start_seg_$nchain1_$nf : $Toppar.end_seg_$nchain1_$nf
+                                 and segid $Toppar.prot_segid_$nchain1)
+        display FLEXIBLE SIDE-CHAINS SEGMENT NR $nf FROM $Toppar.start_seg_$nchain1_$nf TO $Toppar.end_seg_$nchain1_$nf
+      end loop Xflex
+    end if
+  end if
+end loop nloop1
+
+!then fully flexible segments for all stages
+evaluate($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop2
+  evaluate($nchain1 = $nchain1 + 1)
+  if ($Toppar.nfle_$nchain1 = 0) then
+    display NO FULLY FLEXIBLE SEGMENTS for molecule $nchain1
+  else
+    display FULLY FLEXIBLE SEGMENTS for molecule $nchain1
+    evaluate($nf=0)
+    while ($nf < $Toppar.nfle_$nchain1) loop Xfflex
+      evaluate($nf=$nf + 1)
+      do (store5 = $nchain1) ( resid $Toppar.start_fle_$nchain1_$nf : $Toppar.end_fle_$nchain1_$nf
+                               and segid $Toppar.prot_segid_$nchain1)
+      do (store7 = $nchain1) ( resid $Toppar.start_fle_$nchain1_$nf : $Toppar.end_fle_$nchain1_$nf
+                               and segid $Toppar.prot_segid_$nchain1)
+      display FULLY FLEXIBLE SEGMENT NR $nf FROM $Toppar.start_fle_$nchain1_$nf TO $Toppar.end_fle_$nchain1_$nf
+    end loop Xfflex
+  end if
+end loop nloop2
+
+do (store5 = 21) (resn WAT or resn HOH or resn TIP*)
+
+evaluate ($nfletot = 0)
+! check number of flexible residues per molecule
+evaluate($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop3
+  evaluate($nchain1 = $nchain1 + 1)
+  do (store6 = 0) (all)
+  do (store6 = 1) (tag and (attr store7 = $nchain1))
+  show sum (store6) (all)
+  evaluate ($numfle=$result)
+  do (store6 = 0) (all)
+  do (store6 = 1) (tag and segid $Toppar.prot_segid_$nchain1 and not (attr store7 = $nchain1))
+  show sum (store6) (all)
+  evaluate ($numrig=$result)
+  do (store6 = 0) (all)
+  do (store6 = 1) (tag and segid $Toppar.prot_segid_$nchain1)
+  show sum (store6) (all)
+  evaluate ($numres=$result)
+  display FLEXIBILITY STATISTIC FOR MOLECULE $nchain1 : Nres=$numres Nrigid=$numrig Nflex=$numfle
+  evaluate ($nfletot = $nfletot + $numfle)
+end loop nloop3
+
+do (store1 = 0) (all)
+do (store1 = 1) ((resn WAT or resn HOH or resn TIP*) and name OH2)
+show sum (store1) ((resn WAT or resn HOH or resn TIP*))
+evaluate ($nfletot = $nfletot + $result)
+
+evaluate ($nfletot = $nfletot + 10)

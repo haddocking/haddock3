@@ -1,0 +1,896 @@
+! generate.inp
+!     Generates missing coordinates and topology
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * and from the CNS distriution of Brunger and Adams                   *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+{+ file: generate.inp +}
+{+ directory: general +}
+{+ description: Generate coordinate and structure file for simple models +}
+{+ comment:
+           This is designed to be a means of generating a coordinate
+           and structure file for commonly encountered models: protein
+           and/or DNA/RNA. The coordinates
+           are provided by the user in a single input PDB file.
+           Disulphide bonds will be automatically determined by distance.
+           If required generate hydrogens. Any atoms with unknown
+           coordinates can be automatically generated +}
+{+ authors: Paul Adams and Axel Brunger +}
+{+ copyright: Yale University +}
+
+{+ Adapted for use in HADDOCK by Alexandre Bonvin, Utrecht University Feb-2002 +}
+
+{- Guidelines for using this file:
+   - all strings must be quoted by double-quotes
+   - logical variables (true/false) are not quoted
+   - do not remove any evaluate statements from the file -}
+
+{- Special patches will have to be entered manually at the relevant points
+   in the file - see comments throughout the file -}
+
+{- begin block parameter definition -} define(
+
+{============================== important =================================}
+
+{* Different chains in the structure must have either unique segid or
+   chainid records. If this is no the case, the end of a chain must
+   be delimited by a TER card. *}
+
+{* A break in a chain can be detected automatically or should be delimited
+   by a BREAK card. In this case no patch (head, tail or link) will be 
+   applied between the residues that bound the chain break. *}
+
+{* NB. The input PDB file must finish with an END statement *}
+
+{=========================== coordinate files =============================}
+
+{* coordinate file *}
+{===>} coordinate_infile="/home/abonvin/software/haddock/examples/e2a.pdb";
+
+{* convert chainid to segid if chainid is non-blank *}
+{+ choice: true false +}
+{===>} convert=false;
+
+{* separate chains by segid - a new segid starts a new chain *}
+{+ choice: true false +}
+{===>} separate=true;
+{============================ renaming atoms ===============================}
+
+{* some atoms may need to be renamed in the topology database to conform
+   to what is present in the coordinate file *}
+
+{* delta carbon in isoleucine is named CD in CNS
+   what is it currently called in the coordinate file? *}
+{* this will not be changed if left blank *}
+{===>} ile_CD_becomes="CD1";
+
+{* terminal oxygens are named OT1 and OT2 in CNS
+   what are they currently called in the coordinate file? *}
+{* these will not be changed if left blank *}
+{===>} OT1_becomes="O";
+{===>} OT2_becomes="OXT";
+
+{======================= automatic mainchain breaks ========================}
+
+{* automatically detect mainchain breaks in proteins based on distance *}
+{* the peptide link at break points will be removed *}
+{+ choice: true false +}
+{===>} auto_break=true;
+
+{* cutoff distance in Angstroms for identification of breaks *}
+{* the default of 2.5A for peptide bonds should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} pbreak_cutoff=3.5;
+{===>} pcgbreak_cutoff=8.0;
+{* the default of 2.5A for nucleic acid linkages should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} dbreak_cutoff=4.5;
+
+{* file containing patches to delete peptide links *}
+{===>} prot_break_infile="RUN:toppar/protein_break.top";
+
+{* file containing patches to delete nucleic acid links *}
+{===>} dna_break_infile="RUN:toppar/dna_break.top";
+
+{======================= automatic disulphide bonds ========================}
+
+{* cutoff distance in Angstroms for identification of disulphides *}
+{* the default of 3.0A should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} disulphide_dist=3.0;
+
+{======================= automatic cyclic peptidic bond ====================}
+
+{* cutoff distance in Angstroms for identification of disulphides *}
+{* the default of 3.0A should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} cyclicpept_dist=1.5;
+
+{======================= automatic iron cluster bonds ======================}
+
+{* cutoff distance in Angstroms for identification of iron cluster bonds *}
+{* the default of 8.0A should be reasonable for most cases. If the input
+   structure has bad geometry it may be necessary to increase this distance *}
+{===>} iron1cluster_dist=5.0;
+{===>} iron2cluster_dist=8.0;
+
+{======================= automatic cis peptide bonds =======================}
+
+{* select atoms to be included in calculation of omega angles *}
+{* to define cis peptides*}
+{===>} atom_select=(known and not hydrogen);
+
+{========================= RNA to DNA conversion  ==========================}
+
+{* All nucleic acid residues initially have ribose sugars (rather than
+   deoxyribose). A patch must be applied to convert the ribose to deoxyribose
+   for DNA residues. Select those residues which need to have the patch
+   applied to make them DNA. *}
+{* Make sure that the atom selection is specific for the nucleic acid
+   residues *}
+{===>} dna_sele=(none);
+            
+{========================= generate parameters =============================}
+
+{* hydrogen flag - determines whether hydrogens will be output *}
+{* must be true for NMR, atomic resolution X-ray crystallography 
+   or modelling.  Set to false for most X-ray crystallographic 
+   applications at resolution > 1A *}
+{+ choice: true false +}
+{===>} hydrogen_flag=true;
+
+{* which hydrogens to build *}
+{+ choice: "all" "unknown" +}
+{===>} hydrogen_build="all";
+
+{* selection of atoms other than hydrogens for which coordinates
+   will be generated *}
+{* to generate coordinates for all unknown atoms use: (not(known)) *}
+{===>} atom_build=(not(known));
+
+{* selection of atoms to be deleted *}
+{* to delete no atoms use: (none) *}
+{===>} atom_delete=(none);
+
+{* set bfactor flag *}
+{+ choice: true false +}
+{===>} set_bfactor=true;
+
+{* set bfactor value *}
+{===>} bfactor=15.0;
+
+{* set occupancy flag *}
+{+ choice: true false +}
+{===>} set_occupancy=true;
+
+{* set occupancy value *}
+{===>} occupancy=1.0;
+
+{============================= output files ================================}
+
+{* output structure file *}
+{===>} structure_outfile="haddock.psf";
+
+{* output coordinate file *}
+{===>} coordinate_outfile="haddock.pdb";
+
+{================== protein topology and parameter files ===================}
+
+{* protein topology file *}
+{===>} prot_topology_infile="RUN:toppar/protein-allhdg5-4.top";
+
+{* protein linkage file *}
+{===>} prot_link_infile="RUN:toppar/protein-allhdg5-4.link";
+
+{* protein parameter file *}
+{===>} prot_parameter_infile="RUN:toppar/protein-allhdg5-4.param";
+
+{================ nucleic acid topology and parameter files =================}
+
+{* nucleic acid topology file *}
+{===>} nucl_topology_infile="RUN:toppar/dna-rna-allatom-hj-opls-1.3.top";
+
+{* nucleic acid linkage file *}
+{* use RUN:/toppar/dna-rna-pho.link for 5'-phosphate *}
+{===>} nucl_link_infile="RUN:/toppar/dna-rna-1.3.link";
+
+{* nucleic acid parameter file *}
+{===>} nucl_parameter_infile="RUN:/toppar/dna-rna-allatom-hj-opls-1.3.param";
+
+{================= carbohydrate topology and parameter files ===============}
+
+{* carbohydrate topology file *}
+{===>} carbo_topology_infile="RUN:/toppar/carbohydrate.top";
+
+{* carbohydrate parameter file *}
+{===>} carbo_parameter_infile="RUN:/toppar/carbohydrate.param";
+
+{================= solvent topology and parameter files ====================}
+
+{* solvent topology file *}
+{===>} solv_topology_infile="RUN:/toppar/water-allhdg5-4.top";
+
+{* solvent parameter file *}
+{===>} solv_parameter_infile="RUN:/toppar/water-allhdg5-4.param";
+
+{================= cofactor topology and parameter files ===================}
+
+{* co-factor topology file *}
+{===>} cofac_topology_infile="RUN:/toppar/ligand.top";
+
+{* co-factor linkage file *}
+{===>} cofac_link_infile="RUN:toppar/ligand.pep";
+
+{* co-factor parameter file *}
+{===>} cofac_parameter_infile="RUN:/toppar/ligand.param";
+
+{================= known ligands topology and parameter files ==============}
+
+{* ligands topology file *}
+{===>} ligands_topology_infile="RUN:/toppar/fragment_probes.top";
+
+{* ligands parameter file *}
+{===>} ligands_parameter_infile="RUN:/toppar/fragment_probes.param";
+
+{===================== ion topology and parameter files ====================}
+
+{* ion topology file *}
+{===>} ion_topology_infile="RUN:/toppar/ion.top";
+
+{* ion parameter file *}
+{===>} ion_parameter_infile="RUN:/toppar/ion.param";
+
+{===================== heme topology and parameter files ====================}
+
+{* heme topology file *}
+{===>} heme_topology_infile="RUN:/toppar/hemes-allhdg.top";
+
+{* heme parameter file *}
+{===>} heme_parameter_infile="RUN:/toppar/hemes-allhdg.param";
+
+{===================== default number of histidines for patching ===========}
+
+ ) {- end block parameter definition -}
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@RUN:begin/iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+data      =$data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;
+)
+! set abort=off end
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!The next line will be changed automatically from python:
+ evaluate ($chain = 1)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ evaluate($topology_infile= "RUN:toppar/" + $Toppar.prot_top_$chain)
+ evaluate($parameter_infile= "RUN:toppar/" + $Toppar.prot_par_$chain)
+ evaluate($link_file= "RUN:toppar/" + $Toppar.prot_link_$chain)
+ evaluate($coor_infile= "RUN:data/sequence/" + $Toppar.prot_coor_$chain)
+ evaluate($coor_inlist= "RUN:data/sequence/file_" + encode($chain) + ".list")
+ evaluate($coor_outfile= "BEGIN:" + $Toppar.prot_root_$chain + ".pdb")
+ evaluate($psf_outfile= "BEGIN:" + $Toppar.prot_root_$chain + ".psf")
+ evaluate($psf2_outfile= "BEGIN:" + $Toppar.prot_coor_$chain - ".pdb" + ".psf")
+ evaluate($par_nonbonded= $Toppar.par_nonbonded)
+
+ if ($Toppar.prot_segid_$chain="") then
+   evaluate($Toppar.prot_segid_$chain=encode($chain))
+ end if
+
+ evaluate ($log_level=quiet)
+
+ topology
+   @@$topology_infile
+   if ( &BLANK%ion_topology_infile = false ) then
+     @@&ion_topology_infile
+   end if
+   if ( &BLANK%nucl_topology_infile = false ) then
+     @@&nucl_topology_infile
+   end if
+   if ( &BLANK%solv_topology_infile = false ) then
+     @@&solv_topology_infile
+   end if
+   if ( &BLANK%ligands_topology_infile = false ) then
+     @@&ligands_topology_infile
+   end if
+   if ( &BLANK%cofac_topology_infile = false ) then
+     @@&cofac_topology_infile
+   end if
+   if ( &BLANK%heme_topology_infile = false ) then
+     @@&heme_topology_infile
+   end if
+   if ( &BLANK%prot_break_infile = false ) then
+     @@&prot_break_infile
+   end if
+   if ( &BLANK%dna_break_infile = false ) then
+     @@&dna_break_infile
+   end if
+ end
+
+ parameter
+   @@$parameter_infile
+   if ( &BLANK%ion_parameter_infile = false ) then
+     @@&ion_parameter_infile
+   end if
+   if ( &BLANK%nucl_parameter_infile = false ) then
+     @@&nucl_parameter_infile
+   end if
+   if ( &BLANK%solv_parameter_infile = false ) then
+     @@&solv_parameter_infile
+   end if
+   if ( &BLANK%ligands_parameter_infile = false ) then
+     @@&ligands_parameter_infile
+   end if
+   if ( &BLANK%cofac_parameter_infile = false ) then
+     @@&cofac_parameter_infile
+   end if
+   if ( &BLANK%heme_parameter_infile = false ) then
+     @@&heme_parameter_infile
+   end if
+ end
+
+ segment
+   chain
+     if ( &convert = true ) then
+       convert=true
+     end if
+     if ( &separate = true ) then
+       separate=true
+     end if
+     @@$link_file
+     if ( &BLANK%nucl_link_infile = false ) then
+       @@&nucl_link_infile
+     end if
+     if ( &BLANK%cofac_link_infile = false ) then
+       @@&cofac_link_infile
+     end if
+     coordinates @@$coor_infile
+   end
+ end
+
+ coordinates @@$coor_infile end
+
+ if ( &BLANK%ile_CD_becomes = false ) then
+   do (name=&ile_CD_becomes) (resn ILE and name CD)
+ end if
+ if ( &BLANK%OT1_becomes = false ) then
+   do (name=&OT1_becomes) (name OT1)
+ end if
+ if ( &BLANK%OT2_becomes = false ) then
+   do (name=&OT2_becomes) (name OT2)
+ end if
+
+ !for the histidine patches:
+ if ($Toppar.autohis = false) then
+   evaluate($hisd_counter=1)
+   while ($hisd_counter le $Toppar.nhisd_$chain) loop hisd
+     if ($Toppar.hisd_resid_$chain_$hisd_counter > 0) then
+       show (resn) (tag and resid $Toppar.hisd_resid_$chain_$hisd_counter)
+       if ($result eq "HIS") then
+         patch hisd reference=nil=(resid $Toppar.hisd_resid_$chain_$hisd_counter) end
+       end if
+     end if
+     evaluate($hisd_counter=$hisd_counter + 1)
+   end loop hisd
+
+   evaluate($hise_counter=1)
+   while ($hise_counter le $Toppar.nhise_$chain) loop hise
+     if ($Toppar.hise_resid_$chain_$hise_counter > 0) then
+       show (resn) (tag and resid $Toppar.hise_resid_$chain_$hise_counter)
+       if ($result eq "HIS") then
+         patch hise reference=nil=(resid $Toppar.hise_resid_$chain_$hise_counter) end
+       end if
+     end if
+     evaluate($hise_counter=$hise_counter + 1)
+   end loop hise
+ end if
+
+! The following patches would define covalent bond between a CA+2 and oxygen ligands
+! from Asp and Glu (first selection is amino-acid, second is ion)
+! patch dca2 refe=1=(resid 25) refe=2=(resid 83) end
+! patch dca2 refe=1=(resid 29) refe=2=(resid 83) end
+! patch dca2 refe=1=(resid 35) refe=2=(resid 83) end
+! patch eca2 refe=1=(resid 36) refe=2=(resid 83) end
+!
+! following patch is to attach a heme (resid YY) CAB atom to a cys (resid XX)
+! patch phcb refe=1=(resid XX) refe=2=(resid YY) end
+! following patch is to attach a heme (resid YY) CAC atom to a cys (resid XX)
+! patch phcc refe=1=(resid XX) refe=2=(resid YY) end
+!
+! following patch is to define an isopeptide bond between a Cter and a Lys side-chain
+! patch clys refe=1=(resid 72) refe=2=(resid 148) end
+!
+! following patch is to define an isopeptide bond between a Cter and a Lys side-chain
+! patch clys refe=1=(resid 72) refe=2=(resid 148) end
+
+ inline @RUN:protocols/patch-types-cg.cns
+ inline @RUN:protocols/patch-bb-cg.cns
+
+ if ($Toppar.delenph = true) then
+   delete sele=(name H* and attr charge = 0) end
+ end if
+
+ evaluate ($nstruc = 1)
+ for $file in ( @@$coor_inlist )  loop main
+
+ set seed=$Saprotocol.iniseed end
+
+ coor init end
+ coordinates 
+   if ( &convert = true ) then
+     convert=true
+   end if
+   @@$file
+
+ show sum(1) ( not(hydrogen) and not(known) )
+ if ( $select = 0 ) then
+   display  %INFO: There are no coordinates missing for non-hydrogen atoms
+ end if
+
+ if ( $log_level = verbose ) then
+   set message=normal echo=on end
+ else
+   set message=off echo=off end
+ end if
+
+ inline @RUN:protocols/build-missing.cns
+
+ if ($nstruc = 1) then
+
+ if ( &auto_break = true ) then
+   inline @RUN:protocols/prot_break.cns
+   inline @RUN:protocols/dna_break.cns
+ end if
+
+! check for disulphide bonds
+
+ evaluate ($disu=0)
+
+ for $id1 in id ( resn CYS and name SG ) loop dis1
+
+   show (segid) (id $id1)
+   evaluate ($segid1=$result)
+   show (resid) (id $id1)
+   evaluate ($resid1=$result)
+
+   identity (store9) (all)
+
+   for $id2 in id ( resn CYS and name SG and 
+                  ( attr store9 > $id1 ) ) loop dis2
+
+     show (segid) (id $id2)
+     evaluate ($segid2=$result)
+     show (resid) (id $id2)
+     evaluate ($resid2=$result)
+
+     pick bond (id $id1) (id $id2) geometry
+
+     if ( $result <= &disulphide_dist ) then
+       evaluate ($disu=$disu+1)
+       evaluate ($seg1.$disu=$segid1)
+       evaluate ($seg2.$disu=$segid2)
+       evaluate ($res1.$disu=$resid1)
+       evaluate ($res2.$disu=$resid2)
+     end if
+
+   end loop dis2
+
+ end loop dis1
+
+ evaluate ($counter=1)
+ while ( $counter <= $disu ) loop disu
+   patch disu
+     reference=1=(segid $seg1.$counter and resid $res1.$counter)
+     reference=2=(segid $seg2.$counter and resid $res2.$counter)
+   end
+   buffer message
+     display disulphide added: from \
+$seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
+   end
+   evaluate ($counter=$counter+1)
+ end loop disu
+
+! check for cyclid peptidic bonds
+
+ if ($Toppar.cyclicpept_$chain eq TRUE ) then
+
+   evaluate ($cycp=0)
+
+   for $id1 in id ( tag and name N ) loop cyp1
+
+     show (segid) (id $id1)
+     evaluate ($segid1=$result)
+     show (resid) (id $id1)
+     evaluate ($resid1=$result)
+     show (resn) (id $id1)
+     evaluate ($resn1=$result)
+
+     for $id2 in id ( name C and bondedto (name O and not resid $resid1 ) ) loop cyp2
+
+       show (segid) (id $id2)
+       evaluate ($segid2=$result)
+       show (resid) (id $id2)
+       evaluate ($resid2=$result)
+       show (resn) (id $id2)
+       evaluate ($resn2=$result)
+
+       evaluate ($rdiff = decode($resid2) - decode($resid1))
+
+       if ($rdiff gt 2) then
+
+         pick bond (id $id1) (id $id2) geometry
+
+         if ( $result <= &cyclicpept_dist ) then
+           evaluate ($cycp=$cycp+1)
+           evaluate ($seg1.$cycp=$segid1)
+           evaluate ($seg2.$cycp=$segid2)
+           evaluate ($res1.$cycp=$resid1)
+           evaluate ($res2.$cycp=$resid2)
+           evaluate ($rsn1.$cycp=$resn1)
+           evaluate ($rsn2.$cycp=$resn2)
+         end if
+
+       end if
+
+     end loop cyp2
+
+   end loop cyp1
+
+   evaluate ($counter=1)
+
+   while ( $counter <= $cycp ) loop cypep
+
+     evaluate ($ptype = PEPT)
+     evaluate ($patchdone = 0)
+     if ( $rsn2.$counter eq GLY) then
+       if ($rsn1.$counter eq PRO) then
+         evaluate ($ptype = PPGP)
+         evaluate ($patchdone = 1)
+       end if
+       if ($rsn1.$counter eq GLY) then
+         evaluate ($ptype = PPGG)
+         evaluate ($patchdone = 1)
+       end if
+       if ($patchdone eq 0) then
+         evaluate ($ptype = PPG1)
+       end if
+     else
+       if ($rsn1.$counter eq PRO) then
+         evaluate ($ptype = PEPP)
+       end if
+       if ($rsn1.$counter eq GLY) then
+         evaluate ($ptype = PPG2)
+       end if
+     end if
+
+     patch $ptype
+       reference=+=(segid $seg1.$counter and resid $res1.$counter)
+       reference=-=(segid $seg2.$counter and resid $res2.$counter)
+     end
+
+     buffer message
+       display cyclic peptide detected: peptidic bond added between \
+$seg1.$counter[a4] $res1.$counter[a4] and $seg2.$counter[a4] $res2.$counter[a4]
+     end
+     evaluate ($counter=$counter+1)
+   end loop cypep
+
+ end if ! check for cyclic peptide
+
+! check for covalently-linked hemeC
+
+ inline @RUN:protocols/covalheme.cns
+
+
+ ! check for covalently-linked Acetylated Nter to CYS
+
+ inline @RUN:protocols/coval-ace-cys.cns
+
+ evaluate ($ironclus=0)
+ 
+ ! check for FE1 bonds in iron cluster
+ for $id1 in id ( resname CFE and name SG ) loop fes1
+
+   show (segid) (id $id1)
+   evaluate ($segid1=$result)
+   show (resid) (id $id1)
+   evaluate ($resid1=$result)
+
+   identity (store9) (all)
+
+   for $id2 in id ( resname CYF and name SG ) loop fes2
+
+     show (segid) (id $id2)
+     evaluate ($segid2=$result)
+     show (resid) (id $id2)
+     evaluate ($resid2=$result)
+
+     pick bond (id $id1) (id $id2) geometry
+
+     if ( $result <= &iron1cluster_dist ) then
+       evaluate ($ironclus=$ironclus+1)
+       evaluate ($seg1.$ironclus=$segid1)
+       evaluate ($seg2.$ironclus=$segid2)
+       evaluate ($res1.$ironclus=$resid1)
+       evaluate ($res2.$ironclus=$resid2)
+     end if
+
+   end loop fes2
+
+ end loop fes1
+
+ evaluate ($counter=1)
+ while ( $counter <= $ironclus ) loop iron1
+   patch sef1
+     reference=1=(segid $seg1.$counter and resid $res1.$counter)
+     reference=2=(segid $seg2.$counter and resid $res2.$counter)
+   end
+   buffer message
+     display iron FE1 sulphur bond added: from $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
+   end
+   evaluate ($counter=$counter+1)
+ end loop iron1
+
+ evaluate ($ironclus=0)
+ 
+ ! check for FE2 bonds in iron cluster
+ for $id1 in id ( resname CFE and name SG ) loop fes1
+
+   show (segid) (id $id1)
+   evaluate ($segid1=$result)
+   show (resid) (id $id1)
+   evaluate ($resid1=$result)
+
+   identity (store9) (all)
+
+   for $id2 in id ( resname CYF and name SG ) loop fes2
+
+     show (segid) (id $id2)
+     evaluate ($segid2=$result)
+     show (resid) (id $id2)
+     evaluate ($resid2=$result)
+
+     pick bond (id $id1) (id $id2) geometry
+
+     if ( $result <= &iron2cluster_dist ) then
+       if ($result > &iron1cluster_dist ) then
+         evaluate ($ironclus=$ironclus+1)
+         evaluate ($seg1.$ironclus=$segid1)
+         evaluate ($seg2.$ironclus=$segid2)
+         evaluate ($res1.$ironclus=$resid1)
+         evaluate ($res2.$ironclus=$resid2)
+       end if
+     end if
+
+   end loop fes2
+
+ end loop fes1
+
+ evaluate ($counter=1)
+ while ( $counter <= $ironclus ) loop iron2
+   patch sef2
+     reference=1=(segid $seg1.$counter and resid $res1.$counter)
+     reference=2=(segid $seg2.$counter and resid $res2.$counter)
+   end
+   buffer message
+     display iron FE2 sulphur bond added: from $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
+   end
+   evaluate ($counter=$counter+1)
+ end loop iron2
+
+
+ {- patching of RNA to DNA -}
+ evaluate ($counter=0)
+ if ($Toppar.dna_$chain eq TRUE) then
+   for $id in id ( tag and (resn ADE or resn CYT or resn THY or resn GUA or resn A or resn C or resn T or resn G) ) loop dna
+     evaluate ($counter=$counter+1)
+     show (segid) (id $id)
+     evaluate ($dna.segid.$counter=$result)
+     show (resid) (id $id)
+     evaluate ($dna.resid.$counter=$result)
+   end loop dna
+ end if
+ evaluate ($dna.num=$counter)
+
+ evaluate ($counter=0)
+ while ($counter < $dna.num) loop dnap
+   evaluate ($counter=$counter+1)
+   patch deox reference=nil=(segid $dna.segid.$counter and
+                             resid $dna.resid.$counter) end
+ end loop dnap
+
+
+ for $id in id ( &atom_select and name ca and resn PRO) loop cisp
+
+   show (segid) (id $id)
+   evaluate ($segid=$result)
+   show (resid) (id $id)
+   evaluate ($resid=$result)
+   show (resn) (id $id)
+   evaluate ($resn=$result)
+
+   identity (store9) ( &atom_select and ( name c and bondedto 
+            ( name n and resid $resid and segid $segid ) ) )
+   if ( $select = 1 ) then
+     show element (store9) (attribute store9 > 0)
+     evaluate ($id_prev=$result)
+     show (segid) (id $id_prev)
+     evaluate ($segid_prev=$result)
+     show (resid) (id $id_prev)
+     evaluate ($resid_prev=$result)
+     show (resn) (id $id_prev)
+     evaluate ($resn_prev=$result)
+ 
+     pick dihedral
+       (name ca and segid $segid_prev and resid $resid_prev)
+       (name  c and segid $segid_prev and resid $resid_prev)
+       (name  n and segid $segid and resid $resid)
+       (name ca and segid $segid and resid $resid)
+       geometry
+       
+     evaluate ($dihedral=mod($result+360,360))
+
+     if ( $dihedral > 180 ) then
+       evaluate ($dihedral=$dihedral-360)
+     end if
+
+     evaluate ($absdihedral=abs($dihedral))
+
+     if ( $absdihedral < 25 ) then
+       patch cisp reference=NIL=(segid $segid_prev and resid $resid_prev) end
+       display CIS peptide bon detected for residue $resid_prev
+     end if
+
+   end if
+
+ end loop cisp
+
+ end if {! end if for patches based on first structure only !}
+
+ if (&hydrogen_flag=false) then
+   delete selection=( hydrogen ) end
+ end if
+
+ delete selection=( &atom_delete ) end
+
+ inline @RUN:protocols/build-missing.cns
+
+ !check for histidine protonation state if auto mode on
+ !but only for the first model
+ if ($nstruc = 1) then
+   if ($Toppar.autohis = true) then
+     inline @RUN:protocols/auto-his.cns
+   end if
+ end if
+
+ energy end
+ evaluate ($bonded = $bond + $angl + $impr)
+ if ($bonded > 10000) then
+    minimize powell nstep=100 drop=10.0 nprint=10 end
+ end if
+ if ($bonded > 10000) then
+   energy end
+   evaluate ($bonded = $bond + $angl + $impr)
+   evaluate ($dispfile = $coor_outfile - ".pdb" + "_" + encode($nstruc) + ".warn")
+   set display=$dispfile end
+   display WARNING: the bonded energy is very high:
+   display Ebonded-total=$bonded Ebond=$bond Eangl=$angl Eimpr=$impr
+   display Something is possibly wrong with your input structure
+   close $dispfile end
+ end if
+
+ show sum(1) (not(known))
+ if ( $result < 100 ) then
+   for $id in id (not(known)) loop print
+     show (segid) (id $id)
+     evaluate ($segid=$result)
+     show (resn) (id $id)
+     evaluate ($resn=$result)
+     show (resid) (id $id)
+     evaluate ($resid=$result)
+     show (name) (id $id)
+     evaluate ($name=$result)
+     buffer message
+       display unknown coordinates for atom: $segid[a4] $resn[a4] $resid[a4] $name[a4]
+     end
+   end loop print
+ else
+   buffer message
+     display unknown coordinates for more than 100 atoms
+   end
+ end if
+
+ if (&set_bfactor=true) then
+   do (b=&bfactor) ( all )
+ else
+   show ave(b) (known and not(store9))
+   do (b=$result) (store9 and (attr b < 0.01))
+ end if
+
+ if ($saprotocol.randorien eq true) then
+   if (&set_occupancy=true) then
+     do (q=&occupancy) ( all )
+   end if
+ else
+   if (&set_occupancy=true) then
+     do (q=&occupancy) ( not(store9) )
+     do (q=0.0) (store9)
+   end if
+ end if
+
+ show sum(1) (store9)
+ if ( $result < 100 ) then
+   for $id in id (store9) loop print
+     show (segid) (id $id)
+     evaluate ($segid=$result)
+     show (resn) (id $id)
+     evaluate ($resn=$result)
+     show (resid) (id $id)
+     evaluate ($resid=$result)
+     show (name) (id $id)
+     evaluate ($name=$result)
+     buffer message
+       display coordinates built for atom: $segid[a4] $resn[a4] $resid[a4] $name[a4]
+     end 
+   end loop print
+ else
+   buffer message
+     display coordinates built for more than 100 hundred atoms
+   end
+ end if
+
+ set remarks=reset end
+
+ buffer message
+   to=remarks
+   dump
+ end
+ buffer message reset end
+ 
+ do (segid = $Toppar.prot_segid_$chain) (all)
+ 
+ if ($nstruc = 1) then
+   write coordinates output=$coor_outfile end
+ end if
+ evaluate ($filename_$nstruc = $coor_outfile - ".pdb" + "_" + encode($nstruc) + ".pdb")
+ write coordinates output=$filename_$nstruc end
+ evaluate ($nstruc = $nstruc + 1)
+
+ do (segid = "    ") (all)
+ 
+ end loop main
+
+ do (segid = $Toppar.prot_segid_$chain) (all)
+ write structure output=$psf_outfile end
+ write structure output=$psf2_outfile end
+
+ evaluate ($disfile = "BEGIN:file_" + encode($chain) + ".list")
+ set display=$disfile end
+
+ evaluate ($num = 1)
+ while ($num < $nstruc) loop wrfile
+    evaluate ($outstring = """ + $filename_$num + """)
+    display $outstring
+    evaluate ($num = $num + 1)
+ end loop wrfile
+
+ stop
+
+

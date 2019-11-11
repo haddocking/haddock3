@@ -2,7 +2,6 @@ import multiprocessing
 import subprocess
 import os
 import toml
-import tqdm
 from haddock.modules.functions import load_ini
 
 ini = load_ini('haddock3.ini')
@@ -79,12 +78,10 @@ class CNS:
 				arg_list.append((self.cns_exec, inp_f, out_f))
 
 		with multiprocessing.Pool(processes=nproc) as pool:
-			_ = list(tqdm.tqdm(pool.imap(self.execute, arg_list), total=len(arg_list)))
-			# _ = pool.imap(self.execute, arg_list)
+			_ = pool.starmap(self.execute, arg_list)
 
 	@staticmethod
-	def execute(args):
-		cns_exec, input_f, output_f = args
+	def execute(cns_exec, input_f, output_f):
 		with open(input_f) as inp:
 			with open(output_f, 'w+') as outf:
 				p = subprocess.Popen(cns_exec, stdin=inp, stdout=outf, close_fds=True)

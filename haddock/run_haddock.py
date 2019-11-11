@@ -41,12 +41,11 @@ def adieu():
     end = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     salut = bye()
     print(f'''
- Your HADDOCK Run: {s.run_dir} has been correctly setup
-
  Finished at {end}
 
 {salut}
 ''')
+
 
 def generate_topology(mol_dic, run_param):
     print('\n++ Generating topologies')
@@ -221,24 +220,27 @@ if __name__ == '__main__':
     greeting()
 
     setup_dictionary = toml.load(args.run_file)
+    run_id = setup_dictionary['identifier']['run']
+    if type(run_id) == int:
+        run_folder = f'run{run_id}'
+    else:
+        run_folder = f'run-{run_id}'
 
-    s = Setup(setup_dictionary)
-    s.prepare_folders()
-    s.configure_recipes()
-
-    processed_molecules = pre_process(setup_dictionary['molecules'])
+    if not os.path.isdir(run_folder):
+        print(f'+ Setting up {run_folder}')
+        s = Setup(setup_dictionary)
+        s.prepare_folders()
+        s.configure_recipes()
 
     if args.setup:
         print(f'+ Running Setup only mode (--setup), exiting now')
+        adieu()
         exit()
-    else:
-        run_id = setup_dictionary['identifier']['run']
-        if type(run_id) == int:
-            run_folder = f'run{run_id}'
-        else:
-            run_folder = f'run-{run_id}'
-        print(f'+ Executing {run_folder}')
-        os.chdir(run_folder)
+
+    processed_molecules = pre_process(setup_dictionary['molecules'])
+
+    print(f'+ Executing {run_folder}')
+    os.chdir(run_folder)
 
     run_f = 'data/run.toml'
     if not os.path.isfile(run_f):

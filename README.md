@@ -41,7 +41,7 @@ $ vim haddock/etc/haddock3.ini
 
 ```bash
 $ cd examples/protein-protein
-$ python3 ../../haddock/run_haddock.py run.toml
+$ python3 ../../haddock/haddock3.py run.toml
 ```
 
 # Scoring

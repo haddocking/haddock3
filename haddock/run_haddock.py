@@ -209,9 +209,6 @@ def pre_process(raw_molecule_dic):
 
 if __name__ == '__main__':
 
-    # if option --setup, only setup and do not run
-    # else setup and run
-
     parser = argparse.ArgumentParser(description='Setup your HADDOCK run')
     parser.add_argument("run_file", help="The run file containing the parameters of your run (.toml)")
     parser.add_argument("--setup", help="Only setup the run, do not execute", action="store_true", default=False)

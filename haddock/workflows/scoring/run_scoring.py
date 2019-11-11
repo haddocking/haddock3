@@ -7,7 +7,7 @@ from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
-from haddock.run_haddock import generate_topology
+from haddock.haddock3 import generate_topology
 from haddock.version import CURRENT_VERSION
 
 etc_folder = get_full_path('haddock', 'etc')

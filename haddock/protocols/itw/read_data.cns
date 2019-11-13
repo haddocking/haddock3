@@ -170,7 +170,7 @@ evaluate ($tensread = false)
 if ($Data.flags.xrdc = true) then
   noe 
     class tens
-    @@RUN:data/tensor/tensor.tbl
+    @@RUN:$tensor_tbl
     potential tens square
     scale     tens 500.0
   end
@@ -204,7 +204,7 @@ if ($Data.flags.xpcs = true) then
   if ($tensread eq FALSE) then
     noe 
       class tens
-      @@RUN:data/tensor/tensor.tbl
+      @@RUN:$tensor_tbl
       potential tens square
       scale     tens 500.0
     end

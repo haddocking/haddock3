@@ -62,6 +62,7 @@
     "ambi_9": false,
     "amb_lastit": 2,
     "anastruc_1": 200,
+    "anastruc_0": 200,
     "autohis": true,
     "c2sym_end1_1": "",
     "c2sym_end1_10": "",
@@ -1882,6 +1883,27 @@
     "zres_type_6": "",
     "zres_type_7": "",
     "zres_type_8": "",
-    "zres_type_9": ""
+    "zres_type_9": "",
+    "air_scaling": false,
+    "tot_unamb": 25,
+    "mrswi_hot": 0.5,
+    "mrswi_cool1": 0.5,
+    "mrswi_cool2": 0.5,
+    "mrswi_cool3": 0.5,
+    "rswi_hot": 0.5,
+    "rswi_cool1": 0.5,
+    "rswi_cool2": 0.5,
+    "rswi_cool3": 0.5,
+    "masy_hot": -1.0,
+    "masy_cool1": -1.0,
+    "masy_cool2": -0.1,
+    "masy_cool3": -0.1,
+    "asy_hot": 1.0,
+    "asy_cool1": 1.0,
+    "asy_cool2": 0.1,
+    "asy_cool3": 0.1,
+    "delenph": true,
+    "dihedflag": true
+
   }
 }

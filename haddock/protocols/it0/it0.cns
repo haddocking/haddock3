@@ -45,6 +45,28 @@ noe
 end
 
 !==================================================================!
+
+topology  @@RUN:$top_axis
+parameter @@RUN:$par_axis
+
+structure @@RUN:$tensor_psf
+
+topology  @@RUN:$top_axis
+parameter @@RUN:$par_axis
+structure @@RUN:$tensor_para_psf
+topology  @@RUN:$top_axis_dani
+parameter @@RUN:$par_axis
+structure @@RUN:$tensor_dani_psf
+coor @@RUN:$tensor_pdb
+coor @@RUN:$tensor_para_pdb
+
+@@RUN:$tensor_tbl
+@@RUN:$tensor_tbl
+@RUN:$scatter_lib
+@@RUN:$tensor_tbl
+@@RUN:$tensor_tbl
+
+
 evaluate ($saprotocol.crossdock=$crossdock)
 evaluate ($saprotocol.randorien=$randorien)
 evaluate ($saprotocol.rebuildcplx=$rebuildcplx)
@@ -88,12 +110,10 @@ evaluate ($saprotocol.cool3_steps=$cool3_steps)
 evaluate ($saprotocol.fbeta=100)
 evaluate ($saprotocol.mass=100)
 
-evaluate ($filenames.fileroot=$fileroot)
-evaluate ($filenames.template=$fileroot + "_1.pdb")
+!evaluate ($filenames.fileroot=$fileroot)
+!evaluate ($filenames.template=$fileroot + "_1.pdb")
 
 evaluate ($iterations.ini_count    =1)
-evaluate ($iterations.structures   =$structures_$iteration)
-evaluate ($iterations.keepstruct   =$keepstruct_$iteration)
 evaluate ($iterations.w_vdw        =$w_vdw_$iteration)
 evaluate ($iterations.w_elec       =$w_elec_$iteration)
 evaluate ($iterations.w_dist       =$w_dist_$iteration)
@@ -547,7 +567,7 @@ evaluate ($data.nb_dist=$dist_nb)
 evaluate ($refine.firstwater=$firstwater)
 evaluate ($refine.solvshell=$solvshell)
 evaluate ($refine.keepwater=$keepwater)
-evaluate ($refine.waterrefine=$min($structures_1,waterrefine))
+!evaluate ($refine.waterrefine=$min($structures_1,waterrefine))
 evaluate ($refine.solvent=$solvent)
 evaluate ($refine.heatsteps=$waterheatsteps)
 evaluate ($refine.steps=$watersteps)
@@ -748,7 +768,7 @@ evaluate ($zcent=$result)
 
 coor select (not known and resn ani) end
 if ($select gt 0) then
-  coor @@RUN:toppar/tensor.pdb
+  coor @@RUN:$tensor_pdb
 
   {* Find CoM of protein and move tensor 100 A away *}
   show ave (x) (name CA or name BB or name C1')
@@ -767,7 +787,7 @@ end if
 
 coor select (not known and resn xan) end
 if ($select gt 0) then
-  coor @@RUN:toppar/tensor_para.pdb
+  coor @@RUN:$tensor_para_pdb
   evaluate ($rantens_para = true)
 else
   evaluate ($rantens_para = false)
@@ -1123,8 +1143,8 @@ evaluate ($numnoe = 0)
       end if
 
       if ($Data.flags.sani eq true) then
-!        coor @@RUN:toppar/tensor.pdb
-        coor @@toppar/tensor.pdb
+!        coor @@RUN:$tensor_pdb
+        coor @@$tensor_pdb
         do (x = x + $xcent + 100) (resn ANI)
         do (y = y + $ycent + 100) (resn ANI)
         do (z = z + $zcent + 100) (resn ANI)
@@ -1139,16 +1159,16 @@ evaluate ($numnoe = 0)
       end if
 
       if ($Data.flags.xrdc eq true) then
-!        coor @@RUN:toppar/tensor_para.pdb
-        coor @@toppar/tensor_para.pdb
+!        coor @@RUN:$tensor_para_pdb
+        coor @@$tensor_para_pdb
         do (x=x+$xcent+100) (resn XAN)
         do (y=y+$ycent+100) (resn XAN)
         do (z=z+$zcent+100) (resn XAN)
       end if
 
       if ($Data.flags.xpcs eq true) then
-!        coor @@RUN:toppar/tensor_para.pdb
-        coor @@toppar/tensor_para.pdb
+!        coor @@RUN:$tensor_para_pdb
+        coor @@$tensor_para_pdb
         do (x=x+$xcent+100) (resn XAN)
         do (y=y+$ycent+100) (resn XAN)
         do (z=z+$zcent+100) (resn XAN)

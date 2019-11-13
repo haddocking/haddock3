@@ -57,7 +57,7 @@
 
     xray
         ! read in atomic form factors
-        @RUN:toppar/scatter.lib
+        @RUN:$scatter_lib
 
         ! reciprocal space complex arrays
         declare name=fobs  domain=reciprocal type=complex end

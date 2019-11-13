@@ -748,7 +748,7 @@ evaluate ($zcent=$result)
 
 coor select (not known and resn ani) end
 if ($select gt 0) then
-  coor @@RUN:toppar/tensor.pdb
+  coor @@RUN:$tensor_pdb
 
   {* Find CoM of protein and move tensor 100 A away *}
   show ave (x) (name CA or name BB or name C1')
@@ -767,7 +767,7 @@ end if
 
 coor select (not known and resn xan) end
 if ($select gt 0) then
-  coor @@RUN:toppar/tensor_para.pdb
+  coor @@RUN:$tensor_para_pdb
   evaluate ($rantens_para = true)
 else
   evaluate ($rantens_para = false)

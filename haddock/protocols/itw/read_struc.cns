@@ -19,9 +19,9 @@ end if
 
 !for the rdc restraints:
 if ($Data.flags.sani = true) then
-  topology  @@RUN:toppar/top_axis.pro end
-  parameter @@RUN:toppar/par_axis.pro end
-  structure @@RUN:toppar/tensor.psf end
+  topology  @@RUN:$top_axis end
+  parameter @@RUN:$par_axis end
+  structure @@RUN:$tensor_psf end
 end if
 eval ($xtensor = false)
 if ($Data.flags.xrdc = true) then
@@ -31,14 +31,14 @@ if ($Data.flags.xpcs = true) then
   eval ($xtensor = true)
 end if
 if ($xtensor = true) then
-  topology  @@RUN:toppar/top_axis.pro end
-  parameter @@RUN:toppar/par_axis.pro end
-  structure @@RUN:toppar/tensor_para.psf end
+  topology  @@RUN:$top_axis end
+  parameter @@RUN:$par_axis end
+  structure @@RUN:$tensor_para_psf end
 end if
 if ($Data.flags.dani = true) then
-  topology  @@RUN:toppar/top_axis_dani.pro end
-  parameter @@RUN:toppar/par_axis.pro end
-  structure @@RUN:toppar/tensor_dani.psf end
+  topology  @@RUN:$top_axis_dani end
+  parameter @@RUN:$par_axis end
+  structure @@RUN:$tensor_dani_psf end
 end if
 
 !read the parameter files:

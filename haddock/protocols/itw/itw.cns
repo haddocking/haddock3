@@ -707,7 +707,7 @@ if ($Data.flags.sani eq true) then
    flag incl sani end
    coor select (not known and resn ani) end
    if ($select gt 0) then 
-     coor @@RUN:toppar/tensor.pdb
+     coor @@RUN:$tensor_pdb
 
      {* Find CoM of protein and move tensor 100 A away *}
      show ave (x) (name CA or name BB or name C1') 
@@ -750,7 +750,7 @@ end if
 if ($xanmin eq true) then
    coor select (not known and resn xan) end
    if ($select gt 0) then 
-     coor @@RUN:toppar/tensor_para.pdb
+     coor @@RUN:$tensor_para_pdb
 
      {* Find CoM of protein and move tensor 100 A away *}
      show ave (x) (name CA or name BB or name C1') 

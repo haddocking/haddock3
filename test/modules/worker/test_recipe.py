@@ -11,7 +11,7 @@ class TestRecipeComposer(unittest.TestCase):
 		default = {"params": {"log_level": "verbose"}}
 		custom = {"params": {"log_level": "quiet"}}
 
-		self.Recipe = RecipeComposer(recipe_file='it0.cns', default_params=default, custom_params=custom)
+		self.Recipe = RecipeComposer(recipe_file='rigid-body.cns', default_params=default, custom_params=custom)
 
 	def test_identify_modules(self):
 

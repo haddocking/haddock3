@@ -26,7 +26,8 @@ def greeting():
     python_version = sys.version
     print(f'''##############################################
 #                                            #
-#              Starting HADDOCK               #
+#                   HADDOCK                  #
+#                                            #
 #             EXPERIMENTAL BUILD             #
 #                                            #
 ##############################################
@@ -156,7 +157,7 @@ def run_itw(model_list, run_param):
 
     recipe = f'water_refinement/template/{recipe_name}'
     if not os.path.isfile(recipe):
-        print('+ ERROR: Template recipe for semi-flexible not found')
+        print('+ ERROR: Template recipe for water-refinement not found')
 
     if '.cns' not in recipe:
         # Its a module, look for it

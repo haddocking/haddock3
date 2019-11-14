@@ -53,7 +53,7 @@ noe
         set echo off message off end 
         class      dist @@NEWIT:unambig.tbl
         class      ambi @@NEWIT:ambig.tbl
-        class      hbon @@RUN:data/hbonds/hbonds.tbl
+        class      hbon @@$hbond_fname
         set echo on message on end
 
         averaging  * sum
@@ -189,7 +189,7 @@ noe
         set echo off message off end 
         class      dist @@NEWIT:unambig.tbl
 !!!        class      ambi @@NEWIT:ambig.tbl
-!!!        class      hbon @@RUN:data/hbonds/hbonds.tbl                
+!!!        class      hbon @@$hbond_fname
         set echo on message on end
 
         averaging  * sum
@@ -311,7 +311,7 @@ noe
         set echo off message off end 
 !!!        class      dist @@NEWIT:unambig.tbl
         class      ambi @@NEWIT:ambig.tbl
-!!!        class      hbon @@RUN:data/hbonds/hbonds.tbl               
+!!!        class      hbon @@$hbond_fname
         set echo on message on end
 
         averaging  * sum
@@ -434,7 +434,7 @@ noe
         set echo off message off end 
         class      dist @@NEWIT:unambig.tbl
         class      ambi @@NEWIT:ambig.tbl
-!!!        class      hbon @@RUN:data/hbonds/hbonds.tbl
+!!!        class      hbon @@$hbond_fname
         set echo on message on end
 
         averaging  * sum
@@ -556,7 +556,7 @@ noe
         set echo off message off end 
 !!!        class      dist @@NEWIT:unambig.tbl
 !!!        class      ambi @@NEWIT:ambig.tbl
-        class      hbon @@RUN:data/hbonds/hbonds.tbl             
+        class      hbon @@$hbond_fname
         set echo on message on end
 
         averaging  * sum

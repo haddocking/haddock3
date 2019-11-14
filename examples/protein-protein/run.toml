@@ -24,16 +24,16 @@ nproc = 24
 recipe='default'
 
 [stage.rigid_body]
-recipe='default'
-sampling = 2
+recipe='rigid-body-minimal.cns'
+sampling = 10
 
 params.auto_his = true
 
 [stage.semi_flexible]
 recipe='default'
-sampling = 2
+sampling = 5
 
 [stage.water_refinement]
 recipe='default'
-sampling = 2
+sampling = 5
 #===========================================================#

@@ -32,17 +32,17 @@
     xray
         ! Set unit cell parameters. The angles are implicitely assumed to be 90'
         symmetry=(x, y, z)
-        a=&Data.em.xlength 
-        b=&Data.em.ylength 
-        c=&Data.em.zlength
+        a=$Data.em.xlength
+        b=$Data.em.ylength
+        c=$Data.em.zlength
 
         ! set target resolution
-        mapresolution &Data.em.resolution
+        mapresolution $Data.em.resolution
 
         ! set up FFT
         method=FFT
-        evaluate($voxelspacing = &Data.em.xlength / &Data.em.nx)
-        evaluate($gridsize = $voxelspacing/&Data.em.resolution)
+        evaluate($voxelspacing = $Data.em.xlength / $Data.em.nx)
+        evaluate($gridsize = $voxelspacing/$Data.em.resolution)
         fft 
             automemory=true
             gridsize=$gridsize
@@ -52,12 +52,12 @@
         end
 
         ! allocate space for the reflections.
-        generate 100000 &Data.em.resolution
+        generate 100000 $Data.em.resolution
     end
 
     xray
         ! read in atomic form factors
-        @RUN:$scatter_lib
+        @@$scatter_lib
 
         ! reciprocal space complex arrays
         declare name=fobs  domain=reciprocal type=complex end
@@ -92,7 +92,7 @@
         dtarget=(dvector(combine(amplitude(fobs),phase(fobs)), (fcalc), 1))
 
         ! set weight of target function
-        wa=&Data.em.kscale
+        wa=$Data.em.kscale
 
         ! set tolerance level for recomputing structure factors. This 
         ! should maybe be higher during the refinement stage.

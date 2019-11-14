@@ -1,8 +1,0 @@
-! set coordinates of centroids (MAP atom)
-evaluate($nchain1 = 0)
-while ($nchain1 < $Data.ncomponents) loop nloop1
-    evaluate($nchain1 = $nchain1 + 1)
-    do (x = $Data.centroids.xcom_$nchain1) (segid $Toppar.prot_segid_$nchain1 and name MAP)
-    do (y = $Data.centroids.ycom_$nchain1) (segid $Toppar.prot_segid_$nchain1 and name MAP)
-    do (z = $Data.centroids.zcom_$nchain1) (segid $Toppar.prot_segid_$nchain1 and name MAP)
-end loop nloop1

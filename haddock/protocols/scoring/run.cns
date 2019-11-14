@@ -4791,10 +4791,10 @@ evaluate (&iterations.anastruc     =&anastruc_$iteration)
 evaluate (&iterations.w_lcc        = &w_lcc_$iteration)
 
 
-evaluate (&data.ncomponents=&ncomponents)
+evaluate ($Data.ncomponents=&ncomponents)
 
 evaluate ($nmol=1)
-while ($nmol <= &data.ncomponents) loop mol
+while ($nmol <= $Data.ncomponents) loop mol
 
   !aa topology, linkage and parameters files 
   evaluate (&toppar.prot_top_$nmol=&prot_top_mol$nmol )
@@ -4858,8 +4858,8 @@ end loop mol
 evaluate (&toppar.par_nonbonded=&par_nonbonded)
 
 ! z-restraining
-evaluate (&Data.flags.zres =  &zres_on)
-evaluate (&data.numzres=&numzres)
+evaluate ($Data.flags.zres =  &zres_on)
+evaluate ($Data.numzres=&numzres)
 evaluate ($ncc=1)
 while ($ncc <= &numzres) loop zres
   evaluate (&toppar.zres_sta_$ncc=&zres_sta_$ncc)
@@ -4870,9 +4870,9 @@ while ($ncc <= &numzres) loop zres
 end loop zres
 
 ! NCS restraints
-evaluate (&data.kncs=&kncs)
-evaluate (&Data.flags.ncs  =  &ncs_on)
-evaluate (&data.numncs=&numncs)
+evaluate ($Data.kncs=&kncs)
+evaluate ($Data.flags.ncs  =  &ncs_on)
+evaluate ($Data.numncs=&numncs)
 evaluate ($ncc=1)
 while ($ncc <= &numncs) loop ncs
   evaluate (&toppar.ncs_sta1_$ncc=&ncs_sta1_$ncc)
@@ -4885,9 +4885,9 @@ while ($ncc <= &numncs) loop ncs
 end loop ncs
 
 ! Symmetry restraints
-evaluate (&data.ksym=&ksym)
-evaluate (&Data.flags.sym  =  &sym_on)
-evaluate (&data.numc2sym=&numc2sym)
+evaluate ($Data.ksym=&ksym)
+evaluate ($Data.flags.sym  =  &sym_on)
+evaluate ($Data.numc2sym=&numc2sym)
 evaluate ($nsym=1)
 while ($nsym <= &numc2sym) loop sym
   evaluate (&toppar.c2sym_sta1_$nsym=&c2sym_sta1_$nsym)
@@ -4899,7 +4899,7 @@ while ($nsym <= &numc2sym) loop sym
   evaluate ($nsym = $nsym + 1)
 end loop sym
 
-evaluate (&data.numc3sym=&numc3sym)
+evaluate ($Data.numc3sym=&numc3sym)
 evaluate ($nsym=1)
 while ($nsym <= &numc3sym) loop sym
   evaluate (&toppar.c3sym_sta1_$nsym=&c3sym_sta1_$nsym)
@@ -4914,7 +4914,7 @@ while ($nsym <= &numc3sym) loop sym
   evaluate ($nsym = $nsym + 1)
 end loop sym
 
-evaluate (&data.nums3sym=&nums3sym)
+evaluate ($Data.nums3sym=&nums3sym)
 evaluate ($nsym=1)
 while ($nsym <= &nums3sym) loop sym
   evaluate (&toppar.s3sym_sta1_$nsym=&s3sym_sta1_$nsym)
@@ -4929,7 +4929,7 @@ while ($nsym <= &nums3sym) loop sym
   evaluate ($nsym = $nsym + 1)
 end loop sym
 
-evaluate (&data.numc4sym=&numc4sym)
+evaluate ($Data.numc4sym=&numc4sym)
 evaluate ($nsym=1)
 while ($nsym <= &numc4sym) loop sym
   evaluate (&toppar.c4sym_sta1_$nsym=&c4sym_sta1_$nsym)
@@ -4947,7 +4947,7 @@ while ($nsym <= &numc4sym) loop sym
   evaluate ($nsym = $nsym + 1)
 end loop sym
 
-evaluate (&data.numc5sym=&numc5sym)
+evaluate ($Data.numc5sym=&numc5sym)
 evaluate ($nsym=1)
 while ($nsym <= &numc5sym) loop sym
   evaluate (&toppar.c5sym_sta1_$nsym=&c5sym_sta1_$nsym)
@@ -4969,7 +4969,7 @@ while ($nsym <= &numc5sym) loop sym
 end loop sym
 
 
-evaluate (&data.numc6sym=&numc6sym)
+evaluate ($Data.numc6sym=&numc6sym)
 evaluate ($nsym=1)
 while ($nsym <= &numc6sym) loop sym
   evaluate (&toppar.c6sym_sta1_$nsym=&c6sym_sta1_$nsym)
@@ -4993,223 +4993,223 @@ while ($nsym <= &numc6sym) loop sym
   evaluate ($nsym = $nsym + 1)
 end loop sym
 
-if ( &data.numc2sym eq 6) then
+if ( $Data.numc2sym eq 6) then
   evaluate (&saprotocol.rotate180_it0 = false)
   evaluate (&saprotocol.rotate180_it1 = false)
 end if
-if ( &data.numc3sym ne 0) then
+if ( $Data.numc3sym ne 0) then
   evaluate (&saprotocol.rotate180_it0 = false)
   evaluate (&saprotocol.rotate180_it1 = false)
 end if
-if ( &data.numc4sym ne 0) then
+if ( $Data.numc4sym ne 0) then
   evaluate (&saprotocol.rotate180_it0 = false)
   evaluate (&saprotocol.rotate180_it1 = false)
 end if
-if ( &data.numc5sym ne 0) then
+if ( $Data.numc5sym ne 0) then
   evaluate (&saprotocol.rotate180_it0 = false)
   evaluate (&saprotocol.rotate180_it1 = false)
 end if
-if ( &data.numc6sym ne 0) then
+if ( $Data.numc6sym ne 0) then
   evaluate (&saprotocol.rotate180_it0 = false)
   evaluate (&saprotocol.rotate180_it1 = false)
 end if
 
 
 !Dihedrals, DNA and distance restraints
-evaluate (&Data.dnarest = &dnarest_on)
-evaluate (&Data.flags.cdih =  &dihedrals_on)
-evaluate (&Data.cdih.on = &dihedrals_on)
-evaluate (&Data.ssdihed = &ssdihed)
-evaluate (&Data.error_dih = &error_dih)
-evaluate (&data.dihedrals.on=&dihedrals_on)
-evaluate (&data.dihedrals_hot=&dihedrals_hot)
-evaluate (&data.dihedrals_cool1=&dihedrals_cool1)
-evaluate (&data.dihedrals_cool2=&dihedrals_cool2)
-evaluate (&data.dihedrals_cool3=&dihedrals_cool3)
-evaluate (&data.hbonds_on=&hbonds_on)
+evaluate ($Data.dnarest = &dnarest_on)
+evaluate ($Data.flags.cdih =  &dihedrals_on)
+evaluate ($Data.cdih.on = &dihedrals_on)
+evaluate ($Data.ssdihed = &ssdihed)
+evaluate ($Data.error_dih = &error_dih)
+evaluate ($Data.dihedrals.on=&dihedrals_on)
+evaluate ($Data.dihedrals_hot=&dihedrals_hot)
+evaluate ($Data.dihedrals_cool1=&dihedrals_cool1)
+evaluate ($Data.dihedrals_cool2=&dihedrals_cool2)
+evaluate ($Data.dihedrals_cool3=&dihedrals_cool3)
+evaluate ($Data.hbonds_on=&hbonds_on)
 
 ! RDC restraints
-evaluate (&Data.flags.vean =  false)
-evaluate (&Data.flags.xrdc =  false)
-evaluate (&Data.flags.sani =  false)
-evaluate (&data.numrdc=&numrdc)
+evaluate ($Data.flags.vean =  false)
+evaluate ($Data.flags.xrdc =  false)
+evaluate ($Data.flags.sani =  false)
+evaluate ($Data.numrdc=&numrdc)
 evaluate ($ncc=1)
-while ($ncc <= &data.numrdc) loop rdc
+while ($ncc <= $Data.numrdc) loop rdc
   if (&rdc_choice_$ncc = "VANGLE") then
-    evaluate (&Data.flags.vean =  true)
+    evaluate ($Data.flags.vean =  true)
   end if
   if (&rdc_choice_$ncc = "SANI") then
-    evaluate (&Data.flags.sani =  true)
+    evaluate ($Data.flags.sani =  true)
   end if
   if (&rdc_choice_$ncc = "XRDC") then
-    evaluate (&Data.flags.xrdc =  true)
+    evaluate ($Data.flags.xrdc =  true)
   end if
-  evaluate (&data.rdc_choice_$ncc=&rdc_choice_$ncc)
-  evaluate (&data.rdc_firstIt_$ncc=&rdc_firstIt_$ncc)
-  evaluate (&data.rdc_lastIt_$ncc=&rdc_lastIt_$ncc)
-  evaluate (&data.rdc_hot_$ncc=&rdc_hot_$ncc)
-  evaluate (&data.rdc_cool1_$ncc=&rdc_cool1_$ncc)
-  evaluate (&data.rdc_cool2_$ncc=&rdc_cool2_$ncc)
-  evaluate (&data.rdc_cool3_$ncc=&rdc_cool3_$ncc)
-  evaluate (&data.rdc_r_$ncc=&rdc_r_$ncc)
-  evaluate (&data.rdc_d_$ncc=&rdc_d_$ncc)
-  evaluate (&data.ini_bor_hot_$ncc=&ini_bor_hot_$ncc)
-  evaluate (&data.ini_bor_cool1_$ncc=&ini_bor_cool1_$ncc)
-  evaluate (&data.ini_bor_cool2_$ncc=&ini_bor_cool2_$ncc)
-  evaluate (&data.ini_bor_cool3_$ncc=&ini_bor_cool3_$ncc)
-  evaluate (&data.ini_cen_hot_$ncc=&ini_cen_hot_$ncc)
-  evaluate (&data.ini_cen_cool1_$ncc=&ini_cen_cool1_$ncc)
-  evaluate (&data.ini_cen_cool2_$ncc=&ini_cen_cool2_$ncc)
-  evaluate (&data.ini_cen_cool3_$ncc=&ini_cen_cool3_$ncc)
-  evaluate (&data.fin_bor_hot_$ncc=&fin_bor_hot_$ncc)
-  evaluate (&data.fin_bor_cool1_$ncc=&fin_bor_cool1_$ncc)
-  evaluate (&data.fin_bor_cool2_$ncc=&fin_bor_cool2_$ncc)
-  evaluate (&data.fin_bor_cool3_$ncc=&fin_bor_cool3_$ncc)
-  evaluate (&data.fin_cen_hot_$ncc=&fin_cen_hot_$ncc)
-  evaluate (&data.fin_cen_cool1_$ncc=&fin_cen_cool1_$ncc)
-  evaluate (&data.fin_cen_cool2_$ncc=&fin_cen_cool2_$ncc)
-  evaluate (&data.fin_cen_cool3_$ncc=&fin_cen_cool3_$ncc)
+  evaluate ($Data.rdc_choice_$ncc=&rdc_choice_$ncc)
+  evaluate ($Data.rdc_firstIt_$ncc=&rdc_firstIt_$ncc)
+  evaluate ($Data.rdc_lastIt_$ncc=&rdc_lastIt_$ncc)
+  evaluate ($Data.rdc_hot_$ncc=&rdc_hot_$ncc)
+  evaluate ($Data.rdc_cool1_$ncc=&rdc_cool1_$ncc)
+  evaluate ($Data.rdc_cool2_$ncc=&rdc_cool2_$ncc)
+  evaluate ($Data.rdc_cool3_$ncc=&rdc_cool3_$ncc)
+  evaluate ($Data.rdc_r_$ncc=&rdc_r_$ncc)
+  evaluate ($Data.rdc_d_$ncc=&rdc_d_$ncc)
+  evaluate ($Data.ini_bor_hot_$ncc=&ini_bor_hot_$ncc)
+  evaluate ($Data.ini_bor_cool1_$ncc=&ini_bor_cool1_$ncc)
+  evaluate ($Data.ini_bor_cool2_$ncc=&ini_bor_cool2_$ncc)
+  evaluate ($Data.ini_bor_cool3_$ncc=&ini_bor_cool3_$ncc)
+  evaluate ($Data.ini_cen_hot_$ncc=&ini_cen_hot_$ncc)
+  evaluate ($Data.ini_cen_cool1_$ncc=&ini_cen_cool1_$ncc)
+  evaluate ($Data.ini_cen_cool2_$ncc=&ini_cen_cool2_$ncc)
+  evaluate ($Data.ini_cen_cool3_$ncc=&ini_cen_cool3_$ncc)
+  evaluate ($Data.fin_bor_hot_$ncc=&fin_bor_hot_$ncc)
+  evaluate ($Data.fin_bor_cool1_$ncc=&fin_bor_cool1_$ncc)
+  evaluate ($Data.fin_bor_cool2_$ncc=&fin_bor_cool2_$ncc)
+  evaluate ($Data.fin_bor_cool3_$ncc=&fin_bor_cool3_$ncc)
+  evaluate ($Data.fin_cen_hot_$ncc=&fin_cen_hot_$ncc)
+  evaluate ($Data.fin_cen_cool1_$ncc=&fin_cen_cool1_$ncc)
+  evaluate ($Data.fin_cen_cool2_$ncc=&fin_cen_cool2_$ncc)
+  evaluate ($Data.fin_cen_cool3_$ncc=&fin_cen_cool3_$ncc)
   evaluate ($ncc=$ncc+1)
 end loop rdc
 
 ! PCS restraints
-evaluate (&Data.flags.xpcs =  false)
-evaluate (&data.numpcs=&numpcs)
+evaluate ($Data.flags.xpcs =  false)
+evaluate ($Data.numpcs=&numpcs)
 evaluate ($ncc=1)
 while ($ncc <= &numpcs) loop pcs
   if (&pcs_choice_$ncc = "XPCS") then
-    evaluate (&Data.flags.xpcs =  true)
+    evaluate ($Data.flags.xpcs =  true)
   end if
-  evaluate (&data.pcs_choice_$ncc=&pcs_choice_$ncc)
-  evaluate (&data.pcs_firstIt_$ncc=&pcs_firstIt_$ncc)
-  evaluate (&data.pcs_lastIt_$ncc=&pcs_lastIt_$ncc)
-  evaluate (&data.pcs_hot_$ncc=&pcs_hot_$ncc)
-  evaluate (&data.pcs_cool1_$ncc=&pcs_cool1_$ncc)
-  evaluate (&data.pcs_cool2_$ncc=&pcs_cool2_$ncc)
-  evaluate (&data.pcs_cool3_$ncc=&pcs_cool3_$ncc)
-  evaluate (&data.pcs_r_$ncc=&pcs_r_$ncc)
-  evaluate (&data.pcs_d_$ncc=&pcs_d_$ncc)
+  evaluate ($Data.pcs_choice_$ncc=&pcs_choice_$ncc)
+  evaluate ($Data.pcs_firstIt_$ncc=&pcs_firstIt_$ncc)
+  evaluate ($Data.pcs_lastIt_$ncc=&pcs_lastIt_$ncc)
+  evaluate ($Data.pcs_hot_$ncc=&pcs_hot_$ncc)
+  evaluate ($Data.pcs_cool1_$ncc=&pcs_cool1_$ncc)
+  evaluate ($Data.pcs_cool2_$ncc=&pcs_cool2_$ncc)
+  evaluate ($Data.pcs_cool3_$ncc=&pcs_cool3_$ncc)
+  evaluate ($Data.pcs_r_$ncc=&pcs_r_$ncc)
+  evaluate ($Data.pcs_d_$ncc=&pcs_d_$ncc)
   evaluate ($ncc=$ncc+1)
 end loop pcs
 
 ! DANI restraints
-evaluate (&Data.flags.dani =  false)
-evaluate (&data.numdani=&numdani)
+evaluate ($Data.flags.dani =  false)
+evaluate ($Data.numdani=&numdani)
 evaluate ($ncc=1)
 while ($ncc <= &numdani) loop dani
   if (&dan_choice_$ncc = "DANI") then
-    evaluate (&Data.flags.dani =  true)
+    evaluate ($Data.flags.dani =  true)
   end if
-  evaluate (&data.dan_choice_$ncc=&dan_choice_$ncc)
-  evaluate (&data.dan_firstIt_$ncc=&dan_firstIt_$ncc)
-  evaluate (&data.dan_lastIt_$ncc=&dan_lastIt_$ncc)
-  evaluate (&data.dan_hot_$ncc=&dan_hot_$ncc)
-  evaluate (&data.dan_cool1_$ncc=&dan_cool1_$ncc)
-  evaluate (&data.dan_cool2_$ncc=&dan_cool2_$ncc)
-  evaluate (&data.dan_cool3_$ncc=&dan_cool3_$ncc)
-  evaluate (&data.dan_tc_$ncc=&dan_tc_$ncc)
-  evaluate (&data.dan_anis_$ncc=&dan_anis_$ncc)
-  evaluate (&data.dan_r_$ncc=&dan_r_$ncc)
-  evaluate (&data.dan_wh_$ncc=&dan_wh_$ncc)
-  evaluate (&data.dan_wn_$ncc=&dan_wn_$ncc)
+  evaluate ($Data.dan_choice_$ncc=&dan_choice_$ncc)
+  evaluate ($Data.dan_firstIt_$ncc=&dan_firstIt_$ncc)
+  evaluate ($Data.dan_lastIt_$ncc=&dan_lastIt_$ncc)
+  evaluate ($Data.dan_hot_$ncc=&dan_hot_$ncc)
+  evaluate ($Data.dan_cool1_$ncc=&dan_cool1_$ncc)
+  evaluate ($Data.dan_cool2_$ncc=&dan_cool2_$ncc)
+  evaluate ($Data.dan_cool3_$ncc=&dan_cool3_$ncc)
+  evaluate ($Data.dan_tc_$ncc=&dan_tc_$ncc)
+  evaluate ($Data.dan_anis_$ncc=&dan_anis_$ncc)
+  evaluate ($Data.dan_r_$ncc=&dan_r_$ncc)
+  evaluate ($Data.dan_wh_$ncc=&dan_wh_$ncc)
+  evaluate ($Data.dan_wn_$ncc=&dan_wn_$ncc)
   evaluate ($ncc=$ncc+1)
 end loop dani
 
 ! planarity restraints
-evaluate (&Data.flags.plan =  false)
+evaluate ($Data.flags.plan =  false)
 
 ! distance restraints
-evaluate (&Data.flags.noe  =  true)
-evaluate (&data.scaling=&air_scaling)
-evaluate (&data.totnoe_unamb=&tot_unamb)
-evaluate (&data.unamb_firstit=&unamb_firstit)
-evaluate (&data.unamb_lastit=&unamb_lastit)
-evaluate (&data.unamb_hot=&unamb_hot)
-evaluate (&data.unamb_cool1=&unamb_cool1)
-evaluate (&data.unamb_cool2=&unamb_cool2)
-evaluate (&data.unamb_cool3=&unamb_cool3)
-evaluate (&data.noecv=&noecv)
-evaluate (&data.ncvpart=&ncvpart)
+evaluate ($Data.flags.noe  =  true)
+evaluate ($Data.scaling=&air_scaling)
+evaluate ($Data.totnoe_unamb=&tot_unamb)
+evaluate ($Data.unamb_firstit=&unamb_firstit)
+evaluate ($Data.unamb_lastit=&unamb_lastit)
+evaluate ($Data.unamb_hot=&unamb_hot)
+evaluate ($Data.unamb_cool1=&unamb_cool1)
+evaluate ($Data.unamb_cool2=&unamb_cool2)
+evaluate ($Data.unamb_cool3=&unamb_cool3)
+evaluate ($Data.noecv=&noecv)
+evaluate ($Data.ncvpart=&ncvpart)
 
-evaluate (&data.totnoe_amb=&tot_amb)
-evaluate (&data.amb_firstit=&amb_firstit)
-evaluate (&data.amb_lastit=&amb_lastit)
-evaluate (&data.amb_hot=&amb_hot)
-evaluate (&data.amb_cool1=&amb_cool1)
-evaluate (&data.amb_cool2=&amb_cool2)
-evaluate (&data.amb_cool3=&amb_cool3)
+evaluate ($Data.totnoe_amb=&tot_amb)
+evaluate ($Data.amb_firstit=&amb_firstit)
+evaluate ($Data.amb_lastit=&amb_lastit)
+evaluate ($Data.amb_hot=&amb_hot)
+evaluate ($Data.amb_cool1=&amb_cool1)
+evaluate ($Data.amb_cool2=&amb_cool2)
+evaluate ($Data.amb_cool3=&amb_cool3)
 
-evaluate (&data.hbond_firstit=&hbond_firstit)
-evaluate (&data.hbond_lastit=&hbond_lastit)
-evaluate (&data.hbond_hot=&hbond_hot)
-evaluate (&data.hbond_cool1=&hbond_cool1)
-evaluate (&data.hbond_cool2=&hbond_cool2)
-evaluate (&data.hbond_cool3=&hbond_cool3)
+evaluate ($Data.hbond_firstit=&hbond_firstit)
+evaluate ($Data.hbond_lastit=&hbond_lastit)
+evaluate ($Data.hbond_hot=&hbond_hot)
+evaluate ($Data.hbond_cool1=&hbond_cool1)
+evaluate ($Data.hbond_cool2=&hbond_cool2)
+evaluate ($Data.hbond_cool3=&hbond_cool3)
 
-evaluate (&data.mrswi_hot=&mrswi_hot)
-evaluate (&data.mrswi_cool1=&mrswi_cool1)
-evaluate (&data.mrswi_cool2=&mrswi_cool2)
-evaluate (&data.mrswi_cool3=&mrswi_cool3)
+evaluate ($Data.mrswi_hot=&mrswi_hot)
+evaluate ($Data.mrswi_cool1=&mrswi_cool1)
+evaluate ($Data.mrswi_cool2=&mrswi_cool2)
+evaluate ($Data.mrswi_cool3=&mrswi_cool3)
 
-evaluate (&data.rswi_hot=&rswi_hot)
-evaluate (&data.rswi_cool1=&rswi_cool1)
-evaluate (&data.rswi_cool2=&rswi_cool2)
-evaluate (&data.rswi_cool3=&rswi_cool3)
+evaluate ($Data.rswi_hot=&rswi_hot)
+evaluate ($Data.rswi_cool1=&rswi_cool1)
+evaluate ($Data.rswi_cool2=&rswi_cool2)
+evaluate ($Data.rswi_cool3=&rswi_cool3)
 
-evaluate (&data.masy_hot=&masy_hot)
-evaluate (&data.masy_cool1=&masy_cool1)
-evaluate (&data.masy_cool2=&masy_cool2)
-evaluate (&data.masy_cool3=&masy_cool3)
+evaluate ($Data.masy_hot=&masy_hot)
+evaluate ($Data.masy_cool1=&masy_cool1)
+evaluate ($Data.masy_cool2=&masy_cool2)
+evaluate ($Data.masy_cool3=&masy_cool3)
 
-evaluate (&data.asy_hot=&asy_hot)
-evaluate (&data.asy_cool1=&asy_cool1)
-evaluate (&data.asy_cool2=&asy_cool2)
-evaluate (&data.asy_cool3=&asy_cool3)
+evaluate ($Data.asy_hot=&asy_hot)
+evaluate ($Data.asy_cool1=&asy_cool1)
+evaluate ($Data.asy_cool2=&asy_cool2)
+evaluate ($Data.asy_cool3=&asy_cool3)
 
-evaluate (&data.ranair=&ranair)
-if (&data.ranair eq true) then
-  evaluate (&data.noecv = false)
+evaluate ($Data.ranair=&ranair)
+if ($Data.ranair eq true) then
+  evaluate ($Data.noecv = false)
 end if
-evaluate (&data.cmrest=&cmrest)
-evaluate (&data.cmtight=&cmtight)
-evaluate (&data.kcont=&kcont)
-evaluate (&data.surfrest=&surfrest)
-evaluate (&data.ksurf=&ksurf)
+evaluate ($Data.cmrest=&cmrest)
+evaluate ($Data.cmtight=&cmtight)
+evaluate ($Data.kcont=&kcont)
+evaluate ($Data.surfrest=&surfrest)
+evaluate ($Data.ksurf=&ksurf)
 
 
 ! radius of gydration restraints
-evaluate (&data.flags.rg=&rgrest)
-evaluate (&data.rgtarg=&rgtarg)
-evaluate (&data.krg_hot=&krg_hot)
-evaluate (&data.krg_cool1=&krg_cool1)
-evaluate (&data.krg_cool2=&krg_cool2)
-evaluate (&data.krg_cool3=&krg_cool3)
-evaluate (&data.rgsele=&rgsele)
+evaluate ($Data.flags.rg=&rgrest)
+evaluate ($Data.rgtarg=&rgtarg)
+evaluate ($Data.krg_hot=&krg_hot)
+evaluate ($Data.krg_cool1=&krg_cool1)
+evaluate ($Data.krg_cool2=&krg_cool2)
+evaluate ($Data.krg_cool3=&krg_cool3)
+evaluate ($Data.rgsele=&rgsele)
 
-evaluate (&data.kzres=&kzres)
-evaluate (&data.zresmax=&zresmax)
-evaluate (&data.zresmin=&zresmin)
+evaluate ($Data.kzres=&kzres)
+evaluate ($Data.zresmax=&zresmax)
+evaluate ($Data.zresmin=&zresmin)
 
 ! keep or delete non-polar hydrogens
 evaluate (&toppar.delenph=&delenph)
 
 
 !Electrostatics:
-evaluate (&Data.flags.dihed = &dihedflag)
-evaluate (&Data.flags.elec0 = &elecflag_0)
-evaluate (&Data.flags.elec1 = &elecflag_1)
-evaluate (&Data.epsilon0 = &epsilon_0)
-evaluate (&Data.epsilon1 = &epsilon_1)
-evaluate (&Data.dielec0  = &dielec_0)
-evaluate (&Data.dielec1  = &dielec_1)
+evaluate ($Data.flags.dihed = &dihedflag)
+evaluate ($Data.flags.elec0 = &elecflag_0)
+evaluate ($Data.flags.elec1 = &elecflag_1)
+evaluate ($Data.epsilon0 = &epsilon_0)
+evaluate ($Data.epsilon1 = &epsilon_1)
+evaluate ($Data.dielec0  = &dielec_0)
+evaluate ($Data.dielec1  = &dielec_1)
 
 
 !Interaction matrix:
 evaluate ($nmol1=1)
-while ($nmol1 <= &data.ncomponents) loop mol1
+while ($nmol1 <= $Data.ncomponents) loop mol1
   evaluate ($nmol2=$nmol1 + 1)
   evaluate (&toppar.int_$nmol1_$nmol1 = &int_$nmol1_$nmol1)
-  while ($nmol2 <= &data.ncomponents) loop mol2
+  while ($nmol2 <= $Data.ncomponents) loop mol2
     evaluate (&toppar.int_$nmol1_$nmol2 = &int_$nmol1_$nmol2)
     evaluate (&toppar.int_$nmol2_$nmol1 = &int_$nmol1_$nmol2)
     evaluate ($nmol2=$nmol2 + 1)
@@ -5218,8 +5218,8 @@ while ($nmol1 <= &data.ncomponents) loop mol1
 end loop mol1
 
 !intermolecular contacts analysis
-evaluate (&data.hb_dist=&dist_hb)
-evaluate (&data.nb_dist=&dist_nb)
+evaluate ($Data.hb_dist=&dist_hb)
+evaluate ($Data.nb_dist=&dist_nb)
 
 
 !water refinement
@@ -5255,21 +5255,21 @@ else        {...now the standard PARALLHDG parameters}
 end if
 
 ! Water in rigid body docking
-evaluate (&data.waterdock=&waterdock)
-evaluate (&data.db_method=&db_method)
-evaluate (&data.water_tokeep=&water_tokeep)
-evaluate (&data.dnap_water_tokeep=&dnap_water_tokeep)
-evaluate (&data.water_randfrac=&water_randfrac)
-evaluate (&data.solvate_method=&solvate_method)
-evaluate (&data.water_surfcutoff=&water_surfcutoff)
-evaluate (&data.water_analysis=&water_analysis)
-evaluate (&data.transwater=&transwater)
-evaluate (&data.water_restraint_initial=&water_restraint_initial)
-evaluate (&data.water_restraint_cutoff=&water_restraint_cutoff)
-evaluate (&data.water_restraint_scale=&water_restraint_scale)
-evaluate (&data.waterensemble=&waterensemble)
+evaluate ($Data.waterdock=&waterdock)
+evaluate ($Data.db_method=&db_method)
+evaluate ($Data.water_tokeep=&water_tokeep)
+evaluate ($Data.dnap_water_tokeep=&dnap_water_tokeep)
+evaluate ($Data.water_randfrac=&water_randfrac)
+evaluate ($Data.solvate_method=&solvate_method)
+evaluate ($Data.water_surfcutoff=&water_surfcutoff)
+evaluate ($Data.water_analysis=&water_analysis)
+evaluate ($Data.transwater=&transwater)
+evaluate ($Data.water_restraint_initial=&water_restraint_initial)
+evaluate ($Data.water_restraint_cutoff=&water_restraint_cutoff)
+evaluate ($Data.water_restraint_scale=&water_restraint_scale)
+evaluate ($Data.waterensemble=&waterensemble)
 
-if (&data.waterdock eq true) then
+if ($Data.waterdock eq true) then
   evaluate (&saprotocol.rotate180_it0 = false)
   evaluate (&saprotocol.rotate180_it1 = false)
   evaluate (&SaProtocol.initiosteps = 0)
@@ -5279,31 +5279,31 @@ if (&data.waterdock eq true) then
 end if
 
 ! Centroid parameters
-eval(&data.flags.centroids = &centroid_rest)
-eval(&data.centroids.kscale = &centroid_kscale)
+eval($Data.flags.centroids = &centroid_rest)
+eval($Data.centroids.kscale = &centroid_kscale)
 eval($nchain = 0)
 while ($nchain < &ncomponents) loop nloop1
     eval($nchain = $nchain + 1)
-    eval(&data.centroids.xcom_$nchain = &xcom_$nchain)
-    eval(&data.centroids.ycom_$nchain = &ycom_$nchain)
-    eval(&data.centroids.zcom_$nchain = &zcom_$nchain)
-    eval(&data.centroids.ambi_$nchain = &ambi_$nchain)
+    eval($Data.centroids.xcom_$nchain = &xcom_$nchain)
+    eval($Data.centroids.ycom_$nchain = &ycom_$nchain)
+    eval($Data.centroids.zcom_$nchain = &zcom_$nchain)
+    eval($Data.centroids.ambi_$nchain = &ambi_$nchain)
 end loop nloop1
 
 if (&saprotocol.expand eq true) then
-  eval(&data.flags.centroids = true)
+  eval($Data.flags.centroids = true)
 end if
 
 ! Cryo-EM parameters
-eval(&data.flags.em = &em_rest)
-eval(&data.em.kscale = &em_kscale)
-eval(&data.em.it0 = &em_it0)
-eval(&data.em.it1 = &em_it1)
-eval(&data.em.itw = &em_itw)
-eval(&data.em.resolution = &em_resolution)
-eval(&data.em.nx = &nx)
-eval(&data.em.ny = &ny)
-eval(&data.em.nz = &nz)
-eval(&data.em.xlength = &xlength)
-eval(&data.em.ylength = &ylength)
-eval(&data.em.zlength = &zlength)
+eval($Data.flags.em = &em_rest)
+eval($Data.em.kscale = &em_kscale)
+eval($Data.em.it0 = &em_it0)
+eval($Data.em.it1 = &em_it1)
+eval($Data.em.itw = &em_itw)
+eval($Data.em.resolution = &em_resolution)
+eval($Data.em.nx = &nx)
+eval($Data.em.ny = &ny)
+eval($Data.em.nz = &nz)
+eval($Data.em.xlength = &xlength)
+eval($Data.em.ylength = &ylength)
+eval($Data.em.zlength = &zlength)

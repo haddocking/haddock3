@@ -19,21 +19,21 @@ evaluate ($calcsteps= $SaProtocol.initiosteps)
 evaluate ($printsteps= max(int($calcsteps/10),1))
 
 noe 
-    rswitch ambi &Data.Rswi_hot 
-    rswitch dist &Data.Rswi_hot
-    rswitch hbon &Data.Rswi_hot
+    rswitch ambi $Data.Rswi_hot
+    rswitch dist $Data.Rswi_hot
+    rswitch hbon $Data.Rswi_hot
 
-    mrswitch ambi &Data.mRswi_hot 
-    mrswitch dist &Data.mRswi_hot
-    mrswitch hbon &Data.mRswi_hot
+    mrswitch ambi $Data.mRswi_hot
+    mrswitch dist $Data.mRswi_hot
+    mrswitch hbon $Data.mRswi_hot
 
-    asym ambi &Data.asy_hot 
-    asym dist &Data.asy_hot
-    asym hbon &Data.asy_hot
+    asym ambi $Data.asy_hot
+    asym dist $Data.asy_hot
+    asym hbon $Data.asy_hot
 
-    masym ambi &Data.masy_hot 
-    masym dist &Data.masy_hot
-    masym hbon &Data.masy_hot
+    masym ambi $Data.masy_hot
+    masym dist $Data.masy_hot
+    masym hbon $Data.masy_hot
 end
 
 evaluate ($bath = &SaPRotocol.tadhigh_t)
@@ -44,13 +44,13 @@ do (vy = maxwell($bath)) (all)
 do (vz = maxwell($bath)) (all)
 
 
-restraints dihedral scale &Data.dihedrals_hot end 
+restraints dihedral scale $Data.dihedrals_hot end
 
 evaluate ($nrdc=1)
 while ($nrdc <= $data.numrdc) loop rdc
   !for the vean statement:
-  evaluate( $k_cen_$nrdc = &data.ini_cen_hot_$nrdc)
-  evaluate( $k_bor_$nrdc = &data.ini_bor_hot_$nrdc)
+  evaluate( $k_cen_$nrdc = $Data.ini_cen_hot_$nrdc)
+  evaluate( $k_bor_$nrdc = $Data.ini_bor_hot_$nrdc)
   evaluate( $cln = "rd" + encode($nrdc) )
   if ($Data.flags.sani eq true) then
     sani class $cln force $Data.rdc_hot_$nrdc end
@@ -89,9 +89,9 @@ if ($Data.scaling eq TRUE) then
 end if
 
 noe 
-  scale dist  &Data.unamb_hot 
-  scale ambi  &Data.amb_hot
-  scale hbon  &Data.hbond_hot
+  scale dist  $Data.unamb_hot
+  scale ambi  $Data.amb_hot
+  scale hbon  $Data.hbond_hot
 end
       
 evaluate ($kinter = &SaProtocol.inter_init_rigid)

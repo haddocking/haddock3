@@ -1,7 +1,7 @@
 {
   "topology": "generate-topology.cns",
-  "rigid_body": "it0.cns",
-  "semi_flexible": "it1.cns",
-  "water_refinement": "itw.cns",
+  "rigid_body": "rigid-body.cns",
+  "semi_flexible": "semi-flexible.cns",
+  "water_refinement": "water_refinement.cns",
   "scoring": "scoring.cns"
 }

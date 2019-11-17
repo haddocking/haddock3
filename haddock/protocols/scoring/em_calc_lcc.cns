@@ -59,7 +59,7 @@
 
     do (b = 0) (all)
     evaluate($nchain1 = 0)
-    while ($nchain1 < &Data.ncomponents) loop nloop1
+    while ($nchain1 < $Data.ncomponents) loop nloop1
         evaluate($nchain1 = $nchain1 + 1)
         
         !if ($Saprotocol.init_placement.prot_segid_$nchain1.fixed = False) then

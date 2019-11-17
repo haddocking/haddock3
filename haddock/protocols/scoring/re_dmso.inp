@@ -101,7 +101,7 @@ if ($Data.flags.sani eq true) then
    flag incl sani end
    coor select (not known and resn ani) end
    if ($select gt 0) then 
-     coor @@RUN:toppar/tensor.pdb
+     coor @@$tensor_pdb
 
      {* Find CoM of protein and move tensor 100 A away *}
      show ave (x) (name CA or name BB or name C1') 
@@ -144,7 +144,7 @@ end if
 if ($xanmin eq true) then
    coor select (not known and resn xan) end
    if ($select gt 0) then 
-     coor @@RUN:toppar/tensor_para.pdb
+     coor @@$tensor_para_pdb
 
      {* Find CoM of protein and move tensor 100 A away *}
      show ave (x) (name CA or name BB or name C1') 
@@ -256,10 +256,10 @@ if ($Data.ranair eq true) then
 !  @RUN:protocols/contactairs.cns
 
   !Read back in hbond data
-  if (&data.hbond_lastit ge &iteration) then
-      if (&data.hbond_firstit le &iteration) then
-        if (&data.hbonds_on eq true) then 
-          noe @@RUN:data/hbonds/hbonds.tbl end
+  if ($Data.hbond_lastit ge &iteration) then
+      if ($Data.hbond_firstit le &iteration) then
+        if ($Data.hbonds_on eq true) then
+          noe @@$hbond_fname end
         end if
       end if
   end if

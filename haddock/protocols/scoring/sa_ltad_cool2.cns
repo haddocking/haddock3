@@ -18,42 +18,42 @@ module(SaProtocol;Data;Toppar)
 
 evaluate ($ncycle = 10)
 
-evaluate ($asy_add = (&Data.asy_cool2-&Data.asy_cool1)/$ncycle)
-evaluate ($masy_add = (&Data.masy_cool2-&Data.masy_cool1)/$ncycle)
+evaluate ($asy_add = ($Data.asy_cool2-$Data.asy_cool1)/$ncycle)
+evaluate ($masy_add = ($Data.masy_cool2-$Data.masy_cool1)/$ncycle)
 
-evaluate ($asy=&Data.asy_cool1)
-evaluate ($masy=&Data.masy_cool1)
+evaluate ($asy=$Data.asy_cool1)
+evaluate ($masy=$Data.masy_cool1)
 
 noe 
-    rswitch ambi &Data.Rswi_cool1 
-    rswitch dist &Data.Rswi_cool1
-    rswitch hbon &Data.Rswi_cool1
+    rswitch ambi $Data.Rswi_cool1
+    rswitch dist $Data.Rswi_cool1
+    rswitch hbon $Data.Rswi_cool1
 
-    mrswitch ambi &Data.mRswi_cool1 
-    mrswitch dist &Data.mRswi_cool1
-    mrswitch hbon &Data.mRswi_cool1
+    mrswitch ambi $Data.mRswi_cool1
+    mrswitch dist $Data.mRswi_cool1
+    mrswitch hbon $Data.mRswi_cool1
 
-    asym ambi &Data.asy_cool1 
-    asym dist &Data.asy_cool1
-    asym hbon &Data.asy_cool1
+    asym ambi $Data.asy_cool1
+    asym dist $Data.asy_cool1
+    asym hbon $Data.asy_cool1
 
-    masym ambi &Data.masy_cool1 
-    masym dist &Data.masy_cool1
-    masym hbon &Data.masy_cool1
+    masym ambi $Data.masy_cool1
+    masym dist $Data.masy_cool1
+    masym hbon $Data.masy_cool1
 end
 
-restraints dihedral   scale=&Data.dihedrals_cool2   end
+restraints dihedral   scale=$Data.dihedrals_cool2   end
 
 
 evaluate ($nrdc=1)
 while ($nrdc <= $data.numrdc) loop rdc
-  evaluate( $k_sani_$nrdc  = &Data.rdc_cool1_$nrdc)
-  evaluate( $k_cen_$nrdc = &Data.ini_cen_cool2_$nrdc)
-  evaluate( $cen_fac_$nrdc = ( &Data.fin_cen_cool2_$nrdc / &Data.ini_cen_cool2_$nrdc)^( 1 / $ncycle))
-  evaluate( $k_bor_$nrdc = &Data.ini_bor_cool2_$nrdc)
-  evaluate( $bor_fac_$nrdc = ( &Data.fin_bor_cool2_$nrdc / &Data.ini_bor_cool2_$nrdc)^( 1 / $ncycle))
-  if (&Data.rdc_cool1_$nrdc > 0) then
-    evaluate( $sani_fac_$nrdc = ( &Data.rdc_cool2_$nrdc / &Data.rdc_cool1_$nrdc)^( 1 / $ncycle))
+  evaluate( $k_sani_$nrdc  = $Data.rdc_cool1_$nrdc)
+  evaluate( $k_cen_$nrdc = $Data.ini_cen_cool2_$nrdc)
+  evaluate( $cen_fac_$nrdc = ( $Data.fin_cen_cool2_$nrdc / $Data.ini_cen_cool2_$nrdc)^( 1 / $ncycle))
+  evaluate( $k_bor_$nrdc = $Data.ini_bor_cool2_$nrdc)
+  evaluate( $bor_fac_$nrdc = ( $Data.fin_bor_cool2_$nrdc / $Data.ini_bor_cool2_$nrdc)^( 1 / $ncycle))
+  if ($Data.rdc_cool1_$nrdc > 0) then
+    evaluate( $sani_fac_$nrdc = ( $Data.rdc_cool2_$nrdc / $Data.rdc_cool1_$nrdc)^( 1 / $ncycle))
   else
     evaluate( $sani_fac_$nrdc = 0)
   end if
@@ -73,9 +73,9 @@ end loop rdc
 
 evaluate ($ndani=1)
 while ($ndani <= $data.numdani) loop dani
-  evaluate( $k_dani_$ndani  = &Data.dan_cool1_$ndani)
-  if (&Data.dan_cool1_$ndani > 0) then
-    evaluate( $dani_fac_$ndani = ( &Data.dan_cool2_$ndani / &Data.dan_cool1_$ndani)^( 1 / $ncycle))
+  evaluate( $k_dani_$ndani  = $Data.dan_cool1_$ndani)
+  if ($Data.dan_cool1_$ndani > 0) then
+    evaluate( $dani_fac_$ndani = ( $Data.dan_cool2_$ndani / $Data.dan_cool1_$ndani)^( 1 / $ncycle))
   else
     evaluate( $dani_fac_$ndani = 0)
   end if
@@ -90,9 +90,9 @@ end loop dani
 evaluate ($npcs=1)
 while ($npcs <= $data.numpcs) loop pcs
   if ($Data.flags.xpcs eq true) then
-    evaluate( $k_xpcs_$npcs  = &Data.pcs_cool1_$npcs)
-    if (&Data.pcs_hot_$npcs > 0) then
-      evaluate( $xpcs_fac_$npcs = ( &Data.pcs_cool2_$npcs / &Data.pcs_cool1_$npcs)^( 1 / $ncycle))
+    evaluate( $k_xpcs_$npcs  = $Data.pcs_cool1_$npcs)
+    if ($Data.pcs_hot_$npcs > 0) then
+      evaluate( $xpcs_fac_$npcs = ( $Data.pcs_cool2_$npcs / $Data.pcs_cool1_$npcs)^( 1 / $ncycle))
     else
       evaluate( $xpcs_fac_$npcs = 0)
     end if
@@ -111,31 +111,31 @@ evaluate ($calcsteps = int(&SaProtocol.cool2_steps/$ncycle))
 evaluate ($printsteps = int($calcsteps / 4))
 evaluate ($timestep = &SaProtocol.timestep*&SaProtocol.tadfactor)
 
-if (&Data.unamb_cool1 = 0) then
-  evaluate (&Data.unamb_cool1 = 0.000001)
+if ($Data.unamb_cool1 = 0) then
+  evaluate ($Data.unamb_cool1 = 0.000001)
 end if
-if (&Data.unamb_cool2 = 0) then
-  evaluate (&Data.unamb_cool2 = 0.000001)
+if ($Data.unamb_cool2 = 0) then
+  evaluate ($Data.unamb_cool2 = 0.000001)
 end if
-if (&Data.amb_cool1 = 0) then
-  evaluate (&Data.amb_cool1 = 0.000001)
+if ($Data.amb_cool1 = 0) then
+  evaluate ($Data.amb_cool1 = 0.000001)
 end if
-if (&Data.amb_cool2 = 0) then
-  evaluate (&Data.amb_cool2 = 0.000001)
+if ($Data.amb_cool2 = 0) then
+  evaluate ($Data.amb_cool2 = 0.000001)
 end if
-if (&Data.hbond_cool1 = 0) then
-  evaluate (&Data.hbond_cool1 = 0.000001)
+if ($Data.hbond_cool1 = 0) then
+  evaluate ($Data.hbond_cool1 = 0.000001)
 end if
-if (&Data.hbond_cool2 = 0) then
-  evaluate (&Data.hbond_cool2 = 0.000001)
+if ($Data.hbond_cool2 = 0) then
+  evaluate ($Data.hbond_cool2 = 0.000001)
 end if
 
-evaluate ($k_unamb= &Data.unamb_cool1)
-evaluate ($unamb_fac = (&Data.unamb_cool2/&Data.unamb_cool1)^(1/$ncycle))
-evaluate ($k_amb= &Data.amb_cool1)
-evaluate ($amb_fac = (&Data.amb_cool2/&Data.amb_cool1)^(1/$ncycle))
-evaluate ($k_hbond= &Data.hbond_cool1)
-evaluate ($hbond_fac = (&Data.hbond_cool2/&Data.hbond_cool1)^(1/$ncycle))
+evaluate ($k_unamb= $Data.unamb_cool1)
+evaluate ($unamb_fac = ($Data.unamb_cool2/$Data.unamb_cool1)^(1/$ncycle))
+evaluate ($k_amb= $Data.amb_cool1)
+evaluate ($amb_fac = ($Data.amb_cool2/$Data.amb_cool1)^(1/$ncycle))
+evaluate ($k_hbond= $Data.hbond_cool1)
+evaluate ($hbond_fac = ($Data.hbond_cool2/$Data.hbond_cool1)^(1/$ncycle))
 
 
 evaluate ($bath  = &SaProtocol.t2_init)

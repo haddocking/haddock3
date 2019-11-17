@@ -1,0 +1,248 @@
+! sa_ltad_cool2.cns
+!   Perform the second simulation annealing stage of it1
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+!module(SaProtocol;Data;Toppar)
+
+! module sa_ltad_cool2.cns
+! torsion dynamics cooling
+
+evaluate ($ncycle = 10)
+
+evaluate ($asy_add = ($Data.asy_cool2-$Data.asy_cool1)/$ncycle)
+evaluate ($masy_add = ($Data.masy_cool2-$Data.masy_cool1)/$ncycle)
+
+evaluate ($asy=$Data.asy_cool1)
+evaluate ($masy=$Data.masy_cool1)
+
+noe 
+    rswitch ambi $Data.Rswi_cool1
+    rswitch dist $Data.Rswi_cool1
+    rswitch hbon $Data.Rswi_cool1
+
+    mrswitch ambi $Data.mRswi_cool1
+    mrswitch dist $Data.mRswi_cool1
+    mrswitch hbon $Data.mRswi_cool1
+
+    asym ambi $Data.asy_cool1
+    asym dist $Data.asy_cool1
+    asym hbon $Data.asy_cool1
+
+    masym ambi $Data.masy_cool1
+    masym dist $Data.masy_cool1
+    masym hbon $Data.masy_cool1
+end
+
+restraints dihedral   scale=$Data.dihedrals_cool2   end
+
+
+evaluate ($nrdc=1)
+while ($nrdc <= $data.numrdc) loop rdc
+  evaluate( $k_sani_$nrdc  = $Data.rdc_cool1_$nrdc)
+  evaluate( $k_cen_$nrdc = $Data.ini_cen_cool2_$nrdc)
+  evaluate( $cen_fac_$nrdc = ( $Data.fin_cen_cool2_$nrdc / $Data.ini_cen_cool2_$nrdc)^( 1 / $ncycle))
+  evaluate( $k_bor_$nrdc = $Data.ini_bor_cool2_$nrdc)
+  evaluate( $bor_fac_$nrdc = ( $Data.fin_bor_cool2_$nrdc / $Data.ini_bor_cool2_$nrdc)^( 1 / $ncycle))
+  if ($Data.rdc_cool1_$nrdc > 0) then
+    evaluate( $sani_fac_$nrdc = ( $Data.rdc_cool2_$nrdc / $Data.rdc_cool1_$nrdc)^( 1 / $ncycle))
+  else
+    evaluate( $sani_fac_$nrdc = 0)
+  end if
+  evaluate ($cln = "rd" + encode($nrdc) )
+  if ($Data.flags.vean eq true) then
+    vean class $cln force $k_bor_$nrdc $k_cen_$nrdc end
+  end if
+  if ($Data.flags.sani eq true) then
+    sani class $cln force $k_sani_$nrdc end
+  end if
+  if ($Data.flags.xrdc eq true) then
+    xrdc class $cln force $k_sani_$nrdc end
+  end if
+  evaluate ($nrdc = $nrdc + 1)
+end loop rdc
+
+
+evaluate ($ndani=1)
+while ($ndani <= $data.numdani) loop dani
+  evaluate( $k_dani_$ndani  = $Data.dan_cool1_$ndani)
+  if ($Data.dan_cool1_$ndani > 0) then
+    evaluate( $dani_fac_$ndani = ( $Data.dan_cool2_$ndani / $Data.dan_cool1_$ndani)^( 1 / $ncycle))
+  else
+    evaluate( $dani_fac_$ndani = 0)
+  end if
+  evaluate ($cln = "da" + encode($ndani) )
+  if ($Data.flags.dani eq true) then
+    dani class $cln force $Data.dan_hot_$ndani end
+  end if
+  dani class $cln force $k_dani_$ndani end
+  evaluate ($ndani = $ndani + 1)
+end loop dani
+
+evaluate ($npcs=1)
+while ($npcs <= $data.numpcs) loop pcs
+  if ($Data.flags.xpcs eq true) then
+    evaluate( $k_xpcs_$npcs  = $Data.pcs_cool1_$npcs)
+    if ($Data.pcs_hot_$npcs > 0) then
+      evaluate( $xpcs_fac_$npcs = ( $Data.pcs_cool2_$npcs / $Data.pcs_cool1_$npcs)^( 1 / $ncycle))
+    else
+      evaluate( $xpcs_fac_$npcs = 0)
+    end if
+    evaluate ($cln = "pc" + encode($npcs) )
+    xpcs class $cln force $k_xpcs_$npcs end
+  end if
+  evaluate ($npcs= $npcs + 1)
+end loop pcs
+
+
+evaluate ($interstep = ($SaProtocol.inter_fin_cool2 - $SaProtocol.inter_init_cool2)/($ncycle-1))
+evaluate ($kinter = $SaProtocol.inter_init_cool2)
+
+evaluate ($tempstep = ($SaProtocol.t2_init - $SaProtocol.t2_final)/$ncycle)
+evaluate ($calcsteps = int($SaProtocol.cool2_steps/$ncycle))
+evaluate ($printsteps = int($calcsteps / 4))
+evaluate ($timestep = $SaProtocol.timestep*$SaProtocol.tadfactor)
+
+if ($Data.unamb_cool1 = 0) then
+  evaluate ($Data.unamb_cool1 = 0.000001)
+end if
+if ($Data.unamb_cool2 = 0) then
+  evaluate ($Data.unamb_cool2 = 0.000001)
+end if
+if ($Data.amb_cool1 = 0) then
+  evaluate ($Data.amb_cool1 = 0.000001)
+end if
+if ($Data.amb_cool2 = 0) then
+  evaluate ($Data.amb_cool2 = 0.000001)
+end if
+if ($Data.hbond_cool1 = 0) then
+  evaluate ($Data.hbond_cool1 = 0.000001)
+end if
+if ($Data.hbond_cool2 = 0) then
+  evaluate ($Data.hbond_cool2 = 0.000001)
+end if
+
+evaluate ($k_unamb= $Data.unamb_cool1)
+evaluate ($unamb_fac = ($Data.unamb_cool2/$Data.unamb_cool1)^(1/$ncycle))
+evaluate ($k_amb= $Data.amb_cool1)
+evaluate ($amb_fac = ($Data.amb_cool2/$Data.amb_cool1)^(1/$ncycle))
+evaluate ($k_hbond= $Data.hbond_cool1)
+evaluate ($hbond_fac = ($Data.hbond_cool2/$Data.hbond_cool1)^(1/$ncycle))
+
+
+evaluate ($bath  = $SaProtocol.t2_init)
+do (vx=maxwell($bath)) ( all )
+do (vy=maxwell($bath)) ( all )
+do (vz=maxwell($bath)) ( all )
+
+evaluate ($reassign = TRUE)
+evaluate ($i_cool = 0)
+while ($i_cool < $ncycle) loop cool
+
+      evaluate ($i_cool=$i_cool+1)
+
+      evaluate ($bath  = $bath  - $tempstep)       
+      evaluate ($k_unamb = $k_unamb*$unamb_fac)
+      evaluate ($k_amb = $k_amb*$amb_fac)
+      evaluate ($k_hbond = $k_hbond*$hbond_fac)
+      evaluate ($asy=$asy+$asy_add)
+      evaluate ($masy=$masy+$masy_add)
+      
+      
+      evaluate ($nrdc=1)
+      while ($nrdc <= $data.numrdc) loop rdc
+        evaluate ($k_bor_$nrdc = $k_bor_$nrdc * $bor_fac_$nrdc)
+        evaluate ($k_cen_$nrdc = $k_cen_$nrdc * $cen_fac_$nrdc)
+        evaluate ($cln = "rd" + encode($nrdc) )
+        evaluate ($k_sani_$nrdc = $k_sani_$nrdc * $sani_fac_$nrdc)
+        if ($Data.flags.vean eq true) then
+          vean class $cln force $k_bor_$nrdc $k_cen_$nrdc end
+        end if
+        evaluate ($k_sani_$nrdc = $k_sani_$nrdc * $sani_fac_$nrdc)
+        if ($Data.flags.sani eq true) then
+          sani class $cln force $k_sani_$nrdc end
+        end if
+        if ($Data.flags.xrdc eq true) then
+          xrdc class $cln force $k_sani_$nrdc end
+        end if
+        evaluate ($nrdc = $nrdc + 1)
+      end loop rdc
+
+      if ($Data.flags.xpcs eq true) then
+        evaluate ($npcs=1)
+        while ($npcs <= $data.numpcs) loop pcs
+          evaluate ($k_xpcs_$npcs = $k_xpcs_$npcs * $xpcs_fac_$npcs)
+	  evaluate ($cln = "pc" + encode($npcs) )
+          xpcs class $cln force $k_xpcs_$npcs end
+          evaluate ($npcs= $npcs + 1)
+        end loop pcs
+      end if
+
+      if ($Data.flags.dani eq true) then
+        evaluate ($ndani=1)
+        while ($ndani <= $data.numdani) loop dani
+          evaluate ($k_dani_$ndani = $k_dani_$ndani * $dani_fac_$ndani)
+	  evaluate ($cln = "pc" + encode($ndani) )
+          dani class $cln force $k_dani_$ndani end
+          evaluate ($ndani = $ndani + 1)
+        end loop dani
+      end if
+
+
+      if ($Data.scaling eq TRUE) then 
+        inline @RUN:protocols/set_noe_scale.cns
+        noe 
+           scale dist $Data.unamb_cool2
+           scale ambi $Data.amb_cool2 
+           scale hbon $Data.hbond_cool2
+           asym ambi $asy
+           asym dist $asy
+           asym hbon $asy
+           masym ambi $masy
+           masym dist $masy
+           masym hbon $masy
+        end
+      else
+        noe 
+           scale dist $k_unamb
+           scale ambi $k_amb
+           scale hbon $k_hbond
+           asym ambi $asy
+           asym dist $asy
+           asym hbon $asy
+           masym ambi $masy
+           masym dist $masy
+           masym hbon $masy
+        end
+      end if
+
+      !scale intermolecular interactions:
+      inline @RUN:protocols/scale_inter.cns
+      evaluate ($kinter = $kinter + $interstep)
+
+      dyna tors
+         reassign $reassign
+         timestep=$timestep
+         nstep=$calcsteps
+         nprint=$printsteps
+         ntrfrq=0
+         tcoupling = true  temperature = $bath
+      end
+      evaluate ($reassign = FALSE)
+      
+      energy end
+      if ($ener > 99999999) then
+        display ENERGY PROBLEM, THE SYSTEM IS BLOWING UP: ==> STOPPING
+        stop
+      end if
+
+end loop cool
+

@@ -63,7 +63,7 @@ if ($Data.hbond_lastit ge $Iteration) then
 
       fileexist $hbond_fname end
       if ($result eq true) then
-!        noe @@RUN:data/hbonds/hbonds.tbl end
+!        noe @@$hbond_fname end
         noe @@$hbond_fname end
       end if
 
@@ -170,7 +170,7 @@ evaluate ($tensread = false)
 if ($Data.flags.xrdc = true) then
   noe 
     class tens
-    @@RUN:data/tensor/tensor.tbl
+    @@$tensor_tbl
     potential tens square
     scale     tens 500.0
   end
@@ -204,7 +204,7 @@ if ($Data.flags.xpcs = true) then
   if ($tensread eq FALSE) then
     noe 
       class tens
-      @@RUN:data/tensor/tensor.tbl
+      @@$tensor_tbl
       potential tens square
       scale     tens 500.0
     end

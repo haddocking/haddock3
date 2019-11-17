@@ -33,10 +33,24 @@ class InputGenerator:
 		translation_vectors = dict([(i, ini.get('translation_vectors', f'trans_vector_{i}')) for i in range(51)])
 		trans_vec = self.load_trans_vectors(translation_vectors)
 
+		tensor_options = ['tensor_psf', 'tensor_pdb', 'tensor_para_psf', 'tensor_para_pdb', 'tensor_dani_psf']
+		tensor_params = dict([(e, ini.get('tensor', e)) for e in tensor_options])
+		tensor = self.load_tensor(tensor_params)
+
+		scatter_lib = ini.get('scatter', 'scatter_lib')
+		scatter = self.load_scatter(scatter_lib)
+
+		axis_options = ['top_axis', 'par_axis', 'top_axis_dani']
+		axis_params = dict([(e, ini.get('axis', e)) for e in axis_options ])
+		axis = self.load_axis(axis_params)
+
+		waterbox_param = ini.get('water_box', 'boxtyp20')
+		water_box = self.load_waterbox(waterbox_param)
+
 		output = self.prepare_output(output_pdb, output_psf, output_fname)
 		input_str = self.prepare_input(input_pdb, input_psf)
 
-		inp = param + top + input_str + output + link + protonation + trans_vec + self.recipe_str
+		inp = param + top + input_str + output + link + protonation + trans_vec + tensor + scatter + axis + water_box + self.recipe_str
 
 		return inp
 
@@ -107,6 +121,12 @@ class InputGenerator:
 		try:
 			dihe_fname = glob.glob('data/dihe.tbl')[0]
 			input_str += f'eval ($dihe_fname="{dihe_fname}")\n'
+		except IndexError:
+			input_str += f'eval ($dihe_fname="")\n'
+
+		try:
+			tensor_fname = glob.glob('data/tensor.tbl')[0]
+			input_str += f'eval ($tensor_tbl="{tensor_fname}")\n'
 		except IndexError:
 			input_str += f'eval ($dihe_fname="")\n'
 
@@ -210,3 +230,35 @@ class InputGenerator:
 			trans_header += f'eval ($trans_vector_{vector_id} = "{vector_file}" )\n'
 
 		return trans_header
+
+	@staticmethod
+	def load_tensor(tensor):
+		tensor_header = '\n! Tensors\n'
+		for tensor_id in tensor:
+			tensor_file = tensor[tensor_id]
+			tensor_header += f'eval (${tensor_id} = "{tensor_file}" )\n'
+
+		return tensor_header
+
+	@staticmethod
+	def load_axis(axis):
+		axis_header = '\n! Axis\n'
+		for axis_id in axis:
+			axis_file = axis[axis_id]
+			axis_header += f'eval (${axis_id} = "{axis_file}" )\n'
+
+		return axis_header
+
+	@staticmethod
+	def load_scatter(scatter_lib):
+		scatter_header = '\n! Scatter lib\n'
+		scatter_header += f'eval ($scatter_lib = "{scatter_lib}" )\n'
+
+		return scatter_header
+
+	@staticmethod
+	def load_waterbox(waterbox_param):
+		water_header = '\n! Water box\n'
+		water_header += f'eval ($boxtyp20 = "{waterbox_param}" )\n'
+
+		return water_header

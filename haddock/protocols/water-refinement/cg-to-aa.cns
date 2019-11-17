@@ -1,0 +1,137 @@
+evaluate ($kinter = 1)
+
+! Change segid of CG structure
+!
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  evaluate ($nchain = $nchain + 1)
+  if ($toppar.cg_$nchain eq true) then
+    evaluate($coor_infile_$nchain= "RUN:begin-aa/" + $Toppar.prot_root_$nchain + ".pdb")
+    coor @@ $coor_infile_$nchain
+  end if
+end loop nloop1
+
+! Read morphing restraints
+!
+noe 
+  nres 1000000
+!  class cgaa @@RUN:data/distances/cg-to-aa.tbl
+  class cgaa @@$cg_to_aa
+  averaging  cgaa center
+  scale      cgaa 50.0
+  sqconstant cgaa 1.0
+  sqexponent cgaa 2
+  soexponent cgaa 1
+  rswitch    cgaa 1.0
+  sqoffset   cgaa 0.0
+  asymptote  cgaa 2.0
+  msoexponent cgaa 1
+  masymptote  cgaa -0.1
+  mrswitch    cgaa 1.0
+end
+
+! Fix the CG model and existing AA models
+!
+fix sele=(segid *CG) end
+evaluate ($nchain=0)
+while ($nchain < $data.ncomponents) loop nloop1
+  evaluate ($nchain = $nchain + 1)
+  if ($toppar.cg_$nchain eq false) then
+    fix sele=(segid $Toppar.prot_segid_$nchain) end
+  end if
+end loop nloop1
+
+
+evaluate ($kinter = 0.001)
+@RUN:protocols/scale_inter.cns
+
+flag excl * incl noe end
+
+energy end
+
+! Rigid body EM to position AA model onto CG model
+!
+minimize rigid
+  eval ($nchain = 0)
+  while ($nchain < $data.ncomponents) loop nloop1
+    eval($nchain = $nchain + 1)
+    if ($toppar.cg_$nchain eq true) then
+      group (segid $Toppar.prot_segid_$nchain)
+      translation=true
+    end if
+  end loop nloop1
+  nstep 200
+  nprint 10  
+end
+
+! Starting the morphing for conformational changes
+! Powell EM, including covalent terms
+!
+
+flag excl * incl bond angl impr dihe vdw elec noe end
+minimize powell nstep=500 drop=40.0 nprint=25 end
+evaluate ($kinter = 0.01)
+@RUN:protocols/scale_inter.cns
+minimize powell nstep=500 drop=40.0 nprint=25 end
+
+energy end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+{- Friction coefficient, in 1/ps. -}
+  do (fbeta=100) (not segid *CG)
+
+  evaluate ($bath=300.0)
+  evaluate ($nstep=500)
+  evaluate ($timestep=0.0005)
+
+  do (vx=maxwell($bath)) (store1)
+  do (vy=maxwell($bath)) (store1)
+  do (vz=maxwell($bath)) (store1)
+
+  dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+  end
+
+  minimize powell nstep=500 drop=40.0 nprint=25 end
+end if
+
+! Now turn on intermolecular interactions
+!
+evaluate ($kinter = 0.1)
+@RUN:protocols/scale_inter.cns
+minimize powell nstep=500 drop=10.0 nprint=25 end
+evaluate ($kinter = 1.0)
+@RUN:protocols/scale_inter.cns
+minimize powell nstep=500 drop=10.0 nprint=25 end
+
+if ($failure eq false) then
+! Short MD optimization
+!
+  do (vx=maxwell($bath)) (store1)
+  do (vy=maxwell($bath)) (store1)
+  do (vz=maxwell($bath)) (store1)
+     
+  dynamics cartesian
+    nstep=$nstep
+    timestep=$timestep
+    tcoupling=true temperature=$bath
+    nprint=50
+    cmremove=true
+  end
+end if
+
+minimize powell nstep=500 drop=40.0 nprint=25 end
+minimize powell nstep=500 drop=10.0 nprint=25 end
+
+energy end
+
+parameter nbonds eps=1.0 end end
+
+delete sele=(segid *CG) end
+

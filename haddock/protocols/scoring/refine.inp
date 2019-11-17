@@ -129,7 +129,7 @@ evaluate ($zcent=$result)
 
 coor select (not known and resn ani) end
 if ($select gt 0) then
-  coor @@RUN:toppar/tensor.pdb
+  coor @@$tensor_pdb
 
   {* Find CoM of protein and move tensor 100 A away *}
   show ave (x) (name CA or name BB or name C1')
@@ -148,7 +148,7 @@ end if
 
 coor select (not known and resn xan) end
 if ($select gt 0) then
-  coor @@RUN:toppar/tensor_para.pdb
+  coor @@$tensor_para_pdb
   evaluate ($rantens_para = true)
 else
   evaluate ($rantens_para = false)
@@ -415,10 +415,10 @@ if ($iteration = 0) then
     @RUN:protocols/randomairs.cns
 
     !Read back in hbond data
-    if (&data.hbond_lastit ge &iteration) then
-      if (&data.hbond_firstit le &iteration) then
-        if (&data.hbonds_on eq true) then
-          noe @@RUN:data/hbonds/hbonds.tbl end
+    if ($Data.hbond_lastit ge &iteration) then
+      if ($Data.hbond_firstit le &iteration) then
+        if ($Data.hbonds_on eq true) then
+          noe @@$hbond_fname end
         end if
       end if
     end if
@@ -497,7 +497,7 @@ if ($iteration = 0) then
       end if
 
       if ($Data.flags.sani eq true) then
-        coor @@RUN:toppar/tensor.pdb
+        coor @@$tensor_pdb
         do (x = x + $xcent + 100) (resn ANI)
         do (y = y + $ycent + 100) (resn ANI)
         do (z = z + $zcent + 100) (resn ANI)
@@ -511,14 +511,14 @@ if ($iteration = 0) then
       end if
 
       if ($Data.flags.xrdc eq true) then
-        coor @@RUN:toppar/tensor_para.pdb
+        coor @@$tensor_para_pdb
         do (x=x+$xcent+100) (resn XAN)
         do (y=y+$ycent+100) (resn XAN)
         do (z=z+$zcent+100) (resn XAN)
       end if
 
       if ($Data.flags.xpcs eq true) then
-        coor @@RUN:toppar/tensor_para.pdb
+        coor @@$tensor_para_pdb
         do (x=x+$xcent+100) (resn XAN)
         do (y=y+$ycent+100) (resn XAN)
         do (z=z+$zcent+100) (resn XAN)
@@ -1188,10 +1188,10 @@ else
     @RUN:protocols/contactairs.cns
 
     !Read back in hbond data
-    if (&data.hbond_lastit ge &iteration) then
-      if (&data.hbond_firstit le &iteration) then
-        if (&data.hbonds_on eq true) then
-          noe @@RUN:data/hbonds/hbonds.tbl end
+    if ($Data.hbond_lastit ge &iteration) then
+      if ($Data.hbond_firstit le &iteration) then
+        if ($Data.hbonds_on eq true) then
+          noe @@$hbond_fname end
         end if
       end if
     end if

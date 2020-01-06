@@ -1,83 +1,83 @@
+import configparser
+import os
 import itertools
 import subprocess
-import haddock.workflows.scoring.config as config
 from haddock.modules.structure.utils import PDB
+from utils.files import get_full_path
 
-segid2chain = PDB.segid2chain
-identify_chains = PDB.identify_chains
+etc_folder = get_full_path('haddock', 'etc')
+config_file = os.path.join(etc_folder, 'haddock3.ini')
 
-dockq_exec = config.ini.get('third party', 'dockq_exe')
+ini = configparser.ConfigParser(os.environ)
+ini.read(config_file, encoding='utf-8')
+
+dockq_exec = ini.get('third_party', 'dockq_exe')
 
 
-# TODO: Implement parallelism
-def dockq(ref, pdb_f):
-	print(f'+ {pdb_f}')
+def dockq(ref, pdb_f, count):
+
+	# print(f'+ {count} {pdb_f}')
+
 	irms = float('nan')
 	lrms = float('nan')
 	fnat = float('nan')
-	capri = float('nan')
 	dockq_score = float('nan')
+	capri = None
+	order = None
 
-	ref = segid2chain(ref)
-	pdb_f = segid2chain(pdb_f)
+	ref = PDB.fix_id(ref)
+	pdb_f = PDB.fix_id(pdb_f)
 
-	ref_comb = itertools.combinations(identify_chains(ref), 2)
-	pdb_comb = itertools.combinations(identify_chains(pdb_f), 2)
+	reference_chains = PDB.identify_chainseg(ref)
+	pdb_chains = PDB.identify_chainseg(pdb_f)
 
 	result_dic = {}
-	for a, b in zip(pdb_comb, ref_comb):
 
-		interface_name = '_'.join(a)
+	if reference_chains != pdb_chains:
+		# not supported
+		print(f'+ WARNING: Skipping {pdb_f}, number of chains do not match. Expected {len(reference_chains)} found {len(pdb_chains)}')
+		interface_name = ''
+		result_dic[f'{interface_name}_irms'] = float('nan')
+		result_dic[f'{interface_name}_lrms'] = float('nan')
+		result_dic[f'{interface_name}_fnat'] = float('nan')
+		result_dic[f'{interface_name}_capri'] = ''
+		result_dic[f'{interface_name}_dockq'] = float('nan')
+		result_dic[f'{interface_name}_order'] = ''
 
-		cmd = f'{dockq_exec} {pdb_f} {ref} -model_chain1 {a[0]} {a[1]} -native_chain1 {b[0]} {b[1]}'
+	else:
 
-		p = subprocess.run(cmd.split(), stdout=subprocess.PIPE)
-		out = p.stdout.decode('utf-8').split('\n')
+		for comb in itertools.combinations(pdb_chains, 2):
 
-		for l in out:
-			if 'Fnat' in l:
-				fnat = float(l.split()[1])
-			if 'iRMS' in l:
-				irms = float(l.split()[1])
-			if 'LRMS' in l:
-				lrms = float(l.split()[1])
-			if 'CAPRI ' in l:
-				capri = l.split()[1]
-			if 'DockQ ' in l and '*' not in l:
-				dockq_score = float(l.split()[1])
+			interface_name = ''.join(comb) + '-' + [e for e in pdb_chains if e not in comb][0]
 
-		result_dic[f'{interface_name}_irms'] = irms
-		result_dic[f'{interface_name}_lrms'] = lrms
-		result_dic[f'{interface_name}_fnat'] = fnat
-		result_dic[f'{interface_name}_capri'] = capri
-		result_dic[f'{interface_name}_dockq'] = dockq_score
+			cmd = f'{dockq_exec} {pdb_f} {ref} -native_chain1 {comb[0]} {comb[1]} -perm1'
+
+			p = subprocess.run(cmd.split(), stdout=subprocess.PIPE)
+			out = p.stdout.decode('utf-8').split('\n')
+
+			for l in out:
+				if l.startswith('Best score'):
+					output_l = l.split()
+					order = f'{output_l[-4]}->{output_l[-1]}'
+				elif l.startswith('Fnat'):
+					fnat = float(l.split()[1])
+				elif l.startswith('iRMS'):
+					irms = float(l.split()[1])
+				elif l.startswith('LRMS'):
+					lrms = float(l.split()[1])
+				elif l.startswith('DockQ_CAPRI'):
+					capri = l.split()[1]
+				elif l.startswith('DockQ'):
+					dockq_score = float(l.split()[1])
+				else:
+					pass
+
+			result_dic[f'{interface_name}_irms'] = irms
+			result_dic[f'{interface_name}_lrms'] = lrms
+			result_dic[f'{interface_name}_fnat'] = fnat
+			result_dic[f'{interface_name}_capri'] = capri
+			result_dic[f'{interface_name}_dockq'] = dockq_score
+			result_dic[f'{interface_name}_order'] = order
 
 	return result_dic
 
-
-#
-# def define_interfaces(chain_str):
-# 	interface_list = []
-# 	if len(chain_str) >= 4:
-# 		for inter_a in itertools.combinations(chain_str, 2):
-# 			a = ''.join(inter_a)
-# 			for inter_b in itertools.combinations(chain_str.replace(a, ''), 2):
-# 				b = ''.join(inter_b)
-# 				if not set(inter_a) & set(inter_b):
-# 					if not (b, a) in interface_list:
-# 						interface_list.append((a, b))
-#
-# 	elif len(chain_str) == 2:
-# 		interface_list = list(itertools.combinations(chain_str, 2))
-#
-# 	elif len(chain_str) == 3:
-# 		for inter_a in itertools.combinations(chain_str, 2):
-# 			a = ''.join(inter_a)
-# 			inter_b = set(chain_str) - set(inter_a)
-# 			# inter_b = list(chain_str.replace(a, ''))
-# 			b = ''.join(inter_b)
-# 			if not set(inter_a) & set(inter_b):
-# 				if not (b, a) in interface_list:
-# 					interface_list.append((a, b))
-#
-# 	return interface_list

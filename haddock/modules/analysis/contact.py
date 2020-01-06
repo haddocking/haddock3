@@ -11,16 +11,16 @@ class Contacts:
 
     def __init__(self):
         # self.nproc = config.param_dic['input']['nproc']
-        self.con_exec = ini.get('third party', 'contacts_exe')
+        self.con_exec = ini.get('scripts', 'contacts_exe')
         self.run_param = toml.load('data/run.toml')
         self.nproc = self.run_param['execution_parameters']['nproc']
         self.arg_list = []
         self.contact_file_list = []
 
-        self.path = os.getcwd() + '/contacts'
-
-        if not os.path.isdir(self.path):
-            os.system(f'mkdir {self.path}')
+        # self.path = os.getcwd() + '/contacts'
+        #
+        # if not os.path.isdir(self.path):
+        #     os.system(f'mkdir {self.path}')
 
     def calculate_contacts(self, pdb_list, cutoff):
 

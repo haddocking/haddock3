@@ -1,49 +1,35 @@
+import configparser
 import itertools
 import subprocess
 import os
-
+from utils.files import get_full_path
 from haddock.modules.structure.utils import PDB
-# from haddock.workflows.scoring.config import load_parameters
-import haddock.workflows.scoring.config as config
 
-# load_structure = PDB.load_structure
-# param_dic = load_parameters()
-# dcomplex_exe = config.ini['third-party']['dcomplex_exe']
-dcomplex_exe = config.ini.get('third party', 'dcomplex_exe')
+etc_folder = get_full_path('haddock', 'etc')
+config_file = os.path.join(etc_folder, 'haddock3.ini')
 
-# FIXME: create Dfire symbolic links and correct locations
-# def setup_dfire():
+ini = configparser.ConfigParser(os.environ)
+ini.read(config_file, encoding='utf-8')
+
+dcomplex_exe = ini.get('third_party', 'dcomplex_exe')
 
 
-# TODO: Implement parallelism
 def dfire(pdb_f):
 
-	prot_dic = load_structure(pdb_f)
+	prot_dic = PDB.load_structure(pdb_f)
 	dfire_dic = {'binding': [], 'score': []}
 	for segid_x, segid_y in itertools.combinations(prot_dic, 2):
-		with open('dfire.inp','w') as inp:
-			inp.write(f'{pdb_f}\n1\n{segid_x}\n1\n{segid_y}')
-		inp.close()
 
-		inp = open('dfire.inp')
-		p = subprocess.run(dcomplex_exe, stdin=inp, stdout=subprocess.PIPE)
+		p = subprocess.run([dcomplex_exe, pdb_f, segid_x, segid_y], stdout=subprocess.PIPE)
+
 		try:
-			_, binding, dfire_score = p.stdout.decode('utf-8').split()
-			binding = float(binding.split('kcal/mol')[0])
-			float(dfire_score)
+			binding = float(p.stdout.decode('utf-8').split()[-2])
 		except ValueError:
 			binding = float('nan')
-			dfire_score = float('nan')
 
 		dfire_dic['binding'].append(binding)
-		dfire_dic['score'].append(dfire_score)
-
-		os.remove('dfire.inp')
 
 	binding_l = [float(e) for e in dfire_dic['binding']]
-	score_l = [float(e) for e in dfire_dic['score']]
-
 	mean_binding = sum(binding_l) / len(binding_l)
-	mean_score = sum(score_l) / len(score_l)
 
-	return mean_binding, mean_score
+	return mean_binding

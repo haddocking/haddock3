@@ -124,9 +124,12 @@ class Setup:
         stage_dic = self.setup_dic['stage']
         for stage in stage_dic:
             recipe_id = stage_dic[stage]['recipe']
-            # TODO: check if recipe is valid
+
             if recipe_id == 'default':
                 recipe_id = self.default_recipes[stage]
+            else:
+                # TODO: check if recipe is valid
+                pass
 
             recipe_name = recipe_id.split('.')[0]
             recipe_params_file = f'{self.protocol_path}/{recipe_name}/{recipe_name}.json'

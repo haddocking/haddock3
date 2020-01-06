@@ -199,6 +199,9 @@ def pre_process(raw_molecule_dic):
     # 1. Add or assign ChainID/SegID
     chainseg_dic = p.fix_chainseg(raw_molecule_dic)
 
+    # 2. Remove aa not present in the topology
+    p
+
     # 2. Check if it is an ensemble and split it
     ensemble_dic = p.treat_ensemble(chainseg_dic)
 
@@ -210,12 +213,12 @@ def pre_process(raw_molecule_dic):
 
 if __name__ == '__main__':
 
+    greeting()
+
     parser = argparse.ArgumentParser(description='Setup your HADDOCK run')
     parser.add_argument("run_file", help="The run file containing the parameters of your run (.toml)")
     parser.add_argument("--setup", help="Only setup the run, do not execute", action="store_true", default=False)
     args = parser.parse_args()
-
-    greeting()
 
     setup_dictionary = toml.load(args.run_file)
     run_id = setup_dictionary['identifier']['run']

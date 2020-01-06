@@ -1,0 +1,23 @@
+#===========================================================#
+title = "HADDOCK3 Scoring Workflow Setup file"
+#===========================================================#
+[molecules]
+mol1 = 'T158-150random.pdb'
+
+[identifier]
+run = 1
+
+[execution_parameters]
+scheme = 'parallel'
+nproc = 24
+reference = 'lowest'
+
+[stage]
+
+[stage.topology]
+recipe='default'
+
+[stage.scoring]
+recipe='default'
+
+#===========================================================#

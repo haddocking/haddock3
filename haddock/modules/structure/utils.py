@@ -1,16 +1,53 @@
 import os
 import string
+import configparser
 from itertools import chain
-# from haddock.modules.structure.reduce import analyze_protonation_state
 from utils.files import get_full_path
 
+# from haddock.modules.structure.reduce import analyze_protonation_state
+
+etc_folder = get_full_path('haddock', 'etc')
+config_file = os.path.join(etc_folder, 'haddock3.ini')
+
+ini = configparser.ConfigParser(os.environ)
+ini.read(config_file, encoding='utf-8')
+
 src_path = get_full_path('haddock', 'src')
+
+
+def histogram(items):
+    for c, n in items:
+        if n/10 > 1:
+            output = int(n/10) * '-'
+            print(f' {c}\t{output} ({n})')
+
+
+def pad_line(line):
+    # borrowed from from pdb-tools (:
+    """Helper function to pad line to 80 characters in case it is shorter"""
+    size_of_line = len(line)
+    if size_of_line < 80:
+        padding = 80 - size_of_line + 1
+        line = line.strip('\n') + ' ' * padding + '\n'
+    return line[:81]  # 80 + newline character
+
+
+def identify_known(top_f):
+    """ Read the topology file and identify which residues are known """
+    known_l = []
+    with open(top_f) as f:
+        for l in f.readlines():
+            if 'resi' in l[:4].casefold():
+                res = l.split()[1]
+                known_l.append(res)
+    return known_l
 
 
 class PDB:
 
     def __init__(self):
         self.to_remove = ['REMAR', 'CTERB', 'CTERA', 'NTERA', 'NTERB', 'CONECT']
+        self.to_keep = identify_known(ini.get('topology', 'top_file'))
         self.to_rename = {'WAT ': 'TIP3', 'HSD': 'HIS', 'HSE': 'HIS', 'HID': 'HIS', 'HIE': 'HIS',
                           ' 0.00969': ' 0.00   '}
         self.model_list = []
@@ -44,65 +81,68 @@ class PDB:
             f.close()
         return new_d
 
-    # @staticmethod
-    # def load_structure(pdb_f):
-    #     """ Load a PDB structure into a dictionary """
-    #     prot_dic = {}
-    #     with open(pdb_f) as f:
-    #         for line in f.readlines():
-    #             if line.startswith(('ATOM', 'HETATM', 'ANISOU')):
-    #                 if 'HN' in line:
-    #                     new_line = line[:12] + ' H  ' + line[16:]
-    #                     line = new_line
-    #                 # segid = line[72:76].strip()
-    #                 chainid = line[21]
-    #                 if chain in prot_dic:
-    #                     prot_dic[chainid].append(line)
-    #                 else:
-    #                     prot_dic[chainid] = [line]
-    #     f.close()
-    #     return prot_dic
+    @staticmethod
+    def load_structure(pdb_f):
+        """ Load a PDB structure into a dictionary """
+        prot_dic = {}
+        with open(pdb_f) as f:
+            for line in f.readlines():
+                if line.startswith(('ATOM', 'HETATM', 'ANISOU')):
+                    if 'HN' in line:
+                        new_line = line[:12] + ' H  ' + line[16:]
+                        line = new_line
+                    ident = line[72:76].strip()  # segid
+                    # ident = line[21]  # chain
+                    if ident in prot_dic:
+                        prot_dic[ident].append(line)
+                    else:
+                        prot_dic[ident] = [line]
+        f.close()
+        return prot_dic
+
+    @staticmethod
+    def identify_chains(pdb):
+        """ Read PDB structure and return chainIDs """
+        chain_l = []
+        with open(pdb) as f:
+            for l in f.readlines():
+                if 'ATOM' in l[:4]:
+                    chain_id = l[21]
+                    if chain_id not in chain_l:
+                        chain_l.append(chain_id)
+        f.close()
+        chain_l = list(set(chain_l))
+        return chain_l
 
     # @staticmethod
-    # def identify_chains(pdb):
-    #     """ Read PDB structure and return chainIDs """
+    # def chainid_or_segid(pdb):
+    #     """ Check if the PDB has ALL chainIDs or segIDs fields filled """
     #     chain_l = []
+    #     seg_l = []
     #     with open(pdb) as f:
     #         for l in f.readlines():
     #             if 'ATOM' in l[:4]:
-    #                 chain_id = l[21]
-    #                 if chain_id not in chain_l:
-    #                     chain_l.append(chain_id)
-    #     f.close()
-    #     return chain_l
-
-    # @staticmethod
-    # def extract_md5(pdb_ens):
-    #     """ Read the whole scoring set and return a dictionary with model number and MD5 """
-    #     regex = r"(\d*)\sMD5\s(.*)"
-    #     md5_dictionary = {}
-    #     with open(pdb_ens) as f:
-    #         data = f.readlines()
-    #         for line in data:
-    #             matches = re.finditer(regex, line, re.MULTILINE)
-    #             if matches:
-    #                 for match in matches:
-    #                     try:
-    #                         model_number = int(match.group(1))
-    #                         md5 = match.group(2)
-    #                     except ValueError:
-    #                         # this is not the match you are looking for
-    #                         continue
-    #                     md5_dictionary[int(model_number)] = md5
-    #             if 'ATOM' in line[:4]:
-    #                 break
-    #     f.close()
+    #                 segid = l[72:76].strip()[:1]
+    #                 chainid = l[21].strip()[:1]
     #
-    #     return md5_dictionary
+    #                 if segid: seg_l.append(True)
+    #                 if chainid: chain_l.append(True)
+    #
+    #     if chain_l:
+    #         chain_check = all(chain_l)
+    #     else:
+    #         chain_check = False
+    #
+    #     if seg_l:
+    #         seg_check = all(seg_l)
+    #     else:
+    #         seg_check = False
+    #
+    #     return chain_check, seg_check
 
     @staticmethod
     def split_models(ensamble_f):
-        # """" adapted """"  from pdb-tools (:
+        # borrowed from from pdb-tools (:
         model_list = []
         records = ('ATOM', 'HETATM', 'ANISOU', 'TER')
         path = '/'.join(ensamble_f.split('/')[:-1])
@@ -127,15 +167,52 @@ class PDB:
         return model_list
 
     @staticmethod
-    def add_chainseg(pdbf, ident, overwrite=True):
-        """" Add chainID and segID to a PDB structure """
+    def fix_id(pdbf, priority='seg', overwrite=True):
+        """ Replaces the chainID with segID or vice-versa, based on the priority param """
         new_pdb = pdbf + '_'
         with open(new_pdb, 'w') as out_fh:
             with open(pdbf) as in_fh:
                 for line in in_fh.readlines():
                     if 'ATOM' in line[:4]:
-                        c = line[21].strip()[:1]
-                        s = line[72:76].strip()[:1]
+                        line = pad_line(line)
+                        chainid = line[21].strip()[:1]  # chainID
+                        segid = line[72:76].strip()[:1]  # segID
+
+                        if priority == 'seg':
+                            if not segid:
+                                # cannot use this priority
+                                exit()
+                            line = line[:21] + segid + line[22:]
+                        elif priority == 'chain':
+                            if not chainid:
+                                # cannot use this priority
+                                exit()
+                            line = line[:72] + chainid.ljust(4) + line[76:]
+
+                        else:
+                            # option not supported
+                            exit()
+                    out_fh.write(line)
+
+            in_fh.close()
+        out_fh.close()
+
+        if overwrite:
+            os.rename(new_pdb, pdbf)
+            return pdbf
+        else:
+            return new_pdb
+
+    @staticmethod
+    def add_chainseg(pdbf, ident, overwrite=True):
+        """" Add ONE chainID and segID to a PDB structure """
+        new_pdb = pdbf + '_'
+        with open(new_pdb, 'w') as out_fh:
+            with open(pdbf) as in_fh:
+                for line in in_fh.readlines():
+                    if 'ATOM' in line[:4]:
+                        c = line[21].strip()[:1]  # chainID
+                        s = line[72:76].strip()[:1]  # segID
 
                         if c != ident:
                             line = line[:21] + ident + line[22:]
@@ -162,7 +239,8 @@ class PDB:
         for pdb in pdb_inp:
             with open(pdb) as fh:
                 for line in fh.readlines():
-                    if 'ATOM' in line[:4]:
+                    if line.startswith('ATOM'):
+                        line = pad_line(line)
                         segid = line[72:76].strip()[:1]
                         chainid = line[21].strip()[:1]
                         if segid:
@@ -178,11 +256,14 @@ class PDB:
         segid_l.sort()
         return segid_l
 
+    # def exclude_unknown(self, pdb_dic):
+
     def fix_chainseg(self, pdb_dic):
         """" Separate by molecule id and assign segids accordingly """
         chainseg_check = []
         segid_dic = dict(
                 [(int(e.split('mol')[1]), {'mol': None, 'segid': None}) for e in pdb_dic if 'mol' in e])
+
         for e in pdb_dic:
             if 'mol' in e:
                 ident = int(e.split('mol')[1])
@@ -231,17 +312,25 @@ class PDB:
     def sanitize(self, pdb_dic, overwrite=True):
         """ Remove problematic portions of a PDB file """
         clean_model_list = []
+        removed_l = []
         # Get just the pdbs, the data structure does not matter
         pdb_list = list(chain.from_iterable([pdb_dic[e] for e in pdb_dic]))
         for pdb in pdb_list:
             out_l = []
             with open(pdb) as input_handler:
                 for line in input_handler:
-                    # Ignoring lines containing any tag from _to_remove
+                    # Ignoring lines containing any tag from _to_remove and what is in to_keep
                     if not any([tag in line for tag in self.to_remove]):
                         for tag, new_tag in self.to_rename.items():
                             line = line.replace(tag, new_tag)
-                        out_l.append(line)
+                        # check if this residue is known
+                        res = line[17:20].strip()
+                        if res and res in self.to_keep:
+                            out_l.append(line)
+                        elif not res:
+                            out_l.append(line)
+                        else:
+                            removed_l.append(res)
 
             out_l = [e for e in out_l if 'TER' not in e]
             out_l.append('END\n')
@@ -258,4 +347,83 @@ class PDB:
             else:
                 clean_model_list.append(sanitized_pdb)
 
+        removed_l = list(set(removed_l))
+        if removed_l:
+            if len(removed_l) == 1:
+                print('\n+ WARNING: The following residue was removed because it is present in the input but not '
+                      'in the topology file')
+            else:
+                print('\n+ WARNING: The following residues were removed because they are present in the input but '
+                      'not in the topology file')
+            removed_str = ' ,'.join(removed_l)
+            print(f'++ {removed_str}')
+
         return clean_model_list
+
+    @staticmethod
+    def count_atoms(pdbf):
+        counter = 0
+        with open(pdbf) as fh:
+            for l in fh.readlines():
+                if l.startswith('ATOM'):
+                    counter += 1
+        return counter
+
+    def organize_chains(self, pdb_dic):
+
+        # Assume all models have CHAIN
+        for mol in pdb_dic:
+            chain_count_dic = {}
+            for pdb in pdb_dic[mol]:
+                chains = self.identify_chains(pdb)
+                size = self.count_atoms(pdb)
+                chain_count_dic[pdb] = [size, len(chains), chains]
+
+            # count how many times each one appeared
+            sizes = [chain_count_dic[e][0] for e in chain_count_dic]
+            sizes_data = list(set([(a, sizes.count(a)) for a in sizes]))
+
+            chains = [chain_count_dic[e][1] for e in chain_count_dic]
+            chains_data = list(set([(a, chains.count(a)) for a in chains]))
+
+            chain_names = list(chain.from_iterable([chain_count_dic[e][2] for e in chain_count_dic]))
+            chain_names = list(set(chain_names))
+            chain_names.sort()
+            chain_names_str = ' '.join(chain_names)
+
+            sizes_data.sort()
+            chains_data.sort()
+
+            print('\n+ Size distribution')
+            histogram(sizes_data)
+
+            print('\n+ Chain count distribution')
+            histogram(chains_data)
+
+            print(f'\n+ Chain names found: {chain_names_str}')
+
+
+
+    # @staticmethod
+    # def extract_md5(pdb_ens):
+    #     """ Read the whole scoring set and return a dictionary with model number and MD5 """
+    #     regex = r"(\d*)\sMD5\s(.*)"
+    #     md5_dictionary = {}
+    #     with open(pdb_ens) as f:
+    #         data = f.readlines()
+    #         for line in data:
+    #             matches = re.finditer(regex, line, re.MULTILINE)
+    #             if matches:
+    #                 for match in matches:
+    #                     try:
+    #                         model_number = int(match.group(1))
+    #                         md5 = match.group(2)
+    #                     except ValueError:
+    #                         # this is not the match you are looking for
+    #                         continue
+    #                     md5_dictionary[int(model_number)] = md5
+    #             if 'ATOM' in line[:4]:
+    #                 break
+    #     f.close()
+    #
+    #     return md5_dictionary

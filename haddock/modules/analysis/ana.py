@@ -1,11 +1,10 @@
 # import glob
 import re
 import os
-# import haddock.workflows.scoring.config as config
 from haddock.modules.analysis.contact import Contacts
-# from haddock.workflows.scoring.analysis.dfire import dfire
-# from haddock.workflows.scoring.analysis.dockq import dockq
-# from haddock.workflows.scoring.analysis.fastcontact import fastcontact
+from haddock.modules.analysis.dfire import dfire
+from haddock.modules.analysis.dockq import dockq
+from haddock.modules.analysis.fastcontact import fastcontact
 
 
 class Ana:
@@ -98,7 +97,7 @@ class Ana:
 	def calculate_haddock_score(self):
 		""" Calculate the HADDOCK Score of the PDB file using its appropriate weight """
 
-		print(f'+ Calculating HADDOCK score for {len(self.structure_dic)} structures')
+		print(f'\n+ Calculating HADDOCK score for {len(self.structure_dic)} structures')
 
 		try:
 			for pdb in self.structure_dic:
@@ -121,7 +120,7 @@ class Ana:
 	def cluster(self, cutoff, strictness=0.75, threshold=4):
 		""" Cluster scored models using FCC, output a sorted text file containing clusters and mean scores """
 
-		print(f'+ Clustering with cutoff: {cutoff} and threshold: {threshold}')
+		print(f'+ FCC clustering with cutoff: {cutoff} and threshold: {threshold}')
 
 		wd = os.getcwd()
 		output_f = f'{wd}/cluster_{cutoff}_{threshold}.out'
@@ -220,41 +219,48 @@ class Ana:
 					name_wzeros = f'{path}/{root}_{str(model).zfill(6)}.pdb'
 					if os.path.isfile(name_wzeros):
 						name = name_wzeros
+
+				haddock_score = .0
 				try:
 					haddock_score = self.structure_dic[name]['haddock-score']
 				except KeyError:
 					# No haddock score...?
-					haddock_score = float('nan')
-					sort_tag = False
+					print('+ ERROR: Model has no Haddock Score')
+					exit()
+					# haddock_score = float('nan')
+					# sort_tag = False
 
 				clustered_models_list.append((model, haddock_score))
 
 				# add cluster info to internal structure
 				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_name"] = c.name
+
 			if sort_tag:
 				# sort cluster elements by haddock score
 				model_list = sorted(clustered_models_list, key=lambda x: x[1])
 			else:
 				# sort by model number
 				model_list = sorted(clustered_models_list, key=lambda x: x[0])
+
 			score_list = [e[1] for e in clustered_models_list]
 			mean_score = sum(score_list) / len(score_list)
-			# top4_mean_score = sum(score_list[:4]) / len(score_list[:4])
-			tbw = f"Cluster {c.name} -> ({c.center.name}) "
+			top4_mean_score = sum(score_list[:4]) / len(score_list[:4])
+			cluster_dic[c.name] = (mean_score, top4_mean_score, c.center.name, [])
 			for i, m in enumerate(model_list):
-				tbw += f'{m[0]} '
-				name = f'{path}/{root}_{m[0]}.pdb'
+				model_id, score = m
+				cluster_dic[c.name][3].append(model_id)
+				name = f'{path}/{root}_{model_id}.pdb'
 				if not os.path.isfile(name):
-					name_wzeros = f'{path}/{root}_{str(m[0]).zfill(6)}.pdb'
+					name_wzeros = f'{path}/{root}_{str(model_id).zfill(6)}.pdb'
 					if os.path.isfile(name_wzeros):
 						name = name_wzeros
 				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = i
 
-			tbw += '\n'
-			cluster_dic[c.name] = (tbw, mean_score)
-
 		# sort clusters by mean haddock score
-		sorted_cluster_list = sorted([(x, cluster_dic[x][1]) for x in list(cluster_dic.keys())], key=lambda x: x[1])
+		sorted_cluster_list = sorted([(x, cluster_dic[x][0], cluster_dic[x][1], cluster_dic[x][2], cluster_dic[x][3]) for x in list(cluster_dic.keys())], key=lambda x: x[1])
+
+		# sort cluster by top4 score
+		# sorted_cluster_list = sorted([(x, cluster_dic[x][0], cluster_dic[x][1], cluster_dic[x][2], cluster_dic[x][3) for x in list(cluster_dic.keys())], key=lambda x: x[2])
 
 		cluster_ranking = dict([(e[0], i + 1) for i, e in enumerate(sorted_cluster_list)])
 		# add overall cluster ranking to data structure
@@ -265,11 +271,13 @@ class Ana:
 				self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_overall_ranking"] = overall_ranking
 
 		# output
+		# header = '# Cluster ID\t[mean_score, top4_mean_score]\t->\t(center) top1 top2 top3 top4 ...\n'
 		with open(output_f, 'w') as out:
+			# out.write(header)
 			for c in sorted_cluster_list:
-				cluster_name, cluster_mean = c
-				tbw_l = cluster_dic[cluster_name][0].split('->')
-				tbw = f'{tbw_l[0]}[{cluster_mean:.3f}] ->{tbw_l[1]}'
+				cluster_name, cluster_mean, cluster_top4_mean, cluster_center, sorted_model_list = c
+				sorted_model_string = ' '.join(map(str, sorted_model_list))
+				tbw = f'Cluster {cluster_name} [{cluster_mean:.3f}, {cluster_top4_mean:.3f}] -> ({cluster_center}) {sorted_model_string}\n'
 				out.write(tbw)
 		out.close()
 
@@ -315,7 +323,14 @@ class Ana:
 				cc = float(len(con_a.intersection(con_b)))
 				# cc_v = float(len(con_b.intersection(con_a)))
 
-				fcc, fcc_v = cc * 1.0 / len(con_a), cc * 1.0 / len(con_b)
+				try:
+					fcc, fcc_v = cc * 1.0 / len(con_a), cc * 1.0 / len(con_b)
+				except ZeroDivisionError:
+					# Either con_a or con_b == 0, which means that there are no contacts between molecules.
+					#  This should not happen in docking, but is relevant for scoring
+					fcc = .0
+					fcc_v = .0
+
 				self.fcc_matrix.append(f'{i + 1} {j + 1} {fcc:.3f} {fcc_v:.3f}')
 		#
 		# 	with open(self.fcc_matrix_f, 'w') as out:
@@ -334,40 +349,42 @@ class Ana:
 		# 	# print('+ Using previously loaded FCC matrix')
 		# 	pass
 
-	def run_dockq(self):
+	def run_dockq(self, ref):
 
-		print('+ Running DockQ')
+		print('\n+ Running DockQ')
 
-		if config.param_dic['input']['reference'] == 'lowest':
+		reference_pdb = ''
+		total = 0
+		if ref == 'lowest':
+
 			score_list = []
 			for pdb in self.structure_dic:
 				score_list.append((pdb, self.structure_dic[pdb]['haddock-score']))
+
 			sorted_score_list = sorted(score_list, key=lambda x: x[1])
 			reference_pdb = sorted_score_list[0][0]
 			reference_score = sorted_score_list[0][1]
 
-			print(f'++ Using {reference_pdb} as reference structure, lowest haddock score: {reference_score:.3f}')
+			total = len(self.structure_dic)
+
+			print(f'++ Using lowest haddock score as reference {reference_pdb} = {reference_score:.3f}, n = {total}')
 
 		else:
-			reference_pdb = config.param_dic['input']['reference']
+			print('+ ERROR: Not yet implemented, try lowest')
+			exit()
 
-			print(f'++ Using {reference_pdb} as reference structure, user input')
+		if reference_pdb == '':
+			exit()
 
-		# pdb_list = list(self.structure_dic.keys())
-		#
-		# dockq = DockQ()
-		# d = dockq.run(pdb_list, reference_pdb)
-
-		#
-		for pdb in self.structure_dic:
-			result_dic = dockq(reference_pdb, pdb)
+		for i, pdb in enumerate(self.structure_dic):
+			result_dic = dockq(reference_pdb, pdb, total-i)
 			for k in result_dic:
 				self.structure_dic[pdb][k] = result_dic[k]
 
 	def run_fastcontact(self):
 		""" Run fastcontact on all scored PDBs """
 
-		print('+ Running FASTCONTACT')
+		print('\n+ Running FASTCONTACT')
 
 		for pdb in self.structure_dic:
 			fast_elec, fast_desol = fastcontact(pdb)
@@ -377,16 +394,15 @@ class Ana:
 	def run_dfire(self):
 		""" Run dfire on all scored PDBs """
 
-		print('+ Running DFIRE')
+		print('\n+ Running DFIRE')
 
 		for pdb in self.structure_dic:
-			d_binding, d_score = dfire(pdb)
+			d_binding = dfire(pdb)
 			self.structure_dic[pdb]['dfire-ebinding'] = d_binding
-			self.structure_dic[pdb]['dfire-score'] = d_score
 
 	def output(self):
 
-		print(f'+ Saving results to {self.output_f}')
+		print(f'\n+ Saving results to {self.output_f}')
 
 		# sort by haddock score!
 		score_list = [(pdb, self.structure_dic[pdb]['haddock-score']) for pdb in self.structure_dic]

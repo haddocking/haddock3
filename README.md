@@ -8,14 +8,15 @@
 
 # Changelog
 
-* 0.0.alpha1 (06-11-2019)
+* 3.0.alpha2 UNRELASED
+    * QoL improvment to setup/execute in a single command (haddock3.py)
+    * Scoring workflow refactoring to correclty implement third-party software
+
+* 3.0.alpha1 (06-11-2019)
     * First version of the skeleton code, 
     * Simple protein-protein with ambiguious restraints
     * Scoring of an ensamble of models (clustering included)
 
-# TODO
-
-**WIP**
 
 # Instalation
 
@@ -37,20 +38,62 @@ $ cd ../../
 $ vim haddock/etc/haddock3.ini
 ```
 
-# Execution
+# Workflows
+## Docking
 
 ```bash
 $ cd examples/protein-protein
 $ python3 ../../haddock/haddock3.py run.toml
 ```
 
-# Scoring
+## Scoring
+
+The scoring example demostrates a realistic scenario; the ensamble is a randomly selected subset (150 models) of the 
+Target 158 Scorers set. 
+
+1. Pre-Processing
+    * The ensamble is separated into models 
+    * chains are matched (*PENDING*)
+    * segIDs are added based on the detected chainID
+    
+2. Topology generation
+    * Since we expect an heterogenous ensamble, a topology is generated for each model
+    
+3. Run HADDOCK's scoring recipe
+    * *DESCRIPTION PENDING*
+
+4. Analysis
+    * Extract energy values and calculate HADDOCK Score
+    * Cluster based on FCC (RMSD not implemented)
+    * Run third-party analysis software:
+        * FASTCONTACT
+        * DFIRE
+        * DockQ
+
+5. Output
+    * Script-friendly `.csv` table containing all relevant values
+        * Note: This table is dynamically generated based on the protocol that was executed
+    * Revamped clustering output files, sorted by haddockscore
+        * Note: `14` corresponds to molecule `scoring/mol1_14.pdb` the top1 model of the top1, `119` is 
+        `scoring/mol1_119.pdb` and is the top3 model of the top2 cluster.
+    ```
+    Cluster ID [mean score, top4 mean] -> (cluster center) top1 top2 top3 top4
+    
+    Cluster 3 [-539.197, -539.197] -> (25) 14 120 133 103
+    Cluster 1 [-330.265, -348.685] -> (106) 4 59 119 51 42
+    Cluster 2 [-258.977, -258.977] -> (135) 83 64 30 58
+    ```
+6. Visualization
+    * WIP
+  
+
+### Execution
+
 
 ```bash
-$ cd examples/protein-protein
-$ python ../../haddock/workflows/scoring/setup_scoring.py scoring.toml
-$ cd run-scoring-example
-$ python3 ../../../haddock/workflows/scoring/run_scoring.py
+$ cd examples/scoring
+$ tar xvf T158-150random.tar.xz
+$ python3 ../../haddock/workflows/scoring/run_scoring.py scoring.toml
 ```
 
 

@@ -1,10 +1,12 @@
 import sys
 import toml
 import json
+import argparse
 from datetime import datetime
 from haddock.modules.analysis.ana import Ana
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
+from haddock.modules.setup import Setup
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
 from haddock.haddock3 import generate_topology
@@ -15,35 +17,14 @@ with open(f'{etc_folder}/default.json', 'r') as fh:
     default_recipes = json.load(fh)
 fh.close()
 
-
-def run_analysis(pdb_l):
-    ana = Ana(pdb_l)
-
-    ana.extract_energies()
-
-    ana.calculate_haddock_score()
-
-    # ana.cluster(cutoff=0.75, threshold=1)
-    # ana.cluster(cutoff=0.75, threshold=2)
-    ana.cluster(cutoff=0.75, threshold=4)
-
-    # ana.cluster(cutoff=0.65, threshold=1)
-    # ana.cluster(cutoff=0.65, threshold=2)
-    ana.cluster(cutoff=0.65, threshold=4)
-
-    # ana.run_fastcontact()
-
-    # ana.run_dfire()
-
-    # ana.run_dockq()
-
-    ana.output()
+start = None
 
 
 def greeting():
-    now = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    global start
+    start = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     python_version = sys.version
-    return (f'''##############################################
+    print(f'''##############################################
 #                                            #
 #              Starting HADDOCK              #
 #             EXPERIMENTAL BUILD             #
@@ -52,14 +33,14 @@ def greeting():
 #                                            #
 ##############################################
 
-Starting HADDOCK {CURRENT_VERSION} on {now}
+Starting HADDOCK {CURRENT_VERSION} on {start}
 
 Python {python_version}
 ''')
 
 
 def score_models(run_param):
-    print('++ Running scoring workflow')
+    print('\n++ Running scoring workflow')
 
     recipe_name = run_param['stage']['scoring']['recipe']
     if recipe_name == 'default':
@@ -106,9 +87,79 @@ def score_models(run_param):
     return pdb_list
 
 
+def preprocess_scoring(raw_molecule_dic):
+
+    print('\n+ Pre-processing input molecules')
+
+    p = PDB()
+
+    # Split the ensamble in multiple models
+    print('++ Treating ensambles')
+    ensemble_dic = p.treat_ensemble(raw_molecule_dic)
+
+    # Deal with chains (WIP)
+    print('++ Matching chains (WIP)')
+    p.organize_chains(ensemble_dic)
+
+    # Clean problematic parts
+    print('++ Cleaning problematic parts')
+    clean_molecule_dic = p.sanitize(ensemble_dic)
+
+    # Deal with chainIDs and segIDs
+    print('++ Swapping segID with chainID')
+    clean_pdb_list = []
+    for pdb in clean_molecule_dic:
+        clean_pdb = p.fix_id(pdb, priority='chain')
+        clean_pdb_list.append(clean_pdb)
+
+    return clean_pdb_list
+
+
+def adieu():
+    end = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+    duration = datetime.strptime(end, '%d/%m/%Y %H:%M:%S') - datetime.strptime(start, '%d/%m/%Y %H:%M:%S')
+    salut = bye()
+    print(f'''
+ Finished at {end} ({duration})
+
+{salut}
+''')
+
+
 if __name__ == '__main__':
 
-    print(greeting())
+    # Initialize ======================================================================================================#
+
+    greeting()
+
+    parser = argparse.ArgumentParser(description='Setup your HADDOCK Scoring run')
+    parser.add_argument("run_file", help="The run file containing the parameters of your scoring run (.toml)")
+    args = parser.parse_args()
+
+    if len(sys.argv) < 2:
+        parser.print_usage()
+        exit()
+
+    # Setup & pre-process =============================================================================================#
+
+    setup_dictionary = toml.load(args.run_file)
+    run_id = setup_dictionary['identifier']['run']
+    if type(run_id) == int:
+        run_folder = f'run{run_id}'
+    else:
+        run_folder = f'run-{run_id}'
+
+    if not os.path.isdir(run_folder):
+        print(f'+ Setting up {run_folder}')
+        s = Setup(setup_dictionary)
+        s.prepare_folders()
+        s.configure_recipes()
+
+        # this one is not being used anywhere
+        _ = preprocess_scoring(setup_dictionary['molecules'])
+
+    print(f'\n+ Executing {run_folder}')
+    os.chdir(run_folder)
 
     run_f = 'data/run.toml'
     if not os.path.isfile(run_f):
@@ -118,8 +169,40 @@ if __name__ == '__main__':
     run_parameters = toml.load(run_f)
     molecules = get_begin_molecules('data/')
 
+    # Generate Topologies =============================================================================================#
+
     begin_models = generate_topology(molecules, run_parameters)
+
+    # Run HADDOCK's CNS scoring recipe ================================================================================#
 
     rescored = score_models(run_parameters)
 
-    run_analysis(rescored)
+    # Analysis ========================================================================================================#
+
+    ana = Ana(rescored)
+    reference = setup_dictionary['execution_parameters']['reference']
+
+    # HADDOCK-Score
+    ana.extract_energies()
+    ana.calculate_haddock_score()
+
+    # Clustering
+    ana.cluster(cutoff=0.75, threshold=1)
+    ana.cluster(cutoff=0.75, threshold=2)
+    ana.cluster(cutoff=0.75, threshold=4)
+
+    ana.cluster(cutoff=0.65, threshold=1)
+    ana.cluster(cutoff=0.65, threshold=2)
+    ana.cluster(cutoff=0.65, threshold=4)
+
+    # Third-party
+    ana.run_fastcontact()
+    ana.run_dfire()
+    ana.run_dockq(reference)
+
+    # Output ==========================================================================================================#
+    ana.output()
+
+    # Done! ===========================================================================================================#
+
+    adieu()

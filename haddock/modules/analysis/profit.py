@@ -5,7 +5,6 @@
 #
 #
 # def profit_rmsd(ordered_dic):
-# 	# TODO: implement multichain support
 # 	# profit_exe = '/programs/i386-mac/profit/3.1/profit'
 # 	rmsd_d = {}
 #

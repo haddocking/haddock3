@@ -12,7 +12,7 @@ class CNS:
 
 	def __init__(self):
 		self.stdout = None
-		self.cns_exec = ini.get('cns', 'cns_exe')
+		self.cns_exec = ini.get('DEFAULT', 'cns_exe')
 
 		self.run_param = toml.load('data/run.toml')
 		self.run_scheme = self.run_param['execution_parameters']['scheme']

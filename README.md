@@ -28,14 +28,13 @@
 $ git clone https://github.com/haddocking/haddock3.git
 $ cd haddock3
 $ setenv PYTHONPATH ${PYTHONPATH}:`pwd`
+$ setenv HADDOCK3 `pwd`
+$ setenv CNS_EXE /location/to/cns/executable
 $ pip install -r requirements.txt --user
 $ cd haddock/src
 $ make
 $ chmod +x contact_fcc
 $ cd ../../
-
-# Edit "cns_exe" and "haddock3" in the ini script
-$ vim haddock/etc/haddock3.ini
 ```
 
 # Workflows

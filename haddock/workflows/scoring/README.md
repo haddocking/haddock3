@@ -4,100 +4,29 @@ This workflow follows a very similar to the default scoring used by HADDOCK in C
 
 *WARNING: Still a work in progress, unstable and subject to major unannounced changes.*
 
-Python version is 3.7.3
-
-Input is an ensamble of models - `Target146.pdb`
-
-`$ python scoring.py`
-
-***
-
-Pre-processing
-* Split ensamble in separated models
-* Sanitize the PDBs; remove problematic portions of a PDB file and convert resnames.
-* Use user-inputed structure to match chains using structural alignment (TODO)
-
-Initialization
-* Read parameters and recipe from `scoring.json` and prepare for execution
-* Delegate the jobs to the JobCreator; `1 model = 1 task`, equivalent to `$ cns < scoringN.inp > out`
-
-Execution
-* Run the jobs based on the `run_scheme` defined in `scoring.json`
-
-Analysis
-* Retrieve scored structres and extract energy values from the header
-* Calculate the HADDOCK-Score
-* Cluster models using the FCC
-* Run third-party software
-    * DockQ
-        * irmsd,lrmsd,fnat and dockq, reference structure = lowest haddock-score
-    * FASTCONTACT
-    * DFIRE
-    * SOAP (TODO)
-* Output one large text file containing all information
-
-Interactive selection
-* Generate PyMol sessions with common scenarios (TODO)
-* Implement a database? (TODO)
-
-***
-
-# CNS Recipe
-
-The provided recipe `simple-scoring.inp` is a simplification of the scoring routine and is independent of the rest of the workflow. 
-Dependencies, aka `inline @script.cns` should be *integrated* into the recipe to facilitate execution and paralelization by the CNS-Python wrapper.
-
-```shell
-simple-scoring.inp
-|__ def_solv_param.cns
-|__ symmultimer.cns (DISABLED)
-|__ scale_intra_only.cns
-|__ scale_inter_only.cns
-|__ print_coorheader.cns
-
-``` 
-
-For further development of the CNS recipes, expected input is a single PDB structure (properly cleaned) and output a PDB structure with the default HADDOCK header and named `XXXX_conv.pdb`. 
-
-***
-
 Example script to run in Alcazar using 48 proc:
 
 ```bash
 #!/usr/bin/env tcsh
-#PBS -N exp-scoring
+#PBS -N scoring-test
 #PBS -q short
 #PBS -l nodes=1:ppn=48
 #PBS -S /bin/tcsh
 
 echo $PYTHONPATH
-echo `pwd`
+setenv HADDOCK3 /home/rodrigo/software/haddock3
+setenv PYTHONPATH $PYTHONPATH\:$HADDOCK3
 
-setenv PYTHONPATH $PYTHONPATH\:/home/rodrigo/haddock3
-setenv PYTHONPATH $PYTHONPATH\:/home/rodrigo/haddock3/haddock/workflows/scoring
-cd /home/rodrigo/work/scoring
-/home/rodrigo/miniconda3/bin/python /home/rodrigo/haddock3/haddock/workflows/scoring/scoring.py /home/rodrigo/work/scoring/scoring.json
+echo $PYTHONPATH
+echo $HADDOCK3
+
+cd /home/rodrigo/software/haddock3/examples/scoring
+/home/rodrigo/miniconda3/bin/python /home/rodrigo/software/haddock3/haddock/workflows/scoring/run_scoring.py /home/rodrigo/software/haddock3/examples/sco
+ring/scoring.toml > /home/rodrigo/software/haddock3/examples/scoring/scoring.out
 ```
 
 
 *WARNING: Still a work in progress, unstable and subject to major unannounced changes.*
-
-
-***
-
-# TODO List
-
-- Implement chain matching via structural alignment ([lovoalign](https://www.ime.unicamp.br/~martinez/lovoalign/home.html))
-- Add extra `run_schemes`
-- Refactor `scoring.json`, maybe switch to TOML for increased readability
-- Write tests
-- Implement CI via TravisCI
-- Automatically generate PyMol sessions with common scenarios for visual inspection ex: *Top 2 models of the Top10 cluster*
-- Sort out Licensing and authorization (FCC)
-- Add SOAP
-- Add parallelization to third party software
-- Implement a solution for data visualization
-- Improve code documentation
 
 ***
 

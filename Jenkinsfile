@@ -20,8 +20,8 @@ pipeline {
     }
   }
   environment {
-    HADDOCK3 = '${env.WORKSPACE}'
-    CNS_EXE = ''
+    HADDOCK3 = "${env.WORKSPACE}"
+    CNS_EXE = ""
     CODECOV_TOKEN = '2ef88c60-f7a3-46bb-bf66-fa112b7896b7'
   }
 }

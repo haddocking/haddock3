@@ -16,9 +16,11 @@ Example script to run in Alcazar using 48 proc:
 echo $PYTHONPATH
 setenv HADDOCK3 /home/rodrigo/software/haddock3
 setenv PYTHONPATH $PYTHONPATH\:$HADDOCK3
+setenv CNS_EXE /home/software/science/cns/cns_solve_1.3-UU/intel-x86_64bit-linux/bin/cns
 
 echo $PYTHONPATH
 echo $HADDOCK3
+echo $CNS_EXE
 
 cd /home/rodrigo/software/haddock3/examples/scoring
 /home/rodrigo/miniconda3/bin/python /home/rodrigo/software/haddock3/haddock/workflows/scoring/run_scoring.py /home/rodrigo/software/haddock3/examples/sco

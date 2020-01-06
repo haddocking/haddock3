@@ -37,6 +37,8 @@ $ chmod +x contact_fcc
 $ cd ../../
 ```
 
+Edit `haddock/etc/haddock3.ini` to account for the third-party software
+
 # Workflows
 ## Docking
 

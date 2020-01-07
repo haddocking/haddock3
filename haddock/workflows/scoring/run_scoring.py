@@ -196,9 +196,9 @@ if __name__ == '__main__':
     ana.cluster(cutoff=0.65, threshold=4)
 
     # Third-party
-    ana.run_fastcontact()
-    ana.run_dfire()
-    ana.run_dockq(reference)
+    # ana.run_fastcontact()
+    # ana.run_dfire()
+    # ana.run_dockq(reference)
 
     # Output ==========================================================================================================#
     ana.output()

@@ -33,7 +33,6 @@ $ setenv CNS_EXE /location/to/cns/executable
 $ pip install -r requirements.txt --user
 $ cd haddock/src
 $ make
-$ chmod +x contact_fcc
 $ cd ../../
 ```
 

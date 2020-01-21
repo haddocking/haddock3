@@ -2,7 +2,7 @@ import configparser
 import itertools
 import subprocess
 import os
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 from haddock.modules.structure.utils import PDB
 
 etc_folder = get_full_path('haddock', 'etc')

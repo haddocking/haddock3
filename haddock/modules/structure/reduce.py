@@ -1,7 +1,7 @@
 import configparser
 import subprocess
 import os
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 
 etc_folder = get_full_path('haddock', 'etc')
 config_file = os.path.join(etc_folder, 'haddock3.ini')

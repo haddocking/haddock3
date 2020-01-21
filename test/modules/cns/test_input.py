@@ -1,7 +1,7 @@
 # """ Test the Input generator """
 # import unittest
 # from unittest.mock import patch
-# from utils.files import get_full_path
+# from haddock.utils.files import get_full_path
 #
 # data_path = get_full_path('test', 'test_data')
 # param_path = get_full_path('haddock', 'toppar')

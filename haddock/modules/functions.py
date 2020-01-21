@@ -4,7 +4,7 @@ import configparser
 import os
 import glob
 from haddock.modules.structure.utils import PDB
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 
 
 def treat_ensemble(pdb_dic):

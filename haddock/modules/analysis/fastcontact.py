@@ -3,7 +3,7 @@ import os
 import itertools
 import subprocess
 from haddock.modules.structure.utils import PDB
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 
 etc_folder = get_full_path('haddock', 'etc')
 config_file = os.path.join(etc_folder, 'haddock3.ini')

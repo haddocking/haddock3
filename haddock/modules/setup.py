@@ -1,7 +1,7 @@
 import os
 import json
 import toml
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 from haddock.modules.worker.recipe import RecipeComposer
 
 etc_folder = get_full_path('haddock', 'etc')

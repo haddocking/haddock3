@@ -180,25 +180,28 @@ if __name__ == '__main__':
     # Analysis ========================================================================================================#
 
     ana = Ana(rescored)
+
     reference = setup_dictionary['execution_parameters']['reference']
+    method = setup_dictionary['clustering']['method']
+    detail_flag = setup_dictionary['clustering']['details']
+    clustering_params = setup_dictionary['clustering']['params']
 
     # HADDOCK-Score
     ana.extract_energies()
     ana.calculate_haddock_score()
 
     # Clustering
-    ana.cluster(cutoff=0.75, threshold=1)
-    ana.cluster(cutoff=0.75, threshold=2)
-    ana.cluster(cutoff=0.75, threshold=4)
+    if method != 'fcc':
+        print(f'+ ERROR: Clustering method {method} not supported')
+        exit()
 
-    ana.cluster(cutoff=0.65, threshold=1)
-    ana.cluster(cutoff=0.65, threshold=2)
-    ana.cluster(cutoff=0.65, threshold=4)
+    for cutoff, threshold in clustering_params:
+        ana.cluster(cutoff=cutoff, threshold=threshold, detailed=clustering_params)
 
     # Third-party
-    # ana.run_fastcontact()
-    # ana.run_dfire()
-    # ana.run_dockq(reference)
+    ana.run_fastcontact()
+    ana.run_dfire()
+    ana.run_dockq(reference)
 
     # Output ==========================================================================================================#
     ana.output()

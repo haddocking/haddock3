@@ -1,20 +1,10 @@
-import configparser
-import os
 import itertools
 import subprocess
 from haddock.modules.structure.utils import PDB
 from haddock.utils.files import get_full_path
 
-etc_folder = get_full_path('haddock', 'etc')
-config_file = os.path.join(etc_folder, 'haddock3.ini')
 
-ini = configparser.ConfigParser(os.environ)
-ini.read(config_file, encoding='utf-8')
-
-dockq_exec = ini.get('third_party', 'dockq_exe')
-
-
-def dockq(ref, pdb_f, count):
+def dockq(ref, pdb_f, dockq_exec):
 
 	# print(f'+ {count} {pdb_f}')
 

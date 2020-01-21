@@ -1,19 +1,32 @@
 #===========================================================#
 title = "HADDOCK3 Scoring Workflow Setup file"
 #===========================================================#
+# Input molecule is expected to be an ENSAMBLE with ChainIDs
 [molecules]
-mol1 = 'T158-150random.pdb'
+mol1 = 'T158-5random.pdb'
 
 [identifier]
-run = 1
+run = 'example'
 
 [execution_parameters]
-scheme = 'parallel'
 nproc = 24
+scheme = 'parallel'
+
+# Which reference sutructure should be used to calculate RMSDs
 reference = 'lowest'
 
-[stage]
+[clustering]
+method = 'fcc'
+details = false
 
+# Cutoff and Threshold
+params = [
+    [0.60, 4.0],
+    [0.70, 4.0],
+    [0.75, 4.0]
+]
+#===========================================================#
+[stage]
 [stage.topology]
 recipe='default'
 

@@ -1,21 +1,11 @@
-import configparser
 import os
 import itertools
 import subprocess
 from haddock.modules.structure.utils import PDB
-from utils.files import get_full_path
-
-etc_folder = get_full_path('haddock', 'etc')
-config_file = os.path.join(etc_folder, 'haddock3.ini')
-
-ini = configparser.ConfigParser(os.environ)
-ini.read(config_file, encoding='utf-8')
-
-fastcontact_exe = ini.get('third_party', 'fastcontact_exe')
 
 
-# TODO: Implement parallelism
-def fastcontact(pdb_f):
+# TODO: Implement parallelism?
+def fastcontact(pdb_f, fastcontact_exe):
 
     felecv = .0
     fdesolv = .0

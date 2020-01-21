@@ -1,35 +1,42 @@
-import configparser
 import itertools
 import subprocess
-import os
-from utils.files import get_full_path
+import re
 from haddock.modules.structure.utils import PDB
 
-etc_folder = get_full_path('haddock', 'etc')
-config_file = os.path.join(etc_folder, 'haddock3.ini')
 
-ini = configparser.ConfigParser(os.environ)
-ini.read(config_file, encoding='utf-8')
+def dfire(pdb_f, dcomplex_exe):
 
-dcomplex_exe = ini.get('third_party', 'dcomplex_exe')
+	fixed_pdb = PDB.fix_id(pdb_f)
+	prot_dic = PDB.load_structure(fixed_pdb)
 
+	dfire_regex = r'-?\d*?\.\d\d*'
 
-def dfire(pdb_f):
-
-	prot_dic = PDB.load_structure(pdb_f)
 	dfire_dic = {'binding': [], 'score': []}
 	for segid_x, segid_y in itertools.combinations(prot_dic, 2):
 
-		p = subprocess.run([dcomplex_exe, pdb_f, segid_x, segid_y], stdout=subprocess.PIPE)
+		input_str = str.encode(f'{fixed_pdb}\n1\n{segid_x}\n1\n{segid_y}')
+
+		p = subprocess.run(dcomplex_exe, input=input_str, stdout=subprocess.PIPE)
 
 		try:
-			binding = float(p.stdout.decode('utf-8').split()[-2])
+			result = p.stdout.decode('utf-8')
+			score, binding = re.findall(dfire_regex, result)
+
+			score = float(score)
+			binding = float(binding)
+
 		except ValueError:
+
 			binding = float('nan')
+			score = float('nan')
 
 		dfire_dic['binding'].append(binding)
+		dfire_dic['score'].append(score)
 
 	binding_l = [float(e) for e in dfire_dic['binding']]
-	mean_binding = sum(binding_l) / len(binding_l)
+	score_l = [float(e) for e in dfire_dic['score']]
 
-	return mean_binding
+	mean_binding = sum(binding_l) / len(binding_l)
+	mean_score = sum(score_l) / len(score_l)
+
+	return mean_binding, mean_score

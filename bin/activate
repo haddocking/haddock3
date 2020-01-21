@@ -3,3 +3,4 @@
 export PYTHONPATH=${PYTHONPATH}:`pwd`
 export HADDOCK3=`pwd`
 export CNS_EXE=${HADDOCK3}/cns/cns_solve-1.31-UU-MacIntel.exe
+export PATH=${PATH}:${HADDOCK3}/bin

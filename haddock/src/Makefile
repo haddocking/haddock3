@@ -14,6 +14,7 @@ all:
 
 contact_fcc: contact_fcc.cpp
 	$(CPP) $(CPFLAGS) -o contact_fcc contact_fcc.cpp
+	chmod u+x contact_fcc
 
 clean :
 	/bin/rm $(EXEC)

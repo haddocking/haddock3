@@ -2,6 +2,7 @@ import os
 import itertools
 import subprocess
 from haddock.modules.structure.utils import PDB
+from haddock.utils.files import get_full_path
 
 
 # TODO: Implement parallelism?

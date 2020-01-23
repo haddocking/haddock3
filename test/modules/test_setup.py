@@ -1,7 +1,7 @@
 import unittest
 import os
 from haddock.modules.setup import Setup
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 
 data_path = get_full_path('test', 'data')
 

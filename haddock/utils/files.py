@@ -1,6 +1,7 @@
 from os.path import dirname, join
 
-MAIN_DIRECTORY = dirname(dirname(__file__))
+
+MAIN_DIRECTORY = dirname(join(dirname(__file__), '..', '..', '..'))
 
 
 def get_full_path(*path):

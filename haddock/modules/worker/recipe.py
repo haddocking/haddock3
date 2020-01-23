@@ -1,8 +1,8 @@
-from utils.files import get_full_path
 import json
 import os
 import re
 import random
+from haddock.utils.files import get_full_path
 
 
 class RecipeComposer:

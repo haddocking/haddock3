@@ -4,7 +4,7 @@ import unittest
 import os
 from shutil import copyfile
 from haddock.modules.structure.utils import PDB
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 
 data_path = get_full_path('test', 'data')
 

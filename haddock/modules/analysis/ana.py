@@ -4,8 +4,8 @@ import os
 import shutil
 import statistics
 import math
-from utils.files import get_full_path
 import configparser
+from haddock.utils.files import get_full_path
 from haddock.modules.analysis.contact import Contacts
 from haddock.modules.analysis.dfire import dfire
 from haddock.modules.analysis.dockq import dockq

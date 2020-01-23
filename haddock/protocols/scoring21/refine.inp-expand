@@ -1,0 +1,1744 @@
+! refine.inp
+!    The core docking script of HADDOCK performing rigid-body docking
+!    and semi-flexible refinement in torsion angle space
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@NEWIT:iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+Data      =$Data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;)
+
+evaluate ($log_level=quiet)
+!evaluate ($log_level=verbose)
+
+if ( $log_level = verbose ) then
+   set message=normal echo=on end
+else
+   set message=off echo=off end
+end if
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!The next line will be changed automatically from python:
+evaluate ($whichMD="torsion")
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!The next line will be changed automatically from python:
+evaluate ($count = 1)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!The next line will be changed automatically from python:
+evaluate ($file = "")
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!reads in structure, coordinates and parameter files
+@RUN:protocols/read_struc.cns
+
+flag include bond angle impr vdw end
+
+if ($Data.flags.dihed eq true) then
+  flag include dihed end
+end if
+
+do (fbeta=$Saprotocol.fbeta) (all)
+do (mass=$Saprotocol.mass) (all)
+do (mass=1000) (resn ani)
+do (mass=1000) (resn xan)
+do (mass=1000) (resn dan)
+
+evaluate ($end_count = $iterations.ini_count + $iterations.structures - 1)
+
+if ($Data.noecv eq true) then
+  if ($iteration = 0) then
+    evaluate ($npart = 1 + mod($count,$Data.ncvpart))
+    evaluate ($fileseed="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".seed")
+    evaluate ($seed = max($iteration,1)*$count*$Saprotocol.iniseed)
+  else
+    evaluate ($fileseed= $file - ".pdb" + ".seed")
+    @@$fileseed (seed=$seed;npart=$npart )
+    evaluate ($fileseed="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".seed")
+    evaluate ($num = $count + $iterations.structures)
+    evaluate ($file_r_seed="NEWIT:" + $Filenames.fileroot + "_" + encode($num) + ".seed")
+    if ($saprotocol.rotate180_it1 eq true) then
+      set display=$file_r_seed end
+      display module(seed;npart)
+      display define (
+      display currentseed = $seed;
+      display currentpart = $npart;
+      display )
+      display evaluate (&seed=&currentseed)
+      display evaluate (&npart=&currentpart)
+      close $file_r_seed end
+    end if
+  end if
+  set display=$fileseed end
+  display module(seed;npart)
+  display define (
+  display currentseed = $seed;
+  display currentpart = $npart;
+  display )
+  display evaluate (&seed=&currentseed)
+  display evaluate (&npart=&currentpart)
+  close $fileseed end
+else
+  evaluate ($seed = max($iteration,1)*$count*$Saprotocol.iniseed)
+end if
+set seed $seed end
+
+coor init end
+coor @@$file
+
+! reinitialize the DUM residue
+if ($Data.flags.centroids = true) then
+    if ($iteration = 0) then
+        @RUN:protocols/centroids_initialize.cns
+    end if
+end if
+
+! check for the presence of ions and add covalent bond
+if ($iteration = 1) then
+  @RUN:protocols/covalions.cns
+end if
+
+{* Find CoM of protein *}
+show ave (x) (name CA or name BB or name C1')
+evaluate ($xcent=$result)
+show ave (y) (name CA or name BB or name C1')
+evaluate ($ycent=$result)
+show ave (z) (name CA or name BB or name C1')
+evaluate ($zcent=$result)
+
+coor select (not known and resn ani) end
+if ($select gt 0) then
+  coor @@$tensor_pdb
+
+  {* Find CoM of protein and move tensor 100 A away *}
+  show ave (x) (name CA or name BB or name C1')
+  evaluate ($xcent=$result)
+  show ave (y) (name CA or name BB or name C1')
+  evaluate ($ycent=$result)
+  show ave (z) (name CA or name BB or name C1')
+  evaluate ($zcent=$result)
+  do (x=x+$xcent+100) (resn ANI)
+  do (y=y+$ycent+100) (resn ANI)
+  do (z=z+$zcent+100) (resn ANI)
+  evaluate ($rantens = true)
+else
+  evaluate ($rantens = false)
+end if
+
+coor select (not known and resn xan) end
+if ($select gt 0) then
+  coor @@$tensor_para_pdb
+  evaluate ($rantens_para = true)
+else
+  evaluate ($rantens_para = false)
+end if
+
+coor select (not known and resn dan) end
+if ($select gt 0) then
+  coor @@RUN:toppar/tensor_dani.pdb
+
+  {* Find CoM of protein and move tensor 100 A away *}
+  show ave (x) (name CA or name BB or name C1')
+  evaluate ($xcent=$result)
+  show ave (y) (name CA or name BB or name C1')
+  evaluate ($ycent=$result)
+  show ave (z) (name CA or name BB or name C1')
+  evaluate ($zcent=$result)
+  do (x=x+$xcent+100) (resn DAN)
+  do (y=y+$ycent+100) (resn DAN)
+  do (z=z+$zcent+100) (resn DAN)
+  evaluate ($rantens_dani = true)
+else
+  evaluate ($rantens_dani = false)
+end if
+
+!catch possible bound water and set high T steps to 0
+coor select ((resn WAT or resn HOH or resn TIP*)) end
+if ($select gt 0) then
+  evaluate ($SaProtocol.initiosteps = 0)
+  evaluate ($SaProtocol.cool1_steps = 0)
+  evaluate ($refine.keepwater = true)
+end if
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+!set the energy flags:
+inline @RUN:protocols/setflags.cns
+
+!read all the experimental Data:
+evaluate ($lcc = 0)
+set seed $seed end
+set message=normal echo=on end
+if ($data.waterdock eq false) then
+    inline @RUN:protocols/read_data.cns
+    if ($data.flags.em = true) then
+        @RUN:protocols/em_read_data.cns(Data=$data;)
+    end if
+
+    if ($Data.flags.centroids = true) then
+        if ($iteration = 0) then
+            @RUN:protocols/centroids_set_restraints.cns
+        end if
+    end if
+end if
+
+{* ======================= reset coordinates and proceed *}
+
+do (x = refx) (all)
+do (y = refy) (all)
+do (z = refz) (all)
+
+inline @RUN:protocols/read_water1.cns
+if ($data.waterdock eq true) then
+  inline @RUN:protocols/water_rest.cns
+  set seed $seed end
+  set message=normal echo=on end
+  inline @RUN:protocols/read_data.cns
+end if
+
+!set the energy flags:
+inline @RUN:protocols/setflags.cns
+
+{* random removal of restaints ================================== *}
+if ($Data.noecv eq true) then
+  set message=on echo=on end
+  noe cv $npart ? end
+else
+  evaluate ($npart = 0)
+end if
+
+if ( $log_level = verbose ) then
+   set message=normal echo=on end
+else
+   set message=off echo=off end
+end if
+
+!set the rdc coefficients:
+evaluate ($nrdc=1)
+while ($nrdc <= $data.numrdc) loop rdc
+  evaluate ($cln = "rd" + encode($nrdc) )
+  if ($Data.rdc_choice_$nrdc eq "SANI") then
+    sani class $cln coeff 0.0 $Data.rdc_d_$nrdc $Data.rdc_r_$nrdc end
+  end if
+  if ($Data.rdc_choice_$nrdc eq "XRDC") then
+    xrdc class $cln coeff $Data.rdc_d_$nrdc $Data.rdc_r_$nrdc end
+  end if
+  evaluate ($nrdc=$nrdc+1)
+end loop rdc
+
+!set the pcs coefficients:
+evaluate ($npcs=1)
+while ($npcs <= $data.numpcs) loop pcs
+  if ($Data.pcs_choice_$npcs eq "XPCS") then
+    evaluate ($cln = "pc"+encode($npcs) )
+    xpcs class $cln coeff $Data.pcs_d_$npcs $Data.pcs_r_$npcs end
+  end if
+  evaluate ($npcs=$npcs+1)
+end loop pcs
+
+! set dani coefficients:
+evaluate ($ndani=1)
+while ($ndani <= $data.numdani) loop dani
+  if ($Data.dan_choice_$ndani eq "DANI") then
+    evaluate ($cln = "da"+encode($ndani) )
+    dani class $cln coeff $Data.dan_tc_$ndani $Data.dan_anis_$ndani $Data.dan_r_$ndani $Data.dan_wh_$ndani $Data.dan_wn_$ndani end
+  end if
+  evaluate ($ndani=$ndani+1)
+end loop dani
+
+
+{* ============================================================== *}
+eval ($anisotropy = false)
+if ($Data.flags.sani eq true) then
+  flag incl sani end
+  eval ($anisotropy = true)
+else
+  flag excl sani end
+end if
+
+if ($Data.flags.xrdc eq true) then
+  flag incl xrdc end
+  eval ($anisotropy = true)
+else
+  flag excl xrdc end
+end if
+
+if ($Data.flags.xpcs eq true) then
+  flag incl xpcs end
+  eval ($anisotropy = true)
+else
+  flag excl xpcs end
+end if
+
+if ($Data.flags.vean eq true) then
+  flag incl vean end
+else
+  flag excl vean end
+end if
+
+if ($Data.flags.dani eq true) then
+  flag incl dani end
+  eval ($anisotropy = true)
+else
+  flag excl dani end
+end if
+
+! determine whether the final models should be reoriented along their principal
+! axes before writing to file in it0 and it1
+eval($reorient = true)
+if ($data.flags.zres = true) then
+    eval($reorient = false)
+elseif ($data.flags.em = true) then
+    eval($reorient = false)
+elseif ($data.flags.centroids = true) then
+    eval($reorient = false)
+end if
+
+eval ($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+  eval($nchain1 = $nchain1 + 1)
+  if ($Toppar.fix_origin_$nchain1 eq true) then
+    eval($reorient = false)
+  end if
+end loop nloop1
+
+evaluate ($numnoe = 0)
+
+{*======================= random orientations and rigid body minimisation *}
+if ($iteration = 0) then
+  if ($SaProtocol.rigidmini eq true) then
+    !Make sure that at least as many distance restraints are successfully
+    !read as the number of partitions for cross-validation
+    evaluate ($numnoe = 0)
+    noe ? end
+    if ($NUMNOE = 0) then
+      if ($Data.ncomponents > 1) then
+        if ($Data.surfrest eq FALSE) then
+          if ($Data.cmrest eq FALSE) then
+            if ($Data.ranair eq FALSE) then
+              if ($Data.flags.rg eq FALSE) then
+                evaluate ($errfile = "RUN:WARNING")
+                fileexist $errfile end
+                if ($result eq false) then
+                  set display=$errfile end
+                  display TOTAL NUMBER OF DISTANCE RESTRAINTS FOR RIGID BODY DOCKING IS ZERO!
+                  display CONTROL YOUR PARAMETER SETTINGS AND RESTRAINT DEFINITIONS
+                  display STRUCTURE NUMBER $count
+                  close $errfile end
+                end if
+              end if
+            end if
+          end if
+        end if
+      end if
+      evaluate ($Data.ncvpart = 1)
+      evaluate ($Data.noecv = FALSE)
+    end if
+  end if
+
+  if ($NUMNOE lt $Data.ncvpart) then
+    noe part=1 end
+    evaluate ($Data.ncvpart = 1)
+    evaluate ($Data.noecv = FALSE)
+  end if
+
+  flag excl bond angl dihe impr zhar end
+
+  if ($Data.flags.elec0 eq true) then
+    flag include elec end
+    if ($Data.dielec0 eq rdie) then
+      parameter nbonds eps=$Data.epsilon0 rdie shift switch end end
+      ! shift statement needed first to activate switch (CNS bug?)
+    else
+      parameter nbonds eps=$Data.epsilon0 cdie shift end end
+    end if
+    parameter nbonds ? end end
+  else
+    evaluate ($elec=0.0)
+    flag exclude elec end
+  end if
+
+  flag excl cdih end
+
+  if ($Data.ranair eq true) then
+    if ($Data.ncomponents > 2) then
+      evaluate ($errfile = "RUN:FAILED")
+      fileexist $errfile end
+      if ($result eq false) then
+        set display=$errfile end
+        display ========= Unsupported option ===========
+        display Random definition of AIRs with more than
+        display two molecules currently unsupported
+        display ========================================
+        close $errfile end
+      end if
+      stop
+    end if
+    evaluate ($Data.noecv = false)
+    noe
+      reset
+      nrestraints = 100000     ! allocate space for NOEs
+      ceiling 1000
+    end
+    @RUN:protocols/randomairs.cns
+
+    !Read back in hbond data
+    if ($Data.hbond_lastit ge &iteration) then
+      if ($Data.hbond_firstit le &iteration) then
+        if ($Data.hbonds_on eq true) then
+          noe @@$hbond_fname end
+        end if
+      end if
+    end if
+
+    noe
+      averaging  * sum
+      potential  * soft
+      scale      * 1.0
+      sqconstant * 1.0
+      sqexponent * 2
+      soexponent * 1
+      rswitch    * 1.0
+      sqoffset   * 0.0
+      asymptote  * 2.0
+      msoexponent * 1
+      masymptote  * -0.1
+      mrswitch    * 1.0
+      avexpo hbond 20
+    end
+    inline @RUN:protocols/water_rest.cns
+  end if
+
+  @RUN:protocols/symmultimer.cns
+
+  @RUN:protocols/zrestraining.cns
+
+  if ($Data.flags.rg eq true ) then
+    collapse
+      force  $Data.krg_hot
+      target $Data.rgtarg
+      sele   (not (resn ANI or resn XAN or resn WAT or resn HOH or resn TIP* or resn DUM or resh SHA))
+    end
+  end if
+
+  if ($Data.cmrest eq true ) then
+    @RUN:protocols/cm-restraints.cns
+  end if
+
+  if ($Data.surfrest eq true ) then
+    @RUN:protocols/surf-restraints.cns
+  end if
+
+  if ($Data.flags.centroids eq true) then
+      @RUN:protocols/centroids_initialize.cns
+      @RUN:protocols/centroids_set_map.cns
+      noe scale centroid $data.centroids.kscale end
+  end if
+
+  flag excl ncs end
+  evaluate ($nrig = 0)
+  evaluate ($nfirst = 1)
+  evaluate ($bestair = 0)
+
+  if ($SaProtocol.rigidmini eq true) then
+    while ($nrig < $SaProtocol.ntrials) loop trials
+
+      evaluate ($nrig = $nrig + 1)
+
+      if ( $log_level = verbose ) then
+        set message=normal echo=on end
+       else
+        set message=off echo=off end
+      end if
+
+      ! random placement of molecules
+      if ($SaProtocol.randorien eq true) then
+          @RUN:protocols/separate.cns(Data=$Data; Toppar=$Toppar)
+          @RUN:protocols/random_rotations.cns
+          if ($Data.flags.centroids eq true) then
+              ! place the centroids on their positions
+              @RUN:protocols/centroids_initialize.cns
+              @RUN:protocols/centroids_set_map.cns
+              ! place the molecules around the centroids
+              @RUN:protocols/centroids_init_placement.cns
+          end if
+      end if
+
+      if ($Data.flags.sani eq true) then
+        coor @@$tensor_pdb
+        do (x = x + $xcent + 100) (resn ANI)
+        do (y = y + $ycent + 100) (resn ANI)
+        do (z = z + $zcent + 100) (resn ANI)
+      end if
+
+      if ($Data.flags.dani eq true) then
+        coor @@RUN:toppar/tensor_dani.pdb
+        do (x=x+$xcent+100) (resn DAN)
+        do (y=y+$ycent+100) (resn DAN)
+        do (z=z+$zcent+100) (resn DAN)
+      end if
+
+      if ($Data.flags.xrdc eq true) then
+        coor @@$tensor_para_pdb
+        do (x=x+$xcent+100) (resn XAN)
+        do (y=y+$ycent+100) (resn XAN)
+        do (z=z+$zcent+100) (resn XAN)
+      end if
+
+      if ($Data.flags.xpcs eq true) then
+        coor @@$tensor_para_pdb
+        do (x=x+$xcent+100) (resn XAN)
+        do (y=y+$ycent+100) (resn XAN)
+        do (z=z+$zcent+100) (resn XAN)
+      end if
+
+      evaluate ($unamb_scale = 1.0)
+      evaluate ($ambig_scale = 1.0)
+      evaluate ($hbond_scale = 1.0)
+      evaluate ($symm_scale = 1.0)
+      evaluate ($cont_scale = 0.0)
+      evaluate ($surf_scale = 0.0)
+
+      noe
+        scale dist $unamb_scale
+        scale ambi $ambig_scale
+        scale hbon $hbond_scale
+        scale symm $symm_scale
+        scale contact $cont_scale
+        scale surface $surf_scale
+      end
+
+      evaluate ($nrdc=1)
+      while ($nrdc <= $data.numrdc) loop rdc
+        evaluate ($vea_bor_scale_$nrdc = min($Data.ini_bor_hot_$nrdc,$Data.fin_bor_cool3_$nrdc))
+        evaluate ($vea_cen_scale_$nrdc = min($Data.ini_cen_hot_$nrdc,$Data.fin_cen_cool3_$nrdc))
+	evaluate ($cln = "rd"+encode($nrdc) )
+        evaluate ($san_scale_$nrdc = min($Data.rdc_hot_$nrdc,$Data.rdc_cool3_$nrdc))
+        if ($Data.flags.vean eq true) then
+          vean class $cln force 0.0 0.0 end
+        end if
+        if ($Data.flags.sani eq true) then
+          sani class $cln force 0.0 end
+        end if
+        if ($Data.flags.xrdc eq true) then
+          xrdc class $cln force 0.0 end
+        end if
+        evaluate ($nrdc = $nrdc + 1)
+      end loop rdc
+
+      evaluate ($ndani=1)
+      while ($ndani <= $data.numdani) loop dani
+       evaluate ($dan_scale_$ndani = min($Data.dan_hot_$ndani,$Data.dan_cool3_$ndani))
+       if ($Data.flags.dani eq true) then
+          evaluate ($cln = "da"+encode($ndani) )
+          dani class $cln force 0.0 end
+        end if
+        evaluate ($ndani = $ndani + 1)
+      end loop dani
+
+      if ($Data.flags.xpcs eq true) then
+        evaluate ($npcs=1)
+        while ($npcs <= $data.numpcs) loop pcs
+          evaluate ($pcs_scale_$npcs = min($Data.pcs_hot_$npcs,$Data.pcs_cool3_$npcs))
+          evaluate ($cln = "pc"+encode($npcs) )
+          xpcs class $cln force 0.0 end
+          evaluate ($npcs= $npcs + 1)
+        end loop pcs
+      end if
+
+      evaluate ($kinter = $SaProtocol.inter_rigid)
+      @RUN:protocols/scale_inter_mini.cns
+
+
+      ! a few rounds of rotational rigid body minimization for each independent chain
+      evaluate ($imini = 0)
+      while ($imini le 4) loop rigmin
+
+        if ($imini >= 1) then
+	  evaluate ($paramin = false)
+          evaluate ($nrdc=1)
+          while ($nrdc <= $data.numrdc) loop rdc
+            evaluate ($vea_bor_scale_$nrdc = min($Data.ini_bor_hot_$nrdc,$Data.fin_bor_cool3_$nrdc))
+            evaluate ($vea_cen_scale_$nrdc = min($Data.ini_cen_hot_$nrdc,$Data.fin_cen_cool3_$nrdc))
+            evaluate ($san_scale_$nrdc = min($Data.rdc_hot_$nrdc,$Data.rdc_cool3_$nrdc))
+            evaluate ($cln = "rd"+encode($nrdc) )
+            if ($Data.flags.vean eq true) then
+              vean class $cln force $vea_bor_scale_$nrdc $vea_cen_scale_$nrdc end
+              evaluate ($vea_bor_scale_$nrdc = min(($vea_bor_scale_$nrdc * 2),$Data.fin_bor_cool3_$nrdc))
+              evaluate ($vea_cen_scale_$nrdc = min(($vea_cen_scale_$nrdc * 2),$Data.fin_cen_cool3_$nrdc))
+            end if
+            if ($Data.flags.sani eq true) then
+              sani class $cln force $san_scale_$nrdc end
+              evaluate ($san_scale_$nrdc = min($san_scale_$nrdc * 2,$Data.rdc_cool3_$nrdc))
+            end if
+            if ($Data.flags.xrdc eq true) then
+              xrdc class $cln force $san_scale_$nrdc end
+              evaluate ($san_scale_$nrdc = min($san_scale_$nrdc * 2,$Data.rdc_cool3_$nrdc))
+     	      evaluate ($paramin = true)
+            end if
+            evaluate ($nrdc = $nrdc + 1)
+          end loop rdc
+
+          if ($Data.flags.sani eq true) then
+            if ($rantens eq true) then
+              @RUN:protocols/mini_tensor.cns
+            end if
+          end if
+
+          if ($Data.flags.xpcs eq true) then
+            evaluate ($npcs=1)
+            while ($npcs <= $data.numpcs) loop pcs
+              evaluate ($cln = "pc"+encode($npcs) )
+              xpcs class $cln force $pcs_scale_$npcs end
+              evaluate ($pcs_scale_$npcs = min($pcs_scale_$npcs * 2,$Data.pcs_cool3_$npcs))
+              evaluate ($npcs= $npcs + 1)
+            end loop pcs
+          end if
+
+          if ($paramin eq TRUE) then
+            if ($rantens_para eq true) then
+              @RUN:protocols/mini_tensor_para.cns
+            end if
+          end if
+
+          if ($Data.flags.dani eq true) then
+            evaluate ($ndani=1)
+            while ($ndani <= $data.numdani) loop dani
+              evaluate ($cln = "da"+encode($ndani) )
+              dani class $cln force $dan_scale_$ndani end
+              evaluate ($dan_scale_$ndani = min($dan_scale_$ndani * 2,$Data.dan_cool3_$ndani))
+              evaluate ($ndani = $ndani + 1)
+            end loop dani
+            if ($rantens_dani eq true) then
+              @RUN:protocols/mini_tensor_dani.cns
+            end if
+          end if
+
+        end if
+
+        evaluate ($imini = $imini + 1)
+        eval ($ministeps = 500 * nint ($data.ncomponents/6 + 1))
+        if ($SaProtocol.randorien eq true) then
+          flag excl vdw elec coll zhar end
+        end if
+        eval ($nchain1 = 0)
+        while ($nchain1 < $data.ncomponents) loop nloop1
+          eval($nchain1 = $nchain1 + 1)
+	  if ($Toppar.fix_origin_$nchain1 eq false) then
+            fix sele=(not all) end
+            fix sele=( not (segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name OO) end
+            minimize rigid
+              group (segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1 and not name MAP)
+              translation=false
+              nstep $ministeps
+              drop 10.0
+              tole 0.1
+              nprint 10
+            end
+	  end if
+        end loop nloop1
+        fix sele=(not all) end
+
+        flag include vdw end
+        if ($Data.flags.elec0 eq true) then
+          flag include elec end
+        end if
+
+        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_cool3))
+        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_cool3))
+        evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_cool3))
+        evaluate ($symm_scale = min(($symm_scale * 2),$Data.ksym))
+
+        noe
+          scale dist $unamb_scale
+          scale ambi $ambig_scale
+          scale hbon $hbond_scale
+          scale symm $symm_scale
+          if ($data.flags.centroids = true) then
+              scale centroid $data.centroids.kscale end
+          end if
+        end
+
+      end loop rigmin
+
+      evaluate ($unamb_scale_store = $unamb_scale)
+      evaluate ($ambig_scale_store = $ambig_scale)
+      evaluate ($hbond_scale_store = $hbond_scale)
+      evaluate ($symm_scale_store = $symm_scale)
+
+      flag include vdw end
+      if ($Data.flags.elec0 eq true) then
+        flag include elec end
+      end if
+
+      if ($SaProtocol.rigidtrans eq true) then
+
+        if ($data.waterdock eq true) then
+         if ($data.solvate_method ne "db") then
+          inline @RUN:protocols/waterdock_remove-water.cns
+         else
+          inline @RUN:protocols/db0.cns
+         end if
+        end if
+
+        evaluate ($cont_scale = $Data.kcont)
+        evaluate ($surf_scale = $Data.ksurf)
+        noe
+          scale contact $cont_scale
+          scale surface $surf_scale
+        end
+        fix sele=(name OO and not resn XAN) end
+        minimize rigid
+          eval ($nchain1 = 0)
+          while ($nchain1 < $data.ncomponents) loop nloop1
+            eval($nchain1 = $nchain1 + 1)
+	    if ($Toppar.fix_origin_$nchain1 eq false) then
+              group (segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1 and not name MAP)
+	    end if
+            translation=false
+          end loop nloop1
+          nstep 1000
+          nprint 10
+        end
+
+        if ($data.solvate_method eq "db") then
+          inline @RUN:protocols/db00.cns
+        end if
+
+        energy end
+
+        if ($Data.flags.rg eq true) then
+          flag include coll end
+        end if
+
+        if ($Data.flags.zres eq true) then
+          flag incl zhar end
+        end if
+
+        fix sele=(name OO and not resn XAN) end
+        eval ($ministeps = $SaProtocol.emstepstrans)
+        minimize rigid
+          eval ($nchain1 = 0)
+          while ($nchain1 < $data.ncomponents) loop nloop1
+            eval($nchain1 = $nchain1 + 1)
+	    if ($Toppar.fix_origin_$nchain1 eq false) then
+              group (segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1 and not name MAP)
+	    end if
+            translation=true
+          end loop nloop1
+          nstep $ministeps
+          nprint 10
+        end
+
+        energy end
+
+        if ($data.waterdock eq true) then
+          if ($data.solvate_method eq "db") then
+            display MINIMIZATION ENERGY BEFORE: $grad $ener $vdw $elec
+            minimize rigid
+              eval ($nchain1 = 0)
+              while ($nchain1 < $data.ncomponents) loop nloop1
+                eval($nchain1 = $nchain1 + 1)
+	        if ($Toppar.fix_origin_$nchain1 eq false) then
+                  group (segid $Toppar.prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or name MAP))
+		end if
+                translation=true
+              end loop nloop1
+              for $id in id ((resn WAT or resn HOH or resn TIP*) and name OH2 and (attr store5 ne 1)) loop miniwater
+                group (byres(id $id))
+              end loop miniwater
+              translation=$data.transwater
+              nstep $ministeps
+              nprint 100
+            end
+            display MINIMIZATION ENERGY AFTER: $grad $ener $vdw $elec
+            inline @RUN:protocols/db1.cns
+         end if
+         inline @RUN:protocols/waterdock_mini.cns
+        end if
+
+        fix sele=(name OO and not resn XAN) end
+        minimize rigid
+          eval ($nchain1 = 0)
+          while ($nchain1 < $data.ncomponents) loop nloop1
+            eval($nchain1 = $nchain1 + 1)
+	    if ($Toppar.fix_origin_$nchain1 eq false) then
+              group (segid $Toppar.prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or name MAP))
+	    end if
+            translation=true
+          end loop nloop1
+          for $id in id (segid WA* and (resn WAT or resn HOH or resn TIP*) and name OH2 and (attr store5 ne 1)) loop miniwater
+            group (byres(id $id))
+          end loop miniwater
+          translation=true
+          nstep $ministeps
+          nprint 10
+        end
+        energy end
+
+        if ($data.waterdock eq true) then
+          inline @RUN:protocols/waterdock_mini.cns
+        end if
+
+        fix sele=(not all) end
+
+        if ($anisotropy eq true) then
+          fix sele=(not all) end
+          fix sele=(name OO and not resn XAN) end
+          minimize rigid
+            for $id in id ((resn ANI or resn DAN or resn XAN) and name OO) loop miniani
+              group (byres(id $id))
+              translation=false
+            end loop miniani
+            translation=false
+            nstep 100
+            drop 10.0
+            nprint 10
+          end
+          minimize rigid
+            eval ($nchain1 = 0)
+            while ($nchain1 < $data.ncomponents) loop nloop1
+              eval($nchain1 = $nchain1 + 1)
+	      if ($Toppar.fix_origin_$nchain1 eq false) then
+                group (segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1 and not name MAP)
+              end if
+              translation=true
+            end loop nloop1
+            for $id in id ((resn ANI or resn DAN or resn XAN) and name OO) loop miniani
+              group (byres(id $id))
+              translation=false
+            end loop miniani
+            translation=true
+            nstep $ministeps
+            nprint 10
+          end
+        end if
+
+        fix sele=(not all) end
+
+      end if ! ($Saprotocol.rigidtrans eq true)
+
+      ! centroids based energy should not be part of the $NOE energy
+      if ($data.flags.centroids = true) then
+          noe scale centroid 0 end
+      end if
+
+      if ($data.flags.em = true) then
+          ! determine the best orientation of the complex in the density
+          @RUN:protocols/em_orien_search.cns
+      end if
+
+      inline @RUN:protocols/bestener.cns
+
+      if ($saprotocol.rotate180_it0 eq true) then
+          eval($nchain1 = 0)
+          while ($nchain1 < $data.ncomponents) loop nloop4
+            eval($nchain1 = $nchain1 + 1)
+	    if ($Toppar.shape_$nchain1 eq false) then
+              eval($nchain2 = $nchain1 )
+              while ($nchain2 < $data.ncomponents) loop nloop3
+                eval($nchain2 = $nchain2 + 1)
+	        if ($Toppar.shape_$nchain2 eq false) then
+                  @RUN:protocols/rotation180.cns
+                  if ($data.flags.em = true) then
+                      @RUN:protocols/em_orien_search.cns
+                  end if
+                  inline @RUN:protocols/bestener.cns
+		end if
+              end loop nloop3
+	    end if
+          end loop nloop4
+      end if
+
+    end loop trials
+
+  else ! if ($Saprotocol.rigidmini = False)
+
+    evaluate ($kinter = $SaProtocol.inter_rigid)
+    @RUN:protocols/scale_inter_only.cns
+
+    if ($Data.flags.sani eq true) then
+      evaluate ($nrdc=1)
+      while ($nrdc <= $data.numrdc) loop rdc
+        evaluate ($cln = "rd"+encode($nrdc) )
+        sani class $cln force $Data.rdc_hot_$nrdc end
+        evaluate ($nrdc = $nrdc + 1)
+      end loop rdc
+      if ($rantens eq true) then
+        @RUN:protocols/mini_tensor.cns
+      end if
+    end if
+
+    evaluate ($paramin = false)
+    if ($Data.flags.xrdc eq true) then
+      evaluate ($nrdc=1)
+      while ($nrdc <= $data.numrdc) loop rdc
+        evaluate ($cln = "rd"+encode($nrdc) )
+        xrdc class $cln force $Data.rdc_hot_$nrdc end
+        evaluate ($nrdc = $nrdc + 1)
+      end loop rdc
+      evaluate ($paramin = true)
+    end if
+
+    if ($Data.flags.xpcs eq true) then
+      evaluate ($npcs=1)
+      while ($npcs <= $data.numpcs) loop pcs
+        evaluate ($cln = "pc"+encode($npcs) )
+        xpcs class $cln force $Data.pcs_hot_$npcs end
+        evaluate ($paramin = true)
+        evaluate ($npcs= $npcs + 1)
+      end loop pcs
+    end if
+
+    if ($paramin eq TRUE) then
+      if ($rantens_para eq true) then
+        @RUN:protocols/mini_tensor_para.cns
+      end if
+    end if
+
+    if ($Data.flags.dani eq true) then
+      evaluate ($ndani=1)
+      while ($ndani <= $data.numdani) loop dani
+        evaluate ($cln = "da"+encode($ndani) )
+        dani class $cln force $Data.dan_hot_$ndani end
+        evaluate ($ndani = $ndani + 1)
+      end loop dani
+      if ($rantens_dani eq true) then
+        @RUN:protocols/mini_tensor_dani.cns
+      end if
+    end if
+
+    do (refx=x) (all)
+    do (refy=y) (all)
+    do (refz=z) (all)
+
+    ! the centroid based restraints should not be included in the energy calculation
+    if ($data.flags.centroids eq true) then
+        noe scale centroid 0 end
+    end if
+
+    energy end
+    evaluate ($bestair = $noe)
+
+  end if ! ($Saprotocol.rigidmini = true)
+
+
+{* ===================== calculate complex internal energy *}
+  evaluate ($kinter = 1.0)
+  @RUN:protocols/scale_intra_only.cns
+
+  flag include bond angle dihe impr vdw end
+
+  evaluate ($elec = 0.0)
+  evaluate ($eintfree = 0.0)
+  if ($Data.flags.elec0 eq true) then
+    flag include elec end
+  end if
+
+  energy end
+
+  evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+  evaluate ($eintfree = $eintcplx) 
+  {* at this stage the two are similar since rigid-body EM only *}
+
+{* =========================== write out structure after rigid body refinement *}
+
+  !bestener.cns: for waterdock, store3 contains store5 from lowest energy structure
+  do (x = refx) (not store3)
+  do (y = refy) (not store3)
+  do (z = refz) (not store3)
+  if ($data.waterdock eq true) then
+    if ($data.solvate_method eq "restraints") then
+      noe reset end
+      @RUN:protocols/read_noes.cns(Iteration=$Iteration; Data=$Data; count=$count)
+    end if
+  end if
+
+  evaluate ($esym = 0.0)
+  evaluate ($ncs = 0.0)
+  evaluate ($zhar = 0.0)
+  evaluate ($rms_test_noe = 0.0)
+  evaluate ($violations_test_noe = 0)
+  if ($Data.flags.sym eq true) then
+    noe reset nres= 2000000 end
+    @RUN:protocols/symmultimer.cns
+    noe
+      scale symm $Data.ksym
+    end
+    energy end
+    evaluate ($esym = $noe)
+    if ($Data.noecv eq true) then
+      display Print out of cross-validated violations and rms not
+      display possible in combination with symmetry restraints
+      display CV values set therefore to 0
+    end if
+    noe reset end
+    set message=normal echo=on end
+    !read again the NOE data, needed to remove the symmetry restraints
+    @@RUN:protocols/read_noes.cns(Iteration=$Iteration; Data=$Data; count=$count)
+    if ( $log_level = verbose ) then
+       set message=normal echo=on end
+    else
+       set message=off echo=off end
+    end if
+  else
+    if ($Data.noecv eq true) then
+      set message=on echo=on end
+      noe cv $ncvbest ? end
+    end if
+    if ( $log_level = verbose ) then
+      set message=normal echo=on end
+    else
+      set message=off echo=off end
+    end if
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.noecv eq true) then
+      evaluate ($rms_test_noe=$test_rms)
+      evaluate ($violations_test_noe=$test_violations)
+    end if
+  end if
+
+  evaluate ($unamb_scale = $Data.unamb_cool3)
+  evaluate ($ambig_scale = $Data.amb_cool3)
+  evaluate ($hbond_scale = $Data.hbond_cool3)
+  if ($data.solvate_method eq "restraints") then
+    evaluate ($amwa_scale = $data.water_restraint_scale)
+  end if
+
+  noe
+    scale dist $unamb_scale
+    scale ambi $ambig_scale
+    scale hbon 0.0
+    scale cont 0.0
+    if ($data.solvate_method eq "restraints") then
+     scale amwa $amwa_scale
+    end if
+  end
+
+{* ===================== calculate final energies and write structure *}
+  flag incl bond angl impr noe end
+  flag exclude xref end
+  if ($Data.flags.sani eq true) then
+    flag incl sani end
+  end if
+  if ($Data.flags.xrdc eq true) then
+    flag incl xrdc end
+  end if
+  if ($Data.flags.xpcs eq true) then
+    flag incl xpcs end
+  end if
+  if ($Data.flags.dani eq true) then
+    flag incl dani end
+  end if
+  if ($Data.flags.vean eq true) then
+    flag incl vean end
+  end if
+
+  if ($Data.flags.rg eq true ) then
+    collapse force $Data.krg_cool3 end
+  end if
+
+  if ($Data.flags.zres eq true) then
+    flag incl zhar end
+  end if
+
+  if ($data.ncomponents > 1) then
+    evaluate ($kinter = 1.0)
+    @RUN:protocols/scale_inter_final.cns
+  else
+    @RUN:protocols/scale_intra_only.cns
+  end if
+  energy end
+  evaluate ($cdih = 0.0)
+  evaluate ($etot = $ener - $noe)
+  evaluate ($noe = $bestair)
+  evaluate ($etot = $etot + $noe)
+
+  evaluate ($Data.flags.dihed = false)
+  evaluate ($filename="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".pdb0")
+  inline @RUN:protocols/print_coorheader.cns
+
+  if ($reorient eq true) then
+    coor sele=(segid $Toppar.prot_segid_1) orient end
+  end if
+
+  if ($data.waterdock eq true) then
+    write coordinates sele=(not (resn WAT or resn HOH or resn DUM)) output=$filename end
+    inline @RUN:protocols/waterdock_out0.cns
+  else
+    write coordinates sele=(not resn DUM) output=$filename end
+  end if
+
+  stop
+
+{*======================= semi-flexible SA refinement*}
+else
+
+  if ($saprotocol.expand eq TRUE ) then
+    @RUN:protocols/centroids_initialize.cns
+    @RUN:protocols/centroids_set_restraints.cns
+    noe scale centroid $data.centroids.kscale end
+    @RUN:protocols/expand.cns
+    evaluate ($filename="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + "_expand.pdb")
+    !write coordinates sele=(not resn DUM) output=$filename end
+  end if
+
+  !Make sure that at least as many distance restraints are successfully
+  !read as the number of partitions for cross-validation
+  evaluate ($numnoe = 999)
+  noe ? end
+  if ($NUMNOE = 0) then
+    if ($Data.ncomponents > 1) then
+      if ($Data.surfrest eq FALSE) then
+        if ($Data.cmrest eq FALSE) then
+          if ($Data.ranair eq FALSE) then
+            if ($Data.flags.rg eq FALSE) then
+              evaluate ($errfile = "RUN:WARNING")
+              fileexist $errfile end
+              if ($result eq false) then
+                set display=$errfile end
+                display TOTAL NUMBER OF DISTANCE RESTRAINTS FOR FLEXIBLE REFINEMENT IS ZERO!
+                display CONTROL YOUR PARAMETER SETTINGS AND RESTRAINT DEFINITIONS
+                close $errfile end
+              end if
+            end if
+          end if
+        end if
+      end if
+    end if
+    evaluate ($Data.ncvpart = 1)
+    evaluate ($Data.noecv = FALSE)
+  end if
+
+  if ($NUMNOE lt $Data.ncvpart) then
+    noe part=1 end
+    evaluate ($Data.ncvpart = 1)
+    evaluate ($Data.noecv = FALSE)
+  end if
+
+  {*== check first for failed structures ==*}
+  evaluate ($failure = false)
+  evaluate ($filefail="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".fail")
+  fileexist $filefail end
+  evaluate ($failure = $result)
+
+  parameter
+    bond  (resn WAT ) (resn WAT ) 1000 TOKEN
+    angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
+    bond  (resn HOH ) (resn HOH ) 1000 TOKEN
+    angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
+    bond  (resn TIP*) (resn TIP*) 1000 TOKEN
+    angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
+  end
+
+  if ($Data.ranair eq true) then
+    if ($Data.ncomponents > 2) then
+      evaluate ($errfile = "RUN:FAILED")
+      fileexist $errfile end
+      if ($result eq false) then
+        set display=$errfile end
+        display ========= Unsupported option ===========
+        display Random definition of AIRs with more than
+        display two molecules currently unsupported
+        display ========================================
+        close $errfile end
+      end if
+      stop
+    end if
+    evaluate ($Data.noecv = false)
+    noe
+      reset
+      nrestraints = 100000     ! allocate space for NOEs
+      ceiling 1000
+    end
+    @RUN:protocols/contactairs.cns
+
+    !Read back in hbond data
+    if ($Data.hbond_lastit ge &iteration) then
+      if ($Data.hbond_firstit le &iteration) then
+        if ($Data.hbonds_on eq true) then
+          noe @@$hbond_fname end
+        end if
+      end if
+    end if
+
+    noe
+      averaging  * sum
+      potential  * soft
+      scale      * 1.0
+      sqconstant * 1.0
+      sqexponent * 2
+      soexponent * 1
+      rswitch    * 1.0
+      sqoffset   * 0.0
+      asymptote  * 2.0
+      msoexponent * 1
+      masymptote  * -0.1
+      mrswitch    * 1.0
+      avexpo hbond 20
+    end
+    inline @RUN:protocols/water_rest.cns
+  end if
+
+  if ($Data.flags.elec1 eq true) then
+    flag include elec end
+    if ($Data.dielec1 eq rdie) then
+      parameter nbonds eps=$Data.epsilon1 rdie shift switch end end
+      ! shift statement needed first to activate switch (CNS bug?)
+    else
+      parameter nbonds eps=$Data.epsilon1 cdie end end
+    end if
+    parameter nbonds ? end end
+  else
+    evaluate ($elec=0.0)
+    flag exclude elec end
+  end if
+
+end if
+
+if ( $log_level = verbose ) then
+  set message=normal echo=on end
+else
+  set message=off echo=off end
+end if
+
+evaluate ($ini_flt = 5.0)
+
+@RUN:protocols/symmultimer.cns
+
+if ($Data.flags.zres eq true ) then
+  flag incl zhar end
+  @RUN:protocols/zrestraining.cns
+end if
+
+if ($Data.cmrest eq true ) then
+  @RUN:protocols/cm-restraints.cns
+end if
+
+! use contact airs rather than surface restraints at it1
+if ($Data.surfrest eq true ) then
+  @RUN:protocols/contactairs.cns
+end if
+
+if ($Data.dnarest eq true ) then
+  @RUN:data/sequence/dna-rna_restraints.def
+end if
+
+if ($Data.flags.rg eq true ) then
+  collapse
+    force  $Data.krg_hot
+    target $Data.rgtarg
+    sele   (not (resn ANI or resn XAN or resn TIP*))
+  end
+end if
+
+if ($Data.ssdihed eq all ) then
+  @RUN:protocols/protein-ss-restraints-all.def
+end if
+if ($Data.ssdihed eq alpha ) then
+  @RUN:protocols/protein-ss-restraints-alpha.def
+end if
+if ($Data.ssdihed eq alphabeta ) then
+  @RUN:protocols/protein-ss-restraints-alpha-beta.def
+end if
+
+! get initial energy
+energy end
+
+coor copy end
+
+if ($saprotocol.rotate180_it1 eq true) then
+  evaluate ($rotiter = 2)  {* two iteration in rotloop1, rotation *}
+else
+  evaluate ($rotiter = 1)  {* only one iteration in rotloop1, no rotation *}
+end if
+
+evaluate ($nlcount = 0)  {* two iterations in rotloop1, first rotated *}
+{* ================== Loop to sample 180 degrees rotated solutions if requested *}
+
+while ($nlcount < $rotiter) loop rotloop1
+
+  evaluate ($nlcount = $nlcount + 1)
+
+  evaluate ($unamb_scale = $Data.unamb_hot)
+  evaluate ($ambig_scale = $Data.amb_hot)
+  evaluate ($hbond_scale = $Data.hbond_hot)
+
+  noe
+    scale dist $unamb_scale
+    scale ambi $ambig_scale
+    scale hbon $hbond_scale
+  end
+
+  if ($Data.flags.dihed eq true) then
+    flag include dihed end
+  end if
+
+  if ($Data.scaling eq TRUE) then
+    inline @RUN:protocols/set_noe_scale.cns
+    energy end
+    noe
+      scale dist $Data.unamb_hot
+      scale ambi $Data.amb_hot
+    end
+    energy end
+  end if
+
+  if ($Data.flags.sani eq true) then
+    evaluate ($nrdc=1)
+    while ($nrdc <= $data.numrdc) loop rdc
+      evaluate ($cln = "rd"+encode($nrdc) )
+      sani class $cln force $Data.rdc_hot_$nrdc end
+      evaluate ($nrdc = $nrdc + 1)
+    end loop rdc
+    if ($rantens eq true) then
+      @RUN:protocols/mini_tensor.cns
+    end if
+  end if
+
+  evaluate ($paramin = false)
+  if ($Data.flags.xrdc eq true) then
+    evaluate ($nrdc=1)
+    while ($nrdc <= $data.numrdc) loop rdc
+      evaluate ($cln = "rd"+encode($nrdc) )
+      xrdc class $cln force $Data.rdc_hot_$nrdc end
+      evaluate ($nrdc = $nrdc + 1)
+    end loop rdc
+    evaluate ($paramin = true)
+  end if
+
+  if ($Data.flags.xpcs eq true) then
+    evaluate ($npcs=1)
+    while ($npcs <= $data.numpcs) loop pcs
+      evaluate ($cln = "pc"+encode($npcs) )
+      xpcs class $cln force $Data.pcs_hot_$npcs end
+      evaluate ($paramin = true)
+      evaluate ($npcs= $npcs + 1)
+    end loop pcs
+  end if
+
+  if ($paramin eq TRUE) then
+    if ($rantens_para eq true) then
+      @RUN:protocols/mini_tensor_para.cns
+    end if
+  end if
+
+  if ($Data.flags.dani eq true) then
+    evaluate ($ndani=1)
+    while ($ndani <= $data.numdani) loop dani
+      evaluate ($cln = "da"+encode($ndani) )
+      dani class $cln force $Data.dan_hot_$ndani end
+      evaluate ($ndani = $ndani + 1)
+    end loop dani
+    if ($rantens_dani eq true) then
+      @RUN:protocols/mini_tensor_dani.cns
+    end if
+  end if
+
+
+  if ($nlcount = 2) then
+
+    flag excl bond angl dihe impr zhar end
+
+    evaluate ($kinter = $SaProtocol.inter_rigid)
+    @RUN:protocols/scale_inter_only.cns
+
+    eval($nchain1 = 0)
+    while ($nchain1 < $data.ncomponents) loop nloop4
+      eval($nchain1 = $nchain1 + 1)
+      eval($nchain2 = $nchain1 )
+      while ($nchain2 < $data.ncomponents) loop nloop3
+        eval($nchain2 = $nchain2 + 1)
+        @RUN:protocols/rotation180.cns
+      end loop nloop3
+    end loop nloop4
+
+    inline @RUN:protocols/setflags.cns
+    if ($Data.flags.elec1 eq true) then
+      flag include elec end
+    end if
+    if ($Data.flags.dihed eq true) then
+      flag include dihed end
+    end if
+    flag include bond angle impr vdw end
+
+  end if
+
+  igroup
+    interaction  (not (resn ANI or resn DAN or resn XAN or resn SHA))
+                 (not (resn ANI or resn DAN or resn XAN or resn SHA)) weight * 1 end
+    interaction  (resn ANI or resn DAN or resn XAN or resn SHA)
+                 (resn ANI or resn DAN or resn XAN or resn SHA) weight * 1 vdw 0.0 elec 0.0 end
+  end
+
+  energy end
+
+  ! fix the residues describing the shape 
+  fix sele=(resn SHA) end
+
+  ! fix the DUM residue for expand/refine and perform a first rigid body EM
+  if ($saprotocol.expand eq TRUE ) then
+    fix sele=(name DUM) end
+    fix sele=(name OO and not resn XAN) end
+    eval ($ministeps = $SaProtocol.emstepstrans)
+    minimize rigid
+      eval ($nchain1 = 0)
+      while ($nchain1 < $data.ncomponents) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+        if ($Toppar.fix_origin_$nchain1 eq false) then
+          group (segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1 and not (name MAP or name DUM))
+        end if
+        translation=true
+      end loop nloop1
+      nstep $ministeps
+      nprint 10
+    end
+    energy end
+  end if
+
+{* 0 ======================================= initial EM for flexible parts only *}
+
+  if ($Data.flags.rg eq true ) then
+    collapse force $Data.krg_hot end
+  end if
+
+  if ($SaProtocol.rigidtrans eq true) then
+    @RUN:protocols/flex_segment_back.cns
+    fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP*)) end
+    minimize powell nstep=200 drop=10.0 nprint=25 end
+    fix sele=(not all) end
+  end if
+
+  energy end
+
+  do (refx = x) (all)
+  do (refy = y) (all)
+  do (refz = z) (all)
+
+  do (harm = 0) (all)
+  do (harm = 20) (name OO and not resn XAN)
+  restraints harmonic exponent=2 end
+  flag incl harm end
+
+  ! fix the residues describing the shape 
+  fix sele=(resn SHA) end
+
+  ! fix the DUM residue for expand/refine
+  if ($saprotocol.expand eq TRUE ) then
+    fix sele=(name DUM) end
+  end if
+
+  ! the following is added to avoid the generation of the torsion angle topology if not needed
+  ! in cases where the number of steps is set to 0 (avoid issues with isolated atoms)
+  eval ($torsiondone = false)
+  if ($failure eq false) then
+{* 1 ======================================= rigid body high temperature search*}
+{* rigid bodies *}
+    if ($data.flags.em = true) then
+        if ($data.em.it1 = true) then
+            flags include xref end
+        end if
+    end if
+
+    if ($SaProtocol.initiosteps > 0) then
+      @RUN:protocols/torsiontop.cns
+      eval ($torsiondone = true)
+      flags exclude dihed end
+      @RUN:protocols/sa_ltad_hightemp.cns(SaProtocol=$SaProtocol;Data=$Data;Toppar=$Toppar)
+    end if
+
+{* 2 ======================================= rigid body first slow cooling *}
+{* rigid bodies only *}
+
+    if ($Data.flags.rg eq true ) then
+      collapse force $Data.krg_cool1 end
+    end if
+
+    if ($SaProtocol.cool1_steps > 0) then
+      if ($torsiondone ne true) then
+        @RUN:protocols/torsiontop.cns
+        eval ($torsiondone = true)
+      end if
+      evaluate ($SaProtocol.tadfactor = 4)
+      @RUN:protocols/sa_ltad_cool1.cns(SaProtocol=$SaProtocol;Data=$Data;Toppar=$Toppar)
+    end if
+
+{* 3 ======================================= second slow cooling *}
+{* flexible side-chains and reduced time step *}
+
+    if ($Data.flags.rg eq true ) then
+      collapse force $Data.krg_cool2 end
+    end if
+
+    if ($Data.flags.dihed eq true) then flags include dihed end end if
+
+    if ($SaProtocol.cool2_steps > 0) then
+      if ($torsiondone eq true) then
+        dyna tors topo reset end end
+      end if
+      @RUN:protocols/torsiontop_flex.cns
+      eval ($torsiondone = true)
+      evaluate ($SaProtocol.tadfactor = 1)
+      @RUN:protocols/sa_ltad_cool2.cns(SaProtocol=$SaProtocol;Data=$Data;Toppar=$Toppar)
+    end if
+
+{* 4 ============================================ third slow cooling *}
+{* flexible side-chains and backbone at interface and reduced time step *}
+
+    if ($Data.flags.rg eq true ) then
+      collapse force $Data.krg_cool3 end
+    end if
+
+    if ($SaProtocol.cool3_steps > 0) then
+      if ($torsiondone eq true) then
+        dyna tors topo reset end end
+      end if
+      @RUN:protocols/torsiontop_flex_back.cns
+      eval ($torsiondone = true)
+      evaluate ($SaProtocol.tadfactor = 1)
+      @RUN:protocols/sa_ltad_cool3.cns(SaProtocol=$SaProtocol;Data=$Data;Toppar=$Toppar)
+    end if
+
+  end if
+
+{* 5 =========================== final minimization *}
+
+  if ($Data.scaling eq true) then
+    inline @RUN:protocols/set_noe_scale.cns
+    energy end
+    noe
+      scale dist $Data.unamb_cool3
+      scale ambi $Data.amb_cool3
+      scale hbon $Data.hbond_cool3
+    end
+    energy end
+  end if
+
+  @RUN:protocols/flex_segment_back.cns
+
+  fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP* or resn XAN)) end
+  minimize powell nstep=200 drop=10.0 nprint=25 end
+  fix sele=(not all) end
+  energy end
+
+  if ($nlcount = 1) then
+    coor swap end
+    if ($torsiondone eq true) then
+      if ($failure eq false) then
+        dyna tors topo reset end end
+      end if
+    end if
+  end if
+
+end loop rotloop1
+
+coor swap end
+
+if ($saprotocol.rotate180_it1 eq true) then
+  evaluate ($rotiter = 2)  {* two iteration in rotloop2, rotation *}
+else
+  evaluate ($rotiter = 1)  {* only one iteration in rotloop2, no rotation *}
+end if
+
+evaluate ($nlcount = 0)
+
+{* ================== Loop to write 180 degrees rotated solutions if requested *}
+
+while ($nlcount < $rotiter) loop rotloop2
+
+  evaluate ($nlcount = $nlcount + 1)
+
+{* ======================= calculate free molecules internal energy *}
+
+  igroup
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) 
+                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
+  end
+
+  do (refx=x) (all)
+  do (refy=y) (all)
+  do (refz=z) (all)
+
+  fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
+
+  flag excl noe dani sani vean xrdc xpcs coll cdih zhar end
+  flag include bond angle dihe impr vdw end
+
+  evaluate ($elec = 0.0)
+  evaluate ($eintfree = 0.0)
+  if ($Data.flags.elec1 eq true) then
+    flag include elec end
+  end if
+
+  if ($Data.dielec1 eq rdie) then
+    parameter nbonds eps=$Data.epsilon1 rdie shift switch end end
+    ! shift statement needed first to activate switch (CNS bug?)
+  else
+    parameter nbonds eps=$Data.epsilon1 cdie end end
+  end if
+  parameter nbonds ? end end
+  inline @RUN:protocols/calc_free-ene.cns
+
+  fix sele=(not all) end
+
+  do (x = refx) (all)
+  do (y = refy) (all)
+  do (z = refz) (all)
+
+{* ===================== calculate complex internal energy *}
+
+  evaluate ($kinter = 1.0)
+  @RUN:protocols/scale_intra_only.cns
+
+  flag include bond angle dihe impr vdw end
+
+  evaluate ($elec = 0.0)
+  evaluate ($eintcplx = 0.0)
+  if ($Data.flags.elec1 eq true) then
+    flag include elec end
+  end if
+
+  energy end
+
+  evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+
+{* ===================== calculate final energies and write structure *}
+  evaluate ($cdih=0.0)
+  flag incl noe cdih end
+  if ($Data.flags.sani eq true) then
+    flag incl sani end
+  end if
+  if ($Data.flags.xrdc eq true) then
+    flag incl xrdc end
+  end if
+  if ($Data.flags.xpcs eq true) then
+    flag incl xpcs end
+  end if
+  if ($Data.flags.dani eq true) then
+    flag incl dani end
+  end if
+  if ($Data.flags.vean eq true) then
+    flag incl vean end
+  end if
+  if ($Data.ncomponents > 1) then
+    evaluate ($kinter = 1.0)
+    @RUN:protocols/scale_inter_final.cns
+  else
+    @RUN:protocols/scale_intra_only.cns
+  end if
+
+  noe
+    scale dist $Data.unamb_cool3
+    scale ambi $Data.amb_cool3
+    scale hbon 0.0
+    scale symm 0.0
+    scale cont 0.0
+  end
+  energy end
+  evaluate ($eair= $noe)
+
+  evaluate ($esym = 0.0)
+  evaluate ($ncs = 0.0)
+  evaluate ($zhar = 0.0)
+  if ($Data.flags.sym  eq true) then
+    noe reset nres= 200000 end
+    @RUN:protocols/symmultimer.cns
+    noe
+      scale symm $Data.ksym
+    end
+    energy end
+    evaluate ($esym = $noe)
+    if ($Data.noecv eq true) then
+      evaluate ($violations_test_noe=0)
+      evaluate ($rms_test_noe=0.0)
+      display Print out of cross-validated violations and rms not
+      display possible in combination with symmetry restraints
+      display CV values set therefore to 0
+    end if
+    noe reset end
+    set message=normal echo=on end
+    !read all the experimental Data:
+    @@RUN:protocols/read_noes.cns(Iteration=$Iteration; Data=$Data; count=$count)
+    if ( $log_level = verbose ) then
+      set message=normal echo=on end
+    else
+      set message=off echo=off end
+    end if
+  else
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.noecv eq true) then
+      evaluate ($rms_test_noe=$test_rms)
+      evaluate ($violations_test_noe=$test_violations)
+    else
+      evaluate ($rms_test_noe=0.0)
+      evaluate ($violations_test_noe=0)
+    end if
+  end if
+
+  if ($Data.dnarest eq true) then
+    @RUN:data/sequence/dna-rna_restraints.def
+  end if
+
+  energy end
+  evaluate ($etot = $ener - $noe)
+  evaluate ($noe = $eair)
+  evaluate ($etot = $etot + $noe)
+
+  ! get the local cross-correlation for EM-data
+  if ($data.flags.em = true) then
+      @RUN:protocols/em_calc_lcc.cns(toppar=$toppar; data=$data; saprotocol=$saprotocol; lcc=$lcc;)
+      flags exclude xref end
+  end if
+
+
+  evaluate ($Data.flags.dihed = false)
+  if ($nlcount = 1) then
+    evaluate ($filename="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".pdb0")
+  else
+    evaluate ($num = $count + $iterations.structures)
+    evaluate ($filename="NEWIT:" + $Filenames.fileroot + "_" + encode($num) + ".pdb0")
+  end if
+  inline @RUN:protocols/print_coorheader.cns
+
+  if ($reorient = true) then
+    coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
+  end if
+
+  if ($data.waterdock eq true) then
+    write coordinates sele=(not (resn WAT or resn HOH or resn TIP*)) output=$filename end
+    inline @RUN:protocols/waterdock_out1.cns
+  else
+    write coordinates output=$filename end
+  end if
+
+  coor swap end
+
+end loop rotloop2
+stop

@@ -1,0 +1,56 @@
+! generate_complex.inp
+!    Merge the coordinates and topologies of the various components of the complex
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+! a maximum number of structures to be written to avoid
+! filling the disk space
+evalute ($maxstruc = 5000)
+
+@RUN:protocols/initialize.cns(iteration=$iteration;)
+
+@RUN:begin/iteration.cns(iteration=$iteration;)
+
+@RUN:run.cns(
+iteration =$iteration;
+filenames =$filenames;
+Data      =$Data;
+iterations=$iterations;
+saprotocol=$saprotocol;
+refine    =$refine;
+toppar    =$toppar;
+analysis  =$analysis;)
+
+eval($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop cloop1
+  eval($nchain1 = $nchain1 + 1)
+  evaluate($coor_infile_$nchain1= "RUN:begin-aa/" + $Toppar.prot_root_$nchain1 + ".pdb")
+  evaluate($psf_infile_$nchain1= "RUN:begin-aa/" + $Toppar.prot_root_$nchain1 + ".psf")
+  fileexist $coor_infile_$nchain1 end
+  evaluate ($coorexist_$nchain1 = $result)
+  fileexist $psf_infile_$nchain1 end
+  evaluate ($psfexist_$nchain1 = $result)
+  if ($coorexist_$nchain1 eq false) then
+    evaluate($coor_infile_$nchain1= "RUN:begin/" + $Toppar.prot_root_$nchain1 + ".pdb")
+  end if
+  if ($psfexist_$nchain1 eq false) then
+    evaluate($psf_infile_$nchain1= "RUN:begin/" + $Toppar.prot_root_$nchain1 + ".psf")
+  end if
+  structure @@$psf_infile_$nchain1 end
+  coor @@ $coor_infile_$nchain1
+end loop cloop1
+
+evaluate ($structurefile = "RUN:begin-aa/" + $Filenames.fileroot + ".psf")
+write structure output=$structurefile end     
+
+evaluate ($coorfile = "RUN:begin-aa/" + $Filenames.fileroot + ".pdb")
+write coor output=$coorfile end     
+
+stop

@@ -3,7 +3,6 @@ import sys
 import toml
 import json
 from datetime import datetime
-
 from haddock.modules.analysis.ana import Ana
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator

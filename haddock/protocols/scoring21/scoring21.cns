@@ -1,0 +1,725 @@
+
+
+!=================================================================!
+! Do not change below this line unless you know what you are doing
+!=================================================================!
+
+eval ($Data.flags.dihed = $dihed)
+eval ($Data.flags.sani = $sani)
+eval ($Data.flags.dani = $dani)
+eval ($Data.flags.coup = $coup)
+eval ($Data.flags.vean = $vean)
+eval ($Data.flags.cdih = $cdih)
+eval ($Data.flags.noe = $noe)
+eval ($Data.flags.sym = $sym)
+eval ($Data.flags.ncs = $ncs)
+eval ($Data.noecv = $noecv)
+eval ($Data.waterdock = $waterdock)
+
+eval($Data.flags.xrdc = $xrdc)
+eval($Data.flags.xpcs = $xpcs)
+eval($Data.flags.rg = $rg)
+eval($Data.flags.zres = $zres)
+eval($Data.flags.em = $em)
+
+evaluate ($data.ncomponents = $ncomponents)
+
+evaluate ($nmol=1)
+while ($nmol <= $data.ncomponents) loop mol
+  evaluate ($toppar.prot_segid_$nmol = $prot_segid_mol$nmol)
+  evaluate ($nmol = $nmol + 1)
+end loop mol
+
+evaluate ($data.ksym=1.0)
+evaluate ($data.numc2sym=0)
+evaluate (&toppar.c2sym_sta1_1="")
+evaluate (&toppar.c2sym_sta1_2="")
+evaluate (&toppar.c2sym_sta1_3="")
+evaluate (&toppar.c2sym_sta1_4="")
+evaluate (&toppar.c2sym_sta1_5="")
+evaluate (&toppar.c2sym_sta1_6="")
+evaluate (&toppar.c2sym_sta1_7="")
+evaluate (&toppar.c2sym_sta1_8="")
+evaluate (&toppar.c2sym_sta1_9="")
+evaluate (&toppar.c2sym_sta1_10="")
+evaluate (&toppar.c2sym_end1_1="")
+evaluate (&toppar.c2sym_end1_2="")
+evaluate (&toppar.c2sym_end1_3="")
+evaluate (&toppar.c2sym_end1_4="")
+evaluate (&toppar.c2sym_end1_5="")
+evaluate (&toppar.c2sym_end1_6="")
+evaluate (&toppar.c2sym_end1_7="")
+evaluate (&toppar.c2sym_end1_8="")
+evaluate (&toppar.c2sym_end1_9="")
+evaluate (&toppar.c2sym_end1_10="")
+evaluate (&toppar.c2sym_seg1_1="")
+evaluate (&toppar.c2sym_seg1_2="")
+evaluate (&toppar.c2sym_seg1_3="")
+evaluate (&toppar.c2sym_seg1_4="")
+evaluate (&toppar.c2sym_seg1_5="")
+evaluate (&toppar.c2sym_seg1_6="")
+evaluate (&toppar.c2sym_seg1_7="")
+evaluate (&toppar.c2sym_seg1_8="")
+evaluate (&toppar.c2sym_seg1_9="")
+evaluate (&toppar.c2sym_seg1_10="")
+evaluate (&toppar.c2sym_sta2_1="")
+evaluate (&toppar.c2sym_sta2_2="")
+evaluate (&toppar.c2sym_sta2_3="")
+evaluate (&toppar.c2sym_sta2_4="")
+evaluate (&toppar.c2sym_sta2_5="")
+evaluate (&toppar.c2sym_sta2_6="")
+evaluate (&toppar.c2sym_sta2_7="")
+evaluate (&toppar.c2sym_sta2_8="")
+evaluate (&toppar.c2sym_sta2_9="")
+evaluate (&toppar.c2sym_sta2_10="")
+evaluate (&toppar.c2sym_end2_1="")
+evaluate (&toppar.c2sym_end2_2="")
+evaluate (&toppar.c2sym_end2_3="")
+evaluate (&toppar.c2sym_end2_4="")
+evaluate (&toppar.c2sym_end2_5="")
+evaluate (&toppar.c2sym_end2_6="")
+evaluate (&toppar.c2sym_end2_7="")
+evaluate (&toppar.c2sym_end2_8="")
+evaluate (&toppar.c2sym_end2_9="")
+evaluate (&toppar.c2sym_end2_10="")
+evaluate (&toppar.c2sym_seg2_1="")
+evaluate (&toppar.c2sym_seg2_2="")
+evaluate (&toppar.c2sym_seg2_3="")
+evaluate (&toppar.c2sym_seg2_4="")
+evaluate (&toppar.c2sym_seg2_5="")
+evaluate (&toppar.c2sym_seg2_6="")
+evaluate (&toppar.c2sym_seg2_7="")
+evaluate (&toppar.c2sym_seg2_8="")
+evaluate (&toppar.c2sym_seg2_9="")
+evaluate (&toppar.c2sym_seg2_10="")
+
+evaluate ($data.numc3sym=0)
+evaluate ($toppar.c3sym_sta1_1="")
+evaluate ($toppar.c3sym_end1_1="")
+evaluate ($toppar.c3sym_seg1_1="")
+evaluate ($toppar.c3sym_sta2_1="")
+evaluate ($toppar.c3sym_end2_1="")
+evaluate ($toppar.c3sym_seg2_1="")
+evaluate ($toppar.c3sym_sta3_1="")
+evaluate ($toppar.c3sym_end3_1="")
+evaluate ($toppar.c3sym_seg3_1="")
+
+evaluate ($data.numc5sym=0)
+
+evaluate ($toppar.hisd_resid_1_1=0)
+evaluate ($toppar.hisd_resid_1_2=0)
+evaluate ($toppar.hisd_resid_1_3=0)
+evaluate ($toppar.hisd_resid_1_4=0)
+evaluate ($toppar.hisd_resid_1_5=0)
+evaluate ($toppar.hisd_resid_1_6=0)
+evaluate ($toppar.hisd_resid_1_7=0)
+evaluate ($toppar.hisd_resid_1_8=0)
+evaluate ($toppar.hisd_resid_1_9=0)
+evaluate ($toppar.hisd_resid_1_10=0)
+
+evaluate ($toppar.hise_resid_1_1=0)
+evaluate ($toppar.hise_resid_1_2=0)
+evaluate ($toppar.hise_resid_1_3=0)
+evaluate ($toppar.hise_resid_1_4=0)
+evaluate ($toppar.hise_resid_1_5=0)
+evaluate ($toppar.hise_resid_1_6=0)
+evaluate ($toppar.hise_resid_1_7=0)
+evaluate ($toppar.hise_resid_1_8=0)
+evaluate ($toppar.hise_resid_1_9=0)
+evaluate ($toppar.hise_resid_1_10=0)
+
+evaluate ($toppar.hisd_resid_2_1=0)
+evaluate ($toppar.hisd_resid_2_2=0)
+evaluate ($toppar.hisd_resid_2_3=0)
+evaluate ($toppar.hisd_resid_2_4=0)
+evaluate ($toppar.hisd_resid_2_5=0)
+evaluate ($toppar.hisd_resid_2_6=0)
+evaluate ($toppar.hisd_resid_2_7=0)
+evaluate ($toppar.hisd_resid_2_8=0)
+evaluate ($toppar.hisd_resid_2_9=0)
+evaluate ($toppar.hisd_resid_2_10=0)
+
+evaluate ($toppar.hise_resid_2_1=0)
+evaluate ($toppar.hise_resid_2_2=0)
+evaluate ($toppar.hise_resid_2_3=0)
+evaluate ($toppar.hise_resid_2_4=0)
+evaluate ($toppar.hise_resid_2_5=0)
+evaluate ($toppar.hise_resid_2_6=0)
+evaluate ($toppar.hise_resid_2_7=0)
+evaluate ($toppar.hise_resid_2_8=0)
+evaluate ($toppar.hise_resid_2_9=0)
+evaluate ($toppar.hise_resid_2_10=0)
+
+evaluate ($toppar.hisd_resid_3_1=0)
+evaluate ($toppar.hisd_resid_3_2=0)
+evaluate ($toppar.hisd_resid_3_3=0)
+evaluate ($toppar.hisd_resid_3_4=0)
+evaluate ($toppar.hisd_resid_3_5=0)
+evaluate ($toppar.hisd_resid_3_6=0)
+evaluate ($toppar.hisd_resid_3_7=0)
+evaluate ($toppar.hisd_resid_3_8=0)
+evaluate ($toppar.hisd_resid_3_9=0)
+evaluate ($toppar.hisd_resid_3_10=0)
+
+evaluate ($toppar.hise_resid_3_1=0)
+evaluate ($toppar.hise_resid_3_2=0)
+evaluate ($toppar.hise_resid_3_3=0)
+evaluate ($toppar.hise_resid_3_4=0)
+evaluate ($toppar.hise_resid_3_5=0)
+evaluate ($toppar.hise_resid_3_6=0)
+evaluate ($toppar.hise_resid_3_7=0)
+evaluate ($toppar.hise_resid_3_8=0)
+evaluate ($toppar.hise_resid_3_9=0)
+evaluate ($toppar.hise_resid_3_10=0)
+
+evaluate ($toppar.hisd_resid_4_1=0)
+evaluate ($toppar.hisd_resid_4_2=0)
+evaluate ($toppar.hisd_resid_4_3=0)
+evaluate ($toppar.hisd_resid_4_4=0)
+evaluate ($toppar.hisd_resid_4_5=0)
+evaluate ($toppar.hisd_resid_4_6=0)
+evaluate ($toppar.hisd_resid_4_7=0)
+evaluate ($toppar.hisd_resid_4_8=0)
+evaluate ($toppar.hisd_resid_4_9=0)
+evaluate ($toppar.hisd_resid_4_10=0)
+
+evaluate ($toppar.hise_resid_4_1=0)
+evaluate ($toppar.hise_resid_4_2=0)
+evaluate ($toppar.hise_resid_4_3=0)
+evaluate ($toppar.hise_resid_4_4=0)
+evaluate ($toppar.hise_resid_4_5=0)
+evaluate ($toppar.hise_resid_4_6=0)
+evaluate ($toppar.hise_resid_4_7=0)
+evaluate ($toppar.hise_resid_4_8=0)
+evaluate ($toppar.hise_resid_4_9=0)
+evaluate ($toppar.hise_resid_4_10=0)
+
+!fileexist $filename end
+
+eval($OT1_becomes="O")
+eval($OT2_becomes="OXT")
+eval($ile_CD_becomes="CD1")
+
+evaluate ($count = 0)
+
+eval($count=$count+1)
+
+
+!evaluate ($convfileexist=$result)
+!if ($convfileexist eq false) then
+dele sele=(all) end
+struc reset end
+noe reset end
+
+segment
+  chain
+    convert=true
+    separate=true
+    @@$link_file
+    coordinates @@$file
+  end
+end
+do (name="CD1") (resname ILE and name CD)
+do (name="O") (name OT1)
+do (name="OXT") (name OT2)
+delete sele=(hydrogen and attr charge = 0) end
+
+coordinates @@$file
+
+show sum(1) ( not(hydrogen) and not(known) )
+if ( $select = 0 ) then
+  display  %INFO: There are no coordinates missing for non-hydrogen atoms
+end if
+
+if ( $log_level = verbose ) then
+  set message=normal echo=on end
+else
+  set message=off echo=off end
+end if
+
+if ( $auto_break = true ) then
+  display test: autobreak
+  evaluate ($break=0)
+
+  for $id1 in id ( name C and bondedto(name CA) and bondedto(name O) ) loop break
+
+    show (segid) (id $id1)
+    evaluate ($segid1=$result)
+    show (resid) (id $id1)
+    evaluate ($resid1=$result)
+    show (resname) (id $id1)
+    evaluate ($resname1=$result)
+
+    show sum(1) (id $id1 and known)
+    if ( $result = 0 ) then
+      display unknown coordinates for segid $segid1 resname $resname1 resid $resid1 name C
+      display this coordinate must be known for automatic chain break detection
+      abort
+    end if
+
+    identity (store1) ( name N and bondedto( segid $segid1 and resid $resid1 and name c ) )
+
+    if ( $select = 1 ) then
+      show element (store1) (attribute store1 > 0)
+      evaluate ($id2=$result)
+      show (segid) (id $id2)
+      evaluate ($segid2=$result)
+      show (resid) (id $id2)
+      evaluate ($resid2=$result)
+      show (resname) (id $id2)
+      evaluate ($resname2=$result)
+
+      show sum(1) (id $id2 and known)
+      if ( $result = 0 ) then
+        display unknown coordinates for segid $segid2 resname $resname2 resid $resid2 name N
+        display this coordinate must be known for automatic chain break detection
+        abort
+      end if
+
+      pick bond
+        (name c and segid $segid1 and resid $resid1)
+        (name n and segid $segid2 and resid $resid2)
+        geometry
+
+      if ( $result > $break_cutoff ) then
+        evaluate ($break=$break+1)
+        evaluate ($seg1.$break=$segid1)
+        evaluate ($res1.$break=$resid1)
+        evaluate ($seg2.$break=$segid2)
+        evaluate ($res2.$break=$resid2)
+        if ( $resname2 = PRO ) then
+          evaluate ($patch.$break=DPPP)
+        elseif ( $resname2 = CPR ) then
+          evaluate ($patch.$break=DPPP)
+        else
+          evaluate ($patch.$break=DPEP)
+        end if
+      end if
+    end if
+
+  end loop break
+
+  evaluate ($counter=1)
+
+  while ($counter <= $break) loop delete
+    patch $patch.$counter
+      reference=-=(segid $seg1.$counter and resid $res1.$counter)
+      reference=+=(segid $seg2.$counter and resid $res2.$counter)
+    end
+    evaluate ($counter=$counter+1)
+  end loop delete
+
+end if
+
+
+! Histidine protonation
+  eval($nchain = 0)
+
+  while ($nchain < $data.ncomponents) loop nloop1
+    eval($nchain = $nchain + 1)
+
+    !for the histidine patches:
+    evaluate($hisd_counter=1)
+    while ($hisd_counter le 10) loop hisd
+      if ($Toppar.hisd_resid_$nchain_$hisd_counter > 0) then
+        show (resn) (tag and resid $Toppar.hisd_resid_$nchain_$hisd_counter and segid $Toppar.prot_segid_$nchain)
+	if ($result eq "HIS") then
+           patch hisd reference=nil=(resid $Toppar.hisd_resid_$nchain_$hisd_counter
+	                             and segid $Toppar.prot_segid_$nchain) end
+        end if
+      end if
+      evaluate($hisd_counter=$hisd_counter + 1)
+    end loop hisd
+
+    evaluate($hise_counter=1)
+    while ($hise_counter le 10) loop hise
+      if ($Toppar.hise_resid_$nchain_$hise_counter > 0) then
+        show (resn) (tag and resid $Toppar.hise_resid_$nchain_$hise_counter and segid $Toppar.prot_segid_$nchain)
+	if ($result eq "HIS") then
+          patch hise reference=nil=(resid $Toppar.hise_resid_$nchain_$hise_counter
+	                            and segid $Toppar.prot_segid_$nchain) end
+        end if
+      end if
+      evaluate($hise_counter=$hise_counter + 1)
+    end loop hise
+  end loop nloop1
+
+evaluate ($disu=0)
+
+for $id1 in id ( resname CYS and name SG ) loop dis1
+  display test: dis1 $id1
+
+  show (segid) (id $id1)
+  evaluate ($segid1=$result)
+  show (resid) (id $id1)
+  evaluate ($resid1=$result)
+
+  identity (store1) (all)
+
+  for $id2 in id ( resname CYS and name SG and
+                ( attr store1 > $id1 ) ) loop dis2
+
+    show (segid) (id $id2)
+    evaluate ($segid2=$result)
+    show (resid) (id $id2)
+    evaluate ($resid2=$result)
+
+    pick bond (id $id1) (id $id2) geometry
+
+    if ( $result <= $disulphide_dist ) then
+      evaluate ($disu=$disu+1)
+      evaluate ($seg1.$disu=$segid1)
+      evaluate ($seg2.$disu=$segid2)
+      evaluate ($res1.$disu=$resid1)
+      evaluate ($res2.$disu=$resid2)
+    end if
+
+  end loop dis2
+
+end loop dis1
+
+evaluate ($counter=1)
+while ( $counter <= $disu ) loop disu
+  display test: disu $counter
+  patch disu
+    reference=1=(segid $seg1.$counter and resid $res1.$counter)
+    reference=2=(segid $seg2.$counter and resid $res2.$counter)
+  end
+  evaluate ($counter=$counter+1)
+end loop disu
+
+for $id in id ( known and not hydrogen and name ca and resname PRO) loop cisp
+
+  show (segid) (id $id)
+  evaluate ($segid=$result)
+  show (resid) (id $id)
+  evaluate ($resid=$result)
+  show (resname) (id $id)
+  evaluate ($resname=$result)
+
+  identity (store1) ( known and not hydrogen and ( name c and bondedto
+           ( name n and resid $resid and segid $segid ) ) )
+  if ( $select = 1 ) then
+    show element (store1) (attribute store1 > 0)
+    evaluate ($id_prev=$result)
+    show (segid) (id $id_prev)
+    evaluate ($segid_prev=$result)
+    show (resid) (id $id_prev)
+    evaluate ($resid_prev=$result)
+    show (resname) (id $id_prev)
+    evaluate ($resname_prev=$result)
+
+    pick dihedral
+      (name ca and segid $segid_prev and resid $resid_prev)
+      (name  c and segid $segid_prev and resid $resid_prev)
+      (name  n and segid $segid and resid $resid)
+      (name ca and segid $segid and resid $resid)
+      geometry
+
+    evaluate ($dihedral=mod($result+360,360))
+
+    if ( $dihedral > 180 ) then
+      evaluate ($dihedral=$dihedral-360)
+    end if
+
+    evaluate ($absdihedral=abs($dihedral))
+
+    if ( $absdihedral < 25 ) then
+      patch cisp reference=NIL=(segid $segid_prev and resid $resid_prev) end
+      display CIS peptide bon detected for residue $resid_prev
+    end if
+
+  end if
+
+end loop cisp
+
+identity (store1) (none)
+
+identity (store1) (not(known))
+
+show sum(1) (store1)
+evaluate ($tobuild=$result)
+
+if ( $tobuild > 0 ) then
+
+  fix selection=(not(store1)) end
+
+  show sum(1) (store1)
+  evaluate ($moving=$result)
+
+  if ( $moving > 0 ) then
+    for $id in id (tag and byres(store1)) loop avco
+
+      show ave(x) (byres(id $id) and known)
+      evaluate ($ave_x=$result)
+      show ave(y) (byres(id $id) and known)
+      evaluate ($ave_y=$result)
+      show ave(z) (byres(id $id) and known)
+      evaluate ($ave_z=$result)
+
+      do (x=$ave_x) (byres(id $id) and store1)
+      do (y=$ave_y) (byres(id $id) and store1)
+      do (z=$ave_z) (byres(id $id) and store1)
+
+    end loop avco
+
+    do (x=x+random(2.0)) (store1)
+    do (y=y+random(2.0)) (store1)
+    do (z=z+random(2.0)) (store1)
+
+    {- start parameter for the side chain building -}
+    parameter
+      nbonds
+        rcon=20. nbxmod=-2 repel=0.9  wmin=0.1 tolerance=1.
+        rexp=2 irexp=2 inhibit=0.5
+      end
+    end
+
+    {- Friction coefficient, in 1/ps. -}
+    do (fbeta=100) (store1)
+
+    evaluate ($bath=300.0)
+    evaluate ($nstep=500)
+    evaluate ($timestep=0.0005)
+
+    do (refy=mass) (store1)
+
+    do (mass=20) (store1)
+
+    igroup interaction
+      (store1) (store1 or known)
+    end
+
+    {- turn on initial energy terms -}
+    flags exclude * include bond angle vdw end
+
+    minimize powell nstep=50  nprint=10 end
+
+    do (vx=maxwell($bath)) (store1)
+    do (vy=maxwell($bath)) (store1)
+    do (vz=maxwell($bath)) (store1)
+
+    flags exclude vdw include impr end
+
+    dynamics cartesian
+      nstep=50
+      timestep=$timestep
+      tcoupling=true temperature=$bath
+      nprint=$nstep
+      cmremove=false
+    end
+
+    flags include vdw end
+
+    minimize powell nstep=50 nprint=10 end
+
+    do (vx=maxwell($bath)) (store1)
+    do (vy=maxwell($bath)) (store1)
+    do (vz=maxwell($bath)) (store1)
+
+    dynamics cartesian
+      nstep=50
+      timestep=$timestep
+      tcoupling=true temperature=$bath
+      nprint=$nstep
+      cmremove=false
+    end
+
+    parameter
+      nbonds
+        rcon=2. nbxmod=-3 repel=0.75
+      end
+    end
+
+    minimize powell nstep=100 nprint=25 end
+
+    do (vx=maxwell($bath)) (store1)
+    do (vy=maxwell($bath)) (store1)
+    do (vz=maxwell($bath)) (store1)
+
+    dynamics cartesian
+      nstep=$nstep
+      timestep=$timestep
+      tcoupling=true temperature=$bath
+      nprint=$nstep
+      cmremove=false
+    end
+
+    {- turn on all energy terms -}
+    flags include dihe ? end
+
+    {- set repel to ~vdw radii -}
+    parameter
+      nbonds
+        repel=0.89
+      end
+    end
+
+    minimize powell nstep=500 nprint=50 end
+
+    flag include elec end
+    energy end
+    flags exclude * include bond angl impr dihe vdw end
+
+    {- return masses to something sensible -}
+    do (mass=refy) (store1)
+
+    do (vx=maxwell($bath)) (store1)
+    do (vy=maxwell($bath)) (store1)
+    do (vz=maxwell($bath)) (store1)
+
+    dynamics cartesian
+      nstep=$nstep
+      timestep=$timestep
+      tcoupling=true temperature=$bath
+      nprint=$nstep
+      cmremove=false
+    end
+
+    {- some final minimisation -}
+    minimize powell
+      nstep=500
+      drop=40.0
+      nprint=50
+    end
+
+    print thres=0.02 bonds
+    print thres=5. angles
+
+  end if
+
+  fix selection=( none ) end
+
+end if
+
+if (&set_bfactor=true) then
+  do (b=&bfactor) ( all )
+else
+  show ave(b) (known and not(store1))
+  do (b=$result) (store1 and (attr b < 0.01))
+end if
+
+set remarks=reset end
+
+{* ===================== turn on electrostatics *}
+
+parameter
+  nbonds
+    nbxmod=5 atom cdie shift
+    cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=$epsilon e14fac=0.4 inhibit 0.5
+    wmin=0.5
+    tolerance  0.5
+    repel=0.0
+  end
+end
+
+flags excl * incl bond angl impr dihe vdw elec end
+
+{* ===================== calculate free molecules internal energy *}
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+inline @calc_free-ene.cns
+
+
+do (x=refx) (all)
+do (y=refy) (all)
+do (z=refz) (all)
+
+{* ===================== minimize complex *}
+
+parameter nbonds eps=$epsilon end end
+
+fix selection=(not all) end
+
+!  fix selection=(not(store1)) end
+!  fix selection=(segid B or (name P or name N1 or name CA or name C or name N or name O)) end
+minimize powell
+  nstep=50
+  drop=40.0
+  nprint=50
+end
+fix selection=(not all) end
+
+parameter nbonds eps=1.0 end end
+
+{* ===================== calculate symmetry energy *}
+noe reset nres=10000 end
+@symmultimer.cns
+flag incl noe end
+noe
+  scale symm $Data.ksym
+end
+energy end
+evaluate ($esym = $noe)
+
+!! PENDING !!
+!
+! Need to account for the possible UNAMBIG.tbl file at python level
+!
+!
+!{* ===================== calculate air energy *}
+!noe
+!      reset
+!      nrestraints = 1000000   ! allocate space for NOEs
+!      ceiling 100
+!
+!      set echo off message off end
+!      class      unamb @@unambig.tbl
+!      set echo on message on end
+!
+!      averaging  * sum
+!      potential  * soft
+!      scale      * 50.0
+!      sqconstant * 1.0
+!      sqexponent * 2
+!      soexponent * 1
+!      rswitch    * 1.0
+!      sqoffset   * 0.0
+!      asymptote  * 2.0
+!
+!      msoexponent * 1
+!      masymptote  * -2.0
+!      mrswitch    * 1.0
+!
+!      avexpo hbond 20
+!end
+
+energy end
+evaluate ($air = $noe)
+print threshold=0.3 noe
+evaluate ($rms_noe=$result)
+evaluate ($violations_noe=$violations)
+
+{* ===================== calculate complex internal energy *}
+evaluate ($kinter = 1.0)
+@scale_intra_only.cns
+
+
+energy end
+evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+
+{* ===================== calculate final energies and write structure *}
+flag exclude * include elec vdw end
+evaluate ($kinter = 1.0)
+
+@scale_inter_only.cns
+
+
+energy end
+evaluate ($etot = $ener)
+
+do (q=1.0) (all)
+do (b=10) (all)
+@print_coorheader.cns
+
+!==================================================================!
+! Output section, do not modify
+!==================================================================!
+
+write coordinates output=$output_pdb_filename end
+display OUTPUT: $output_pdb_filename
+
+stop

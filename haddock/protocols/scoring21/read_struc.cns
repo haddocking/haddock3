@@ -1,0 +1,198 @@
+! read_struc.cns
+
+! create and set the dummy atoms if centroids are required in rigid body stage
+if ($Data.flags.centroids = true) then
+    if ($iteration = 0) then
+!        @RUN:protocols/centroids_create.cns(ncomponents=$Data.ncomponents; Toppar=$Toppar;)
+        @RUN:protocols/centroids_create.cns
+        @RUN:protocols/centroids_initialize.cns
+    end if
+    if ($iteration = 1) then
+      if ($saprotocol.expand = true) then
+!        @RUN:protocols/centroids_create.cns(ncomponents=$Data.ncomponents; Toppar=$Toppar;)
+        @RUN:protocols/centroids_create.cns
+        @RUN:protocols/centroids_initialize.cns
+        delete sele=(name MAP) end
+      end if     
+    end if
+end if
+
+!for the rdc restraints:
+if ($Data.flags.sani = true) then
+  topology  @@$top_axis end
+  parameter @@$par_axis end
+  structure @@$tensor_psf end
+end if
+eval ($xtensor = false)
+if ($Data.flags.xrdc = true) then
+  eval ($xtensor = true)
+end if
+if ($Data.flags.xpcs = true) then
+  eval ($xtensor = true)
+end if
+if ($xtensor = true) then
+  topology  @@$top_axis end
+  parameter @@$par_axis end
+  structure @@$tensor_para_psf end
+end if
+if ($Data.flags.dani = true) then
+  topology  @@$top_axis_dani end
+  parameter @@$par_axis end
+  structure @@$tensor_dani_psf end
+end if
+
+!read the parameter files:
+if ($toppar.par_nonbonded = "") then
+  evaluate ($toppar.par_nonbonded = "OPLSX")
+end if
+evaluate ($par_nonbonded = $toppar.par_nonbonded)
+
+! CG not supported yet
+!eval($nchain1= 1)
+!eval($coarse = false)
+!while ($nchain1 <= $data.ncomponents) loop cloop1
+!  evaluate ($par_cg_$nchain1 = false)
+!  evaluate ($parstatus_cg_$nchain1 = false)
+!  if ($toppar.cg_$nchain1 = true) then
+!    eval($coarse = true)
+!    if ( $iteration < 2) then
+!      evaluate ($par_nonbonded_$nchain1 = "RUN:toppar/" + $toppar.prot_cg_par_$nchain1)
+!    else
+!      evaluate ($par_nonbonded_$nchain1 = "RUN:toppar/" + $toppar.prot_par_$nchain1)
+!      evaluate ($par_cg_$nchain1 = true)
+!      evaluate ($par_cg_nonbonded_$nchain1 = "RUN:toppar/" + $toppar.prot_cg_par_$nchain1)
+!    end if
+!  else
+!    evaluate ($par_nonbonded_$nchain1 = "RUN:toppar/" + $toppar.prot_par_$nchain1)
+!  end if
+!  eval($nchain1 = $nchain1 + 1)
+!end loop cloop1
+!
+!eval($nchain1= 0)
+!while ($nchain1 < $data.ncomponents) loop cloop1
+!  eval($nchain1 = $nchain1 + 1)
+!  eval($parstatus_$nchain1 = true)
+!end loop cloop1
+!
+!eval($nchain1= 1)
+!while ($nchain1 < $data.ncomponents) loop cloop2
+!  eval($nchain2 = $nchain1 + 1)
+!  while ($nchain2 <= $data.ncomponents) loop cloop3
+!    if ($par_nonbonded_$nchain2 eq $par_nonbonded_$nchain1) then
+!      eval($parstatus_$nchain2 = false)
+!    end if
+!    eval($nchain2 = $nchain2 + 1)
+!  end loop cloop3
+!  eval($nchain1 = $nchain1 + 1)
+!end loop cloop2
+!
+!parameter @@$par_nonbonded_1 end
+!eval($nchain1= 2)
+!while ($nchain1 <= $data.ncomponents) loop cloop1
+!  if ($parstatus_$nchain1 = true) then
+!    parameter @@$par_nonbonded_$nchain1 end
+!  end if
+!  eval($nchain1 = $nchain1 + 1)
+!end loop cloop1
+
+parameter 
+  nbonds
+    nbxmod=5 atom cdie shift
+    cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
+    wmin=0.5 tolerance  0.5
+  end
+end
+
+!if ($coarse eq true) then
+!  eval($nchain1= 1)
+!  while ($nchain1 < $data.ncomponents) loop cloop1
+!    eval($nchain2 = $nchain1 + 1)
+!    if ($par_cg_$nchain1 eq true) then
+!      if ($nchain1 = 1) then
+!        eval($parstatus_cg_$nchain1 = true)
+!      end if
+!      while ($nchain2 <= $data.ncomponents) loop cloop2
+!        if ($par_cg_$nchain2 eq true) then
+!          if ($par_cg_nonbonded_$nchain2 eq $par_cg_nonbonded_$nchain1) then
+!            eval($parstatus_cg_$nchain2 = false)
+!          end if
+!        end if
+!        eval($nchain2 = $nchain2 + 1)
+!      end loop cloop2
+!    else
+!      eval($parstatus_cg_$nchain1 = false)
+!    end if
+!    eval($nchain1 = $nchain1 + 1)
+!  end loop cloop1
+!
+!  eval($nchain1= 1)
+!  while ($nchain1 <= $data.ncomponents) loop cloop1
+!    if ($parstatus_cg_$nchain1 = true) then
+!      parameter @@$par_cg_nonbonded_$nchain1 end
+!    end if
+!    eval($nchain1 = $nchain1 + 1)
+!  end loop cloop1
+!
+!  if ( $iteration < 2) then
+!    parameter
+!      nbonds
+!        nbxmod=5 atom cdie shift
+!        cutnb=15.0 ctofnb=14.0 ctonnb=12.0 eps=1.0 e14fac=0.4 inhibit 0.25
+!        wmin=0.5 tolerance  0.5
+!      end
+!    end
+!  end if
+!end if
+
+!! this is required for protein-DNA complexes
+!! bur not needed if a DNA param file has already been defined
+!if ( &BLANK%nucl_parameter_infile = false ) then
+!  eval($dnaparam = "RUN:toppar/" + &nucl_parameter_infile)
+!  eval($read_dna_param = true)
+!  eval($nchain1 = 1)
+!  while ($nchain1 <= $data.ncomponents) loop cloop1
+!    if ($par_nonbonded_$nchain1 = $dnaparam) then
+!      eval($read_dna_param = false)
+!    end if
+!    eval($nchain1 = $nchain1 + 1)
+!  end loop cloop1
+!  if ($read_dna_param = true) then
+!    param @@$dnaparam end
+!  end if
+!end if
+!
+!! and the same for the CG version
+!if ($coarse eq true) then
+!  if ( &BLANK%nucl_cgparameter_infile = false ) then
+!    eval($dnacgparam = "RUN:toppar/" + &nucl_cgparameter_infile)
+!    eval($read_dna_cgparam = true)
+!    eval($nchain1 = 1)
+!    while ($nchain1 <= $data.ncomponents) loop cloop1
+!      if ($par_cg_nonbonded_$nchain1 = $dnacgparam) then
+!        eval($read_dna_cgparam = false)
+!      end if
+!      eval($nchain1 = $nchain1 + 1)
+!    end loop cloop1
+!    if ($read_dna_cgparam = true) then
+!      param @@$dnacgparam end
+!    end if
+!  end if
+!end if
+
+!parameter @@RUN:toppar/ion.param end
+!parameter @@RUN:toppar/ligand.param end
+!parameter @@RUN:toppar/fragment_probes.param end
+!parameter @@RUN:toppar/hemes-allhdg.param end
+!parameter @@RUN:toppar/water-allhdg5-4.param end
+!parameter @@RUN:toppar/shape.param end
+
+igroup
+  interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+               (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
+  interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
+               (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
+  interaction  (resn SHA) (not resn SHA) weight * 0 end
+
+end
+
+inline @RUN:protocols/charge-beads-interactions.cns

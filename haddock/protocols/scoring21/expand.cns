@@ -1,0 +1,91 @@
+! expand.cns
+!    Expand the initial structure and randomly rotate each component
+!    Save the initial center of mass positions
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+
+! find out the center of mass of each component
+eval ($ncount=1)
+while ($ncount le $data.ncomponents) loop findcm
+    show ave (x) (not name H* and not name DUM and segid $Toppar.prot_segid_$ncount)
+    eval ($xcm_$ncount=$result)
+    show ave (y) (not name H* and not name DUM and segid $Toppar.prot_segid_$ncount)
+    eval ($ycm_$ncount=$result)
+    show ave (z) (not name H* and not name DUM and segid $Toppar.prot_segid_$ncount)
+    eval ($zcm_$ncount=$result)
+    eval ($ncount=$ncount + 1)
+end loop findcm
+
+! find the center of mass of the entire complex
+show ave (x) (not name H* and not name DUM)
+eval ($xcm_tot=$result)
+show ave (y) (not name H* and not name DUM)
+eval ($ycm_tot=$result)
+show ave (z) (not name H* and not name DUM)
+eval ($zcm_tot=$result)
+
+! find the difference vector between the center of mass each component and the center of mass of the entire complex
+! multiply difference vector by expansion factor
+! translate components by difference vectors 
+
+eval ($ncount=1)
+while ($ncount le $data.ncomponents) loop transvec
+    eval ($v_x$ncount=($xcm_$ncount-$xcm_tot)*$saprotocol.expansion)
+    eval ($v_y$ncount=($ycm_$ncount-$ycm_tot)*$saprotocol.expansion)
+    eval ($v_z$ncount=($zcm_$ncount-$zcm_tot)*$saprotocol.expansion)  	
+    coor trans sele=(segid $Toppar.prot_segid_$ncount and not name DUM ) vector = ($v_x$ncount, $v_y$ncount,$v_z$ncount) end
+    eval ($ncount= $ncount + 1)
+end loop transvec
+
+! Rotate over random angle
+
+eval ($ncount=1)
+while ($ncount le $data.ncomponents) loop quatgen  
+    ! Generate 3 random axes, for pure quaternion: u = xi + yj + zk
+    evaluate ($RRM_e1_$ncount = random() * 2 - 1)
+    evaluate ($RRM_e2_$ncount = random() * 2 - 1)
+    evaluate ($RRM_e3_$ncount = random() * 2 - 1)
+
+    evaluate ($unit_quat_$ncount = $RRM_e1_$ncount * $RRM_e1_$ncount + $RRM_e2_$ncount * $RRM_e2_$ncount + $RRM_e3_$ncount * $RRM_e3_$ncount)
+
+    ! Normalize to create pure unit quaternion u = xi + yj + zk; |u| = 1
+    eval ($RRM_e1_$ncount = $RRM_e1_$ncount / SQRT($unit_quat_$ncount))
+    eval ($RRM_e2_$ncount = $RRM_e2_$ncount / sqrt($unit_quat_$ncount))
+    eval ($RRM_e3_$ncount = $RRM_e3_$ncount / sqrt($unit_quat_$ncount))
+    evaluate ($unit_quat_$ncount = $RRM_e1_$ncount * $RRM_e1_$ncount + $RRM_e2_$ncount * $RRM_e2_$ncount + $RRM_e3_$ncount * $RRM_e3_$ncount)	
+
+    ! Create unit quaternion q = cos (alpha/2) + sin (alpha/2)* u  
+    ! Alpha is the rotation angle 
+
+    if ($unit_quat_$ncount eq 1) then
+	eval ($q0_$ncount = cos($saprotocol.randangle/2))
+	eval ($q1_$ncount = sin($saprotocol.randangle/2)*$RRM_e1_$ncount)	
+	eval ($q2_$ncount = sin($saprotocol.randangle/2)*$RRM_e2_$ncount)	
+	eval ($q3_$ncount = sin($saprotocol.randangle/2)*$RRM_e3_$ncount)	
+    end if
+
+    ! define center of rotation 
+    show ave (x) (not name H* and not name DUM and segid $Toppar.prot_segid_$ncount)
+    eval ($xdis = $result)
+    show ave (y) (not name H* and not name DUM and segid $Toppar.prot_segid_$ncount)
+    eval ($ydis = $result)
+    show ave (z) (not name H* and not name DUM and segid $Toppar.prot_segid_$ncount)
+    eval ($zdis = $result)
+
+    ! Rotate molecules using generated quaternion q
+     coor rotate 
+         quaternion $q0_$ncount $q1_$ncount $q2_$ncount $q3_$ncount 
+         center = ($xdis $ydis $zdis)
+         sele = (segid $Toppar.prot_segid_$ncount and not name DUM) 
+     end
+
+     eval ($ncount = $ncount + 1)
+
+end loop quatgen
+

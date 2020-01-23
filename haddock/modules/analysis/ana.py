@@ -4,6 +4,11 @@ import os
 import shutil
 import statistics
 import math
+import subprocess
+import operator
+import itertools
+
+from haddock.modules.structure.utils import PDB
 from utils.files import get_full_path
 import configparser
 from haddock.modules.analysis.contact import Contacts
@@ -723,6 +728,15 @@ class Ana:
 
 		fcc_fh.close()
 
+	def fetch_lowest(self):
+		score_list = []
+		for pdb in self.structure_dic:
+			score_list.append((pdb, self.structure_dic[pdb]['haddock-score']))
+		sorted_score_list = sorted(score_list, key=lambda x: x[1])
+		lowest_pdb = sorted_score_list[0][0]
+		lowest_score = sorted_score_list[0][1]
+		return lowest_pdb, lowest_score
+
 	def run_dockq(self, ref):
 
 		dockq_exec = ini.get('third_party', 'dockq_exe')
@@ -731,17 +745,9 @@ class Ana:
 			print('\n+ Running DockQ')
 
 			reference_pdb = ''
-			total = 0
+
 			if ref == 'lowest':
-
-				score_list = []
-				for pdb in self.structure_dic:
-					score_list.append((pdb, self.structure_dic[pdb]['haddock-score']))
-
-				sorted_score_list = sorted(score_list, key=lambda x: x[1])
-				reference_pdb = sorted_score_list[0][0]
-				reference_score = sorted_score_list[0][1]
-
+				reference_pdb, reference_score = self.fetch_lowest()
 				total = len(self.structure_dic)
 
 				print(f'++ Using lowest haddock score as reference {reference_pdb} = {reference_score:.3f}, n = {total}')
@@ -1016,6 +1022,95 @@ class Ana:
 				f.write(header)
 				f.write(tbw_2)
 			f.close()
+
+	def match_renumber(self, reference_pdb):
+		""" Match the chains and renumber the structures according to a reference PDB """
+
+		clustalo_exe = ini.get('third_party', 'clustalo_exe')
+
+		if not shutil.which(clustalo_exe):
+			print('\n+ ClustalO not configured in haddock3.ini')
+			print('\n+ WARNING: matching not possible!')
+			return False
+		else:
+			print('\n+ Running automated chain matching and renumbering')
+			print('\n+ WARNING: Use with caution')
+
+		if reference_pdb == 'lowest':
+			reference_pdb, reference_score = self.fetch_lowest()
+
+		reference_pdb = PDB.fix_id(reference_pdb, priority='chain')
+		reference_seq_dic = PDB.load_seq(reference_pdb)
+
+		reference_chains = PDB.identify_chains(reference_pdb)
+		reference_chains.sort()
+
+		for pdb in self.structure_dic:
+			# match the chains with sequence alignment
+			target_seq_dic = PDB.load_seq(pdb)
+			pdb = PDB.fix_id(pdb, priority='seg')
+			target_chains = PDB.identify_chains(pdb)
+			target_chains.sort()
+
+			identity_dic = {}
+			for ref_chain, target_chain in itertools.product(reference_chains, target_chains):
+				ref_seq = ''.join(list(reference_seq_dic[ref_chain].values()))
+				target_seq = ''.join(list(target_seq_dic[target_chain].values()))
+
+				open('seq.fasta', 'w').write(f'>ref\n{ref_seq}\n>target\n{target_seq}\n')
+
+				cmd = f'{clustalo_exe} -i seq.fasta --outfmt=clu --resno --wrap=9000 --force'
+				p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+				out = p.communicate()
+
+				aln_data = out[0].decode('utf-8').split()
+				ref_aln = aln_data[6]
+				target_aln = aln_data[9]
+
+				counter_a = 0
+				counter_b = 0
+				numbering_dic = {}
+				for i in range(len(ref_aln)):
+					ref_char = ref_aln[i]
+					target_char = target_aln[i]
+
+					ref_resnum = list(reference_seq_dic[ref_chain])[counter_a]
+					target_resnum = list(target_seq_dic[target_chain])[counter_b]
+
+					# print(ref_char, ref_resnum, target_char, target_resnum)
+					if '-' not in ref_char:
+						counter_a += 1
+					if '-' not in target_char:
+						counter_b += 1
+
+					if '-' not in ref_char and '-' not in target_char:
+						numbering_dic[target_resnum] = ref_resnum
+
+				identity = out[0].decode('utf-8').count('*') / float(len(ref_seq))
+				# identity_list.append((ref_chain, target_chain, identity))
+				try:
+					identity_dic[ref_chain].append((target_chain, identity, numbering_dic))
+				except KeyError:
+					identity_dic[ref_chain] = [(target_chain, identity, numbering_dic)]
+
+			counter = 0
+			for ref_c in reference_chains:
+				# this chain will be matched to
+				idents = dict([(v[0], v[1]) for v in identity_dic[ref_c]])
+				# separate the numbering dic according to the TARGET chain
+				numbering_dics = dict([(v[0], v[2]) for v in identity_dic[ref_c]])
+				if len(set(idents.values())) == 1:
+					# this is a homo-something, so it can be matched in anyway but must still be unique (:
+					old_chain = target_chains[counter]
+					new_chain = ref_c
+					chain_matched_pdb = PDB.replace_chain(pdb, old_chain, new_chain)
+					# print(numbering_dics[new_chain])
+					renumbered_pdb = PDB.renumber(chain_matched_pdb, numbering_dics[new_chain], new_chain)
+					counter += 1
+				else:
+					# selec the lowest
+					pass
+		return True
 
 	# =================================================================================================================#
 

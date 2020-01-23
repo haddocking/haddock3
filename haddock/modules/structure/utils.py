@@ -169,6 +169,8 @@ class PDB:
     @staticmethod
     def fix_id(pdbf, priority='seg', overwrite=True):
         """ Replaces the chainID with segID or vice-versa, based on the priority param """
+        # if priority = seg, replace chainid with segid
+        # if priority = chain, replace segid with chaid
         new_pdb = pdbf + '_'
         with open(new_pdb, 'w') as out_fh:
             with open(pdbf) as in_fh:
@@ -402,6 +404,70 @@ class PDB:
 
             print(f'\n+ Chain names found: {chain_names_str}')
 
+    @staticmethod
+    def replace_chain(pdbf, old_chain, new_chain, overwrite=True):
+        new_pdb = pdbf + '_'
+        with open(new_pdb, 'w') as out_fh:
+            with open(pdbf) as in_fh:
+                for line in in_fh.readlines():
+                    if line.startswith('ATOM'):
+                        current_chain = line[21]
+                        if current_chain == old_chain:
+                            line = line[:21] + new_chain + line[22:]
+                    out_fh.write(line)
+            in_fh.close()
+        out_fh.close()
+
+        if overwrite:
+            os.rename(new_pdb, pdbf)
+            return pdbf
+        else:
+            return new_pdb
+
+    @staticmethod
+    def renumber(pdbf, renumber_dic, target_chain, overwrite=True):
+        new_pdb = pdbf + '_'
+        with open(new_pdb, 'w') as out_fh:
+            with open(pdbf) as in_fh:
+                for line in in_fh.readlines():
+                    if line.startswith('ATOM'):
+                        current_res = int(line[22:26])
+                        current_chain = line[21]
+                        if current_chain == target_chain:
+                            new_res = renumber_dic[current_res]
+                            line = line[:22] + '{:>4}'.format(new_res) + line[26:]
+                    out_fh.write(line)
+            in_fh.close()
+        out_fh.close()
+
+        if overwrite:
+            os.rename(new_pdb, pdbf)
+            return pdbf
+        else:
+            return new_pdb
+
+    @staticmethod
+    def load_seq(pdb_f):
+        aa_dic = {'ALA': 'A', 'ARG': 'R', 'ASN': 'N', 'ASP': 'D', 'CYS': 'C', 'GLU': 'E', 'GLN': 'Q', 'GLY': 'G',
+                  'HIS': 'H', 'ILE': 'I', 'LEU': 'L', 'LYS': 'K', 'MET': 'M', 'PHE': 'F', 'PRO': 'P', 'SER': 'S',
+                  'THR': 'T', 'TRP': 'W', 'TYR': 'Y', 'VAL': 'V',  'DC': 'C',  'DA': 'A',  'DG': 'G',  'DT': 'T',
+                  'ADE': 'A', 'THY': 'T', 'GUA': 'G', 'CYT': 'C'}
+        seq_dic = {}
+        for l in open(pdb_f):
+            if 'ATOM' in l[:4]:
+                segment_id = l[72:76].strip()
+                resnum = int(l[22:26])
+                resname = l[17:20].split()[0]
+                try:
+                    _ = seq_dic[segment_id]
+                except KeyError:
+                    seq_dic[segment_id] = {}
+                try:
+                    name = aa_dic[resname]
+                except KeyError:
+                    name = 'X'
+                seq_dic[segment_id][resnum] = name
+        return seq_dic
 
 
     # @staticmethod

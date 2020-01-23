@@ -3,5 +3,7 @@
   "rigid_body": "rigid-body.cns",
   "semi_flexible": "semi-flexible.cns",
   "water_refinement": "water-refinement.cns",
-  "scoring": "scoring.cns"
+  "scoring": "scoring24.cns",
+
+
 }

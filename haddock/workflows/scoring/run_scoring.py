@@ -181,7 +181,9 @@ if __name__ == '__main__':
 
     ana = Ana(rescored)
 
-    reference = setup_dictionary['execution_parameters']['reference']
+    reference_structure = setup_dictionary['execution_parameters']['reference']['analysis']
+    chain_num_reference = setup_dictionary['execution_parameters']['reference']['numbering']
+
     method = setup_dictionary['clustering']['method']
     detail_flag = setup_dictionary['clustering']['details']
     clustering_params = setup_dictionary['clustering']['params']
@@ -189,6 +191,8 @@ if __name__ == '__main__':
     # HADDOCK-Score
     ana.extract_energies()
     ana.calculate_haddock_score()
+
+    ana.match_renumber(chain_num_reference)
 
     # Clustering
     if method != 'fcc':
@@ -201,7 +205,7 @@ if __name__ == '__main__':
     # Third-party
     ana.run_fastcontact()
     ana.run_dfire()
-    ana.run_dockq(reference)
+    ana.run_dockq(reference_structure)
 
     # Output ==========================================================================================================#
     ana.output()

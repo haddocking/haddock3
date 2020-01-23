@@ -87,6 +87,9 @@ haddock/workflows/scoring/*out
 haddock/workflows/scoring/*fcc_matrix
 haddock/workflows/scoring/structures.ranking
 
+# CNS binaries
+cns/
+
 # Docker containers
 containers/docker/*.gz
 containers/docker/*.tar

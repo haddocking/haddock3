@@ -1,6 +1,8 @@
 import itertools
 import subprocess
+import os
 import re
+from haddock.utils.files import get_full_path
 from haddock.modules.structure.utils import PDB
 
 

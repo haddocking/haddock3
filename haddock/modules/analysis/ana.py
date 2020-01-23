@@ -7,10 +7,9 @@ import math
 import subprocess
 import operator
 import itertools
-
-from haddock.modules.structure.utils import PDB
-from utils.files import get_full_path
 import configparser
+from haddock.modules.structure.utils import PDB
+from haddock.utils.files import get_full_path
 from haddock.modules.analysis.contact import Contacts
 from haddock.modules.analysis.dfire import dfire
 from haddock.modules.analysis.dockq import dockq

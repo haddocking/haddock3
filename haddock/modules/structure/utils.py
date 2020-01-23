@@ -2,7 +2,7 @@ import os
 import string
 import configparser
 from itertools import chain
-from utils.files import get_full_path
+from haddock.utils.files import get_full_path
 
 # from haddock.modules.structure.reduce import analyze_protonation_state
 

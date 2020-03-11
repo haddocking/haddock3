@@ -114,6 +114,20 @@ class PDB:
         chain_l = list(set(chain_l))
         return chain_l
 
+    @staticmethod
+    def identify_segids(pdb):
+        """ Read PDB structure and return chainIDs """
+        segid_l = []
+        with open(pdb) as f:
+            for l in f.readlines():
+                if 'ATOM' in l[:4]:
+                    segid = l[72:76].strip()[:1]
+                    if segid not in segid_l:
+                        segid_l.append(segid)
+        f.close()
+        segid_l = list(set(segid_l))
+        return segid_l
+
     # @staticmethod
     # def chainid_or_segid(pdb):
     #     """ Check if the PDB has ALL chainIDs or segIDs fields filled """
@@ -179,17 +193,18 @@ class PDB:
                         line = pad_line(line)
                         chainid = line[21].strip()[:1]  # chainID
                         segid = line[72:76].strip()[:1]  # segID
-
                         if priority == 'seg':
                             if not segid:
-                                # cannot use this priority
+                                print('\n+ ERROR: Fix id failed, no segID')
                                 exit()
                             line = line[:21] + segid + line[22:]
                         elif priority == 'chain':
                             if not chainid:
-                                # cannot use this priority
+                                print('\n+ ERROR: Fix id failed, no chaiID')
                                 exit()
                             line = line[:72] + chainid.ljust(4) + line[76:]
+                            if not '\n' in line:
+                                line += '\n'
 
                         else:
                             # option not supported
@@ -257,8 +272,6 @@ class PDB:
         # chain1 = A, chain2 = B or chain1 = D, chain = E, etc
         segid_l.sort()
         return segid_l
-
-    # def exclude_unknown(self, pdb_dic):
 
     def fix_chainseg(self, pdb_dic):
         """" Separate by molecule id and assign segids accordingly """
@@ -374,12 +387,19 @@ class PDB:
     def organize_chains(self, pdb_dic):
 
         # Assume all models have CHAIN
+        new_pdb_dic = {}
         for mol in pdb_dic:
+            new_pdb_dic[mol] = []
             chain_count_dic = {}
             for pdb in pdb_dic[mol]:
                 chains = self.identify_chains(pdb)
                 size = self.count_atoms(pdb)
-                chain_count_dic[pdb] = [size, len(chains), chains]
+                if len(chains) > 1:
+                    new_pdb_dic[mol].append(pdb)
+                    chain_count_dic[pdb] = [size, len(chains), chains]
+                else:
+                    print(f'+ WARNING: {pdb} has {len(chains)} chain, removing')
+                    os.remove(pdb)
 
             # count how many times each one appeared
             sizes = [chain_count_dic[e][0] for e in chain_count_dic]
@@ -399,10 +419,9 @@ class PDB:
             print('\n+ Size distribution')
             histogram(sizes_data)
 
-            print('\n+ Chain count distribution')
-            histogram(chains_data)
-
             print(f'\n+ Chain names found: {chain_names_str}')
+
+        return new_pdb_dic
 
     @staticmethod
     def replace_chain(pdbf, old_chain, new_chain, overwrite=True):
@@ -427,6 +446,7 @@ class PDB:
     @staticmethod
     def renumber(pdbf, renumber_dic, target_chain, overwrite=True):
         new_pdb = pdbf + '_'
+        ignored_res = []
         with open(new_pdb, 'w') as out_fh:
             with open(pdbf) as in_fh:
                 for line in in_fh.readlines():
@@ -434,11 +454,23 @@ class PDB:
                         current_res = int(line[22:26])
                         current_chain = line[21]
                         if current_chain == target_chain:
-                            new_res = renumber_dic[current_res]
-                            line = line[:22] + '{:>4}'.format(new_res) + line[26:]
-                    out_fh.write(line)
+                            try:
+                                new_res = renumber_dic[current_res]
+                                line = line[:22] + '{:>4}'.format(new_res) + line[26:]
+                                out_fh.write(line)
+                            except:
+                                # Residue not found in reference, IGNORE
+                                ignored_res.append(current_res)
+                        else:
+                            out_fh.write(line)
+                    else:
+                        out_fh.write(line)
             in_fh.close()
         out_fh.close()
+
+        if ignored_res:
+            ignored_res_str = ', '.join(map(str, list(set(ignored_res))))
+            # print(f'+ WARNING: {pdbf} Chain {target_chain} Res {ignored_res_str} not found in reference, discarded.')
 
         if overwrite:
             os.rename(new_pdb, pdbf)
@@ -469,7 +501,6 @@ class PDB:
                 seq_dic[segment_id][resnum] = name
         return seq_dic
 
-
     # @staticmethod
     # def extract_md5(pdb_ens):
     #     """ Read the whole scoring set and return a dictionary with model number and MD5 """
@@ -491,5 +522,4 @@ class PDB:
     #             if 'ATOM' in line[:4]:
     #                 break
     #     f.close()
-    #
     #     return md5_dictionary

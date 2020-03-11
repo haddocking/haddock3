@@ -3,13 +3,14 @@ import toml
 import json
 import argparse
 from datetime import datetime
+
+from bin.haddock3 import generate_topology
 from haddock.modules.analysis.ana import Ana
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.setup import Setup
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
-from haddock.haddock3 import generate_topology
 from haddock.version import CURRENT_VERSION
 
 etc_folder = get_full_path('haddock', 'etc')
@@ -58,6 +59,7 @@ def score_models(run_param):
 
     input_list = []
     # match pdbs and psfs
+    # FIXME: Find a better way to retrieve molecules from topology
     for pdbf in glob.glob('topology/*pdb'):
         psff = pdbf.replace('.pdb', '.psf')
         if os.path.isfile(psff):
@@ -98,15 +100,15 @@ def preprocess_scoring(raw_molecule_dic):
     ensemble_dic = p.treat_ensemble(raw_molecule_dic)
 
     # Deal with chains (WIP)
-    print('++ Matching chains (WIP)')
-    p.organize_chains(ensemble_dic)
+    print('++ Analyzing chains')
+    organized_dic = p.organize_chains(ensemble_dic)
 
     # Clean problematic parts
     print('++ Cleaning problematic parts')
-    clean_molecule_dic = p.sanitize(ensemble_dic)
+    clean_molecule_dic = p.sanitize(organized_dic)
 
     # Deal with chainIDs and segIDs
-    print('++ Swapping segID with chainID')
+    print('++ Adding segID (from chainID)')
     clean_pdb_list = []
     for pdb in clean_molecule_dic:
         clean_pdb = p.fix_id(pdb, priority='chain')
@@ -154,7 +156,6 @@ if __name__ == '__main__':
         s = Setup(setup_dictionary)
         s.prepare_folders()
         s.configure_recipes()
-
         # this one is not being used anywhere
         _ = preprocess_scoring(setup_dictionary['molecules'])
 
@@ -200,7 +201,7 @@ if __name__ == '__main__':
         exit()
 
     for cutoff, threshold in clustering_params:
-        ana.cluster(cutoff=cutoff, threshold=threshold, detailed=clustering_params)
+        ana.cluster(cutoff=cutoff, size=threshold)
 
     # Third-party
     ana.run_fastcontact()

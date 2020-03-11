@@ -11,15 +11,15 @@
 !
 {- turn on electrostatic and proper non-bonded-}
 {- not needed since already ok as defined in build missing script -}
-!parameter
-!  nbonds
-!    repel=0
-!    nbxmod=5 atom cdie shift
-!    cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=10.0 e14fac=0.4 inhibit 0.25
-!    wmin=0.5
-!    tolerance  0.5
-!  end
-!end
+parameter
+  nbonds
+    repel=0
+    nbxmod=5 atom cdie shift
+    cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=10.0 e14fac=0.4 inhibit 0.25
+    wmin=0.5
+    tolerance  0.5
+  end
+end
 
 evaluate ($nhisd = 0)
 evaluate ($nhise = 0)

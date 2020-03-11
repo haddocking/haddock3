@@ -5,11 +5,12 @@ import shutil
 import statistics
 import math
 import subprocess
-import operator
 import itertools
 import configparser
+import operator
 from haddock.modules.structure.utils import PDB
 from haddock.utils.files import get_full_path
+from haddock.modules.analysis.fcc import read_matrix, cluster_elements, output_clusters
 from haddock.modules.analysis.contact import Contacts
 from haddock.modules.analysis.dfire import dfire
 from haddock.modules.analysis.dockq import dockq
@@ -141,75 +142,22 @@ class Ana:
 
 			self.structure_dic[pdb]['haddock-score'] = haddock_score
 
-	# TODO: Implment RMSD clustering
-	def cluster(self, cutoff, threshold=4, strictness=0.75, detailed=False):
+	def cluster(self, cutoff, size=4, strictness=0.75, detailed=False):
 		""" Cluster scored models using FCC, output a sorted text file containing clusters and mean scores """
 
-		print(f'+ FCC clustering with cutoff: {cutoff:.2f} and threshold: {threshold}')
+		print(f'+ FCC clustering with cutoff: {cutoff:.2f} and max size: {size}')
 
-		self.calculate_contacts()
-		self.calc_fcc_matrix()
-
-		cutoff = float(cutoff)
-		partner_cutoff = float(cutoff) * float(strictness)
+		self.calculate_contacts()  # this will be sorted by HADDOCK Score
+		fcc_matrix = self.calc_fcc_matrix()
+		pool = read_matrix(fcc_matrix, cutoff, strictness)
+		element_pool, clusters = cluster_elements(pool, size)
+		output_clusters(f'cluster_debug_{cutoff:.2f}-{int(size)}.out', clusters)
 
 		# populate internal data structure with cluster info
 		for pdb in self.structure_dic:
-			self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_name"] = float('nan')
-			self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_internal_ranking"] = float('nan')
-			self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_overall_ranking"] = float('nan')
-
-		elements = {}
-
-		for e in self.fcc_matrix:
-			ref, mobi, d_rm, d_mr = e.split()
-			ref = int(ref)
-			mobi = int(mobi)
-			d_rm = float(d_rm)
-			d_mr = float(d_mr)
-
-			# Create or Retrieve Elements
-			if ref not in elements:
-				r = Element(ref)
-				elements[ref] = r
-			else:
-				r = elements[ref]
-
-			if mobi not in elements:
-				m = Element(mobi)
-				elements[mobi] = m
-			else:
-				m = elements[mobi]
-
-			# Assign neighbors
-			if d_rm >= cutoff and d_mr >= partner_cutoff:
-				r.add_neighbor(m)
-			if d_mr >= cutoff and d_rm >= partner_cutoff:
-				m.add_neighbor(r)
-
-		clusters = []
-		# threshold -= 1  # Account for center
-		# ep = element_pool
-		ep = elements
-		cn = 1  # Cluster Number
-		while 1:
-			# Clusterable elements
-			ce = [e for e in ep if not ep[e].cluster]
-			if not ce:  # No more elements to cluster
-				break
-
-			# Select Cluster Center
-			# Element with largest neighbor list
-			ctr_nlist, ctr = sorted([(len([se for se in ep[e].neighbors if not se.cluster]), e) for e in ce])[-1]
-
-			# Cluster until length of remaining elements lists are above threshold
-			if ctr_nlist < threshold:
-				break
-
-			# Create Cluster
-			c = Cluster(cn, ep[ctr])
-			cn += 1
-			clusters.append(c)
+			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_name"] = float('nan')
+			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_internal_ranking"] = float('nan')
+			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_overall_ranking"] = float('nan')
 
 		# Important: guess the root, this might change according to the worflow
 		first_model_name = list(self.structure_dic.items())[0][0]
@@ -219,29 +167,36 @@ class Ana:
 		path = re.findall(path_regex, first_model_name)[0]
 		root = re.findall(root_regex, first_model_name)[0]
 		wd = os.getcwd()
-		output_f = f'{wd}/analysis/fcc_{cutoff}-{threshold}.out'
+		output_f = f'{wd}/analysis/fcc_{cutoff}-{size}.out'
 		# output_f = f'{wd}/{path}/analysis/fcc_{cutoff}-{threshold}.out'
 
-		cluster_dic = {}
+		# get the ORDER, +1 since line counting starts at 1
+		ref_dic = dict([(i+1, int(e.split('/')[-1].split('.')[0].split('_')[-1])) for i, e in enumerate(self.con_list)])
 
+		cluster_dic = {}
 		for c in clusters:
-			# FIXME: Does the cluster center start at 0 or at 1?
+			# The numbers are the INDEX of the INPUT FILE, not the MODEL numbers
 			c.center.name -= 1
 			clustered_models_list = []
-			cluster_center_name = f'{path}/{root}_{c.center.name}.pdb'
+
+			center_model_number = ref_dic[c.center.name]
+
+			cluster_center_name = f'{path}/{root}_{center_model_number}.pdb'
+			# cluster_center_name = f'{path}/{root}_{c.center.name}.pdb'
 			if not os.path.isfile(cluster_center_name):
-				cluster_center_name_wzeros = f'{path}/{root}_{str(c.center.name).zfill(6)}.pdb'
+				cluster_center_name_wzeros = f'{path}/{root}_{str(center_model_number).zfill(6)}.pdb'
 				if os.path.isfile(cluster_center_name_wzeros):
 					cluster_center_name = cluster_center_name_wzeros
 
-			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_name"] = c.name
-			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = 0
+			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{size}_name"] = c.name
+			self.structure_dic[cluster_center_name][f"cluster-{cutoff}-{size}_internal_ranking"] = 0
 
 			sort_tag = True
-			for model in [m.name for m in c.members]:
-				name = f'{path}/{root}_{model}.pdb'
+			for model_index in [m.name for m in c.members]:
+				model_number = ref_dic[model_index]
+				name = f'{path}/{root}_{model_number}.pdb'
 				if not os.path.isfile(name):
-					name_wzeros = f'{path}/{root}_{str(model).zfill(6)}.pdb'
+					name_wzeros = f'{path}/{root}_{str(model_number).zfill(6)}.pdb'
 					if os.path.isfile(name_wzeros):
 						name = name_wzeros
 
@@ -255,10 +210,10 @@ class Ana:
 				# haddock_score = float('nan')
 				# sort_tag = False
 
-				clustered_models_list.append((model, haddock_score))
+				clustered_models_list.append((model_number, haddock_score))
 
 				# add cluster info to internal structure
-				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_name"] = c.name
+				self.structure_dic[name][f"cluster-{cutoff}-{size}_name"] = c.name
 
 			if sort_tag:
 				# sort cluster elements by haddock score
@@ -283,7 +238,7 @@ class Ana:
 					if os.path.isfile(name_wzeros):
 						name = name_wzeros
 
-				self.structure_dic[name][f"cluster-{cutoff}-{threshold}_internal_ranking"] = i+1
+				self.structure_dic[name][f"cluster-{cutoff}-{size}_internal_ranking"] = i+1
 
 		# sort clusters by mean haddock score
 		sorted_cluster_list = sorted(
@@ -296,10 +251,10 @@ class Ana:
 		cluster_ranking = dict([(e[0], i + 1) for i, e in enumerate(sorted_cluster_list)])
 		# add overall cluster ranking to data structure
 		for pdb in self.structure_dic:
-			cluster_name = self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_name"]
+			cluster_name = self.structure_dic[pdb][f"cluster-{cutoff}-{size}_name"]
 			if cluster_name == cluster_name:  # means it is not NaN
 				overall_ranking = cluster_ranking[cluster_name]
-				self.structure_dic[pdb][f"cluster-{cutoff}-{threshold}_overall_ranking"] = overall_ranking
+				self.structure_dic[pdb][f"cluster-{cutoff}-{size}_overall_ranking"] = overall_ranking
 
 		# output
 		# header = '# Cluster ID\t[mean_score, top4_mean_score]\t->\t(center) top1 top2 top3 top4 ...\n'
@@ -310,6 +265,7 @@ class Ana:
 				sorted_model_string = ' '.join(map(str, sorted_model_list))
 				tbw = f'Cluster {cluster_name} [{cluster_mean:.2f}, {cluster_top4_mean:.2f}] -> ({cluster_center}) ' \
 					f'{sorted_model_string}\n'
+				# tbw = f'Cluster {cluster_name} [{cluster_mean:.2f}, {cluster_top4_mean:.2f}] -> {sorted_model_string}\n'
 				out.write(tbw)
 		out.close()
 
@@ -471,35 +427,35 @@ class Ana:
 					# file.nam_clustX_haddock-score
 					file_nam_haddockscore += f'{name} {haddock_score_v:.2f}\n'
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}_bsa', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}_bsa', 'w') as f:
 					f.write(file_nam_bsa)
 				f.close()
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}_dH', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}_dH', 'w') as f:
 					f.write(file_nam_dh)
 				f.close()
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}_Edesolv', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}_Edesolv', 'w') as f:
 					f.write(file_nam_desol)
 				f.close()
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}_ener', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}_ener', 'w') as f:
 					f.write(file_cns_tbw)
 				f.close()
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}_haddock-score', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}_haddock-score', 'w') as f:
 					f.write(file_nam_haddockscore)
 				f.close()
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}', 'w') as f:
 					f.write(file_list_tbw)
 				f.close()
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}_best2', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}_best2', 'w') as f:
 					f.write(file_list_tbw_best2)
 				f.close()
 
-				with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_clust{cluster_name}_best4', 'w') as f:
+				with open(f'{wd}/analysis/fcc_{cutoff}-{size}_clust{cluster_name}_best4', 'w') as f:
 					f.write(file_list_tbw_best4)
 				f.close()
 
@@ -543,19 +499,19 @@ class Ana:
 				# f.close()
 				# =========================================================================================================#
 
-			with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_bsa.txt', 'w') as f:
+			with open(f'{wd}/analysis/fcc_{cutoff}-{size}_bsa.txt', 'w') as f:
 				f.write('#Cluster BSA sd\n')
 				for cluster_id in bsa_dic:
 					f.write(f'file.nam_clust{cluster_id} {statistics.mean(bsa_dic[cluster_id]):.2f} {statistics.stdev(bsa_dic[cluster_id]):.2f}\n')
 			f.close()
 
-			with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}_haddock.txt', 'w') as f:
+			with open(f'{wd}/analysis/fcc_{cutoff}-{size}_haddock.txt', 'w') as f:
 				f.write('#Cluster haddock-score sd\n')
 				for cluster_id in haddock_score_dic:
 					f.write(f'file.nam_clust{cluster_id} {statistics.mean(haddock_score_dic[cluster_id]):.2f} {statistics.stdev(haddock_score_dic[cluster_id]):.2f}\n')
 			f.close()
 
-			with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}.stats', 'w') as f:
+			with open(f'{wd}/analysis/fcc_{cutoff}-{size}.stats', 'w') as f:
 				f.write('#Cluster haddock-score sd rmsd sd rmsd-Emin sd Nstruc Etot sd Evdw sd Eelec sd BSA sd\n')
 				for cluster_id in range(1, total_cluster+1):
 
@@ -585,7 +541,7 @@ class Ana:
 					f.write(f'file.nam_clust{cluster_id} {hs_mean:.2f} {hs_sd:.2f} {rmsd_mean:.2f} {rmsd_sd:.2f} {rmsdemin_mean:.2f} {rmsdemin_sd:.2f} {size} {total_mean:.2f} {total_sd:.2f} {vdw_mean:.2f} {vdw_sd:.2f} {elec_mean:.2f} {elec_sd:.2f} {bsa_mean:.2f} {bsa_sd:.2f}\n')
 			f.close()
 
-			with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}.stats_best2', 'w') as f:
+			with open(f'{wd}/analysis/fcc_{cutoff}-{size}.stats_best2', 'w') as f:
 				f.write('#Cluster haddock-score sd rmsd sd rmsd-Emin sd Nstruc Etot sd Evdw sd Eelec sd BSA sd\n')
 				for cluster_id in range(1, total_cluster + 1):
 
@@ -615,7 +571,7 @@ class Ana:
 					f.write(f'file.nam_clust{cluster_id} {hs_mean:.2f} {hs_sd:.2f} {rmsd_mean:.2f} {rmsd_sd:.2f} {rmsdemin_mean:.2f} {rmsdemin_sd:.2f} {size} {total_mean:.2f} {total_sd:.2f} {vdw_mean:.2f} {vdw_sd:.2f} {elec_mean:.2f} {elec_sd:.2f} {bsa_mean:.2f} {bsa_sd:.2f}\n')
 			f.close()
 
-			with open(f'{wd}/analysis/fcc_{cutoff}-{threshold}.stats_best4', 'w') as f:
+			with open(f'{wd}/analysis/fcc_{cutoff}-{size}.stats_best4', 'w') as f:
 				f.write('#Cluster haddock-score sd rmsd sd rmsd-Emin sd Nstruc Etot sd Evdw sd Eelec sd BSA sd\n')
 				for cluster_id in range(1, total_cluster + 1):
 
@@ -655,15 +611,15 @@ class Ana:
 
 		with open('file.list', 'w') as fl_fh:
 			for p in sorted_pdb_list:
-				fl_fh.write(f'{p[0]} {{ {p[1]} }}\n')
+				fl_fh.write(f'{p[0]}\t{{ {p[1]:.2f} }}\n')
 		fl_fh.close()
 
 		file_nam = [p[0] for p in sorted_pdb_list]
 
-		with open('file.nam', 'w') as fh:
-			for p in file_nam:
-				fh.write(f'{p}\n')
-		fh.close()
+		# with open('file.nam', 'w') as fh:
+		# 	for p in file_nam:
+		# 		fh.write(f'{p}\n')
+		# fh.close()
 
 		con = Contacts()
 		con.calculate_contacts(file_nam, cutoff=5.0)
@@ -672,7 +628,7 @@ class Ana:
 
 	def calc_fcc_matrix(self, ignore_chain=False):
 		""" Calculate the FCC matrix (extracted and adapted from calc_fcc_matrix.py """
-
+		fcc_matrix_outf = 'fcc.matrix'
 		# if not os.path.isfile(self.fcc_matrix_f) and not self.fcc_matrix:
 
 		# print('+ Creating FCC matrix')
@@ -693,7 +649,7 @@ class Ana:
 		else:
 			contacts = [set([int(l) for l in open(f)]) for f in self.con_list if f.strip()]
 
-		with open('fcc.matrix', 'w') as fcc_fh:
+		with open(fcc_matrix_outf, 'w') as fcc_fh:
 			# get the pairwise matrix
 			for i in range(len(contacts)):
 				for j in range(i + 1, len(contacts)):
@@ -726,6 +682,7 @@ class Ana:
 					fcc_fh.write(f'{i + 1} {j + 1} {fcc:.3f} {fcc_v:.3f}\n')
 
 		fcc_fh.close()
+		return fcc_matrix_outf
 
 	def fetch_lowest(self):
 		score_list = []
@@ -868,8 +825,8 @@ class Ana:
 				element_list = [(j[2], j[3], j[4]) for j in elements]
 				sorted_element_list = sorted(element_list, key=lambda x: x[0])
 
-				# delete the center of the cluster
-				del sorted_element_list[0]
+				# was the cluster center added to cluster_dic? if so remove!
+				# del sorted_element_list[0]
 
 				# start!
 
@@ -1029,86 +986,107 @@ class Ana:
 
 		if not shutil.which(clustalo_exe):
 			print('\n+ ClustalO not configured in haddock3.ini')
-			print('\n+ WARNING: matching not possible!')
+			print('+ WARNING: matching not possible!')
 			return False
 		else:
 			print('\n+ Running automated chain matching and renumbering')
-			print('\n+ WARNING: Use with caution')
+			print('+ WARNING: Use with caution, some residues could be deleted')
 
 		if reference_pdb == 'lowest':
 			reference_pdb, reference_score = self.fetch_lowest()
 
-		reference_pdb = PDB.fix_id(reference_pdb, priority='chain')
-		reference_seq_dic = PDB.load_seq(reference_pdb)
+		if ' ' not in PDB.identify_chains(reference_pdb):
+			reference_pdb = PDB.fix_id(reference_pdb, priority='chain')
+		if ' ' not in PDB.identify_chainseg(reference_pdb):
+			reference_pdb = PDB.fix_id(reference_pdb, priority='seg')
 
+		reference_seq_dic = PDB.load_seq(reference_pdb)
 		reference_chains = PDB.identify_chains(reference_pdb)
 		reference_chains.sort()
 
-		for pdb in self.structure_dic:
+		pdb_list = list(self.structure_dic.keys())
+		pdb_list.sort()
+
+		for pdb in pdb_list:
 			# match the chains with sequence alignment
 			target_seq_dic = PDB.load_seq(pdb)
 			pdb = PDB.fix_id(pdb, priority='seg')
+
+			# Get what chains are present in the target
 			target_chains = PDB.identify_chains(pdb)
 			target_chains.sort()
 
+			# Do a combinatorial alignment to check which chains match better
 			identity_dic = {}
 			for ref_chain, target_chain in itertools.product(reference_chains, target_chains):
 				ref_seq = ''.join(list(reference_seq_dic[ref_chain].values()))
 				target_seq = ''.join(list(target_seq_dic[target_chain].values()))
-
 				open('seq.fasta', 'w').write(f'>ref\n{ref_seq}\n>target\n{target_seq}\n')
-
 				cmd = f'{clustalo_exe} -i seq.fasta --outfmt=clu --resno --wrap=9000 --force'
 				p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 				out = p.communicate()
-
+				os.remove('seq.fasta')
 				aln_data = out[0].decode('utf-8').split()
 				ref_aln = aln_data[6]
 				target_aln = aln_data[9]
-
 				counter_a = 0
 				counter_b = 0
 				numbering_dic = {}
 				for i in range(len(ref_aln)):
 					ref_char = ref_aln[i]
 					target_char = target_aln[i]
-
 					ref_resnum = list(reference_seq_dic[ref_chain])[counter_a]
-					target_resnum = list(target_seq_dic[target_chain])[counter_b]
-
+					try:
+						target_resnum = list(target_seq_dic[target_chain])[counter_b]
+					except IndexError:
+						# Target sequence exhausted, ignore
+						target_resnum = '-'
 					# print(ref_char, ref_resnum, target_char, target_resnum)
 					if '-' not in ref_char:
 						counter_a += 1
 					if '-' not in target_char:
 						counter_b += 1
-
 					if '-' not in ref_char and '-' not in target_char:
 						numbering_dic[target_resnum] = ref_resnum
-
 				identity = out[0].decode('utf-8').count('*') / float(len(ref_seq))
-				# identity_list.append((ref_chain, target_chain, identity))
+				coverage = len(numbering_dic) / len(ref_aln)
+				# print(ref_chain, target_chain, identity, coverage)
+				# print(f'>R:{ref_chain}\n{ref_aln}')
+				# print(f'>T:{target_chain}\n{target_aln}')
 				try:
-					identity_dic[ref_chain].append((target_chain, identity, numbering_dic))
+					identity_dic[ref_chain].append((target_chain, identity, coverage, numbering_dic))
 				except KeyError:
-					identity_dic[ref_chain] = [(target_chain, identity, numbering_dic)]
+					identity_dic[ref_chain] = [(target_chain, identity, coverage,  numbering_dic)]
+			# print('#########\n')
 
-			counter = 0
-			for ref_c in reference_chains:
-				# this chain will be matched to
-				idents = dict([(v[0], v[1]) for v in identity_dic[ref_c]])
-				# separate the numbering dic according to the TARGET chain
-				numbering_dics = dict([(v[0], v[2]) for v in identity_dic[ref_c]])
-				if len(set(idents.values())) == 1:
-					# this is a homo-something, so it can be matched in anyway but must still be unique (:
-					old_chain = target_chains[counter]
-					new_chain = ref_c
-					chain_matched_pdb = PDB.replace_chain(pdb, old_chain, new_chain)
-					# print(numbering_dics[new_chain])
-					renumbered_pdb = PDB.renumber(chain_matched_pdb, numbering_dics[new_chain], new_chain)
-					counter += 1
+			# do the renumbering
+			for i, ref_c in enumerate(reference_chains):
+				target_info_list = [(v[0], v[1], v[2]) for v in identity_dic[ref_c]]
+				# sort by identity and coverage
+				sorted_target_list = sorted(target_info_list, key=lambda x: (-x[2], x[1]))
+				# create a catalog with possible numbering references
+				numbering_dic_catalog = dict([(v[0], v[3]) for v in identity_dic[ref_c]])
+
+				if len(set([ e[1] for e in sorted_target_list])) == 1:
+					# this is a homo-something, match is sequentialy
+					selected_chain = target_chains[i]
 				else:
-					# selec the lowest
-					pass
+					# get the highest identity/coverage
+					selected_chain = sorted_target_list[0][0]
+
+				# select the correct numbering dictionary
+				selected_numbering_dic = numbering_dic_catalog[selected_chain]
+				# just for readability:
+				old_chain = selected_chain
+				new_chain = ref_c
+
+				# replace the target chain (old) with the same observed in the reference (new)
+				chain_matched_pdb = PDB.replace_chain(pdb, old_chain, new_chain)
+
+				# renumber!
+				#  Note, if residue is present in target and not in reference it will be DELETED, use with caution
+				renumbered_pdb = PDB.renumber(chain_matched_pdb, selected_numbering_dic, new_chain, overwrite=True)
+
 		return True
 
 	# =================================================================================================================#

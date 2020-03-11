@@ -13,7 +13,7 @@
 !
 !eval($filelist="filelist.list")
 !
-!evaluate ($iteration=1)
+
 !evaluate ($data.ncomponents=20)
 !evaluate ($Toppar.prot_segid_1="A")
 !evaluate ($Toppar.prot_segid_2="B")
@@ -99,7 +99,6 @@ while ($nmol <= $data.ncomponents) loop mol
 end loop mol
 
 evaluate ($Saprotocol.iniseed = $seed)
-
 evaluate ($Toppar.autohis     = $autohis)
 evaluate ($Toppar.delenph     = $delnph)
 evaluate ($Toppar.autohis     = $autohis)
@@ -122,9 +121,9 @@ evaluate ($Data.flags.rg      = $rg)
 evaluate ($Data.flags.em      = $em)
 evaluate ($Data.flags.sym     = $sym)
 evaluate ($Data.flags.ncs     = $ncs)
+evaluate ($iteration          = 1)
 
 !evaluate ($log_level=verbose)
-!
 !topology
 !     @@&prot_topology_infile
 !     @@&ion_topology_infile
@@ -136,7 +135,6 @@ evaluate ($Data.flags.ncs     = $ncs)
 !     @@&prot_break_infile
 !     @@&dna_break_infile
 !end
-!
 !parameter
 !     @@&prot_parameter_infile
 !     @@&ion_parameter_infile
@@ -152,12 +150,13 @@ evaluate ($count = 0)
 !for $file in ( @@$filelist ) loop readpdb
 
   eval($count=$count+1)
-  evaluate ($filename= $file - ".pdb" + "_conv.pdb")
-  evaluate ($psfname= $file - ".pdb" + "_conv.psf")
 
-  fileexist $filename end
-  evaluate ($convfileexist=$result)
-  if ($convfileexist eq false) then
+!  evaluate ($filename= $file - ".pdb" + "_conv.pdb")
+!  evaluate ($psfname= $file - ".pdb" + "_conv.psf")
+!  fileexist $filename end
+
+!  evaluate ($convfileexist=$result)
+!  if ($convfileexist eq false) then
   dele sele=(all) end
   struc reset end
   noe reset end
@@ -428,16 +427,12 @@ $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
 !  @HADDOCK:protocols-scoring/print_coorheader.cns
   @print_coorheader.cns
   coor orient end
-  write coordinates format=pdbo sele= (all) output =$filename end
-  write structure output =$psfname end
-
-  end if
 
 !==================================================================!
 ! Output section, do not modify
 !==================================================================!
 
-write coordinates output=$output_pdb_filename end
+write coordinates format=pdbo sele= (all) output=$output_pdb_filename end
 display OUTPUT: $output_pdb_filename
 
 stop

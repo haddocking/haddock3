@@ -123,6 +123,7 @@ def get_stars(data_frame, top_r):
 
 
 if __name__ == '__main__':
+    ''' Parse HADDOCK3.0 ss.stats result file and calculate Benchmark statistics '''
 
     parser = argparse.ArgumentParser(description='Prepare SS data')
     parser.add_argument("benchmark_path",

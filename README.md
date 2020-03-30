@@ -19,7 +19,7 @@
 
 #### HADDOCK
 
- * Download the [latest release](https://github.com/haddocking/haddock3/releases) *or* clone the repository
+ * Download the [latest release](https://github.com/haddocking/haddock3/releases)
 
 ```bash
 $ wget https://github.com/haddocking/haddock3/archive/v3.0.alpha2.zip

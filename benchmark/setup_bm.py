@@ -1,30 +1,25 @@
+# Setup the Benchmark
 import argparse
 import os
 import glob
-
 
 def create_toml(receptor_f, ligand_f, pdb_name):
     toml_str = f'''title = "HADDOCK3 Setup file"
 [molecules]
 mol1 = '{receptor_f}'
 mol2 = '{ligand_f}'
-
 [restraints]
 ambig = 'ambig.tbl'
-
 [identifier]
 run = 'ti'
-
 [execution_parameters]
 scheme = 'parallel'
-nproc = 50
+nproc = 48
 reference.analysis  = '/home/rodrigo/projects/BM5-clean/HADDOCK-ready/{pdb_name}/ana_scripts/target.pdb'
-
 # Stage specific parameters
 [stage]
 [stage.topology]
 recipe='default'
-
 [stage.rigid_body]
 recipe='rigid-body-minimal.cns'
 sampling = 1000
@@ -33,7 +28,6 @@ params.noecv = false
 recipe='default'
 sampling = 400
 params.noecv = false
-
 [stage.water_refinement]
 recipe='default'
 sampling = 400
@@ -66,6 +60,7 @@ endif'''
 
 
 if __name__ == '__main__':
+    ''' Setup BM5 for Haddock3 benchmarking '''
 
     parser = argparse.ArgumentParser(description='Setup your HADDOCK run')
     parser.add_argument("benchmark_path", help="Location of BM5")
@@ -86,12 +81,10 @@ if __name__ == '__main__':
         receptor = f'{pdb_id}_r_u.pdb'
         toml_file = f'{target_path}{pdb_id}.toml'
         job_file = f'{target_path}{pdb_id}.job'
-        # if not os.path.isfile(toml_file):
         toml_str = create_toml(receptor, ligand, pdb_id)
         with open(toml_file, 'w') as fh:
             fh.write(toml_str)
 
-        # if not os.path.isfile(job_file):
         job_str = create_job(target_path, toml_file, pdb_id)
         with open(job_file, 'w') as fh:
             fh.write(job_str)

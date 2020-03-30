@@ -66,6 +66,7 @@ class Queue:
 
 
 if __name__ == '__main__':
+    ''' Deamon to submit/check all Benchmark jobs '''
 
     parser = argparse.ArgumentParser(description='This is the submission Daemon')
     parser.add_argument("benchmark_path",

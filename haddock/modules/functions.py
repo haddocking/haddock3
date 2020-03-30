@@ -1,3 +1,4 @@
+import copy
 import re
 import random
 import configparser
@@ -47,14 +48,36 @@ def molecularize(dic):
 
     return out_dic
 
+def check_failures(jobs):
+    fjobs = copy.deepcopy(jobs)
+    failed_jobs = []
+    for j in jobs.dic:
+        inp, out = jobs.dic[j]
+        complete_check = None
+        for i, line in enumerate(reversed(list(open(out)))):
+            if 'CNSsolve>stop' in line:
+                complete_check = True
+            if not complete_check and 'ABORT' in line:
+                failed_jobs.append(j)
+            if i == 50:
+                break
+    # create deletion list
+    if failed_jobs:
+        deletion_list = [k for k in jobs.dic.keys() if k not in failed_jobs]
+        for delk in deletion_list:
+            del fjobs.dic[delk]
+        return fjobs, True
+    else:
+        return None, False
+
 
 def retrieve_output(jobs):
     """" Read the output file and look for < OUTPUT: > to identify if the job was sucessful """
     output_dic = {}
-    complete_check = None
     for j in jobs.dic:
         inp, out = jobs.dic[j]
         output_dic[j] = []
+        complete_check = None
         for i, line in enumerate(reversed(list(open(out)))):
             if 'OUTPUT:' in line and 'CNS' not in line:
                 v = line.strip().split(':')[1][1:]

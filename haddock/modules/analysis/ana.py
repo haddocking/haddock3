@@ -629,9 +629,7 @@ class Ana:
 	def calc_fcc_matrix(self, ignore_chain=False):
 		""" Calculate the FCC matrix (extracted and adapted from calc_fcc_matrix.py """
 		fcc_matrix_outf = 'fcc.matrix'
-		# if not os.path.isfile(self.fcc_matrix_f) and not self.fcc_matrix:
 
-		# print('+ Creating FCC matrix')
 		if not self.con_list:
 			self.calculate_contacts()
 
@@ -700,8 +698,6 @@ class Ana:
 		if shutil.which(dockq_exec):
 			print('\n+ Running DockQ')
 
-			reference_pdb = ''
-
 			if ref == 'lowest':
 				reference_pdb, reference_score = self.fetch_lowest()
 				total = len(self.structure_dic)
@@ -709,11 +705,7 @@ class Ana:
 				print(f'++ Using lowest haddock score as reference {reference_pdb} = {reference_score:.3f}, n = {total}')
 
 			else:
-				print('+ ERROR: Not yet implemented, try lowest')
-				exit()
-
-			if reference_pdb == '':
-				exit()
+				reference_pdb = ref
 
 			for i, pdb in enumerate(self.structure_dic):
 				result_dic = dockq(reference_pdb, pdb, dockq_exec)

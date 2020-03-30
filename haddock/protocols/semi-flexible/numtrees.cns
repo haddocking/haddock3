@@ -13,7 +13,7 @@
 
 !module (numtrees; Data; Toppar;)
 
-evaluate (&numtrees = 1)
+evaluate ($numtrees = 1)
 evaluate ($ncount = 0)
 evaluate ($break=$data.ncomponents)
 
@@ -98,19 +98,19 @@ end loop nsloop
 do (store1 = 0) (all)
 do (store1 = 1) ((resn WAT or resn HOH or resn TIP*) and name OH2)
 show sum (store1) ((resn WAT or resn HOH or resn TIP*))
-evaluate (&numtrees = $numtrees + $break + $result)
+evaluate ($numtrees = $numtrees + $break + $result)
 
 if ($data.flags.sani eq true) then
-  evaluate (&numtrees = $numtrees + 5)
+  evaluate ($numtrees = $numtrees + 5)
 end if
 if ($data.flags.xrdc eq true) then
-  evaluate (&numtrees = $numtrees + 5)
+  evaluate ($numtrees = $numtrees + 5)
 end if
 if ($data.flags.xpcs eq true) then
-  evaluate (&numtrees = $numtrees + 5)
+  evaluate ($numtrees = $numtrees + 5)
 end if
 if ($data.flags.dani eq true) then
-  evaluate (&numtrees = $numtrees + 5)
+  evaluate ($numtrees = $numtrees + 5)
 end if
 
-evaluate (&numtrees = $numtrees + 300)
+evaluate ($numtrees = $numtrees + 300)

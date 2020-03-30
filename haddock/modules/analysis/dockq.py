@@ -6,8 +6,6 @@ from haddock.utils.files import get_full_path
 
 def dockq(ref, pdb_f, dockq_exec):
 
-	# print(f'+ {count} {pdb_f}')
-
 	irms = float('nan')
 	lrms = float('nan')
 	fnat = float('nan')
@@ -24,7 +22,6 @@ def dockq(ref, pdb_f, dockq_exec):
 	result_dic = {}
 
 	if reference_chains != pdb_chains:
-		# not supported
 		print(f'+ WARNING: Skipping {pdb_f}, number of chains do not match. Expected {len(reference_chains)} found {len(pdb_chains)}')
 		interface_name = ''
 		result_dic[f'{interface_name}_irms'] = float('nan')
@@ -38,7 +35,8 @@ def dockq(ref, pdb_f, dockq_exec):
 
 		for comb in itertools.combinations(pdb_chains, 2):
 
-			interface_name = ''.join(comb) + '-' + [e for e in pdb_chains if e not in comb][0]
+			# interface_name = ''.join(comb) + '-' + [e for e in pdb_chains if e not in comb][0]
+			interface_name = ''.join(comb)
 
 			cmd = f'{dockq_exec} {pdb_f} {ref} -native_chain1 {comb[0]} {comb[1]} -perm1'
 

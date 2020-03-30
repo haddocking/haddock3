@@ -193,7 +193,7 @@ if __name__ == '__main__':
     ana.extract_energies()
     ana.calculate_haddock_score()
 
-    ana.match_renumber(chain_num_reference)
+    # ana.match_renumber(chain_num_reference)
 
     # Clustering
     if method != 'fcc':

@@ -142,6 +142,7 @@ def run_it1(model_list, run_param):
         it1 = SemiFlexible()
         job_dic = it1.init(recipe, model_list)
         complex_list = it1.run(job_dic)
+
         file_list = it1.output(complex_list)
 
     return file_list
@@ -176,7 +177,7 @@ def run_itw(model_list, run_param):
     return file_list
 
 
-def run_analysis(pdb_l):
+def run_analysis(pdb_l, reference=None):
     print('\n++ Running analysis')
     ana = Ana(pdb_l)
 
@@ -184,11 +185,12 @@ def run_analysis(pdb_l):
 
     ana.calculate_haddock_score()
 
-    ana.cluster(cutoff=0.60, threshold=4)
+    ana.cluster(cutoff=0.60, size=4)
 
     # ana.run_fastcontact()
     # ana.run_dfire()
-    # ana.run_dockq()
+    if reference:
+        ana.run_dockq(reference)
 
     ana.output()
 
@@ -200,16 +202,28 @@ def pre_process(raw_molecule_dic):
     # 1. Add or assign ChainID/SegID
     chainseg_dic = p.fix_chainseg(raw_molecule_dic)
 
-    # 2. Remove aa not present in the topology
-    p
-
     # 2. Check if it is an ensemble and split it
     ensemble_dic = p.treat_ensemble(chainseg_dic)
 
-    # 3. Clean problematic parts
+    # 3. Clean problematic parts and remove aa not present in the topology
     clean_molecule_dic = p.sanitize(ensemble_dic)
 
     return clean_molecule_dic
+
+
+def clean_run():
+    allowed_folders = ['topology/', 'data/', 'analysis/']
+    folder_l = glob.glob('*/')
+    for f in folder_l:
+        if f not in allowed_folders:
+            out_l = glob.glob(f'{f}*.out')
+            out_l.sort()
+            for out_f in out_l[1:]:
+                os.remove(out_f)
+            inp_l = glob.glob(f'{f}*.inp')
+            inp_l.sort()
+            for inp_f in inp_l[1:]:
+                os.remove(inp_f)
 
 
 if __name__ == '__main__':
@@ -307,9 +321,16 @@ if __name__ == '__main__':
 
     # 3. Analysis =====================================================================================================#
 
-    run_analysis(water_refinement_complexes)
+    try:
+        reference_structure = setup_dictionary['execution_parameters']['reference']['analysis']
+    except KeyError:
+        reference_structure = None
+
+    run_analysis(water_refinement_complexes, reference_structure)
 
     # 4. Done! ========================================================================================================#
+
+    # clean_run()
 
     adieu()
 

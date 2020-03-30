@@ -1,4 +1,5 @@
 import multiprocessing
+import random
 import subprocess
 import os
 import toml
@@ -17,8 +18,30 @@ class CNS:
 		self.run_param = toml.load('data/run.toml')
 		self.run_scheme = self.run_param['execution_parameters']['scheme']
 
-	def run(self, jobs):
+	@staticmethod
+	def replace_seed(jobs):
+		for j in jobs.dic:
+			inp_f, out = jobs.dic[j]
+			print(inp_f)
+			new_inp_f = inp_f.replace('.inp', '.inp_')
+			with open(new_inp_f, 'w') as n_fh:
+				with open(inp_f, 'r') as fh:
+					for line in fh.readlines():
+						if 'eval ($seed=' in line:
+							seed = random.randint(100, 999)
+							line = f'eval ($seed={seed})\n'
+						n_fh.write(line)
+			# overwrite
+			os.rename(new_inp_f, inp_f)
+			# remove .out
+			os.remove(out)
+		return jobs
+
+	def run(self, jobs, retry=False):
 		"""Pass the input defined in input_file to CNS"""
+		if retry:
+			jobs = self.replace_seed(jobs)
+
 		if self.run_scheme == 'serial':
 			self.run_serial(jobs)
 

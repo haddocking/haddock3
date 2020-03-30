@@ -130,8 +130,7 @@ class InputGenerator:
 		except IndexError:
 			input_str += f'eval ($dihe_fname="")\n'
 
-		# seed = random.randint(100, 999)
-		seed = 911
+		seed = random.randint(100, 999)
 		input_str += f'eval ($seed={seed})\n'
 
 		return input_str

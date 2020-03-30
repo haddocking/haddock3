@@ -3,7 +3,7 @@ import math
 import glob
 from haddock.modules.cns.engine import CNS
 from haddock.modules.cns.input import InputGenerator
-from haddock.modules.functions import retrieve_output, calculate_haddock_score
+from haddock.modules.functions import retrieve_output, calculate_haddock_score, check_failures
 from haddock.modules.worker.distribution import JobCreator
 
 
@@ -33,9 +33,23 @@ class SemiFlexible:
         return jobs
 
     @staticmethod
-    def run(jobs):
+    def run(jobs, retry_counter=5):
         cns = CNS()
         cns.run(jobs)
+        failed_jobs, fail_check = check_failures(jobs)
+        if fail_check:
+            while retry_counter != 0:
+                cns = CNS()
+                cns.run(failed_jobs, retry=True)
+                failed_jobs, fail_check = check_failures(failed_jobs)
+                if not fail_check:
+                    retry_counter = 0
+                else:
+                    retry_counter -= 1
+            if fail_check and retry_counter == 0:
+                print('+ ERROR: Jobs failed in it1')
+                exit()
+
         output = retrieve_output(jobs)
         return output
 

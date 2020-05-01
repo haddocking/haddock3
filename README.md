@@ -10,7 +10,7 @@
 ***
     
 ## Requirements
- * [Crystallography & NMR System (CNS)](http://cns-online.org/v1.3/)
+ * Crystallography & NMR System (CNS)
     * Make a request on the [CNS website](http://cns-online.org/v1.3/), download the software and copy the contents of `/cns1.3` to CNS's source folder before compilation.
  * Python 3.7.x (Anaconda is recomended)
 

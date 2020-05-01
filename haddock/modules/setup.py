@@ -13,8 +13,7 @@ class Setup:
         self.setup_dic = setup_dic
 
         if not self.check_setup_dic(setup_dic):
-            print('+ ERROR: Please configure your setup file')
-            exit()
+            raise SetupError('+ Error: Please configure your setup file')
 
         self.protocol_path = get_full_path('haddock', 'protocols')
 
@@ -26,14 +25,12 @@ class Setup:
         try:
             run_id = self.setup_dic['identifier']['run']
         except KeyError:
-            print('+ ERROR: Run identifier not provided')
-            exit()
+            raise SetupError('+ ERROR: Run identifier not provided')
 
         for mol in self.setup_dic['molecules']:
             target_mol = self.setup_dic['molecules'][mol]
             if not os.path.isfile(target_mol):
-                print(f'+ ERROR: Molecule {target_mol} not found')
-                exit()
+                raise SetupError(f'+ ERROR: Molecule {target_mol} not found')
 
         self.run_dir = None
         if type(run_id) == int:
@@ -42,8 +39,7 @@ class Setup:
             run_id = run_id.replace(' ', '-')
             self.run_dir = f"run-{run_id}"
         else:
-            print('+ ERROR: Run identifier can only be string or integer')
-            exit()
+            raise SetupError('+ ERROR: Run identifier can only be string or integer')
 
     @staticmethod
     def check_setup_dic(sdic):
@@ -57,8 +53,7 @@ class Setup:
         """ Create folder structure and copy/edit significant input files """
 
         if len(self.setup_dic['molecules']) >= 20:
-            print('+ ERROR: Too many molecules')
-            exit()
+            raise SetupError('+ ERROR: Too many molecules')
 
         # move input molecules to correct places
         if not os.path.isdir(self.run_dir):
@@ -80,12 +75,10 @@ class Setup:
             molecule = self.setup_dic['molecules'][mol_id]
 
             if molecule == mol_id + '.pdb':
-                print("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
-                exit()
+                raise SetupError("+ ERROR: Name mol_X.pdb not supported, please rename your molecule.")
             # Ensembles will be treated later
             if not os.path.isfile(molecule):
-                print(f'+ ERROR: {molecule} not found!')
-                exit()
+                raise SetupError(f'+ ERROR: {molecule} not found!')
 
             os.system(f'cp {molecule} {self.run_dir}/data/{mol_id}_1.pdb')
 
@@ -139,8 +132,7 @@ class Setup:
                     default_parameter_dic = json.load(f)
                 f.close()
             else:
-                print(f'+ ERROR: Default parameters not found for {recipe_id}')
-                exit()
+                raise SetupError(f'+ ERROR: Default parameters not found for {recipe_id}')
 
             custom_parameter_dic = dict([(a, stage_dic[stage][a]) for a in stage_dic[stage] if a != 'recipe'])
 
@@ -166,3 +158,11 @@ class Setup:
 
         # Q: What should this function return?
         return True
+
+class SetupError(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
+        raise SystemExit('{0} '.format(self.message))

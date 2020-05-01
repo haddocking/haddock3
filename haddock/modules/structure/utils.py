@@ -52,10 +52,6 @@ class PDB:
                           ' 0.00969': ' 0.00   '}
         self.model_list = []
 
-    # @staticmethod
-    # def get_protonation(pdbf):
-    # 	return analyze_protonation_state(pdbf)
-
     def treat_ensemble(self, pdb_dic):
         """" Separate a multimodel PDB file and add it to data structure """
         check = False
@@ -112,6 +108,7 @@ class PDB:
                         chain_l.append(chain_id)
         f.close()
         chain_l = list(set(chain_l))
+        chain_l.sort()
         return chain_l
 
     @staticmethod
@@ -126,33 +123,9 @@ class PDB:
                         segid_l.append(segid)
         f.close()
         segid_l = list(set(segid_l))
+        segid_l.sort()
         return segid_l
 
-    # @staticmethod
-    # def chainid_or_segid(pdb):
-    #     """ Check if the PDB has ALL chainIDs or segIDs fields filled """
-    #     chain_l = []
-    #     seg_l = []
-    #     with open(pdb) as f:
-    #         for l in f.readlines():
-    #             if 'ATOM' in l[:4]:
-    #                 segid = l[72:76].strip()[:1]
-    #                 chainid = l[21].strip()[:1]
-    #
-    #                 if segid: seg_l.append(True)
-    #                 if chainid: chain_l.append(True)
-    #
-    #     if chain_l:
-    #         chain_check = all(chain_l)
-    #     else:
-    #         chain_check = False
-    #
-    #     if seg_l:
-    #         seg_check = all(seg_l)
-    #     else:
-    #         seg_check = False
-    #
-    #     return chain_check, seg_check
 
     @staticmethod
     def split_models(ensamble_f):
@@ -500,26 +473,3 @@ class PDB:
                     name = 'X'
                 seq_dic[segment_id][resnum] = name
         return seq_dic
-
-    # @staticmethod
-    # def extract_md5(pdb_ens):
-    #     """ Read the whole scoring set and return a dictionary with model number and MD5 """
-    #     regex = r"(\d*)\sMD5\s(.*)"
-    #     md5_dictionary = {}
-    #     with open(pdb_ens) as f:
-    #         data = f.readlines()
-    #         for line in data:
-    #             matches = re.finditer(regex, line, re.MULTILINE)
-    #             if matches:
-    #                 for match in matches:
-    #                     try:
-    #                         model_number = int(match.group(1))
-    #                         md5 = match.group(2)
-    #                     except ValueError:
-    #                         # this is not the match you are looking for
-    #                         continue
-    #                     md5_dictionary[int(model_number)] = md5
-    #             if 'ATOM' in line[:4]:
-    #                 break
-    #     f.close()
-    #     return md5_dictionary

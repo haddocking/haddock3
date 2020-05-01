@@ -11,7 +11,7 @@ from haddock.modules.cns.input import InputGenerator
 from haddock.modules.docking.it0 import RigidBody
 from haddock.modules.docking.it1 import SemiFlexible
 from haddock.modules.docking.itw import WaterRefinement
-from haddock.modules.setup import Setup
+from haddock.modules.setup import Setup, SetupError
 from haddock.modules.worker.distribution import JobCreator
 from haddock.modules.functions import *
 from haddock.version import CURRENT_VERSION
@@ -236,32 +236,22 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     setup_dictionary = toml.load(args.run_file)
-    run_id = setup_dictionary['identifier']['run']
-    if type(run_id) == int:
-        run_folder = f'run{run_id}'
-    else:
-        run_folder = f'run-{run_id}'
-
-    if not os.path.isdir(run_folder):
-        print(f'+ Setting up {run_folder}')
-        s = Setup(setup_dictionary)
-        s.prepare_folders()
-        s.configure_recipes()
+    s = Setup(setup_dictionary)
+    s.prepare_folders()
+    s.configure_recipes()
 
     if args.setup:
-        print(f'+ Running Setup only mode (--setup), exiting now')
         adieu()
-        exit()
+        SystemExit(f'+ Running Setup only mode (--setup), exiting now')
 
     processed_molecules = pre_process(setup_dictionary['molecules'])
 
-    print(f'+ Executing {run_folder}')
-    os.chdir(run_folder)
+    print(f'+ Executing {s.run_dir}')
+    os.chdir(s.run_dir)
 
     run_f = 'data/run.toml'
     if not os.path.isfile(run_f):
-        print('+ ERROR: data/run.toml not found, make sure you are in the correct folder.')
-        exit()
+        raise SetupError('+ ERROR: data/run.toml not found, make sure you are in the correct folder.')
     run_parameters = toml.load(run_f)
 
     molecules = get_begin_molecules('data/')

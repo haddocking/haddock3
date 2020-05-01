@@ -1,3 +1,4 @@
+import shutil
 import unittest
 import os
 from haddock.modules.setup import Setup
@@ -27,6 +28,9 @@ class TestSetup(unittest.TestCase):
 
 		self.assertTrue(check)
 		self.assertTrue(os.path.isfile('run1/topology/template/generate-topology.cns'))
+
+	def tearDown(self):
+		shutil.rmtree('run1')
 
 
 if __name__ == '__main__':

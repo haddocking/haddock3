@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-
 import argparse
 import sys
 import toml
 import json
 from datetime import datetime
 from haddock.modules.analysis.ana import Ana
-from haddock.modules.cns.engine import CNS
+from haddock.modules.cns.engine import CNS, CNSError
 from haddock.modules.cns.input import InputGenerator
 from haddock.modules.docking.it0 import RigidBody
 from haddock.modules.docking.it1 import SemiFlexible
@@ -248,6 +247,10 @@ if __name__ == '__main__':
 
     print(f'+ Executing {s.run_dir}')
     os.chdir(s.run_dir)
+
+    valid_cns = CNS().validate_cns()
+    if not valid_cns:
+        raise CNSError('+ ERROR: There is something wrong with CNS')
 
     run_f = 'data/run.toml'
     if not os.path.isfile(run_f):

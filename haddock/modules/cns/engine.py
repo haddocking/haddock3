@@ -18,6 +18,16 @@ class CNS:
 		self.run_param = toml.load('data/run.toml')
 		self.run_scheme = self.run_param['execution_parameters']['scheme']
 
+	def validate_cns(self):
+
+		cns_script_child = subprocess.Popen([self.cns_exec], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+		stdout, stderr = cns_script_child.communicate(b"display Valid\nstop")
+		if 'Valid' in stdout.decode('utf-8'):
+			return True
+		else:
+			raise False
+
+
 	@staticmethod
 	def replace_seed(jobs):
 		for j in jobs.dic:
@@ -110,3 +120,11 @@ class CNS:
 				p = subprocess.Popen(cns_exec, stdin=inp, stdout=outf, close_fds=True)
 				_, _ = p.communicate()
 				p.kill()
+
+class CNSError(Exception):
+	def __init__(self, *args):
+		if args:
+			self.message = args[0]
+		else:
+			self.message = None
+		raise SystemExit('{0} '.format(self.message))

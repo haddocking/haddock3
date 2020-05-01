@@ -43,7 +43,7 @@ class TestPDB(unittest.TestCase):
 		expected_chain_l = ['A', 'B','C']
 		self.assertEqual(chain_l, expected_chain_l)
 
-	def identify_segids(self):
+	def test_identify_segids(self):
 		pdb_f = f'{data_path}/miniA.pdb'
 		segid_l = self.PDB.identify_segids(pdb_f)
 		expected_segid_l = ['A']

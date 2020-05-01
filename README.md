@@ -9,55 +9,36 @@
 
 ***
     
-# Instalation
-
-#### Requirements
+## Requirements
  * [Crystallography & NMR System (CNS)](http://cns-online.org/v1.3/)
- * Python 3.7.x
+    * Make a request on the [CNS website](http://cns-online.org/v1.3/), download the software and copy the contents of `/cns1.3` to CNS's source folder before compilation.
+ * Python 3.7.x (Anaconda is recomended)
 
-#### CNS
- * Make a request on the [CNS website](http://cns-online.org/v1.3/), download the software and copy the contents of `/cns1.3` to CNS's source folder before compilation.
-
-#### HADDOCK
-
- * Download the [latest release](https://github.com/haddocking/haddock3/releases)
-
+## Instalation
+ Download the [latest release](https://github.com/haddocking/haddock3/releases) or clone the repository
+ 
 ```bash
-$ wget https://github.com/haddocking/haddock3/archive/v3.0.alpha2.zip
-$ unzip haddock3-3.0.alpha2
 $ cd haddock3
+$ conda create -n haddock3 python=3.7
+$ conda activate haddock3
 $ pip install -r requirements.txt
-```
- OR
 
- * Clone the repository, please not that the repository is under constant change 
-
-```bash
-$ git clone https://github.com/haddocking/haddock3.git
-$ cd haddock3
-$ pip install -r requirements.txt
-```
-
-#### Third-party
-* Edit `haddock3/haddock/etc/haddock3.ini` to account for the third-party software
-
-# Execution
-
-*Edit `CNS_EXE` in `bin/activate` with the correct path*
-
-```bash
-$ cd haddock3
+# add location of CNS executable
+$ vim bin/activate
 $ source bin/activate
-$ cd src/haddock3
-$ source bin/activate_haddock
-$ haddock3.py
-```
 
-Example:
-```
-$ cd examples/protein-protein
+$ cd haddock/src
+$ make
+
+# run the example
+$ cd ../../examples/protein-protein
 $ haddock3.py run.toml
 ```
+
+##Optinal: Third-party software
+* Edit `haddock3/haddock/etc/haddock3.ini` to account for the third-party software
+
+***
 
 Haddock's main input file is a [.toml](https://github.com/toml-lang/toml) containing the parameters that will be used in the simulation.
 

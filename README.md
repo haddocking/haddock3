@@ -35,7 +35,7 @@ $ cd ../../examples/protein-protein
 $ haddock3.py run.toml
 ```
 
-## Optinal: Third-party software
+## Optional: Third-party software
 * Edit `haddock3/haddock/etc/haddock3.ini` to account for the third-party software
 
 ***

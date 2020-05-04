@@ -23,7 +23,7 @@ $ conda create -n haddock3 python=3.7
 $ conda activate haddock3
 $ pip install -r requirements.txt
 
-# add location of CNS executable
+# change the Paths
 $ vim bin/activate
 $ source bin/activate
 

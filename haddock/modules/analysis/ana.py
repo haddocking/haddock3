@@ -151,7 +151,7 @@ class Ana:
 		fcc_matrix = self.calc_fcc_matrix()
 		pool = read_matrix(fcc_matrix, cutoff, strictness)
 		element_pool, clusters = cluster_elements(pool, size)
-		output_clusters(f'cluster_debug_{cutoff:.2f}-{int(size)}.out', clusters)
+		# output_clusters(f'cluster_debug_{cutoff:.2f}-{int(size)}.out', clusters)
 
 		# populate internal data structure with cluster info
 		for pdb in self.structure_dic:
@@ -757,7 +757,7 @@ class Ana:
 	def output(self):
 
 		# Single Structure
-		print(f'\n+ Saving single-structure analysis to {self.ss_output_f}.stats')
+		print('\n+ Saving single-structure analysis')
 
 		# sort by haddock score!
 		score_list = [(pdb, self.structure_dic[pdb]['haddock-score']) for pdb in self.structure_dic]
@@ -765,7 +765,7 @@ class Ana:
 		k = sorted_score_list[0][0]
 		header = 'model ranking ' + ' '.join(list(self.structure_dic[k])) + '\n'
 
-		with open(f'{self.ss_output_f}.stats', 'w') as out:
+		with open(f'analysis/{self.ss_output_f}.stats', 'w') as out:
 			out.write(header)
 
 			for i, e in enumerate(sorted_score_list):
@@ -781,7 +781,7 @@ class Ana:
 		out.close()
 
 		# Cluster based - improve ASAP #======================================================#
-		print(f'\n+ Saving cluster analysis to {self.cluster_output_f}.stats')
+		print('\n+ Saving cluster analysis')
 
 		cluster_params = list(set([c.split('cluster-')[-1].split('_')[0] for c in self.structure_dic[k] if 'cluster' in c]))
 		cluster_dic = {}
@@ -956,20 +956,20 @@ class Ana:
 				tbw_4 += f'clust{cluster_id} {size} {haddock_score_mean_4:.2f} {haddock_score_sd_4:.2f} {bsa_mean_4:.2f} {bsa_sd_4:.2f} {desolv_mean_4:.2f} {desolv_sd_4:.2f} {vdw_mean_4:.2f} {vdw_sd_4:.2f} {fastelec_mean_4:.2f} {fastelec_sd_4:.2f} {fastdesol_mean_4:.2f} {fastdesol_sd_4:.2f} {dfire_ebinding_mean_4:.2f} {dfire_ebinding_sd_4:.2f} {dfire_score_mean_4:.2f} {dfire_score_sd_4:.2f}\n'
 				tbw_2 += f'clust{cluster_id} {size} {haddock_score_mean_2:.2f} {haddock_score_sd_2:.2f} {bsa_mean_2:.2f} {bsa_sd_2:.2f} {desolv_mean_2:.2f} {desolv_sd_2:.2f} {vdw_mean_2:.2f} {vdw_sd_2:.2f} {fastelec_mean_2:.2f} {fastelec_sd_2:.2f} {fastdesol_mean_2:.2f} {fastdesol_sd_2:.2f} {dfire_ebinding_mean_2:.2f} {dfire_ebinding_sd_2:.2f} {dfire_score_mean_2:.2f} {dfire_score_sd_2:.2f}\n'
 
-			with open(f'{self.cluster_output_f}_{param}.stats', 'w') as f:
-				f.write(header)
-				f.write(tbw)
-			f.close()
+			# with open(f'{self.cluster_output_f}_{param}.stats', 'w') as f:
+			# 	f.write(header)
+			# 	f.write(tbw)
+			# f.close()
 
-			with open(f'{self.cluster_output_f}_{param}_best4.stats', 'w') as f:
-				f.write(header)
-				f.write(tbw_4)
-			f.close()
+			# with open(f'{self.cluster_output_f}_{param}_best4.stats', 'w') as f:
+			# 	f.write(header)
+			# 	f.write(tbw_4)
+			# f.close()
 
-			with open(f'{self.cluster_output_f}_{param}_best2.stats', 'w') as f:
-				f.write(header)
-				f.write(tbw_2)
-			f.close()
+			# with open(f'{self.cluster_output_f}_{param}_best2.stats', 'w') as f:
+			# 	f.write(header)
+			# 	f.write(tbw_2)
+			# f.close()
 
 	def match_renumber(self, reference_pdb):
 		""" Match the chains and renumber the structures according to a reference PDB """

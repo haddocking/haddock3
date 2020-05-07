@@ -1,46 +1,32 @@
-![Stable release](https://badgen.net/badge/release/3.0.a1/orange)
+![Stable release](https://badgen.net/badge/release/3.0.a2/orange)
 [![Build Status](http://alembick.science.uu.nl:8080/buildStatus/icon?job=haddock3%2Fmaster)](http://alembick.science.uu.nl:8080/job/haddock3/job/master/)
 [![codecov](https://codecov.io/gh/haddocking/haddock3/branch/master/graph/badge.svg?token=K2UshyxoRu)](https://codecov.io/gh/haddocking/haddock3)
 
 ![HADDOCK3](docs/media/HADDOCK3-logo.png)
 
 
-**ATTENTION: This repository is under heavy development and will change abruptly.**
+**ATTENTION: This repository is under heavy development and will change abruptly and without warning.**
 
-***
-    
-## Requirements
- * Crystallography & NMR System (CNS)
-    * Make a request on the [CNS website](http://cns-online.org/v1.3/), download the software and copy the contents of `/cns1.3` to CNS's source folder before compilation.
- * Python 3.7.x (Anaconda is recomended)
 
 ## Instalation
- Download the [latest release](https://github.com/haddocking/haddock3/releases) or clone the repository
- 
-```bash
-$ cd haddock3
-$ conda create -n haddock3 python=3.7
-$ conda activate haddock3
-$ pip install -r requirements.txt
+ Please refer to [INSTALLATION.md](INSTALLATION.md)
 
-# change the Paths
-$ vim bin/activate
-$ source bin/activate
+## Description
 
-$ cd haddock/src
-$ make
+HADDOCK v3.0 is a bottom-up reimagination of the long standing time-proven [HADDOCK](http://www.bonvinlab.org/) used for integrative modeling of biomolecular complexes.
+This young and still very-experimental (use it at your own risk!) aims to modularize and extend HADDOCK's core functions.
 
-# run the example
-$ cd ../../examples/protein-protein
-$ haddock3.py run.toml
-```
+In its current implementation (Alpha2) HADDOCK v3.0 still lacks the full repertoire of features present at the production version, [HADDOCK v2.4](https://bianca.science.uu.nl/haddock2.4/).
+However it is able to take full advantage of the ambiguous interaction restraints (AIRs) to drive the docking process.
 
-## Optional: Third-party software
-* Edit `haddock3/haddock/etc/haddock3.ini` to account for the third-party software
+It was evaluated using the [Protein-Protein Docking Benchmark 5](https://github.com/haddocking/BM5-clean) and compared with the live version (v2.4).
+This evaluation was done using the true interface of each complex of (4.9 Å) and is expressed in terms of success rate; the ammount of BM5 targets that have at least one docking solution below the specified threhshold whithin a specified subset of solutions ranked by HADDOCK-score.
 
-***
+![BM5](docs/media/haddock3-0-0-alpha2-BM5.png)
 
-Haddock's main input file is a [.toml](https://github.com/toml-lang/toml) containing the parameters that will be used in the simulation.
+
+## Technical details
+HADDOCK v3.0 main input file is a [.toml](https://github.com/toml-lang/toml) containing the parameters that will be used in the simulation.
 
 ```toml
 #===========================================================#
@@ -82,11 +68,11 @@ sampling = 200
 #===========================================================#
 ```
 
-For a complete list of paramters, click here <under-construction> 
+*The complete list of parameters will be available soon* 
 
-In this example the simulation will be executed in parallel and use the default rigid-body (**it0**) protocol with automatic histidine protonation, default semi-flexible (**it1**) stage and default water-refinement (**itw**).
+In the [example](examples/protein-protein) the simulation will be executed in parallel and will use a minimal version of the rigid-body protocol with automatic histidine protonation, the default semi-flexible stage and also default water-refinement.
 
-Running this setup file will create the following folder structure:
+Upon execution the following folder structure will be created:
 
 ```
 run1/
@@ -122,12 +108,5 @@ run1/topology/
             |_ generate_topology.cns
 ```
 
-# Benchmark
 
-HADDOCK v3.0 alpha2 was benchmarked using the [Protein-Protein Docking Benchmark 5](https://github.com/haddocking/BM5-clean) and compared with the current live version. v2.4
-
-The evaluation was done using the true interface of each complex of (4.9 Å) and is expressed in terms of success rate; the ammount of BM5 targets that have at least one docking solution below the specified threhshold whithin a specified subset of solutions ranked by HADDOCK-score.
-
-
-![BM5](docs/media/haddock3-0-0-alpha2-BM5.png)
-***
+** Documentation is a work-in-progress, more to come.

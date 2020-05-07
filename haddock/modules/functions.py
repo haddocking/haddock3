@@ -155,7 +155,7 @@ def calculate_haddock_score(pdb_file, stage):
 
 
 def bye():
-    salutations = ['Tot ziens!', 'Good bye!', 'Até logo!', 'Ciao!', 'Au revoir!', 'Adéu-siau!', 'Agur!', 'Dovidenia!']
+    salutations = ['Tot ziens!', 'Good bye!', 'Até logo!', 'Ciao!', 'Au revoir mille tonnerres!', 'Adéu-siau!', 'Agur!', 'Dovidenia!']
     return '\n'.join(random.sample(salutations, k=3))
 
 

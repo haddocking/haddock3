@@ -3,9 +3,7 @@ title = "HADDOCK3 Setup file"
 #===========================================================#
 [molecules]
 mol1 = '1AY7_r_u.pdb'
-#mol1.segid = "A"
 mol2 = '1AY7_l_u.pdb'
-#mol2.segid = "B"
 
 [restraints]
 ambig = 'ambig.tbl'
@@ -15,25 +13,22 @@ run = 1
 
 [execution_parameters]
 scheme = 'parallel'
-nproc = 24
+nproc = 48
 
-# Stage specific parameters
 [stage]
-
 [stage.topology]
 recipe='default'
 
 [stage.rigid_body]
 recipe='rigid-body-minimal.cns'
-sampling = 10
-
+sampling = 1000
 params.auto_his = true
 
 [stage.semi_flexible]
 recipe='default'
-sampling = 5
+sampling = 400
 
 [stage.water_refinement]
 recipe='default'
-sampling = 5
+sampling = 400
 #===========================================================#

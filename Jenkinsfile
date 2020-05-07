@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Install') {
       steps {
-        sh 'cat requirements.txt | xargs -n 1 pip install'
+        sh 'pip install -r requirements'
         sh 'chmod +x `pwd`/haddock/src/*'
       }
     }

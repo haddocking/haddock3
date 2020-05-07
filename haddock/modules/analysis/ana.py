@@ -44,21 +44,21 @@ class Ana:
 	def extract_energies(self):
 		""" Extract energies from the header of the PDB file, according to HADDOCK formatting """
 
-		total = float('nan')
-		bonds = float('nan')
-		angles = float('nan')
-		improper = float('nan')
-		dihe = float('nan')
-		vdw = float('nan')
-		elec = float('nan')
-		air = float('nan')
-		cdih = float('nan')
-		coup = float('nan')
-		sani = float('nan')
-		vean = float('nan')
-		dani = float('nan')
-		desolv = float('nan')
-		bsa = float('nan')
+		total = .0
+		bonds = .0
+		angles = .0
+		improper = .0
+		dihe = .0
+		vdw = .0
+		elec = .0
+		air = .0
+		cdih = .0
+		coup = .0
+		sani = .0
+		vean = .0
+		dani = .0
+		desolv = .0
+		bsa = .0
 
 		for pdb in self.structure_dic:
 
@@ -155,9 +155,9 @@ class Ana:
 
 		# populate internal data structure with cluster info
 		for pdb in self.structure_dic:
-			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_name"] = float('nan')
-			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_internal_ranking"] = float('nan')
-			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_overall_ranking"] = float('nan')
+			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_name"] = .0
+			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_internal_ranking"] = .0
+			self.structure_dic[pdb][f"cluster-{cutoff}-{size}_overall_ranking"] = .0
 
 		# Important: guess the root, this might change according to the worflow
 		first_model_name = list(self.structure_dic.items())[0][0]
@@ -207,7 +207,7 @@ class Ana:
 					# No haddock score...?
 					print('+ ERROR: Model has no Haddock Score')
 					exit()
-				# haddock_score = float('nan')
+				# haddock_score = .0
 				# sort_tag = False
 
 				clustered_models_list.append((model_number, haddock_score))
@@ -518,11 +518,11 @@ class Ana:
 					hs_mean = statistics.mean(haddock_score_dic[cluster_id])
 					hs_sd = statistics.stdev(haddock_score_dic[cluster_id])
 
-					rmsd_mean = float('nan')
-					rmsd_sd = float('nan')
+					rmsd_mean = .0
+					rmsd_sd = .0
 
-					rmsdemin_mean = float('nan')
-					rmsdemin_sd = float('nan')
+					rmsdemin_mean = .0
+					rmsdemin_sd = .0
 
 					size = len(haddock_score_dic[cluster_id])
 
@@ -548,11 +548,11 @@ class Ana:
 					hs_mean = statistics.mean(haddock_score_dic[cluster_id][:2])
 					hs_sd = statistics.stdev(haddock_score_dic[cluster_id][:2])
 
-					rmsd_mean = float('nan')
-					rmsd_sd = float('nan')
+					rmsd_mean = .0
+					rmsd_sd = .0
 
-					rmsdemin_mean = float('nan')
-					rmsdemin_sd = float('nan')
+					rmsdemin_mean = .0
+					rmsdemin_sd = .0
 
 					size = len(haddock_score_dic[cluster_id])
 
@@ -578,11 +578,11 @@ class Ana:
 					hs_mean = statistics.mean(haddock_score_dic[cluster_id][:4])
 					hs_sd = statistics.stdev(haddock_score_dic[cluster_id][:4])
 
-					rmsd_mean = float('nan')
-					rmsd_sd = float('nan')
+					rmsd_mean = .0
+					rmsd_sd = .0
 
-					rmsdemin_mean = float('nan')
-					rmsdemin_sd = float('nan')
+					rmsdemin_mean = .0
+					rmsdemin_sd = .0
 
 					size = len(haddock_score_dic[cluster_id])
 
@@ -882,14 +882,14 @@ class Ana:
 					fastelec_sd_2 = statistics.stdev(fastelec_l[:2])
 
 				except:
-					fastelec_mean = float('nan')
-					fastelec_sd = float('nan')
+					fastelec_mean = .0
+					fastelec_sd = .0
 
-					fastelec_mean_4 = float('nan')
-					fastelec_sd_4 = float('nan')
+					fastelec_mean_4 = .0
+					fastelec_sd_4 = .0
 
-					fastelec_mean_2 = float('nan')
-					fastelec_sd_2 = float('nan')
+					fastelec_mean_2 = .0
+					fastelec_sd_2 = .0
 
 				try:
 					fastdesol_l = [j[2]['fastdesol'] for j in sorted_element_list]
@@ -903,14 +903,14 @@ class Ana:
 					fastdesol_sd_2 = statistics.stdev(fastdesol_l[:2])
 
 				except:
-					fastdesol_mean = float('nan')
-					fastdesol_sd = float('nan')
+					fastdesol_mean = .0
+					fastdesol_sd = .0
 
-					fastdesol_mean_4 = float('nan')
-					fastdesol_sd_4 = float('nan')
+					fastdesol_mean_4 = .0
+					fastdesol_sd_4 = .0
 
-					fastdesol_mean_2 = float('nan')
-					fastdesol_sd_2 = float('nan')
+					fastdesol_mean_2 = .0
+					fastdesol_sd_2 = .0
 
 				try:
 					dfire_ebinding_l = [j[2]['dfire-ebinding'] for j in sorted_element_list]
@@ -934,23 +934,23 @@ class Ana:
 					dfire_score_sd_2 = statistics.stdev(dfire_score_l[:2])
 
 				except:
-					dfire_ebinding_mean = float('nan')
-					dfire_ebinding_sd = float('nan')
+					dfire_ebinding_mean = .0
+					dfire_ebinding_sd = .0
 
-					dfire_ebinding_mean_4 = float('nan')
-					dfire_ebinding_sd_4 = float('nan')
+					dfire_ebinding_mean_4 = .0
+					dfire_ebinding_sd_4 = .0
 
-					dfire_ebinding_mean_2 = float('nan')
-					dfire_ebinding_sd_2 = float('nan')
+					dfire_ebinding_mean_2 = .0
+					dfire_ebinding_sd_2 = .0
 
-					dfire_score_mean = float('nan')
-					dfire_score_sd = float('nan')
+					dfire_score_mean = .0
+					dfire_score_sd = .0
 
-					dfire_score_mean_4 = float('nan')
-					dfire_score_sd_4 = float('nan')
+					dfire_score_mean_4 = .0
+					dfire_score_sd_4 = .0
 
-					dfire_score_mean_2 = float('nan')
-					dfire_score_sd_2 = float('nan')
+					dfire_score_mean_2 = .0
+					dfire_score_sd_2 = .0
 
 				tbw += f'clust{cluster_id} {size} {haddock_score_mean:.2f} {haddock_score_sd:.2f} {bsa_mean:.2f} {bsa_sd:.2f} {desolv_mean:.2f} {desolv_sd:.2f} {vdw_mean:.2f} {vdw_sd:.2f} {fastelec_mean:.2f} {fastelec_sd:.2f} {fastdesol_mean:.2f} {fastdesol_sd:.2f} {dfire_ebinding_mean:.2f} {dfire_ebinding_sd:.2f} {dfire_score_mean:.2f} {dfire_score_sd:.2f}\n'
 				tbw_4 += f'clust{cluster_id} {size} {haddock_score_mean_4:.2f} {haddock_score_sd_4:.2f} {bsa_mean_4:.2f} {bsa_sd_4:.2f} {desolv_mean_4:.2f} {desolv_sd_4:.2f} {vdw_mean_4:.2f} {vdw_sd_4:.2f} {fastelec_mean_4:.2f} {fastelec_sd_4:.2f} {fastdesol_mean_4:.2f} {fastdesol_sd_4:.2f} {dfire_ebinding_mean_4:.2f} {dfire_ebinding_sd_4:.2f} {dfire_score_mean_4:.2f} {dfire_score_sd_4:.2f}\n'

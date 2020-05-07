@@ -6,10 +6,10 @@ from haddock.utils.files import get_full_path
 
 def dockq(ref, pdb_f, dockq_exec):
 
-	irms = float('nan')
-	lrms = float('nan')
-	fnat = float('nan')
-	dockq_score = float('nan')
+	irms = .0
+	lrms = .0
+	fnat = .0
+	dockq_score = .0
 	capri = None
 	order = None
 
@@ -24,11 +24,11 @@ def dockq(ref, pdb_f, dockq_exec):
 	if reference_chains != pdb_chains:
 		print(f'+ WARNING: Skipping {pdb_f}, number of chains do not match. Expected {len(reference_chains)} found {len(pdb_chains)}')
 		interface_name = ''
-		result_dic[f'{interface_name}_irms'] = float('nan')
-		result_dic[f'{interface_name}_lrms'] = float('nan')
-		result_dic[f'{interface_name}_fnat'] = float('nan')
+		result_dic[f'{interface_name}_irms'] = .0
+		result_dic[f'{interface_name}_lrms'] = .0
+		result_dic[f'{interface_name}_fnat'] = .0
 		result_dic[f'{interface_name}_capri'] = ''
-		result_dic[f'{interface_name}_dockq'] = float('nan')
+		result_dic[f'{interface_name}_dockq'] = .0
 		result_dic[f'{interface_name}_order'] = ''
 
 	else:

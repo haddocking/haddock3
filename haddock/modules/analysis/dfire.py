@@ -29,8 +29,8 @@ def dfire(pdb_f, dcomplex_exe):
 
 		except ValueError:
 
-			binding = float('nan')
-			score = float('nan')
+			binding = .0
+			score = .0
 
 		dfire_dic['binding'].append(binding)
 		dfire_dic['score'].append(score)

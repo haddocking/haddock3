@@ -2,7 +2,8 @@
 
 ## Requirements
  * Crystallography & NMR System (CNS)
-    * Make a request on the [CNS website](http://cns-online.org/v1.3/), download the software and copy the contents of `/cns1.3` to CNS's source folder before compilation.
+    * Make a request on the [CNS website](http://cns-online.org/v1.3/), 
+    * It must be compiled with the contents of `cns1.3/` (provided)
  * Python 3.7.x
  * gcc 4 (or higher)
  
@@ -69,7 +70,7 @@ Example single-structure results:
 
 ```
 model ranking haddock-score total bonds angles improper dihe vdw elec air cdih coup sani vean dani desolv bsa cluster-0.6-4_name cluster-0.6-4_internal_ranking cluster-0.6-4_overall_ranking
-water_refinement/complex_itw_000000.pdb 1 -152.997 -537.556 0.000 0.000 0.000 0.000 -49.403 -498.758 10.605 0.000 0.000 nan 0.000 0.000 -4.904 1544.040 2 1 1 
-water_refinement/complex_itw_000005.pdb 2 -150.768 -495.467 0.000 0.000 0.000 0.000 -51.989 -454.567 11.089 0.000 0.000 nan 0.000 0.000 -8.975 1575.740 2 2 1
+water_refinement/complex_itw_000000.pdb 1 -152.997 -537.556 0.000 0.000 0.000 0.000 -49.403 -498.758 10.605 0.000 0.000 0.000 0.000 0.000 -4.904 1544.040 2 1 1 
+water_refinement/complex_itw_000005.pdb 2 -150.768 -495.467 0.000 0.000 0.000 0.000 -51.989 -454.567 11.089 0.000 0.000 0.000 0.000 0.000 -8.975 1575.740 2 2 1
 ...
 ``` 

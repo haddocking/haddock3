@@ -7,16 +7,20 @@
 
 **ATTENTION: This repository is under heavy development and will change abruptly and without warning.**
 
+## Registration
 
-## Instalation
- Please refer to [INSTALLATION.md](INSTALLATION.md)
+Please consider registering for haddock3. Visit for this: [bonvinlab.org/software/haddock3](bonvinlab.org/software/haddock3)
+
+## Installation
+
+Please refer to [INSTALLATION.md](INSTALLATION.md)
 
 ## Description
 
-HADDOCK v3.0 is a bottom-up reimagination of the long standing time-proven [HADDOCK](http://www.bonvinlab.org/) used for integrative modeling of biomolecular complexes.
+HADDOCK v3.0 is a bottom-up reimagination of the long standing time-proven [HADDOCK](http://www.bonvinlab.org/software) used for integrative modeling of biomolecular complexes.
 This young and still very-experimental (use it at your own risk!) aims to modularize and extend HADDOCK's core functions.
 
-In its current implementation (Alpha2) HADDOCK v3.0 still lacks the full repertoire of features present at the production version, [HADDOCK v2.4](https://bianca.science.uu.nl/haddock2.4/).
+In its current implementation (Alpha2) HADDOCK v3.0 still lacks the full repertoire of features present at the production version, [HADDOCK v2.4](https://wenmr.science.uu.nl/haddock2.4/).
 However it is able to take full advantage of the ambiguous interaction restraints (AIRs) to drive the docking process.
 
 It was evaluated using the [Protein-Protein Docking Benchmark 5](https://github.com/haddocking/BM5-clean) and compared with the live version (v2.4).

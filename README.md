@@ -9,7 +9,7 @@
 
 ## Registration
 
-Please consider registering for haddock3. Visit for this: [bonvinlab.org/software/haddock3](bonvinlab.org/software/haddock3)
+Please consider registering for haddock3. Visit for this: [bonvinlab.org/software/haddock3](https://bonvinlab.org/software/haddock3)
 
 ## Installation
 

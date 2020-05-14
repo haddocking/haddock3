@@ -186,10 +186,9 @@ def run_analysis(pdb_l, reference=None):
 
     ana.cluster(cutoff=0.60, size=4)
 
-    # ana.run_fastcontact()
-    # ana.run_dfire()
-    if reference:
-        ana.run_dockq(reference)
+    ana.run_fastcontact()
+    ana.run_dfire()
+    ana.run_dockq(reference)
 
     ana.output()
 
@@ -323,7 +322,7 @@ if __name__ == '__main__':
 
     # 4. Done! ========================================================================================================#
 
-    clean_run()
+    # clean_run()
 
     adieu()
 

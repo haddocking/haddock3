@@ -252,7 +252,7 @@ class Ana:
 		# add overall cluster ranking to data structure
 		for pdb in self.structure_dic:
 			cluster_name = self.structure_dic[pdb][f"cluster-{cutoff}-{size}_name"]
-			if cluster_name == cluster_name:  # means it is not NaN
+			if cluster_name != 0:
 				overall_ranking = cluster_ranking[cluster_name]
 				self.structure_dic[pdb][f"cluster-{cutoff}-{size}_overall_ranking"] = overall_ranking
 
@@ -696,12 +696,15 @@ class Ana:
 		dockq_exec = ini.get('third_party', 'dockq_exe')
 
 		if shutil.which(dockq_exec):
+			if ref == 'None':
+				print(f'++ Cannot run DockQ, no reference has been set')
+				return
+
 			print('\n+ Running DockQ')
 
 			if ref == 'lowest':
 				reference_pdb, reference_score = self.fetch_lowest()
 				total = len(self.structure_dic)
-
 				print(f'++ Using lowest haddock score as reference {reference_pdb} = {reference_score:.3f}, n = {total}')
 
 			else:
@@ -712,7 +715,8 @@ class Ana:
 				for k in result_dic:
 					self.structure_dic[pdb][k] = result_dic[k]
 		else:
-			print('\n+ DockQ not configured in haddock3.ini')
+			print('\n+ DockQ not correctly configured in haddock3.ini')
+			return
 
 	def run_fastcontact(self):
 		""" Run fastcontact on all scored PDBs """
@@ -727,7 +731,8 @@ class Ana:
 				self.structure_dic[pdb]['fastelec'] = fast_elec
 				self.structure_dic[pdb]['fastdesol'] = fast_desol
 		else:
-			print('\n+ FASTCONTACT not configured in haddock3.ini')
+			print('\n+ FASTCONTACT not correctly configured in haddock3.ini')
+			return
 
 	def run_dfire(self):
 		""" Run dfire on all scored PDBs """
@@ -752,7 +757,8 @@ class Ana:
 			os.remove(lib_name)
 			os.remove(dat_name)
 		else:
-			print('\n+ DFIRE not configured in haddock3.ini')
+			print('\n+ DFIRE not correctly configured in haddock3.ini')
+			return
 
 	def output(self):
 
@@ -977,7 +983,7 @@ class Ana:
 		clustalo_exe = ini.get('third_party', 'clustalo_exe')
 
 		if not shutil.which(clustalo_exe):
-			print('\n+ ClustalO not configured in haddock3.ini')
+			print('\n+ ClustalO not correctly configured in haddock3.ini')
 			print('+ WARNING: matching not possible!')
 			return False
 		else:

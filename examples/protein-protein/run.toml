@@ -21,14 +21,14 @@ recipe='default'
 
 [stage.rigid_body]
 recipe='rigid-body-minimal.cns'
-sampling = 1000
+sampling = 100
 params.auto_his = true
 
 [stage.semi_flexible]
 recipe='default'
-sampling = 400
+sampling = 50
 
 [stage.water_refinement]
 recipe='default'
-sampling = 400
+sampling = 50
 #===========================================================#

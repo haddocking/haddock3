@@ -1,4 +1,5 @@
 [![Stable release](https://badgen.net/badge/release/3.0.a2/orange)](https://github.com/haddocking/haddock3/releases)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3883889.svg)](https://doi.org/10.5281/zenodo.3883889)
 [![Build Status](http://alembick.science.uu.nl:8080/buildStatus/icon?job=haddock3%2Fmaster)](http://alembick.science.uu.nl:8080/job/haddock3/job/master/)
 [![codecov](https://codecov.io/gh/haddocking/haddock3/branch/master/graph/badge.svg?token=K2UshyxoRu)](https://codecov.io/gh/haddocking/haddock3)
 [![License](https://img.shields.io/github/license/haddocking/haddock3?color=blue)](https://github.com/haddocking/haddock3/blob/master/LICENSE)

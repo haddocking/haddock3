@@ -59,8 +59,7 @@ class Setup:
         if not os.path.isdir(self.run_dir):
             os.system(f'mkdir {self.run_dir}')
         else:
-            print(f'+ WARNING: {self.run_dir} already present')
-        # exit()
+            raise SetupError(f'+ ERROR: {self.run_dir} already present')
 
         data_dir = f'{self.run_dir}/data'
         if not os.path.isdir(data_dir):

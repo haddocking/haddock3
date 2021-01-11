@@ -1,5 +1,2 @@
-certifi==2019.6.16
-chardet==3.0.4
-codecov==2.0.15
-coverage==4.5.4
 toml==0.10.0
+pdb-tools==2.1.0

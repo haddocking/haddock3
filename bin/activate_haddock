@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export HADDOCKPATH=`pwd`
+export PYTHONPATH=$PYTHONPATH:$HADDOCKPATH
+export PATH=$PATH:$HADDOCKPATH/bin

@@ -1,0 +1,165 @@
+
+! scoring.cns
+!     Minimizes complex and score
+!
+! ***********************************************************************
+! * Copyright 2003-2020 Alexandre Bonvin, Utrecht University.           *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+define(
+noe=false;
+noecv=false;
+npart=1;
+sym=false;
+ncs=false;
+log_level="verbose";
+dielec="cdie";
+epsilon1=1
+)
+
+evaluate ($Data.dielec        = $dielec)
+evaluate ($Data.epsilon1      = $epsilon1)
+evaluate ($Data.flags.dihed   = $dihed)
+evaluate ($Data.flags.noe     = $noe)
+evaluate ($Data.flags.cdih    = $cdih)
+evaluate ($Data.flags.sani    = $sani)
+evaluate ($Data.flags.vean    = $vean)
+evaluate ($Data.flags.xrdc    = $xrdc)
+evaluate ($Data.flags.DANI    = $dani)
+evaluate ($Data.flags.XPCS    = $xpcs)
+evaluate ($Data.flags.harm    = $harm)
+evaluate ($Data.flags.zres    = $zres)
+evaluate ($Data.flags.rg      = $rg)
+evaluate ($Data.flags.em      = $em)
+evaluate ($Data.flags.sym     = $sym)
+evaluate ($Data.flags.ncs     = $ncs)
+evaluate ($Data.waterdock     = $waterdock)
+evaluate ($Refine.keepwater   = $keepwater)
+
+
+if ( $log_level = verbose ) then
+  set message=normal echo=on end
+else
+  set message=off echo=off end
+end if
+
+evaluate ($filename= $file)
+evaluate ($psfname= $file - ".pdb" + ".psf")
+
+fileexist $psfname end
+evaluate ($psffileexist=$result)
+
+fileexist $filename end
+evaluate ($pdbfileexist=$result)
+
+if ($psffileexist eq true) then
+  struc @$psfname end
+
+  if ($pdbfileexist eq true) then
+    coor @@$filename 
+
+    ! next line to remove the MAP atom defined in the DUM residue
+    ! in case of use of dummy particles
+    delete sele=(name MAP) end
+
+{* ===================== turn on electrostatics *}
+
+    parameter
+      nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=$Data.epsilon1 e14fac=0.4 inhibit 0.5
+        wmin=0.5
+        tolerance  0.5
+        repel=0.0
+      end
+    end
+
+    if ($Data.dielec eq rdie) then
+      parameter nbonds eps=$Data.epsilon1 rdie shift switch end end
+    end if
+
+    flags excl * incl bond angl impr dihe vdw elec end
+
+    energy end
+
+{* ===================== calculate free molecules internal energy *}
+
+    do (refx=x) (all)
+    do (refy=y) (all)
+    do (refz=z) (all)
+    evaluate ($elec = 0.0)
+    evaluate ($eintfree = 0.0)
+    inline @RUN:calc_free-ene.cns
+    do (x=refx) (all)
+    do (y=refy) (all)
+    do (z=refz) (all)
+
+{* ===================== minimize complex *}
+
+    fix selection=(not all) end
+
+    minimize powell
+      nstep=50
+      drop=40.0
+      nprint=10
+    end
+
+    parameter nbonds eps=1.0 end end
+
+
+{* ===================== calculate complex internal energy *}
+    evaluate ($kinter = 1.0)
+    @RUN:scale_intra_only.cns
+    energy end
+    evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+    if ($ncomponents = 1) then
+      evaluate ($eintfree = $eintcplx)
+    end if
+
+{* ===================== calculate final energies and write structure *}
+    if ($ncomponents > 1) then
+      evaluate ($kinter = 1.0)
+      @RUN:scale_inter_final.cns
+    else
+      @RUN:scale_intra_only.cns
+    end if
+
+    energy end
+
+    evaluate ($esym = 0.0)
+    evaluate ($enoe = 0.0)
+    evaluate ($cdih=0.0)
+    evaluate ($eair= 0.0)
+    evaluate ($rms_noe=0.0)
+    evaluate ($violations_noe=0)
+    evaluate ($rms_test_noe=0.0)
+    evaluate ($violations_test_noe=0)
+    evaluate ($esym = 0.0)
+    evaluate ($ncs = 0.0)
+    evaluate ($zhar = 0.0)
+    evaluate ($esolcplx = 0.0)
+    evaluate ($edesolv = 0.0)
+    evaluate ($lcc = 0.0)
+    evaluate ($etot = $ener)
+    evaluate ($noe = $eair)
+  
+    do (q=1.0) (all)
+    @RUN:print_coorheader.cns
+    coor orient end
+
+    ! Output section, do not modify
+    !==================================================================!
+
+    write coordinates format=pdbo output=$output_pdb_filename end
+    display OUTPUT: $output_pdb_filename
+
+  end if
+
+end if
+!==================================================================!
+stop
+

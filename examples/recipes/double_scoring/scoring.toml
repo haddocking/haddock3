@@ -1,0 +1,27 @@
+# Recipe: Double-round scoring with HADDOCK
+
+# A recipe is composed by different stages which are executed in 
+# by index in the order field:
+order = ["topology", "scoring.1", "scoring.2"]
+
+[stage]
+
+#####################################################################-1
+[stage.topology]
+flavour = "default"
+autohis = true
+
+# Definition of the input molecules:
+[[stage.topology.molecules]]
+[[stage.topology.molecules.1]]
+file = "structure.pdb"
+
+#####################################################################-2
+[stage.scoring.1]
+flavour = ""
+steps = 50
+
+#####################################################################-3
+[stage.scoring.2]
+flavour = ""
+steps = 100

@@ -1,0 +1,505 @@
+
+!=================================================================!
+! Do not change below this line unless you know what you are doing
+!=================================================================!
+
+define(
+convert=false;
+separate=true;
+ile_CD_becomes="CD1";
+OT1_becomes="O";
+OT2_becomes="OXT";
+auto_break=true;
+pbreak_cutoff=3.5;
+pcgbreak_cutoff=8.0;
+dbreak_cutoff=4.5;
+disulphide_dist=3.0;
+cyclicpept_dist=1.5;
+iron1cluster_dist=5.0;
+iron2cluster_dist=8.0;
+atom_select=(known and not hydrogen);
+dna_sele=(none);
+hydrogen_flag=true;
+hydrogen_build="all";
+atom_build=(not(known));
+atom_delete=(none);
+set_bfactor=true;
+bfactor=15.0;
+set_occupancy=true;
+occupancy=1.0;
+)
+
+evaluate ($chain = 1)
+evaluate($coor_infile= $file)
+
+ segment
+   chain
+     if ( &convert = true ) then
+       convert=true
+     end if
+     if ( &separate = true ) then
+       separate=true
+     end if
+!     if ( &BLANK%nucl_link_infile = false ) then
+!       @@&nucl_link_infile
+!     end if
+!     if ( &BLANK%cofac_link_infile = false ) then
+!       @@&cofac_link_infile
+!     end if
+     @@$link_file
+     coordinates @@$coor_infile
+   end
+ end
+
+ coordinates @@$coor_infile
+
+ if ( &BLANK%ile_CD_becomes = false ) then
+   do (name=&ile_CD_becomes) (resn ILE and name CD)
+ end if
+ if ( &BLANK%OT1_becomes = false ) then
+   do (name=&OT1_becomes) (name OT1)
+ end if
+ if ( &BLANK%OT2_becomes = false ) then
+   do (name=&OT2_becomes) (name OT2)
+ end if
+
+ !for the histidine patches:
+ if ($autohis = false) then
+   evaluate($hisd_counter=1)
+   while ($hisd_counter le $Toppar.nhisd_$chain) loop hisd
+     if ($Toppar.hisd_resid_$chain_$hisd_counter > 0) then
+       show (resn) (tag and resid $Toppar.hisd_resid_$chain_$hisd_counter)
+       if ($result eq "HIS") then
+         patch hisd reference=nil=(resid $Toppar.hisd_resid_$chain_$hisd_counter) end
+       end if
+     end if
+     evaluate($hisd_counter=$hisd_counter + 1)
+   end loop hisd
+
+   evaluate($hise_counter=1)
+   while ($hise_counter le $Toppar.nhise_$chain) loop hise
+     if ($Toppar.hise_resid_$chain_$hise_counter > 0) then
+       show (resn) (tag and resid $Toppar.hise_resid_$chain_$hise_counter)
+       if ($result eq "HIS") then
+         patch hise reference=nil=(resid $Toppar.hise_resid_$chain_$hise_counter) end
+       end if
+     end if
+     evaluate($hise_counter=$hise_counter + 1)
+   end loop hise
+ end if
+
+! The following patches would define covalent bond between a CA+2 and oxygen ligands
+! from Asp and Glu (first selection is amino-acid, second is ion)
+! patch dca2 refe=1=(resid 25) refe=2=(resid 83) end
+! patch dca2 refe=1=(resid 29) refe=2=(resid 83) end
+! patch dca2 refe=1=(resid 35) refe=2=(resid 83) end
+! patch eca2 refe=1=(resid 36) refe=2=(resid 83) end
+!
+! following patch is to attach a heme (resid YY) CAB atom to a cys (resid XX)
+! patch phcb refe=1=(resid XX) refe=2=(resid YY) end
+! following patch is to attach a heme (resid YY) CAC atom to a cys (resid XX)
+! patch phcc refe=1=(resid XX) refe=2=(resid YY) end
+!
+! following patch is to define an isopeptide bond between a Cter and a Lys side-chain
+! patch clys refe=1=(resid 72) refe=2=(resid 148) end
+!
+! following patch is to define an isopeptide bond between a Cter and a Lys side-chain
+! patch clys refe=1=(resid 72) refe=2=(resid 148) end
+
+ inline @RUN:patch-types-cg.cns
+ inline @RUN:patch-bb-cg.cns
+
+ if ($delenph = true) then
+   delete sele=(name H* and attr charge = 0) end
+ end if
+
+ evaluate ($nstruc = 1)
+
+ coor init end
+ coordinates 
+   if ( &convert = true ) then
+     convert=true
+   end if
+   @@$file
+
+ show sum(1) ( not(hydrogen) and not(known) )
+ if ( $select = 0 ) then
+   display  %INFO: There are no coordinates missing for non-hydrogen atoms
+ end if
+
+ if ( $log_level = verbose ) then
+   set message=normal echo=on end
+ else
+   set message=off echo=off end
+ end if
+
+ inline @RUN:build-missing.cns
+
+ if ($nstruc = 1) then
+
+ if ( &auto_break = true ) then
+   inline @RUN:prot_break.cns
+   inline @RUN:dna_break.cns
+ end if
+
+! Disulphide bonds
+ evaluate ($disu=0)
+ for $id1 in id ( resn CYS and name SG ) loop dis1
+   show (segid) (id $id1)
+   evaluate ($segid1=$result)
+   show (resid) (id $id1)
+   evaluate ($resid1=$result)
+   identity (store9) (all)
+   for $id2 in id ( resn CYS and name SG and 
+                  ( attr store9 > $id1 ) ) loop dis2
+     show (segid) (id $id2)
+     evaluate ($segid2=$result)
+     show (resid) (id $id2)
+     evaluate ($resid2=$result)
+     pick bond (id $id1) (id $id2) geometry
+     if ( $result <= &disulphide_dist ) then
+       evaluate ($disu=$disu+1)
+       evaluate ($seg1.$disu=$segid1)
+       evaluate ($seg2.$disu=$segid2)
+       evaluate ($res1.$disu=$resid1)
+       evaluate ($res2.$disu=$resid2)
+     end if
+   end loop dis2
+ end loop dis1
+
+ evaluate ($counter=1)
+ while ( $counter <= $disu ) loop disu
+   patch disu
+     reference=1=(segid $seg1.$counter and resid $res1.$counter)
+     reference=2=(segid $seg2.$counter and resid $res2.$counter)
+   end
+   buffer message
+     display disulphide added: from \
+$seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
+   end
+   evaluate ($counter=$counter+1)
+ end loop disu
+
+ ! Cyclic peptide business
+ if (cyclicpept eq TRUE ) then
+   evaluate ($cycp=0)
+   for $id1 in id ( tag and name N ) loop cyp1
+     show (segid) (id $id1)
+     evaluate ($segid1=$result)
+     show (resid) (id $id1)
+     evaluate ($resid1=$result)
+     show (resn) (id $id1)
+     evaluate ($resn1=$result)
+     for $id2 in id ( name C and bondedto (name O and not resid $resid1 ) ) loop cyp2
+       show (segid) (id $id2)
+       evaluate ($segid2=$result)
+       show (resid) (id $id2)
+       evaluate ($resid2=$result)
+       show (resn) (id $id2)
+       evaluate ($resn2=$result)
+       evaluate ($rdiff = decode($resid2) - decode($resid1))
+       if ($rdiff gt 2) then
+         pick bond (id $id1) (id $id2) geometry
+         if ( $result <= &cyclicpept_dist ) then
+           evaluate ($cycp=$cycp+1)
+           evaluate ($seg1.$cycp=$segid1)
+           evaluate ($seg2.$cycp=$segid2)
+           evaluate ($res1.$cycp=$resid1)
+           evaluate ($res2.$cycp=$resid2)
+           evaluate ($rsn1.$cycp=$resn1)
+           evaluate ($rsn2.$cycp=$resn2)
+         end if
+       end if
+     end loop cyp2
+   end loop cyp1
+   evaluate ($counter=1)
+   while ( $counter <= $cycp ) loop cypep
+     evaluate ($ptype = PEPT)
+     evaluate ($patchdone = 0)
+     if ( $rsn2.$counter eq GLY) then
+       if ($rsn1.$counter eq PRO) then
+         evaluate ($ptype = PPGP)
+         evaluate ($patchdone = 1)
+       end if
+       if ($rsn1.$counter eq GLY) then
+         evaluate ($ptype = PPGG)
+         evaluate ($patchdone = 1)
+       end if
+       if ($patchdone eq 0) then
+         evaluate ($ptype = PPG1)
+       end if
+     else
+       if ($rsn1.$counter eq PRO) then
+         evaluate ($ptype = PEPP)
+       end if
+       if ($rsn1.$counter eq GLY) then
+         evaluate ($ptype = PPG2)
+       end if
+     end if
+     patch $ptype
+       reference=+=(segid $seg1.$counter and resid $res1.$counter)
+       reference=-=(segid $seg2.$counter and resid $res2.$counter)
+     end
+     buffer message
+       display cyclic peptide detected: peptidic bond added between \
+$seg1.$counter[a4] $res1.$counter[a4] and $seg2.$counter[a4] $res2.$counter[a4]
+     end
+     evaluate ($counter=$counter+1)
+   end loop cypep
+ end if ! check for cyclic peptide
+
+! check for covalently-linked hemeC
+inline @RUN:covalheme.cns
+
+! check for covalently-linked Acetylated Nter to CYS
+inline @RUN:coval-ace-cys.cns
+
+! Iron cluster business
+evaluate ($ironclus=0)
+ ! check for FE1 bonds in iron cluster
+ for $id1 in id ( resname CFE and name SG ) loop fes1
+   show (segid) (id $id1)
+   evaluate ($segid1=$result)
+   show (resid) (id $id1)
+   evaluate ($resid1=$result)
+   identity (store9) (all)
+   for $id2 in id ( resname CYF and name SG ) loop fes2
+     show (segid) (id $id2)
+     evaluate ($segid2=$result)
+     show (resid) (id $id2)
+     evaluate ($resid2=$result)
+     pick bond (id $id1) (id $id2) geometry
+     if ( $result <= &iron1cluster_dist ) then
+       evaluate ($ironclus=$ironclus+1)
+       evaluate ($seg1.$ironclus=$segid1)
+       evaluate ($seg2.$ironclus=$segid2)
+       evaluate ($res1.$ironclus=$resid1)
+       evaluate ($res2.$ironclus=$resid2)
+     end if
+   end loop fes2
+ end loop fes1
+ evaluate ($counter=1)
+ while ( $counter <= $ironclus ) loop iron1
+   patch sef1
+     reference=1=(segid $seg1.$counter and resid $res1.$counter)
+     reference=2=(segid $seg2.$counter and resid $res2.$counter)
+   end
+   buffer message
+     display iron FE1 sulphur bond added: from $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
+   end
+   evaluate ($counter=$counter+1)
+ end loop iron1
+ evaluate ($ironclus=0)
+ ! check for FE2 bonds in iron cluster
+ for $id1 in id ( resname CFE and name SG ) loop fes1
+   show (segid) (id $id1)
+   evaluate ($segid1=$result)
+   show (resid) (id $id1)
+   evaluate ($resid1=$result)
+   identity (store9) (all)
+   for $id2 in id ( resname CYF and name SG ) loop fes2
+     show (segid) (id $id2)
+     evaluate ($segid2=$result)
+     show (resid) (id $id2)
+     evaluate ($resid2=$result)
+     pick bond (id $id1) (id $id2) geometry
+     if ( $result <= &iron2cluster_dist ) then
+       if ($result > &iron1cluster_dist ) then
+         evaluate ($ironclus=$ironclus+1)
+         evaluate ($seg1.$ironclus=$segid1)
+         evaluate ($seg2.$ironclus=$segid2)
+         evaluate ($res1.$ironclus=$resid1)
+         evaluate ($res2.$ironclus=$resid2)
+       end if
+     end if
+   end loop fes2
+ end loop fes1
+ evaluate ($counter=1)
+ while ( $counter <= $ironclus ) loop iron2
+   patch sef2
+     reference=1=(segid $seg1.$counter and resid $res1.$counter)
+     reference=2=(segid $seg2.$counter and resid $res2.$counter)
+   end
+   buffer message
+     display iron FE2 sulphur bond added: from $seg1.$counter[a4] $res1.$counter[a4] to $seg2.$counter[a4] $res2.$counter[a4]
+   end
+   evaluate ($counter=$counter+1)
+ end loop iron2
+
+ {- patching of RNA to DNA -}
+ evaluate ($counter=0)
+ if (dna eq TRUE) then
+   for $id in id ( tag and (resn ADE or resn CYT or resn THY or resn GUA or resn A or resn C or resn T or resn G) ) loop
+    dna_patch
+     evaluate ($counter=$counter+1)
+     show (segid) (id $id)
+     evaluate ($dna.segid.$counter=$result)
+     show (resid) (id $id)
+     evaluate ($dna.resid.$counter=$result)
+   end loop dna_patch
+ end if
+ evaluate ($dnum=$counter)
+
+ evaluate ($counter=0)
+ while ($counter < $dnum) loop dnap
+   evaluate ($counter=$counter+1)
+   patch deox reference=nil=(segid $dna.segid.$counter and
+                             resid $dna.resid.$counter) end
+ end loop dnap
+
+ for $id in id ( &atom_select and name ca and resn PRO) loop cisp
+
+   show (segid) (id $id)
+   evaluate ($segid=$result)
+   show (resid) (id $id)
+   evaluate ($resid=$result)
+   show (resn) (id $id)
+   evaluate ($resn=$result)
+
+   identity (store9) ( &atom_select and ( name c and bondedto 
+            ( name n and resid $resid and segid $segid ) ) )
+   if ( $select = 1 ) then
+     show element (store9) (attribute store9 > 0)
+     evaluate ($id_prev=$result)
+     show (segid) (id $id_prev)
+     evaluate ($segid_prev=$result)
+     show (resid) (id $id_prev)
+     evaluate ($resid_prev=$result)
+     show (resn) (id $id_prev)
+     evaluate ($resn_prev=$result)
+ 
+     pick dihedral
+       (name ca and segid $segid_prev and resid $resid_prev)
+       (name  c and segid $segid_prev and resid $resid_prev)
+       (name  n and segid $segid and resid $resid)
+       (name ca and segid $segid and resid $resid)
+       geometry
+       
+     evaluate ($dihedral=mod($result+360,360))
+
+     if ( $dihedral > 180 ) then
+       evaluate ($dihedral=$dihedral-360)
+     end if
+
+     evaluate ($absdihedral=abs($dihedral))
+
+     if ( $absdihedral < 25 ) then
+       patch cisp reference=NIL=(segid $segid_prev and resid $resid_prev) end
+       display CIS peptide bon detected for residue $resid_prev
+     end if
+   end if
+ end loop cisp
+
+ end if {! end if for patches based on first structure only !}
+
+ if (&hydrogen_flag=false) then
+   delete selection=( hydrogen ) end
+ end if
+
+ delete selection=( &atom_delete ) end
+
+ inline @RUN:build-missing.cns
+
+if ($autohis = true) then
+ inline @RUN:auto-his.cns
+end if
+
+
+ energy end
+ evaluate ($bonded = $bond + $angl + $impr)
+ if ($bonded > 10000) then
+    minimize powell nstep=100 drop=10.0 nprint=10 end
+ end if
+ if ($bonded > 10000) then
+   energy end
+   evaluate ($bonded = $bond + $angl + $impr)
+   evaluate ($dispfile = $output_pdb_filename - ".pdb" + "_" + encode($nstruc) + ".warn")
+   set display=$dispfile end
+   display WARNING: the bonded energy is very high:
+   display Ebonded-total=$bonded Ebond=$bond Eangl=$angl Eimpr=$impr
+   display Something is possibly wrong with your input structure
+   close $dispfile end
+ end if
+
+ show sum(1) (not(known))
+ if ( $result < 100 ) then
+   for $id in id (not(known)) loop print
+     show (segid) (id $id)
+     evaluate ($segid=$result)
+     show (resn) (id $id)
+     evaluate ($resn=$result)
+     show (resid) (id $id)
+     evaluate ($resid=$result)
+     show (name) (id $id)
+     evaluate ($name=$result)
+     buffer message
+       display unknown coordinates for atom: $segid[a4] $resn[a4] $resid[a4] $name[a4]
+     end
+   end loop print
+ else
+   buffer message
+     display unknown coordinates for more than 100 atoms
+   end
+ end if
+
+ if (&set_bfactor=true) then
+   do (b=&bfactor) ( all )
+ else
+   show ave(b) (known and not(store9))
+   do (b=$result) (store9 and (attr b < 0.01))
+ end if
+
+ if (randorien eq true) then
+   if (&set_occupancy=true) then
+     do (q=&occupancy) ( all )
+   end if
+ else
+   if (&set_occupancy=true) then
+     do (q=&occupancy) ( not(store9) )
+     do (q=0.0) (store9)
+   end if
+ end if
+
+ show sum(1) (store9)
+ if ( $result < 100 ) then
+   for $id in id (store9) loop print
+     show (segid) (id $id)
+     evaluate ($segid=$result)
+     show (resn) (id $id)
+     evaluate ($resn=$result)
+     show (resid) (id $id)
+     evaluate ($resid=$result)
+     show (name) (id $id)
+     evaluate ($name=$result)
+     buffer message
+       display coordinates built for atom: $segid[a4] $resn[a4] $resid[a4] $name[a4]
+     end 
+   end loop print
+ else
+   buffer message
+     display coordinates built for more than 100 hundred atoms
+   end
+ end if
+
+ set remarks=reset end
+
+ buffer message
+   to=remarks
+   dump
+ end
+ buffer message reset end
+
+
+! do (segid = "    ") (all)
+! do (segid = $segid) (all)
+
+ write structure output=$output_psf_filename end
+ write coordinates output=$output_pdb_filename end
+
+ display OUTPUT: $output_pdb_filename
+ display OUTPUT: $output_psf_filename
+
+! no identation, this marks the end of the recipe
+stop
+
+

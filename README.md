@@ -5,7 +5,7 @@
 * Clone this repository:
 
 ```bash
-git clone https://github.com/brianjimenez/haddock3.git
+git clone -b beta1 https://github.com/haddocking/haddock3.git
 cd haddock3
 ```
 

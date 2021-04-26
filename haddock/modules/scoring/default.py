@@ -18,8 +18,8 @@ def generate_scoring(input_pdb, course_path, recipe_str, defaults):
 
     output_pdb_filename = course_path / input_pdb.name
     input_abs_path = input_pdb.resolve().parent.absolute()
-    output_psf_filename = course_path / f'{input_pdb.stem}.{Format.TOPOLOGY}'
-    output = f'{linesep}! Output structure{linesep}'
+    output_psf_filename = course_path / f"{input_pdb.stem}.{Format.TOPOLOGY}"
+    output = f"{linesep}! Output structure{linesep}"
     output += f"eval ($output_psf_filename= \"{output_psf_filename}\"){linesep}"
     output += f"eval ($output_pdb_filename= \"{output_pdb_filename}\"){linesep}"
 
@@ -27,8 +27,8 @@ def generate_scoring(input_pdb, course_path, recipe_str, defaults):
 
     inp = general_param + param + top + input_str + output + topology_protonation + recipe_str
 
-    output_inp_filename = course_path / f'{input_pdb.stem}.{Format.CNS_INPUT}'
-    with open(output_inp_filename, 'w') as output_handler:
+    output_inp_filename = course_path / f"{input_pdb.stem}.{Format.CNS_INPUT}"
+    with open(output_inp_filename, "w") as output_handler:
         output_handler.write(inp)
 
     return output_inp_filename
@@ -53,14 +53,14 @@ class HaddockModule(BaseHaddockModule):
         for input_pdb_filename in models_to_score:
             input_pdb = self.previous_path() / input_pdb_filename
             scoring_filename = generate_scoring(input_pdb, self.path, self.recipe_str, self.defaults)
-            output_filename = self.path / f'{input_pdb.stem}_scoring.out'
+            output_filename = self.path / f"{input_pdb.stem}_scoring.out"
             jobs.append(CNSJob(scoring_filename, output_filename, cns_folder=self.cns_folder_path))
 
         # Run CNS engine
-        logger.info(f'Running CNS engine with {len(jobs)} jobs')
+        logger.info(f"Running CNS engine with {len(jobs)} jobs")
         engine = CNSEngine(jobs)
         engine.run()
-        logger.info('CNS engine has finished')
+        logger.info("CNS engine has finished")
 
         # Check for generated output, fail it not all expected files are found
         expected = []
@@ -71,12 +71,12 @@ class HaddockModule(BaseHaddockModule):
                 not_found.append(model)
             expected.append((model, Format.PDB))
         if not_found:
-            self.finish_with_error(f'Several files were not generated: {not_found}')
+            self.finish_with_error(f"Several files were not generated: {not_found}")
 
         # Save module information
         io = ModuleIO()
         for model in models_to_score:
             io.add(model, Format.PDB)
         for expected_file, output_format in expected:
-            io.add(expected_file.name, output_format, 'o')
+            io.add(expected_file.name, output_format, "o")
         io.save(self.path)

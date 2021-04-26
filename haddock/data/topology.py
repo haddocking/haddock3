@@ -9,7 +9,7 @@ class Topology:
         supported = []
         with open(Default.TOPOLOGY_FILE) as input_handler:
             for line in input_handler:
-                if 'resi' in line[:4].casefold():
+                if "resi" in line[:4].casefold():
                     res = line.split()[1]
                     supported.append(res)
         return supported

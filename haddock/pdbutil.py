@@ -8,9 +8,9 @@ from haddock.modules import working_directory
 class PDBFactory:
     """A factory class to deal with PDB logic"""
 
-    __to_remove = ['REMAR', 'CTERB', 'CTERA', 'NTERA', 'NTERB', 'CONECT']
-    __to_rename = {'HSD': 'HIS', 'HSE': 'HIS', 'HID': 'HIS', 'HIE': 'HIS',
-                   'WAT ': 'TIP3', ' 0.00969': ' 0.00   '}
+    __to_remove = ["REMAR", "CTERB", "CTERA", "NTERA", "NTERB", "CONECT"]
+    __to_rename = {"HSD": "HIS", "HSE": "HIS", "HID": "HIS", "HIE": "HIS",
+                   "WAT ": "TIP3", " 0.00969": " 0.00   "}
     __to_keep = Topology.get_supported()
 
     @staticmethod
@@ -23,7 +23,7 @@ class PDBFactory:
                 split_model(input_handler)
 
         basename = Path(pdb_file_path)
-        new_models = list(abs_path.glob(f'{basename.stem}_*{basename.suffix}'))
+        new_models = list(abs_path.glob(f"{basename.stem}_*{basename.suffix}"))
         return new_models
 
     @staticmethod
@@ -41,19 +41,19 @@ class PDBFactory:
                     res = line[17:20].strip()
                     if res and res in PDBFactory.__to_keep:
                         good_lines.append(line)
-            if len(good_lines) and good_lines[-1] != 'END':
-                good_lines.append('END')
+            if len(good_lines) and good_lines[-1] != "END":
+                good_lines.append("END")
 
         if overwrite:
-            with open(pdb_file_path, 'w') as output_handler:
+            with open(pdb_file_path, "w") as output_handler:
                 for line in good_lines:
                     output_handler.write(line + os.linesep)
             return pdb_file_path
         else:
             basename = Path(pdb_file_path)
             abs_path = Path(pdb_file_path).resolve().parent.absolute()
-            new_pdb_file = abs_path / f'{basename.stem}_cleaned{basename.suffix}'
-            with open(new_pdb_file, 'w') as output_handler:
+            new_pdb_file = abs_path / f"{basename.stem}_cleaned{basename.suffix}"
+            with open(new_pdb_file, "w") as output_handler:
                 for line in good_lines:
                     output_handler.write(line + os.linesep)
             return new_pdb_file
@@ -64,15 +64,15 @@ class PDBFactory:
         segid_l = []
         with open(pdb_file_path) as input_handler:
             for line in input_handler:
-                if line.startswith('ATOM  '):
+                if line.startswith("ATOM  "):
                     try:
                         segid = line[72:76].strip()[:1]
                     except IndexError:
-                        segid = ''
+                        segid = ""
                     try:
                         chainid = line[21].strip()[:1]
                     except IndexError:
-                        chainid = ''
+                        chainid = ""
 
                     if segid:
                         segid_l.append(segid)

@@ -1,6 +1,7 @@
 import logging
 import toml
 import importlib
+import shutil
 from pathlib import Path
 from haddock.error import HaddockError, RecipeError
 from haddock.defaults import MODULE_PATH_NAME, TOPOLOGY_PATH
@@ -74,7 +75,10 @@ class Course:
             p = self.working_path / Path(TOPOLOGY_PATH)
         else:
             p = self.working_path / Path(f"{MODULE_PATH_NAME}{self.order}")
-        p.absolute().mkdir(parents=True, exist_ok=True)
+        if p.exists():
+            logger.warning(f"Found previous run ({p}), removed")
+            shutil.rmtree(p)
+        p.absolute().mkdir(parents=True, exist_ok=False)
 
         # Import the module given by the flavour or default
         module_name = f"haddock.modules.{self.module}.{self.flavour}"

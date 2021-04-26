@@ -30,14 +30,14 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         try:
-            molecules = HaddockModule._map(module_information['molecules'][0])
+            molecules = HaddockModule._map(module_information["molecules"][0])
         except KeyError:
             self.finish_with_error("No molecules found in recipe")
         except RecipeError as re:
             self.finish_with_error(re)
 
         for order, molecule in enumerate(molecules):
-            logger.info(f'{order+1} - {molecule.file_name}')
+            logger.info(f"{order+1} - {molecule.file_name}")
 
             # Get the molecule path and copy it to the course path
             molecule_orig_file_name = self.path.parent / molecule.file_name
@@ -45,57 +45,57 @@ class HaddockModule(BaseHaddockModule):
             shutil.copyfile(molecule_orig_file_name, molecule_file_name)
 
             # Split models
-            logger.info(f'Split models if needed for {molecule.file_name}')
+            logger.info(f"Split models if needed for {molecule.file_name}")
             models = sorted(PDBFactory.split_ensemble(molecule_file_name))
 
             # Sanitize the different PDB files
             for model in models:
-                logger.info(f'Sanitizing molecule {model.name}')
+                logger.info(f"Sanitizing molecule {model.name}")
                 PDBFactory.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
                 topology_filename = generate_topology(model, self.path, self.recipe_str, self.defaults)
-                logger.info(f'Topology created in {topology_filename}')
+                logger.info(f"Topology created in {topology_filename}")
 
                 # Add new job to the pool
-                output_filename = model.resolve().parent.absolute() / f'{model.stem}.{Format.CNS_OUTPUT}'
+                output_filename = model.resolve().parent.absolute() / f"{model.stem}.{Format.CNS_OUTPUT}"
                 jobs.append(CNSJob(topology_filename, output_filename, cns_folder=self.cns_folder_path))
 
             # Run CNS engine
-            logger.info(f'Running CNS engine with {len(jobs)} jobs')
+            logger.info(f"Running CNS engine with {len(jobs)} jobs")
             engine = CNSEngine(jobs)
             engine.run()
-            logger.info('CNS engine has finished')
+            logger.info("CNS engine has finished")
 
             # Check for generated output, fail it not all expected files are found
             expected = []
             not_found = []
             for model in models:
                 model_name = model.stem
-                if not (processed_pdb := self.path / f'{model_name}_haddock.{Format.PDB}').is_file():
+                if not (processed_pdb := self.path / f"{model_name}_haddock.{Format.PDB}").is_file():
                     not_found.append(processed_pdb.name)
-                if not (processed_topology := self.path / f'{model_name}_haddock.{Format.TOPOLOGY}').is_file():
+                if not (processed_topology := self.path / f"{model_name}_haddock.{Format.TOPOLOGY}").is_file():
                     not_found.append(processed_topology.name)
                 expected.append((processed_topology, Format.TOPOLOGY))
                 expected.append((processed_pdb, Format.PDB))
             if not_found:
-                self.finish_with_error(f'Several files were not generated: {not_found}')
+                self.finish_with_error(f"Several files were not generated: {not_found}")
 
             # Save module information
             io = ModuleIO()
             for model in models:
                 io.add(model, Format.PDB)
             for expected_file, output_format in expected:
-                io.add(expected_file.name, output_format, 'o')
+                io.add(expected_file.name, output_format, "o")
             io.save(self.path)
 
     @staticmethod
     def _map(raw_data):
         molecules = []
         for molecule_id, data in raw_data.items():
-            file_name = data[0]['file']
+            file_name = data[0]["file"]
             try:
-                segid = data[0]['segid']
+                segid = data[0]["segid"]
             except KeyError:
                 segid = None
             molecule = Molecule(file_name, segid)

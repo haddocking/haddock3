@@ -49,7 +49,7 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_score = [o[0] for o in self.previous_io.output if o[1] == Format.PDB]
+        models_to_score = [file_name for (file_name, file_format) in self.previous_io.output if file_format == Format.PDB]
         for input_pdb_filename in models_to_score:
             input_pdb = self.previous_path() / input_pdb_filename
             scoring_filename = generate_scoring(input_pdb, self.path, self.recipe_str, self.defaults)

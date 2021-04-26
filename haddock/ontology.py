@@ -1,6 +1,6 @@
 """This module describes the Haddock3 ontology used for communicating between modules"""
 
-import toml
+import json
 from os import linesep
 from enum import Enum
 from pathlib import Path
@@ -38,18 +38,19 @@ class ModuleIO:
         """Save Input/Output needed files by this module to disk"""
         with open(path / filename, 'w') as output_handler:
             to_save = {'input': self.input, 'output': self.output}
-            toml.dump(to_save, output_handler)
+            json.dump(to_save, output_handler, indent=4)
         return path / filename
 
     def load(self, filename):
         """Load the content of a given IO filename"""
-        content = toml.load(filename)
-        self.input = content['input']
-        for pair in self.input:
-            pair[1] = Format[pair[1]]
-        self.output = content['output']
-        for pair in self.output:
-            pair[1] = Format[pair[1]]
+        with open(filename) as json_file:
+            content = json.load(json_file)
+            self.input = content['input']
+            for pair in self.input:
+                pair[1] = Format[pair[1]]
+            self.output = content['output']
+            for pair in self.output:
+                pair[1] = Format[pair[1]]
 
     def __repr__(self):
         return f'Input: {self.input}{linesep}Output: {self.output}'

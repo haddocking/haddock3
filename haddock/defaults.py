@@ -21,7 +21,7 @@ except ValueError:
 MODULE_PATH_NAME = "step_"
 
 # Default name for exchange module information file
-MODULE_IO_FILE = "io.toml"
+MODULE_IO_FILE = "io.json"
 
 # Temptative number of max allowed number of modules to execute
 MAX_NUM_MODULES = 10000

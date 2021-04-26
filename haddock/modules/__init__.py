@@ -5,14 +5,14 @@ from pathlib import Path
 import logging
 from haddock.error import RecipeError
 from haddock.ontology import ModuleIO
-from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE
+from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
 
 logger = logging.getLogger(__name__)
 
 
 class BaseHaddockModule:
     """Base class for any HADDOCK module"""
-    def __init__(self, order, path, cns_script='', cns_defaults=''):
+    def __init__(self, order, path, cns_script="", cns_defaults=""):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
@@ -31,7 +31,7 @@ class BaseHaddockModule:
         try:
             self.defaults = toml.load(self.defaults_path)
         except FileNotFoundError:
-            raise RecipeError(f'Error while opening defaults {self.defaults_path}')
+            raise RecipeError(f"Error while opening defaults {self.defaults_path}")
 
     def run(self, module_information):
         raise NotImplementedError()
@@ -53,8 +53,10 @@ class BaseHaddockModule:
             return io
 
     def previous_path(self):
-        if self.order > 0:
-            return self.path.resolve().parent.absolute() / f'{MODULE_PATH_NAME}{self.order-1}'
+        if self.order > 1:
+            return self.path.resolve().parent.absolute() / f"{MODULE_PATH_NAME}{self.order-1}"
+        elif self.order == 1:
+            return self.path.resolve().parent.absolute() / TOPOLOGY_PATH
         else:
             return self.path
 

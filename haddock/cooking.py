@@ -3,7 +3,7 @@ import toml
 import importlib
 from pathlib import Path
 from haddock.error import HaddockError, RecipeError
-from haddock.defaults import MODULE_PATH_NAME
+from haddock.defaults import MODULE_PATH_NAME, TOPOLOGY_PATH
 
 
 logger = logging.getLogger(__name__)
@@ -36,18 +36,18 @@ class Recipe:
             raise RecipeError("This recipe does not specify the order of execution")
 
         # Basic check for defined stages by order
-        for stage in content['order']:
-            if stage not in content['stage']:
+        for stage in content["order"]:
+            if stage not in content["stage"]:
                 raise RecipeError(f"{stage} is defined by the order variable but not defined in this recipe")
 
         logger.info(f"Recipe [{recipe_path}] contains {len(content['order'])} courses")
 
         # Create the list of courses contained in this recipe
         self.courses = []
-        for num_stage, stage in enumerate(content['order']):
+        for num_stage, stage in enumerate(content["order"]):
             try:
                 logger.info(f"Reading instructions of [{stage}] course")
-                self.courses.append(Course(stage, num_stage, content['stage'][stage], recipe_path.parent))
+                self.courses.append(Course(stage, num_stage, content["stage"][stage], recipe_path.parent))
             except RecipeError as re:
                 logger.error(f"Error found while parsing course {stage}")
                 raise HaddockError(str(re))
@@ -63,14 +63,17 @@ class Course:
 
     def cook(self):
         try:
-            self.flavour = self.raw_information['flavour']
+            self.flavour = self.raw_information["flavour"]
             if not self.flavour:
                 self.flavour = "default"
         except KeyError:
             self.flavour = "default"
 
         # Create course path structure
-        p = self.working_path / Path(f"{MODULE_PATH_NAME}{self.order}")
+        if self.module == "topology":
+            p = self.working_path / Path(TOPOLOGY_PATH)
+        else:
+            p = self.working_path / Path(f"{MODULE_PATH_NAME}{self.order}")
         p.absolute().mkdir(parents=True, exist_ok=True)
 
         # Import the module given by the flavour or default
@@ -78,7 +81,7 @@ class Course:
         module_lib = importlib.import_module(module_name)
         module = module_lib.HaddockModule(order=self.order, path=p.absolute())
         # Remove flavour information as it is already used and won't be mapped
-        self.raw_information.pop('flavour', None)
+        self.raw_information.pop("flavour", None)
 
         # Run module
         module.run(self.raw_information)

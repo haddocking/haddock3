@@ -6,7 +6,7 @@ from haddock.structure import Molecule
 from haddock.pdbutil import PDBFactory
 from haddock.cns.topology import generate_topology
 from haddock.cns.engine import CNSJob, CNSEngine
-from haddock.ontology import Format, ModuleIO
+from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
 from haddock.error import RecipeError
 
 
@@ -76,17 +76,18 @@ class HaddockModule(BaseHaddockModule):
                     not_found.append(processed_pdb.name)
                 if not (processed_topology := self.path / f"{model_name}_haddock.{Format.TOPOLOGY}").is_file():
                     not_found.append(processed_topology.name)
-                expected.append((processed_topology, Format.TOPOLOGY))
-                expected.append((processed_pdb, Format.PDB))
+                topology = TopologyFile(processed_topology)
+                expected.append(topology)
+                expected.append(PDBFile(processed_pdb, topology))
             if not_found:
                 self.finish_with_error(f"Several files were not generated: {not_found}")
 
             # Save module information
             io = ModuleIO()
             for model in models:
-                io.add(model, Format.PDB)
-            for expected_file, output_format in expected:
-                io.add(expected_file.name, output_format, "o")
+                io.add(PDBFile(model))
+            for persistent in expected:
+                io.add(persistent, "o")
             io.save(self.path)
 
     @staticmethod

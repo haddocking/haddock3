@@ -5,7 +5,7 @@ from haddock.modules import BaseHaddockModule
 from haddock.cns.engine import CNSJob, CNSEngine
 from haddock.cns.util import load_recipe_params, prepare_input
 from haddock.cns.topology import get_topology_header
-from haddock.ontology import Format, ModuleIO
+from haddock.ontology import Format, ModuleIO, PDBFile
 
 
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_score = [file_name for (file_name, file_format) in self.previous_io.output if file_format == Format.PDB]
+        models_to_score = [p.file_name for p in self.previous_io.output if p.file_type == Format.PDB]
         for input_pdb_filename in models_to_score:
             input_pdb = self.previous_path() / input_pdb_filename
             scoring_filename = generate_scoring(input_pdb, self.path, self.recipe_str, self.defaults)
@@ -69,14 +69,14 @@ class HaddockModule(BaseHaddockModule):
             model = Path(model)
             if not (self.path / model).is_file():
                 not_found.append(model)
-            expected.append((model, Format.PDB))
+            expected.append(PDBFile(model))
         if not_found:
             self.finish_with_error(f"Several files were not generated: {not_found}")
 
         # Save module information
         io = ModuleIO()
         for model in models_to_score:
-            io.add(model, Format.PDB)
-        for expected_file, output_format in expected:
-            io.add(expected_file.name, output_format, "o")
+            io.add(PDBFile(model))
+        for p in expected:
+            io.add(p, "o")
         io.save(self.path)

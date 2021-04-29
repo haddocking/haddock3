@@ -36,11 +36,6 @@ class Recipe:
         if 'order' not in content:
             raise RecipeError("This recipe does not specify the order of execution")
 
-        # Basic check for defined stages by order
-        for stage in content["order"]:
-            if stage not in content["stage"]:
-                raise RecipeError(f"{stage} is defined by the order variable but not defined in this recipe")
-
         logger.info(f"Recipe [{recipe_path}] contains {len(content['order'])} courses")
 
         # Create the list of courses contained in this recipe
@@ -48,7 +43,12 @@ class Recipe:
         for num_stage, stage in enumerate(content["order"]):
             try:
                 logger.info(f"Reading instructions of [{stage}] course")
-                self.courses.append(Course(stage, num_stage, content["stage"][stage], recipe_path.parent))
+                is_substage = (len(stage.split('.')) == 2)
+                if is_substage:
+                    sub_stage, sub_id = stage.split('.')
+                    self.courses.append(Course(sub_stage, num_stage, content["stage"][sub_stage][sub_id], recipe_path.parent))
+                else:
+                    self.courses.append(Course(stage, num_stage, content["stage"][stage], recipe_path.parent))
             except RecipeError as re:
                 logger.error(f"Error found while parsing course {stage}")
                 raise HaddockError(str(re))

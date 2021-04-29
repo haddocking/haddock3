@@ -28,10 +28,16 @@ class BaseHaddockModule:
                 self.recipe_str = input_handler.read()
         except FileNotFoundError:
             raise RecipeError(f"Error while opening recipe {self.cns_recipe_path}")
+        except AttributeError:
+            # No CNS-like module
+            pass
         try:
             self.defaults = toml.load(self.defaults_path)
         except FileNotFoundError:
             raise RecipeError(f"Error while opening defaults {self.defaults_path}")
+        except AttributeError:
+            # No CNS-like module
+            pass
 
     def run(self, module_information):
         raise NotImplementedError()

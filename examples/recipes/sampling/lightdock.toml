@@ -1,0 +1,27 @@
+# Recipe: LightDock integration with HADDOCK scoring
+
+# A recipe is composed by different stages which are executed in 
+# by index in the order field:
+order = ["topology", "sampling", "scoring"]
+
+[stage]
+
+#####################################################################-1
+[stage.topology]
+flavour = "default"
+autohis = true
+
+# Definition of the input molecules:
+[[stage.topology.molecules]]
+[[stage.topology.molecules.1]]
+file = "2oob.pdb"
+
+#####################################################################-2
+[stage.sampling]
+flavour = "lightdock"
+receptor_active = "A.937"
+
+
+#####################################################################-3
+[stage.scoring]
+flavour = ""

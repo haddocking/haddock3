@@ -1,8 +1,10 @@
 import logging
+import shutil
 from os import linesep
 from pathlib import Path
 from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile
+from haddock.pdbutil import PDBFactory
 
 
 logger = logging.getLogger(__name__)
@@ -23,6 +25,26 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the models generated in previous step
         models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+
+        # Check if multiple models are provided
+        if len(models_to_score) > 1:
+            self.finish_with_error("Only one model allowed in LightDock sampling module")
+
+        model = models_to_score[0]
+        # Check if chain IDs are present
+        segids, chains = PDBFactory.identify_chainseg(Path(model.path) / model.file_name)
+        if set(segids) != set(chains):
+            logger.info("No chain IDs found, using segid information")
+            PDBFactory.swap_segid_chain(Path(model.path) / model.file_name,
+                self.path / model.file_name)
+        else:
+            # Copy original model to this working path
+            shutil.copyfile(Path(model.path) / model.file_name, self.path / model.file_name)
+
+        model_with_chains = self.path / model.file_name
+        # Split by chain
+        new_models = PDBFactory.split_by_chain(model_with_chains)
+        print(new_models)
 
         # Dummy expected
         expected = models_to_score

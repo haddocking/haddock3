@@ -74,7 +74,8 @@ def prepare_input(pdb_input, course_path, psf_input=None):
         for pdb in pdb_input:
             input_str += f'coor @@{pdb}{linesep}'
 
-    chainsegs = PDBFactory.identify_chainseg(pdb_input)
+    segids, chains = PDBFactory.identify_chainseg(pdb_input)
+    chainsegs = sorted(list(set(segids) | set(chains)))
 
     ncomponents = len(chainsegs)
 

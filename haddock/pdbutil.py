@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 from pdbtools.pdb_splitmodel import split_model
+from pdbtools.pdb_segxchain import place_seg_on_chain
+from pdbtools.pdb_splitchain import split_chain
 from haddock.data.topology import Topology
 from haddock.modules import working_directory
 
@@ -15,7 +17,7 @@ class PDBFactory:
 
     @staticmethod
     def split_ensemble(pdb_file_path):
-        """"Split a PDB file in multiple structures if different models are found"""
+        """"Split a PDB file into multiple structures if different models are found"""
         new_models = []
         abs_path = Path(pdb_file_path).resolve().parent.absolute()
         with open(pdb_file_path) as input_handler:
@@ -25,9 +27,36 @@ class PDBFactory:
         basename = Path(pdb_file_path)
         new_models = list(abs_path.glob(f"{basename.stem}_*{basename.suffix}"))
         if not new_models:
+            # No new models found after split, return itself
+            new_models.append(pdb_file_path)
+        return new_models
+
+    @staticmethod
+    def split_by_chain(pdb_file_path):
+        """"Split a PDB file into multiple structures for each chain"""
+        new_models = []
+        abs_path = Path(pdb_file_path).resolve().parent.absolute()
+        with open(pdb_file_path) as input_handler:
+            with working_directory(abs_path):
+                split_chain(input_handler)
+
+        basename = Path(pdb_file_path)
+        new_models = list(abs_path.glob(f"{basename.stem}_*{basename.suffix}"))
+        if not new_models:
             # No new models found after split, single structure PDB file
             new_models.append(pdb_file_path)
         return new_models
+
+    @staticmethod
+    def swap_segid_chain(pdb_file_path, new_pdb_file_path):
+        """"Add to the Chain ID column the found Segid"""
+        new_models = []
+        abs_path = Path(pdb_file_path).resolve().parent.absolute()
+        with open(pdb_file_path) as input_handler:
+            with working_directory(abs_path):
+                with open(new_pdb_file_path, "w") as output_handler:
+                    for line in place_seg_on_chain(input_handler):
+                        output_handler.write(line)
 
     @staticmethod
     def sanitize(pdb_file_path, overwrite=True):
@@ -64,7 +93,8 @@ class PDBFactory:
     @staticmethod
     def identify_chainseg(pdb_file_path):
         """"Return segID OR chainID"""
-        segid_l = []
+        segids = []
+        chains = []
         with open(pdb_file_path) as input_handler:
             for line in input_handler:
                 if line.startswith("ATOM  "):
@@ -73,15 +103,15 @@ class PDBFactory:
                     except IndexError:
                         segid = ""
                     try:
-                        chainid = line[21].strip()[:1]
+                        chainid = line[21].strip()
                     except IndexError:
                         chainid = ""
 
                     if segid:
-                        segid_l.append(segid)
-                    elif chainid:
-                        segid_l.append(segid)
+                        segids.append(segid)
+                    if chainid:
+                        chains.append(chainid)
 
-        segid_l = list(set(segid_l))
-        segid_l.sort()
-        return segid_l
+        segids = sorted(list(set(segids)))
+        chains = sorted(list(set(chains)))
+        return segids, chains

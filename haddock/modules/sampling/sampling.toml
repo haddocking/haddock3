@@ -1,0 +1,12 @@
+[params]
+glowworms = 200
+steps = 100
+swarms = 400
+top = 10
+receptor_active = ''
+receptor_passive = ''
+ligand_active = ''
+ligand_passive = ''
+noxt = true
+noh = true
+restraints = false

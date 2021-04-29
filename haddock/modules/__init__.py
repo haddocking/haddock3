@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class BaseHaddockModule:
     """Base class for any HADDOCK module"""
-    def __init__(self, order, path, cns_script="", cns_defaults=""):
+    def __init__(self, order, path, cns_script="", defaults=""):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
@@ -20,8 +20,8 @@ class BaseHaddockModule:
         if cns_script:
             self.cns_folder_path = cns_script.resolve().parent.absolute()
             self.cns_recipe_path = cns_script
-        if cns_defaults:
-            self.defaults_path = cns_defaults
+        if defaults:
+            self.defaults_path = defaults
 
         try:
             with open(self.cns_recipe_path) as input_handler:
@@ -65,6 +65,12 @@ class BaseHaddockModule:
             return self.path.resolve().parent.absolute() / TOPOLOGY_PATH
         else:
             return self.path
+
+    def patch_defaults(self, module_parameters):
+        """Apply custom module parameters given to defaults dictionary"""
+        for k in module_parameters:
+            if k in self.defaults["params"]:
+                self.defaults["params"][k] = module_parameters[k]
 
 
 @contextlib.contextmanager

@@ -20,6 +20,7 @@ file = "2oob.pdb"
 [stage.sampling]
 flavour = "lightdock"
 receptor_active = "A.937"
+top=10
 
 
 #####################################################################-3

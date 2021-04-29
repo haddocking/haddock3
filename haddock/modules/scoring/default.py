@@ -40,8 +40,8 @@ class HaddockModule(BaseHaddockModule):
     def __init__(self, order, path):
         recipe_path = Path(__file__).resolve().parent.absolute()
         cns_script = recipe_path / "cns" / "scoring.cns"
-        cns_defaults = recipe_path / "cns" / "scoring.toml"
-        super().__init__(order, path, cns_script, cns_defaults)
+        defaults = recipe_path / "cns" / "scoring.toml"
+        super().__init__(order, path, cns_script, defaults)
 
     def run(self, module_information):
         logger.info("Running [scoring] module")

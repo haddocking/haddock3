@@ -12,14 +12,17 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, order, path):
         recipe_path = Path(__file__).resolve().parent.absolute()
-        super().__init__(order, path)
+        defaults = recipe_path / "sampling.toml"
+        super().__init__(order, path, defaults=defaults)
 
     def run(self, module_information):
         logger.info("Running [sampling-lightdock] module")
 
+        # Apply module information to defaults
+        self.patch_defaults(module_information)
+
         # Get the models generated in previous step
         models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]
-
 
         # Dummy expected
         expected = models_to_score

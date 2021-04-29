@@ -29,7 +29,7 @@ class Persistent:
         self.path = str(Path(path).parent.absolute())
 
     def __repr__(self):
-        return f"[{self.file_type}|{self.created}] {self.file_name}"
+        return f"[{self.file_type}|{self.created}] {Path(self.path) / self.file_name}"
 
 
 class PDBFile(Persistent):

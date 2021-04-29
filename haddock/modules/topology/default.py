@@ -8,6 +8,7 @@ from haddock.cns.topology import generate_topology
 from haddock.cns.engine import CNSJob, CNSEngine
 from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
 from haddock.error import RecipeError
+from haddock.defaults import TOPOLOGY_PATH
 
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ class HaddockModule(BaseHaddockModule):
 
                 # Prepare generation of topologies jobs
                 topology_filename = generate_topology(model, self.path, self.recipe_str, self.defaults)
-                logger.info(f"Topology created in {topology_filename}")
+                logger.info(f"Topology CNS input created in {topology_filename}")
 
                 # Add new job to the pool
                 output_filename = model.resolve().parent.absolute() / f"{model.stem}.{Format.CNS_OUTPUT}"
@@ -76,9 +77,9 @@ class HaddockModule(BaseHaddockModule):
                     not_found.append(processed_pdb.name)
                 if not (processed_topology := self.path / f"{model_name}_haddock.{Format.TOPOLOGY}").is_file():
                     not_found.append(processed_topology.name)
-                topology = TopologyFile(processed_topology)
+                topology = TopologyFile(processed_topology, path=(self.path / TOPOLOGY_PATH))
                 expected.append(topology)
-                expected.append(PDBFile(processed_pdb, topology))
+                expected.append(PDBFile(processed_pdb, topology, path=(self.path / TOPOLOGY_PATH)))
             if not_found:
                 self.finish_with_error(f"Several files were not generated: {not_found}")
 

@@ -24,6 +24,9 @@ class PDBFactory:
 
         basename = Path(pdb_file_path)
         new_models = list(abs_path.glob(f"{basename.stem}_*{basename.suffix}"))
+        if not new_models:
+            # No new models found after split, single structure PDB file
+            new_models.append(pdb_file_path)
         return new_models
 
     @staticmethod

@@ -20,10 +20,14 @@ file = "2oob.pdb"
 [stage.sampling]
 flavour = "lightdock"
 receptor_chains = "A"
-receptor_active = "A.937"
 ligand_chains = "B"
 scoring = "fastdfire"
-top=10
+swarms = 8
+steps = 10
+glowworms = 20
+top = 10
+noxt = true
+noh = true
 
 
 #####################################################################-3

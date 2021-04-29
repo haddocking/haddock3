@@ -3,6 +3,7 @@ from pathlib import Path
 from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_segxchain import place_seg_on_chain
 from pdbtools.pdb_splitchain import split_chain
+from pdbtools.pdb_tidy import tidy_pdbfile
 from haddock.data.topology import Topology
 from haddock.modules import working_directory
 
@@ -48,9 +49,18 @@ class PDBFactory:
         return new_models
 
     @staticmethod
+    def tidy(pdb_file_path, new_pdb_file_path):
+        """"Tidy PDB structure"""
+        abs_path = Path(pdb_file_path).resolve().parent.absolute()
+        with open(pdb_file_path) as input_handler:
+            with working_directory(abs_path):
+                with open(new_pdb_file_path, "w") as output_handler:
+                    for line in tidy_pdbfile(input_handler):
+                        output_handler.write(line)
+
+    @staticmethod
     def swap_segid_chain(pdb_file_path, new_pdb_file_path):
         """"Add to the Chain ID column the found Segid"""
-        new_models = []
         abs_path = Path(pdb_file_path).resolve().parent.absolute()
         with open(pdb_file_path) as input_handler:
             with working_directory(abs_path):

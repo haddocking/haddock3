@@ -1,3 +1,4 @@
+"""HADDOCK3 scoring module"""
 import logging
 from os import linesep
 from pathlib import Path
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 def generate_scoring(model, course_path, recipe_str, defaults):
     general_param = load_recipe_params(defaults)
 
-    param, top, link, topology_protonation, trans_vec, tensor, scatter, axis, water_box = get_topology_header()
+    param, top, _, topology_protonation, _, _, _, _, _ = get_topology_header()
 
     output_pdb_filename = course_path / Path(model.file_name)
     input_abs_path = Path(model.path).resolve().absolute()

@@ -1,3 +1,4 @@
+"""Molecular data structures"""
 
 class Molecule:
     """Input molecule, usually a PDB file"""

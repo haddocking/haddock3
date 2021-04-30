@@ -1,3 +1,4 @@
+"""Mathematical functions"""
 import random
 
 

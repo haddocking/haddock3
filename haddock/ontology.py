@@ -1,10 +1,10 @@
 """This module describes the Haddock3 ontology used for communicating between modules"""
 
-import jsonpickle
 import datetime
 from os import linesep
 from enum import Enum
 from pathlib import Path
+import jsonpickle
 from haddock.defaults import MODULE_IO_FILE
 
 

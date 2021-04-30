@@ -1,3 +1,4 @@
+"""HADDOCK topologies"""
 from haddock.defaults import Default
 
 

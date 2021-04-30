@@ -1,3 +1,4 @@
+"""CNS Topology creation and management module"""
 import logging
 import shutil
 from pathlib import Path
@@ -93,7 +94,7 @@ class HaddockModule(BaseHaddockModule):
     @staticmethod
     def _map(raw_data):
         molecules = []
-        for molecule_id, data in raw_data.items():
+        for _, data in raw_data.items():
             file_name = data[0]["file"]
             try:
                 segid = data[0]["segid"]

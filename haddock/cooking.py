@@ -1,8 +1,9 @@
+"""HADDOCK3 workflow logic"""
 import logging
-import toml
 import importlib
 import shutil
 from pathlib import Path
+import toml
 from haddock.error import HaddockError, RecipeError
 from haddock.defaults import MODULE_PATH_NAME, TOPOLOGY_PATH
 
@@ -51,7 +52,7 @@ class Recipe:
                     self.courses.append(Course(stage, num_stage, content["stage"][stage], recipe_path.parent))
             except RecipeError as re:
                 logger.error(f"Error found while parsing course {stage}")
-                raise HaddockError(str(re))
+                raise HaddockError from re
 
 
 class Course:
@@ -61,15 +62,12 @@ class Course:
         self.order = order
         self.raw_information = course_information
         self.working_path = working_path
-
-    def cook(self):
-        try:
+        if "flavour" in self.raw_information and self.raw_information["flavour"]:
             self.flavour = self.raw_information["flavour"]
-            if not self.flavour:
-                self.flavour = "default"
-        except KeyError:
+        else:
             self.flavour = "default"
 
+    def cook(self):
         # Create course path structure
         if self.module == "topology":
             p = self.working_path / Path(TOPOLOGY_PATH)

@@ -1,7 +1,7 @@
+"""Running Lightdock as a module"""
 import logging
 import shutil
 import subprocess
-from os import linesep
 from pathlib import Path
 from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile

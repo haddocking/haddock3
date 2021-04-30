@@ -19,7 +19,7 @@ class Sailor(Process):
         logger.info(f"Sailor {self.name} says: Aye, Captain!")
 
 
-class CaptainHaddock(object):
+class CaptainHaddock():
     """Aye, Captain"""
     def __init__(self, tasks, num_cores=0):
         try:

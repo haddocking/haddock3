@@ -1,3 +1,4 @@
+"""CNS scripts util functions"""
 from os import linesep
 from haddock.pdbutil import PDBFactory
 from haddock.mathutil import RandomNumberGenerator
@@ -53,24 +54,24 @@ def prepare_input(pdb_input, course_path, psf_input=None):
     input_str = f'{linesep}! Input structure{linesep}'
 
     if psf_input:
-        if type(psf_input) == str:
+        if isinstance(psf_input, str):
             input_str += f'structure{linesep}'
             input_str += f'  @@{psf_input}{linesep}'
             input_str += f'end{linesep}'
-        if type(psf_input) == list:
+        if isinstance(psf_input, list):
             input_str += f'structure{linesep}'
             for psf in psf_input:
                 input_str += f'  @@{psf}{linesep}'
             input_str += f'end{linesep}'
 
-    if type(pdb_input) == str:
+    if isinstance(pdb_input, str):
         if psf_input:
             input_str += f'coor @@{pdb_input}{linesep}'
 
         # $file variable is still used by some CNS recipes, need refactoring!
         input_str += f'eval ($file=\"{pdb_input}\"){linesep}'
 
-    if type(pdb_input) == list or type(pdb_input) == tuple:
+    if isinstance(pdb_input, (list, tuple)):
         for pdb in pdb_input:
             input_str += f'coor @@{pdb}{linesep}'
 

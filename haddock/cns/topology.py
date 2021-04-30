@@ -1,3 +1,4 @@
+"""CNS language translation for topology"""
 from os import linesep
 from haddock.defaults import Default
 from haddock.ontology import Format

@@ -1,3 +1,4 @@
+"""Parse molecular structures in PDB format"""
 import os
 from pathlib import Path
 from pdbtools.pdb_splitmodel import split_model
@@ -83,7 +84,7 @@ class PDBFactory:
                     res = line[17:20].strip()
                     if res and res in PDBFactory.__to_keep:
                         good_lines.append(line)
-            if len(good_lines) and good_lines[-1] != "END":
+            if len(good_lines) > 0 and good_lines[-1] != "END":
                 good_lines.append("END")
 
         if overwrite:
@@ -91,14 +92,14 @@ class PDBFactory:
                 for line in good_lines:
                     output_handler.write(line + os.linesep)
             return pdb_file_path
-        else:
-            basename = Path(pdb_file_path)
-            abs_path = Path(pdb_file_path).resolve().parent.absolute()
-            new_pdb_file = abs_path / f"{basename.stem}_cleaned{basename.suffix}"
-            with open(new_pdb_file, "w") as output_handler:
-                for line in good_lines:
-                    output_handler.write(line + os.linesep)
-            return new_pdb_file
+
+        basename = Path(pdb_file_path)
+        abs_path = Path(pdb_file_path).resolve().parent.absolute()
+        new_pdb_file = abs_path / f"{basename.stem}_cleaned{basename.suffix}"
+        with open(new_pdb_file, "w") as output_handler:
+            for line in good_lines:
+                output_handler.write(line + os.linesep)
+        return new_pdb_file
 
     @staticmethod
     def identify_chainseg(pdb_file_path):

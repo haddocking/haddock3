@@ -1,3 +1,4 @@
+"""All default parameters used by the framework"""
 import os
 import multiprocessing
 from pathlib import Path

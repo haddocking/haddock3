@@ -1,8 +1,9 @@
+"""Workflow module logic"""
 import os
-import toml
+import logging
 import contextlib
 from pathlib import Path
-import logging
+import toml
 from haddock.error import RecipeError
 from haddock.ontology import ModuleIO
 from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
@@ -51,20 +52,20 @@ class BaseHaddockModule:
     def _load_previous_io(self):
         if self.order == 0:
             return ModuleIO()
-        else:
-            io = ModuleIO()
-            previous_io = self.previous_path() / MODULE_IO_FILE
-            if previous_io.is_file():
-                io.load(previous_io)
-            return io
+
+        io = ModuleIO()
+        previous_io = self.previous_path() / MODULE_IO_FILE
+        if previous_io.is_file():
+            io.load(previous_io)
+        return io
 
     def previous_path(self):
         if self.order > 1:
             return self.path.resolve().parent.absolute() / f"{MODULE_PATH_NAME}{self.order-1}"
-        elif self.order == 1:
+        if self.order == 1:
             return self.path.resolve().parent.absolute() / TOPOLOGY_PATH
-        else:
-            return self.path
+
+        return self.path
 
     def patch_defaults(self, module_parameters):
         """Apply custom module parameters given to defaults dictionary"""

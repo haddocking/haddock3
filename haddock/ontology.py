@@ -55,9 +55,15 @@ class ModuleIO:
     def add(self, persistent, mode="i"):
         """Add a given filename as input or output"""
         if mode == "i":
-            self.input.append(persistent)
+            if isinstance(persistent, list):
+                self.input.extend(persistent)
+            else:
+                self.input.append(persistent)
         else:
-            self.output.append(persistent)
+            if isinstance(persistent, list):
+                self.output.extend(persistent)
+            else:
+                self.output.append(persistent)
 
     def save(self, path, filename=MODULE_IO_FILE):
         """Save Input/Output needed files by this module to disk"""

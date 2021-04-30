@@ -87,8 +87,7 @@ class HaddockModule(BaseHaddockModule):
             io = ModuleIO()
             for model in models:
                 io.add(PDBFile(model))
-            for persistent in expected:
-                io.add(persistent, "o")
+            io.add(expected, "o")
             io.save(self.path)
 
     @staticmethod

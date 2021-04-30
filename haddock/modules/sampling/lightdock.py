@@ -114,8 +114,6 @@ class HaddockModule(BaseHaddockModule):
 
         # Save module information
         io = ModuleIO()
-        for model in models_to_score:
-            io.add(model)
-        for p in expected:
-            io.add(p, "o")
+        io.add(models_to_score)
+        io.add(expected, "o")
         io.save(self.path)

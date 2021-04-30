@@ -89,9 +89,15 @@ class HaddockModule(BaseHaddockModule):
             cmd = f"lgd_rank.py {swarms} {steps}"
             subprocess.call(cmd, shell=True)
 
-        # Generate top
+        # Generate top, requires a hack to use original structures (H, OXT, etc.)
         logger.info("Generating top structures")
         with working_directory(self.path):
+            # Save structures, needs error control
+            shutil.copyfile(self.path / receptor_pdb_file, self.path / f"tmp_{receptor_pdb_file}")
+            shutil.copyfile(self.path / ligand_pdb_file, self.path / f"tmp_{ligand_pdb_file}")
+            shutil.copy(self.path / receptor_pdb_file, self.path / f"lightdock_{receptor_pdb_file}")
+            shutil.copy(self.path / ligand_pdb_file, self.path / f"lightdock_{ligand_pdb_file}")
+            # Create top
             steps = self.defaults["params"]["steps"]
             top = self.defaults["params"]["top"]
             cmd = f"lgd_top.py {receptor_pdb_file} {ligand_pdb_file} rank_by_scoring.list {top}"

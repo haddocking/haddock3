@@ -1,13 +1,14 @@
 """Running CNS scripts"""
 import subprocess
 from haddock.error import CNSRunningError
-from haddock.parallel import CaptainHaddock
+from haddock.parallel import Scheduler
 from haddock.defaults import CNS_EXE, NUM_CORES
 
 
 class CNSJob:
     """A CNS job script"""
-    def __init__(self, input_file, output_file, cns_folder='.', cns_exec=CNS_EXE):
+    def __init__(self, input_file, output_file, cns_folder='.',
+                 cns_exec=CNS_EXE):
         """
         :param input_file: input CNS script
         :param output_file: CNS output
@@ -24,7 +25,11 @@ class CNSJob:
         with open(self.input_file) as inp:
             with open(self.output_file, 'w+') as outf:
                 env = {'RUN': self.cns_folder}
-                p = subprocess.Popen(self.cns_exec, stdin=inp, stdout=outf, close_fds=True, env=env)
+                p = subprocess.Popen(self.cns_exec,
+                                     stdin=inp,
+                                     stdout=outf,
+                                     close_fds=True,
+                                     env=env)
                 out, error = p.communicate()
                 p.kill()
                 if error:
@@ -45,5 +50,5 @@ class CNSEngine:
 
     def run(self):
         """Run all provided jobs"""
-        captain = CaptainHaddock(self.jobs, self.num_cores)
-        captain.drink()
+        scheduler = Scheduler(self.jobs, self.num_cores)
+        scheduler.execute()

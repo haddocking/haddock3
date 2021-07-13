@@ -16,24 +16,31 @@ def get_topology_header(protonation=None):
     axis = load_axis(Default.AXIS)
     water_box = load_waterbox(Default.WATER_BOX['boxtyp20'])
 
-    return param, top, link, topology_protonation, trans_vec, tensor, scatter, axis, water_box
+    return (param, top, link, topology_protonation, trans_vec, tensor, scatter,
+            axis, water_box)
 
 
-def generate_topology(input_pdb, course_path, recipe_str, defaults, protonation=None):
+def generate_topology(input_pdb, course_path, recipe_str, defaults,
+                      protonation=None):
     """Generate a HADDOCK topology file from input_pdb"""
     general_param = load_recipe_params(defaults)
 
-    param, top, link, topology_protonation, trans_vec, tensor, scatter, axis, water_box = get_topology_header(protonation)
+    param, top, link, topology_protonation, \
+        trans_vec, tensor, scatter, \
+        axis, water_box = get_topology_header(protonation)
 
     abs_path = input_pdb.resolve().parent.absolute()
-    output_pdb_filename = abs_path / f'{input_pdb.stem}_haddock{input_pdb.suffix}'
-    output_psf_filename = abs_path / f'{input_pdb.stem}_haddock.{Format.TOPOLOGY}'
+    output_pdb_filename = abs_path / (f'{input_pdb.stem}_'
+                                      f'haddock{input_pdb.suffix}')
+    output_psf_filename = abs_path / (f'{input_pdb.stem}_'
+                                      f'haddock.{Format.TOPOLOGY}')
     output = prepare_output(output_psf_filename, output_pdb_filename)
 
     input_str = prepare_input(str(input_pdb.resolve().absolute()), course_path)
 
-    inp = general_param + param + top + input_str + output + link + topology_protonation \
-        + trans_vec + tensor + scatter + axis + water_box + recipe_str
+    inp = general_param + param + top + input_str + output + link \
+        + topology_protonation + trans_vec + tensor + scatter + axis \
+        + water_box + recipe_str
 
     output_inp_filename = abs_path / f'{input_pdb.stem}.{Format.CNS_INPUT}'
     with open(output_inp_filename, 'w') as output_handler:
@@ -45,8 +52,10 @@ def generate_topology(input_pdb, course_path, recipe_str, defaults, protonation=
 def prepare_output(output_psf_filename, output_pdb_filename):
     """Output of the CNS file"""
     output = f'{linesep}! Output structure{linesep}'
-    output += f"eval ($output_psf_filename= \"{output_psf_filename}\"){linesep}"
-    output += f"eval ($output_pdb_filename= \"{output_pdb_filename}\"){linesep}"
+    output += ("eval ($output_psf_filename="
+               f" \"{output_psf_filename}\"){linesep}")
+    output += ("eval ($output_pdb_filename="
+               f" \"{output_pdb_filename}\"){linesep}")
     return output
 
 
@@ -72,10 +81,12 @@ def load_protonation_state(protononation):
 
             hise_str = ''
             for e in [(i + 1, c + 1, r) for c, r in enumerate(hise_l)]:
-                hise_str += f'eval ($toppar.hise_resid_{e[0]}_{e[1]} = {e[2]}){linesep}'
+                hise_str += (f'eval ($toppar.hise_resid_{e[0]}_{e[1]}'
+                             f' = {e[2]}){linesep}')
             hisd_str = ''
             for e in [(i + 1, c + 1, r) for c, r in enumerate(hisd_l)]:
-                hisd_str += f'eval ($toppar.hisd_resid_{e[0]}_{e[1]} = {e[2]}){linesep}'
+                hisd_str += (f'eval ($toppar.hisd_resid_{e[0]}_{e[1]}'
+                             f' = {e[2]}){linesep}')
 
             protonation_header += hise_str
             protonation_header += hisd_str

@@ -1,4 +1,5 @@
-"""This module describes the Haddock3 ontology used for communicating between modules"""
+"""This module describes the Haddock3 ontology used for communicating between
+modules"""
 
 import datetime
 from os import linesep
@@ -29,7 +30,9 @@ class Persistent:
         self.path = str(Path(path).parent.absolute())
 
     def __repr__(self):
-        return f"[{self.file_type}|{self.created}] {Path(self.path) / self.file_name}"
+        rep = (f"[{self.file_type}|{self.created}] "
+               f"{Path(self.path) / self.file_name}")
+        return rep
 
 
 class PDBFile(Persistent):

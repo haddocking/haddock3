@@ -38,108 +38,11 @@ class Default:
     LINK_FILE = data_path / "toppar/protein-allhdg5-4-noter.link"
 
     TRANSLATION_VECTORS = {
-        "trans_vector_0": (data_path /
-                           "toppar/initial_positions/trans_vector_0"),
-        "trans_vector_1": (data_path /
-                           "toppar/initial_positions/trans_vector_1"),
-        "trans_vector_2": (data_path /
-                           "toppar/initial_positions/trans_vector_2"),
-        "trans_vector_3": (data_path /
-                           "toppar/initial_positions/trans_vector_3"),
-        "trans_vector_4": (data_path /
-                           "toppar/initial_positions/trans_vector_4"),
-        "trans_vector_5": (data_path /
-                           "toppar/initial_positions/trans_vector_5"),
-        "trans_vector_6": (data_path /
-                           "toppar/initial_positions/trans_vector_6"),
-        "trans_vector_7": (data_path /
-                           "toppar/initial_positions/trans_vector_7"),
-        "trans_vector_8": (data_path /
-                           "toppar/initial_positions/trans_vector_8"),
-        "trans_vector_9": (data_path /
-                           "toppar/initial_positions/trans_vector_9"),
-        "trans_vector_10": (data_path /
-                            "toppar/initial_positions/trans_vector_10"),
-        "trans_vector_11": (data_path /
-                            "toppar/initial_positions/trans_vector_11"),
-        "trans_vector_12": (data_path /
-                            "toppar/initial_positions/trans_vector_12"),
-        "trans_vector_13": (data_path /
-                            "toppar/initial_positions/trans_vector_13"),
-        "trans_vector_14": (data_path /
-                            "toppar/initial_positions/trans_vector_14"),
-        "trans_vector_15": (data_path /
-                            "toppar/initial_positions/trans_vector_15"),
-        "trans_vector_16": (data_path /
-                            "toppar/initial_positions/trans_vector_16"),
-        "trans_vector_17": (data_path /
-                            "toppar/initial_positions/trans_vector_17"),
-        "trans_vector_18": (data_path /
-                            "toppar/initial_positions/trans_vector_18"),
-        "trans_vector_19": (data_path /
-                            "toppar/initial_positions/trans_vector_19"),
-        "trans_vector_20": (data_path /
-                            "toppar/initial_positions/trans_vector_20"),
-        "trans_vector_21": (data_path /
-                            "toppar/initial_positions/trans_vector_21"),
-        "trans_vector_22": (data_path /
-                            "toppar/initial_positions/trans_vector_22"),
-        "trans_vector_23": (data_path /
-                            "toppar/initial_positions/trans_vector_23"),
-        "trans_vector_24": (data_path /
-                            "toppar/initial_positions/trans_vector_24"),
-        "trans_vector_25": (data_path /
-                            "toppar/initial_positions/trans_vector_25"),
-        "trans_vector_26": (data_path /
-                            "toppar/initial_positions/trans_vector_26"),
-        "trans_vector_27": (data_path /
-                            "toppar/initial_positions/trans_vector_27"),
-        "trans_vector_28": (data_path /
-                            "toppar/initial_positions/trans_vector_28"),
-        "trans_vector_29": (data_path /
-                            "toppar/initial_positions/trans_vector_29"),
-        "trans_vector_30": (data_path /
-                            "toppar/initial_positions/trans_vector_30"),
-        "trans_vector_31": (data_path /
-                            "toppar/initial_positions/trans_vector_31"),
-        "trans_vector_32": (data_path /
-                            "toppar/initial_positions/trans_vector_32"),
-        "trans_vector_33": (data_path /
-                            "toppar/initial_positions/trans_vector_33"),
-        "trans_vector_34": (data_path /
-                            "toppar/initial_positions/trans_vector_34"),
-        "trans_vector_35": (data_path /
-                            "toppar/initial_positions/trans_vector_35"),
-        "trans_vector_36": (data_path /
-                            "toppar/initial_positions/trans_vector_36"),
-        "trans_vector_37": (data_path /
-                            "toppar/initial_positions/trans_vector_37"),
-        "trans_vector_38": (data_path /
-                            "toppar/initial_positions/trans_vector_38"),
-        "trans_vector_39": (data_path /
-                            "toppar/initial_positions/trans_vector_39"),
-        "trans_vector_40": (data_path /
-                            "toppar/initial_positions/trans_vector_40"),
-        "trans_vector_41": (data_path /
-                            "toppar/initial_positions/trans_vector_41"),
-        "trans_vector_42": (data_path /
-                            "toppar/initial_positions/trans_vector_42"),
-        "trans_vector_43": (data_path /
-                            "toppar/initial_positions/trans_vector_43"),
-        "trans_vector_44": (data_path /
-                            "toppar/initial_positions/trans_vector_44"),
-        "trans_vector_45": (data_path /
-                            "toppar/initial_positions/trans_vector_45"),
-        "trans_vector_46": (data_path /
-                            "toppar/initial_positions/trans_vector_46"),
-        "trans_vector_47": (data_path /
-                            "toppar/initial_positions/trans_vector_47"),
-        "trans_vector_48": (data_path /
-                            "toppar/initial_positions/trans_vector_48"),
-        "trans_vector_49": (data_path /
-                            "toppar/initial_positions/trans_vector_49"),
-        "trans_vector_50": (data_path /
-                            "toppar/initial_positions/trans_vector_50")
+        f"trans_vector_{i}": Path(data_path,
+                                  'toppar',
+                                  'initial_positions',
+                                  f'trans_vector_{i}')
+        for i in range(51)
     }
 
     TENSORS = {

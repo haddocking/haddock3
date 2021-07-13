@@ -27,20 +27,17 @@ class HaddockModule(BaseHaddockModule):
         self.patch_defaults(module_information)
 
         # Get the models generated in previous step
-        models_to_score = []
-        for p in self.previous_io.output:
-            if p.file_type == Format.PDB:
-                models_to_score.append(p)
+        models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]
 
         # Check if multiple models are provided
         if len(models_to_score) > 1:
-            self.finish_with_error("Only one model allowed in LightDock"
-                                   " sampling module")
+            _msg = "Only one model allowed in LightDock sampling module"
+            self.finish_with_error(_msg)
 
         model = models_to_score[0]
         # Check if chain IDs are present
-        segids, chains = PDBFactory.identify_chainseg(Path(model.path) /
-                                                      model.file_name)
+        _path = Path(model.path, model.file_name)
+        segids, chains = PDBFactory.identify_chainseg(_path)
         if set(segids) != set(chains):
             logger.info("No chain IDs found, using segid information")
             PDBFactory.swap_segid_chain(Path(model.path) / model.file_name,

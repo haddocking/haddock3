@@ -65,6 +65,7 @@ class Recipe:
 
 
 class Step:
+    """Represents a step to be executed in the workflow."""
 
     def __init__(self, module_name, order, course_information, working_path):
         self.module = module_name

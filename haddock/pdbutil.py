@@ -19,7 +19,10 @@ class PDBFactory:
 
     @staticmethod
     def split_ensemble(pdb_file_path):
-        """"Split a PDB file into multiple structures if different models are found"""
+        """"
+        Split a PDB file into multiple structures if different models
+            are found
+        """
         new_models = []
         abs_path = Path(pdb_file_path).resolve().parent.absolute()
         with open(pdb_file_path) as input_handler:

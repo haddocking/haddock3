@@ -48,7 +48,7 @@ else
 end if
 
 evaluate ($filename= $file)
-evaluate ($psfname= $file - ".pdb" + ".psf")
+evaluate ($psfname= $input_psf_filename)
 
 fileexist $psfname end
 evaluate ($psffileexist=$result)
@@ -60,7 +60,7 @@ if ($psffileexist eq true) then
   struc @$psfname end
 
   if ($pdbfileexist eq true) then
-    coor @@$filename 
+    coor @@$filename
 
     ! next line to remove the MAP atom defined in the DUM residue
     ! in case of use of dummy particles
@@ -146,7 +146,7 @@ if ($psffileexist eq true) then
     evaluate ($lcc = 0.0)
     evaluate ($etot = $ener)
     evaluate ($noe = $eair)
-  
+
     do (q=1.0) (all)
     @RUN:print_coorheader.cns
     coor orient end

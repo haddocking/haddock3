@@ -1,3 +1,4 @@
+"""Running CNS scripts"""
 import subprocess
 from haddock.error import CNSRunningError
 from haddock.parallel import CaptainHaddock

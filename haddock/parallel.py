@@ -11,15 +11,15 @@ class Sailor(Process):
     def __init__(self, tasks):
         super(Sailor, self).__init__()
         self.tasks = tasks
-        logger.info(f'Sailor ready with {len(self.tasks)} tasks')
+        logger.info(f"Sailor ready with {len(self.tasks)} tasks")
 
     def run(self):
         for task in self.tasks:
             task.run()
-        logger.info(f'Sailor {self.name} says: Aye, Captain!')
+        logger.info(f"Sailor {self.name} says: Aye, Captain!")
 
 
-class CaptainHaddock(object):
+class CaptainHaddock():
     """Aye, Captain"""
     def __init__(self, tasks, num_cores=0):
         try:
@@ -27,7 +27,7 @@ class CaptainHaddock(object):
             if self.num_processes < 1:
                 raise ValueError()
             if self.num_processes > cpu_count():
-                logger.warning(f'Number of cores ({self.num_processes}) larger than available.')
+                logger.warning(f"Number of cores ({self.num_processes}) larger than available.")
                 raise ValueError()
         except (ValueError, TypeError):
             logger.warning("Number of cores has not been specified or is incorrect. Using available cores.")
@@ -38,7 +38,7 @@ class CaptainHaddock(object):
         # Do not waste resources
         if self.num_tasks < self.num_processes:
             self.num_processes = self.num_tasks
-        logger.info(f'Captain commands {self.num_processes} sailors (cpu cores)')
+        logger.info(f"Captain commands {self.num_processes} sailors (cpu cores)")
 
         self.crew = []
         crew_tasks = [tasks[i::self.num_processes] for i in range(self.num_processes)]
@@ -47,10 +47,10 @@ class CaptainHaddock(object):
             sailor = Sailor(crew_tasks[i])
             self.crew.append(sailor)
 
-        logger.info(f'{self.num_tasks} tasks ready')
+        logger.info(f"{self.num_tasks} tasks ready")
 
     def drink(self):
-        """Drink up me 'earties, yo ho"""
+        """Drink up me "earties, yo ho"""
         logger.info("Oh Captain, my Captain!")
         try:
             for sailor in self.crew:
@@ -59,7 +59,7 @@ class CaptainHaddock(object):
             for sailor in self.crew:
                 sailor.join()
 
-            logger.info(f'{self.num_tasks} tasks finished')
+            logger.info(f"{self.num_tasks} tasks finished")
         except KeyboardInterrupt:
             self.mutiny()
 

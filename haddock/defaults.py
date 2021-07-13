@@ -1,27 +1,26 @@
+"""All default parameters used by the framework"""
 import os
 import multiprocessing
 from pathlib import Path
 
 
 # Locate the CNS binary
-CNS_EXE = os.getenv('HADDOCK3_CNS_EXE')
+CNS_EXE = os.getenv("HADDOCK3_CNS_EXE")
 if not CNS_EXE:
     bin_path = Path(__file__).resolve().parent.parent.absolute()
     CNS_EXE = bin_path / "bin/cns/cns_solve-1.31-UU-MacIntel.exe"
 
 # Number of cores to use
-try:
-    NUM_CORES = int(os.getenv('HADDOCK3_NUM_CORES'))
-    if not NUM_CORES:
-        NUM_CORES = multiprocessing.cpu_count()
-except ValueError:
-    NUM_CORES = multiprocessing.cpu_count()
+NUM_CORES = int(os.getenv("HADDOCK3_NUM_CORES", multiprocessing.cpu_count()))
 
 # Module input and generated data will be stored in folder starting by this prefix
 MODULE_PATH_NAME = "step_"
 
 # Default name for exchange module information file
-MODULE_IO_FILE = "io.toml"
+MODULE_IO_FILE = "io.json"
+
+# Topology got a first-class treatment concerning folder structure
+TOPOLOGY_PATH = "topology"
 
 # Temptative number of max allowed number of modules to execute
 MAX_NUM_MODULES = 10000
@@ -29,7 +28,7 @@ MAX_NUM_MODULES = 10000
 
 class Default:
 
-    data_path = Path(__file__).resolve().parent.absolute() / 'data'
+    data_path = Path(__file__).resolve().parent.absolute() / "data"
 
     PARAMETERS_FILE = data_path / "toppar/haddock.param"
 

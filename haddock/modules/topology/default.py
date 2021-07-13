@@ -56,12 +56,19 @@ class HaddockModule(BaseHaddockModule):
                 PDBFactory.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topology_filename = generate_topology(model, self.path, self.recipe_str, self.defaults)
-                logger.info(f"Topology CNS input created in {topology_filename}")
+                topology_filename = generate_topology(model,
+                                                      self.path,
+                                                      self.recipe_str,
+                                                      self.defaults)
+                logger.info("Topology CNS input created in"
+                            f" {topology_filename}")
 
                 # Add new job to the pool
-                output_filename = model.resolve().parent.absolute() / f"{model.stem}.{Format.CNS_OUTPUT}"
-                jobs.append(CNSJob(topology_filename, output_filename, cns_folder=self.cns_folder_path))
+                output_filename = (model.resolve().parent.absolute()
+                                   / f"{model.stem}.{Format.CNS_OUTPUT}")
+                jobs.append(CNSJob(topology_filename,
+                                   output_filename,
+                                   cns_folder=self.cns_folder_path))
 
             # Run CNS engine
             logger.info(f"Running CNS engine with {len(jobs)} jobs")
@@ -69,20 +76,30 @@ class HaddockModule(BaseHaddockModule):
             engine.run()
             logger.info("CNS engine has finished")
 
-            # Check for generated output, fail it not all expected files are found
+            # Check for generated output, fail it not all expected files
+            #  are found
             expected = []
             not_found = []
             for model in models:
                 model_name = model.stem
-                if not (processed_pdb := self.path / f"{model_name}_haddock.{Format.PDB}").is_file():
+                processed_pdb = (self.path /
+                                 f"{model_name}_haddock.{Format.PDB}")
+                if not processed_pdb.is_file():
                     not_found.append(processed_pdb.name)
-                if not (processed_topology := self.path / f"{model_name}_haddock.{Format.TOPOLOGY}").is_file():
+                processed_topology = (self.path /
+                                      f"{model_name}_haddock"
+                                      f".{Format.TOPOLOGY}")
+                if not processed_topology.is_file():
                     not_found.append(processed_topology.name)
-                topology = TopologyFile(processed_topology, path=(self.path / TOPOLOGY_PATH))
+                topology = TopologyFile(processed_topology,
+                                        path=(self.path / TOPOLOGY_PATH))
                 expected.append(topology)
-                expected.append(PDBFile(processed_pdb, topology, path=(self.path / TOPOLOGY_PATH)))
+                expected.append(PDBFile(processed_pdb,
+                                        topology,
+                                        path=(self.path / TOPOLOGY_PATH)))
             if not_found:
-                self.finish_with_error(f"Several files were not generated: {not_found}")
+                self.finish_with_error("Several files were not generated:"
+                                       f" {not_found}")
 
             # Save module information
             io = ModuleIO()

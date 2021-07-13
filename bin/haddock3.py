@@ -5,7 +5,7 @@ import logging
 import sys
 from haddock.version import CURRENT_VERSION
 from haddock.cli import greeting, adieu
-from haddock.cooking import Chef
+from haddock.workflow import WorkflowManager
 from haddock.error import HaddockError
 
 
@@ -30,7 +30,8 @@ def main(args=None):
                         help="The input recipe file name")
     # Version
     parser.add_argument("-V", "-v", "--version", help="show version",
-                        action="version", version="%s %s" % (parser.prog, CURRENT_VERSION))
+                        action="version",
+                        version="%s %s" % (parser.prog, CURRENT_VERSION))
 
     # Special case only using print instead of logging
     options = parser.parse_args()
@@ -39,15 +40,17 @@ def main(args=None):
 
     # Configuring logging
     logging.basicConfig(level=options.log_level,
-                        format="[%(asctime)s] %(levelname)s - %(name)s: %(message)s",
+                        format=("[%(asctime)s] %(levelname)s - "
+                                "%(name)s: %(message)s"),
                         datefmt="%d/%m/%Y %H:%M:%S")
 
     try:
         # Let the chef work
-        chef = Chef(recipe_path=options.recipe.name, start=options.restart)
+        workflow = WorkflowManager(recipe_path=options.recipe.name,
+                                   start=options.restart)
 
         # Main loop of execution
-        chef.cook()
+        workflow.run()
 
     except HaddockError as he:
         logging.error(he)

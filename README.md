@@ -1,5 +1,11 @@
-# HADDOCK3
 
+# WARNING: This is not the stable branch
+
+Please go to the `alpha1` or the release page.
+
+* * *
+
+# HADDOCK3
 ## 1. Installation
 
 * Clone this repository:

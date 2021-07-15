@@ -1,7 +1,7 @@
 
-# WARNING: This is not the stable branch
+# WARNING: The `main` branch is not production-ready
 
-Please go to the `alpha1` or the release page.
+The `main` branch is a prototype of newly refined architecture and it does not yet contain the functionalities we have reported previously. For a running version of HADDOCK3 please refer to the `alpha1` or the release page. However, we won't develop `alpha1` further. Stay tuned for new updates on the `main` branch as we are activily working on it. Cheers!
 
 * * *
 

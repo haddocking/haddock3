@@ -8,7 +8,7 @@ order = ["topology", "scoring.1", "scoring.2"]
 
 #####################################################################-1
 [stage.topology]
-flavour = "default"
+mode = "default"
 autohis = true
 
 # Definition of the input molecules:
@@ -18,10 +18,10 @@ file = "structure.pdb"
 
 #####################################################################-2
 [stage.scoring.1]
-flavour = ""
+mode = ""
 steps = 50
 
 #####################################################################-3
 [stage.scoring.2]
-flavour = ""
+mode = ""
 steps = 100

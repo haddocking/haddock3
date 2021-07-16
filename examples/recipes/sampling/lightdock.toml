@@ -8,7 +8,7 @@ order = ["topology", "sampling", "scoring"]
 
 #####################################################################-1
 [stage.topology]
-flavour = "default"
+mode = "default"
 autohis = true
 
 # Definition of the input molecules:
@@ -18,7 +18,7 @@ file = "2oob.pdb"
 
 #####################################################################-2
 [stage.sampling]
-flavour = "lightdock"
+mode = "lightdock"
 receptor_chains = "A"
 ligand_chains = "B"
 scoring = "fastdfire"
@@ -32,4 +32,4 @@ noh = true
 
 #####################################################################-3
 [stage.scoring]
-flavour = ""
+mode = ""

@@ -8,7 +8,7 @@ order = ["topology", "scoring", "clustering", "analysis"]
 
 #####################################################################-1
 [stage.topology]
-flavour = "default"
+mode = "default"
 autohis = true
 
 # Definition of the input molecules:
@@ -19,7 +19,7 @@ segid = ""
 
 #####################################################################-2
 [stage.scoring]
-flavour = ""
+mode = ""
 
 #####################################################################-3
 [stage.clustering]

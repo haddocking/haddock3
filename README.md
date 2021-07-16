@@ -27,12 +27,14 @@ cd haddock3
 virtualenv-3.8 venv
 source venv/bin/activate
 pip install -r requirements.txt
+python setup.py develop --no-deps
 ```
 
 #### with `conda`
 ```bash
 conda env create -f requirements.yml
 conda activate haddock3
+python setup.py develop --no-deps
 ```
 
 ### 1.3 Copy CNS binary to the expected path:
@@ -43,7 +45,7 @@ mkdir -p bin/cns
 # on mac
 ls -s bin/cns/cns /PATH/TO/cns_solve-1.31-UU-MacIntel.exe
 
-# on linux
+# on linux, adapt the file name if needed
 ls -s bin/cns/cns /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe
 ```
 
@@ -69,5 +71,5 @@ source bin/activate_haddock
 
 ```bash
 cd examples/recipes/scoring/
-haddock3.py scoring.toml
+haddock3 scoring.toml
 ```

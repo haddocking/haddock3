@@ -11,4 +11,3 @@ dependencies:
     - pip:
         - pdb-tools
         - lightdock
-        - libfuncpy

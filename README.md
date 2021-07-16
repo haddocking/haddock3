@@ -50,8 +50,14 @@ ls -s bin/cns/cns /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-200
 ### 1.4 Activate environment variables
 
 Edit the file `bin/activate_haddock` and change the value in
-`HADDOCK3_NUM_CORES` variable to the number of cores `haddock3` will
-use. Save and exit. Source the file:
+`HADDOCK3_NUM_CORES` variable to the number of CPU cores you wish
+`haddock3` to use. For example, to use 4 cores:
+
+```bash
+export HADDOCK3_NUM_CORES=4
+```
+
+Save and exit. Source the file:
 
 ```bash
 source bin/activate_haddock

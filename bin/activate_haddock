@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export HADDOCK3_NUM_CORES=4
 export HADDOCKPATH=`pwd`
 export PYTHONPATH=$PYTHONPATH:$HADDOCKPATH
 export PATH=$PATH:$HADDOCKPATH/bin
+export HADDOCK3_CNS_EXE="${HADDOCKPATH}/bin/cns/cns"

@@ -1,0 +1,13 @@
+name: haddock3
+channels:
+    - conda-forge
+    - defaults
+dependencies:
+    - python==3.8
+    - pip
+    - numpy
+    - toml
+    - jsonpickle
+    - pip:
+        - pdb-tools
+        - lightdock

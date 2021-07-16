@@ -36,7 +36,6 @@ class Default:
     TOPOLOGY_FILE = data_path / "toppar/haddock.top"
 
     LINK_FILE = data_path / "toppar/protein-allhdg5-4-noter.link"
-    print(Path(data_path))
 
     TRANSLATION_VECTORS = {}
     for i in range(51):

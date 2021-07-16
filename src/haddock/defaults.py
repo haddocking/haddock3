@@ -39,7 +39,7 @@ class Default:
 
     TRANSLATION_VECTORS = {}
     for i in range(51):
-        _s = f"trans_vector_{i}"
+        _s = f'trans_vector_{i}'
         _p = Path(data_path, 'toppar', 'initial_positions', _s)
         TRANSLATION_VECTORS[_s] = _p
 

@@ -37,13 +37,11 @@ class Default:
 
     LINK_FILE = data_path / "toppar/protein-allhdg5-4-noter.link"
 
-    TRANSLATION_VECTORS = {
-        f"trans_vector_{i}": Path(data_path,
-                                  'toppar',
-                                  'initial_positions',
-                                  f'trans_vector_{i}')
-        for i in range(51)
-    }
+    TRANSLATION_VECTORS = {}
+    for i in range(51):
+        _s = f'trans_vector_{i}'
+        _p = Path(data_path, 'toppar', 'initial_positions', _s)
+        TRANSLATION_VECTORS[_s] = _p
 
     TENSORS = {
         "tensor_psf": data_path / "toppar/tensor.psf",

@@ -41,10 +41,10 @@ conda activate haddock3
 mkdir -p bin/cns
 
 # on mac
-ls -s bin/cns/cns /PATH/TO/cns_solve-1.31-UU-MacIntel.exe
+ls -s bin/cns /PATH/TO/cns_solve-1.31-UU-MacIntel.exe
 
 # on linux
-ls -s bin/cns/cns /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe
+ls -s bin/cns /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe
 ```
 
 ### 1.4 Activate environment variables

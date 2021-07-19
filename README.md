@@ -1,4 +1,3 @@
-
 # WARNING: The `main` branch is not production-ready
 
 The `main` branch is a prototype of newly refined architecture and it
@@ -64,6 +63,21 @@ Save and exit. Source the file:
 ```bash
 source bin/activate_haddock
 ```
+
+You need to `source bin/activate_haddock` at each new terminal window
+you wish to use `haddock3`.
+
+### 1.5 Keep up to date
+
+In the `github` folder of `haddock3` run:
+
+```bash
+git pull
+```
+
+This will pull the latest changes to your local folder and because you
+installed `haddock3` with the option `develop` those changes become
+available immediately.
 
 ## 2. Examples
 

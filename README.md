@@ -1,4 +1,3 @@
-
 # WARNING: The `main` branch is not production-ready
 
 The `main` branch is a prototype of newly refined architecture and it
@@ -27,12 +26,14 @@ cd haddock3
 virtualenv-3.8 venv
 source venv/bin/activate
 pip install -r requirements.txt
+python setup.py develop --no-deps
 ```
 
 #### with `conda`
 ```bash
 conda env create -f requirements.yml
 conda activate haddock3
+python setup.py develop --no-deps
 ```
 
 ### 1.3 Copy CNS binary to the expected path:
@@ -63,11 +64,26 @@ Save and exit. Source the file:
 source bin/activate_haddock
 ```
 
+You need to `source bin/activate_haddock` at each new terminal window
+you wish to use `haddock3`.
+
+### 1.5 Keep up to date
+
+In the `github` folder of `haddock3` run:
+
+```bash
+git pull
+```
+
+This will pull the latest changes to your local folder and because you
+installed `haddock3` with the option `develop` those changes become
+available immediately.
+
 ## 2. Examples
 
 ### 2.1. Basic scoring of an ensemble of 5 structures:
 
 ```bash
 cd examples/recipes/scoring/
-haddock3.py scoring.toml
+haddock3 scoring.toml
 ```

@@ -10,12 +10,6 @@ from haddock.modules import working_directory
 from haddock.libs.libutil import get_result_or_same_in_list
 
 
-
-def split_ensemble(lines):
-    """."""
-    models = pdb_splitmodel.run(lines)
-
-
 class PDBFactory:
     """A factory class to deal with PDB logic"""
 

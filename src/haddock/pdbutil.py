@@ -30,7 +30,6 @@ class PDBFactory:
         Split a PDB file into multiple structures if different models
             are found
         """
-        new_models = []
         abs_path = Path(pdb_file_path).resolve().parent.absolute()
         with open(pdb_file_path) as input_handler:
             with working_directory(abs_path):
@@ -41,7 +40,6 @@ class PDBFactory:
     @staticmethod
     def split_by_chain(pdb_file_path):
         """"Split a PDB file into multiple structures for each chain"""
-        new_models = []
         abs_path = Path(pdb_file_path).resolve().parent.absolute()
         with open(pdb_file_path) as input_handler:
             with working_directory(abs_path):

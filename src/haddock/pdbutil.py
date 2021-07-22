@@ -7,6 +7,7 @@ from pdbtools.pdb_splitchain import split_chain
 from pdbtools.pdb_tidy import tidy_pdbfile
 from haddock.data.topology import Topology
 from haddock.modules import working_directory
+from haddock.libs.libutil import get_result_or_same_in_list
 
 
 class PDBFactory:
@@ -23,34 +24,22 @@ class PDBFactory:
         Split a PDB file into multiple structures if different models
             are found
         """
-        new_models = []
         abs_path = Path(pdb_file_path).resolve().parent.absolute()
         with open(pdb_file_path) as input_handler:
             with working_directory(abs_path):
                 split_model(input_handler)
 
-        basename = Path(pdb_file_path)
-        new_models = list(abs_path.glob(f"{basename.stem}_*{basename.suffix}"))
-        if not new_models:
-            # No new models found after split, return itself
-            new_models.append(pdb_file_path)
-        return new_models
+        return get_new_models(pdb_file_path)
 
     @staticmethod
     def split_by_chain(pdb_file_path):
         """"Split a PDB file into multiple structures for each chain"""
-        new_models = []
         abs_path = Path(pdb_file_path).resolve().parent.absolute()
         with open(pdb_file_path) as input_handler:
             with working_directory(abs_path):
                 split_chain(input_handler)
 
-        basename = Path(pdb_file_path)
-        new_models = list(abs_path.glob(f"{basename.stem}_*{basename.suffix}"))
-        if not new_models:
-            # No new models found after split, single structure PDB file
-            new_models.append(pdb_file_path)
-        return new_models
+        return get_new_models(pdb_file_path)
 
     @staticmethod
     def tidy(pdb_file_path, new_pdb_file_path):
@@ -129,3 +118,44 @@ class PDBFactory:
         segids = sorted(list(set(segids)))
         chains = sorted(list(set(chains)))
         return segids, chains
+
+
+def get_new_models(pdb_file_path):
+    """
+    Get new PDB models if they exist.
+
+    If no new models are found, return the original path within a list.
+    """
+    new_models = get_result_or_same_in_list(
+        get_pdb_file_suffix_variations,
+        pdb_file_path,
+        )
+    return new_models
+
+
+def get_pdb_file_suffix_variations(pdb_file_path, sep="_"):
+    """
+    List suffix variations of a PDB file.
+
+    If `file.pdb` is given, and files `file_1.pdb`, `file_2.pdb`, exist
+    in the folder, those will be listed.
+
+    Parameters
+    ----------
+    pdb_file_path : str or Path
+        The path to the source PDB file. The source PDB file does not
+        need to exist and it can be just a reference name.
+
+    sep : str
+        The separation between the file base name and the suffix.
+        Defaults to "_".
+
+    Returns
+    -------
+    list
+        List of Paths with the identified PBD files.
+        If no files are found return an empty list.
+    """
+    basename = Path(pdb_file_path)
+    abs_path = basename.resolve().parent
+    return list(abs_path.glob(f"{basename.stem}{sep}*{basename.suffix}"))

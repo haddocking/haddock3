@@ -10,11 +10,10 @@ logger = logging.getLogger(__name__)
 CNS_EXE = os.getenv("HADDOCK3_CNS_EXE")
 if not CNS_EXE:
     bin_path = Path(__file__).resolve().parent.parent.parent.absolute()
-    CNS_EXE = bin_path / "bin/cn"
+    CNS_EXE = bin_path / "bin" / "cns"
     if not CNS_EXE.exists():
         logger.error('HADDOCK3_CNS_EXE not defined and bin/cns not found')
         sys.exit()
-
 
 # Number of cores to use
 NUM_CORES = int(os.getenv("HADDOCK3_NUM_CORES", multiprocessing.cpu_count()))

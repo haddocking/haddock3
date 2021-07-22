@@ -39,13 +39,13 @@ python setup.py develop --no-deps
 ### 1.3 Copy CNS binary to the expected path:
 
 ```bash
-mkdir -p bin/cns
+mkdir -p bin/
 
 # on mac
-ls -s bin/cns /PATH/TO/cns_solve-1.31-UU-MacIntel.exe
+ls -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns 
 
 # on linux
-ls -s bin/cns /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe
+ls -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns 
 ```
 
 ### 1.4 Activate environment variables

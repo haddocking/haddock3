@@ -6,7 +6,8 @@ import sys
 from haddock.version import CURRENT_VERSION
 from haddock.cli import greeting, adieu
 from haddock.workflow import WorkflowManager
-from haddock.error import HaddockError
+from haddock.setup import Setup
+from haddock.error import HaddockError, SetupError
 
 
 def main(args=None):
@@ -40,13 +41,19 @@ def main(args=None):
 
     # Configuring logging
     logging.basicConfig(level=options.log_level,
-                        format=("[%(asctime)s] %(levelname)s - "
-                                "%(name)s: %(message)s"),
-                        datefmt="%d/%m/%Y %H:%M:%S")
+                        format=("[%(asctime)s] %(name)s:L%(lineno)d"
+                                " %(levelname)s - %(message)s"))
 
     try:
-        # Let the chef work
-        workflow = WorkflowManager(recipe_path=options.recipe.name,
+        setup = Setup(workflow_f=options.recipe.name)
+        params = setup.validate()
+
+    except SetupError as se:
+        logging.error(se)
+        sys.exit()
+
+    try:
+        workflow = WorkflowManager(workflow_params=params,
                                    start=options.restart)
 
         # Main loop of execution

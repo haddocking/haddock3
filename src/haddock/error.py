@@ -9,7 +9,7 @@ class ConfigurationError(HaddockError):
     pass
 
 
-class RecipeError(HaddockError):
+class StepError(HaddockError):
     pass
 
 
@@ -18,4 +18,8 @@ class CNSRunningError(HaddockError):
 
 
 class HaddockModuleError(HaddockError):
+    pass
+
+
+class SetupError(HaddockError):
     pass

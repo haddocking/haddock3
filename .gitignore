@@ -129,13 +129,13 @@ dmypy.json
 .pyre/
 
 .DS_Store
+# vim
+tags
+.vim
+
 
 ## Specific to this project
 bin/cns
 # ignore generated data of the examples
-examples/recipes/scoring/step_1
-examples/recipes/scoring/topology
+examples/scoring/run1
 
-# vim
-tags
-.vim

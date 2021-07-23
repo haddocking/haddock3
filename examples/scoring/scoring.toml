@@ -1,27 +1,29 @@
-# Recipe: Full scoring example with HADDOCK
+# ====================================================================
+# Scoring example
 
-# A recipe is composed by different stages which are executed in 
-# by index in the order field:
+[input]
+# in which order the steps must be executed?
 order = ["topology", "scoring", "clustering", "analysis"]
 
-[stage]
+# directory in which the scoring will be done
+project_dir = "run1"
 
-#####################################################################-1
+# ensemble to be scored
+[input.molecules]
+mol_1 = "T161-rescoring-5.pdb"
+
+# ====================================================================
+[stage]
+# Parameters for each stage are defined below
+
+########################
 [stage.topology]
-mode = "default"
 autohis = true
 
-# Definition of the input molecules:
-[[stage.topology.molecules]]
-[[stage.topology.molecules.1]]
-file = "T161-rescoring-5.pdb"
-segid = ""
-
-#####################################################################-2
+########################
 [stage.scoring]
-mode = ""
 
-#####################################################################-3
+########################
 [stage.clustering]
 method = "fcc"
 details = false
@@ -32,9 +34,9 @@ params = [
     [0.70, 4.0],
     [0.75, 4.0]
 ]
-
-#####################################################################-4
+########################
 [stage.analysis]
-[[stage.analysis.reference]]
-file = "capri_48_161.brk"
+template = "capri_48_161.brk"
+reference = ""
 analysis  = "lowest"
+# ====================================================================

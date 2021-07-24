@@ -3,10 +3,10 @@
 
 [input]
 # in which order the steps must be executed?
-order = ["topology", "scoring", "clustering", "analysis"]
+order = ["topology", "scoring"]
 
 # directory in which the scoring will be done
-project_dir = "run1"
+project_dir = "run_simple_scoring"
 
 # ensemble to be scored
 [input.molecules]
@@ -22,21 +22,3 @@ autohis = true
 
 ########################
 [stage.scoring]
-
-########################
-[stage.clustering]
-method = "fcc"
-details = false
-
-# Cutoff and Threshold
-params = [
-    [0.60, 4.0],
-    [0.70, 4.0],
-    [0.75, 4.0]
-]
-########################
-[stage.analysis]
-template = "capri_48_161.brk"
-reference = ""
-analysis  = "lowest"
-# ====================================================================

@@ -6,7 +6,7 @@ import sys
 from haddock.version import CURRENT_VERSION
 from haddock.cli import greeting, adieu
 from haddock.workflow import WorkflowManager
-from haddock.setup import setup_run
+from haddock.gear.prepare_run import setup_run
 from haddock.error import HaddockError, ConfigurationError
 
 

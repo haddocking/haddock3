@@ -1,3 +1,4 @@
+"""Logic pertraining to preparing the run files and folders."""
 import copy
 import logging
 import shutil

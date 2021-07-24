@@ -1,71 +1,98 @@
-import toml
-import shutil
 import copy
-from pathlib import Path
-from haddock.error import SetupError
 import logging
+import shutil
+from pathlib import Path
+
+import toml
+
+from haddock import modules_folder
+from haddock.error import ConfigurationError
+
 
 logger = logging.getLogger(__name__)
 
 
-class Setup:
-    """Sets up the folder structure for the simulation."""
+def setup_run(workflow_path):
+    """Setup run."""
+    params = toml.load(workflow_path)
 
-    def __init__(self, workflow_f):
-        self.params = toml.load(workflow_f)
+    validate_params(params)
+    convert_params_to_path(params)
+    remove_folder(params['input']['project_dir'])
+    create_begin_files(params)
 
-    def validate(self):
-        # ====
-        # Major validation function
-        # ===
+    return params
 
-        # check if steps are valid
-        module_directory = Path(__file__).parent / 'modules'
-        if 'order' not in self.params['input']:
-            raise SetupError("Workflow does not specify the"
-                             " order of execution")
 
-        steps = copy.deepcopy(self.params['input']['order'])
-        for step in steps:
-            module_loc = module_directory / step / 'default.py'
-            if not module_loc.exists():
-                logger.warning(f'Module {step} is not valid, it will'
-                               ' be EXCLUDED from execution')
-                self.params['input']['order'].remove(step)
+def validate_params(params):
+    order_exists(params)
+    validate_modules(params)
+    validate_params(params)
 
-        try:
-            params = self._create_folder_structure()
-        except SetupError as se:
-            logger.error(se)
 
-        return params
+def order_exists(params):
+    """Confirms order key exists in config."""
+    try:
+        if 'order' not in params['input']:
+            _msg = (
+                "Workflow does not specify the execution 'order'. "
+                "Please refer to DOCUMENTATION-LINK for more information.")
+            raise ConfigurationError(_msg)
+    except KeyError:
+        _msg = (
+            "Config file should have an 'input' section"
+            "Please refer to DOCUMENTATION-LINK for more information.")
+        raise ConfigurationError(_msg)
+    return
 
-    def _create_folder_structure(self):
 
-        params = copy.deepcopy(self.params)
-        input_params = params['input']
-        project_dir = Path(input_params['project_dir'])
-        input_params['project_dir'] = project_dir.absolute()
+def validate_modules(params):
+    """Validate modules."""
+    for step in params['input']['order']:
+        module_loc = modules_folder / step
+        if not module_loc.exists():
+            _msg = (
+                "Module {step} not found in HADDOCK3 library. "
+                "Please refer to the list of available modules at: "
+                "DOCUMENTATION-LINK"
+                )
+            raise ConfigurationError(_msg)
 
-        data_dir = project_dir / 'data'
-        begin_dir = project_dir / 'begin'
 
-        if project_dir.exists():
-            logger.warning('This code is not production ready')
-            logger.warning(f'{project_dir} exists, it will be REMOVED')
-            shutil.rmtree(project_dir)
+def convert_params_to_path(params):
+    """Convert parameters to path."""
+    input_params = params['input']
+    project_dir = Path(input_params['project_dir'])
+    input_params['project_dir'] = project_dir.resolve()
 
-        project_dir.mkdir()
-        begin_dir.mkdir()
-        data_dir.mkdir()
+    for mol_id, file_name in input_params['molecules'].keys():
+        file_path = Path(file_name)
+        input_params['molecules'][mol_id] = file_path
 
-        for mol_identifier in input_params['molecules']:
-            input_mol = Path(input_params['molecules'][mol_identifier])
-            shutil.copy(input_mol, data_dir)
+    return
 
-            begin_mol = (begin_dir / f'{mol_identifier}.pdb').absolute()
-            shutil.copy(input_mol, begin_mol)
 
-            input_params['molecules'][mol_identifier] = begin_mol
+def remove_folder(folder):
+    """."""
+    if folder.exists():
+        logger.warning(f'{folder} exists and it will be REMOVED!')
+        shutil.rmtree(folder)
 
-        return params
+
+def create_begin_files(params):
+    """."""
+    project_dir = params['input']['project_dir']
+    data_dir = project_dir / 'data'
+    begin_dir = project_dir / 'begin'
+
+    project_dir.mkdir()
+    begin_dir.mkdir()
+    data_dir.mkdir()
+
+    for mol_id, mol_path in input_params['molecules'].keys():
+        shutil.copy(mol_path, data_dir)
+
+        begin_mol = (begin_dir / f'{mol_id}.pdb').resolve()
+        shutil.copy(mol_path, begin_mol)
+
+        input_params['molecules'][mol_id] = begin_mol

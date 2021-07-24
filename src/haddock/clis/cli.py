@@ -46,8 +46,6 @@ def main(args=None):
 
     try:
         params = setup_run(options.recipe.name)
-        #setup = Setup(workflow_f=options.recipe.name)
-        #params = setup.validate()
 
     except ConfigurationError as se:
         logging.error(se)

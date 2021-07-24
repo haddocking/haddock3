@@ -129,6 +129,7 @@ dmypy.json
 .pyre/
 
 .DS_Store
+
 # vim
 tags
 .vim
@@ -137,5 +138,5 @@ tags
 ## Specific to this project
 bin/cns
 # ignore generated data of the examples
-examples/scoring/run1
+examples/*/run*
 

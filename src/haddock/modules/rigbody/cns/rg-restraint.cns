@@ -1,0 +1,16 @@
+! rg-restraint.cns
+!    Define the radius of gyration restraint
+!
+! ***********************************************************************
+! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+collapse
+  force  $Data.krg
+  target $Data.rgtarg
+  sele   ($Data.rgsele)
+end

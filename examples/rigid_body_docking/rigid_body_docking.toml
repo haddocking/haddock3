@@ -1,0 +1,30 @@
+# ====================================================================
+# Rigid-body docking example
+
+[input]
+# in which order the steps must be executed?
+order = ["topology", "rigbody"]
+
+# directory in which the scoring will be done
+project_dir = "run1"
+
+# ensemble to be scored
+[input.molecules]
+mol_1 = "1a2k_l_u.pdb"
+mol_2 = "1a2k_r_u.pdb"
+
+# ====================================================================
+[stage]
+# Parameters for each stage are defined below
+
+########################
+[stage.topology]
+autohis = true
+
+########################
+[stage.rigbody]
+ambig = 'ambig.tbl'
+sampling = 2
+
+# ====================================================================
+

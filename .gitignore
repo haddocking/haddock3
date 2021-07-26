@@ -130,12 +130,13 @@ dmypy.json
 
 .DS_Store
 
-## Specific to this project
-bin/cns
-# ignore generated data of the examples
-examples/recipes/scoring/step_1
-examples/recipes/scoring/topology
-
 # vim
 tags
 .vim
+
+
+## Specific to this project
+bin/cns
+# ignore generated data of the examples
+examples/*/run*
+

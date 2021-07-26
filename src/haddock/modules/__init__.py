@@ -4,7 +4,7 @@ import logging
 import contextlib
 from pathlib import Path
 import toml
-from haddock.error import RecipeError
+from haddock.error import StepError
 from haddock.ontology import ModuleIO
 from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
 
@@ -20,22 +20,24 @@ class BaseHaddockModule:
 
         if cns_script:
             self.cns_folder_path = cns_script.resolve().parent.absolute()
-            self.cns_recipe_path = cns_script
+            self.cns_protocol_path = cns_script
         if defaults:
             self.defaults_path = defaults
 
         try:
-            with open(self.cns_recipe_path) as input_handler:
+            with open(self.cns_protocol_path) as input_handler:
                 self.recipe_str = input_handler.read()
         except FileNotFoundError:
-            raise RecipeError(f"Error while opening recipe {self.cns_recipe_path}")
+            _msg = f"Error while opening workflow {self.cns_protocol_path}"
+            raise StepError(_msg)
         except AttributeError:
             # No CNS-like module
             pass
         try:
             self.defaults = toml.load(self.defaults_path)
         except FileNotFoundError:
-            raise RecipeError(f"Error while opening defaults {self.defaults_path}")
+            _msg = f"Error while opening defaults {self.defaults_path}"
+            raise StepError(_msg)
         except AttributeError:
             # No CNS-like module
             pass
@@ -61,7 +63,8 @@ class BaseHaddockModule:
 
     def previous_path(self):
         if self.order > 1:
-            return self.path.resolve().parent.absolute() / f"{MODULE_PATH_NAME}{self.order-1}"
+            return (self.path.resolve().parent.absolute() /
+                    f"{MODULE_PATH_NAME}{self.order-1}")
         if self.order == 1:
             return self.path.resolve().parent.absolute() / TOPOLOGY_PATH
 

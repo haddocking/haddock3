@@ -43,7 +43,8 @@ def generate_scoring(model, course_path, recipe_str, defaults):
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path):
+    def __init__(self, stream, order, path):
+        self.stream = stream
         recipe_path = Path(__file__).resolve().parent.absolute()
         cns_script = recipe_path / "cns" / "scoring.cns"
         defaults = recipe_path / "cns" / "scoring.toml"
@@ -65,9 +66,12 @@ class HaddockModule(BaseHaddockModule):
                                                 self.defaults)
             output_filename = (self.path /
                                f"{Path(model.file_name).stem}_scoring.out")
-            jobs.append(CNSJob(scoring_filename,
-                               output_filename,
-                               cns_folder=self.cns_folder_path))
+
+            job = CNSJob(scoring_filename,
+                         output_filename,
+                         cns_folder=self.cns_folder_path)
+
+            jobs.append(job)
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")

@@ -1,0 +1,24 @@
+# ====================================================================
+# Scoring example
+
+[input]
+# in which order the steps must be executed?
+order = ["topology", "scoring"]
+
+# directory in which the scoring will be done
+project_dir = "run_simple_scoring"
+
+# ensemble to be scored
+[input.molecules]
+mol_1 = "T161-rescoring-5.pdb"
+
+# ====================================================================
+[stage]
+# Parameters for each stage are defined below
+
+########################
+[stage.topology]
+autohis = true
+
+########################
+[stage.scoring]

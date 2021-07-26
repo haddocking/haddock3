@@ -6,8 +6,8 @@ import sys
 from haddock.version import CURRENT_VERSION
 from haddock.cli import greeting, adieu
 from haddock.workflow import WorkflowManager
-from haddock.setup import Setup
-from haddock.error import HaddockError, SetupError
+from haddock.gear.prepare_run import setup_run
+from haddock.error import HaddockError, ConfigurationError
 
 
 def main(args=None):
@@ -45,10 +45,9 @@ def main(args=None):
                                 " %(levelname)s - %(message)s"))
 
     try:
-        setup = Setup(workflow_f=options.recipe.name)
-        params = setup.validate()
+        params = setup_run(options.recipe.name)
 
-    except SetupError as se:
+    except ConfigurationError as se:
         logging.error(se)
         sys.exit()
 

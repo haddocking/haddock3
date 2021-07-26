@@ -13,8 +13,6 @@ class WorkflowManager:
     """The WorkflowManager reads the workflow and executes them."""
     def __init__(self, workflow_params, start=0):
         self.start = start
-        # Save current working path
-        self.cwd = workflow_params['input']['project_dir']
         # Create a workflow from a TOML file
         self.recipe = Workflow(workflow_params)
 

@@ -3,7 +3,7 @@
 
 [input]
 # in which order the steps must be executed?
-order = ["topology", "rigbody"]
+order = ["topology", "rigidbody"]
 
 # directory in which the scoring will be done
 project_dir = "run1"
@@ -22,7 +22,7 @@ mol_2 = "1a2k_r_u.pdb"
 autohis = true
 
 ########################
-[stage.rigbody]
+[stage.rigidbody]
 ambig = 'ambig.tbl'
 sampling = 2
 

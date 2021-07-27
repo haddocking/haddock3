@@ -36,7 +36,7 @@ def generate_docking(identifier, input_files, step_path, recipe_str, defaults):
 
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
-    output_pdb_filename = step_path / f'rigbody_{identifier}.pdb'
+    output_pdb_filename = step_path / f'rigidbody_{identifier}.pdb'
     output = f"{linesep}! Output structure{linesep}"
     # output += (f"eval ($input_psf_filename="
     #            f" \"{input_psf_filename}\"){linesep}")
@@ -45,7 +45,7 @@ def generate_docking(identifier, input_files, step_path, recipe_str, defaults):
     inp = default_params + param + top + input_str + output \
         + topology_protonation + recipe_str
 
-    inp_file = step_path / f'rigbody_{identifier}.inp'
+    inp_file = step_path / f'rigidbody_{identifier}.inp'
     with open(inp_file, 'w') as fh:
         fh.write(inp)
 
@@ -57,12 +57,12 @@ class HaddockModule(BaseHaddockModule):
     def __init__(self, stream, order, path):
         self.stream = stream
         recipe_path = Path(__file__).resolve().parent.absolute()
-        cns_script = recipe_path / "cns" / "rigbody.cns"
-        defaults = recipe_path / "cns" / "rigbody.toml"
+        cns_script = recipe_path / "cns" / "rigidbody.cns"
+        defaults = recipe_path / "cns" / "rigidbody.toml"
         super().__init__(order, path, cns_script, defaults)
 
     def run(self, module_information):
-        logger.info("Running [rigbody] module")
+        logger.info("Running [rigidbody] module")
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -79,8 +79,8 @@ class HaddockModule(BaseHaddockModule):
                                         self.recipe_str,
                                         self.defaults)
 
-            out_file = self.path / f"rigbody_{idx}.out"
-            structure_file = self.path / f"rigbody_{idx}.pdb"
+            out_file = self.path / f"rigidbody_{idx}.out"
+            structure_file = self.path / f"rigidbody_{idx}.pdb"
             structure_list.append(structure_file)
 
             job = CNSJob(inp_file, out_file, cns_folder=self.cns_folder_path)

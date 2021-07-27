@@ -6,12 +6,42 @@ from haddock.modules import BaseHaddockModule
 from haddock.structure import Molecule
 from haddock.pdbutil import PDBFactory
 from haddock.cns.engine import CNSJob, CNSEngine
-from haddock.cns.util import generate_topology
+from haddock.cns.util import (load_workflow_params, generate_default_header,
+                              prepare_output, prepare_single_input)
 from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
 from haddock.error import StepError
 from haddock.defaults import TOPOLOGY_PATH
 
 logger = logging.getLogger(__name__)
+
+
+def generate_topology(input_pdb, step_path, recipe_str, defaults,
+                      protonation=None):
+    """Generate a HADDOCK topology file from input_pdb"""
+    general_param = load_workflow_params(defaults)
+
+    param, top, link, topology_protonation, \
+        trans_vec, tensor, scatter, \
+        axis, water_box = generate_default_header(protonation)
+
+    abs_path = input_pdb.resolve().parent.absolute()
+    output_pdb_filename = abs_path / (f'{input_pdb.stem}_'
+                                      f'haddock{input_pdb.suffix}')
+    output_psf_filename = abs_path / (f'{input_pdb.stem}_'
+                                      f'haddock.{Format.TOPOLOGY}')
+    output = prepare_output(output_psf_filename, output_pdb_filename)
+
+    input_str = prepare_single_input(str(input_pdb.resolve().absolute()))
+
+    inp = general_param + param + top + input_str + output + link \
+        + topology_protonation + trans_vec + tensor + scatter + axis \
+        + water_box + recipe_str
+
+    output_inp_filename = abs_path / f'{input_pdb.stem}.{Format.CNS_INPUT}'
+    with open(output_inp_filename, 'w') as output_handler:
+        output_handler.write(inp)
+
+    return output_inp_filename
 
 
 class HaddockModule(BaseHaddockModule):

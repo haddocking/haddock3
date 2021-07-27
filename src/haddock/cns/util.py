@@ -176,6 +176,30 @@ def load_ambig(ambig_f):
     return ambig_str
 
 
+def load_unambig(unambig_f):
+    """Add unambig file"""
+    unambig_str = f'eval ($unambig_fname="{str(unambig_f)}"){linesep}'
+    return unambig_str
+
+
+def load_hbond(hbond_f):
+    """Add hbond file"""
+    hbond_str = f'eval ($hbond_fname="{hbond_f}"){linesep}'
+    return hbond_str
+
+
+def load_dihe(dihe_f):
+    """Add dihedral file"""
+    dihe_str = f'eval ($dihe_fname="{dihe_f}"){linesep}'
+    return dihe_str
+
+
+def load_tensor_tbl(tensor_f):
+    """Add tensor tbl file"""
+    tensor_str = f'eval ($tensor_tbl="{tensor_f}"){linesep}'
+    return tensor_str
+
+
 def prepare_output(output_psf_filename, output_pdb_filename):
     """Output of the CNS file"""
     output = f'{linesep}! Output structure{linesep}'
@@ -273,43 +297,6 @@ def prepare_single_input(pdb_input, psf_input=None):
     for i, segid in enumerate(chainsegs):
         input_str += f'eval ($prot_segid_{i+1}="{segid}"){linesep}'
 
-    # TODO: Split this in multiple functions
-    # try:
-    #     ambig_fname = list(course_path.glob('ambig.tbl'))[0]
-    #     input_str += f'eval ($ambig_fname="{ambig_fname}"){linesep}'
-    # except IndexError:
-    #     input_str += f'eval ($ambig_fname=""){linesep}'
-    # try:
-    #     ambig_fname = list(step_path.glob('ambig.tbl'))[0]
-    #     input_str += f'eval ($ambig_fname="{ambig_fname}"){linesep}'
-    # except IndexError:
-    #     input_str += f'eval ($ambig_fname=""){linesep}'
-
-    # try:
-    #     unambig_fname = list(step_path.glob('unambig.tbl'))[0]
-    #     input_str += f'eval ($unambig_fname="{unambig_fname}"){linesep}'
-    # except IndexError:
-    #     input_str += f'eval ($unambig_fname=""){linesep}'
-
-    # try:
-    #     hbond_fname = list(step_path.glob('hbond.tbl'))[0]
-    #     input_str += f'eval ($hbond_fname="{hbond_fname}"){linesep}'
-    # except IndexError:
-    #     input_str += f'eval ($hbond_fname=""){linesep}'
-
-    # try:
-    #     dihe_fname = list(step_path.glob('dihe.tbl'))[0]
-    #     input_str += f'eval ($dihe_fname="{dihe_fname}"){linesep}'
-    # except IndexError:
-    #     input_str += f'eval ($dihe_fname=""){linesep}'
-
-    # try:
-    #     tensor_fname = list(step_path.glob('tensor.tbl'))[0]
-    #     input_str += f'eval ($tensor_tbl="{tensor_fname}"){linesep}'
-    # except IndexError:
-    #     input_str += f'eval ($tensor_fname=""){linesep}'
-
-    # rnd = RandomNumberGenerator()
     seed = RND.randint(100, 999)
     input_str += f'eval ($seed={seed}){linesep}'
 

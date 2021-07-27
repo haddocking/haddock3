@@ -5,7 +5,7 @@
     working in real space is a bit cumbersome. Therefor we first determine the
     map size and such befor reading it in. The unit cell is determined first
     and the resolution cutoff.  After that the FFT parameters can be determined
-    and space is generated for the reflections.
+    and space is generated for the reflections. 
 
     It follows with reading in the form factors for all the atoms. The arrays
     FOBS, FCALC, FPART and MAP are allocated. The CryoEM map is read and the
@@ -43,7 +43,7 @@
         method=FFT
         evaluate($voxelspacing = $Data.em.xlength / $Data.em.nx)
         evaluate($gridsize = $voxelspacing/$Data.em.resolution)
-        fft
+        fft 
             automemory=true
             gridsize=$gridsize
             bscale=100
@@ -94,7 +94,7 @@
         ! set weight of target function
         wa=$Data.em.kscale
 
-        ! set tolerance level for recomputing structure factors. This
+        ! set tolerance level for recomputing structure factors. This 
         ! should maybe be higher during the refinement stage.
         tolerance=0.0
     end

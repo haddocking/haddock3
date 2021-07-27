@@ -9,11 +9,11 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
- !store5 contains the waters that are to be "removed"
+ !store5 contains the waters that are to be "removed" 
  ident (store5) (not all)
 
  ident (store5) ((resn WAT or resn HOH))
-
+ 
  !count number of waters
  show sum(1) ((resn WAT or resn HOH) and name OH2)
  eval ($watercount=$result)
@@ -23,7 +23,7 @@
  eval ($randfrac = $randfrac * $data.water_randfrac)
  eval ($fractionkeep =$data.water_tokeep + $randfrac)
  eval ($tokeep = $fractionkeep * $watercount)
-
+  
  display info: watercount $watercount
  display info: tokeep $tokeep
  !for each nrig value, different waters are "removed"
@@ -34,7 +34,7 @@
      ident (store5) (store5 or id $atom_id)
   end if
  end loop loop2
-
+      
  ident (store5) (byres store5)
 
  !"removing" of water: interaction weight 0

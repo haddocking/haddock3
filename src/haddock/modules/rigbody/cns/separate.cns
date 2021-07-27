@@ -165,7 +165,9 @@
     ! based on minimization of electrostatic potential of N equally charged particles.
     ! See Thomson problem: http://en.wikipedia.org/wiki/Thomson_problem
 !    evaluate ($filename = "RUN:toppar/initial_positions/trans_vector_" + encode($n_moving_mol) )
-    evaluate ($filename = "RUN:trans_vector_" + encode($n_moving_mol) )
+!    evaluate ($filename = "toppar/initial_positions/trans_vector_" + encode($n_moving_mol) )
+    evaluate ($encode_moving_mol = encode($n_moving_mol))
+    evaluate ($filename = $trans_vector_$encode_moving_mol)
     inline @@$filename
 
     ! Logic:
@@ -208,8 +210,8 @@
         end loop selectmol
         display $maxid
         if ($Toppar.fix_origin_$maxid eq false) then
-          coor trans
-	       sele=(segid $Toppar.prot_segid_$maxid or segid $watersegname_$maxid)
+          coor trans 
+	       sele=(segid $Toppar.prot_segid_$maxid or segid $watersegname_$maxid) 
 	       vector=($x_$molcounter, $y_$molcounter, $z_$molcounter) end
 
           ! Reset random_ncount to 0 to avoid re-selecting

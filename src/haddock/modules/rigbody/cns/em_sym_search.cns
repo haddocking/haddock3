@@ -66,9 +66,9 @@
 !                                   lcc=$newlcc;
 !                                   )
     @RUN:em_calc_lcc.cns
-    ! if the lcc of the initial orientation is better, swap the COMP
+    ! if the lcc of the initial orientation is better, swap the COMP 
     ! coordinate set to the MAIN coordinate set
     if ($lcc > $newlcc) then
         coor swap selection=(all) end
-    end if
+    end if    
 

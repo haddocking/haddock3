@@ -16,8 +16,8 @@
     evaluate ($ambig_scale = $Data.amb_cool3)
     evaluate ($hbond_scale = $Data.hbond_cool3)
 
-    noe
-      scale dist $unamb_scale
+    noe 
+      scale dist $unamb_scale 
       scale ambi $ambig_scale
       scale hbon $hbond_scale
       scale symm 0.0
@@ -55,7 +55,7 @@
       end if
       evaluate ($npcs = $npcs + 1)
     end loop pcs
-
+ 
     evaluate ($ener = 0)
     evaluate ($vdw  = 0)
     evaluate ($elec = 0)
@@ -149,8 +149,8 @@
     evaluate ($hbond_scale = $hbond_scale_store)
     evaluate ($symm_scale = $symm_scale_store)
 
-    noe
-      scale dist $unamb_scale
+    noe 
+      scale dist $unamb_scale 
       scale ambi $ambig_scale
       scale hbon $hbond_scale
       scale symm $symm_scale

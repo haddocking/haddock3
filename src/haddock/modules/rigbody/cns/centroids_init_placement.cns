@@ -43,7 +43,7 @@ end if
 ! in case of c-symmetry get axis of symmetry from map-coordinates
 if ($place_molecules_in_plane = true) then
 
-    ! axis of symmetry is orthogonal to the symmetry plane
+    ! axis of symmetry is orthogonal to the symmetry plane 
     ! get two vectors representing the symmetry plane
     eval($pq.x = $Data.centroids.xcom_1 - $map_ave.x)
     eval($pq.y = $data.centroids.ycom_1 - $map_ave.y)
@@ -52,17 +52,17 @@ if ($place_molecules_in_plane = true) then
     eval($pr.y = $data.centroids.ycom_2 - $map_ave.y)
     eval($pr.z = $data.centroids.zcom_2 - $map_ave.z)
 
-    ! the axis of symmetry is orthogonal to the symmetry plane and
+    ! the axis of symmetry is orthogonal to the symmetry plane and 
     ! is the cross-product of those two vectors
     call cross(in1=$pq; in2=$pr; out=$sym_axis;)
 
-    ! get angle between the axis of symmetry and current symmetry z-axis
+    ! get angle between the axis of symmetry and current symmetry z-axis 
     eval($z_axis.x = 0)
     eval($z_axis.y = 0)
     eval($z_axis.z = 1)
     call get_angle(in1=$sym_axis; in2=$z_axis; angle=$angle)
 
-    ! rotate the current system around the axis orthogonal to the
+    ! rotate the current system around the axis orthogonal to the 
     ! current axis of symmetry and future axis of symmetry
     ! first get an orthogonal vector to the axis of symmetry
     call cross(in1=$z_axis; in2=$sym_axis; out=$rot_axis;)
@@ -71,7 +71,7 @@ if ($place_molecules_in_plane = true) then
     eval($nchain1 = 0)
     while ($nchain1 < $Data.ncomponents) loop nloop1
         eval($nchain1 = $nchain1 + 1)
-        coor rotate
+        coor rotate 
             selection=((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
             axis ($rot_axis.x $rot_axis.y $rot_axis.z) $angle
         end
@@ -83,20 +83,20 @@ if ($place_molecules_in_plane = true) then
     eval($angle = 360.0 * random())
     while ($nchain1 < $Data.ncomponents) loop nloop1
         eval($nchain1 = $nchain1 + 1)
-        coor rotate
+        coor rotate 
             selection=((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
             axis ($sym_axis.x $sym_axis.y $sym_axis.z) $angle
         end
     end loop nloop1
 else
-    ! random rotation of the whole system around origin to reduce bias
+    ! random rotation of the whole system around origin to reduce bias 
     ! for volume data fitting
 !    @RUN:get_random_rotation.cns(Rotation=$rr;)
     @RUN:get_random_rotation.cns
     eval($nchain1 = 0)
     while ($nchain1 < $Data.ncomponents) loop nloop1
         eval($nchain1 = $nchain1 + 1)
-        coor rotate
+        coor rotate 
             selection=((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
             quaternion $rr.q0 $rr.q1 $rr.q2 $rr.q3
         end
@@ -108,8 +108,8 @@ eval($nchain1 = 0)
 while ($nchain1 < $Data.ncomponents) loop nloop1
     eval($nchain1 = $nchain1 + 1)
 
-    coor translate
-        selection=((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
+    coor translate 
+        selection=((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP) 
         vector=($map_ave.x $map_ave.y $map_ave.z)
     end
 end loop nloop1

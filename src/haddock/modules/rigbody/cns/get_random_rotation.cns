@@ -28,7 +28,7 @@
    Note
    ----
        There is no need in general to specify the Type as a matrix when performing the rotation.
-
+       
    Example:
    >>>> ! $rand_rot does NOT have to exist currently
    !>>>> @RUN:get_random_rotation.cns(Rotation=$rand_rot;)
@@ -40,8 +40,8 @@
    Example using a rotation matrix:
    !>>>> @RUN:get_random_rotation.cns(Rotation=$rr; Type='Matrix';)
    >>>> coor rotate
-   >>>>    matrix $rr.a11 $rr.a12 $rr.a13
-   >>>>           $rr.a21 $rr.a22 $rr.a23
+   >>>>    matrix $rr.a11 $rr.a12 $rr.a13 
+   >>>>           $rr.a21 $rr.a22 $rr.a23 
    >>>>           $rr.a31 $rr.a32 $rr.a33
    >>>>    selection=(all)
    >>>> end

@@ -90,7 +90,7 @@ while ($done = 0)  loop trial
   end if
   evaluate ($iselres1 = 0)
   evaluate ($iselres1 = int(ran() * $rmax) + 1)
-
+  
   eval($founda=0)
   eval($foundb=0)
   eval($closesta=1000)
@@ -141,10 +141,10 @@ while ($done = 0)  loop trial
     end if
   end loop nloop2
 
-  if ($founda > 0) then
+  if ($founda > 0) then 
    if($foundb > 0) then
     display SOLVATED-DOCKING: $iselres1 $closesta $restypea $closestb $restypeb $db.$restypea_$restypeb
-    eval ($r = random(1.0))
+    eval ($r = random(1.0)) 
 !    display SOLVATED-DOCKING: info: r-value $r
     eval ($r = $r*$rmultfact)
     if ($r > $db.$restypea_$restypeb) then
@@ -162,7 +162,7 @@ while ($done = 0)  loop trial
 !   display SOLVATED-DOCKING: nothing found for $iselres1
    do (store5=1) (attr store4 = $iselres1)
   end if
-
+   
   show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
   if ($watercount > 0) then
     eval($fractionleft = $result/$watercount)
@@ -187,7 +187,7 @@ while ($done = 0)  loop ptrial
   end if
   evaluate ($iselres1 = 0)
   evaluate ($iselres1 = int(ran() * $rmax) + 1)
-
+  
   eval($founda=0)
   eval($foundb=0)
   eval($closesta=1000)
@@ -229,10 +229,10 @@ while ($done = 0)  loop ptrial
     end if
   end loop nloop2
 
-  if ($founda > 0) then
+  if ($founda > 0) then 
    if($foundb > 0) then
     display SOLVATED-DOCKING DNA PHOSPHATE: $iselres1 $closesta $restypea $closestb $restypeb $db.$restypea_$restypeb
-    eval ($r = random(1.0))
+    eval ($r = random(1.0)) 
 !    display SOLVATED-DOCKING: info: r-value $r
     eval ($r = $r*$rmultfact)
     if ($r > $db.DP_$restypea_$restypeb) then
@@ -250,7 +250,7 @@ while ($done = 0)  loop ptrial
 !   display SOLVATED-DOCKING: nothing found for $iselres1
    do (store5=1) (attr store4 = $iselres1)
   end if
-
+   
   show sum(1) ((resn WAT or resn HOH) and name OH2 and (attr store5 ne 1))
   if ($dnapwatercount > 0) then
     eval($fractionleft = $result/$dnapwatercount)

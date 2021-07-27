@@ -164,10 +164,7 @@
     ! Translate molecules to positions calculated using an algorithm
     ! based on minimization of electrostatic potential of N equally charged particles.
     ! See Thomson problem: http://en.wikipedia.org/wiki/Thomson_problem
-!    evaluate ($filename = "RUN:toppar/initial_positions/trans_vector_" + encode($n_moving_mol) )
-!    evaluate ($filename = "toppar/initial_positions/trans_vector_" + encode($n_moving_mol) )
-    evaluate ($encode_moving_mol = encode($n_moving_mol))
-    evaluate ($filename = $trans_vector_$encode_moving_mol)
+    evaluate ($filename = "RUN:trans_vector_" + encode($n_moving_mol) )
     inline @@$filename
 
     ! Logic:

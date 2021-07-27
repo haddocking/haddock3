@@ -15,7 +15,7 @@ mol_2 = "1a2k_r_u.pdb"
 
 # ====================================================================
 [stage]
-# Parameters for each stage are defined below
+# Parameters for each stage are defined below, prefer full paths
 
 ########################
 [stage.topology]
@@ -24,7 +24,7 @@ autohis = true
 ########################
 [stage.rigidbody]
 ambig = 'ambig.tbl'
-sampling = 2
+sampling = 100
 
 # ====================================================================
 

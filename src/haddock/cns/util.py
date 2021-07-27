@@ -6,6 +6,8 @@ from haddock.defaults import Default
 from haddock.ontology import Format
 # from haddock.cns.util import load_workflow_params, prepare_input
 
+RND = RandomNumberGenerator()
+
 
 def generate_topology(input_pdb, step_path, recipe_str, defaults,
                       protonation=None):
@@ -168,6 +170,12 @@ def load_waterbox(waterbox_param):
     return water_header
 
 
+def load_ambig(ambig_f):
+    """Add ambig file"""
+    ambig_str = f'eval ($ambig_fname="{str(ambig_f)}"){linesep}'
+    return ambig_str
+
+
 def prepare_output(output_psf_filename, output_pdb_filename):
     """Output of the CNS file"""
     output = f'{linesep}! Output structure{linesep}'
@@ -227,8 +235,7 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
     ncomponents = len(pdb_input_list)
     input_str += f'eval ($ncomponents={ncomponents}){linesep}'
 
-    rnd = RandomNumberGenerator()
-    seed = rnd.randint(100, 999)
+    seed = RND.randint(100, 999)
     input_str += f'eval ($seed={seed}){linesep}'
 
     return input_str
@@ -302,8 +309,8 @@ def prepare_single_input(pdb_input, psf_input=None):
     # except IndexError:
     #     input_str += f'eval ($tensor_fname=""){linesep}'
 
-    rnd = RandomNumberGenerator()
-    seed = rnd.randint(100, 999)
+    # rnd = RandomNumberGenerator()
+    seed = RND.randint(100, 999)
     input_str += f'eval ($seed={seed}){linesep}'
 
     return input_str

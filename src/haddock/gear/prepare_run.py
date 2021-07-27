@@ -1,5 +1,4 @@
 """Logic pertraining to preparing the run files and folders."""
-import copy
 import logging
 import shutil
 from pathlib import Path
@@ -123,3 +122,16 @@ def create_begin_files(params):
         shutil.copy(mol_path, begin_mol)
 
         params['input']['molecules'][mol_id] = begin_mol
+
+    for step in params['stage']:
+        for key in params['stage'][step]:
+            if 'ambig' in key:
+                ambig_f = Path(params['stage'][step][key]).absolute()
+                if not ambig_f.exists():
+                    _msg = f'Stage: {step} ambig file {ambig_f.name} not found'
+                    raise ConfigurationError(_msg)
+                new_loc = begin_dir / step / 'ambig.tbl'
+                new_loc.parent.mkdir(exist_ok=True)
+                shutil.copy(ambig_f, new_loc)
+
+                params['stage'][step][key] = new_loc

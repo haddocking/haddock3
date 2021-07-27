@@ -19,7 +19,7 @@ def retrieve_dependency(cns_script):
             if match:
                 dependency = match[0].split('/')[-1]
                 dep_list.append(dependency)
-    return dep_list
+    return list(set(dep_list))
 
 
 if __name__ == "__main__":
@@ -58,7 +58,7 @@ if __name__ == "__main__":
 
             loc = protocol_dir / cns_script
             if not loc.exists():
-                logging.error('Dependency not found in protocols folder.')
+                logging.error(f'Dependency not found, investigate: {loc}')
                 sys.exit()
 
             dep_list = retrieve_dependency(loc)

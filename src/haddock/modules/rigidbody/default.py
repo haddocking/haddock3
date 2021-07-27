@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def generate_docking(identifier, input_files, step_path, recipe_str, defaults, ambig=None):
+    """Generate the .inp file that will run the docking."""
     # prepare the CNS header that will read the input
 
     # read the default parameters
@@ -39,8 +40,6 @@ def generate_docking(identifier, input_files, step_path, recipe_str, defaults, a
 
     output_pdb_filename = step_path / f'rigidbody_{identifier}.pdb'
     output = f"{linesep}! Output structure{linesep}"
-    # output += (f"eval ($input_psf_filename="
-    #            f" \"{input_psf_filename}\"){linesep}")
     output += (f"eval ($output_pdb_filename="
                f" \"{output_pdb_filename}\"){linesep}")
     inp = default_params + param + top + input_str + output \

@@ -125,11 +125,11 @@ class HaddockModule(BaseHaddockModule):
             if not processed_topology.is_file():
                 not_found.append(processed_topology.name)
             topology = TopologyFile(processed_topology,
-                                    path=(self.path / TOPOLOGY_PATH))
+                                    path=self.path)
             expected.append(topology)
             expected.append(PDBFile(processed_pdb,
                                     topology,
-                                    path=(self.path / TOPOLOGY_PATH)))
+                                    path=self.path))
         if not_found:
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")

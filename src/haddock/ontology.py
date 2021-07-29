@@ -27,7 +27,7 @@ class Persistent:
         self.created = datetime.datetime.now().isoformat(' ', 'seconds')
         self.file_name = Path(file_name).name
         self.file_type = file_type
-        self.path = str(Path(path).parent.absolute())
+        self.path = str(Path(path).absolute())
 
     def __repr__(self):
         rep = (f"[{self.file_type}|{self.created}] "

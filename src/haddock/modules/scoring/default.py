@@ -4,8 +4,8 @@ from os import linesep
 from pathlib import Path
 from haddock.modules import BaseHaddockModule
 from haddock.cns.engine import CNSJob, CNSEngine
-from haddock.cns.util import load_recipe_params, prepare_input
-from haddock.cns.topology import get_topology_header
+from haddock.cns.util import (generate_default_header, load_workflow_params,
+                              prepare_single_input)
 from haddock.ontology import Format, ModuleIO, PDBFile
 
 
@@ -13,9 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 def generate_scoring(model, course_path, recipe_str, defaults):
-    general_param = load_recipe_params(defaults)
+    general_param = load_workflow_params(defaults)
 
-    param, top, _, topology_protonation, _, _, _, _, _ = get_topology_header()
+    param, top, _, topology_protonation, _, _, _, _, _ = \
+        generate_default_header()
 
     output_pdb_filename = course_path / Path(model.file_name)
     input_abs_path = Path(model.path).resolve().absolute()
@@ -28,7 +29,7 @@ def generate_scoring(model, course_path, recipe_str, defaults):
     output += (f"eval ($output_pdb_filename="
                f" \"{output_pdb_filename}\"){linesep}")
 
-    input_str = prepare_input(str(input_pdb_filename), input_abs_path)
+    input_str = prepare_single_input(str(input_pdb_filename))
 
     inp = general_param + param + top + input_str + output \
         + topology_protonation + recipe_str

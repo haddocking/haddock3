@@ -1,5 +1,4 @@
 """Logic pertraining to preparing the run files and folders."""
-import copy
 import logging
 import shutil
 from pathlib import Path
@@ -8,6 +7,7 @@ import toml
 
 from haddock import modules_folder
 from haddock.error import ConfigurationError
+from haddock.libs.libutil import copy_files_to_dir
 
 
 logger = logging.getLogger(__name__)
@@ -116,10 +116,36 @@ def create_begin_files(params):
     begin_dir.mkdir()
     data_dir.mkdir()
 
-    for mol_id, mol_path in params['input']['molecules'].items():
-        shutil.copy(mol_path, data_dir)
 
-        begin_mol = (begin_dir / f'{mol_id}.pdb').resolve()
+    copy_files_to_dir(params['input']['molecules'].values(), data_dir)
+    copy_molecules_to_begin_folder(params['input']['molecules'], begin_dir)
+    copy_ambig_files(params, begin_dir)
+
+    return
+
+
+def copy_molecules_to_begin_folder(mol_dict, begin_dir):
+    """Copy molecules to run directory."""
+    for mol_id, mol_path in mol_dict.items():
+
+        begin_mol = Path(begin_dir, f'{mol_id}.pdb').resolve()
         shutil.copy(mol_path, begin_mol)
+        mol_dict[mol_id] = begin_mol
 
-        params['input']['molecules'][mol_id] = begin_mol
+
+def copy_ambig_files(params, directory):
+    """Copy ambiguity table files to run directory and updates new path."""
+    for step, step_dict in params['stage'].items():
+        for key, value in step_dict.items():
+            if key == 'ambig':
+                ambig_f = Path(value).resolve()
+                new_loc = Path(directory , step, 'ambig.tbl')
+                new_loc.parent.mkdir(exist_ok=True)
+
+                try:
+                    shutil.copy(ambig_f, new_loc)
+                except FileNotFoundError:
+                    _msg = f'Stage: {step} ambig file {ambig_f.name} not found'
+                    raise ConfigurationError(_msg)
+
+                step_dict[key] = new_loc

@@ -69,6 +69,9 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the models generated in previous step
         models_to_dock = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+
+        # TODO: Make the topology aquisition generic, here its expecting this module
+        #  to be preceeded by topology
         topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
 
         ambig_f = None

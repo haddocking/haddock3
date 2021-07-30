@@ -3,7 +3,7 @@
 
 [input]
 # in which order the steps must be executed?
-order = ["topology", "rigidbody"]
+order = ["topology", "rigidbody", "flexref"]
 
 # directory in which the scoring will be done
 project_dir = "run1"
@@ -24,7 +24,12 @@ autohis = true
 ########################
 [stage.rigidbody]
 ambig = 'ambig.tbl'
-sampling = 100
+sampling = 2
+
+########################
+[stage.flexref]
+ambig = 'ambig.tbl'
+cool1_steps = 500
 
 # ====================================================================
 

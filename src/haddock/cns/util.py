@@ -3,8 +3,6 @@ from os import linesep
 from haddock.pdbutil import PDBFactory
 from haddock.mathutil import RandomNumberGenerator
 from haddock.defaults import Default
-from haddock.ontology import Format
-# from haddock.cns.util import load_workflow_params, prepare_input
 
 RND = RandomNumberGenerator()
 
@@ -227,7 +225,7 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
     for pdb in pdb_input_list:
         input_str += f'coor @@{pdb}{linesep}'
 
-    ncomponents = len(pdb_input_list)
+    ncomponents = len(psf_input_list)
     input_str += f'eval ($ncomponents={ncomponents}){linesep}'
 
     seed = RND.randint(100, 999)

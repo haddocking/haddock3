@@ -54,12 +54,12 @@ class HaddockModule(BaseHaddockModule):
     def __init__(self, stream, order, path):
         self.stream = stream
         recipe_path = Path(__file__).resolve().parent.absolute()
-        cns_script = recipe_path / "cns" / "waterref.cns"
-        defaults = recipe_path / "cns" / "waterref.toml"
+        cns_script = recipe_path / "cns" / "mdref.cns"
+        defaults = recipe_path / "cns" / "mdref.toml"
         super().__init__(order, path, cns_script, defaults)
 
     def run(self, module_information):
-        logger.info("Running [waterref] module")
+        logger.info("Running [mdref] module")
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []

@@ -3,7 +3,7 @@
 
 [input]
 # in which order the steps must be executed?
-order = ["topology", "rigidbody", "energyminref", "flexref", "waterref"]
+order = ["topology", "rigidbody", "flexref", "waterref"]
 
 # directory in which the scoring will be done
 project_dir = "run1"
@@ -31,10 +31,6 @@ ambig = 'ambig.tbl'
 cool1_steps = 500
 
 [stage.waterref]
-ambig = 'ambig.tbl'
-cool1_steps = 10
-
-[stage.energyminref]
 ambig = 'ambig.tbl'
 cool1_steps = 10
 

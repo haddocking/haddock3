@@ -1,0 +1,17 @@
+!
+! Define atomic solvation parameters taken from Fernandez-Recia et al. JMB 335:843 (2004)
+!
+evaluate ($arofac = 6.26)
+evaluate ($alifac = 1.27)
+evaluate ($polfac = 2.30)
+do (store1 =  0.0000) (all)
+do (store1 =  0.0151 * $alifac) (name C*)
+do (store1 =  0.0176 * $arofac) ((name CG* or name CD* or name CE* or name CH* or name CZ*) and (resn PHE or resn TYR or resn HIS or resn TRP))
+do (store1 = -0.0170 * $polfac) (name N*)
+do (store1 = -0.0548 * $polfac) (name NT* or (name NZ* and resn LYS))
+do (store1 = -0.0273 * $polfac) (name NH* and resn ARG)
+do (store1 = -0.0136 * $polfac) (name O*)
+do (store1 = -0.0185 * $polfac) (name OG* or name OH)
+do (store1 = -0.0299 * $polfac) ((name OD* and resn ASP) or (name OE* and resn GLU))
+do (store1 =  0.0112 * $polfac) (name S*)
+do (store1 =  0.0022 * $polfac) ((name S* and attr charge = -0.3) or (name SD and resn MET))

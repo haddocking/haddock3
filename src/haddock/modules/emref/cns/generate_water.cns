@@ -84,10 +84,12 @@ while ($xtrans < $xmtran) loop wat1
       segment
         name="    "
         chain
-          coordinates @@RUN:boxtyp20.pdb
+!          coordinates @@RUN:boxtyp20.pdb
+          coor @@$boxtyp20
         end
       end
-      coor @@RUN:boxtyp20.pdb
+!      coor @@RUN:boxtyp20.pdb
+      coor @@$boxtyp20
       do (segid=W000) (segid "    ")
       coor sele=(segid W000) translate vector = ($xtrans $ytrans $ztrans) end
 

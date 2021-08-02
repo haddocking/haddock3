@@ -16,17 +16,16 @@ mol_2 = "1a2k_r_u.pdb"
 # ====================================================================
 [stage]
 # Parameters for each stage are defined below, prefer full paths
-
-########################
+#####################################################################
+# WARNING: THE PARAMETERS HERE ARE ILLUSTRATIVE
+#  THE WORKFLOW IS WORK-IN-PROGRESS
+#####################################################################
 [stage.topology]
 autohis = true
 
-########################
 [stage.rigidbody]
 ambig = 'ambig.tbl'
-sampling = 2
 
-########################
 [stage.flexref]
 ambig = 'ambig.tbl'
 cool1_steps = 500

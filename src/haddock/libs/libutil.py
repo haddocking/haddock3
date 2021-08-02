@@ -1,5 +1,9 @@
 """General utilities."""
+import logging
 import shutil
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_result_or_same_in_list(function, value):
@@ -29,3 +33,10 @@ def copy_files_to_dir(paths, directory):
     """
     for path in paths:
         shutil.copy(path, directory)
+
+
+def remove_folder(folder):
+    """Removes a folder if it exists."""
+    if folder.exists():
+        logger.warning(f'{folder} exists and it will be REMOVED!')
+        shutil.rmtree(folder)

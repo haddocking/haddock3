@@ -4,6 +4,8 @@
 # by index in the order field:
 order = ["topology", "sampling", "scoring"]
 
+molecules = ["2oob.pdb"]
+run_dir = "run1"
 [stage]
 
 #####################################################################-1

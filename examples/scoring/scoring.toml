@@ -1,16 +1,14 @@
 # ====================================================================
 # Scoring example
 
-[input]
 # in which order the steps must be executed?
 order = ["topology", "scoring", "clustering", "analysis"]
 
 # directory in which the scoring will be done
-project_dir = "run1"
+run_dir = "run1"
 
 # ensemble to be scored
-[input.molecules]
-mol_1 = "T161-rescoring-5.pdb"
+molecules = ["T161-rescoring-5.pdb"]
 
 # ====================================================================
 [stage]

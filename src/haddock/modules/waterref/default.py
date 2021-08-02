@@ -11,7 +11,8 @@ from haddock.ontology import Format, ModuleIO, PDBFile
 logger = logging.getLogger(__name__)
 
 
-def generate_waterref(identifier, input_file, step_path, recipe_str, defaults, ambig=None):
+def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
+                      ambig=None):
     """Generate the .inp file that will run the docking."""
     # prepare the CNS header that will read the input
 

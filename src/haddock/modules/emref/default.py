@@ -11,7 +11,7 @@ from haddock.ontology import Format, ModuleIO, PDBFile
 logger = logging.getLogger(__name__)
 
 
-def generate_energyminref(identifier, input_file, step_path, recipe_str,
+def generate_emref(identifier, input_file, step_path, recipe_str,
                           defaults, ambig=None):
     """Generate the .inp file that will run the docking."""
     # prepare the CNS header that will read the input
@@ -35,14 +35,14 @@ def generate_energyminref(identifier, input_file, step_path, recipe_str,
     else:
         ambig_str = ""
 
-    output_pdb_filename = step_path / f'energyminref_{identifier}.pdb'
+    output_pdb_filename = step_path / f'emref_{identifier}.pdb'
     output = f"{linesep}! Output structure{linesep}"
     output += (f"eval ($output_pdb_filename="
                f" \"{output_pdb_filename}\"){linesep}")
     inp = default_params + param + top + input_str + output \
         + topology_protonation + ambig_str + recipe_str
 
-    inp_file = step_path / f'energyminref_{identifier}.inp'
+    inp_file = step_path / f'emref_{identifier}.inp'
     with open(inp_file, 'w') as fh:
         fh.write(inp)
 
@@ -54,12 +54,12 @@ class HaddockModule(BaseHaddockModule):
     def __init__(self, stream, order, path):
         self.stream = stream
         recipe_path = Path(__file__).resolve().parent.absolute()
-        cns_script = recipe_path / "cns" / "energyminref.cns"
-        defaults = recipe_path / "cns" / "energyminref.toml"
+        cns_script = recipe_path / "cns" / "emref.cns"
+        defaults = recipe_path / "cns" / "emref.toml"
         super().__init__(order, path, cns_script, defaults)
 
     def run(self, module_information):
-        logger.info("Running [energyminref] module")
+        logger.info("Running [emref] module")
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -76,15 +76,15 @@ class HaddockModule(BaseHaddockModule):
 
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
-            inp_file = generate_energyminref(idx,
+            inp_file = generate_emref(idx,
                                              model,
                                              self.path,
                                              self.recipe_str,
                                              self.defaults,
                                              ambig_f)
 
-            out_file = self.path / f"energyminref_{idx}.out"
-            structure_file = self.path / f"energyminref_{idx}.pdb"
+            out_file = self.path / f"emref_{idx}.out"
+            structure_file = self.path / f"emref_{idx}.pdb"
             refined_structure_list.append(structure_file)
 
             job = CNSJob(inp_file, out_file, cns_folder=self.cns_folder_path)

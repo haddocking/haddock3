@@ -25,6 +25,7 @@ autohis = true
 
 [stage.rigidbody]
 ambig = 'ambig.tbl'
+sampling = 2
 
 [stage.flexref]
 ambig = 'ambig.tbl'

@@ -46,7 +46,6 @@ def main(args=None):
 
     try:
         params = setup_run(options.recipe.name)
-        print(params)
 
     except ConfigurationError as se:
         logging.error(se)

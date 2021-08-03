@@ -2,7 +2,7 @@
 # Scoring example
 
 # in which order the steps must be executed?
-order = ["topology", "scoring", "clustering", "analysis"]
+order = ["topology", "scoring"]#, "clustering", "analysis"]
 
 # directory in which the scoring will be done
 run_dir = "run1"
@@ -22,9 +22,9 @@ autohis = true
 [stage.scoring]
 
 ########################
-[stage.clustering]
-method = "fcc"
-details = false
+#[stage.clustering]
+#method = "fcc"
+#details = false
 
 # Cutoff and Threshold
 params = [
@@ -33,8 +33,8 @@ params = [
     [0.75, 4.0]
 ]
 ########################
-[stage.analysis]
-template = "capri_48_161.brk"
-reference = ""
-analysis  = "lowest"
+#[stage.analysis]
+#template = "capri_48_161.brk"
+#reference = ""
+#analysis  = "lowest"
 # ====================================================================

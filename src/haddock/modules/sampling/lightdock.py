@@ -125,7 +125,7 @@ class HaddockModule(BaseHaddockModule):
             PDBFactory.tidy(self.path / file_name, self.path / tidy_file_name)
             expected.append(PDBFile(tidy_file_name,
                                     topology=model.topology,
-                                    path=(self.path / tidy_file_name)))
+                                    path=self.path))
 
         # Save module information
         io = ModuleIO()

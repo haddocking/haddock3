@@ -9,6 +9,7 @@ import toml
 
 from haddock import modules_folder
 from haddock.error import ConfigurationError
+from haddock.gear import mandatory_params
 from haddock.libs.libutil import copy_files_to_dir, remove_folder
 
 
@@ -64,20 +65,22 @@ def validate_params(params):
     """
     Validate the parameter file.
 
-    #1 : checks for 'order' key
+    #1 : checks for mandatory parameters
     #2 : checks for correct modules
     """
-    order_exists(params)
+    check_mandatory_argments_are_present(params)
     validate_modules(params)
 
 
-def order_exists(params):
+def check_mandatory_argments_are_present(params):
     """Confirms order key exists in config."""
-    if 'order' not in params:
-        _msg = (
-            "Workflow does not specify the execution 'order'. "
-            "Please refer to DOCUMENTATION-LINK for more information.")
-        raise ConfigurationError(_msg)
+    for arg in mandatory_params.general:
+        if arg not in params:
+            _msg = (
+                f"Parameter {arg!r} is not defined in the configuration file. "
+                "Please refer to DOCUMENTATION-LINK for more information."
+                )
+            raise ConfigurationError(_msg)
     return
 
 

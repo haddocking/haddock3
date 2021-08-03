@@ -1,6 +1,6 @@
-"""Mandatory configuration file arguments."""
+"""Relates to logic or definition of parameters."""
 
-general = [
+config_mandatory_general_parameters = [
     'molecules',
     'order',
     'run_dir',

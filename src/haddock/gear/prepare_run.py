@@ -9,7 +9,7 @@ import toml
 
 from haddock import modules_folder
 from haddock.error import ConfigurationError
-from haddock.gear import mandatory_params
+from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.libs.libutil import copy_files_to_dir, remove_folder
 
 
@@ -74,7 +74,7 @@ def validate_params(params):
 
 def check_mandatory_argments_are_present(params):
     """Confirms order key exists in config."""
-    for arg in mandatory_params.general:
+    for arg in config_mandatory_general_parameters:
         if arg not in params:
             _msg = (
                 f"Parameter {arg!r} is not defined in the configuration file. "

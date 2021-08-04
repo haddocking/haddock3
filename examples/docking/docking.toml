@@ -3,7 +3,7 @@
 
 [input]
 # in which order the steps must be executed?
-order = ["allatom", "rigidbody", "flexref", "mdref"]
+order = ["allatom", "rigidbody"]#, "flexref", "mdref"]
 
 # directory in which the scoring will be done
 project_dir = "run1"

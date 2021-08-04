@@ -15,15 +15,12 @@ modules_folder = Path(__file__).resolve().parent
 
 _folder_match_regex = '[a-zA-Z]*/'
 modules_index = {
-    module: category.name
+    module.name: category.name
     for category in modules_folder.glob(_folder_match_regex)
     for module in category.glob(_folder_match_regex)
     }
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
-
-available_modules = [module.name for module in modules_index.keys()]
-"""List of available HADDOCK3 modules regardless of their category."""
 
 
 class BaseHaddockModule:
@@ -72,17 +69,18 @@ class BaseHaddockModule:
 
         io = ModuleIO()
         previous_io = self.previous_path() / MODULE_IO_FILE
+        print('····· previous io', previous_io)
         if previous_io.is_file():
             io.load(previous_io)
         return io
 
     def previous_path(self):
-        if self.order > 1:
-            return (self.path.resolve().parent.absolute() / self.stream['input']['order'][self.order-1])
-        if self.order == 1:
-            return self.path.resolve().parent.absolute() / TOPOLOGY_PATH
 
-        return self.path
+        previous = sorted(list(self.path.resolve().parent.glob('[0-9][0-9]*/')))
+        try:
+            return previous[-2]
+        except IndexError:
+            return self.path
 
     def patch_defaults(self, module_parameters):
         """Apply custom module parameters given to defaults dictionary"""

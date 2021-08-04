@@ -5,7 +5,7 @@ from pathlib import Path
 
 import toml
 
-from haddock.modules import available_modules
+from haddock.modules import modules_index
 from haddock.error import ConfigurationError
 from haddock.libs.libutil import copy_files_to_dir
 
@@ -77,7 +77,7 @@ def validate_modules(params):
     Raises ConfigurationError if module does not exist.
     """
     for module in params['input']['order']:
-        if module not in available_modules:
+        if module not in modules_index.keys():
             _msg = (
                 f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "

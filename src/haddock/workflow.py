@@ -2,9 +2,12 @@
 import logging
 import importlib
 import shutil
+from pathlib import Path
 from haddock.error import HaddockError, StepError
 # unused
 # from haddock.defaults import MODULE_PATH_NAME, TOPOLOGY_PATH
+from haddock.modules import modules_index
+from haddock.libs.libutil import zero_fill
 
 logger = logging.getLogger(__name__)
 
@@ -48,10 +51,13 @@ class Step:
     def __init__(self, stream, module_name):
         self.stream = stream
         self.module = module_name
-
         self.order = stream['input']['order']
         self.raw_information = stream['stage'][module_name]
-        self.working_path = stream['input']['project_dir'] / module_name
+        self.module_index = self.order.index(self.module)
+        self.working_path = Path(
+            stream['input']['project_dir'],
+            zero_fill(self.module_index, digits=2) + "_" + self.module,
+            )
 
         # ===================================================
         self.mode = "default"
@@ -80,10 +86,15 @@ class Step:
             logger.warning(f"Found previous run ({self.working_path}),"
                            " removed")
             shutil.rmtree(self.working_path)
-        self.working_path.absolute().mkdir(parents=True, exist_ok=False)
+        self.working_path.resolve().mkdir(parents=True, exist_ok=False)
 
         # Import the module given by the mode or default
-        module_name = f"haddock.modules.{self.module}.{self.mode}"
+        module_name = ".".join([
+            'haddock',
+            'modules',
+            modules_index[self.module],
+            self.module
+            ])
         module_lib = importlib.import_module(module_name)
         step_number = self.order.index(self.module)
         module = module_lib.HaddockModule(stream=self.stream,

@@ -56,7 +56,7 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, stream, order, path):
         self.stream = stream
-        recipe_path = Path(__file__).resolve().parent.absolute()
+        recipe_path = Path(__file__).resolve().parent
         cns_script = recipe_path / "cns" / "rigidbody.cns"
         defaults = recipe_path / "cns" / "rigidbody.toml"
         super().__init__(order, path, cns_script, defaults)

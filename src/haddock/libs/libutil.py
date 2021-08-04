@@ -19,6 +19,12 @@ def get_result_or_same_in_list(function, value):
     return result if result else [value]
 
 
+def make_list_if_string(item):
+    if isinstance(item, str):
+        return [item]
+    return item
+
+
 def copy_files_to_dir(paths, directory):
     """
     Copy files to directory.

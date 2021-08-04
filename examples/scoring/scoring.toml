@@ -8,7 +8,7 @@ order = ["topology", "scoring"]#, "clustering", "analysis"]
 run_dir = "run1"
 
 # ensemble to be scored
-molecules = ["T161-rescoring-5.pdb"]
+molecules = "T161-rescoring-5.pdb"
 
 # ====================================================================
 [stage]

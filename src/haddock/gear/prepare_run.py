@@ -10,7 +10,11 @@ import toml
 from haddock import modules_folder
 from haddock.error import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
-from haddock.libs.libutil import copy_files_to_dir, remove_folder
+from haddock.libs.libutil import (
+    copy_files_to_dir,
+    make_list_if_string,
+    remove_folder,
+    )
 
 
 logger = logging.getLogger(__name__)
@@ -123,9 +127,11 @@ def convert_molecules_to_path(params, key='mol', sep='_', start=1):
     are `key` + `sep` + enumerate(`start`), and values are the new Path
     values.
     """
+    molecules = make_list_if_string(params['molecules'])
+
     new_paths = (
         (f'{key}{sep}{i}', Path(file_name))
-        for i, file_name in enumerate(params['molecules'], start)
+        for i, file_name in enumerate(molecules, start)
         )
 
     params['molecules'] = dict(new_paths)

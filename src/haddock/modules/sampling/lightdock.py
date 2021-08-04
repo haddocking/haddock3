@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path):
+    def __init__(self, order, path, *ignore, **everything):
         recipe_path = Path(__file__).resolve().parent.absolute()
         defaults = recipe_path / "sampling.toml"
         super().__init__(order, path, defaults=defaults)
@@ -125,7 +125,7 @@ class HaddockModule(BaseHaddockModule):
             PDBFactory.tidy(self.path / file_name, self.path / tidy_file_name)
             expected.append(PDBFile(tidy_file_name,
                                     topology=model.topology,
-                                    path=(self.path / tidy_file_name)))
+                                    path=self.path))
 
         # Save module information
         io = ModuleIO()

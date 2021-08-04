@@ -63,7 +63,7 @@ class BaseHaddockModule:
 
     def previous_path(self):
         if self.order > 1:
-            return (self.path.resolve().parent.absolute() / self.stream['input']['order'][self.order-1])
+            return (self.path.resolve().parent.absolute() / self.stream['order'][self.order-1])
         if self.order == 1:
             return self.path.resolve().parent.absolute() / TOPOLOGY_PATH
 

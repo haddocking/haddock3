@@ -19,7 +19,7 @@ def generate_scoring(model, course_path, recipe_str, defaults):
         generate_default_header()
 
     output_pdb_filename = course_path / Path(model.file_name)
-    input_abs_path = Path(model.path).resolve().absolute()
+    input_abs_path = Path(model.path).resolve()
     input_pdb_filename = input_abs_path / model.file_name
     input_psf_filename = (Path(model.topology.path) /
                           Path(model.topology.file_name))
@@ -84,12 +84,17 @@ class HaddockModule(BaseHaddockModule):
         expected = []
         not_found = []
         for model in models_to_score:
-            abs_path = self.path / model.file_name
-            if not abs_path.is_file():
+            model_path = Path(self.path, model.file_name)
+            if model_path.is_file():
+                expected.append(
+                    PDBFile(
+                        model.file_name,
+                        topology=model.topology,
+                        path=self.path
+                        ))
+            else:
                 not_found.append(model.file_name)
-            expected.append(PDBFile(model.file_name,
-                                    topology=model.topology,
-                                    path=abs_path))
+
         if not_found:
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")

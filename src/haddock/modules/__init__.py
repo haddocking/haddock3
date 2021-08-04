@@ -8,7 +8,22 @@ from haddock.error import StepError
 from haddock.ontology import ModuleIO
 from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
 
+
 logger = logging.getLogger(__name__)
+
+modules_folder = Path(__file__).resolve().parent
+
+_folder_match_regex = '[a-zA-Z]*/'
+modules_index = {
+    module: category.name
+    for category in modules_folder.glob(_folder_match_regex)
+    for module in category.glob(_folder_match_regex)
+    }
+"""Indexes each module in its specific category. Keys are Paths to the module,
+values are their categories. Categories are the modules parent folders."""
+
+available_modules = [module.name for module in modules_index.keys()]
+"""List of available HADDOCK3 modules regardless of their category."""
 
 
 class BaseHaddockModule:

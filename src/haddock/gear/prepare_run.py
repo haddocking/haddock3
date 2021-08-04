@@ -5,7 +5,7 @@ from pathlib import Path
 
 import toml
 
-from haddock import modules_folder
+from haddock.modules import available_modules
 from haddock.error import ConfigurationError
 from haddock.libs.libutil import copy_files_to_dir
 
@@ -68,18 +68,18 @@ def order_exists(params):
 
 
 def validate_modules(params):
-    """Validate modules."""
+    """
+    Validate modules.
 
-    methods = (
-        (package, params['stage'][package].get('method', 'default.py'))
-        for package in params['input']['order']
-        )
+    Confirm the modules specified in the `order` parameter actually
+    exist in HADDOCK3.
 
-    for package, module in methods:
-        module_loc = modules_folder / package / module
-        if not module_loc.exists():
+    Raises ConfigurationError if module does not exist.
+    """
+    for module in params['input']['order']:
+        if module not in available_modules:
             _msg = (
-                f"Method {package}:{module} not found in HADDOCK3 library. "
+                f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "
                 "DOCUMENTATION-LINK"
                 )

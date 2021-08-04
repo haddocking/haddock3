@@ -69,7 +69,6 @@ class BaseHaddockModule:
 
         io = ModuleIO()
         previous_io = self.previous_path() / MODULE_IO_FILE
-        print('····· previous io', previous_io)
         if previous_io.is_file():
             io.load(previous_io)
         return io

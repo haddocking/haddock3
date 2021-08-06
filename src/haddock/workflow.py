@@ -53,10 +53,9 @@ class Step:
         self.module = module_name
         self.order = stream['order']
         self.raw_information = stream['stage'][module_name]
-        self.mode = stream['stage'][module_name]['mode']
         self.module_index = self.order.index(self.module)
         self.working_path = Path(
-            stream['input']['project_dir'],
+            stream['run_dir'],
             zero_fill(self.module_index, digits=2) + "_" + self.module,
             )
 

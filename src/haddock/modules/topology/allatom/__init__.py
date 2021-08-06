@@ -144,12 +144,11 @@ class HaddockModule(BaseHaddockModule):
     def get_input_molecules(self):
         """Get input molecules from the data stream."""
         molecules = []
-        for mol in self.stream['input']['molecules']:
+        for mol_id, mol_path in self.stream['molecules'].items():
             # TODO: Handle segIDs here, this is highly dependent on the
             #  topology generation, does it expect 1 model = 1 segid
             #  or are the chainIDs from the input preserved?
             segid = None
-            input_mol = Molecule(self.stream['input']['molecules'][mol],
-                                 segid)
+            input_mol = Molecule(mol_path, segid)
             molecules.append(input_mol)
         return molecules

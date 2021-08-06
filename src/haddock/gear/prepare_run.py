@@ -1,16 +1,42 @@
 """Logic pertraining to preparing the run files and folders."""
 import logging
 import shutil
+from contextlib import contextmanager
+from functools import wraps
 from pathlib import Path
 
 import toml
 
 from haddock.modules import modules_index
 from haddock.error import ConfigurationError
-from haddock.libs.libutil import copy_files_to_dir
+from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.libs.libutil import (
+    copy_files_to_dir,
+    make_list_if_string,
+    remove_folder,
+    )
 
 
 logger = logging.getLogger(__name__)
+
+
+@contextmanager
+def config_key_error():
+    """Raise ConfigurationError on KeyError."""
+    try:
+        yield
+    except KeyError as err:
+        msg = f"Expected {err.args[0]!r} parameter in configuration file."
+        logger.debug(err)
+        raise ConfigurationError(msg) from err
+
+
+def with_config_error(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        with config_key_error():
+            return func(*args, **kwargs)
+    return wrapper
 
 
 def setup_run(workflow_path):
@@ -27,14 +53,13 @@ def setup_run(workflow_path):
     Returns
     -------
     dict
-        A
         The updated parameter file.
     """
     params = toml.load(workflow_path)
 
     validate_params(params)
     convert_params_to_path(params)
-    remove_folder(params['input']['project_dir'])
+    remove_folder(params['run_dir'])
     create_begin_files(params)
 
     return params
@@ -44,29 +69,26 @@ def validate_params(params):
     """
     Validate the parameter file.
 
-    #1 : checks for 'order' key
+    #1 : checks for mandatory parameters
     #2 : checks for correct modules
     """
-    order_exists(params)
+    check_mandatory_argments_are_present(params)
     validate_modules(params)
 
 
-def order_exists(params):
+def check_mandatory_argments_are_present(params):
     """Confirms order key exists in config."""
-    try:
-        if 'order' not in params['input']:
+    for arg in config_mandatory_general_parameters:
+        if arg not in params:
             _msg = (
-                "Workflow does not specify the execution 'order'. "
-                "Please refer to DOCUMENTATION-LINK for more information.")
+                f"Parameter {arg!r} is not defined in the configuration file. "
+                "Please refer to DOCUMENTATION-LINK for more information."
+                )
             raise ConfigurationError(_msg)
-    except KeyError:
-        _msg = (
-            "Config file should have an 'input' section"
-            "Please refer to DOCUMENTATION-LINK for more information.")
-        raise ConfigurationError(_msg)
     return
 
 
+@with_config_error
 def validate_modules(params):
     """
     Validate modules.
@@ -88,37 +110,53 @@ def validate_modules(params):
 
 def convert_params_to_path(params):
     """Convert parameters to path."""
-    input_params = params['input']
-    project_dir = Path(input_params['project_dir'])
-    input_params['project_dir'] = project_dir.resolve()
-
-    for mol_id, file_name in input_params['molecules'].items():
-        file_path = Path(file_name)
-        input_params['molecules'][mol_id] = file_path
-
+    convert_molecules_to_path(params)
+    convert_run_dir_to_path(params)
     return
 
 
-def remove_folder(folder):
-    """Removes a folder if it exists."""
-    if folder.exists():
-        logger.warning(f'{folder} exists and it will be REMOVED!')
-        shutil.rmtree(folder)
+@with_config_error
+def convert_molecules_to_path(params, key='mol', sep='_', start=1):
+    """
+    Convert molecules path strings to Python Paths.
+
+    And... convert `molecules` in `params` to a dictionary where keys
+    are `key` + `sep` + enumerate(`start`), and values are the new Path
+    values.
+    """
+    molecules = make_list_if_string(params['molecules'])
+
+    new_paths = (
+        (f'{key}{sep}{i}', Path(file_name))
+        for i, file_name in enumerate(molecules, start)
+        )
+
+    params['molecules'] = dict(new_paths)
+    return
 
 
+@with_config_error
+def convert_run_dir_to_path(params):
+    """Convert run directory value to Python Path."""
+    project_dir = Path(params['run_dir'])
+    params['run_dir'] = project_dir.resolve()
+    return
+
+
+@with_config_error
 def create_begin_files(params):
     """Create initial files for HADDOCK3 run."""
-    project_dir = params['input']['project_dir']
-    data_dir = project_dir / 'data'
-    begin_dir = project_dir / 'begin'
+    run_dir = params['run_dir']
+    data_dir = run_dir / 'data'
+    begin_dir = run_dir / 'begin'
 
-    project_dir.mkdir()
+    run_dir.mkdir()
     begin_dir.mkdir()
     data_dir.mkdir()
 
 
-    copy_files_to_dir(params['input']['molecules'].values(), data_dir)
-    copy_molecules_to_begin_folder(params['input']['molecules'], begin_dir)
+    copy_files_to_dir(params['molecules'].values(), data_dir)
+    copy_molecules_to_begin_folder(params['molecules'], begin_dir)
     copy_ambig_files(params, begin_dir)
 
     return
@@ -133,6 +171,7 @@ def copy_molecules_to_begin_folder(mol_dict, begin_dir):
         mol_dict[mol_id] = begin_mol
 
 
+@with_config_error
 def copy_ambig_files(params, directory):
     """Copy ambiguity table files to run directory and updates new path."""
     for step, step_dict in params['stage'].items():

@@ -74,7 +74,6 @@ class BaseHaddockModule:
         return io
 
     def previous_path(self):
-
         previous = sorted(list(self.path.resolve().parent.glob('[0-9][0-9]*/')))
         try:
             return previous[-2]

@@ -28,7 +28,7 @@ class WorkflowManager:
 class Workflow:
     """Represents a set of stages to be executed by HADDOCK"""
     def __init__(self, content):
-        order = content['input']['order']
+        order = content['order']
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, stage in enumerate(order):
@@ -51,8 +51,9 @@ class Step:
     def __init__(self, stream, module_name):
         self.stream = stream
         self.module = module_name
-        self.order = stream['input']['order']
+        self.order = stream['order']
         self.raw_information = stream['stage'][module_name]
+        self.mode = stream['stage'][module_name]['mode']
         self.module_index = self.order.index(self.module)
         self.working_path = Path(
             stream['input']['project_dir'],
@@ -60,7 +61,7 @@ class Step:
             )
 
         # ===================================================
-        self.mode = "default"
+        # self.mode = "default"
         # DISCUSSION: mode will change the behaviour of a module,
         #  shall we keep this or enforce that different
         #  behaviours = different modules?
@@ -75,8 +76,8 @@ class Step:
         #   Module = rigid_body-randair
         #   Module = rigid_body-ambig
         # =====
-        # if "mode" in self.raw_information and self.raw_information["mode"]:
-        #     self.mode = self.raw_information["mode"]
+        # if "module" in self.raw_information and self.raw_information["module"]:
+        #     self.mode = self.raw_information["module"]
         # else:
         #     self.mode = "default"
         # ===================================================

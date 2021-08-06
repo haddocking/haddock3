@@ -18,7 +18,14 @@ LIGHTDOCK_DEFAULT_CONFIG = "lightdock.toml"
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, default_config=LIGHTDOCK_DEFAULT_CONFIG):
+    def __init__(
+            self,
+            order,
+            path,
+            *ignore,
+            default_config=LIGHTDOCK_DEFAULT_CONFIG,
+            **everything,
+            ):
         recipe_path = Path(__file__).resolve().parent.absolute()
         defaults = recipe_path / default_config
         super().__init__(order, path, defaults=defaults)
@@ -128,7 +135,7 @@ class HaddockModule(BaseHaddockModule):
             PDBFactory.tidy(self.path / file_name, self.path / tidy_file_name)
             expected.append(PDBFile(tidy_file_name,
                                     topology=model.topology,
-                                    path=(self.path / tidy_file_name)))
+                                    path=self.path))
 
         # Save module information
         io = ModuleIO()

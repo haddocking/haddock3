@@ -1,5 +1,9 @@
 """General utilities."""
+import logging
 import shutil
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_result_or_same_in_list(function, value):
@@ -13,6 +17,12 @@ def get_result_or_same_in_list(function, value):
     """
     result = function(value)
     return result if result else [value]
+
+
+def make_list_if_string(item):
+    if isinstance(item, str):
+        return [item]
+    return item
 
 
 def copy_files_to_dir(paths, directory):
@@ -34,3 +44,10 @@ def copy_files_to_dir(paths, directory):
 def zero_fill(number, digits=2):
     """Makes a number string zero filled to the left."""
     return str(number).zfill(digits)
+
+
+def remove_folder(folder):
+    """Removes a folder if it exists."""
+    if folder.exists():
+        logger.warning(f'{folder} exists and it will be REMOVED!')
+        shutil.rmtree(folder)

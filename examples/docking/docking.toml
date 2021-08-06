@@ -1,17 +1,17 @@
 # ====================================================================
 # Rigid-body docking example
 
-[input]
 # in which order the steps must be executed?
 order = ["allatom", "rigidbody"]#, "flexref", "mdref"]
 
 # directory in which the scoring will be done
-project_dir = "run1"
+run_dir = "run1"
 
 # ensemble to be scored
-[input.molecules]
-mol_1 = "1a2k_l_u.pdb"
-mol_2 = "1a2k_r_u.pdb"
+molecules =  [
+    "1a2k_l_u.pdb",
+    "1a2k_r_u.pdb"
+    ]
 
 # ====================================================================
 [stage]

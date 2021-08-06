@@ -98,7 +98,7 @@ def validate_modules(params):
 
     Raises ConfigurationError if module does not exist.
     """
-    for module in params['input']['order']:
+    for module in params['order']:
         if module not in modules_index.keys():
             _msg = (
                 f"Module {module} not found in HADDOCK3 library. "

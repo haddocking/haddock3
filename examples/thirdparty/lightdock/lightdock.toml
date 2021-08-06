@@ -4,7 +4,7 @@
 # by index in the order field:
 
 order = [
-    "allatom",
+    "topoaa",
     "lightdock",
     "emscoring"
     ]
@@ -14,12 +14,12 @@ run_dir = "run1"
 [stage]
 
 #####################################################################-1
-[allatom]
+[topoaa]
 autohis = true
 
 # Definition of the input molecules:
-[[allatom.molecules]]
-[[allatom.molecules.1]]
+[[topoaa.molecules]]
+[[topoaa.molecules.1]]
 file = "2oob.pdb"
 
 #####################################################################-2

@@ -2,7 +2,7 @@
 # Scoring example
 
 # in which order the steps must be executed?
-order = ["topoaa", "scoring"]#, "clustering", "analysis"]
+order = ["topoaa", "emscoring"]#, "clustering", "analysis"]
 
 # directory in which the scoring will be done
 run_dir = "run1"
@@ -19,7 +19,7 @@ molecules = "T161-rescoring-5.pdb"
 autohis = true
 
 ########################
-[stage.scoring]
+[stage.emscoring]
 
 ########################
 #[stage.clustering]

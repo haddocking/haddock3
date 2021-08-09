@@ -14,24 +14,23 @@ molecules =  [
     ]
 
 # ====================================================================
-[stage]
 # Parameters for each stage are defined below, prefer full paths
 #####################################################################
 # WARNING: THE PARAMETERS HERE ARE ILLUSTRATIVE
 #  THE WORKFLOW IS WORK-IN-PROGRESS
 #####################################################################
-[stage.topoaa]
+[topoaa]
 autohis = true
 
-[stage.rigidbody]
+[rigidbody]
 ambig = 'ambig.tbl'
 sampling = 2
 
-[stage.flexref]
+[flexref]
 ambig = 'ambig.tbl'
 cool1_steps = 500
 
-[stage.mdref]
+[mdref]
 ambig = 'ambig.tbl'
 cool1_steps = 10
 

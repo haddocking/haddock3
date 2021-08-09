@@ -1,4 +1,5 @@
 """Molecular data structures"""
+from pathlib import Path
 
 
 class Molecule:
@@ -11,6 +12,6 @@ class Molecule:
         self.segid = segid
 
 
-def make_molecules(self, paths):
+def make_molecules(paths):
     """Get input molecules from the data stream."""
     return list(map(Molecule, paths))

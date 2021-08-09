@@ -55,9 +55,10 @@ class Step:
         self.module_name = module_name
         self.order = order
 
+        print(config_params)
         self.working_path = Path(
             config_params['run_dir'],
-            zero_fill(self.order, digits=2) + "_" + self.module,
+            zero_fill(self.order, digits=2) + "_" + self.module_name,
             )
 
     def execute(self):
@@ -71,8 +72,8 @@ class Step:
         module_name = ".".join([
             'haddock',
             'modules',
-            modules_category[self.module],
-            self.module
+            modules_category[self.module_name],
+            self.module_name
             ])
         module_lib = importlib.import_module(module_name)
         module = module_lib.HaddockModule(config=self.config,

@@ -28,11 +28,9 @@ class WorkflowManager:
 class Workflow:
     """Represents a set of stages to be executed by HADDOCK"""
     def __init__(self, content):
-        print(content)
-        order = content['order']
         # Create the list of steps contained in this workflow
         self.steps = []
-        for num_stage, stage in enumerate(order):
+        for num_stage, stage in enumerate(content.keys()):
             try:
                 logger.info(f"Reading instructions of [{stage}] step")
                 is_substage = (len(stage.split('.')) == 2)

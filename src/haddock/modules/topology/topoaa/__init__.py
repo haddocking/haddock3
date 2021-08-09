@@ -148,7 +148,6 @@ class HaddockModule(BaseHaddockModule):
             # TODO: Handle segIDs here, this is highly dependent on the
             #  topology generation, does it expect 1 model = 1 segid
             #  or are the chainIDs from the input preserved?
-            segid = None
-            input_mol = Molecule(mol_path, segid)
+            input_mol = Molecule(mol_path)
             molecules.append(input_mol)
         return molecules

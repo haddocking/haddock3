@@ -28,6 +28,7 @@ class WorkflowManager:
 class Workflow:
     """Represents a set of stages to be executed by HADDOCK"""
     def __init__(self, content):
+        print(content)
         order = content['order']
         # Create the list of steps contained in this workflow
         self.steps = []

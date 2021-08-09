@@ -14,6 +14,7 @@ from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
     remove_folder,
+    remove_dict_keys,
     )
 
 
@@ -60,7 +61,7 @@ def setup_run(workflow_path):
     validate_params(params)
     convert_params_to_path(params)
     remove_folder(params['run_dir'])
-    create_begin_files(params)
+    begin_dir, _ = create_begin_files(params)
 
     # get a dictionary without the general config keys
     modules_params = remove_dict_keys(
@@ -165,7 +166,7 @@ def create_begin_files(params):
     copy_files_to_dir(params['molecules'].values(), data_dir)
     copy_molecules_to_begin_folder(params['molecules'], begin_dir)
 
-    return
+    return begin_dir, data_dir
 
 
 def copy_molecules_to_begin_folder(mol_dict, begin_dir):

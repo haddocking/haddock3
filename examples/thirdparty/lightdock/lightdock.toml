@@ -2,25 +2,28 @@
 
 # A recipe is composed by different stages which are executed in
 # by index in the order field:
-order = ["topology", "sampling", "scoring"]
+
+order = [
+    "topoaa",
+    "lightdock",
+    "emscoring"
+    ]
 
 molecules = ["2oob.pdb"]
 run_dir = "run1"
 [stage]
 
 #####################################################################-1
-[stage.topology]
-mode = "default"
+[stage.topoaa]
 autohis = true
 
 # Definition of the input molecules:
-[[stage.topology.molecules]]
-[[stage.topology.molecules.1]]
+[[stage.topoaa.molecules]]
+[[stage.topoaa.molecules.1]]
 file = "2oob.pdb"
 
 #####################################################################-2
-[stage.sampling]
-mode = "lightdock"
+[stage.lightdock]
 receptor_chains = "A"
 ligand_chains = "B"
 scoring = "fastdfire"
@@ -31,7 +34,4 @@ top = 10
 noxt = true
 noh = true
 
-
-#####################################################################-3
-[stage.scoring]
-mode = ""
+[stage.emscoring]

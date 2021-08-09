@@ -41,6 +41,11 @@ def copy_files_to_dir(paths, directory):
         shutil.copy(path, directory)
 
 
+def zero_fill(number, digits=2):
+    """Makes a number string zero filled to the left."""
+    return str(number).zfill(digits)
+
+
 def remove_folder(folder):
     """Removes a folder if it exists."""
     if folder.exists():

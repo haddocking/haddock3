@@ -48,13 +48,13 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, stream, order, path):
         self.stream = stream
-        recipe_path = Path(__file__).resolve().parent.absolute()
+        recipe_path = Path(__file__).resolve().parent
         cns_script = recipe_path / "cns" / "generate-topology.cns"
         defaults = recipe_path / "cns" / "generate-topology.toml"
         super().__init__(order, path, cns_script, defaults)
 
     def run(self, module_information):
-        logger.info("Running [topology] module")
+        logger.info("Running [allatom] module")
         logger.info("Generating topologies")
 
         # Pool of jobs to be executed by the CNS engine

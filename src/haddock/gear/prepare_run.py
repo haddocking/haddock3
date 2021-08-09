@@ -7,7 +7,7 @@ from pathlib import Path
 
 import toml
 
-from haddock import modules_folder
+from haddock.modules import modules_index
 from haddock.error import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.libs.libutil import (
@@ -90,25 +90,22 @@ def check_mandatory_argments_are_present(params):
 
 @with_config_error
 def validate_modules(params):
-    """Validate modules."""
+    """
+    Validate modules.
 
-    modes = (
-        (package, params['stage'][package].get('mode', 'default'))
-        for package in params['order']
-        )
+    Confirm the modules specified in the `order` parameter actually
+    exist in HADDOCK3.
 
-    for package, mode in modes:
-        mode = mode or 'default'
-        module_loc = Path(modules_folder, package, mode).with_suffix('.py')
-        if not module_loc.exists():
+    Raises ConfigurationError if module does not exist.
+    """
+    for module in params['order']:
+        if module not in modules_index.keys():
             _msg = (
-                f"Method {package}:{mode} not found in HADDOCK3 library. "
+                f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "
                 "DOCUMENTATION-LINK"
                 )
             raise ConfigurationError(_msg)
-        else:
-            params['stage'][package]['mode'] = mode
 
 
 def convert_params_to_path(params):

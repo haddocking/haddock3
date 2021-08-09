@@ -13,11 +13,21 @@ from haddock.defaults import NUM_CORES
 logger = logging.getLogger(__name__)
 
 
+LIGHTDOCK_DEFAULT_CONFIG = "lightdock.toml"
+
+
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
+    def __init__(
+            self,
+            order,
+            path,
+            *ignore,
+            default_config=LIGHTDOCK_DEFAULT_CONFIG,
+            **everything,
+            ):
         recipe_path = Path(__file__).resolve().parent.absolute()
-        defaults = recipe_path / "sampling.toml"
+        defaults = recipe_path / default_config
         super().__init__(order, path, defaults=defaults)
 
     def run(self, module_information):

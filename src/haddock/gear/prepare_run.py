@@ -62,7 +62,15 @@ def setup_run(workflow_path):
     remove_folder(params['run_dir'])
     create_begin_files(params)
 
-    return params
+    # get a dictionary without the general config keys
+    modules_params = remove_dict_keys(
+        params,
+        config_mandatory_general_parameters,
+        )
+
+    copy_ambig_files(modules_params, begin_dir)
+
+    return modules_params
 
 
 def validate_params(params):
@@ -154,10 +162,8 @@ def create_begin_files(params):
     begin_dir.mkdir()
     data_dir.mkdir()
 
-
     copy_files_to_dir(params['molecules'].values(), data_dir)
     copy_molecules_to_begin_folder(params['molecules'], begin_dir)
-    copy_ambig_files(params, begin_dir)
 
     return
 
@@ -172,9 +178,9 @@ def copy_molecules_to_begin_folder(mol_dict, begin_dir):
 
 
 @with_config_error
-def copy_ambig_files(params, directory):
+def copy_ambig_files(module_params, directory):
     """Copy ambiguity table files to run directory and updates new path."""
-    for step, step_dict in params['stage'].items():
+    for step, step_dict in module_params.items():
         for key, value in step_dict.items():
             if key == 'ambig':
                 ambig_f = Path(value).resolve()

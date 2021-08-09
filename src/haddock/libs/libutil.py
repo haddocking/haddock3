@@ -1,6 +1,7 @@
 """General utilities."""
 import logging
 import shutil
+from copy import deepcopy
 
 
 logger = logging.getLogger(__name__)
@@ -51,3 +52,15 @@ def remove_folder(folder):
     if folder.exists():
         logger.warning(f'{folder} exists and it will be REMOVED!')
         shutil.rmtree(folder)
+
+
+def remove_dict_keys(d, keys):
+    """
+    Remove `keys` from dictionary (`d`).
+
+    Return
+    ------
+    dict
+        A copy of `d` dictionary without the `keys`.
+    """
+    return {k: deepcopy(v) for k, v in d.items() if k not in keys}

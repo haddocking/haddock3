@@ -44,8 +44,7 @@ def generate_scoring(model, course_path, recipe_str, defaults):
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, stream, order, path):
-        self.stream = stream
+    def __init__(self, order, path, *ignore, **everything):
         recipe_path = Path(__file__).resolve().parent.absolute()
         cns_script = recipe_path / "cns" / "scoring.cns"
         defaults = recipe_path / "cns" / "scoring.toml"

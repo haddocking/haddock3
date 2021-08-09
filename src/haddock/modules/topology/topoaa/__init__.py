@@ -3,7 +3,7 @@ import logging
 import shutil
 from pathlib import Path
 from haddock.modules import BaseHaddockModule
-from haddock.structure import Molecule
+from haddock.structure import Molecule, make_molecules
 from haddock.pdbutil import PDBFactory
 from haddock.cns.engine import CNSJob, CNSEngine
 from haddock.cns.util import (load_workflow_params, generate_default_header,
@@ -46,33 +46,29 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, stream, order, path):
-        self.stream = stream
+    def __init__(self, config, order, path, molecules=None):
+        self.config = config
         recipe_path = Path(__file__).resolve().parent
         cns_script = recipe_path / "cns" / "generate-topology.cns"
         defaults = recipe_path / "cns" / "generate-topology.toml"
+
+        self.molecules = molecules or make_molecules(self.config['molecules'])
+
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self, module_information):
+    def run(self):
         logger.info("Running [allatom] module")
         logger.info("Generating topologies")
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
-        try:
-            molecules = self.get_input_molecules()
-        except KeyError:
-            self.finish_with_error("No molecules found in recipe")
-        except StepError as re:
-            self.finish_with_error(re)
-
         models = []
-        for order, molecule in enumerate(molecules):
-            logger.info(f"{order+1} - {molecule.file_name}")
+        for i, molecule in enumerate(self.molecules):
+            logger.info(f"{i + 1} - {molecule.file_name}")
 
             # Copy the molecule to the step folder
-            step_molecule_path = self.path / molecule.file_name.name
+            step_molecule_path = Path(self.path, molecule.file_name.name)
             shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models
@@ -95,8 +91,10 @@ class HaddockModule(BaseHaddockModule):
                             f" {topology_filename}")
 
                 # Add new job to the pool
-                output_filename = (model.resolve().parent.absolute()
-                                   / f"{model.stem}.{Format.CNS_OUTPUT}")
+                output_filename = Path(
+                    model.resolve().parent,
+                    f"{model.stem}.{Format.CNS_OUTPUT}",
+                    )
 
                 job = CNSJob(topology_filename,
                              output_filename,
@@ -140,14 +138,3 @@ class HaddockModule(BaseHaddockModule):
             io.add(PDBFile(model))
         io.add(expected, "o")
         io.save(self.path)
-
-    def get_input_molecules(self):
-        """Get input molecules from the data stream."""
-        molecules = []
-        for mol_id, mol_path in self.stream['molecules'].items():
-            # TODO: Handle segIDs here, this is highly dependent on the
-            #  topology generation, does it expect 1 model = 1 segid
-            #  or are the chainIDs from the input preserved?
-            input_mol = Molecule(mol_path)
-            molecules.append(input_mol)
-        return molecules

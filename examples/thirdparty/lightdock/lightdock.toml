@@ -9,17 +9,12 @@ order = [
     "emscoring"
     ]
 
-molecules = ["2oob.pdb"]
+molecules = "2oob.pdb"
 run_dir = "run1"
 
 #####################################################################-1
 [topoaa]
 autohis = true
-
-# Definition of the input molecules:
-[[topoaa.molecules]]
-[[topoaa.molecules.1]]
-file = "2oob.pdb"
 
 #####################################################################-2
 [lightdock]

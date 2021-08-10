@@ -58,6 +58,8 @@ def setup_run(workflow_path):
     """
     params = toml.load(workflow_path)
 
+    print(params)
+
     validate_params(params)
     convert_params_to_path(params)
     remove_folder(params['run_dir'])
@@ -75,6 +77,10 @@ def setup_run(workflow_path):
 
     # return the modules parameters and other parameters that may serve
     # the workflow
+
+
+    print(modules_params)
+
     return modules_params, {'run_dir': params['run_dir']}
 
 
@@ -138,7 +144,7 @@ def convert_molecules_to_path(params):
     values.
     """
     molecules = make_list_if_string(params['molecules'])
-    params['molecules'] = list(map(Path, molecules))
+    params['molecules'] = [Path(i).resolve() for i in molecules]
     return
 
 

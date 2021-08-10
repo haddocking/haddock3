@@ -31,10 +31,10 @@ class BaseHaddockModule:
         self.previous_io = self._load_previous_io()
 
         if cns_script:
-            self.cns_folder_path = cns_script.resolve().parent.absolute()
+            self.cns_folder_path = cns_script.resolve().parent
             self.cns_protocol_path = cns_script
-        if defaults:
-            self.defaults_path = defaults
+
+        self.defaults = defaults
 
         try:
             with open(self.cns_protocol_path) as input_handler:
@@ -45,17 +45,21 @@ class BaseHaddockModule:
         except AttributeError:
             # No CNS-like module
             pass
-        try:
-            self.defaults = toml.load(self.defaults_path)
-        except FileNotFoundError:
-            _msg = f"Error while opening defaults {self.defaults_path}"
-            raise StepError(_msg)
-        except AttributeError:
-            # No CNS-like module
-            pass
 
-    def run(self, module_information):
-        raise NotImplementedError()
+    @property
+    def defaults(self):
+        return self._defaults
+
+    @defaults.setter
+    def defaults(self, path):
+        try:
+            self._defaults = toml.load(path)
+        except FileNotFoundError as err:
+            _msg = f"Default configuration file path not found: {str(path)!r}"
+            raise StepError(_msg) from err
+
+    def run(self, params):
+        self.update_defaults(**params)
 
     def finish_with_error(self, message=""):
         if not message:
@@ -80,11 +84,9 @@ class BaseHaddockModule:
         except IndexError:
             return self.path
 
-    def patch_defaults(self, module_parameters):
-        """Apply custom module parameters given to defaults dictionary"""
-        for k in module_parameters:
-            if k in self.defaults["params"]:
-                self.defaults["params"][k] = module_parameters[k]
+    def update_defaults(self, **parameters):
+        """Update defaults parameters with run-specific parameters."""
+        self._defaults.update(parameters)
 
 
 @contextlib.contextmanager

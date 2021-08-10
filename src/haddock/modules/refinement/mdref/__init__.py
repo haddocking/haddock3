@@ -10,6 +10,9 @@ from haddock.ontology import Format, ModuleIO, PDBFile
 
 logger = logging.getLogger(__name__)
 
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "cns", "defaults.toml")
+
 
 def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
                       ambig=None):
@@ -51,15 +54,15 @@ def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, stream, order, path):
+    def __init__(self, stream, order, path, default_config=DEFAULT_CONFIG):
         self.stream = stream
-        recipe_path = Path(__file__).resolve().parent.absolute()
-        cns_script = recipe_path / "cns" / "mdref.cns"
-        defaults = recipe_path / "cns" / "mdref.toml"
-        super().__init__(order, path, cns_script, defaults)
+        cns_script = RECIPE_PATH / "cns" / "mdref.cns"
+        super().__init__(order, path, cns_script, default_config)
 
     def run(self, module_information):
         logger.info("Running [mdref] module")
+
+        super().run(module_information)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []

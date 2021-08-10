@@ -46,25 +46,23 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, config, order, path, molecules=None):
-        self.config = config
+    def __init__(self, order, path):
         recipe_path = Path(__file__).resolve().parent
         cns_script = recipe_path / "cns" / "generate-topology.cns"
         defaults = recipe_path / "cns" / "generate-topology.toml"
-
-        self.molecules = molecules or make_molecules(self.config['molecules'])
-
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self):
+    def run(self, molecules, **ignore):
         logger.info("Running [allatom] module")
         logger.info("Generating topologies")
+
+        molecules = make_molecules(molecules)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
         models = []
-        for i, molecule in enumerate(self.molecules):
+        for i, molecule in enumerate(molecules):
             logger.info(f"{i + 1} - {molecule.file_name}")
 
             # Copy the molecule to the step folder

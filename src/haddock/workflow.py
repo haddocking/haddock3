@@ -50,14 +50,13 @@ class Workflow:
 class Step:
     """Represents a Step of the Workflow."""
 
-    def __init__(self, module_name, order=None, **config_params):
+    def __init__(self, module_name, order=None, run_dir=None, **config_params):
         self.config = config_params
         self.module_name = module_name
         self.order = order
 
-        print(config_params)
         self.working_path = Path(
-            config_params['run_dir'],
+            run_dir,
             zero_fill(self.order, digits=2) + "_" + self.module_name,
             )
 
@@ -76,12 +75,12 @@ class Step:
             self.module_name
             ])
         module_lib = importlib.import_module(module_name)
-        module = module_lib.HaddockModule(config=self.config,
-                                          order=self.order,
-                                          path=self.working_path)
+        module = module_lib.HaddockModule(
+            order=self.order,
+            path=self.working_path)
 
         # Remove mode information as it is already used and won't be mapped
         #self.raw_information.pop("mode", None)
 
         # Run module
-        module.run()
+        module.run(**self.config)

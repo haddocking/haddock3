@@ -57,7 +57,7 @@ class HaddockModule(BaseHaddockModule):
         defaults = recipe_path / "cns" / "mdref.toml"
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self, module_information):
+    def run(self, ambig=None, **ignore):
         logger.info("Running [mdref] module")
 
         # Pool of jobs to be executed by the CNS engine
@@ -69,10 +69,6 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
-        ambig_f = None
-        if 'ambig' in module_information:
-            ambig_f = module_information['ambig']
-
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
             inp_file = generate_waterref(idx,
@@ -80,7 +76,7 @@ class HaddockModule(BaseHaddockModule):
                                          self.path,
                                          self.recipe_str,
                                          self.defaults,
-                                         ambig_f)
+                                         ambig)
 
             out_file = self.path / f"waterref_{idx}.out"
             structure_file = self.path / f"waterref_{idx}.pdb"

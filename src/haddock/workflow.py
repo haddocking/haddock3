@@ -79,8 +79,5 @@ class Step:
             order=self.order,
             path=self.working_path)
 
-        # Remove mode information as it is already used and won't be mapped
-        #self.raw_information.pop("mode", None)
-
         # Run module
         module.run(**self.config)

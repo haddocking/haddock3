@@ -58,8 +58,6 @@ def setup_run(workflow_path):
     """
     params = toml.load(workflow_path)
 
-    print(params)
-
     validate_params(params)
     convert_params_to_path(params)
     remove_folder(params['run_dir'])
@@ -75,12 +73,9 @@ def setup_run(workflow_path):
 
     copy_ambig_files(modules_params, begin_dir)
 
-    # return the modules parameters and other parameters that may serve
-    # the workflow
-
-
-    print(modules_params)
-
+    # return the modules' parameters and other parameters that may serve
+    # the workflow, the "other parameters" can be expanded in the future
+    # by a function if needed
     return modules_params, {'run_dir': params['run_dir']}
 
 

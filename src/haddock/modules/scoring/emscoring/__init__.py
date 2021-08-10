@@ -50,7 +50,7 @@ class HaddockModule(BaseHaddockModule):
         defaults = recipe_path / "cns" / "scoring.toml"
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self, module_information):
+    def run(self, **params):
         logger.info("Running [scoring] module")
 
         # Pool of jobs to be executed by the CNS engine

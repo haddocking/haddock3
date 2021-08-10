@@ -52,11 +52,11 @@ class HaddockModule(BaseHaddockModule):
         defaults = recipe_path / "cns" / "generate-topology.toml"
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self, molecules, **ignore):
+    def run(self, **params):
         logger.info("Running [allatom] module")
         logger.info("Generating topologies")
 
-        molecules = make_molecules(molecules)
+        molecules = make_molecules(params['molecules'])
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []

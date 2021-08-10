@@ -60,7 +60,7 @@ class HaddockModule(BaseHaddockModule):
         defaults = recipe_path / "cns" / "rigidbody.toml"
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self, sampling, ambig=None, **ignore):
+    def run(self, **params):
         logger.info("Running [rigidbody] module")
 
         # Pool of jobs to be executed by the CNS engine
@@ -75,13 +75,15 @@ class HaddockModule(BaseHaddockModule):
 
         # xSampling
         structure_list = []
-        for idx in range(sampling):
-            inp_file = generate_docking(idx,
-                                        models_to_dock,
-                                        self.path,
-                                        self.recipe_str,
-                                        self.defaults,
-                                        ambig)
+        for idx in range(params['sampling']):
+            inp_file = generate_docking(
+                idx,
+                models_to_dock,
+                self.path,
+                self.recipe_str,
+                self.defaults,
+                ambig=params.get('ambig', None),
+                )
 
             out_file = self.path / f"rigidbody_{idx}.out"
             structure_file = self.path / f"rigidbody_{idx}.pdb"

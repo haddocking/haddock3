@@ -53,14 +53,13 @@ def generate_flexref(identifier, input_file, step_path, recipe_str, defaults, am
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, stream, order, path):
-        self.stream = stream
+    def __init__(self, order, path, *ignore, **everything):
         recipe_path = Path(__file__).resolve().parent.absolute()
         cns_script = recipe_path / "cns" / "flexref.cns"
         defaults = recipe_path / "cns" / "flexref.toml"
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self, module_information):
+    def run(self, **params):
         logger.info("Running [flexref] module")
 
         # Pool of jobs to be executed by the CNS engine
@@ -72,18 +71,16 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
-        ambig_f = None
-        if 'ambig' in module_information:
-            ambig_f = module_information['ambig']
-
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
-            inp_file = generate_flexref(idx,
-                                        model,
-                                        self.path,
-                                        self.recipe_str,
-                                        self.defaults,
-                                        ambig_f)
+            inp_file = generate_flexref(
+                idx,
+                model,
+                self.path,
+                self.recipe_str,
+                self.defaults,
+                ambig=params.get('ambig', None),
+                )
 
             out_file = self.path / f"flexref_{idx}.out"
             structure_file = self.path / f"flexref_{idx}.pdb"

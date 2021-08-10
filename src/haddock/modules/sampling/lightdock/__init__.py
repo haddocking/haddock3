@@ -30,11 +30,11 @@ class HaddockModule(BaseHaddockModule):
         defaults = recipe_path / default_config
         super().__init__(order, path, defaults=defaults)
 
-    def run(self, module_information):
+    def run(self, **params):
         logger.info("Running [sampling-lightdock] module")
 
         # Apply module information to defaults
-        self.patch_defaults(module_information)
+        self.patch_defaults(params)
 
         # Get the models generated in previous step
         models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]

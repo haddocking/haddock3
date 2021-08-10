@@ -45,15 +45,18 @@ def main(args=None):
                                 " %(levelname)s - %(message)s"))
 
     try:
-        params = setup_run(options.recipe.name)
+        params, other_params = setup_run(options.recipe.name)
 
     except ConfigurationError as se:
         logging.error(se)
         sys.exit()
 
     try:
-        workflow = WorkflowManager(workflow_params=params,
-                                   start=options.restart)
+        workflow = WorkflowManager(
+            workflow_params=params,
+            start=options.restart,
+            **other_params,
+            )
 
         # Main loop of execution
         workflow.run()

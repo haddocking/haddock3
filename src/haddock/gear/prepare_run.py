@@ -7,13 +7,14 @@ from pathlib import Path
 
 import toml
 
-from haddock.modules import modules_index
+from haddock.modules import modules_category
 from haddock.error import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
     remove_folder,
+    remove_dict_keys,
     )
 
 
@@ -60,9 +61,22 @@ def setup_run(workflow_path):
     validate_params(params)
     convert_params_to_path(params)
     remove_folder(params['run_dir'])
-    create_begin_files(params)
+    begin_dir, _ = create_begin_files(params)
 
-    return params
+    copy_molecules_to_topology(params)
+
+    # get a dictionary without the general config keys
+    modules_params = remove_dict_keys(
+        params,
+        config_mandatory_general_parameters,
+        )
+
+    copy_ambig_files(modules_params, begin_dir)
+
+    # return the modules' parameters and other parameters that may serve
+    # the workflow, the "other parameters" can be expanded in the future
+    # by a function if needed
+    return modules_params, {'run_dir': params['run_dir']}
 
 
 def validate_params(params):
@@ -99,7 +113,7 @@ def validate_modules(params):
     Raises ConfigurationError if module does not exist.
     """
     for module in params['order']:
-        if module not in modules_index.keys():
+        if module not in modules_category.keys():
             _msg = (
                 f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "
@@ -116,7 +130,7 @@ def convert_params_to_path(params):
 
 
 @with_config_error
-def convert_molecules_to_path(params, key='mol', sep='_', start=1):
+def convert_molecules_to_path(params):
     """
     Convert molecules path strings to Python Paths.
 
@@ -125,13 +139,7 @@ def convert_molecules_to_path(params, key='mol', sep='_', start=1):
     values.
     """
     molecules = make_list_if_string(params['molecules'])
-
-    new_paths = (
-        (f'{key}{sep}{i}', Path(file_name))
-        for i, file_name in enumerate(molecules, start)
-        )
-
-    params['molecules'] = dict(new_paths)
+    params['molecules'] = [Path(i).resolve() for i in molecules]
     return
 
 
@@ -154,27 +162,36 @@ def create_begin_files(params):
     begin_dir.mkdir()
     data_dir.mkdir()
 
-
-    copy_files_to_dir(params['molecules'].values(), data_dir)
+    copy_files_to_dir(params['molecules'], data_dir)
     copy_molecules_to_begin_folder(params['molecules'], begin_dir)
-    copy_ambig_files(params, begin_dir)
 
-    return
+    return begin_dir, data_dir
 
 
-def copy_molecules_to_begin_folder(mol_dict, begin_dir):
-    """Copy molecules to run directory."""
-    for mol_id, mol_path in mol_dict.items():
-
-        begin_mol = Path(begin_dir, f'{mol_id}.pdb').resolve()
+def copy_molecules_to_begin_folder(
+        molecules,
+        begin_dir,
+        mol='mol',
+        sep='_',
+        start=1,
+        ):
+    """Copy molecules to run directory begin folder."""
+    for i, mol_path in enumerate(molecules, start=start):
+        mol_id = f"{mol}{sep}{i}.pdb"
+        begin_mol = Path(begin_dir, mol_id).resolve()
         shutil.copy(mol_path, begin_mol)
-        mol_dict[mol_id] = begin_mol
 
 
 @with_config_error
-def copy_ambig_files(params, directory):
+def copy_molecules_to_topology(params):
+    """Copy molecules to mandatory topology module."""
+    params['topoaa']['molecules'] = params['molecules']
+
+
+@with_config_error
+def copy_ambig_files(module_params, directory):
     """Copy ambiguity table files to run directory and updates new path."""
-    for step, step_dict in params['stage'].items():
+    for step, step_dict in module_params.items():
         for key, value in step_dict.items():
             if key == 'ambig':
                 ambig_f = Path(value).resolve()

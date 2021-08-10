@@ -44,14 +44,13 @@ def generate_scoring(model, course_path, recipe_str, defaults):
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, stream, order, path):
-        self.stream = stream
+    def __init__(self, order, path, *ignore, **everything):
         recipe_path = Path(__file__).resolve().parent.absolute()
         cns_script = recipe_path / "cns" / "scoring.cns"
         defaults = recipe_path / "cns" / "scoring.toml"
         super().__init__(order, path, cns_script, defaults)
 
-    def run(self, module_information):
+    def run(self, **params):
         logger.info("Running [scoring] module")
 
         # Pool of jobs to be executed by the CNS engine

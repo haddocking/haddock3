@@ -11,18 +11,17 @@ run_dir = "run1"
 molecules = "T161-rescoring-5.pdb"
 
 # ====================================================================
-[stage]
 # Parameters for each stage are defined below
 
 ########################
-[stage.topoaa]
+[topoaa]
 autohis = true
 
 ########################
-[stage.emscoring]
+[emscoring]
 
 ########################
-#[stage.clustering]
+#[clustering]
 #method = "fcc"
 #details = false
 
@@ -33,7 +32,7 @@ params = [
     [0.75, 4.0]
 ]
 ########################
-#[stage.analysis]
+#[analysis]
 #template = "capri_48_161.brk"
 #reference = ""
 #analysis  = "lowest"

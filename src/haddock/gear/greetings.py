@@ -43,7 +43,7 @@ def get_initial_greeting():
 
 def get_greetings(options, how_many=3, sep=" ", exclamation="!"):
     """Get greeting messages."""
-    n = min(how_many, len(options))
+    n = how_many % len(options)
     return sep.join(s + exclamation for s in random.sample(options, k=n))
 
 

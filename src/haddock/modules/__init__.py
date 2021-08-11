@@ -2,8 +2,11 @@
 import os
 import logging
 import contextlib
+from abc import ABC, abstractmethod
 from pathlib import Path
+
 import toml
+
 from haddock.error import StepError
 from haddock.ontology import ModuleIO
 from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
@@ -23,7 +26,7 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-class BaseHaddockModule:
+class BaseHaddockModule(ABC):
     def __init__(self, order, path, params, cns_script=""):
         """
         Base class for any HADDOCK module
@@ -76,6 +79,7 @@ class BaseHaddockModule:
                     )
                 raise TypeError(_msg) from err
 
+    @abstractmethod
     def run(self, params):
         self.update_params(**params)
 

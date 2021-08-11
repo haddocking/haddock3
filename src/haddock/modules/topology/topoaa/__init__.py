@@ -5,12 +5,18 @@ from pathlib import Path
 from haddock.modules import BaseHaddockModule
 from haddock.structure import Molecule, make_molecules
 from haddock.pdbutil import PDBFactory
-from haddock.cns.engine import CNSJob, Scheduler
-from haddock.cns.util import (load_workflow_params, generate_default_header,
-                              prepare_output, prepare_single_input)
-from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
-from haddock.error import StepError
+from haddock.cns.engine import CNSJob
+from haddock.cns.util import (
+    load_workflow_params,
+    generate_default_header,
+    prepare_output,
+    prepare_single_input,
+    )
 from haddock.defaults import TOPOLOGY_PATH
+from haddock.error import StepError
+from haddock.libs.libsubprocess import Scheduler
+from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
+
 
 logger = logging.getLogger(__name__)
 

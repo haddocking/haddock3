@@ -57,12 +57,10 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(
             self,
-            stream,
             order,
             path,
             initial_params=DEFAULT_CONFIG):
         """."""
-        self.stream = stream
         cns_script = RECIPE_PATH / "cns" / "emref.cns"
         super().__init__(order, path, initial_params, cns_script)
 

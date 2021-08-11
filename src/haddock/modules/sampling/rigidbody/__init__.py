@@ -57,9 +57,9 @@ def generate_docking(identifier, input_files, step_path, recipe_str, defaults, a
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, default_config=DEFAULT_CONFIG):
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "rigidbody.cns"
-        super().__init__(order, path, cns_script, default_config)
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [rigidbody] module")
@@ -84,7 +84,7 @@ class HaddockModule(BaseHaddockModule):
                 models_to_dock,
                 self.path,
                 self.recipe_str,
-                self.defaults,
+                self.params,
                 ambig=params.get('ambig', None),
                 )
 

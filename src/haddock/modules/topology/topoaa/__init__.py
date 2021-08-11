@@ -50,9 +50,9 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, default_config=DEFAULT_CONFIG):
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
-        super().__init__(order, path, cns_script, default_config)
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, molecules, **params):
         logger.info("Running [allatom] module")
@@ -88,7 +88,7 @@ class HaddockModule(BaseHaddockModule):
                 topology_filename = generate_topology(model,
                                                       self.path,
                                                       self.recipe_str,
-                                                      self.defaults)
+                                                      self.params)
                 logger.info("Topology CNS input created in"
                             f" {topology_filename}")
 

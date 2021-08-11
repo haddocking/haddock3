@@ -60,11 +60,11 @@ class HaddockModule(BaseHaddockModule):
             stream,
             order,
             path,
-            default_config=DEFAULT_CONFIG):
+            initial_params=DEFAULT_CONFIG):
         """."""
         self.stream = stream
         cns_script = RECIPE_PATH / "cns" / "emref.cns"
-        super().__init__(order, path, cns_script, default_config)
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [emref] module")
@@ -87,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
                 model,
                 self.path,
                 self.recipe_str,
-                self.defaults,
+                self.params,
                 ambig_f=params.get('ambig', None),
                 )
 

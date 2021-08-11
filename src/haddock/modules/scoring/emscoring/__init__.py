@@ -48,9 +48,9 @@ def generate_scoring(model, course_path, recipe_str, defaults):
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, default_config=DEFAULT_CONFIG):
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "scoring.cns"
-        super().__init__(order, path, cns_script, default_config)
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [scoring] module")
@@ -67,7 +67,8 @@ class HaddockModule(BaseHaddockModule):
             scoring_filename = generate_scoring(model,
                                                 self.path,
                                                 self.recipe_str,
-                                                self.defaults)
+                                                self.params,
+                                                )
             output_filename = (self.path /
                                f"{Path(model.file_name).stem}_scoring.out")
 

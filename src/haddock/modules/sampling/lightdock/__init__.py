@@ -23,10 +23,10 @@ class HaddockModule(BaseHaddockModule):
             order,
             path,
             *ignore,
-            default_config=DEFAULT_CONFIG,
+            initial_params=DEFAULT_CONFIG,
             **everything,
             ):
-        super().__init__(order, path, defaults=default_config)
+        super().__init__(order, path, initial_params)
 
     def run(self, **params):
         logger.info("Running [sampling-lightdock] module")
@@ -62,8 +62,8 @@ class HaddockModule(BaseHaddockModule):
                                    " split by chain")
 
         # Receptor and ligand PDB structures
-        rec_chain = self.defaults["receptor_chains"][0]
-        lig_chain = self.defaults["ligand_chains"][0]
+        rec_chain = self.params["receptor_chains"][0]
+        lig_chain = self.params["ligand_chains"][0]
         receptor_pdb_file = (f"{Path(model.file_name).stem}_"
                              f"{rec_chain}.{Format.PDB}")
         ligand_pdb_file = (f"{Path(model.file_name).stem}_"
@@ -72,10 +72,10 @@ class HaddockModule(BaseHaddockModule):
         # Setup
         logger.info("Running LightDock setup")
         with working_directory(self.path):
-            swarms = self.defaults["swarms"]
-            glowworms = self.defaults["glowworms"]
-            noxt = self.defaults["noxt"]
-            noh = self.defaults["noh"]
+            swarms = self.params["swarms"]
+            glowworms = self.params["glowworms"]
+            noxt = self.params["noxt"]
+            noh = self.params["noh"]
             cmd = (f"lightdock3_setup.py {receptor_pdb_file}"
                    f" {ligand_pdb_file} -s {swarms} -g {glowworms}")
             if noxt:
@@ -87,8 +87,8 @@ class HaddockModule(BaseHaddockModule):
         # Simulation
         logger.info("Running LightDock simulation")
         with working_directory(self.path):
-            steps = self.defaults["steps"]
-            scoring = self.defaults["scoring"]
+            steps = self.params["steps"]
+            scoring = self.params["scoring"]
             cores = NUM_CORES
             cmd = f"lightdock3.py setup.json {steps} -c {cores} -s {scoring}"
             subprocess.call(cmd, shell=True)
@@ -98,8 +98,8 @@ class HaddockModule(BaseHaddockModule):
         # Ranking
         logger.info("Generating ranking")
         with working_directory(self.path):
-            steps = self.defaults["steps"]
-            swarms = self.defaults["swarms"]
+            steps = self.params["steps"]
+            swarms = self.params["swarms"]
             cmd = f"lgd_rank.py {swarms} {steps}"
             subprocess.call(cmd, shell=True)
 
@@ -117,15 +117,15 @@ class HaddockModule(BaseHaddockModule):
             shutil.copy(self.path / ligand_pdb_file, self.path /
                         f"lightdock_{ligand_pdb_file}")
             # Create top
-            steps = self.defaults["steps"]
-            top = self.defaults["top"]
+            steps = self.params["steps"]
+            top = self.params["top"]
             cmd = (f"lgd_top.py {receptor_pdb_file} {ligand_pdb_file}"
                    f" rank_by_scoring.list {top}")
             subprocess.call(cmd, shell=True)
 
         # Tidy top files
         expected = []
-        top = self.defaults["top"]
+        top = self.params["top"]
         for i in range(top):
             file_name = f"top_{i+1}.{Format.PDB}"
             tidy_file_name = f"haddock_top_{i+1}.{Format.PDB}"

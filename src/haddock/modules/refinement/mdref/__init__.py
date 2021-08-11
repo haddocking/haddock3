@@ -54,9 +54,9 @@ def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, default_config=DEFAULT_CONFIG):
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "mdref.cns"
-        super().__init__(order, path, cns_script, default_config)
+        super().__init__(order, path, initial_paramas, cns_script)
 
     def run(self, **params):
         logger.info("Running [mdref] module")
@@ -79,7 +79,7 @@ class HaddockModule(BaseHaddockModule):
                 model,
                 self.path,
                 self.recipe_str,
-                self.defaults,
+                self.params,
                 ambig=params.get('ambig', None),
                 )
 

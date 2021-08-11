@@ -24,8 +24,17 @@ values are their categories. Categories are the modules parent folders."""
 
 
 class BaseHaddockModule:
-    """Base class for any HADDOCK module"""
-    def __init__(self, order, path, cns_script="", defaults=""):
+    def __init__(self, order, path, params, cns_script=""):
+        """
+        Base class for any HADDOCK module
+
+        Parameters
+        ----------
+        params : dict or path to toml file
+            A dictionary or a path to a toml file containing the initial
+            module parameters. Usually this is defined by the default
+            params.
+        """
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
@@ -34,7 +43,7 @@ class BaseHaddockModule:
             self.cns_folder_path = cns_script.resolve().parent
             self.cns_protocol_path = cns_script
 
-        self.defaults = defaults
+        self.params = params
 
         try:
             with open(self.cns_protocol_path) as input_handler:
@@ -47,19 +56,28 @@ class BaseHaddockModule:
             pass
 
     @property
-    def defaults(self):
-        return self._defaults
+    def params(self):
+        return self._params
 
-    @defaults.setter
-    def defaults(self, path):
-        try:
-            self._defaults = toml.load(path)
-        except FileNotFoundError as err:
-            _msg = f"Default configuration file path not found: {str(path)!r}"
-            raise StepError(_msg) from err
+    @params.setter
+    def params(self, path_or_dict):
+        if isinstance(path_or_dict, dict):
+            self._params = path_or_dict
+        else:
+            try:
+                self._params = toml.load(path_or_dict)
+            except FileNotFoundError as err:
+                _msg = f"Default configuration file path not found: {str(path_or_dict)!r}"
+                raise FileNotFoundError(_msg) from err
+            except TypeError as err:
+                _msg = (
+                    "Argument does not satisfy condition, must be path or "
+                    f"dict. {type(path_or_dict)} given."
+                    )
+                raise TypeError(_msg) from err
 
     def run(self, params):
-        self.update_defaults(**params)
+        self.update_params(**params)
 
     def finish_with_error(self, message=""):
         if not message:
@@ -84,9 +102,9 @@ class BaseHaddockModule:
         except IndexError:
             return self.path
 
-    def update_defaults(self, **parameters):
+    def update_params(self, **parameters):
         """Update defaults parameters with run-specific parameters."""
-        self._defaults.update(parameters)
+        self._params.update(parameters)
 
 
 @contextlib.contextmanager

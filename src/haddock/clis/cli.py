@@ -4,8 +4,8 @@ import argparse
 import logging
 import sys
 from haddock.version import CURRENT_VERSION
-from haddock.cli import greeting, adieu
 from haddock.workflow import WorkflowManager
+from haddock.gear.greetings import get_adieu, get_initial_greeting
 from haddock.gear.prepare_run import setup_run
 from haddock.error import HaddockError, ConfigurationError
 
@@ -37,7 +37,7 @@ def main(args=None):
     # Special case only using print instead of logging
     options = parser.parse_args()
     if not hasattr(options, "version"):
-        print(greeting())
+        print(get_initial_greeting())
 
     # Configuring logging
     logging.basicConfig(level=options.log_level,
@@ -65,7 +65,7 @@ def main(args=None):
         logging.error(he)
 
     # Finish
-    logging.info(adieu())
+    logging.info(get_adieu())
 
 
 if __name__ == "__main__":

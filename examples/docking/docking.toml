@@ -2,7 +2,8 @@
 # Rigid-body docking example
 
 # in which order the steps must be executed?
-order = ["topoaa", "rigidbody", "flexref", "mdref"]
+# order = ["topoaa", "rigidbody", "flexref", "mdref", "clustfcc"]
+order = ["topoaa", "rigidbody", "clustfcc"]
 
 # directory in which the scoring will be done
 run_dir = "run1"
@@ -26,13 +27,16 @@ autohis = true
 ambig = 'ambig.tbl'
 sampling = 2
 
-[flexref]
-ambig = 'ambig.tbl'
-cool1_steps = 500
+# [flexref]
+# ambig = 'ambig.tbl'
+# cool1_steps = 500
 
-[mdref]
-ambig = 'ambig.tbl'
-cool1_steps = 10
+# [mdref]
+# ambig = 'ambig.tbl'
+# cool1_steps = 10
+
+[clustfcc]
+cutoff = 0.6
 
 # ====================================================================
 

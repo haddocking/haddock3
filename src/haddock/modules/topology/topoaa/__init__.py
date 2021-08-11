@@ -5,7 +5,7 @@ from pathlib import Path
 from haddock.modules import BaseHaddockModule
 from haddock.structure import Molecule, make_molecules
 from haddock.pdbutil import PDBFactory
-from haddock.cns.engine import CNSJob, CNSEngine
+from haddock.engine import CNSJob, Engine
 from haddock.cns.util import (load_workflow_params, generate_default_header,
                               prepare_output, prepare_single_input)
 from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
@@ -102,7 +102,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = CNSEngine(jobs)
+        engine = Engine(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 

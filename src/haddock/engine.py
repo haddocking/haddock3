@@ -19,16 +19,17 @@ class Job:
             cmd = f"{self.executable} {' '.join(map(str, self.args))}"
             self.executable = shlex.split(cmd)
 
-        with open(self.input) as inp:
-            with open(self.output, 'w+') as outf:
-                p = subprocess.Popen(self.executable,
-                                     stdin=inp,
-                                     stdout=outf,
-                                     close_fds=True)
-                out, error = p.communicate()
-                p.kill()
-                if error:
-                    raise JobRunningError(error)
+        # capture output to stdout
+        cmd += f' {self.input}'
+        with open(self.output, 'w') as outf:
+            p = subprocess.Popen(shlex.split(cmd), 
+                                 stdout=outf,
+                                 close_fds=True)
+            out, error = p.communicate()
+        p.kill()
+        outf.close()
+        if error:
+            raise JobRunningError(error)
         return out
 
 

@@ -9,21 +9,15 @@ order = [
     "emscoring"
     ]
 
-molecules = ["2oob.pdb"]
+molecules = "2oob.pdb"
 run_dir = "run1"
-[stage]
 
 #####################################################################-1
-[stage.topoaa]
+[topoaa]
 autohis = true
 
-# Definition of the input molecules:
-[[stage.topoaa.molecules]]
-[[stage.topoaa.molecules.1]]
-file = "2oob.pdb"
-
 #####################################################################-2
-[stage.lightdock]
+[lightdock]
 receptor_chains = "A"
 ligand_chains = "B"
 scoring = "fastdfire"
@@ -34,4 +28,4 @@ top = 10
 noxt = true
 noh = true
 
-[stage.emscoring]
+[emscoring]

@@ -54,15 +54,14 @@ def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, stream, order, path, default_config=DEFAULT_CONFIG):
-        self.stream = stream
+    def __init__(self, order, path, default_config=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "mdref.cns"
         super().__init__(order, path, cns_script, default_config)
 
-    def run(self, module_information):
+    def run(self, **params):
         logger.info("Running [mdref] module")
 
-        super().run(module_information)
+        super().run(params)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -73,18 +72,16 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
-        ambig_f = None
-        if 'ambig' in module_information:
-            ambig_f = module_information['ambig']
-
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
-            inp_file = generate_waterref(idx,
-                                         model,
-                                         self.path,
-                                         self.recipe_str,
-                                         self.defaults,
-                                         ambig_f)
+            inp_file = generate_waterref(
+                idx,
+                model,
+                self.path,
+                self.recipe_str,
+                self.defaults,
+                ambig=params.get('ambig', None),
+                )
 
             out_file = self.path / f"waterref_{idx}.out"
             structure_file = self.path / f"waterref_{idx}.pdb"

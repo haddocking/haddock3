@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 modules_folder = Path(__file__).resolve().parent
 
 _folder_match_regex = '[a-zA-Z]*/'
-modules_index = {
+modules_category = {
     module.name: category.name
     for category in modules_folder.glob(_folder_match_regex)
     for module in category.glob(_folder_match_regex)

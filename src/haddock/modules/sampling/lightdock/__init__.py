@@ -28,10 +28,10 @@ class HaddockModule(BaseHaddockModule):
             ):
         super().__init__(order, path, defaults=default_config)
 
-    def run(self, module_information):
+    def run(self, **params):
         logger.info("Running [sampling-lightdock] module")
 
-        super().run(module_information)
+        super().run(params)
 
         # Get the models generated in previous step
         models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]

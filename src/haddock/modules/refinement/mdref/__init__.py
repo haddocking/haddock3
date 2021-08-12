@@ -3,7 +3,7 @@ import logging
 from os import linesep
 from pathlib import Path
 from haddock.modules import BaseHaddockModule
-from haddock.cns.engine import CNSJob
+from haddock.libs.libsubprocess import CNSJob
 from haddock.cns.util import generate_default_header, load_ambig
 from haddock.cns.util import load_workflow_params, prepare_multiple_input
 from haddock.libs.libsubprocess import Scheduler

@@ -2,6 +2,7 @@
 import logging
 import shutil
 from copy import deepcopy
+from os import cpu_count
 
 from haddock.error import SetupError
 
@@ -96,7 +97,7 @@ def parse_ncores(n, njobs=None, max_cpus=None):
     int
         A correct number of cores according to specifications.
     """
-    max_cpus = max_cpus or os.cpu_count() - 1
+    max_cpus = max_cpus or cpu_count() - 1
 
     if n is None:
         return max_cpus
@@ -104,7 +105,7 @@ def parse_ncores(n, njobs=None, max_cpus=None):
     try:
         n = int(n)
     except (TypeError, ValueError) as err:
-        _msg = "`n` must be `int` or `int`-convertable `str`: {n!r} given."
+        _msg = f"`n` must be `int` or `int`-convertable `str`: {n!r} given."
         raise SetupError(_msg) from err
 
     if n < 1:
@@ -119,7 +120,7 @@ def parse_ncores(n, njobs=None, max_cpus=None):
             )
         return ncores
     except TypeError:
-        logger.info("`njobs` not specified, evaluating initial value {n}...")
+        logger.info(f"`njobs` not specified, evaluating initial value {n}...")
         ncores = min(n, max_cpus)
         logger.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
         return ncores

@@ -5,7 +5,7 @@ from pathlib import Path
 from haddock.modules import BaseHaddockModule
 from haddock.structure import Molecule, make_molecules
 from haddock.pdbutil import PDBFactory
-from haddock.cns.engine import CNSJob
+from haddock.libs.libsubprocess import CNSJob
 from haddock.cns.util import (
     load_workflow_params,
     generate_default_header,

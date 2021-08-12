@@ -3,6 +3,10 @@
 import logging
 from multiprocessing import Process, cpu_count
 
+
+from haddock.libs.libutil import parse_ncores
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -21,12 +25,13 @@ class Worker(Process):
 
 class Scheduler():
 
-    def __init__(self, tasks, num_cores=None):
+    def __init__(self, tasks, ncores=None):
 
         self.num_tasks = len(tasks)
+        self.num_processes = ncores  # first parses num_cores
 
         # Do not waste resources
-        self.num_processes = min(num_cores, self.num_tasks)
+        self.num_processes = min(self.num_processes, self.num_tasks)
 
         # step trick by @brianjimenez
         _n = self.num_processes
@@ -45,7 +50,7 @@ class Scheduler():
         self._ncores = parse_ncores(n)
         logger.info(f"Scheduler configurated for {self._ncores} cpu cores.")
 
-    def execute(self):
+    def run(self):
 
         try:
             for task in self.task_list:

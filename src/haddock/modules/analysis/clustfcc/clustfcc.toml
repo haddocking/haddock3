@@ -1,2 +1,2 @@
 [params]
-executable = "src/fcc/src/contact_fcc"
+executable = "src/contact_fcc"

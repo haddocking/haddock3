@@ -109,3 +109,4 @@ class HaddockModule(BaseHaddockModule):
         io.add(models_to_cluster)
         io.add(cluster_dic, "o")
         io.save(self.path)
+    

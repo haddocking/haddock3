@@ -37,7 +37,7 @@ fraction_cutoff = 0.6
 threshold = 4
 
 [seletopclust]
-top_cluster = 1 # will select the best one
+top_cluster = [1, 2, 3, 4] # will select the best one
 top_models = 4 # will select the top4 models inside the cluster
 
 [flexref]

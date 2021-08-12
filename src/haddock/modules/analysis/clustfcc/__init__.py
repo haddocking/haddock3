@@ -2,6 +2,7 @@
 import logging
 import os
 from pathlib import Path
+from haddock import FCC_path
 from haddock.modules import BaseHaddockModule
 from haddock.engine import Job, Engine
 from haddock.ontology import Format, ModuleIO, PDBFile
@@ -21,9 +22,7 @@ class HaddockModule(BaseHaddockModule):
     def run(self, **params):
         logger.info("Running [clustfcc] module")
 
-        # Q: Here we need to find haddock3/src/fcc, is there a better way of doign it?
-        contact_executable = Path(self.defaults_path.parent.parent.parent.parent.parent.parent,
-                                  self.defaults['params']['executable'])
+        contact_executable = Path(FCC_path, self.defaults['params']['executable'])
 
         # Get the models generated in previous step
         models_to_cluster = [p for p in self.previous_io.output if p.file_type == Format.PDB]

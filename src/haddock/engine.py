@@ -1,8 +1,37 @@
 """Running CNS scripts"""
 import subprocess
-from haddock.error import CNSRunningError
+from haddock.error import CNSRunningError, JobRunningError
 from haddock.parallel import Scheduler
+import shlex
 from haddock.defaults import CNS_EXE, NUM_CORES
+
+
+class Job:
+    """A job to be executed by the engine"""
+    def __init__(self, input, output, executable, *args):
+        self.input = input
+        self.output = output
+        self.executable = executable
+        self.args = args
+
+    def run(self):
+        cmd = ''
+        if self.args:
+            cmd = f"{self.executable} {' '.join(map(str, self.args))}"
+            self.executable = shlex.split(cmd)
+
+        # capture output to stdout
+        cmd += f' {self.input}'
+        with open(self.output, 'w') as outf:
+            p = subprocess.Popen(shlex.split(cmd), 
+                                 stdout=outf,
+                                 close_fds=True)
+            out, error = p.communicate()
+        p.kill()
+
+        if error:
+            raise JobRunningError(error)
+        return out
 
 
 class CNSJob:
@@ -37,8 +66,8 @@ class CNSJob:
         return out
 
 
-class CNSEngine:
-    """CNS execution engine"""
+class Engine:
+    """Execution engine"""
     def __init__(self, jobs, num_cores=0):
         self.jobs = jobs
         if num_cores:

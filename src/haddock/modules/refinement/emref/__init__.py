@@ -3,7 +3,7 @@ import logging
 from os import linesep
 from pathlib import Path
 from haddock.modules import BaseHaddockModule
-from haddock.cns.engine import CNSJob, CNSEngine
+from haddock.engine import CNSJob, Engine
 from haddock.cns.util import generate_default_header, load_ambig
 from haddock.cns.util import load_workflow_params, prepare_multiple_input
 from haddock.ontology import Format, ModuleIO, PDBFile
@@ -90,7 +90,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = CNSEngine(jobs)
+        engine = Engine(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 

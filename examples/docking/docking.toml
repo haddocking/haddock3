@@ -2,7 +2,12 @@
 # Rigid-body docking example
 
 # in which order the steps must be executed?
-order = ["topoaa", "rigidbody", "flexref", "mdref"]
+order = ["topoaa",
+         "rigidbody",
+         "clustfcc",
+         "seletopclusts",
+         "flexref",
+         "mdref"]
 
 # directory in which the scoring will be done
 run_dir = "run1"
@@ -24,7 +29,16 @@ autohis = true
 
 [rigidbody]
 ambig = 'ambig.tbl'
-sampling = 2
+sampling = 20
+
+[clustfcc]
+contact_distance_cutoff = 5.0
+fraction_cutoff = 0.6
+threshold = 4
+
+[seletopclusts]
+top_cluster = [1, 2, 3, 4] # will select the best one
+top_models = 4 # will select the top4 models inside the cluster
 
 [flexref]
 ambig = 'ambig.tbl'

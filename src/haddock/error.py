@@ -13,6 +13,10 @@ class StepError(HaddockError):
     pass
 
 
+class JobRunningError(HaddockError):
+    pass
+
+
 class CNSRunningError(HaddockError):
     pass
 

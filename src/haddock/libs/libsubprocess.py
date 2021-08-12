@@ -1,7 +1,7 @@
 """Running CNS scripts"""
 import subprocess
 from haddock.error import CNSRunningError
-from haddock.parallel import Scheduler
+from haddock.libs.libparallel import Scheduler
 from haddock.defaults import CNS_EXE, NUM_CORES
 
 

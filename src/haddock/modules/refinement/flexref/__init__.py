@@ -2,8 +2,9 @@
 import logging
 from os import linesep
 from pathlib import Path
+from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
-from haddock.cns.engine import CNSJob, CNSEngine
+from haddock.engine import CNSJob, Engine
 from haddock.cns.util import generate_default_header, load_ambig
 from haddock.cns.util import load_workflow_params, prepare_multiple_input
 from haddock.ontology import Format, ModuleIO, PDBFile
@@ -75,6 +76,8 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
+        weights = {'vdw': 1.0, 'elec': 1.0, 'desol': 1, 'air': 0.1, 'bsa': -0.01}
+
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
             inp_file = generate_flexref(
@@ -96,7 +99,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = CNSEngine(jobs)
+        engine = Engine(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 
@@ -106,8 +109,12 @@ class HaddockModule(BaseHaddockModule):
         for model in refined_structure_list:
             if not model.exists():
                 not_found.append(model.name)
+
+            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
+
             pdb = PDBFile(model, path=self.path)
             pdb.topology = topologies
+            pdb.score = haddock_score
             expected.append(pdb)
         if not_found:
             self.finish_with_error("Several files were not generated:"

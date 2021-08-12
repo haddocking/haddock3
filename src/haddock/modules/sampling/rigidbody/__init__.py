@@ -2,8 +2,9 @@
 import logging
 from os import linesep
 from pathlib import Path
+from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
-from haddock.cns.engine import CNSJob, CNSEngine
+from haddock.engine import CNSJob, Engine
 from haddock.cns.util import generate_default_header, load_ambig
 from haddock.cns.util import load_workflow_params, prepare_multiple_input
 from haddock.ontology import Format, ModuleIO, PDBFile
@@ -76,6 +77,8 @@ class HaddockModule(BaseHaddockModule):
         #  to be preceeded by topology
         topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
 
+        weights = {'vdw': 0.01, 'elec': 1.0, 'desol': 1, 'air': 0.01, 'bsa': -0.01}
+
         # xSampling
         structure_list = []
         for idx in range(params['sampling']):
@@ -98,7 +101,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = CNSEngine(jobs)
+        engine = Engine(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 
@@ -108,7 +111,11 @@ class HaddockModule(BaseHaddockModule):
         for model in structure_list:
             if not model.exists():
                 not_found.append(model.name)
+
+            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
+            
             pdb = PDBFile(model, path=self.path)
+            pdb.score = haddock_score
             pdb.topology = topologies
             expected.append(pdb)
         if not_found:

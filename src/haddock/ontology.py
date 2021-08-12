@@ -37,9 +37,10 @@ class Persistent:
 
 class PDBFile(Persistent):
     """Represents a PDB file"""
-    def __init__(self, file_name, topology=None, path='.'):
+    def __init__(self, file_name, topology=None, path='.', score=float('nan')):
         super().__init__(file_name, Format.PDB, path)
         self.topology = topology
+        self.score = score
 
 
 class TopologyFile(Persistent):

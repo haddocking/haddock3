@@ -35,20 +35,3 @@ class CNSJob:
                 if error:
                     raise CNSRunningError(error)
         return out
-
-
-class CNSEngine:
-    """CNS execution engine"""
-    def __init__(self, jobs, num_cores=0):
-        self.jobs = jobs
-        if num_cores:
-            self.num_cores = num_cores
-        elif (num_jobs := len(jobs)) > 1:
-            self.num_cores = min(num_jobs, NUM_CORES)
-        else:
-            self.num_cores = 1
-
-    def run(self):
-        """Run all provided jobs"""
-        scheduler = Scheduler(self.jobs, self.num_cores)
-        scheduler.execute()

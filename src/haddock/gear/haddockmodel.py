@@ -1,5 +1,6 @@
 """Class that represents a Haddock model"""
 
+
 class HaddockModel:
 
     def __init__(self, pdb_f):
@@ -36,18 +37,17 @@ class HaddockModel:
                     if 'Desolvation energy' in line:
                         desol = float(line.rstrip().split(':')[-1])
                         energy_dic['desol'] = desol
-                    
+
         return energy_dic
 
-    
-    def calc_haddock_score(self, **kwargs):
+    def calc_haddock_score(self, **weights):
         """Calculate the haddock score based on the weights and energies."""
         weighted_terms = []
-        for component in kwargs:
-            weight = kwargs[component]
+        for component in weights:
+            weight = weights[component]
             value = self.energies[component]
             weighted_terms.append(value * weight)
-        
+
         # the haddock score is simply the sum of the weighted terms
         haddock_score = sum(weighted_terms)
         return haddock_score

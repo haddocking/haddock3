@@ -15,6 +15,7 @@ class Job:
         self.args = args
 
     def run(self):
+        cmd = ''
         if self.args:
             cmd = f"{self.executable} {' '.join(map(str, self.args))}"
             self.executable = shlex.split(cmd)
@@ -27,7 +28,7 @@ class Job:
                                  close_fds=True)
             out, error = p.communicate()
         p.kill()
-        outf.close()
+
         if error:
             raise JobRunningError(error)
         return out

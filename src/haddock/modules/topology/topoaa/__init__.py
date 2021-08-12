@@ -14,7 +14,7 @@ from haddock.cns.util import (
     )
 from haddock.defaults import TOPOLOGY_PATH
 from haddock.error import StepError
-from haddock.libs.libsubprocess import Scheduler
+from haddock.libs.libparallel import Scheduler
 from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
 
 

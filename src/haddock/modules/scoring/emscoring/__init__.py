@@ -9,7 +9,7 @@ from haddock.cns.util import (
     load_workflow_params,
     prepare_single_input,
     )
-from haddock.libs.libsubprocess import Scheduler
+from haddock.libs.libparallel import Scheduler
 from haddock.ontology import Format, ModuleIO, PDBFile
 
 

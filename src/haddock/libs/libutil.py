@@ -114,12 +114,12 @@ def parse_ncores(n, njobs=None, max_cpus=None):
     try:
         ncores = min(n, njobs, max_cpus)
         logger.info(
-            f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus}"
-            f"maximum available cores."
+            f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "
+            "maximum available cores."
             )
         return ncores
     except TypeError:
-        logger.info("`njobs` not specified, evaluating initial value {n}..."
+        logger.info("`njobs` not specified, evaluating initial value {n}...")
         ncores = min(n, max_cpus)
         logger.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
         return ncores

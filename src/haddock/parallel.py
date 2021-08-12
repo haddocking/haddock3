@@ -1,8 +1,6 @@
 """Module in charge of parallelizing the execution of tasks"""
-
 import logging
-from multiprocessing import Process, cpu_count
-
+from multiprocessing import Process
 
 from haddock.libs.libutil import parse_ncores
 
@@ -23,9 +21,23 @@ class Worker(Process):
         logger.info(f"{self.name} executed")
 
 
-class Scheduler():
+class Scheduler:
 
     def __init__(self, tasks, ncores=None):
+        """
+        Schedule tasks to a defined number of processes.
+
+        Parameters
+        ----------
+        tasks : list
+            The list of tasks to execute. Tasks must have `.start()` and
+            `.join()` methods.
+
+        ncores : None or int
+            The number of cores to use. If `None` is given uses the
+            maximum number of CPUs allowed by
+            `libs.libututil.parse_ncores` function.
+        """
 
         self.num_tasks = len(tasks)
         self.num_processes = ncores  # first parses num_cores

@@ -21,40 +21,29 @@ class Worker(Process):
 
 class Scheduler():
 
-    def __init__(self, tasks, num_cores=0):
-        try:
-            self.num_processes = int(num_cores)
+    def __init__(self, tasks, num_cores=None):
 
-            if self.num_processes < 1:
-                raise ValueError()
-
-            if self.num_processes > cpu_count():
-                logger.warning(f"Number of cores ({self.num_processes}) larger"
-                               " than available.")
-                raise ValueError()
-
-        except (ValueError, TypeError):
-            logger.warning("Number of cores has not been specified or is"
-                           " incorrect. Using available cores.")
-            self.num_processes = cpu_count()
-
-        self.tasks = tasks
         self.num_tasks = len(tasks)
+
         # Do not waste resources
-        if self.num_tasks < self.num_processes:
-            self.num_processes = self.num_tasks
-        logger.info(f"Running with {self.num_processes} cpu cores")
+        self.num_processes = min(num_cores, self.num_tasks)
 
-        self.task_list = []
-        job_list = []
-        for i in range(self.num_processes):
-            job_list.append(tasks[i::self.num_processes])
+        # step trick by @brianjimenez
+        _n = self.num_processes
+        job_list = [tasks[i::_n] for i in range(_n)]
 
-        for i in range(self.num_processes):
-            task = Worker(job_list[i])
-            self.task_list.append(task)
+        self.task_list = [Worker(jobs) for jobs in job_list]
 
-        logger.info(f"{self.num_tasks} tasks ready")
+        logger.info(f"{self.num_tasks} tasks ready.")
+
+    @property
+    def num_processes(self):
+        return self._ncores
+
+    @num_processes.setter
+    def num_processes(self, n):
+        self._ncores = parse_ncores(n)
+        logger.info(f"Scheduler configurated for {self._ncores} cpu cores.")
 
     def execute(self):
 

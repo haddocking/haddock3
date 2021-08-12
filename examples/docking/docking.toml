@@ -5,7 +5,7 @@
 order = ["topoaa",
          "rigidbody",
          "clustfcc",
-         "seletopclust",
+         "seletopclusts",
          "flexref",
          "mdref"]
 
@@ -36,7 +36,7 @@ contact_distance_cutoff = 5.0
 fraction_cutoff = 0.6
 threshold = 4
 
-[seletopclust]
+[seletopclusts]
 top_cluster = [1, 2, 3, 4] # will select the best one
 top_models = 4 # will select the top4 models inside the cluster
 

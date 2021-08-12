@@ -12,11 +12,11 @@ class HaddockModule(BaseHaddockModule):
     def __init__(self, order, path, *ignore, **everything):
         recipe_path = Path(__file__).resolve().parent
         cns_script = ''
-        defaults = recipe_path / "seletopclust.toml"
+        defaults = recipe_path / "seletopclusts.toml"
         super().__init__(order, path, cns_script, defaults)
 
     def run(self, **params):
-        logger.info("Running [selecttopclust] module")
+        logger.info("Running [seletopclusts] module")
 
         # Get the models generated in previous step
         if not type(self.previous_io) == iter:

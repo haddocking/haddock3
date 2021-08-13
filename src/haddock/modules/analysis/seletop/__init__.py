@@ -1,0 +1,40 @@
+"""HADDOCK3 module to select a top cluster/model"""
+import logging
+from pathlib import Path
+from haddock.modules import BaseHaddockModule
+from haddock.ontology import Format, ModuleIO
+
+logger = logging.getLogger(__name__)
+
+
+class HaddockModule(BaseHaddockModule):
+
+    def __init__(self, order, path, *ignore, **everything):
+        recipe_path = Path(__file__).resolve().parent
+        cns_script = ''
+        defaults = recipe_path / "seletop.toml"
+        super().__init__(order, path, cns_script, defaults)
+
+    def run(self, **params):
+        logger.info("Running [seletop] module")
+
+        # Get the models generated in previous step
+        if type(self.previous_io) == iter:
+            self.finish_with_error('This module cannot come after one'
+                                   ' that produced an iterable')
+
+        models_to_select = [(p, p.score) for p in self.previous_io.output if p.file_type == Format.PDB]
+
+        if len(models_to_select) < params['select']:
+            logger.warning('Number of models to be selected is larger'
+                           ' than generated models, selecting ALL')
+
+        # Sort the models according to their scores
+        models_to_select.sort(key=lambda x: x[1])
+
+        # selected_models
+        selected_models = [m[0] for m in models_to_select][:params['select']]
+
+        io = ModuleIO()
+        io.add(selected_models, "o")
+        io.save(self.path)

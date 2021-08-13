@@ -2,6 +2,7 @@
 import logging
 import os
 from pathlib import Path
+from haddock import FCC_path
 from haddock.modules import BaseHaddockModule
 from haddock.engine import Job, Engine
 from haddock.ontology import Format, ModuleIO, PDBFile

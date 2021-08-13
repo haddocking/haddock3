@@ -139,3 +139,4 @@ tags
 bin/cns
 # ignore generated data of the examples
 examples/*/run*
+examples/thirdparty/*/run*

@@ -1,5 +1,5 @@
 # ====================================================================
-# Rigid-body docking example
+# Docking with gdock+haddock example
 
 # in which order the steps must be executed?
 order = ["topoaa",
@@ -9,10 +9,10 @@ order = ["topoaa",
          "flexref",
          "mdref"]
 
-# directory in which the scoring will be done
+# Directory in which the simulation
 run_dir = "run1"
 
-# ensemble to be scored
+# Input molecules
 molecules =  [
     "1a2k_l_u.pdb",
     "1a2k_r_u.pdb"
@@ -22,12 +22,13 @@ molecules =  [
 # Parameters for each stage are defined below, prefer full paths
 #####################################################################
 # WARNING: THE PARAMETERS HERE ARE ILLUSTRATIVE
-#  THE WORKFLOW IS WORK-IN-PROGRESS
 #####################################################################
 [topoaa]
 autohis = true
 
 [gdock]
+# gdock will read an ambig.tbl and convert
+#  to a list of "active" residues
 ambig = 'ambig.tbl'
 
 [clustfcc]
@@ -36,8 +37,10 @@ fraction_cutoff = 0.1
 threshold = 4
 
 [seletopclusts]
-top_cluster = [1] # will select the best one
-top_models = 4 # will select the top4 models inside the cluster
+# will select the best one
+top_cluster = [1]
+# will select the top4 models inside the cluster
+top_models = 4
 
 [flexref]
 ambig = 'ambig.tbl'

@@ -10,19 +10,22 @@ from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 logger = logging.getLogger(__name__)
 
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = False
-        defaults = recipe_path / "clustfcc.toml"
-        super().__init__(order, path, cns_script, defaults)
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [clustfcc] module")
 
-        contact_executable = Path(FCC_path, self.defaults['params']['executable'])
+        super().run(params)
+
+        contact_executable = Path(FCC_path, self.params['executable'])
 
         # Get the models generated in previous step
         models_to_cluster = [p for p in self.previous_io.output if p.file_type == Format.PDB]
@@ -36,7 +39,12 @@ class HaddockModule(BaseHaddockModule):
         for model in models_to_cluster:
             pdb_f = Path(model.path, model.file_name)
             contact_f = Path(self.path, model.file_name.replace('.pdb', '.con'))
-            job = Job(pdb_f, contact_f, contact_executable, params['contact_distance_cutoff'])
+            job = Job(
+                pdb_f,
+                contact_f,
+                contact_executable,
+                self.params['contact_distance_cutoff'],
+                )
             contact_jobs.append(job)
 
         contact_engine = Engine(contact_jobs)
@@ -108,4 +116,3 @@ class HaddockModule(BaseHaddockModule):
         io.add(models_to_cluster)
         io.add(cluster_dic, "o")
         io.save(self.path)
-    

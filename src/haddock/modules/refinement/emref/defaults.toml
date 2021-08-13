@@ -1,4 +1,3 @@
-[params]
 log_level = "verbose"
 amb_cool1 = 10
 amb_cool2 = 50

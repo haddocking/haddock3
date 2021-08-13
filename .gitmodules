@@ -1,3 +1,4 @@
 [submodule "src/fcc"]
 	path = src/fcc
 	url = https://github.com/haddocking/fcc.git
+	ignore = dirty

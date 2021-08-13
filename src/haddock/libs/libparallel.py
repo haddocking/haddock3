@@ -30,8 +30,8 @@ class Scheduler:
         Parameters
         ----------
         tasks : list
-            The list of tasks to execute. Tasks must have `.start()` and
-            `.join()` methods.
+            The list of tasks to execute. Tasks must be subclass of
+            `multiprocessing.Process`.
 
         ncores : None or int
             The number of cores to use. If `None` is given uses the

@@ -8,7 +8,7 @@ order = ["topoaa", "emscoring"]#, "clustering", "analysis"]
 run_dir = "run1"
 
 # ensemble to be scored
-molecules = "T161-rescoring-5.pdb"
+molecules = "../data/T161-rescoring-5.pdb"
 
 # ====================================================================
 # Parameters for each stage are defined below

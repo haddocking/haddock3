@@ -14,8 +14,8 @@ run_dir = "run1"
 
 # ensemble to be scored
 molecules =  [
-    "1a2k_l_u.pdb",
-    "1a2k_r_u.pdb"
+    "../data/1a2k_l_u.pdb",
+    "../data/1a2k_r_u.pdb"
     ]
 
 # ====================================================================
@@ -28,7 +28,7 @@ molecules =  [
 autohis = true
 
 [rigidbody]
-ambig = 'ambig.tbl'
+ambig = '../data/1a2k_ti.tbl'
 sampling = 20
 
 [clustfcc]
@@ -41,11 +41,11 @@ top_cluster = [1, 2, 3, 4] # will select the best one
 top_models = 4 # will select the top4 models inside the cluster
 
 [flexref]
-ambig = 'ambig.tbl'
+ambig = '../data/1a2k_ti.tbl'
 cool1_steps = 500
 
 [mdref]
-ambig = 'ambig.tbl'
+ambig = '../data/1a2k_ti.tbl'
 cool1_steps = 10
 
 # ====================================================================

@@ -1,0 +1,44 @@
+#===============================================================================================#
+# gdock + HADDOCK workflow
+#   Run gdock as the docking sampling, cluster and refine with HADDOCK
+#
+# topology > gdock > cluster-fcc > select-top-clusters > flexible-refinement > md-refinement
+#
+#===============================================================================================#
+
+order = ["topoaa",
+         "gdock",
+         "clustfcc",
+         "seletopclusts",
+         "flexref",
+         "mdref"]
+
+# this contains only the parameters, no input
+[topoaa]
+autohis = true
+
+[gdock]
+# gdock will read an ambig.tbl and convert
+#  to a list of "active" residues
+ambig = 'ambig.tbl'
+
+[clustfcc]
+contact_distance_cutoff = 5.0
+fraction_cutoff = 0.1
+threshold = 4
+
+[seletopclusts]
+# will select the best one
+top_cluster = [1]
+# will select the top4 models inside the cluster
+top_models = 4
+
+[flexref]
+ambig = 'ambig.tbl'
+cool1_steps = 500
+
+[mdref]
+ambig = 'ambig.tbl'
+cool1_steps = 10
+
+#===============================================================================================#

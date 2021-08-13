@@ -1,0 +1,39 @@
+#========================================================================================#
+# HADDOCK default workflow
+#  The default haddock protocol
+#
+# topology > rigid-body > select-top > flexible-refinement > md-refinement > cluster-fcc
+#
+#========================================================================================#
+
+order = ["topoaa",
+         "rigidbody",
+         "seletop",
+         "flexref",
+         "mdref"]
+
+# this contains only the parameters, no input
+[topoaa]
+autohis = true
+
+[rigidbody]
+ambig = 'ambig.tbl'
+sampling = 1000
+
+[seletop]
+select = 400
+
+[flexref]
+ambig = 'ambig.tbl'
+cool1_steps = 500
+
+[mdref]
+ambig = 'ambig.tbl'
+cool1_steps = 10
+
+[clustfcc]
+contact_distance_cutoff = 5.0
+fraction_cutoff = 0.6
+threshold = 4
+
+#========================================================================================#

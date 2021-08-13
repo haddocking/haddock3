@@ -1,0 +1,12 @@
+# location of bm5
+bm5_path = "/Users/rodrigo/repos/BM5-clean"
+
+# where the benchmark will be saved
+output_path = "/Users/rodrigo/projects/bm"
+
+# where the workflows you want to be benchmarked are
+workflow_path = "/Users/rodrigo/repos/haddock3/benchmark/bm_workflows"
+
+# benchmarks to be executed
+workflows = ['default',
+             'clustering']

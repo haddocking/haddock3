@@ -69,7 +69,7 @@ def remove_dict_keys(d, keys):
     return {k: deepcopy(v) for k, v in d.items() if k not in keys}
 
 
-def parse_ncores(n, njobs=None, max_cpus=None):
+def parse_ncores(n=None, njobs=None, max_cpus=None):
     """
     Check the number of cores according to HADDOCK3 architecture.
 
@@ -112,15 +112,15 @@ def parse_ncores(n, njobs=None, max_cpus=None):
         _msg = "`n` is not positive, this is not possible."
         raise SetupError(_msg)
 
-    try:
+    if njobs:
         ncores = min(n, njobs, max_cpus)
         logger.info(
             f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "
             "maximum available cores."
             )
         return ncores
-    except TypeError:
-        logger.info(f"`njobs` not specified, evaluating initial value {n}...")
-        ncores = min(n, max_cpus)
-        logger.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
-        return ncores
+
+    logger.info(f"`njobs` not specified, evaluating initial value {n}...")
+    ncores = min(n, max_cpus)
+    logger.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
+    return ncores

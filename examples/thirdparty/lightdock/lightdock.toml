@@ -9,7 +9,7 @@ order = [
     "emscoring"
     ]
 
-molecules = "../data/2oob.pdb"
+molecules = "../../data/2oob.pdb"
 run_dir = "run1"
 
 #####################################################################-1

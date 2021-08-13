@@ -58,7 +58,7 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "mdref.cns"
-        super().__init__(order, path, initial_paramas, cns_script)
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [mdref] module")

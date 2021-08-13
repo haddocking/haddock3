@@ -2,6 +2,7 @@
 import logging
 from os import linesep
 from pathlib import Path
+from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libsubprocess import CNSJob
 from haddock.cns.util import generate_default_header, load_ambig
@@ -10,6 +11,9 @@ from haddock.libs.libparallel import Scheduler
 from haddock.ontology import Format, ModuleIO, PDBFile
 
 logger = logging.getLogger(__name__)
+
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
 
 
 def generate_docking(identifier, input_files, step_path, recipe_str, defaults, ambig=None):
@@ -55,14 +59,14 @@ def generate_docking(identifier, input_files, step_path, recipe_str, defaults, a
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = recipe_path / "cns" / "rigidbody.cns"
-        defaults = recipe_path / "cns" / "rigidbody.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+        cns_script = RECIPE_PATH / "cns" / "rigidbody.cns"
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [rigidbody] module")
+
+        super().run(params)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -74,6 +78,8 @@ class HaddockModule(BaseHaddockModule):
         #  to be preceeded by topology
         topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
 
+        weights = {'vdw': 0.01, 'elec': 1.0, 'desol': 1, 'air': 0.01, 'bsa': -0.01}
+
         # xSampling
         structure_list = []
         for idx in range(params['sampling']):
@@ -82,7 +88,7 @@ class HaddockModule(BaseHaddockModule):
                 models_to_dock,
                 self.path,
                 self.recipe_str,
-                self.defaults,
+                self.params,
                 ambig=params.get('ambig', None),
                 )
 
@@ -106,7 +112,11 @@ class HaddockModule(BaseHaddockModule):
         for model in structure_list:
             if not model.exists():
                 not_found.append(model.name)
+
+            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
+            
             pdb = PDBFile(model, path=self.path)
+            pdb.score = haddock_score
             pdb.topology = topologies
             expected.append(pdb)
         if not_found:

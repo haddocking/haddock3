@@ -1,5 +1,9 @@
-[params]
 log_level = "verbose"
+prot_segid_mol1 = "A"
+prot_segid_mol2 = "B"
+fix_origin_mol1 = false
+fix_origin_mol2 = false
+unambig_fname = ""
 amb_cool1 = 10
 amb_cool2 = 50
 amb_cool3 = 50
@@ -1358,7 +1362,7 @@ s3sym_sta3_4 = ""
 skip_struc = 0
 solvate_method = "db"
 solvent = "water"
-solvshell = true
+solvshell = false
 ssdihed = "none"
 start_fle_10_1 = ""
 start_fle_10_2 = ""

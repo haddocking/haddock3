@@ -12,8 +12,8 @@ from haddock.defaults import NUM_CORES
 
 logger = logging.getLogger(__name__)
 
-
-LIGHTDOCK_DEFAULT_CONFIG = "lightdock.toml"
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
 
 
 class HaddockModule(BaseHaddockModule):
@@ -23,18 +23,15 @@ class HaddockModule(BaseHaddockModule):
             order,
             path,
             *ignore,
-            default_config=LIGHTDOCK_DEFAULT_CONFIG,
+            initial_params=DEFAULT_CONFIG,
             **everything,
             ):
-        recipe_path = Path(__file__).resolve().parent.absolute()
-        defaults = recipe_path / default_config
-        super().__init__(order, path, defaults=defaults)
+        super().__init__(order, path, initial_params)
 
     def run(self, **params):
         logger.info("Running [sampling-lightdock] module")
 
-        # Apply module information to defaults
-        self.patch_defaults(params)
+        super().run(params)
 
         # Get the models generated in previous step
         models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]
@@ -65,8 +62,8 @@ class HaddockModule(BaseHaddockModule):
                                    " split by chain")
 
         # Receptor and ligand PDB structures
-        rec_chain = self.defaults["params"]["receptor_chains"][0]
-        lig_chain = self.defaults["params"]["ligand_chains"][0]
+        rec_chain = self.params["receptor_chains"][0]
+        lig_chain = self.params["ligand_chains"][0]
         receptor_pdb_file = (f"{Path(model.file_name).stem}_"
                              f"{rec_chain}.{Format.PDB}")
         ligand_pdb_file = (f"{Path(model.file_name).stem}_"
@@ -75,10 +72,10 @@ class HaddockModule(BaseHaddockModule):
         # Setup
         logger.info("Running LightDock setup")
         with working_directory(self.path):
-            swarms = self.defaults["params"]["swarms"]
-            glowworms = self.defaults["params"]["glowworms"]
-            noxt = self.defaults["params"]["noxt"]
-            noh = self.defaults["params"]["noh"]
+            swarms = self.params["swarms"]
+            glowworms = self.params["glowworms"]
+            noxt = self.params["noxt"]
+            noh = self.params["noh"]
             cmd = (f"lightdock3_setup.py {receptor_pdb_file}"
                    f" {ligand_pdb_file} -s {swarms} -g {glowworms}")
             if noxt:
@@ -90,8 +87,8 @@ class HaddockModule(BaseHaddockModule):
         # Simulation
         logger.info("Running LightDock simulation")
         with working_directory(self.path):
-            steps = self.defaults["params"]["steps"]
-            scoring = self.defaults["params"]["scoring"]
+            steps = self.params["steps"]
+            scoring = self.params["scoring"]
             cores = NUM_CORES
             cmd = f"lightdock3.py setup.json {steps} -c {cores} -s {scoring}"
             subprocess.call(cmd, shell=True)
@@ -101,8 +98,8 @@ class HaddockModule(BaseHaddockModule):
         # Ranking
         logger.info("Generating ranking")
         with working_directory(self.path):
-            steps = self.defaults["params"]["steps"]
-            swarms = self.defaults["params"]["swarms"]
+            steps = self.params["steps"]
+            swarms = self.params["swarms"]
             cmd = f"lgd_rank.py {swarms} {steps}"
             subprocess.call(cmd, shell=True)
 
@@ -120,15 +117,15 @@ class HaddockModule(BaseHaddockModule):
             shutil.copy(self.path / ligand_pdb_file, self.path /
                         f"lightdock_{ligand_pdb_file}")
             # Create top
-            steps = self.defaults["params"]["steps"]
-            top = self.defaults["params"]["top"]
+            steps = self.params["steps"]
+            top = self.params["top"]
             cmd = (f"lgd_top.py {receptor_pdb_file} {ligand_pdb_file}"
                    f" rank_by_scoring.list {top}")
             subprocess.call(cmd, shell=True)
 
         # Tidy top files
         expected = []
-        top = self.defaults["params"]["top"]
+        top = self.params["top"]
         for i in range(top):
             file_name = f"top_{i+1}.{Format.PDB}"
             tidy_file_name = f"haddock_top_{i+1}.{Format.PDB}"

@@ -2,10 +2,14 @@
 import logging
 from os import linesep
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
+
 from haddock.cns.engine import CNSJob, Engine
-from haddock.cns.util import (generate_default_header, load_workflow_params,
-                              prepare_single_input)
+from haddock.cns.util import (
+    generate_default_header,
+    load_workflow_params,
+    prepare_single_input,
+    )
+from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile
 
 
@@ -13,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "cns", "defaults.toml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
 
 
 def generate_scoring(model, course_path, recipe_str, defaults):

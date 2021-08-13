@@ -2,21 +2,26 @@
 import logging
 import shutil
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
-from haddock.structure import Molecule, make_molecules
-from haddock.pdbutil import PDBFactory
-from haddock.engine import CNSJob, Engine
-from haddock.cns.util import (load_workflow_params, generate_default_header,
-                              prepare_output, prepare_single_input)
-from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
-from haddock.error import StepError
+
+from haddock.cns.util import (
+    generate_default_header,
+    load_workflow_params,
+    prepare_output,
+    prepare_single_input,
+    )
 from haddock.defaults import TOPOLOGY_PATH
+from haddock.engine import CNSJob, Engine
+from haddock.error import StepError
+from haddock.modules import BaseHaddockModule
+from haddock.ontology import Format, ModuleIO, PDBFile, TopologyFile
+from haddock.pdbutil import PDBFactory
+from haddock.structure import Molecule, make_molecules
+
 
 logger = logging.getLogger(__name__)
 
-
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "cns", "defaults.toml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
 
 
 def generate_topology(input_pdb, step_path, recipe_str, defaults,

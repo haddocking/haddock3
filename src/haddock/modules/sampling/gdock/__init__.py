@@ -14,6 +14,10 @@ from haddock.pdbutil import PDBFactory
 logger = logging.getLogger(__name__)
 
 
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+
+
 def ambig2dic(ambig_f):
     """Read an ambig.tbl file and convert it to a dictionary"""
     ambig_regex = r"resid\s*(\d*)\s*and\s*segid\s*(\w)"
@@ -33,14 +37,13 @@ def ambig2dic(ambig_f):
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = ""
-        defaults = recipe_path / "gdock.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+        super().__init__(order, path, initial_params)
 
     def run(self, **params):
         logger.info("Running [gdock] module")
+
+        super().run(params)
 
         try:
             gdock_path = os.environ['GDOCK_PATH']
@@ -54,7 +57,7 @@ class HaddockModule(BaseHaddockModule):
         # Get the models generated in previous step
         models_to_dock = [p for p in self.previous_io.output if p.file_type == Format.PDB]
 
-        if 'topoaa' not in Path(models_to_dock[0].path).stem:
+        if '00_topoaa' not in Path(models_to_dock[0].path).stem:
             _msg = 'This module must come after Topology generation'
             self.finish_with_error(_msg)
 

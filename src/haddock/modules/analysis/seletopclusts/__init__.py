@@ -6,17 +6,25 @@ from haddock.ontology import ModuleIO
 
 logger = logging.getLogger(__name__)
 
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = ''
-        defaults = recipe_path / "seletopclusts.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(
+            self,
+            order,
+            path,
+            *ignore,
+            init_params=DEFAULT_CONFIG,
+            **everything):
+        super().__init__(order, path, init_params)
 
     def run(self, **params):
         logger.info("Running [seletopclusts] module")
+
+        super().run(params)
 
         # Get the models generated in previous step
         if not type(self.previous_io) == iter:
@@ -49,7 +57,7 @@ class HaddockModule(BaseHaddockModule):
 
         # how many models should we output?
         models = []
-        for select_id in params['top_cluster']:
+        for select_id in self.params['top_cluster']:
             # which cluster should we retrieve?
             # top_cluster = 1 == the best one, should be index 0
             try:
@@ -59,11 +67,11 @@ class HaddockModule(BaseHaddockModule):
                                ' skipping selection')
                 continue
 
-            if params['top_models'] == 'all':
+            if self.params['top_models'] == 'all':
                 for pdb in cluster_dic[target_id]:
                     models.append(pdb)
             else:
-                for pdb in cluster_dic[target_id][:params['top_models']]:
+                for pdb in cluster_dic[target_id][:self.params['top_models']]:
                     models.append(pdb)
 
         # Save module information

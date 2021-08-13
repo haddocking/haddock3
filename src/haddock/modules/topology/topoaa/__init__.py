@@ -2,17 +2,26 @@
 import logging
 import shutil
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
-from haddock.structure import Molecule, make_molecules
-from haddock.pdbutil import PDBFactory
-from haddock.engine import CNSJob, Engine
-from haddock.cns.util import (load_workflow_params, generate_default_header,
-                              prepare_output, prepare_single_input)
-from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
-from haddock.error import StepError
+
+from haddock.cns.util import (
+    generate_default_header,
+    load_workflow_params,
+    prepare_output,
+    prepare_single_input,
+    )
 from haddock.defaults import TOPOLOGY_PATH
+from haddock.engine import CNSJob, Engine
+from haddock.error import StepError
+from haddock.modules import BaseHaddockModule
+from haddock.ontology import Format, ModuleIO, PDBFile, TopologyFile
+from haddock.pdbutil import PDBFactory
+from haddock.structure import Molecule, make_molecules
+
 
 logger = logging.getLogger(__name__)
+
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
 
 
 def generate_topology(input_pdb, step_path, recipe_str, defaults,
@@ -46,17 +55,17 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = recipe_path / "cns" / "generate-topology.cns"
-        defaults = recipe_path / "cns" / "generate-topology.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+        cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
+        super().__init__(order, path, initial_params, cns_script)
 
-    def run(self, **params):
+    def run(self, molecules, **params):
         logger.info("Running [allatom] module")
         logger.info("Generating topologies")
 
-        molecules = make_molecules(params['molecules'])
+        super().run(params)
+
+        molecules = make_molecules(molecules)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -84,7 +93,7 @@ class HaddockModule(BaseHaddockModule):
                 topology_filename = generate_topology(model,
                                                       self.path,
                                                       self.recipe_str,
-                                                      self.defaults)
+                                                      self.params)
                 logger.info("Topology CNS input created in"
                             f" {topology_filename}")
 

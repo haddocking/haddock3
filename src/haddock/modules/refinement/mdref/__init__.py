@@ -9,7 +9,11 @@ from haddock.cns.util import generate_default_header, load_ambig
 from haddock.cns.util import load_workflow_params, prepare_multiple_input
 from haddock.ontology import Format, ModuleIO, PDBFile
 
+
 logger = logging.getLogger(__name__)
+
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
 
 
 def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
@@ -52,14 +56,14 @@ def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent.absolute()
-        cns_script = recipe_path / "cns" / "mdref.cns"
-        defaults = recipe_path / "cns" / "mdref.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+        cns_script = RECIPE_PATH / "cns" / "mdref.cns"
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [mdref] module")
+
+        super().run(params)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -79,7 +83,7 @@ class HaddockModule(BaseHaddockModule):
                 model,
                 self.path,
                 self.recipe_str,
-                self.defaults,
+                self.params,
                 ambig=params.get('ambig', None),
                 )
 

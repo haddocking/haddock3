@@ -2,8 +2,11 @@
 import os
 import logging
 import contextlib
+from abc import ABC, abstractmethod
 from pathlib import Path
+
 import toml
+
 from haddock.error import StepError
 from haddock.ontology import ModuleIO
 from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
@@ -23,18 +26,27 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-class BaseHaddockModule:
-    """Base class for any HADDOCK module"""
-    def __init__(self, order, path, cns_script="", defaults=""):
+class BaseHaddockModule(ABC):
+    def __init__(self, order, path, params, cns_script=""):
+        """
+        Base class for any HADDOCK module
+
+        Parameters
+        ----------
+        params : dict or path to toml file
+            A dictionary or a path to a toml file containing the initial
+            module parameters. Usually this is defined by the default
+            params.
+        """
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
 
         if cns_script:
-            self.cns_folder_path = cns_script.resolve().parent.absolute()
+            self.cns_folder_path = cns_script.resolve().parent
             self.cns_protocol_path = cns_script
-        if defaults:
-            self.defaults_path = defaults
+
+        self.params = params
 
         try:
             with open(self.cns_protocol_path) as input_handler:
@@ -45,17 +57,31 @@ class BaseHaddockModule:
         except AttributeError:
             # No CNS-like module
             pass
-        try:
-            self.defaults = toml.load(self.defaults_path)
-        except FileNotFoundError:
-            _msg = f"Error while opening defaults {self.defaults_path}"
-            raise StepError(_msg)
-        except AttributeError:
-            # No CNS-like module
-            pass
 
-    def run(self, module_information):
-        raise NotImplementedError()
+    @property
+    def params(self):
+        return self._params
+
+    @params.setter
+    def params(self, path_or_dict):
+        if isinstance(path_or_dict, dict):
+            self._params = path_or_dict
+        else:
+            try:
+                self._params = toml.load(path_or_dict)
+            except FileNotFoundError as err:
+                _msg = f"Default configuration file path not found: {str(path_or_dict)!r}"
+                raise FileNotFoundError(_msg) from err
+            except TypeError as err:
+                _msg = (
+                    "Argument does not satisfy condition, must be path or "
+                    f"dict. {type(path_or_dict)} given."
+                    )
+                raise TypeError(_msg) from err
+
+    @abstractmethod
+    def run(self, params):
+        self.update_params(**params)
 
     def finish_with_error(self, message=""):
         if not message:
@@ -80,11 +106,9 @@ class BaseHaddockModule:
         except IndexError:
             return self.path
 
-    def patch_defaults(self, module_parameters):
-        """Apply custom module parameters given to defaults dictionary"""
-        for k in module_parameters:
-            if k in self.defaults["params"]:
-                self.defaults["params"][k] = module_parameters[k]
+    def update_params(self, **parameters):
+        """Update defaults parameters with run-specific parameters."""
+        self._params.update(parameters)
 
 
 @contextlib.contextmanager

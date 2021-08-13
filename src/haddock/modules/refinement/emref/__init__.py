@@ -11,6 +11,10 @@ from haddock.ontology import Format, ModuleIO, PDBFile
 logger = logging.getLogger(__name__)
 
 
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "emref.toml")
+
+
 def generate_emref(identifier, input_file, step_path, recipe_str,
                           defaults, ambig=None):
     """Generate the .inp file that will run the docking."""
@@ -51,14 +55,19 @@ def generate_emref(identifier, input_file, step_path, recipe_str,
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent.absolute()
-        cns_script = recipe_path / "cns" / "emref.cns"
-        defaults = recipe_path / "cns" / "emref.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(
+            self,
+            order,
+            path,
+            initial_params=DEFAULT_CONFIG):
+        """."""
+        cns_script = RECIPE_PATH / "cns" / "emref.cns"
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [emref] module")
+
+        super().run(params)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -76,7 +85,7 @@ class HaddockModule(BaseHaddockModule):
                 model,
                 self.path,
                 self.recipe_str,
-                self.defaults,
+                self.params,
                 ambig_f=params.get('ambig', None),
                 )
 

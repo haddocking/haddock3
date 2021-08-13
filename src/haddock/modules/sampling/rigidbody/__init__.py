@@ -11,6 +11,9 @@ from haddock.ontology import Format, ModuleIO, PDBFile
 
 logger = logging.getLogger(__name__)
 
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+
 
 def generate_docking(identifier, input_files, step_path, recipe_str, defaults, ambig=None):
     """Generate the .inp file that will run the docking."""
@@ -55,14 +58,14 @@ def generate_docking(identifier, input_files, step_path, recipe_str, defaults, a
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = recipe_path / "cns" / "rigidbody.cns"
-        defaults = recipe_path / "cns" / "rigidbody.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+        cns_script = RECIPE_PATH / "cns" / "rigidbody.cns"
+        super().__init__(order, path, initial_params, cns_script)
 
     def run(self, **params):
         logger.info("Running [rigidbody] module")
+
+        super().run(params)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -84,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
                 models_to_dock,
                 self.path,
                 self.recipe_str,
-                self.defaults,
+                self.params,
                 ambig=params.get('ambig', None),
                 )
 

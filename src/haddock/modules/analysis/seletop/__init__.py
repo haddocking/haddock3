@@ -6,17 +6,25 @@ from haddock.ontology import Format, ModuleIO
 
 logger = logging.getLogger(__name__)
 
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+
 
 class HaddockModule(BaseHaddockModule):
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = ''
-        defaults = recipe_path / "seletop.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(
+            self,
+            order,
+            path,
+            *ignore,
+            init_params=DEFAULT_CONFIG,
+            **everything):
+        super().__init__(order, path, init_params)
 
     def run(self, **params):
         logger.info("Running [seletop] module")
+
+        super().run(params)
 
         # Get the models generated in previous step
         if type(self.previous_io) == iter:

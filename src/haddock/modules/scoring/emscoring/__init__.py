@@ -3,12 +3,12 @@ import logging
 from os import linesep
 from pathlib import Path
 
-from haddock.cns.engine import CNSJob, Engine
 from haddock.cns.util import (
     generate_default_header,
     load_workflow_params,
     prepare_single_input,
     )
+from haddock.engine import CNSJob, Engine
 from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile
 

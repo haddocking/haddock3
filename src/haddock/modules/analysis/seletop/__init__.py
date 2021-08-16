@@ -31,17 +31,17 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error('This module cannot come after one'
                                    ' that produced an iterable')
 
-        models_to_select = [(p, p.score) for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_select = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+
+        # sort the models based on their score
+        models_to_select.sort(key=lambda x: x.score)
 
         if len(models_to_select) < params['select']:
             logger.warning('Number of models to be selected is larger'
                            ' than generated models, selecting ALL')
 
-        # Sort the models according to their scores
-        models_to_select.sort(key=lambda x: x[1])
-
-        # selected_models
-        selected_models = [m[0] for m in models_to_select][:params['select']]
+        # select the models based on the parameter
+        selected_models = models_to_select[:params['select']]
 
         io = ModuleIO()
         io.add(selected_models, "o")

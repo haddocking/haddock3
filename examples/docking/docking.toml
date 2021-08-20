@@ -1,14 +1,6 @@
 # ====================================================================
 # Rigid-body docking example
 
-# in which order the steps must be executed?
-order = ["topoaa",
-         "rigidbody",
-         "clustfcc",
-         "seletopclusts",
-         "flexref",
-         "mdref"]
-
 # directory in which the scoring will be done
 run_dir = "run1"
 

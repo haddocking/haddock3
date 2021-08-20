@@ -1,13 +1,6 @@
 # Recipe: LightDock integration with HADDOCK scoring
 
 # A recipe is composed by different stages which are executed in
-# by index in the order field:
-
-order = [
-    "topoaa",
-    "lightdock",
-    "emscoring"
-    ]
 
 molecules = "../../data/2oob.pdb"
 run_dir = "run1"

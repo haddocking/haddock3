@@ -35,7 +35,7 @@ class Workflow:
 
             try:
                 _ = Step(
-                    stage_name,
+                    stage_name.split('.')[0],
                     order=num_stage,
                     run_dir=run_dir,
                     **params,

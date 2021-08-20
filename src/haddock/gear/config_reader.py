@@ -44,6 +44,8 @@ def read_config(f):
             key = line.strip('[]')
             if key in d:
                 key += _CRAZY + str(sum(1 for _k in d if _k.startswith(key)))
+
+            d.setdefault(key, {})
             continue
 
         vk, v = (_.strip() for _ in line.split('='))

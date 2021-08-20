@@ -20,17 +20,19 @@ autohis = true
 ########################
 [emscoring]
 
+[emscoring]
 ########################
 #[clustering]
 #method = "fcc"
 #details = false
 
 # Cutoff and Threshold
-params = [
-    [0.60, 4.0],
-    [0.70, 4.0],
-    [0.75, 4.0]
-]
+#params = [
+#    [0.60, 4.0],
+#    [0.70, 4.0],
+#    [0.75, 4.0]
+#]
+
 ########################
 #[analysis]
 #template = "capri_48_161.brk"

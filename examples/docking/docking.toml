@@ -37,8 +37,12 @@ fraction_cutoff = 0.6
 threshold = 4
 
 [seletopclusts]
-top_cluster = [1, 2, 3, 4] # will select the best one
-top_models = 4 # will select the top4 models inside the cluster
+
+# will select the best one
+top_cluster = [1, 2, 3, 4]
+
+# will select the top4 models inside the cluster
+top_models = 4
 
 [flexref]
 ambig = '../data/1a2k_ti.tbl'

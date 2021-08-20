@@ -5,8 +5,7 @@ from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
 
-import toml
-
+from haddock.gear.config_reader import read_config
 from haddock.modules import modules_category
 from haddock.error import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -56,7 +55,7 @@ def setup_run(workflow_path):
     dict
         The updated parameter file.
     """
-    params = toml.load(workflow_path)
+    params = read_config(workflow_path)
 
     validate_params(params)
     convert_params_to_path(params)

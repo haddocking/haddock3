@@ -6,8 +6,10 @@ from pathlib import Path
 from haddock.error import HaddockError, StepError
 # unused
 # from haddock.defaults import MODULE_PATH_NAME, TOPOLOGY_PATH
-from haddock.modules import modules_category
+from haddock.gear.config_reader import get_module_name
 from haddock.libs.libutil import zero_fill
+from haddock.modules import modules_category
+
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +37,7 @@ class Workflow:
 
             try:
                 _ = Step(
-                    stage_name.split('.')[0],
+                    get_module_name(stage_name),
                     order=num_stage,
                     run_dir=run_dir,
                     **params,

@@ -207,3 +207,8 @@ def _make_nested_keys(d):
             d1[key] = value
 
     return d1
+
+
+def get_module_name(name):
+    """Gets the name according to the config parser."""
+    return name.split('.')[0]

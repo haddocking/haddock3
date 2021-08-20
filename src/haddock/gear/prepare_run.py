@@ -9,6 +9,7 @@ from haddock.gear.config_reader import read_config
 from haddock.modules import modules_category
 from haddock.error import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.gear.config_reader import get_module_name
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
@@ -111,8 +112,9 @@ def validate_modules(params):
 
     Raises ConfigurationError if module does not exist.
     """
-    for module in params['order']:
-        if module not in modules_category.keys():
+    keys = set(params) - set(config_mandatory_general_parameters)
+    for module in keys:
+        if get_module_name(module) not in modules_category.keys():
             _msg = (
                 f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "

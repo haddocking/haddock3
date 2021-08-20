@@ -76,6 +76,41 @@ def read_config(f):
     return _make_nested_keys(d)
 
 
+def _is_correct_line(line):
+    return not _is_comment(line)
+
+
+def _is_comment(line):
+    """Assert if line is a comment or a line to ignore."""
+    is_comment = \
+        line.startswith('#') \
+        or not bool(line)
+
+    return is_comment
+
+
+def _process_line(line):
+    return line.strip()
+
+
+def _parse_value(raw):
+    """Parse values as string to its value."""
+    # ast.literal_eval is not used to allow special methods
+    types = [
+        int,
+        float,
+        _read_bool,
+        datetime.fromisoformat,
+        _clean_string,
+        ]
+
+    for method in types:
+        try:
+            return method(raw)
+        except (ValueError, KeyError):
+            continue
+
+
 def _read_bool(raw):
     """
     Convert "true" and "false" related-strings to `True` and `False`.
@@ -113,39 +148,12 @@ def _clean_string(s):
     return s.strip("'\"")
 
 
-def _parse_value(raw):
-    """Parse values as string to its value."""
-    # ast.literal_eval is not used to allow special methods
-    types = [
-        int,
-        float,
-        _read_bool,
-        datetime.fromisoformat,
-        _clean_string,
-        ]
-
-    for method in types:
-        try:
-            return method(raw)
-        except (ValueError, KeyError):
-            continue
-
-
-def _is_comment(line):
-    """Assert if line is a comment or a line to ignore."""
-    is_comment = \
-        line.startswith('#') \
-        or not bool(line)
-
-    return is_comment
-
-
-def _is_correct_line(line):
-    return not _is_comment(line)
-
-
-def _process_line(line):
-    return line.strip()
+def _eval_list_str(s):
+    """Evaluates a string to a list."""
+    s = '[' + s.strip(',[]') + ']'
+    s = s.replace('true', 'True')
+    s = s.replace('false', 'False')
+    return ast.literal_eval(s)
 
 
 def _get_list_block(fin):
@@ -167,14 +175,6 @@ def _get_list_block(fin):
         block.append(line)
 
     return ''.join(block).strip()
-
-
-def _eval_list_str(s):
-    """Evaluates a string to a list."""
-    s = '[' + s.strip(',[]') + ']'
-    s = s.replace('true', 'True')
-    s = s.replace('false', 'False')
-    return ast.literal_eval(s)
 
 
 def _make_nested_keys(d):

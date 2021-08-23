@@ -19,23 +19,28 @@ from datetime import datetime
 
 
 # string separator for internal reasons
-_CRAZY = '_dnkljkqwdkjwql_'
+# intents to be a string that will never happen in the config
+INTERNAL_SEP = '_dnkljkqwdkjwql_'
 
 # line regexes
-# https://regex101.com/r/5UOnCW/1
+# https://regex101.com/r/Ad3P2x/1
 header_re = re.compile(r'^ *\[([^\[\]].*?)\]')
 
-# https://regex101.com/r/0HyXon/1
-string_re = re.compile(r'''^ *(\w+) *= *[\"\'](.*?)[\"\']''')
+# https://regex101.com/r/q2fuFl/1
+string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
 
-# https://regex101.com/r/6Y5YxX/1
-number_re = re.compile(r'^ *(\w+) *= *(\d+\.?\d+)\s')
+# https://regex101.com/r/iwdRmc/1
+number_re = re.compile(r'^ *(\w+) *= *(\d+\.?\d*)(?: |$)')
 
-# https://regex101.com/r/SS5zBd/1
+# https://regex101.com/r/YCZSAo/1
 list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')
 
-# 
+# https://regex101.com/r/bWlaWB/1
 list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
+
+# https://regex101.com/r/kY49lw/1
+true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
+false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 
 
 class NoGroupFoundError(Exception):
@@ -62,7 +67,8 @@ def read_config(f):
         if header_group:
             key = header_group[1]
             if key in d:
-                key += _CRAZY + str(sum(1 for _k in d if _k.startswith(key)))
+                _num = str(sum(1 for _k in d if _k.startswith(key)))
+                key += INTERNAL_SEP + _num
 
             d1 = d.setdefault(key, {})
             continue
@@ -95,50 +101,6 @@ def read_config(f):
     return _make_nested_keys(d)
 
 
-def get_one_line_group(line):
-    """."""
-    methods = [
-        string_re,
-        number_re,
-        list_one_liner_re,
-        ]
-
-    for method in methods:
-        group = method.match(line)
-        # return first found
-        if group:
-            try:
-                return group[1], ast.literal_eval(group[2])
-            except Exception:  # literal_eval fails
-                pass
-
-    # try special methods
-
-    special_methods = [
-        datetime.fromisoformat,
-        _try_bool,
-        ]
-
-    try:
-        key, value = (s.strip() for s in line.split('='))
-    except ValueError:
-        raise NoGroupFoundError('Line does not match any group.')
-
-    for method in special_methods:
-        try:
-            return key, method(value)
-        except Exception:
-            continue
-
-    raise NoGroupFoundError('Line does not match any group.')
-
-
-def _try_bool(s):
-    s = s.replace('true', 'True')
-    s = s.replace('false', 'False')
-    return ast.literal_eval(s)
-
-
 def _is_correct_line(line):
     return not _is_comment(line)
 
@@ -156,10 +118,41 @@ def _process_line(line):
     return line.strip()
 
 
+def _replace_bool(s):
+    "Replace booleans and try to parse."""
+    s = s.replace('true', 'True')
+    s = s.replace('false', 'False')
+    return s
+
+
 def _eval_list_str(s):
     """Evaluates a string to a list."""
     s = '[' + s.strip(',[]') + ']'
-    return _try_bool(s)
+    s = _replace_bool(s)
+    return ast.literal_eval(s)
+
+
+def get_one_line_group(line):
+    """Attempt to identify a key:value pair in a single line."""
+    for method, func in regex_single_line_methods:
+        group = method.match(line)
+        if group:
+            return group[1], func(group[2])  # return first found
+
+    # all regex-based methods have failed
+    # now try methods not based on regex
+    try:
+        key, value = (s.strip() for s in line.split('='))
+    except ValueError:
+        raise NoGroupFoundError('Line does not match any group.')
+
+    for method in regex_single_line_special_methods:
+        try:
+            return key, method(value)
+        except Exception:
+            continue
+
+    raise NoGroupFoundError('Line does not match any group.')
 
 
 def _get_list_block(fin):
@@ -201,7 +194,7 @@ def _make_nested_keys(d):
 
         if isinstance(value, dict):
 
-            keys = [_k.replace(_CRAZY, '.') for _k in key.split('.')]
+            keys = [_k.replace(INTERNAL_SEP, '.') for _k in key.split('.')]
             dk = d1.setdefault(keys[0], {})
 
             for k in keys[1:]:
@@ -218,3 +211,18 @@ def _make_nested_keys(d):
 def get_module_name(name):
     """Gets the name according to the config parser."""
     return name.split('.')[0]
+
+
+# methods to parse single line values
+# (regex, func)
+regex_single_line_methods = [
+    (string_re, ast.literal_eval),
+    (number_re, ast.literal_eval),
+    (list_one_liner_re, _eval_list_str),
+    (true_re, lambda x: True),
+    (false_re, lambda x: False),
+    ]
+
+regex_single_line_special_methods = [
+    datetime.fromisoformat,
+    ]

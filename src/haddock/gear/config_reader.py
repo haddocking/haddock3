@@ -29,8 +29,8 @@ header_re = re.compile(r'^ *\[([^\[\]].*?)\]')
 # https://regex101.com/r/q2fuFl/1
 string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
 
-# https://regex101.com/r/iwdRmc/1
-number_re = re.compile(r'^ *(\w+) *= *(\d+\.?\d*)(?: |$)')
+# https://regex101.com/r/6X4j7n/1
+number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |$)')
 
 # https://regex101.com/r/YCZSAo/1
 list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')

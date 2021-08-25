@@ -5,8 +5,11 @@ It does not implement all features of TOML files, but it does implement
 the features needed for HADDOCK3. What config reader parses:
 
 * Accepts repeated keys.
-  * Repetitions get `.#` suffixes, where `#` is integer
-* Allows in-line comments
+  * Repetitions get `.#` suffixes, where `#` is an integer
+* Allows in-line comments for regex-defined values
+* lines with special values not defined by regexes do not accept comments
+
+* Regex defined values:
 * lists can be defined in multilines (comments are allowed)
   * multi-line lists must be followed by an empty line.
 * Values must be parseable by:
@@ -49,14 +52,17 @@ class NoGroupFoundError(Exception):
 
 def read_config(f):
     """Parse HADDOCK3 config file to a dictionary."""
+    with open(f, 'r') as fin:
+        return _read_config(fin)
+
+
+def _read_config(fin):
+    # fin can't be processed to a list at this stage
+    # it must be kept as a generator
     d = {}
 
     # main keys always come before any subdictionary
     d1 = d
-
-    # fin can't be processed to a list at this stage
-    # it must be kept as a generator
-    fin = open(f)
 
     pure_lines = filter(_is_correct_line, map(_process_line, fin))
     key = None
@@ -75,7 +81,7 @@ def read_config(f):
 
         # evals if key:value are defined in a single line
         try:
-            key, value = get_one_line_group(line)
+            key, value = _get_one_line_group(line)
         except NoGroupFoundError:
             pass
         else:
@@ -90,6 +96,7 @@ def read_config(f):
             idx = line.find('[')
             # need to send `fin` and not `pure_lines`
             block = line[idx:] + _get_list_block(fin)
+            print('block, ', block)
             list_ = _eval_list_str(block)
             d1[key] = list_
             continue
@@ -97,7 +104,6 @@ def read_config(f):
         # if the flow reaches here...
         raise ValueError(f'Can\'t process this line: {line!r}')
 
-    fin.close()
     return _make_nested_keys(d)
 
 
@@ -106,7 +112,11 @@ def _is_correct_line(line):
 
 
 def _is_comment(line):
-    """Assert if line is a comment or a line to ignore."""
+    """
+    Assert if line is a comment or a line to ignore.
+
+    Expects striped lines.
+    """
     is_comment = \
         line.startswith('#') \
         or not bool(line)
@@ -126,13 +136,16 @@ def _replace_bool(s):
 
 
 def _eval_list_str(s):
-    """Evaluates a string to a list."""
-    s = '[' + s.strip(',[]') + ']'
+    """
+    Evaluates a string to a list.
+
+    List string must be already enclosed in brackets `[]`.
+    """
     s = _replace_bool(s)
     return ast.literal_eval(s)
 
 
-def get_one_line_group(line):
+def _get_one_line_group(line):
     """Attempt to identify a key:value pair in a single line."""
     for method, func in regex_single_line_methods:
         group = method.match(line)

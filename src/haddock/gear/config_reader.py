@@ -2,18 +2,23 @@
 In-house implementation of toml config files for HADDOCK3.
 
 It does not implement all features of TOML files, but it does implement
-the features needed for HADDOCK3. What config reader parses:
+the features needed for HADDOCK3. The config reader:
 
 * Accepts repeated keys.
   * Repetitions get `.#` suffixes, where `#` is an integer
+
 * Allows in-line comments for regex-defined values
-* lines with special values not defined by regexes do not accept comments
+
+* lines with special values not defined by regexes do not accept
+  comments
 
 * Regex defined values:
-* lists can be defined in multilines (comments are allowed)
-  * multi-line lists must be followed by an empty line.
-* Values must be parseable by:
-  * `ast.literal_eval`
+  * strings
+  * numbers
+  * lists defined in one lines
+  * lists defined in multiple lines (require empty line after)
+
+* Values attempted without regex (do not accept comment in lines):
   * `datetime.fromisoformat`
 """
 import ast

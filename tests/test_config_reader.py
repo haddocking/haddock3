@@ -288,6 +288,8 @@ def test_get_module_name(header, name):
                 "foo",
                 [56, 86],
                 ]
+
+            [headerone]
             """.split('\n'),
             {
                 "num1": 10,
@@ -296,6 +298,7 @@ def test_get_module_name(header, name):
                     "name": "the other string",
                     "_list": [12, "foo", [56, 86]],
                     },
+                "headerone.1": {},
                 },
             ),
         ],

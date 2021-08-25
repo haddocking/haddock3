@@ -20,27 +20,27 @@ from datetime import datetime
 
 # string separator for internal reasons
 # intents to be a string that will never happen in the config
-INTERNAL_SEP = '_dnkljkqwdkjwql_'
+_INTERNAL_SEP = '_dnkljkqwdkjwql_'
 
 # line regexes
 # https://regex101.com/r/Ad3P2x/1
-header_re = re.compile(r'^ *\[([^\[\]].*?)\]')
+_header_re = re.compile(r'^ *\[([^\[\]].*?)\]')
 
 # https://regex101.com/r/q2fuFl/1
-string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
+_string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
 
 # https://regex101.com/r/6X4j7n/1
-number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |$)')
+_number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |$)')
 
 # https://regex101.com/r/YCZSAo/1
-list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')
+_list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')
 
 # https://regex101.com/r/bWlaWB/1
-list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
+_list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
 
 # https://regex101.com/r/kY49lw/1
-true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
-false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
+_true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
+_false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 
 
 class NoGroupFoundError(Exception):
@@ -63,12 +63,12 @@ def read_config(f):
     for line in pure_lines:
 
         # treats header
-        header_group = header_re.match(line)
+        header_group = _header_re.match(line)
         if header_group:
             key = header_group[1]
             if key in d:
                 _num = str(sum(1 for _k in d if _k.startswith(key)))
-                key += INTERNAL_SEP + _num
+                key += _INTERNAL_SEP + _num
 
             d1 = d.setdefault(key, {})
             continue
@@ -83,7 +83,7 @@ def read_config(f):
             continue
 
         # evals if key:value is defined in multiple lines
-        mll_group = list_multiliner_re.match(line)
+        mll_group = _list_multiliner_re.match(line)
 
         if mll_group:
             key = mll_group[1]
@@ -194,7 +194,7 @@ def _make_nested_keys(d):
 
         if isinstance(value, dict):
 
-            keys = [_k.replace(INTERNAL_SEP, '.') for _k in key.split('.')]
+            keys = [_k.replace(_INTERNAL_SEP, '.') for _k in key.split('.')]
             dk = d1.setdefault(keys[0], {})
 
             for k in keys[1:]:
@@ -216,11 +216,11 @@ def get_module_name(name):
 # methods to parse single line values
 # (regex, func)
 regex_single_line_methods = [
-    (string_re, ast.literal_eval),
-    (number_re, ast.literal_eval),
-    (list_one_liner_re, _eval_list_str),
-    (true_re, lambda x: True),
-    (false_re, lambda x: False),
+    (_string_re, ast.literal_eval),
+    (_number_re, ast.literal_eval),
+    (_list_one_liner_re, _eval_list_str),
+    (_true_re, lambda x: True),
+    (_false_re, lambda x: False),
     ]
 
 regex_single_line_special_methods = [

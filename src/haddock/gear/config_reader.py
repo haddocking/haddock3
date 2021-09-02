@@ -15,6 +15,7 @@ the features needed for HADDOCK3. The config reader:
 * Regex defined values:
   * strings
   * numbers
+  * null/nones
   * lists defined in one lines
   * lists defined in multiple lines (require empty line after)
 
@@ -39,6 +40,9 @@ _string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
 
 # https://regex101.com/r/6X4j7n/1
 _number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |$)')
+
+# https://regex101.com/r/K6yXbe/1
+_none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
 # https://regex101.com/r/YCZSAo/1
 _list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')
@@ -236,6 +240,7 @@ def get_module_name(name):
 regex_single_line_methods = [
     (_string_re, ast.literal_eval),
     (_number_re, ast.literal_eval),
+    (_none_re, lambda x: None),
     (_list_one_liner_re, _eval_list_str),
     (_true_re, lambda x: True),
     (_false_re, lambda x: False),

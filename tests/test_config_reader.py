@@ -63,6 +63,37 @@ def test_string_re_wrong(line):
 
 
 @pytest.mark.parametrize(
+    'line,name,value',
+    [
+        ('value = null', 'value', 'null'),
+        ("value = Null", 'value', 'Null'),
+        ("var2=None", 'var2', 'None'),
+        ("var2=none#somecomment", 'var2', 'none'),
+        ("var2=None    #somecomment", 'var2', 'None'),
+        ],
+    )
+def test_none_re(line, name, value):
+    """Test none regex."""
+    result = config_reader._none_re.match(line)
+    assert result[1] == name
+    assert result[2] == value
+
+
+@pytest.mark.parametrize(
+    'line',
+    [
+        'value=1',
+        'value=other',
+        'value=true',
+        'value="some string"',
+        'value = ["list"]',
+        ],
+    )
+def test_none_re_wrong(line):
+    assert config_reader._none_re.match(line) is None
+
+
+@pytest.mark.parametrize(
     'line,number',
     [
         ('value = 00', "00"),
@@ -281,6 +312,7 @@ def test_get_module_name(header, name):
             # some comment
             num1 = 10
             name="some string"
+            null_value = None#some comment
             [headerone]
             name = "the other string"
             _list = [
@@ -294,6 +326,7 @@ def test_get_module_name(header, name):
             {
                 "num1": 10,
                 "name": "some string",
+                "null_value": None,
                 "headerone": {
                     "name": "the other string",
                     "_list": [12, "foo", [56, 86]],

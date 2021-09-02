@@ -7,6 +7,7 @@ from pathlib import Path
 
 import toml
 
+from haddock import haddock3_source_path
 from haddock.modules import modules_category
 from haddock.error import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -70,6 +71,7 @@ def setup_run(workflow_path):
         params,
         config_mandatory_general_parameters,
         )
+    validate_modules_params(modules_params)
 
     copy_ambig_files(modules_params, begin_dir)
 
@@ -118,6 +120,34 @@ def validate_modules(params):
                 f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "
                 "DOCUMENTATION-LINK"
+                )
+            raise ConfigurationError(_msg)
+
+
+@with_config_error
+def validate_modules_params(params):
+    """Validates individual parameters for each module."""
+
+    for module_name, args in params.items():
+        pdef = Path(
+            haddock3_source_path,
+            'modules',
+            modules_category[module_name],
+            module_name,
+            'defaults.toml',
+            ).resolve()
+
+        defaults = toml.load(pdef)
+        if not defaults:
+            return
+
+        diff = set(args.keys()) - set(defaults.keys()) \
+            - set(config_mandatory_general_parameters)
+        print(module_name, diff)
+        if diff:
+            _msg = (
+                'The following parameters do not match any expected '
+                f'parameters for module {module_name!r}: {diff}.'
                 )
             raise ConfigurationError(_msg)
 

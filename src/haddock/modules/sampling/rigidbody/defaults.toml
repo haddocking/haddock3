@@ -1,4 +1,5 @@
 log_level = "verbose"
+sampling = 5
 amb_cool1 = 10
 amb_cool2 = 50
 amb_cool3 = 50

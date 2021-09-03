@@ -2,6 +2,7 @@
 import logging
 import shutil
 from copy import deepcopy
+from operator import ge
 from os import cpu_count
 
 from haddock.error import SetupError
@@ -124,3 +125,29 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
     ncores = min(n, max_cpus)
     logger.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
     return ncores
+
+
+def non_negative_int(
+        n,
+        exception=ValueError("`n` do not satistfies."),
+        ):
+    """
+    Transform `n` in int and returns if `compare` evaluates to True.
+
+    Parameters
+    ----------
+    n : int-convertable
+        Something that can be converted to int.
+
+    exception : Exception
+        Ready to raise Exception in case `n` is not a positive integer.
+
+    Raises
+    ------
+    ValueError, TypeError
+        If `n` cannot be converted to `int`
+    """
+    n = int(n)
+    if n >= 0:
+        return n
+    raise exception

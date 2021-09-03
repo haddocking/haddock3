@@ -8,7 +8,8 @@ from haddock.cns.util import (
     load_workflow_params,
     prepare_single_input,
     )
-from haddock.engine import CNSJob, Engine
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile
 
@@ -84,7 +85,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Engine(jobs)
+        engine = Scheduler(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 

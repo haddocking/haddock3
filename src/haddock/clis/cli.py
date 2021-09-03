@@ -29,6 +29,13 @@ def main(args=None):
     # The recipe to be used
     parser.add_argument("recipe", type=argparse.FileType("r"),
                         help="The input recipe file name")
+
+    parser.add_argument(
+        "--setup",
+        help="Only setup the run, do not execute",
+        action="store_true",
+        )
+
     # Version
     parser.add_argument("-V", "-v", "--version", help="show version",
                         action="version",
@@ -51,18 +58,19 @@ def main(args=None):
         logging.error(se)
         sys.exit()
 
-    try:
-        workflow = WorkflowManager(
-            workflow_params=params,
-            start=options.restart,
-            **other_params,
-            )
+    if not options.setup:
+        try:
+            workflow = WorkflowManager(
+                workflow_params=params,
+                start=options.restart,
+                **other_params,
+                )
 
-        # Main loop of execution
-        workflow.run()
+            # Main loop of execution
+            workflow.run()
 
-    except HaddockError as he:
-        logging.error(he)
+        except HaddockError as he:
+            logging.error(he)
 
     # Finish
     logging.info(get_adieu())

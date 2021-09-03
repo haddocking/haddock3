@@ -5,11 +5,10 @@ from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
 
-from haddock.gear.config_reader import read_config
-from haddock.modules import modules_category
-from haddock.error import ConfigurationError
+from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.parameters import config_mandatory_general_parameters
-from haddock.gear.config_reader import get_module_name
+from haddock.error import ConfigurationError
+from haddock.modules import modules_category
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,

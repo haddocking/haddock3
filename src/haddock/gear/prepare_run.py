@@ -141,8 +141,10 @@ def validate_modules_params(params):
         if not defaults:
             return
 
-        diff = set(args.keys()) - set(defaults.keys()) \
+        diff = set(args.keys()) \
+            - set(defaults.keys()) \
             - set(config_mandatory_general_parameters)
+
         print(module_name, diff)
         if diff:
             _msg = (

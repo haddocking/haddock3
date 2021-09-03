@@ -1,4 +1,5 @@
 log_level = "verbose"
+ambig = ""
 amb_cool1 = 10
 amb_cool2 = 50
 amb_cool3 = 50

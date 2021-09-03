@@ -36,12 +36,12 @@ class HaddockModule(BaseHaddockModule):
         # sort the models based on their score
         models_to_select.sort(key=lambda x: x.score)
 
-        if len(models_to_select) < params['select']:
+        if len(models_to_select) < self.params['select']:
             logger.warning('Number of models to be selected is larger'
                            ' than generated models, selecting ALL')
 
         # select the models based on the parameter
-        selected_models = models_to_select[:params['select']]
+        selected_models = models_to_select[:self.params['select']]
 
         io = ModuleIO()
         io.add(selected_models, "o")

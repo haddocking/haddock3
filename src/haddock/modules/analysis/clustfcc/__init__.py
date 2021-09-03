@@ -85,8 +85,16 @@ class HaddockModule(BaseHaddockModule):
 
         # Cluster
         logger.info('Clustering...')
-        pool = cluster_fcc.read_matrix(fcc_matrix_f, params['fraction_cutoff'], strictness=0.75)
-        _, clusters = cluster_fcc.cluster_elements(pool, threshold=params['threshold'])
+        pool = cluster_fcc.read_matrix(
+            fcc_matrix_f,
+            self.params['fraction_cutoff'],
+            self.params['strictness'],
+            )
+
+        _, clusters = cluster_fcc.cluster_elements(
+            pool,
+            threshold=self.params['threshold'],
+            )
 
         # Prepare output and read the elements
         cluster_dic = {}

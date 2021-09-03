@@ -10,12 +10,13 @@ from haddock.cns.util import (
     prepare_single_input,
     )
 from haddock.defaults import TOPOLOGY_PATH
-from haddock.engine import CNSJob, Engine
 from haddock.error import StepError
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.pdbutil import PDBFactory
-from haddock.structure import Molecule, make_molecules
+from haddock.structure import make_molecules
 
 
 logger = logging.getLogger(__name__)
@@ -111,7 +112,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Engine(jobs)
+        engine = Scheduler(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 

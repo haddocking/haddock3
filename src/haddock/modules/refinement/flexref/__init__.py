@@ -4,9 +4,10 @@ from os import linesep
 from pathlib import Path
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
-from haddock.engine import CNSJob, Engine
+from haddock.libs.libsubprocess import CNSJob
 from haddock.cns.util import generate_default_header, load_ambig
 from haddock.cns.util import load_workflow_params, prepare_multiple_input
+from haddock.libs.libparallel import Scheduler
 from haddock.ontology import Format, ModuleIO, PDBFile
 
 
@@ -99,7 +100,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Engine(jobs)
+        engine = Scheduler(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 

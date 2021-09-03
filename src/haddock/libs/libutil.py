@@ -4,6 +4,7 @@ import shutil
 from copy import deepcopy
 from operator import ge
 from os import cpu_count
+from pathlib import Path
 
 from haddock.error import SetupError
 
@@ -129,7 +130,8 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
 
 def non_negative_int(
         n,
-        exception=ValueError("`n` do not satistfies."),
+        exception=ValueError,
+        emsg="`n` do not satisfies",
         ):
     """
     Transform `n` in int and returns if `compare` evaluates to True.
@@ -140,14 +142,57 @@ def non_negative_int(
         Something that can be converted to int.
 
     exception : Exception
-        Ready to raise Exception in case `n` is not a positive integer.
+        The Exception to raise in case `n` is not a positive integer.
+
+    emsg : str
+        The error message to give to `exception`. May accept formatting
+        to pass `n`.
 
     Raises
     ------
     ValueError, TypeError
         If `n` cannot be converted to `int`
     """
-    n = int(n)
-    if n >= 0:
-        return n
-    raise exception
+    n1 = int(n)
+    if n1 >= 0:
+        return n1
+
+    # don't change to f-strings, .format has a purpose
+    raise exception(emsg.format(n))
+
+
+def file_exists(
+        path,
+        exception=ValueError,
+        emsg="`path` is not a file or does not exist",
+        ):
+    """
+    Asserts file exist.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        The file path.
+
+    exception : Exception
+        The Exception to raise in case `path` is not file or does not
+        exist.
+
+    emsg : str
+        The error message to give to `exception`. May accept formatting
+        to pass `path`.
+
+    Raises
+    ------
+    Exception
+        Any exception that pathlib.Path can raise.
+    """
+    p = Path(path)
+
+    valid = [p.exists, p.is_file]
+
+    if all(f() for f in valid):
+        return p
+
+    # don't change to f-strings, .format has a purpose
+    raise exception(emsg.format(str(path)))

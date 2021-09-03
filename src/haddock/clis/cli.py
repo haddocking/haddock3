@@ -2,23 +2,31 @@
 import argparse
 import logging
 import sys
+from argparse import ArgumentTypeError
 from functools import partial
 
 from haddock.version import CURRENT_VERSION
-from haddock.libs.libutil import non_negative_int
+from haddock.libs.libutil import file_exists, non_negative_int
 
 
 # Command line interface parser
 ap = argparse.ArgumentParser()
 
+_arg_file_exist = partial(
+    file_exists,
+    exception=ArgumentTypeError,
+    emsg="File {!r} does not exist or is not a file.")
 ap.add_argument(
     "recipe",
-    type=argparse.FileType("r"),
+    type=_arg_file_exist,
     help="The input recipe file path",
     )
 
-_arg_pos_err = argparse.ArgumentTypeError("Minimum value is 0")
-_arg_pos_int = partial(non_negative_int, exception=_arg_pos_err)
+_arg_pos_int = partial(
+    non_negative_int,
+    exception=ArgumentTypeError,
+    emsg="Minimum value is 0, {!r} given.",
+    )
 ap.add_argument(
     "--restart",
     type=_arg_pos_int,
@@ -80,8 +88,14 @@ def main(
         The path to the recipe (config file).
 
     restart : int
-    """
+        At which step to restart haddock3 run.
 
+    setup_only : bool
+        Whether to setup the run without running it.
+
+    log_level : str
+        The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
+    """
     # anti-pattern to speed up CLI initiation
     from haddock.workflow import WorkflowManager
     from haddock.gear.greetings import get_adieu, get_initial_greeting
@@ -89,9 +103,10 @@ def main(
     from haddock.error import HaddockError, ConfigurationError
 
     # Configuring logging
-    logging.basicConfig(level=options.log_level,
-                        format=("[%(asctime)s] %(name)s:L%(lineno)d"
-                                " %(levelname)s - %(message)s"))
+    logging.basicConfig(
+        level=log_level,
+        format="[%(asctime)s] %(name)s:L%(lineno)d %(levelname)s - %(message)s",
+        )
 
     # Special case only using print instead of logging
     logging.info(get_initial_greeting())

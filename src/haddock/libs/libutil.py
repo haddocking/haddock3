@@ -111,7 +111,7 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
         raise SetupError(_msg) from err
 
     if n < 1:
-        _msg = "`n` is not positive, this is not possible."
+        _msg = f"`n` is not positive, this is not possible: {n!r}"
         raise SetupError(_msg)
 
     if njobs:

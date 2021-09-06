@@ -73,7 +73,7 @@ setup(
         ],
     entry_points={
         'console_scripts': [
-            'haddock3 = haddock.clis.cli:main',
+            'haddock3 = haddock.clis.cli:maincli',
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

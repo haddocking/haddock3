@@ -56,7 +56,7 @@ class HaddockModule(BaseHaddockModule):
 
         contact_file_l = []
         not_found = []
-        for job in contact_engine.tasks:
+        for job in contact_jobs:
             if not job.output.exists():
                 # NOTE: If there is no output, most likely the models are not in contact
                 #  there is no way of knowing how many models are not in contact, it can be

@@ -1,4 +1,5 @@
 """Running CNS scripts"""
+import os
 import shlex
 import subprocess
 
@@ -17,9 +18,9 @@ class Job:
 
     def run(self):
         cmd = " ".join([
-            self.executable,
+            os.fspath(self.executable),
             ''.join(map(str, self.args)),  # empty string if no args
-            self.input,
+            os.fspath(self.input),
             ])
 
         with open(self.output, 'w') as outf:

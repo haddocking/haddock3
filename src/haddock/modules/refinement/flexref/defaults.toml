@@ -3,6 +3,7 @@ prot_segid_mol1 = "A"
 prot_segid_mol2 = "B"
 fix_origin_mol1 = false
 fix_origin_mol2 = false
+ambig = ""
 unambig_fname = ""
 amb_cool1 = 10
 amb_cool2 = 50

@@ -87,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
                 self.path,
                 self.recipe_str,
                 self.params,
-                ambig_f=params.get('ambig', None),
+                ambig_f=self.params.get('ambig', None),
                 )
 
             out_file = self.path / f"emref_{idx}.out"

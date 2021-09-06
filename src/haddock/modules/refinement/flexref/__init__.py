@@ -87,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
                 self.path,
                 self.recipe_str,
                 self.params,
-                ambig=params.get('ambig', None),
+                ambig=self.params.get('ambig', None),
                 )
 
             out_file = self.path / f"flexref_{idx}.out"

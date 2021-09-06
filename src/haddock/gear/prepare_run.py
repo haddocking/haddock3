@@ -7,6 +7,7 @@ from pathlib import Path
 
 import toml
 
+from haddock import haddock3_source_path
 from haddock.modules import modules_category
 from haddock.error import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -48,21 +49,25 @@ def setup_run(workflow_path):
 
     #1 : validate the parameter TOML file
     #2 : convert strings to paths where it should
-    #3 : remove folder from previous runs if run folder name overlaps
-    #4 : create the needed folders/files to start the run
+    #3 : copy molecules to topology key
+    #4 : validate haddock3 modules params names against defaults
+    #5 : remove folder from previous runs if run folder name overlaps
+    #6 : create the needed folders/files to start the run
+    #7 : copy additional files to run folder
 
     Returns
     -------
-    dict
-        The updated parameter file.
+    tuple of two dicts
+        A dictionary with the parameters for the haddock3 modules.
+        A dictionary with the general run parameters.
     """
     params = toml.load(workflow_path)
 
+    # validates the configuration file
     validate_params(params)
-    convert_params_to_path(params)
-    remove_folder(params['run_dir'])
-    begin_dir, _ = create_begin_files(params)
 
+    # pre-treats the configuration file
+    convert_params_to_path(params)
     copy_molecules_to_topology(params)
 
     # get a dictionary without the general config keys
@@ -70,7 +75,13 @@ def setup_run(workflow_path):
         params,
         config_mandatory_general_parameters,
         )
+    validate_modules_params(modules_params)
 
+    # prepares the run folders
+    remove_folder(params['run_dir'])
+    begin_dir, _ = create_begin_files(params)
+
+    # prepare other files
     copy_ambig_files(modules_params, begin_dir)
 
     # return the modules' parameters and other parameters that may serve
@@ -118,6 +129,35 @@ def validate_modules(params):
                 f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "
                 "DOCUMENTATION-LINK"
+                )
+            raise ConfigurationError(_msg)
+
+
+@with_config_error
+def validate_modules_params(params):
+    """Validates individual parameters for each module."""
+
+    for module_name, args in params.items():
+        pdef = Path(
+            haddock3_source_path,
+            'modules',
+            modules_category[module_name],
+            module_name,
+            'defaults.toml',
+            ).resolve()
+
+        defaults = toml.load(pdef)
+        if not defaults:
+            return
+
+        diff = set(args.keys()) \
+            - set(defaults.keys()) \
+            - set(config_mandatory_general_parameters)
+
+        if diff:
+            _msg = (
+                'The following parameters do not match any expected '
+                f'parameters for module {module_name!r}: {diff}.'
                 )
             raise ConfigurationError(_msg)
 

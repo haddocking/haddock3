@@ -112,7 +112,10 @@ def main(
     logging.info(get_initial_greeting())
 
     try:
-        params, other_params = setup_run(recipe)
+        params, other_params = setup_run(
+            recipe,
+            erase_previous=not(bool(restart)),
+            )
 
     except ConfigurationError as err:
         logging.error(err)

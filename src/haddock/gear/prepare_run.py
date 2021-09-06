@@ -41,7 +41,7 @@ def with_config_error(func):
     return wrapper
 
 
-def setup_run(workflow_path):
+def setup_run(workflow_path, erase_previous=True):
     """
     Setup HADDOCK3 run.
 
@@ -54,6 +54,15 @@ def setup_run(workflow_path):
     #5 : remove folder from previous runs if run folder name overlaps
     #6 : create the needed folders/files to start the run
     #7 : copy additional files to run folder
+
+    Parameters
+    ----------
+    workflow_path : str or pathlib.Path
+        The path to the configuration file.
+
+    erase_previous : bool
+        Whether to erase the previous run folder and reprare from
+        scratch. Defaults to `True`.
 
     Returns
     -------
@@ -77,12 +86,13 @@ def setup_run(workflow_path):
         )
     validate_modules_params(modules_params)
 
-    # prepares the run folders
-    remove_folder(params['run_dir'])
-    begin_dir, _ = create_begin_files(params)
+    if erase_previous:
+        # prepares the run folders
+        remove_folder(params['run_dir'])
+        begin_dir, _ = create_begin_files(params)
 
-    # prepare other files
-    copy_ambig_files(modules_params, begin_dir)
+        # prepare other files
+        copy_ambig_files(modules_params, begin_dir)
 
     # return the modules' parameters and other parameters that may serve
     # the workflow, the "other parameters" can be expanded in the future

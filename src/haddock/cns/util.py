@@ -1,8 +1,10 @@
 """CNS scripts util functions"""
 from os import linesep
-from haddock.pdbutil import PDBFactory
-from haddock.libs.libmath import RandomNumberGenerator
+
 from haddock.defaults import Default
+from haddock.libs.libmath import RandomNumberGenerator
+from haddock.libs.libpdb import PDBFactory
+
 
 RND = RandomNumberGenerator()
 

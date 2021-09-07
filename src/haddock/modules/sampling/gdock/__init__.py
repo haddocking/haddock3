@@ -1,15 +1,17 @@
 """HADDOCK3 gdock integration module"""
 import logging
-import re
 import os
-import sys
+import re
 import subprocess
+import sys
+
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
-from haddock.ontology import Format, ModuleIO, PDBFile
-from haddock.modules import working_directory
+
 from haddock.defaults import NUM_CORES
-from haddock.pdbutil import PDBFactory
+from haddock.libs.libpdb import PDBFactory
+from haddock.modules import BaseHaddockModule, working_directory
+from haddock.ontology import Format, ModuleIO, PDBFile
+
 
 logger = logging.getLogger(__name__)
 

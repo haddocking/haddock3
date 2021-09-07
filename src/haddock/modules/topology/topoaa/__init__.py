@@ -12,10 +12,10 @@ from haddock.cns.util import (
 from haddock.defaults import TOPOLOGY_PATH
 from haddock.error import StepError
 from haddock.libs.libparallel import Scheduler
+from haddock.libs.libpdb import PDBFactory
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile, TopologyFile
-from haddock.pdbutil import PDBFactory
 from haddock.structure import make_molecules
 
 

@@ -16,7 +16,7 @@ from haddock.libs.libpdb import PDBFactory
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 from haddock.ontology import Format, ModuleIO, PDBFile, TopologyFile
-from haddock.structure import make_molecules
+from haddock.libs.libstructure import make_molecules
 
 
 logger = logging.getLogger(__name__)

@@ -5,7 +5,7 @@ import sys
 from argparse import ArgumentTypeError
 from functools import partial
 
-from haddock.version import CURRENT_VERSION
+from haddock import current_version
 from haddock.libs.libutil import file_exists, non_negative_int
 
 
@@ -53,7 +53,7 @@ ap.add_argument(
     "--version",
     help="show version",
     action="version",
-    version=f'{ap.prog} - {CURRENT_VERSION}',
+    version=f'{ap.prog} - {current_version}',
     )
 
 

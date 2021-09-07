@@ -4,6 +4,10 @@ import sys
 import multiprocessing
 import logging
 from pathlib import Path
+
+from haddock import haddock3_source_path, toppar_path
+
+
 logger = logging.getLogger(__name__)
 
 # Locate the CNS binary
@@ -34,37 +38,34 @@ MAX_NUM_MODULES = 10000
 
 class Default:
 
-    data_path = Path(__file__).resolve().parent.absolute() / "data"
+    PARAMETERS_FILE = Path(toppar_path, "haddock.param")
 
-    PARAMETERS_FILE = data_path / "toppar/haddock.param"
+    TOPOLOGY_FILE = Path(toppar_path, "haddock.top")
 
-    TOPOLOGY_FILE = data_path / "toppar/haddock.top"
-
-    LINK_FILE = data_path / "toppar/protein-allhdg5-4-noter.link"
+    LINK_FILE = Path(toppar_path, "protein-allhdg5-4-noter.link")
 
     TRANSLATION_VECTORS = {}
     for i in range(51):
-        _s = f'trans_vector_{i}'
-        _p = Path(data_path, 'toppar', 'initial_positions', _s)
+        _p = Path(topopar, 'initial_positions', f'trans_vector_{i}')
         TRANSLATION_VECTORS[_s] = _p
 
     TENSORS = {
-        "tensor_psf": data_path / "toppar/tensor.psf",
-        "tensor_pdb": data_path / "toppar/tensor.pdb",
-        "tensor_para_psf": data_path / "toppar/tensor_para.psf",
-        "tensor_para_pdb": data_path / "toppar/tensor_para.pdb",
-        "tensor_dani_psf": data_path / "toppar/tensor_dani.psf",
-        "tensor_dani_pdb": data_path / "toppar/tensor_dani.pdb"
-    }
+        "tensor_psf": Path(toppar, "tensor.psf"),
+        "tensor_pdb": Path(toppar, "tensor.pdb"),
+        "tensor_para_psf": Path(toppar, "tensor_para.psf"),
+        "tensor_para_pdb": Path(toppar, "tensor_para.pdb"),
+        "tensor_dani_psf": Path(toppar, "tensor_dani.psf"),
+        "tensor_dani_pdb": Path(toppar, "tensor_dani.pdb"),
+        }
 
-    SCATTER_LIB = data_path / "toppar/scatter.lib"
+    SCATTER_LIB = Path(toppar, "scatter.lib")
 
     AXIS = {
-        "top_axis": data_path / "toppar/top_axis.pro",
-        "par_axis": data_path / "toppar/par_axis.pro",
-        "top_axis_dani": data_path / "toppar/top_axis_dani.pro"
-    }
+        "top_axis": Path(toppar, "top_axis.pro"),
+        "par_axis": Path(toppar, "par_axis.pro"),
+        "top_axis_dani": Path(toppar, "top_axis_dani.pro"),
+        }
 
     WATER_BOX = {
-        "boxtyp20": data_path / "toppar/boxtyp20.pdb"
-    }
+        "boxtyp20": Path(toppar, "boxtyp20.pdb")
+        }

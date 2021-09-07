@@ -31,26 +31,6 @@ def test_ap_setup_false():
     assert cmd.setup_only == False
 
 
-@pytest.mark.parametrize(
-    'n',
-    (0, 1, 10, 1230, 50000),
-    )
-def test_ap_restart(n):
-    cmd = ap.parse_args(f'{recipe} --restart {n}'.split())
-    assert cmd.restart == n
-
-
-@pytest.mark.parametrize(
-    'n',
-    (-1, -10, -1230, -50000),
-    )
-def test_ap_restart_error(n):
-    with pytest.raises(SystemExit) as exit:
-        cmd = ap.parse_args(f'{recipe} --restart {n}'.split())
-    assert exit.type == SystemExit
-    assert exit.value.code == 2
-
-
 def test_ap_version():
     with pytest.raises(SystemExit) as exit:
         ap.parse_args('-v'.split())

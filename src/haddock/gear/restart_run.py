@@ -22,7 +22,7 @@ def add_restart_arg(parser):
         "--restart",
         type=_arg_non_neg_int,
         default=None,
-        help="Restart the recipe from this course",
+        help=_help_cli,
         )
 
 

@@ -100,7 +100,7 @@ def main(
     from haddock.libs.libworkflow import WorkflowManager
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
-    from haddock.error import HaddockError, ConfigurationError
+    from haddock.core.exceptions import HaddockError, ConfigurationError
 
     # Configuring logging
     logging.basicConfig(

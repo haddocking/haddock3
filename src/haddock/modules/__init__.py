@@ -8,7 +8,7 @@ from pathlib import Path
 import toml
 
 from haddock.error import StepError
-from haddock.ontology import ModuleIO
+from haddock.libs.libontology import ModuleIO
 from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
 
 

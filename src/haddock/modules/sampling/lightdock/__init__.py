@@ -5,7 +5,7 @@ import subprocess
 
 from pathlib import Path
 
-from haddock.defaults import NUM_CORES
+from haddock.core.defaults import NUM_CORES
 from haddock.libs.libpdb import PDBFactory
 from haddock.modules import BaseHaddockModule, working_directory
 from haddock.libs.libontology import Format, ModuleIO, PDBFile

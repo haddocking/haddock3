@@ -1,7 +1,7 @@
 """CNS scripts util functions"""
 from os import linesep
 
-from haddock.defaults import Default
+from haddock.core.defaults import Default
 from haddock.libs.libmath import RandomNumberGenerator
 from haddock.libs.libpdb import PDBFactory
 

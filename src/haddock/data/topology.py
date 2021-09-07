@@ -1,5 +1,5 @@
 """HADDOCK topologies"""
-from haddock.defaults import Default
+from haddock.core.defaults import Default
 
 
 class Topology:

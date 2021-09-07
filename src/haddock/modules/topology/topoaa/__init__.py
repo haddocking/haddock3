@@ -9,7 +9,7 @@ from haddock.cns.util import (
     prepare_output,
     prepare_single_input,
     )
-from haddock.defaults import TOPOLOGY_PATH
+from haddock.core.defaults import TOPOLOGY_PATH
 from haddock.error import StepError
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libpdb import PDBFactory

@@ -9,7 +9,7 @@ from haddock import FCC_path
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import Job
 from haddock.modules import BaseHaddockModule
-from haddock.ontology import Format, ModuleIO, PDBFile
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
 
 
 logger = logging.getLogger(__name__)

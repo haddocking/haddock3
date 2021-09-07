@@ -15,7 +15,7 @@ from haddock.libs.libparallel import Scheduler
 from haddock.libs.libpdb import PDBFactory
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
-from haddock.ontology import Format, ModuleIO, PDBFile, TopologyFile
+from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
 
 

@@ -2,7 +2,7 @@
 import logging
 from pathlib import Path
 from haddock.modules import BaseHaddockModule
-from haddock.ontology import Format, ModuleIO
+from haddock.libs.libontology import Format, ModuleIO
 
 logger = logging.getLogger(__name__)
 

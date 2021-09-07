@@ -8,7 +8,7 @@ from pathlib import Path
 from haddock.defaults import NUM_CORES
 from haddock.libs.libpdb import PDBFactory
 from haddock.modules import BaseHaddockModule, working_directory
-from haddock.ontology import Format, ModuleIO, PDBFile
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
 
 
 logger = logging.getLogger(__name__)

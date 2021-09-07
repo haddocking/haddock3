@@ -97,7 +97,7 @@ def main(
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # anti-pattern to speed up CLI initiation
-    from haddock.workflow import WorkflowManager
+    from haddock.libs.libworkflow import WorkflowManager
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
     from haddock.error import HaddockError, ConfigurationError

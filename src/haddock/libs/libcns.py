@@ -1,7 +1,6 @@
 """CNS scripts util functions"""
 from os import linesep
 
-from haddock.core.defaults import Default
 from haddock.libs.libmath import RandomNumberGenerator
 from haddock.libs.libpdb import PDBFactory
 
@@ -270,3 +269,14 @@ def prepare_single_input(pdb_input, psf_input=None):
     input_str += f'eval ($seed={seed}){linesep}'
 
     return input_str
+
+
+def get_supported_residues(haddock_topology):
+    """Read the topology file and identify which data is supported"""
+    supported = []
+    with open(haddock_topology) as input_handler:
+        for line in input_handler:
+            if "resi" in line[:4].casefold():
+                res = line.split()[1]
+                supported.append(res)
+    return supported

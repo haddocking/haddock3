@@ -1,13 +1,16 @@
 """Parse molecular structures in PDB format"""
 import os
 from pathlib import Path
+
 from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_segxchain import place_seg_on_chain
 from pdbtools.pdb_splitchain import split_chain
 from pdbtools.pdb_tidy import tidy_pdbfile
-from haddock.data.topology import Topology
-from haddock.modules import working_directory
+
+from haddock.core.cns_paths import topology_file
+from haddock.libs.libcns import get_supported_residues
 from haddock.libs.libutil import get_result_or_same_in_list
+from haddock.modules import working_directory
 
 
 class PDBFactory:
@@ -16,7 +19,7 @@ class PDBFactory:
     __to_remove = ["REMAR", "CTERB", "CTERA", "NTERA", "NTERB", "CONECT"]
     __to_rename = {"HSD": "HIS", "HSE": "HIS", "HID": "HIS", "HIE": "HIS",
                    "WAT ": "TIP3", " 0.00969": " 0.00   "}
-    __to_keep = Topology.get_supported()
+    __to_keep = get_supported_topologies(topology_file)
 
     @staticmethod
     def split_ensemble(pdb_file_path):

@@ -6,7 +6,8 @@ from argparse import ArgumentTypeError
 from functools import partial
 
 from haddock.version import CURRENT_VERSION
-from haddock.libs.libutil import file_exists, non_negative_int
+from haddock.libs.libutil import file_exists
+from haddock.gear.restart_run import add_restart_arg
 
 
 # Command line interface parser
@@ -22,17 +23,7 @@ ap.add_argument(
     help="The input recipe file path",
     )
 
-_arg_pos_int = partial(
-    non_negative_int,
-    exception=ArgumentTypeError,
-    emsg="Minimum value is 0, {!r} given.",
-    )
-ap.add_argument(
-    "--restart",
-    type=_arg_pos_int,
-    default=0,
-    help="Restart the recipe from this course",
-    )
+add_restart_arg(ap)
 
 ap.add_argument(
     "--setup",
@@ -75,7 +66,7 @@ def maincli():
 
 def main(
         recipe,
-        restart=0,
+        restart=None,
         setup_only=False,
         log_level="INFO",
         ):
@@ -112,10 +103,7 @@ def main(
     logging.info(get_initial_greeting())
 
     try:
-        params, other_params = setup_run(
-            recipe,
-            erase_previous=not(bool(restart)),
-            )
+        params, other_params = setup_run(recipe, restart_from=restart)
 
     except ConfigurationError as err:
         logging.error(err)

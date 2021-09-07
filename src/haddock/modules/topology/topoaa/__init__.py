@@ -3,7 +3,7 @@ import logging
 import shutil
 from pathlib import Path
 
-from haddock.cns.util import (
+from haddock.libs.libcns.util import (
     generate_default_header,
     load_workflow_params,
     prepare_output,

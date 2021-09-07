@@ -2,8 +2,7 @@
 from argparse import ArgumentTypeError
 from functools import partial
 
-from haddock.libs.libutil import non_negative_int
-from haddock.libs.libutil import remove folder
+from haddock.libs.libutil import non_negative_int, remove_folder
 
 
 _help_cli = """Restart the run from a given step. Previous folders from

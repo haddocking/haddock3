@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 haddock3_source_path = Path(__file__).resolve().parent
-toppar_path = Path(haddock3_source_path, "data", "toppar")
+toppar_path = Path(haddock3_source_path, "cns", "toppar")
 
 
 FCC_path = Path(

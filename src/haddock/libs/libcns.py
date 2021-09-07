@@ -2,7 +2,7 @@
 from os import linesep
 
 from haddock.libs.libmath import RandomNumberGenerator
-from haddock.libs.libpdb import PDBFactory
+from haddock.libs import libpdb
 from haddock.core import cns_paths
 
 
@@ -256,7 +256,7 @@ def prepare_single_input(pdb_input, psf_input=None):
             input_str += f'end{linesep}'
     # $file variable is still used by some CNS recipes, need refactoring!
     input_str += f'eval ($file=\"{pdb_input}\"){linesep}'
-    segids, chains = PDBFactory.identify_chainseg(pdb_input)
+    segids, chains = libpdb.identify_chainseg(pdb_input)
     chainsegs = sorted(list(set(segids) | set(chains)))
 
     ncomponents = len(chainsegs)
@@ -270,14 +270,3 @@ def prepare_single_input(pdb_input, psf_input=None):
     input_str += f'eval ($seed={seed}){linesep}'
 
     return input_str
-
-
-def get_supported_residues(haddock_topology):
-    """Read the topology file and identify which data is supported"""
-    supported = []
-    with open(haddock_topology) as input_handler:
-        for line in input_handler:
-            if "resi" in line[:4].casefold():
-                res = line.split()[1]
-                supported.append(res)
-    return supported

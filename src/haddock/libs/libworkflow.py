@@ -1,12 +1,13 @@
 """HADDOCK3 workflow logic"""
-import logging
 import importlib
+import logging
 import shutil
 from pathlib import Path
+
 from haddock.core.exceptions import HaddockError, StepError
-# unused
-from haddock.modules import modules_category
 from haddock.libs.libutil import zero_fill
+from haddock.modules import modules_category
+
 
 logger = logging.getLogger(__name__)
 

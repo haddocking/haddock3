@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 
 from haddock.core.defaults import NUM_CORES
-from haddock.libs.libpdb import PDBFactory
+from haddock.libs import libpdb
 from haddock.modules import BaseHaddockModule, working_directory
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 
@@ -45,10 +45,10 @@ class HaddockModule(BaseHaddockModule):
         model = models_to_score[0]
         # Check if chain IDs are present
         _path = Path(model.path, model.file_name)
-        segids, chains = PDBFactory.identify_chainseg(_path)
+        segids, chains = libpdb.identify_chainseg(_path)
         if set(segids) != set(chains):
             logger.info("No chain IDs found, using segid information")
-            PDBFactory.swap_segid_chain(Path(model.path) / model.file_name,
+            libpdb.swap_segid_chain(Path(model.path) / model.file_name,
                                         self.path / model.file_name)
         else:
             # Copy original model to this working path
@@ -57,7 +57,7 @@ class HaddockModule(BaseHaddockModule):
 
         model_with_chains = self.path / model.file_name
         # Split by chain
-        new_models = PDBFactory.split_by_chain(model_with_chains)
+        new_models = libpdb.split_by_chain(model_with_chains)
         if model_with_chains in new_models:
             self.finish_with_error(f"Input {model_with_chains} cannot be"
                                    " split by chain")
@@ -130,7 +130,7 @@ class HaddockModule(BaseHaddockModule):
         for i in range(top):
             file_name = f"top_{i+1}.{Format.PDB}"
             tidy_file_name = f"haddock_top_{i+1}.{Format.PDB}"
-            PDBFactory.tidy(self.path / file_name, self.path / tidy_file_name)
+            libpdb.tidy(self.path / file_name, self.path / tidy_file_name)
             expected.append(PDBFile(tidy_file_name,
                                     topology=model.topology,
                                     path=self.path))

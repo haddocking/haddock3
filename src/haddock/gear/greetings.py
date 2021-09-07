@@ -3,11 +3,10 @@ import logging
 import os
 import random
 import sys
-
 from datetime import datetime
 from functools import partial
 
-from haddock.version import current_version
+from haddock import current_version
 
 
 logger = logging.getLogger(__name__)

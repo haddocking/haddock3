@@ -3,7 +3,7 @@ import logging
 from os import linesep
 from pathlib import Path
 
-from haddock.libs.libcns.util import (
+from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
     prepare_single_input,

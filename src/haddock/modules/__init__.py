@@ -9,7 +9,7 @@ import toml
 
 from haddock.core.exceptions import StepError
 from haddock.libs.libontology import ModuleIO
-from haddock.core.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
+from haddock.core.defaults import MODULE_PATH_NAME, MODULE_IO_FILE
 
 
 logger = logging.getLogger(__name__)

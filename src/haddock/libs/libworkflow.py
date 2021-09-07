@@ -5,7 +5,6 @@ import shutil
 from pathlib import Path
 from haddock.core.exceptions import HaddockError, StepError
 # unused
-# from haddock.core.defaults import MODULE_PATH_NAME, TOPOLOGY_PATH
 from haddock.modules import modules_category
 from haddock.libs.libutil import zero_fill
 

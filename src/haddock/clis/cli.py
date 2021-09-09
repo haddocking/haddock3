@@ -5,7 +5,7 @@ import sys
 from argparse import ArgumentTypeError
 from functools import partial
 
-from haddock.version import CURRENT_VERSION
+from haddock import current_version
 from haddock.libs.libutil import file_exists
 from haddock.gear.restart_run import add_restart_arg
 
@@ -44,7 +44,7 @@ ap.add_argument(
     "--version",
     help="show version",
     action="version",
-    version=f'{ap.prog} - {CURRENT_VERSION}',
+    version=f'{ap.prog} - {current_version}',
     )
 
 
@@ -88,10 +88,10 @@ def main(
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # anti-pattern to speed up CLI initiation
-    from haddock.workflow import WorkflowManager
+    from haddock.libs.libworkflow import WorkflowManager
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
-    from haddock.error import HaddockError, ConfigurationError
+    from haddock.core.exceptions import HaddockError, ConfigurationError
 
     # Configuring logging
     logging.basicConfig(

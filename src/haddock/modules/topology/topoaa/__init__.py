@@ -3,20 +3,19 @@ import logging
 import shutil
 from pathlib import Path
 
-from haddock.cns.util import (
+from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
     prepare_output,
     prepare_single_input,
     )
-from haddock.defaults import TOPOLOGY_PATH
-from haddock.error import StepError
+from haddock.core.exceptions import StepError
+from haddock.libs import libpdb
+from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.libs.libparallel import Scheduler
+from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
-from haddock.ontology import Format, ModuleIO, PDBFile, TopologyFile
-from haddock.pdbutil import PDBFactory
-from haddock.structure import make_molecules
 
 
 logger = logging.getLogger(__name__)
@@ -81,14 +80,14 @@ class HaddockModule(BaseHaddockModule):
 
             # Split models
             logger.info(f"Split models if needed for {step_molecule_path}")
-            ens = PDBFactory.split_ensemble(step_molecule_path)
+            ens = libpdb.split_ensemble(step_molecule_path)
             splited_models = sorted(ens)
 
             # Sanitize the different PDB files
             for model in splited_models:
                 logger.info(f"Sanitizing molecule {model.name}")
                 models.append(model)
-                PDBFactory.sanitize(model, overwrite=True)
+                libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
                 topology_filename = generate_topology(model,

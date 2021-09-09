@@ -6,7 +6,7 @@ from os import linesep
 from enum import Enum
 from pathlib import Path
 import jsonpickle
-from haddock.defaults import MODULE_IO_FILE
+from haddock.core.defaults import MODULE_IO_FILE
 
 
 class Format(Enum):

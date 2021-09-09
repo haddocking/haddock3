@@ -3,8 +3,8 @@ import os
 import shlex
 import subprocess
 
-from haddock.defaults import CNS_EXE, NUM_CORES
-from haddock.error import CNSRunningError, JobRunningError
+from haddock.core.defaults import CNS_EXE, NUM_CORES
+from haddock.core.exceptions import CNSRunningError, JobRunningError
 from haddock.libs.libparallel import Scheduler
 
 

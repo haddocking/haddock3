@@ -9,7 +9,7 @@ import toml
 
 from haddock import haddock3_source_path
 from haddock.modules import modules_category
-from haddock.error import ConfigurationError
+from haddock.core.exceptions import ConfigurationError
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.libs.libutil import (

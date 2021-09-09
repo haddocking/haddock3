@@ -5,10 +5,10 @@ from pathlib import Path
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libsubprocess import CNSJob
-from haddock.cns.util import generate_default_header, load_ambig
-from haddock.cns.util import load_workflow_params, prepare_multiple_input
+from haddock.libs.libcns import generate_default_header, load_ambig
+from haddock.libs.libcns import load_workflow_params, prepare_multiple_input
 from haddock.libs.libparallel import Scheduler
-from haddock.ontology import Format, ModuleIO, PDBFile
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
 
 
 logger = logging.getLogger(__name__)

@@ -6,7 +6,7 @@ from operator import ge
 from os import cpu_count
 from pathlib import Path
 
-from haddock.error import SetupError
+from haddock.core.exceptions import SetupError
 
 
 logger = logging.getLogger(__name__)

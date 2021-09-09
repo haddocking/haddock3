@@ -1,15 +1,17 @@
 """HADDOCK3 gdock integration module"""
 import logging
-import re
 import os
-import sys
+import re
 import subprocess
+import sys
+
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
-from haddock.ontology import Format, ModuleIO, PDBFile
-from haddock.modules import working_directory
-from haddock.defaults import NUM_CORES
-from haddock.pdbutil import PDBFactory
+
+from haddock.core.defaults import NUM_CORES
+from haddock.libs import libpdb
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.modules import BaseHaddockModule, working_directory
+
 
 logger = logging.getLogger(__name__)
 
@@ -71,10 +73,10 @@ class HaddockModule(BaseHaddockModule):
         for chain in input:
             pdb = input[chain]
             chain_pdb = Path(self.path, pdb.name)
-            segids, chains = PDBFactory.identify_chainseg(pdb)
+            segids, chains = libpdb.identify_chainseg(pdb)
             if set(segids) != set(chains):
                 logger.info("No chain IDs found, using segid information")
-                PDBFactory.swap_segid_chain(pdb, chain_pdb)
+                libpdb.swap_segid_chain(pdb, chain_pdb)
             input[chain] = chain_pdb
 
         # convert ambig to list

@@ -2,11 +2,15 @@
 import logging
 import os
 from pathlib import Path
-from haddock import FCC_path
-from haddock.modules import BaseHaddockModule
-from haddock.engine import Job, Engine
-from haddock.ontology import Format, ModuleIO, PDBFile
+
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
+
+from haddock import FCC_path
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import Job
+from haddock.modules import BaseHaddockModule
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
+
 
 logger = logging.getLogger(__name__)
 
@@ -47,12 +51,12 @@ class HaddockModule(BaseHaddockModule):
                 )
             contact_jobs.append(job)
 
-        contact_engine = Engine(contact_jobs)
+        contact_engine = Scheduler(contact_jobs)
         contact_engine.run()
 
         contact_file_l = []
         not_found = []
-        for job in contact_engine.jobs:
+        for job in contact_jobs:
             if not job.output.exists():
                 # NOTE: If there is no output, most likely the models are not in contact
                 #  there is no way of knowing how many models are not in contact, it can be
@@ -85,8 +89,16 @@ class HaddockModule(BaseHaddockModule):
 
         # Cluster
         logger.info('Clustering...')
-        pool = cluster_fcc.read_matrix(fcc_matrix_f, params['fraction_cutoff'], strictness=0.75)
-        _, clusters = cluster_fcc.cluster_elements(pool, threshold=params['threshold'])
+        pool = cluster_fcc.read_matrix(
+            fcc_matrix_f,
+            self.params['fraction_cutoff'],
+            self.params['strictness'],
+            )
+
+        _, clusters = cluster_fcc.cluster_elements(
+            pool,
+            threshold=self.params['threshold'],
+            )
 
         # Prepare output and read the elements
         cluster_dic = {}

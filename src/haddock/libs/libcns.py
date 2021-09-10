@@ -1,22 +1,24 @@
 """CNS scripts util functions"""
 from os import linesep
-from haddock.pdbutil import PDBFactory
-from haddock.mathutil import RandomNumberGenerator
-from haddock.defaults import Default
+
+from haddock.libs.libmath import RandomNumberGenerator
+from haddock.libs import libpdb
+from haddock.core import cns_paths
+
 
 RND = RandomNumberGenerator()
 
 
 def generate_default_header(protonation=None):
-    param = load_ff_parameters(Default.PARAMETERS_FILE)
-    top = load_ff_topology(Default.TOPOLOGY_FILE)
-    link = load_link(Default.LINK_FILE)
+    param = load_ff_parameters(cns_paths.parameters_file)
+    top = load_ff_topology(cns_paths.topology_file)
+    link = load_link(cns_paths.link_file)
     topology_protonation = load_protonation_state(protonation)
-    trans_vec = load_trans_vectors(Default.TRANSLATION_VECTORS)
-    tensor = load_tensor(Default.TENSORS)
-    scatter = load_scatter(Default.SCATTER_LIB)
-    axis = load_axis(Default.AXIS)
-    water_box = load_waterbox(Default.WATER_BOX['boxtyp20'])
+    trans_vec = load_trans_vectors(cns_paths.translation_vectors)
+    tensor = load_tensor(cns_paths.tensors)
+    scatter = load_scatter(cns_paths.scatter_lib)
+    axis = load_axis(cns_paths.axis)
+    water_box = load_waterbox(cns_paths.water_box['boxtyp20'])
 
     return (param, top, link, topology_protonation, trans_vec, tensor, scatter,
             axis, water_box)
@@ -254,7 +256,7 @@ def prepare_single_input(pdb_input, psf_input=None):
             input_str += f'end{linesep}'
     # $file variable is still used by some CNS recipes, need refactoring!
     input_str += f'eval ($file=\"{pdb_input}\"){linesep}'
-    segids, chains = PDBFactory.identify_chainseg(pdb_input)
+    segids, chains = libpdb.identify_chainseg(pdb_input)
     chainsegs = sorted(list(set(segids) | set(chains)))
 
     ncomponents = len(chainsegs)

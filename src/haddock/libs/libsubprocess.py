@@ -1,9 +1,11 @@
 """Running CNS scripts"""
-import subprocess
-from haddock.error import CNSRunningError, JobRunningError
-from haddock.parallel import Scheduler
+import os
 import shlex
-from haddock.defaults import CNS_EXE, NUM_CORES
+import subprocess
+
+from haddock.core.defaults import CNS_EXE, NUM_CORES
+from haddock.core.exceptions import CNSRunningError, JobRunningError
+from haddock.libs.libparallel import Scheduler
 
 
 class Job:
@@ -15,22 +17,23 @@ class Job:
         self.args = args
 
     def run(self):
-        cmd = ''
-        if self.args:
-            cmd = f"{self.executable} {' '.join(map(str, self.args))}"
-            self.executable = shlex.split(cmd)
+        cmd = " ".join([
+            os.fspath(self.executable),
+            ''.join(map(str, self.args)),  # empty string if no args
+            os.fspath(self.input),
+            ])
 
-        # capture output to stdout
-        cmd += f' {self.input}'
         with open(self.output, 'w') as outf:
-            p = subprocess.Popen(shlex.split(cmd), 
+            p = subprocess.Popen(shlex.split(cmd),
                                  stdout=outf,
                                  close_fds=True)
             out, error = p.communicate()
+
         p.kill()
 
         if error:
             raise JobRunningError(error)
+
         return out
 
 
@@ -61,23 +64,6 @@ class CNSJob:
                                      env=env)
                 out, error = p.communicate()
                 p.kill()
-                if error:
-                    raise CNSRunningError(error)
+        if error:
+            raise CNSRunningError(error)
         return out
-
-
-class Engine:
-    """Execution engine"""
-    def __init__(self, jobs, num_cores=0):
-        self.jobs = jobs
-        if num_cores:
-            self.num_cores = num_cores
-        elif (num_jobs := len(jobs)) > 1:
-            self.num_cores = min(num_jobs, NUM_CORES)
-        else:
-            self.num_cores = 1
-
-    def run(self):
-        """Run all provided jobs"""
-        scheduler = Scheduler(self.jobs, self.num_cores)
-        scheduler.execute()

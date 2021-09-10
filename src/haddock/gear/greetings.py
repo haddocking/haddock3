@@ -3,11 +3,10 @@ import logging
 import os
 import random
 import sys
-
 from datetime import datetime
 from functools import partial
 
-from haddock.version import CURRENT_VERSION
+from haddock import current_version
 
 
 logger = logging.getLogger(__name__)
@@ -34,7 +33,7 @@ def get_initial_greeting():
                f"""#                                            #{os.linesep}"""
                f"""##############################################{os.linesep}"""
                f"""{os.linesep}"""
-               f"""Starting HADDOCK {CURRENT_VERSION} on {now}{os.linesep}"""
+               f"""Starting HADDOCK {current_version} on {now}{os.linesep}"""
                f"""{os.linesep}"""
                f"""Python {python_version}{os.linesep}"""
                )

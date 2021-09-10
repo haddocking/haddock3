@@ -1,11 +1,10 @@
 """HADDOCK3 workflow logic"""
-import logging
 import importlib
+import logging
 import shutil
 from pathlib import Path
-from haddock.error import HaddockError, StepError
-# unused
-# from haddock.defaults import MODULE_PATH_NAME, TOPOLOGY_PATH
+
+from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
 from haddock.libs.libutil import zero_fill
 from haddock.modules import modules_category

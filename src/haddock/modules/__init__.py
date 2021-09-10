@@ -7,9 +7,9 @@ from pathlib import Path
 
 import toml
 
-from haddock.error import StepError
-from haddock.ontology import ModuleIO
-from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
+from haddock.core.exceptions import StepError
+from haddock.libs.libontology import ModuleIO
+from haddock.core.defaults import MODULE_PATH_NAME, MODULE_IO_FILE
 
 
 logger = logging.getLogger(__name__)
@@ -102,7 +102,7 @@ class BaseHaddockModule(ABC):
     def previous_path(self):
         previous = sorted(list(self.path.resolve().parent.glob('[0-9][0-9]*/')))
         try:
-            return previous[-2]
+            return previous[self.order - 1]
         except IndexError:
             return self.path
 

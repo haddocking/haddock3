@@ -4,10 +4,11 @@ from os import linesep
 from pathlib import Path
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
-from haddock.engine import CNSJob, Engine
-from haddock.cns.util import generate_default_header, load_ambig
-from haddock.cns.util import load_workflow_params, prepare_multiple_input
-from haddock.ontology import Format, ModuleIO, PDBFile
+from haddock.libs.libsubprocess import CNSJob
+from haddock.libs.libcns import generate_default_header, load_ambig
+from haddock.libs.libcns import load_workflow_params, prepare_multiple_input
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,7 @@ class HaddockModule(BaseHaddockModule):
                 self.path,
                 self.recipe_str,
                 self.params,
-                ambig=params.get('ambig', None),
+                ambig=self.params.get('ambig', None),
                 )
 
             out_file = self.path / f"rigidbody_{idx}.out"
@@ -101,7 +102,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Engine(jobs)
+        engine = Scheduler(jobs)
         engine.run()
         logger.info("CNS engine has finished")
 

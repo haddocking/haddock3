@@ -80,8 +80,6 @@ class HaddockModule(BaseHaddockModule):
         #  to be preceeded by topology
         topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
 
-        weights = {'vdw': 0.01, 'elec': 1.0, 'desol': 1, 'air': 0.01, 'bsa': -0.01}
-
         # xSampling
         structure_list = []
         for idx in range(params['sampling']):
@@ -115,8 +113,9 @@ class HaddockModule(BaseHaddockModule):
             if not model.exists():
                 not_found.append(model.name)
 
-            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
-            
+            haddock_score = \
+                HaddockModel(model).calc_haddock_score(**self.params['weights'])
+
             pdb = PDBFile(model, path=self.path)
             pdb.score = haddock_score
             pdb.topology = topologies

@@ -1875,6 +1875,7 @@ dna_rest_file = ""
 protein_ss_rest_all = ""
 protein_ss_restraints_alpha = ""
 protein_ss_restraints_alpha_beta = ""
+
 [weights]
 vdw = 0.01
 elec = 1.0

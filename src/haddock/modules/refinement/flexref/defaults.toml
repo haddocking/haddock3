@@ -1873,3 +1873,10 @@ asy_cool2 = 0.1
 asy_cool3 = 0.1
 delenph = true
 dihedflag = true
+
+[weights]
+vdw = 1.0
+elec = 1.0
+desol = 1
+air = 0.1
+bsa = -0.01

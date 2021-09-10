@@ -75,8 +75,6 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
-        weights = {'vdw': 1.0, 'elec': 0.2, 'desol': 1.0, 'air': 0.1}
-
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
             inp_file = generate_waterref(
@@ -109,7 +107,8 @@ class HaddockModule(BaseHaddockModule):
             if not model.exists():
                 not_found.append(model.name)
 
-            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
+            haddock_score = \
+                HaddockModel(model).calc_haddock_score(**self.params['weights'])
 
             pdb = PDBFile(model, path=self.path)
             pdb.topology = topologies

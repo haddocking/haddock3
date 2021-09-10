@@ -82,7 +82,7 @@ def _read_config(fin):
         if header_group:
             key = header_group[1]
             if key in d:
-                _num = str(sum(1 for _k in d if _k.startswith(key)))
+                _num = str(sum(1 for _k in d if _k == key))
                 key += _INTERNAL_SEP + _num
 
             d1 = d.setdefault(key, {})

@@ -321,7 +321,13 @@ def test_get_module_name(header, name):
                 [56, 86],
                 ]
 
-            [headerone]
+            [headerone.weights]
+            val = 1
+            bsa = 0.1
+            elec = -1
+            list1 = [1, 2,"3"]
+
+            [headerone] #some comment
             """.split('\n'),
             {
                 "num1": 10,
@@ -330,6 +336,12 @@ def test_get_module_name(header, name):
                 "headerone": {
                     "name": "the other string",
                     "_list": [12, "foo", [56, 86]],
+                    "weights": {
+                        "val": 1,
+                        "bsa": 0.1,
+                        "elec": -1,
+                        "list1": [1, 2, "3"],
+                        },
                     },
                 "headerone.1": {},
                 },
@@ -340,6 +352,8 @@ def test_read_config(lines,expected):
     """Test read config."""
     print(lines)
     r = config_reader._read_config((i for i in lines))
+    import pprint
+    pprint.pprint(r)
     assert r == expected
 
 

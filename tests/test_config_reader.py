@@ -398,7 +398,7 @@ _config_example_dict_1 = {
     "num1": 10,
     "name": "some string",
     "null_value": None,
-    "headerone.0": {
+    "headerone": {
         "name": "the other string",
         "_list": [12, "foo", [56, 86]],
         "weights": {
@@ -414,7 +414,7 @@ _config_example_dict_1 = {
 
 _config_example_dict_2 = {
     "num1": 10,
-    "module.0": {
+    "module": {
         "name": ["../some/file", "../some/otherfile"],
         "d1": {
             "var1": 1,
@@ -429,7 +429,7 @@ _config_example_dict_2 = {
 
 _config_example_dict_3 = {
     "val": 1,
-    "header.0": {
+    "header": {
         "d1": {
             "val2": 10,
             "val3": 20,

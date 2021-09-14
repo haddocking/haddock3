@@ -118,7 +118,8 @@ def _read_config(fin):
             value_key, value = _read_value(line, fin)
             d1[value_key] = value
 
-    return d
+
+    return _remove_trailing_zeros_in_headers(d)
 
 
 def _update_key_number(key, d, sep='.', offset=0):
@@ -230,6 +231,14 @@ def _get_list_block(fin):
         block.append(line)
 
     return ''.join(block).strip()
+
+
+def _remove_trailing_zeros_in_headers(d):
+    """The suffix '.0' is removed from keys."""
+    d1 = {}
+    for key, value in d.items():
+        d1[key.rstrip('.0')] = value
+    return d1
 
 
 def get_module_name(name):

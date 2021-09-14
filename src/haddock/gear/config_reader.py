@@ -1,7 +1,7 @@
 """
 In-house implementation of toml config files for HADDOCK3.
 
-It does not implement all features of TOML files, but it does implement
+(Likely) It does not implement all features of TOML files, but it does implement
 the features needed for HADDOCK3. The config reader:
 
 * Accepts repeated keys.
@@ -17,23 +17,28 @@ the features needed for HADDOCK3. The config reader:
   * numbers
   * null/nones
   * lists defined in one lines
-  * lists defined in multiple lines (require empty line after)
+  * lists defined in multiple lines (require empty line after the list
+    definition)
 
 * Values attempted without regex (do not accept comment in lines):
   * `datetime.fromisoformat`
+
+To see examples of possible configuration files and generated
+dictionaries see `test/test_config_reader.py`.
 """
 import ast
 import re
+from contextlib import contextmanager
 from datetime import datetime
 
 
-# string separator for internal reasons
-# intents to be a string that will never happen in the config
-_INTERNAL_SEP = '_dnkljkqwdkjwql_'
-
 # line regexes
-# https://regex101.com/r/Ad3P2x/1
-_header_re = re.compile(r'^ *\[([^\[\]].*?)\]')
+# https://regex101.com/r/r4BlJf/1
+_main_header_re = re.compile(r'^ *\[(\w+)\]')
+
+# https://regex101.com/r/wKm07b/1
+# thanks https://stackoverflow.com/questions/39158902
+_sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 
 # https://regex101.com/r/q2fuFl/1
 _string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
@@ -59,6 +64,10 @@ class NoGroupFoundError(Exception):
     pass
 
 
+class ConfigFormatError(Exception):
+    pass
+
+
 def read_config(f):
     """Parse HADDOCK3 config file to a dictionary."""
     with open(f, 'r') as fin:
@@ -66,7 +75,15 @@ def read_config(f):
 
 
 def _read_config(fin):
-    # fin can't be processed to a list at this stage
+    """
+    Read the config line by line.
+
+    Parameters
+    ----------
+    fin : a openned file content generator
+        A generator expressing the content of a file in lines. Cannot be
+        a list.
+    """
     # it must be kept as a generator
     d = {}
 
@@ -74,28 +91,49 @@ def _read_config(fin):
     d1 = d
 
     pure_lines = filter(_is_correct_line, map(_process_line, fin))
-    key = None
+    header = None
     for line in pure_lines:
 
-        # treats header
-        header_group = _header_re.match(line)
-        if header_group:
-            key = header_group[1]
-            if key in d:
-                _num = str(sum(1 for _k in d if _k == key))
-                key += _INTERNAL_SEP + _num
+        main_header_group = _main_header_re.match(line)
+        sub_header_group = _sub_header_re.match(line)
 
-            d1 = d.setdefault(key, {})
-            continue
+        if main_header_group:
+            header = _update_key_number(main_header_group[1], d)
+            d1 = d.setdefault(header, {})
 
+        elif sub_header_group:
+            headers = sub_header_group[1].split('.')
+            header_ = _update_key_number(headers[0], d, offset=-1)
+
+            if header != header_:
+                raise ConfigFormatError(
+                    'A subheader cannot be defined before its main header.'
+                    )
+
+            d1 = d[header_]
+            for head in headers[1:]:
+                d1 = d1.setdefault(head, {})
+
+        else:
+            value_key, value = _read_value(line, fin)
+            d1[value_key] = value
+
+    return d
+
+
+def _update_key_number(key, d, sep='.', offset=0):
+    _num = str(sum(1 for k in d if k.startswith(key)) + offset)
+    return key + sep + _num
+
+
+def _read_value(line, fin):
         # evals if key:value are defined in a single line
         try:
             key, value = _get_one_line_group(line)
         except NoGroupFoundError:
             pass
         else:
-            d1[key] = value
-            continue
+            return key, value
 
         # evals if key:value is defined in multiple lines
         mll_group = _list_multiliner_re.match(line)
@@ -105,15 +143,11 @@ def _read_config(fin):
             idx = line.find('[')
             # need to send `fin` and not `pure_lines`
             block = line[idx:] + _get_list_block(fin)
-            print('block, ', block)
             list_ = _eval_list_str(block)
-            d1[key] = list_
-            continue
+            return key, list_
 
         # if the flow reaches here...
         raise ValueError(f'Can\'t process this line: {line!r}')
-
-    return _make_nested_keys(d)
 
 
 def _is_correct_line(line):
@@ -196,38 +230,6 @@ def _get_list_block(fin):
         block.append(line)
 
     return ''.join(block).strip()
-
-
-def _make_nested_keys(d):
-    """
-    Converts dotted nested keys into actual nested keys.
-
-    Example
-    -------
-    {"one.two": {'foo': 'bar'}}
-    {"one": {"two": {'foo': 'bar'}}}
-
-    {"one.two": {...}, "one.foo": {...}}
-    {"one": {"two": {...}}, {"foo": {...}}}
-    """
-    d1 = {}
-
-    for key, value in d.items():
-
-        if isinstance(value, dict):
-
-            keys = [_k.replace(_INTERNAL_SEP, '.') for _k in key.split('.')]
-            dk = d1.setdefault(keys[0], {})
-
-            for k in keys[1:]:
-                dk = dk.setdefault(k, {})
-
-            dk.update(value)
-
-        else:
-            d1[key] = value
-
-    return d1
 
 
 def get_module_name(name):

@@ -1,4 +1,5 @@
 """Test config reader."""
+import os
 from datetime import datetime
 
 
@@ -12,12 +13,25 @@ from haddock.gear import config_reader
     'line,expected',
     [
         ('[header]', 'header'),
-        ('[another.header]', 'another.header'),
+        ('[under_scores_work]', 'under_scores_work'),
         ],
     )
-def test_header_re(line, expected):
+def test_main_header_re(line, expected):
     """Test header regex."""
-    result = config_reader._header_re.match(line)
+    result = config_reader._main_header_re.match(line)
+    assert result[1] == expected
+
+
+@pytest.mark.parametrize(
+    'line,expected',
+    [
+        ('[another.header]', 'another.header'),
+        ('[another.header_2]', 'another.header_2'),
+        ],
+    )
+def test_sub_header_re(line, expected):
+    """Test header regex."""
+    result = config_reader._sub_header_re.match(line)
     assert result[1] == expected
 
 
@@ -26,10 +40,26 @@ def test_header_re(line, expected):
     [
         '[[header]]',
         'value = "some string"',
+        '[header with spaces]',
+        '[not.valid]',
         ],
     )
-def test_header_re_wrong(line):
-    assert config_reader._header_re.match(line) is None
+def test_main_header_re_wrong(line):
+    assert config_reader._main_header_re.match(line) is None
+
+
+@pytest.mark.parametrize(
+    'line',
+    [
+        '[[header]]',
+        'value = "some string"',
+        '[header with spaces]',
+        '[not.valid with spaces]',
+        '[single]',
+        ],
+    )
+def test_sub_header_re_wrong(line):
+    assert config_reader._sub_header_re.match(line) is None
 
 
 @pytest.mark.parametrize(
@@ -239,59 +269,6 @@ def test_get_block_list(lines, expected):
 
 
 @pytest.mark.parametrize(
-    'd,expected',
-    [
-        (
-            {"one.two": {'foo': 'bar'}},
-            {"one": {"two": {'foo': 'bar'}}},
-            ),
-        (
-            {"one": {'foo': 'bar'}},
-            {"one": {'foo': 'bar'}},
-            ),
-        (
-            {"one": {'foo': 'bar'}, "two": 2},
-            {"one": {'foo': 'bar'}, "two": 2},
-            ),
-        (
-            {
-                "one.two": {'foo': 'bar'},
-                "one.foo": {'zoo': 'animal'},
-                "other": 15,
-                },
-            {
-                "one": {
-                    "two": {'foo': 'bar'},
-                    "foo": {'zoo': 'animal'},
-                    },
-                "other": 15,
-                },
-            ),
-        (
-            {
-                "one.two": {'foo': 'bar'},
-                "one.two.loo": {'zoo': 'animal'},
-                "other": 15,
-                },
-            {
-                "one": {
-                    "two": {
-                        'foo': 'bar',
-                        "loo": {"zoo": "animal"}
-                        },
-                    },
-                "other": 15,
-                },
-            ),
-        ],
-    )
-def test_make_nested_keys(d, expected):
-    """Test making nested keys from numbered headers."""
-    r = config_reader._make_nested_keys(d)
-    assert r == expected
-
-
-@pytest.mark.parametrize(
     'header,name',
     [
         ('header', 'header'),
@@ -304,57 +281,6 @@ def test_get_module_name(header, name):
     assert config_reader.get_module_name(header) == name
 
 
-@pytest.mark.parametrize(
-    'lines,expected',
-    [
-        (
-            """
-            # some comment
-            num1 = 10
-            name="some string"
-            null_value = None#some comment
-            [headerone]
-            name = "the other string"
-            _list = [
-                12,
-                "foo",
-                [56, 86],
-                ]
-
-            [headerone.weights]
-            val = 1
-            bsa = 0.1
-            elec = -1
-            list1 = [1, 2,"3"]
-
-            [headerone] #some comment
-            """.split('\n'),
-            {
-                "num1": 10,
-                "name": "some string",
-                "null_value": None,
-                "headerone": {
-                    "name": "the other string",
-                    "_list": [12, "foo", [56, 86]],
-                    "weights": {
-                        "val": 1,
-                        "bsa": 0.1,
-                        "elec": -1,
-                        "list1": [1, 2, "3"],
-                        },
-                    },
-                "headerone.1": {},
-                },
-            ),
-        ],
-    )
-def test_read_config(lines,expected):
-    """Test read config."""
-    print(lines)
-    r = config_reader._read_config((i for i in lines))
-    import pprint
-    pprint.pprint(r)
-    assert r == expected
 
 
 @pytest.mark.parametrize(
@@ -416,3 +342,137 @@ def test_process_line(line, expected):
     """Test processes lines."""
     r = config_reader._process_line(line)
     assert r == expected
+
+
+_config_example_1 = """
+# some comment
+num1 = 10
+name="some string"
+null_value = None#some comment
+[headerone]
+name = "the other string"
+_list = [
+    12,
+    "foo",
+    [56, 86],
+    ]
+
+[headerone.weights]
+val = 1
+bsa = 0.1
+elec = -1
+list1 = [1, 2,"3"]
+
+[headerone] #some comment
+[headerone.weights]
+other = 50
+"""
+
+_config_example_2 = \
+"""num1 = 10
+[module]
+name = ["../some/file", "../some/otherfile"]
+[module.d1]
+var1 = 1
+var2 = None
+[module.d1.d2]
+var3 = True
+list_ = [ 1,
+2,
+3,
+]
+"""
+
+# this examples shows the behaviour of subkey repetition
+_config_example_3 = \
+"""
+val = 1
+[header]
+[header.d1]
+val2 = 10
+[header.d1]
+val3 = 20
+"""
+
+_config_example_dict_1 = {
+    "num1": 10,
+    "name": "some string",
+    "null_value": None,
+    "headerone.0": {
+        "name": "the other string",
+        "_list": [12, "foo", [56, 86]],
+        "weights": {
+            "val": 1,
+            "bsa": 0.1,
+            "elec": -1,
+            "list1": [1, 2, "3"],
+            },
+        },
+    "headerone.1": {'weights': {'other': 50}},
+    }
+
+
+_config_example_dict_2 = {
+    "num1": 10,
+    "module.0": {
+        "name": ["../some/file", "../some/otherfile"],
+        "d1": {
+            "var1": 1,
+            "var2": None,
+            "d2": {
+                "var3": True,
+                "list_": [1, 2, 3],
+                },
+            },
+        },
+    }
+
+_config_example_dict_3 = {
+    "val": 1,
+    "header.0": {
+        "d1": {
+            "val2": 10,
+            "val3": 20,
+            }
+        }
+    }
+
+
+@pytest.mark.parametrize(
+    'config,expected',
+    [
+        (_config_example_1, _config_example_dict_1),
+        (_config_example_2, _config_example_dict_2),
+        (_config_example_3, _config_example_dict_3),
+        ],
+    )
+def test_read_config(config,expected):
+    """Test read config."""
+    r = config_reader._read_config((i for i in config.split(os.linesep)))
+    assert r == expected
+
+
+_config_broken_1 = """
+name1 = "good"
+[header.subdict]
+number = 15
+"""
+
+_config_broken_2 = """
+name1 = "good"
+[module]
+s = None
+[header.subdict]  # this should give an error
+number = 15
+"""
+
+@pytest.mark.parametrize(
+    'config',
+    [
+        _config_broken_1,
+        _config_broken_2,
+        ],
+    )
+def test_config_format_errors(config):
+    with pytest.raises(config_reader.ConfigFormatError):
+        config_reader._read_config((i for i in config.split(os.linesep)))

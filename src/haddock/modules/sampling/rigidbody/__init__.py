@@ -80,7 +80,12 @@ class HaddockModule(BaseHaddockModule):
         #  to be preceeded by topology
         topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
 
-        # xSampling
+        # Get the weights from the defaults
+        weight_keys = \
+            ['w_vdw_0', 'w_elec_0', 'w_desolv_0', 'w_air_0', 'w_bsa_0']
+        weights = dict((e, self.params[e]) for e in weight_keys)
+
+        # Sampling
         structure_list = []
         for idx in range(params['sampling']):
             inp_file = generate_docking(
@@ -114,7 +119,7 @@ class HaddockModule(BaseHaddockModule):
                 not_found.append(model.name)
 
             haddock_score = \
-                HaddockModel(model).calc_haddock_score(**self.params['weights'])
+                HaddockModel(model).calc_haddock_score(**weights)
 
             pdb = PDBFile(model, path=self.path)
             pdb.score = haddock_score

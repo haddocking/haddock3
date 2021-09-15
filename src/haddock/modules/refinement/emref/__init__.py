@@ -2,6 +2,7 @@
 import logging
 from os import linesep
 from pathlib import Path
+from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libsubprocess import CNSJob
 from haddock.libs.libcns import generate_default_header, load_ambig
@@ -79,6 +80,11 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
+        # Get the weights from the defaults
+        weight_keys = \
+            ['w_vdw_2', 'w_elec_2', 'w_desolv_2', 'w_air_2', 'w_bsa_2']
+        weights = dict((e, self.params[e]) for e in weight_keys)
+
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
             inp_file = generate_emref(
@@ -110,7 +116,12 @@ class HaddockModule(BaseHaddockModule):
         for model in refined_structure_list:
             if not model.exists():
                 not_found.append(model.name)
+
+            haddock_score = \
+                HaddockModel(model).calc_haddock_score(**weights)
+
             pdb = PDBFile(model, path=self.path)
+            pdb.score = haddock_score
             pdb.topology = topologies
             expected.append(pdb)
         if not_found:

@@ -1693,6 +1693,7 @@ water_restraint_scale = 25.0
 watersteps = 1250
 water_surfcutoff = 8.0
 water_tokeep = 0.50
+w_air_2 = 0.1
 w_bsa_0 = -0.01
 w_bsa_1 = -0.01
 w_bsa_2 = 0.0

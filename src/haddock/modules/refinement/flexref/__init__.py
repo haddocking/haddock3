@@ -77,6 +77,11 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
+        # Get the weights from the defaults
+        weight_keys = \
+            ['w_vdw_1', 'w_elec_1', 'w_desolv_1', 'w_air_1', 'w_bsa_1']
+        weights = dict((e, self.params[e]) for e in weight_keys)
+
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
             inp_file = generate_flexref(
@@ -110,7 +115,7 @@ class HaddockModule(BaseHaddockModule):
                 not_found.append(model.name)
 
             haddock_score = \
-                HaddockModel(model).calc_haddock_score(**self.params['weights'])
+                HaddockModel(model).calc_haddock_score(**weights)
 
             pdb = PDBFile(model, path=self.path)
             pdb.topology = topologies

@@ -31,13 +31,6 @@ autohis = true
 ambig = '../data/1a2k_ti.tbl'
 sampling = 20
 
-[rigidbody.weights]
-vdw = 0.01
-elec = 1.0
-desol = 1
-air = 0.01
-bsa = -0.01
-
 #[clustfcc]
 #contact_distance_cutoff = 5.0
 #fraction_cutoff = 0.6
@@ -47,27 +40,13 @@ bsa = -0.01
 #top_cluster = [1, 2, 3, 4] # will select the best one
 #top_models = 4 # will select the top4 models inside the cluster
 
-
 [mdref]
 ambig = '../data/1a2k_ti.tbl'
 cool1_steps = 2
 
-[mdref.weights]
-vdw = 1.0
-elec = 0.2
-desol = 1.0
-air = 0.1
-
 [flexref]
 ambig = '../data/1a2k_ti.tbl'
 cool1_steps = 50
-
-[flxref.weights]
-vdw = 1.0
-elec = 1.0
-desol = 1
-air = 0.1
-bsa = -0.01
 
 # ====================================================================
 

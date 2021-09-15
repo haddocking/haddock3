@@ -35,8 +35,8 @@ class HaddockModel:
                         bsa = float(line.rstrip().split(':')[-1])
                         energy_dic['bsa'] = bsa
                     if 'Desolvation energy' in line:
-                        desol = float(line.rstrip().split(':')[-1])
-                        energy_dic['desolv'] = desol
+                        desolv = float(line.rstrip().split(':')[-1])
+                        energy_dic['desolv'] = desolv
 
         return energy_dic
 

@@ -80,11 +80,6 @@ class HaddockModule(BaseHaddockModule):
         #  to be preceeded by topology
         topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
 
-        # Get the weights from the defaults
-        weight_keys = \
-            ['w_vdw_0', 'w_elec_0', 'w_desolv_0', 'w_air_0', 'w_bsa_0']
-        weights = dict((e, self.params[e]) for e in weight_keys)
-
         # Sampling
         structure_list = []
         for idx in range(params['sampling']):
@@ -111,7 +106,11 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
         logger.info("CNS engine has finished")
 
-        # Check for generated output, fail it not all expected files are found
+        # Get the weights according to CNS parameters
+        _weight_keys = \
+            ('w_vdw_0', 'w_elec_0', 'w_desolv_0', 'w_air_0', 'w_bsa_0')
+        weights = {e: self.params[e] for e in _weight_keys}
+
         expected = []
         not_found = []
         for model in structure_list:
@@ -125,7 +124,10 @@ class HaddockModule(BaseHaddockModule):
             pdb.score = haddock_score
             pdb.topology = topologies
             expected.append(pdb)
+
         if not_found:
+            # Check for generated output,
+            # fail if not all expected files are found
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 

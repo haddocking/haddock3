@@ -77,11 +77,6 @@ class HaddockModule(BaseHaddockModule):
         first_model = models_to_refine[0]
         topologies = first_model.topology
 
-        # Get the weights from the defaults
-        weight_keys = \
-            ['w_vdw_1', 'w_elec_1', 'w_desolv_1', 'w_air_1', 'w_bsa_1']
-        weights = dict((e, self.params[e]) for e in weight_keys)
-
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
             inp_file = generate_flexref(
@@ -107,7 +102,11 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
         logger.info("CNS engine has finished")
 
-        # Check for generated output, fail it not all expected files are found
+        # Get the weights from the defaults
+        _weight_keys = \
+            ('w_vdw_1', 'w_elec_1', 'w_desolv_1', 'w_air_1', 'w_bsa_1')
+        weights = {e: self.params[e] for e in _weight_keys}
+
         expected = []
         not_found = []
         for model in refined_structure_list:
@@ -121,7 +120,10 @@ class HaddockModule(BaseHaddockModule):
             pdb.topology = topologies
             pdb.score = haddock_score
             expected.append(pdb)
+
         if not_found:
+            # Check for generated output,
+            # fail if not all expected files are found
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 

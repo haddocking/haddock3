@@ -10,6 +10,7 @@ from pathlib import Path
 from haddock.core.defaults import NUM_CORES
 from haddock.libs import libpdb
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libutil import check_subprocess
 from haddock.modules import BaseHaddockModule, working_directory
 
 
@@ -18,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+
+
 
 
 def ambig2dic(ambig_f):
@@ -41,6 +44,13 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         super().__init__(order, path, initial_params)
+
+    @classmethod
+    def confirm_installation(cls):
+        """Confirm this module is installed."""
+        gdock_path = os.environ['GDOCK_PATH']
+        gdock_exec = Path(gdock_path, 'gdock.py')
+        check_subprocess(f'{sys.executable} {gdock_exec}')
 
     def run(self, **params):
         logger.info("Running [gdock] module")

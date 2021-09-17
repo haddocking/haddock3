@@ -3,6 +3,7 @@ delenph = true
 randorien = true
 log_level = 'verbose'
 
+[input]
 [input.mol1]
 prot_segid = 'A'
 fix_origin = false

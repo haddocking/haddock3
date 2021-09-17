@@ -1,5 +1,23 @@
 """HADDOCK3 library."""
+import logging
+from os import get_terminal_size
 from pathlib import Path
+
+from haddock.libs.liblog import add_streamhandler
+
+
+log = logging.getLogger(__name__)
+log.handlers.clear()
+log.setLevel(logging.DEBUG)
+
+try:
+    # runs in clusters likely won't have terminal output
+    get_terminal_size()
+except OSError:
+    has_terminal = False
+else:
+    add_streamhandler(log)
+    has_terminal = True
 
 
 haddock3_source_path = Path(__file__).resolve().parent

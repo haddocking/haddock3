@@ -8,7 +8,7 @@ from pathlib import Path
 
 import toml
 
-from haddock import haddock3_source_path
+from haddock import contact_us, haddock3_source_path
 from haddock.modules import modules_category
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -192,8 +192,12 @@ def validate_installed_modules(params):
             module_lib.HaddockModule.confirm_installation()
         except Exception as err:
             _msg = (
-                f'There\'s a problem with module {module_name!r} '
-                'likely it is not installed.'
+                'A problem occurred when we tried to confirm if module '
+                f'{module_name!r} is installed in your system. Have you '
+                'installed the packages required to run this module? If '
+                f'yes write us at {contact_us!r} describing your system '
+                'and the problems you are facing. If not, please install '
+                'them.'
                 )
             raise ModuleError(_msg) from err
 

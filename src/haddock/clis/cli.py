@@ -3,13 +3,15 @@ import argparse
 import sys
 import shutil
 from argparse import ArgumentTypeError
+from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
 from haddock import current_version, has_terminal, log
 from haddock.gear.restart_run import add_restart_arg
-from haddock.libs.liblog import add_loglevel_arg, set_log_level_for_clis, info_name, debug_name
+from haddock.libs.liblog import add_loglevel_arg, set_log_for_cli
 from haddock.libs.libutil import file_exists
+from haddock.libs.libio import save_stream_to_file, save_streams_to_files
 
 
 # Command line interface parser
@@ -61,6 +63,55 @@ def maincli():
     cli(ap, main)
 
 
+@contextmanager
+def manage_config_errors(log_streams, log_names):
+    try:
+        yield
+    except ConfigurationError as err:
+        _msg = (
+            'An error ocurred while reading the configuration file, '
+            'hence the log files will be saved in the CWD and not in the '
+            'specified run directory.'
+            )
+        log.info(_msg)
+        log.error(err)
+        save_streams_to_files(log_streams, log_names)
+        sys.exit()
+
+
+@contextmanager
+def manage_run_errors():
+    try:
+        yield
+    except (SystemExit, KeyboardInterrupt) as err:
+        log.info('Something external to the code halted the execution.')
+        log.exception(err)
+    except Exception as err:
+        log.exception(err)
+
+
+def _run_haddock(restart, params, other_params):
+
+    # anti-pattern to speed up CLI initiation
+    from haddock.libs.libworkflow import WorkflowManager
+    from haddock.core.exceptions import HaddockError, ConfigurationError
+
+    try:
+        workflow = WorkflowManager(
+            workflow_params=params,
+            start=restart,
+            **other_params,
+            )
+
+        # Main loop of execution
+        workflow.run()
+
+    except HaddockError as err:
+        log.error(err)
+
+    return
+
+
 def main(
         recipe,
         restart=None,
@@ -85,70 +136,28 @@ def main(
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # small antipatterns to improve CLI startup speed
-    from haddock.gear.prepare_run import setup_run
     from haddock.core.exceptions import ConfigurationError
+    from haddock.gear.greetings import get_adieu, get_initial_greeting
+    from haddock.gear.prepare_run import setup_run
 
     log_streams, log_suggested_names = \
-        set_log_level_for_clis(log, log_level, stream_to_stdout=has_terminal)
+        set_log_for_cli(log, log_level, stream_to_stdout=has_terminal)
 
-    try:
+    log.info(get_initial_greeting())
+
+    with manage_config_errors(log_streams, log_suggested_names):
         params, other_params = setup_run(recipe, restart_from=restart)
 
-    except ConfigurationError as err:
-        log.error(err)
-        save_streams_to_files(log_streams, log_suggested_names)
-        sys.exit()
-
-    try:
-        _run(recipe, restart, setup_only, params, other_params)
-    except BaseException as err:
-        log.exception(err)
+    if not setup_only:
+        with manage_run_errors():
+            _run_haddock(restart, params, other_params)
 
     _add_dir_run = lambda x: Path(other_params['run_dir'], Path(x).name)
     _log_names = list(map(_add_dir_run, log_suggested_names))
     save_streams_to_files(log_streams, _log_names)
 
-
-
-def save_stream_to_file(stream, file_name):
-    stream.seek(0)
-    with open(file_name, 'w') as fout:
-        shutil.copyfileobj(stream, fout)
-
-
-def save_streams_to_files(streams, file_names):
-    for stream, file_name in zip(streams, file_names):
-        save_stream_to_file(stream, file_name)
-
-
-def _run(recipe, restart, setup_only, params, other_params):
-
-    # anti-pattern to speed up CLI initiation
-    from haddock.libs.libworkflow import WorkflowManager
-    from haddock.gear.greetings import get_adieu, get_initial_greeting
-    from haddock.core.exceptions import HaddockError, ConfigurationError
-
-    # Special case only using print instead of logging
-    log.info(get_initial_greeting())
-
-
-    if not setup_only:
-        try:
-            workflow = WorkflowManager(
-                workflow_params=params,
-                start=restart,
-                **other_params,
-                )
-
-            # Main loop of execution
-            workflow.run()
-
-        except HaddockError as err:
-            log.error(err)
-
     # Finish
     log.info(get_adieu())
-    return
 
 
 if __name__ == "__main__":

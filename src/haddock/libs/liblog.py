@@ -2,6 +2,7 @@ import logging
 import io
 import os
 import sys
+from functools import partial
 from pathlib import Path
 
 
@@ -32,60 +33,39 @@ def add_loglevel_arg(parser):
 
 def add_streamhandler(
         log,
+        stream,
         log_level='INFO',
         formatter=info_formatter,
         ):
-    """Add streamhandler to the log object."""
-    ch = logging.StreamHandler(sys.stdout)
+    """Add a StreamHandler to the log object."""
+    ch = logging.StreamHandler(stream)
     ch.setLevel(log_levels[log_level.upper()])
     ch.setFormatter(logging.Formatter(formatter))
     log.addHandler(ch)
-    return
+    return ch
 
 
-def set_log_level_for_clis(log, log_level, stream_to_stdout=True):
-    """."""
+def set_log_for_cli(log, log_level, stream_to_stdout=True):
+    """Set the logging streams for HADDOCK3 main client"""
     log.setLevel(log_levels[log_level])
 
     if log_level.upper() in ("INFO", "WARNING", "ERROR", "CRITICAL"):
-        h, n = init_info_file(log)
-        return [h.stream], [n]
+        h = add_info_stringio(log)
+        return [h.stream], [info_name]
 
     elif log_level.upper() in ("DEBUG"):
-        log.handlers.clear()
         if stream_to_stdout:
-            add_streamhandler(log, log_level='DEBUG', formatter=debug_formatter)
-        h1, n1 = init_info_file(log)
-        h2, n2 = init_debug_file(log)
-        return (h1.stream, h2.stream), (n1, n2)
+            log.handlers.clear()
+            add_sysout_handler(log, log_level='DEBUG', formatter=debug_formatter)
+        h1  = add_info_stringio(log)
+        h2  = add_debug_stringio(log)
+        return (h1.stream, h2.stream), (info_name, debug_name)
 
     else:
         raise AssertionError("Execution shouldn't reach this point.")
 
 
-def init_debug_file(
-        log,
-        file_name=debug_name,
-        formatter=debug_formatter,
-        ):
-    """."""
-    #handler = logging.FileHandler(file_name, mode='w')
-    handler = logging.StreamHandler(io.StringIO(newline=os.linesep))
-    handler.setLevel(logging.DEBUG)
-    handler.setFormatter(logging.Formatter(formatter))
-    log.addHandler(handler)
-    return handler, file_name
-
-
-def init_info_file(
-        log,
-        file_name=info_name,
-        formatter=info_formatter,
-        ):
-    """
-    """
-    handler = logging.StreamHandler(io.StringIO(newline=os.linesep))
-    handler.setLevel(logging.INFO)
-    handler.setFormatter(logging.Formatter(formatter))
-    log.addHandler(handler)
-    return handler, file_name
+add_sysout_handler = partial(add_streamhandler, stream=sys.stdout)
+add_stringio_handler = partial(add_streamhandler, stream=io.StringIO(newline=os.linesep))
+add_info_stringio = partial(add_stringio_handler, log_level='INFO', formatter=info_formatter)
+add_debug_stringio = partial(add_stringio_handler, log_level='DEBUG', formatter=debug_formatter)

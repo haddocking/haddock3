@@ -18,7 +18,7 @@ molecules = "../data/T161-rescoring-5.pdb"
 autohis = true
 
 ########################
-[emscoring]
+#[emscoring]
 
 ########################
 #[clustering]

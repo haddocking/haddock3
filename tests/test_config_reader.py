@@ -147,6 +147,9 @@ def test_none_re_wrong(line):
         ('value = -10.2E30', "-10.2E30"),
         ('value = -.10E30', "-.10E30"),
         ('value = -.10E-30', "-.10E-30"),
+        ('value = 123#with comment', '123'),
+        ('value = -.10E-30#withcomment', "-.10E-30"),
+        ('value = -.10#E-30', "-.10"),
         ],
     )
 def test_number_re(line, number):
@@ -163,7 +166,6 @@ def test_number_re(line, number):
         "value = 1E4.4",
         "value = .10E30E",
         "value = 10.2.E30",
-        "value = 123#with wrong comment",
         "value = E10",
         "value = .E10",
         "value = -e",
@@ -279,8 +281,6 @@ def test_get_block_list(lines, expected):
 def test_get_module_name(header, name):
     """Test get module name."""
     assert config_reader.get_module_name(header) == name
-
-
 
 
 @pytest.mark.parametrize(

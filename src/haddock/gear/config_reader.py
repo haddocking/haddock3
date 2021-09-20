@@ -44,7 +44,7 @@ _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 _string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
 
 # https://regex101.com/r/6X4j7n/1
-_number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |$)')
+_number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |#|$)')
 
 # https://regex101.com/r/K6yXbe/1
 _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')

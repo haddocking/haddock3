@@ -9,9 +9,12 @@ from pathlib import Path
 info_name = 'haddock3.log'
 debug_name = 'haddock3.debug'
 
-info_formatter = '[%(asctime)s]%(message)s'
-debug_formatter = \
-    "[%(asctime)s]%(filename)s:%(name)s:%(funcName)s:%(lineno)d: %(message)s"
+info_formatter = '[%(asctime)s] %(message)s'
+debug_formatter = (
+    "[%(asctime)s] "
+    "%(filename)s:%(name)s:%(funcName)s:%(lineno)d: "
+    "%(message)s"
+    )
 
 log_levels = {
     'DEBUG': logging.DEBUG,
@@ -47,13 +50,14 @@ def add_streamhandler(
 
 def set_log_for_cli(log, log_level, stream_to_stdout=True):
     """Set the logging streams for HADDOCK3 main client"""
-    log.setLevel(log_levels[log_level])
+    llu = log_level.upper()
+    log.setLevel(log_levels[llu])
 
-    if log_level.upper() in ("INFO", "WARNING", "ERROR", "CRITICAL"):
+    if llu in ("INFO", "WARNING", "ERROR", "CRITICAL"):
         h = add_info_stringio(log)
         return [h.stream], [info_name]
 
-    elif log_level.upper() in ("DEBUG"):
+    elif llu in ("DEBUG"):
         if stream_to_stdout:
             log.handlers.clear()
             add_sysout_handler(log, log_level='DEBUG', formatter=debug_formatter)

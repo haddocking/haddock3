@@ -67,7 +67,7 @@ def maincli():
 def manage_config_errors(log_streams, log_names):
     try:
         yield
-    except ConfigurationError as err:
+    except Exception as err:
         _msg = (
             'An error ocurred while reading the configuration file, '
             'hence the log files will be saved in the CWD and not in the '
@@ -87,6 +87,7 @@ def manage_run_errors():
         log.info('Something external to the code halted the execution.')
         log.exception(err)
     except Exception as err:
+        log.info('An error ocurred while running the HADDOCK3 workflow.')
         log.exception(err)
 
 
@@ -94,20 +95,15 @@ def _run_haddock(restart, params, other_params):
 
     # anti-pattern to speed up CLI initiation
     from haddock.libs.libworkflow import WorkflowManager
-    from haddock.core.exceptions import HaddockError, ConfigurationError
 
-    try:
-        workflow = WorkflowManager(
-            workflow_params=params,
-            start=restart,
-            **other_params,
-            )
+    workflow = WorkflowManager(
+        workflow_params=params,
+        start=restart,
+        **other_params,
+        )
 
-        # Main loop of execution
-        workflow.run()
-
-    except HaddockError as err:
-        log.error(err)
+    # Main loop of execution
+    workflow.run()
 
     return
 
@@ -136,7 +132,6 @@ def main(
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # small antipatterns to improve CLI startup speed
-    from haddock.core.exceptions import ConfigurationError
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
 

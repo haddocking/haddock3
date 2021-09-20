@@ -27,4 +27,4 @@ def test_config_reader_can_read_defaults(module):
 
 def test_all_defaults_have_the_same_name(module):
     """Test all default configuration files have the same name."""
-    assert module.DEFAULT_CONFIG.name == 'defaults.toml'
+    assert module.DEFAULT_CONFIG.name == 'defaults.cfg'

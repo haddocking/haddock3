@@ -17,7 +17,15 @@ examples_path = Path(
     )
 
 
-@pytest.fixture(params=list(examples_path.rglob('*.toml')))
+examples_cfg_files = list(examples_path.rglob('*.cfg'))
+
+
+def test_there_are_config_examples():
+    """Test there are configuration files for examples."""
+    assert examples_cfg_files
+
+
+@pytest.fixture(params=examples_cfg_files)
 def example_config(request):
     return request.param
 

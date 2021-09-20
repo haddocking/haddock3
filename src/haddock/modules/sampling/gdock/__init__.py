@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 def ambig2dic(ambig_f):

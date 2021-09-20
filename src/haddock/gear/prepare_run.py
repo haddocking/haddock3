@@ -5,8 +5,6 @@ from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
 
-import toml
-
 from haddock import haddock3_source_path
 from haddock.modules import modules_category
 from haddock.core.exceptions import ConfigurationError
@@ -160,10 +158,10 @@ def validate_modules_params(params):
             'modules',
             modules_category[_module_name],
             _module_name,
-            'defaults.toml',
+            'defaults.cfg',
             ).resolve()
 
-        defaults = toml.load(pdef)
+        defaults = read_config(pdef)
         if not defaults:
             return
 

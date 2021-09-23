@@ -466,13 +466,30 @@ s = None
 number = 15
 """
 
+_config_broken_3 = """
+name1 = "good"
+name1 = "bad"
+"""
+
+_config_broken_4 = \
+"""
+val = 1
+[header]
+[header.d1]
+val2 = 10
+[header.d1]
+val2 = 20
+"""
+
 @pytest.mark.parametrize(
-    'config',
+    'config, error',
     [
-        _config_broken_1,
-        _config_broken_2,
+        (_config_broken_1, config_reader.ConfigFormatError),
+        (_config_broken_2, config_reader.ConfigFormatError),
+        (_config_broken_3, config_reader.DuplicatedParameterError),
+        (_config_broken_4, config_reader.DuplicatedParameterError),
         ],
     )
-def test_config_format_errors(config):
-    with pytest.raises(config_reader.ConfigFormatError):
+def test_config_format_errors(config, error):
+    with pytest.raises(error):
         config_reader._read_config((i for i in config.split(os.linesep)))

@@ -68,6 +68,10 @@ class ConfigFormatError(Exception):
     pass
 
 
+class DuplicatedParameterError(Exception):
+    pass
+
+
 def read_config(f):
     """Parse HADDOCK3 config file to a dictionary."""
     with open(f, 'r') as fin:
@@ -116,6 +120,13 @@ def _read_config(fin):
 
         else:
             value_key, value = _read_value(line, fin)
+            if value_key in d1:
+                _msg = (
+                    f'The parameter {value_key!r} is repeated. '
+                    'Repeated parameter names are not allowed '
+                    'for the same module.'
+                    )
+                raise DuplicatedParameterError(_msg)
             d1[value_key] = value
 
 

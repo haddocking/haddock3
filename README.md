@@ -42,6 +42,8 @@ python setup.py develop --no-deps
 
 ### 1.3 Copy CNS binary to the expected path:
 
+This cns binary must be compiled from source, please refer to the Alpha 1 branch for instructions.
+
 ```bash
 mkdir -p bin/
 

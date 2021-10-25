@@ -35,17 +35,18 @@ class HaddockModel:
                         bsa = float(line.rstrip().split(':')[-1])
                         energy_dic['bsa'] = bsa
                     if 'Desolvation energy' in line:
-                        desol = float(line.rstrip().split(':')[-1])
-                        energy_dic['desol'] = desol
+                        desolv = float(line.rstrip().split(':')[-1])
+                        energy_dic['desolv'] = desolv
 
         return energy_dic
 
     def calc_haddock_score(self, **weights):
         """Calculate the haddock score based on the weights and energies."""
         weighted_terms = []
-        for component in weights:
-            weight = weights[component]
-            value = self.energies[component]
+        for key in weights:
+            component_id = key.split('_')[1]
+            weight = weights[key]
+            value = self.energies[component_id]
             weighted_terms.append(value * weight)
 
         # the haddock score is simply the sum of the weighted terms

@@ -192,12 +192,12 @@ def validate_installed_modules(params):
             module_lib.HaddockModule.confirm_installation()
         except Exception as err:
             _msg = (
-                'A problem occurred when we tried to confirm if module '
+                'A problem occurred while assessing if module '
                 f'{module_name!r} is installed in your system. Have you '
                 'installed the packages required to run this module? If '
-                f'yes write us at {contact_us!r} describing your system '
+                f'yes, write us at {contact_us!r} describing your system '
                 'and the problems you are facing. If not, please install '
-                'them.'
+                'the required packages to use the module.'
                 )
             raise ModuleError(_msg) from err
 

@@ -1,7 +1,9 @@
 """General utilities."""
 import logging
 import shutil
+import subprocess
 from copy import deepcopy
+from functools import partial
 from operator import ge
 from os import cpu_count
 from pathlib import Path
@@ -10,6 +12,14 @@ from haddock.core.exceptions import SetupError
 
 
 logger = logging.getLogger(__name__)
+
+
+check_subprocess = partial(
+    subprocess.run,
+    shell=True,
+    check=True,
+    stdout=subprocess.DEVNULL,
+    )
 
 
 def get_result_or_same_in_list(function, value):

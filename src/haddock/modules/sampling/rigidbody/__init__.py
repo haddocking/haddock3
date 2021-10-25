@@ -65,6 +65,10 @@ class HaddockModule(BaseHaddockModule):
         cns_script = RECIPE_PATH / "cns" / "rigidbody.cns"
         super().__init__(order, path, initial_params, cns_script)
 
+    @classmethod
+    def confirm_installation(cls):
+        return
+
     def run(self, **params):
         logger.info("Running [rigidbody] module")
 
@@ -117,8 +121,7 @@ class HaddockModule(BaseHaddockModule):
             if not model.exists():
                 not_found.append(model.name)
 
-            haddock_score = \
-                HaddockModel(model).calc_haddock_score(**weights)
+            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
 
             pdb = PDBFile(model, path=self.path)
             pdb.score = haddock_score

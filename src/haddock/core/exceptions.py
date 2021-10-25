@@ -9,6 +9,10 @@ class ConfigurationError(HaddockError):
     pass
 
 
+class ModuleError(HaddockError):
+    pass
+
+
 class StepError(HaddockError):
     pass
 

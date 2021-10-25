@@ -2,4 +2,3 @@ toml==0.10.0
 pdb-tools==2.1.0
 jsonpickle==2.0.0
 numpy==1.20.2
-lightdock==0.9.0a2

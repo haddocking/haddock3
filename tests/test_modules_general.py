@@ -22,7 +22,10 @@ def module(request):
 
 def test_config_reader_can_read_defaults(module):
     """Test gear.config_reader can read modules' default file."""
-    read_config(module.DEFAULT_CONFIG)
+    if module.DEFAULT_CONFIG.parent.name == 'topocg':
+        read_config(module.DEFAULT_CONFIG)
+    else:
+        assert read_config(module.DEFAULT_CONFIG)
 
 
 def test_all_defaults_have_the_same_name(module):

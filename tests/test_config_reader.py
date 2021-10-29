@@ -70,6 +70,8 @@ def test_sub_header_re_wrong(line):
         ("var2='other'", 'var2', "'other'"),
         ("var2='other'#somecomment", 'var2', "'other'"),
         ("var2='other'    #somecomment", 'var2', "'other'"),
+        ("var_2='other'    #somecomment", 'var_2', "'other'"),
+        ("v_ar_2='other'    #somecomment", 'v_ar_2', "'other'"),
         ],
     )
 def test_string_re(line, name, value):
@@ -133,6 +135,7 @@ def test_none_re_wrong(line):
         ('value = 0.', "0."),
         ('value = .0', ".0"),
         ('value = 12.3', "12.3"),
+        ('w_vdw_0 = 0.01', "0.01"),
         ('value = 12.34', "12.34"),
         ('value = -12.34', "-12.34"),
         ('value = 12.34 # with comment', "12.34"),
@@ -150,11 +153,12 @@ def test_none_re_wrong(line):
         ('value = 123#with comment', '123'),
         ('value = -.10E-30#withcomment', "-.10E-30"),
         ('value = -.10#E-30', "-.10"),
+        ('va_lue_0 = -.10#E-30', "-.10"),
         ],
     )
 def test_number_re(line, number):
     result = config_reader._number_re.match(line)
-    assert result[1] == "value"
+    assert result[1] == line.split('=')[0].strip()
     assert result[2] == number
 
 
@@ -349,6 +353,9 @@ _config_example_1 = """
 num1 = 10
 name="some string"
 null_value = None#some comment
+w_vdw_1 = 1.0
+w_vdw_0 = 0.01
+w_vdw_2 = 1.0
 [headerone]
 name = "the other string"
 _list = [
@@ -367,6 +374,41 @@ list1 = [1, 2,"3"]
 [headerone.weights]
 other = 50
 """
+
+_config_example_dict_1 = {
+    "num1": 10,
+    "name": "some string",
+    "null_value": None,
+    "w_vdw_0": 0.01,
+    "w_vdw_1": 1.0,
+    "w_vdw_2": 1.0,
+    "headerone": {
+        "name": "the other string",
+        "_list": [12, "foo", [56, 86]],
+        "weights": {
+            "val": 1,
+            "bsa": 0.1,
+            "elec": -1,
+            "list1": [1, 2, "3"],
+            },
+        },
+    "headerone.1": {'weights': {'other': 50}},
+    }
+
+_config_example_dict_2 = {
+    "num1": 10,
+    "module": {
+        "name": ["../some/file", "../some/otherfile"],
+        "d1": {
+            "var1": 1,
+            "var2": None,
+            "d2": {
+                "var3": True,
+                "list_": [1, 2, 3],
+                },
+            },
+        },
+    }
 
 _config_example_2 = \
 """num1 = 10
@@ -393,39 +435,6 @@ val2 = 10
 [header.d1]
 val3 = 20
 """
-
-_config_example_dict_1 = {
-    "num1": 10,
-    "name": "some string",
-    "null_value": None,
-    "headerone": {
-        "name": "the other string",
-        "_list": [12, "foo", [56, 86]],
-        "weights": {
-            "val": 1,
-            "bsa": 0.1,
-            "elec": -1,
-            "list1": [1, 2, "3"],
-            },
-        },
-    "headerone.1": {'weights': {'other': 50}},
-    }
-
-
-_config_example_dict_2 = {
-    "num1": 10,
-    "module": {
-        "name": ["../some/file", "../some/otherfile"],
-        "d1": {
-            "var1": 1,
-            "var2": None,
-            "d2": {
-                "var3": True,
-                "list_": [1, 2, 3],
-                },
-            },
-        },
-    }
 
 _config_example_dict_3 = {
     "val": 1,

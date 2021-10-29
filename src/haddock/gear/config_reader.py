@@ -142,6 +142,7 @@ def _read_value(line, fin):
         # evals if key:value are defined in a single line
         try:
             key, value = _get_one_line_group(line)
+            print(key , value)
         except NoGroupFoundError:
             pass
         else:
@@ -248,7 +249,10 @@ def _remove_trailing_zeros_in_headers(d):
     """The suffix '.0' is removed from keys."""
     d1 = {}
     for key, value in d.items():
-        d1[key.rstrip('.0')] = value
+        if isinstance(value, dict) and key.endswith('.0'):
+            d1[key[:-2]] = value
+        else:
+            d1[key] = value
     return d1
 
 

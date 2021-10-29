@@ -142,7 +142,6 @@ def _read_value(line, fin):
         # evals if key:value are defined in a single line
         try:
             key, value = _get_one_line_group(line)
-            print(key , value)
         except NoGroupFoundError:
             pass
         else:

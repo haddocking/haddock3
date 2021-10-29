@@ -9,4 +9,3 @@ dependencies:
     - jsonpickle
     - pip:
         - pdb-tools
-        - lightdock

@@ -17,3 +17,4 @@ v_patch = "beta"
 v_release = "unreleased"
 
 current_version = f"{v_major}.{v_minor}.{v_patch}-{v_release}"
+contact_us = 'https://github.com/haddocking/haddock3/issues'

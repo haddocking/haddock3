@@ -63,6 +63,10 @@ class HaddockModule(BaseHaddockModule):
         cns_script = RECIPE_PATH / "cns" / "flexref.cns"
         super().__init__(order, path, initial_params, cns_script)
 
+    @classmethod
+    def confirm_installation(cls):
+        return
+
     def run(self, **params):
         logger.info("Running [flexref] module")
 
@@ -76,8 +80,6 @@ class HaddockModule(BaseHaddockModule):
 
         first_model = models_to_refine[0]
         topologies = first_model.topology
-
-        weights = {'vdw': 1.0, 'elec': 1.0, 'desol': 1, 'air': 0.1, 'bsa': -0.01}
 
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
@@ -104,20 +106,28 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
         logger.info("CNS engine has finished")
 
-        # Check for generated output, fail it not all expected files are found
+        # Get the weights from the defaults
+        _weight_keys = \
+            ('w_vdw_1', 'w_elec_1', 'w_desolv_1', 'w_air_1', 'w_bsa_1')
+        weights = {e: self.params[e] for e in _weight_keys}
+
         expected = []
         not_found = []
         for model in refined_structure_list:
             if not model.exists():
                 not_found.append(model.name)
 
-            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
+            haddock_score = \
+                HaddockModel(model).calc_haddock_score(**weights)
 
             pdb = PDBFile(model, path=self.path)
             pdb.topology = topologies
             pdb.score = haddock_score
             expected.append(pdb)
+
         if not_found:
+            # Check for generated output,
+            # fail if not all expected files are found
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 

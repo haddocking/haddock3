@@ -7,8 +7,9 @@ from pathlib import Path
 
 from haddock.core.defaults import NUM_CORES
 from haddock.libs import libpdb
-from haddock.modules import BaseHaddockModule, working_directory
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libutil import check_subprocess
+from haddock.modules import BaseHaddockModule, working_directory
 
 
 logger = logging.getLogger(__name__)
@@ -28,6 +29,11 @@ class HaddockModule(BaseHaddockModule):
             **everything,
             ):
         super().__init__(order, path, initial_params)
+
+    @classmethod
+    def confirm_installation(cls):
+        """Confirm this module is installed."""
+        check_subprocess('lightdock3.py -h')
 
     def run(self, **params):
         logger.info("Running [sampling-lightdock] module")

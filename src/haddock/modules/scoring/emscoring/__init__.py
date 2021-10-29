@@ -57,6 +57,10 @@ class HaddockModule(BaseHaddockModule):
         cns_script = RECIPE_PATH / "cns" / "scoring.cns"
         super().__init__(order, path, initial_params, cns_script)
 
+    @classmethod
+    def confirm_installation(cls):
+        return
+
     def run(self, **params):
         logger.info("Running [scoring] module")
 

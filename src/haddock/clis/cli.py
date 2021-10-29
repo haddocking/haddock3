@@ -105,9 +105,9 @@ def main(
     try:
         params, other_params = setup_run(recipe, restart_from=restart)
 
-    except ConfigurationError as err:
+    except HaddockError as err:
         logging.error(err)
-        sys.exit()
+        raise err
 
     if not setup_only:
         try:
@@ -121,6 +121,7 @@ def main(
             workflow.run()
 
         except HaddockError as err:
+            raise err
             logging.error(err)
 
     # Finish

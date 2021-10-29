@@ -3,6 +3,8 @@ import logging
 import os
 from pathlib import Path
 
+import toml
+
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path
@@ -23,6 +25,19 @@ class HaddockModule(BaseHaddockModule):
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = False
         super().__init__(order, path, initial_params, cns_script)
+
+    @classmethod
+    def confirm_installation(cls):
+        dcfg = toml.load(DEFAULT_CONFIG)
+        exec_path = Path(FCC_path, dcfg['executable'])
+
+        if not os.access(exec_path, mode=os.F_OK):
+            raise Exception(f'Required {str(exec_path)} file does not exist.')
+
+        if not os.access(exec_path, mode=os.X_OK):
+            raise Exception(f'Required {str(exec_path)} file is not executable')
+
+        return
 
     def run(self, **params):
         logger.info("Running [clustfcc] module")

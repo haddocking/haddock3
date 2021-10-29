@@ -21,6 +21,10 @@ class HaddockModule(BaseHaddockModule):
             **everything):
         super().__init__(order, path, init_params)
 
+    @classmethod
+    def confirm_installation(cls):
+        return
+
     def run(self, **params):
         logger.info("Running [seletop] module")
 

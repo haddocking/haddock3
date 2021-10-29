@@ -82,6 +82,16 @@ class BaseHaddockModule(ABC):
     def run(self, params):
         self.update_params(**params)
 
+    @classmethod
+    @abstractmethod
+    def confirm_installation(self):
+        """
+        Confirm the third-party software needed for the module is installed.
+
+        HADDOCK3's own modules should just return.
+        """
+        return
+
     def finish_with_error(self, message=""):
         if not message:
             message = "Module has failed"

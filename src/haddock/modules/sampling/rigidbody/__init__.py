@@ -1,14 +1,16 @@
 """HADDOCK3 rigid-body docking module"""
 import logging
-from os import linesep
 from pathlib import Path
+from os import linesep
+
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.modules import BaseHaddockModule
-from haddock.libs.libsubprocess import CNSJob
 from haddock.libs.libcns import generate_default_header, load_ambig
 from haddock.libs.libcns import load_workflow_params, prepare_multiple_input
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import CNSJob
+from haddock.modules import BaseHaddockModule
+
 
 logger = logging.getLogger(__name__)
 
@@ -63,6 +65,10 @@ class HaddockModule(BaseHaddockModule):
         cns_script = RECIPE_PATH / "cns" / "rigidbody.cns"
         super().__init__(order, path, initial_params, cns_script)
 
+    @classmethod
+    def confirm_installation(cls):
+        return
+
     def run(self, **params):
         logger.info("Running [rigidbody] module")
 
@@ -78,9 +84,7 @@ class HaddockModule(BaseHaddockModule):
         #  to be preceeded by topology
         topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
 
-        weights = {'vdw': 0.01, 'elec': 1.0, 'desol': 1, 'air': 0.01, 'bsa': -0.01}
-
-        # xSampling
+        # Sampling
         structure_list = []
         for idx in range(params['sampling']):
             inp_file = generate_docking(
@@ -106,7 +110,11 @@ class HaddockModule(BaseHaddockModule):
         engine.run()
         logger.info("CNS engine has finished")
 
-        # Check for generated output, fail it not all expected files are found
+        # Get the weights according to CNS parameters
+        _weight_keys = \
+            ('w_vdw_0', 'w_elec_0', 'w_desolv_0', 'w_air_0', 'w_bsa_0')
+        weights = {e: self.params[e] for e in _weight_keys}
+
         expected = []
         not_found = []
         for model in structure_list:
@@ -114,12 +122,15 @@ class HaddockModule(BaseHaddockModule):
                 not_found.append(model.name)
 
             haddock_score = HaddockModel(model).calc_haddock_score(**weights)
-            
+
             pdb = PDBFile(model, path=self.path)
             pdb.score = haddock_score
             pdb.topology = topologies
             expected.append(pdb)
+
         if not_found:
+            # Check for generated output,
+            # fail if not all expected files are found
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 

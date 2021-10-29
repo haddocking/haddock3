@@ -59,6 +59,10 @@ class HaddockModule(BaseHaddockModule):
         cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
         super().__init__(order, path, initial_params, cns_script)
 
+    @classmethod
+    def confirm_installation(cls):
+        return
+
     def run(self, molecules, **params):
         logger.info("Running [allatom] module")
         logger.info("Generating topologies")

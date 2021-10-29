@@ -1,16 +1,17 @@
 """Logic pertraining to preparing the run files and folders."""
+import importlib
 import logging
 import shutil
 from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
 
-from haddock import haddock3_source_path
-from haddock.modules import modules_category
-from haddock.core.exceptions import ConfigurationError
+from haddock import contact_us, haddock3_source_path
+from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
+from haddock.modules import modules_category
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
@@ -85,6 +86,7 @@ def setup_run(workflow_path, restart_from=None):
         config_mandatory_general_parameters,
         )
     validate_modules_params(modules_params)
+    validate_installed_modules(modules_params)
 
     if restart_from is None:
         # prepares the run folders
@@ -175,6 +177,30 @@ def validate_modules_params(params):
                 f'parameters for module {module_name!r}: {diff}.'
                 )
             raise ConfigurationError(_msg)
+
+
+def validate_installed_modules(params):
+    """Validate if third party-libraries are installed"""
+    for module_name in params.keys():
+        module_import_name = '.'.join([
+            'haddock',
+            'modules',
+            modules_category[module_name],
+            module_name,
+            ])
+        module_lib = importlib.import_module(module_import_name)
+        try:
+            module_lib.HaddockModule.confirm_installation()
+        except Exception as err:
+            _msg = (
+                'A problem occurred while assessing if module '
+                f'{module_name!r} is installed in your system. Have you '
+                'installed the packages required to run this module? If '
+                f'yes, write us at {contact_us!r} describing your system '
+                'and the problems you are facing. If not, please install '
+                'the required packages to use the module.'
+                )
+            raise ModuleError(_msg) from err
 
 
 def convert_params_to_path(params):

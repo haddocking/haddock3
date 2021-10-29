@@ -27,7 +27,7 @@ class WorkflowManager:
 
 class Workflow:
     """Represents a set of stages to be executed by HADDOCK"""
-    def __init__(self, content, ncores=None, run_dir=None):
+    def __init__(self, content, ncores=None, run_dir=None, **ig):
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, (stage_name, params) in enumerate(content.items()):

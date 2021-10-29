@@ -82,15 +82,16 @@ def setup_run(workflow_path, restart_from=None):
     copy_molecules_to_topology(params)
 
     # get a dictionary without the general config keys
-    modules_params = remove_dict_keys(
-        params,
-        config_mandatory_general_parameters,
-        )
-
     general_params = remove_dict_keys(
         params,
-        list(modules_params.keys()),
+        list(modules_category.keys()),
         )
+
+    modules_params = remove_dict_keys(
+        params,
+        list(general_params.keys()),
+        )
+
 
     validate_modules_params(modules_params)
     validate_installed_modules(modules_params)

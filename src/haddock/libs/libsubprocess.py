@@ -61,7 +61,8 @@ class CNSJob:
     def cns_exec(self):
         return self._cns_exec
 
-    @cns_exec.setter(self, cns_exec_path):
+    @cns_exec.setter
+    def cns_exec(self, cns_exec_path):
         if cns_exec_path is None:
             cns_exec_path = cns_exec  # global cns_exec
 

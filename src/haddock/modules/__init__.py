@@ -82,6 +82,7 @@ class BaseHaddockModule(ABC):
     @abstractmethod
     def run(self, params):
         self.update_params(**params)
+        self.params.setdefault('ncores', None)
 
     @classmethod
     @abstractmethod

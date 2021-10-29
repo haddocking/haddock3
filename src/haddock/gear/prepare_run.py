@@ -86,24 +86,31 @@ def setup_run(workflow_path, restart_from=None):
         params,
         config_mandatory_general_parameters,
         )
+
+    general_params = remove_dict_keys(
+        params,
+        list(modules_params.keys()),
+        )
+
     validate_modules_params(modules_params)
     validate_installed_modules(modules_params)
 
     if restart_from is None:
         # prepares the run folders
-        remove_folder(params['run_dir'])
-        begin_dir, _ = create_begin_files(params)
+        remove_folder(general_params['run_dir'])
+        begin_dir, _ = create_begin_files(general_params)
 
         # prepare other files
         copy_ambig_files(modules_params, begin_dir)
 
     else:
-        remove_folders_after_number(params['run_dir'], restart_from)
+        remove_folders_after_number(general_params['run_dir'], restart_from)
 
     # return the modules' parameters and other parameters that may serve
     # the workflow, the "other parameters" can be expanded in the future
     # by a function if needed
-    return modules_params, {'run_dir': params['run_dir']}
+
+    return modules_params, general_params
 
 
 def validate_params(params):

@@ -5,17 +5,20 @@ import multiprocessing
 import logging
 from pathlib import Path
 
+from haddock import haddock3_source_path
+
 
 logger = logging.getLogger(__name__)
 
 # Locate the CNS binary
-CNS_EXE = os.getenv("HADDOCK3_CNS_EXE")
-if not CNS_EXE:
-    bin_path = Path(__file__).resolve().parent.parent.parent.absolute()
-    CNS_EXE = bin_path / "bin" / "cns"
-    if not CNS_EXE.exists():
-        logger.error('HADDOCK3_CNS_EXE not defined and bin/cns not found')
-        sys.exit()
+bin_path = haddock3_source_path.parents[1]
+cns_exec = Path(bin_path, "bin", "cns")
+if not cns_exec.exists():
+    logger.error(
+        'CNS executable `bin/cns` not found. '
+        'Did you installed HADDOCK3 properly?'
+        )
+    sys.exit()
 
 # Number of cores to use
 NUM_CORES = int(os.getenv("HADDOCK3_NUM_CORES", multiprocessing.cpu_count()))

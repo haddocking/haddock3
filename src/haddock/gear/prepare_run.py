@@ -13,6 +13,7 @@ from haddock.modules import modules_category
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
+from haddock.modules import general_parameters_affecting_modules
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
@@ -158,10 +159,10 @@ def validate_modules(params):
 
 
 @with_config_error
-def validate_modules_params(params):
+def validate_modules_params(modules_params):
     """Validates individual parameters for each module."""
 
-    for module_name, args in params.items():
+    for module_name, args in modules_params.items():
         pdef = Path(
             haddock3_source_path,
             'modules',
@@ -176,7 +177,8 @@ def validate_modules_params(params):
 
         diff = set(args.keys()) \
             - set(defaults.keys()) \
-            - set(config_mandatory_general_parameters)
+            - set(config_mandatory_general_parameters) \
+            - general_parameters_affecting_modules
 
         if diff:
             _msg = (

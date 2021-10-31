@@ -20,9 +20,6 @@ if not cns_exec.exists():
         )
     sys.exit()
 
-# Number of cores to use
-NUM_CORES = int(os.getenv("HADDOCK3_NUM_CORES", multiprocessing.cpu_count()))
-
 # Module input and generated data will be stored in folder starting by
 #  this prefix
 MODULE_PATH_NAME = "step_"

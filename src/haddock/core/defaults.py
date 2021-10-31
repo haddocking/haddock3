@@ -5,14 +5,13 @@ import multiprocessing
 import logging
 from pathlib import Path
 
-from haddock import haddock3_source_path
+from haddock import haddock3_repository_path, haddock3_source_path
 
 
 logger = logging.getLogger(__name__)
 
 # Locate the CNS binary
-bin_path = haddock3_source_path.parents[1]
-cns_exec = Path(bin_path, "bin", "cns")
+cns_exec = Path(haddock3_repository_path, "bin", "cns")
 if not cns_exec.exists():
     logger.error(
         'CNS executable `bin/cns` not found. '

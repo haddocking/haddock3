@@ -77,7 +77,7 @@ class Scheduler:
         except KeyboardInterrupt:
             # Q: why have a keyboard interrupt here?
             # A: To have a controlled break if the user Ctrl+c during CNS run
-            logger.info("You have halted CNS execution by hitting Ctrl+c")
+            logger.info("You have halted subprocess execution by hitting Ctrl+c")
             self.terminate()
             sys.exit()
 

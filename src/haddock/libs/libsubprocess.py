@@ -66,8 +66,11 @@ class CNSJob:
         if cns_exec_path is None:
             cns_exec_path = cns_exec  # global cns_exec
 
-        if not cns_exec_path.exists():
-            raise ValueError(f'{str(cns_exec_path)!r} binary file not found.')
+        if not os.access(cns_exec_path, mode=os.X_OK):
+            raise ValueError(
+                f'{str(cns_exec_path)!r} binary file not found, '
+                'or is not executable.'
+                )
 
         self._cns_exec = cns_exec_path
 

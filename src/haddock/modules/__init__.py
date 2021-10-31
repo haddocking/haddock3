@@ -90,6 +90,7 @@ class BaseHaddockModule(ABC):
     def run(self, params):
         self.update_params(**params)
         self.params.setdefault('ncores', None)
+        self.params.setdefault('cns_exec', None)
 
     @classmethod
     @abstractmethod

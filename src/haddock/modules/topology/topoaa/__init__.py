@@ -107,9 +107,12 @@ class HaddockModule(BaseHaddockModule):
                     f"{model.stem}.{Format.CNS_OUTPUT}",
                     )
 
-                job = CNSJob(topology_filename,
-                             output_filename,
-                             cns_folder=self.cns_folder_path)
+                job = CNSJob(
+                    topology_filename,
+                    output_filename,
+                    cns_folder=self.cns_folder_path,
+                    cns_exec=self.params['cns_exec'],
+                    )
 
                 jobs.append(job)
 

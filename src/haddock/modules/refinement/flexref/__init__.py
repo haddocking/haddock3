@@ -96,7 +96,12 @@ class HaddockModule(BaseHaddockModule):
             structure_file = self.path / f"flexref_{idx}.pdb"
             refined_structure_list.append(structure_file)
 
-            job = CNSJob(inp_file, out_file, cns_folder=self.cns_folder_path)
+            job = CNSJob(
+                inp_file,
+                out_file,
+                cns_folder=self.cns_folder_path,
+                cns_exec=self.params['cns_exec'],
+                )
 
             jobs.append(job)
 

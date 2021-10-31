@@ -81,9 +81,12 @@ class HaddockModule(BaseHaddockModule):
             output_filename = (self.path /
                                f"{Path(model.file_name).stem}_scoring.out")
 
-            job = CNSJob(scoring_filename,
-                         output_filename,
-                         cns_folder=self.cns_folder_path)
+            job = CNSJob(
+                scoring_filename,
+                output_filename,
+                cns_folder=self.cns_folder_path,
+                cns_exec=self.params['cns_exec'],
+                )
 
             jobs.append(job)
 

@@ -1,5 +1,6 @@
 """Module in charge of parallelizing the execution of tasks"""
 import logging
+import sys
 from multiprocessing import Process
 
 from haddock.libs.libutil import parse_ncores
@@ -75,12 +76,14 @@ class Scheduler:
 
         except KeyboardInterrupt:
             # Q: why have a keyboard interrupt here?
+            # A: To have a controlled break if the user Ctrl+c during CNS run
+            logger.info("You have halted CNS execution by hitting Ctrl+c")
             self.terminate()
+            sys.exit()
 
     def terminate(self):
 
-        logger.warning("Something went wrong")
         for task in self.task_list:
             task.terminate()
 
-        logger.warning("The workers have stopped")
+        logger.info("The workers terminated in a controlled way")

@@ -2,6 +2,7 @@
 import os
 import shlex
 import subprocess
+import sys
 
 from haddock.core.defaults import CNS_EXE, NUM_CORES
 from haddock.core.exceptions import CNSRunningError, JobRunningError
@@ -39,8 +40,13 @@ class Job:
 
 class CNSJob:
     """A CNS job script"""
-    def __init__(self, input_file, output_file, cns_folder='.',
-                 cns_exec=CNS_EXE):
+    def __init__(
+            self,
+            input_file,
+            output_file,
+            cns_folder='.',
+            cns_exec=CNS_EXE,
+            ):
         """
         :param input_file: input CNS script
         :param output_file: CNS output
@@ -54,16 +60,23 @@ class CNSJob:
 
     def run(self):
         """Run this CNS job script"""
-        with open(self.input_file) as inp:
-            with open(self.output_file, 'w+') as outf:
-                env = {'RUN': self.cns_folder}
-                p = subprocess.Popen(self.cns_exec,
-                                     stdin=inp,
-                                     stdout=outf,
-                                     close_fds=True,
-                                     env=env)
-                out, error = p.communicate()
-                p.kill()
+        with open(self.input_file) as inp, \
+                open(self.output_file, 'w+') as outf:
+
+            env = {'RUN': self.cns_folder}
+            p = subprocess.Popen(
+                self.cns_exec,
+                stdin=inp,
+                stdout=outf,
+                stderr=subprocess.PIPE,
+                close_fds=True,
+                env=env,
+                )
+
+            out, error = p.communicate()
+            p.kill()
+
         if error:
             raise CNSRunningError(error)
+
         return out

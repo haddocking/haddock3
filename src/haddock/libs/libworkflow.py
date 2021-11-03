@@ -2,6 +2,7 @@
 import importlib
 import logging
 import shutil
+import sys
 from pathlib import Path
 
 from haddock.core.exceptions import HaddockError, StepError
@@ -80,4 +81,9 @@ class Step:
             path=self.working_path)
 
         # Run module
-        module.run(**self.config)
+        try:
+            module.run(**self.config)
+        except KeyboardInterrupt:
+            logger.info("You have halted subprocess execution by hitting Ctrl+c")
+            logger.info("Exiting...")
+            sys.exit()

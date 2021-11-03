@@ -74,12 +74,14 @@ class Scheduler:
 
             logger.info(f"{self.num_tasks} tasks finished")
 
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as err:
             # Q: why have a keyboard interrupt here?
             # A: To have a controlled break if the user Ctrl+c during CNS run
-            logger.info("You have halted subprocess execution by hitting Ctrl+c")
             self.terminate()
-            sys.exit()
+            # this raises sends the error to libs.libworkflow.Step
+            # if Scheduler is used independently the error will propagate to
+            # whichever has to catch it
+            raise err
 
     def terminate(self):
 

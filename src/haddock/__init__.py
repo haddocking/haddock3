@@ -3,15 +3,14 @@ import logging
 from os import get_terminal_size
 from pathlib import Path
 
-from haddock.libs.liblog import add_sysout_handler, has_terminal
+from haddock.libs.liblog import add_sysout_handler, add_syserr_handler
 
 
 log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)
-
-if has_terminal:
-    add_sysout_handler(log)
+add_sysout_handler(log)
+add_syserr_handler(log)
 
 haddock3_source_path = Path(__file__).resolve().parent
 toppar_path = Path(haddock3_source_path, "cns", "toppar")

@@ -7,12 +7,7 @@ from os import get_terminal_size
 from pathlib import Path
 
 
-try:
-    get_terminal_size()
-except OSError:
-    has_terminal = False
-else:
-    has_terminal = True
+log_file_name = 'log'
 
 
 info_formatter = '[%(asctime)s] %(message)s'
@@ -64,7 +59,7 @@ def add_handler(
     return ch
 
 
-def add_log_for_CLI(log, log_level, run_dir):
+def add_log_for_CLI(log, log_level, logfile):
     """Configure log for command-line clients."""
     llu = log_level.upper()
 
@@ -74,19 +69,12 @@ def add_log_for_CLI(log, log_level, run_dir):
         }
 
     log.handlers.clear()
-
-    if has_terminal:
-        add_sysout_handler(log, **params)
-
-    add_logfile_handler(
-        log,
-        stream=Path(run_dir, 'log'),
-        **params,
-        )
-
+    add_sysout_handler(log, **params)
+    add_logfile_handler(log, stream=logfile, **params)
     return
 
 
 add_sysout_handler = partial(add_handler, handler=StreamHandler, stream=sys.stdout)
-add_logfile_handler = partial(add_handler, handler=FileHandler, stream='log')
-add_stringio_handler = partial(add_handler, handler=io.StringIO, stream='')
+add_syserr_handler = partial(add_handler, handler=StreamHandler, stream=sys.stderr, log_level='ERROR')
+add_logfile_handler = partial(add_handler, handler=FileHandler, stream=log_file_name)
+add_stringio_handler = partial(add_handler, handler=StreamHandler, stream=io.StringIO())

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-import io
 import argparse
 import sys
 from argparse import ArgumentTypeError
 from functools import partial
+from pathlib import Path
 
 from haddock import current_version, log
 from haddock.libs.libutil import file_exists
-from haddock.libs.liblog import add_loglevel_arg, add_log_for_CLI
+from haddock.libs.liblog import add_loglevel_arg, add_log_for_CLI, add_stringio_handler, log_formatters, log_file_name
 from haddock.gear.restart_run import add_restart_arg
 
 
@@ -89,6 +89,13 @@ def main(
     from haddock.gear.prepare_run import setup_run
     from haddock.core.exceptions import HaddockError, ConfigurationError
 
+    # the io.StringIO handler is a trick to save the log while run_dir
+    # is not read from the configuration file and the log can be saved
+    # in the final file.
+    #
+    # Nonetheless, the log is saved in stdout and stderr in case it
+    # breaks before the actual logfile is defined.
+    # See lines further down on how we resolve this trick
     add_stringio_handler(
         log,
         log_level=log_level,
@@ -105,9 +112,17 @@ def main(
         log.error(err)
         raise err
 
-    log_temporary = log.handlers[-1].getvalue()
-    add_log_for_CLI(log, log_level, run_dir=other_params['run_dir'])
-    log.info(log_temporary)
+    # here we the io.StringIO handler log information, and reset the log
+    # handlers to fit the CLI and HADDOCK3 specifications.
+    log_temporary = log.handlers[-1].stream.getvalue()
+    _run_dir = other_params['run_dir']
+    log_file = Path(_run_dir, log_file_name)
+    add_log_for_CLI(log, log_level, log_file)
+
+    # here we append the log information in the previous io.StringIO()
+    # handler in the log file already in the run_dir
+    with open(log_file, 'a') as fout:
+        fout.write(log_temporary)
 
     if not setup_only:
         try:

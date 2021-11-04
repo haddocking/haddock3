@@ -2,6 +2,15 @@ import logging
 import sys
 from functools import partial
 from logging import StreamHandler, FileHandler
+from os import get_terminal_size
+
+
+try:
+    get_terminal_size()
+except OSError:
+    has_terminal = False
+else:
+    has_terminal = True
 
 
 info_formatter = '[%(asctime)s] %(message)s'

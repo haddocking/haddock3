@@ -3,19 +3,14 @@ import logging
 from os import get_terminal_size
 from pathlib import Path
 
-from haddock.libs.liblog import add_sysout_handler
+from haddock.libs.liblog import add_sysout_handler, has_terminal
 
 
 log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)
 
-try:
-    get_terminal_size()
-except OSError:
-    has_terminal = False
-else:
-    has_terminal = True
+if has_terminal:
     add_sysout_handler(log)
 
 haddock3_source_path = Path(__file__).resolve().parent

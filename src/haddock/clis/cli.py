@@ -6,6 +6,7 @@ from functools import partial
 
 from haddock import current_version, log
 from haddock.libs.libutil import file_exists
+from haddock.libs.liblog import add_loglevel_arg, add_log_for_CLI
 from haddock.gear.restart_run import add_restart_arg
 
 
@@ -31,12 +32,7 @@ ap.add_argument(
     dest='setup_only',
     )
 
-_log_levels = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")
-ap.add_argument(
-    "--log-level",
-    default="INFO",
-    choices=_log_levels,
-    )
+add_loglevel_arg(ap)
 
 ap.add_argument(
     "-v",

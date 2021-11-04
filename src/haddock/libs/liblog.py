@@ -76,7 +76,7 @@ def add_log_for_CLI(log, log_level):
     if has_terminal:
         add_sysout_handler(log, **params)
 
-    add_sysout_handler(log, **params)
+    add_logfile_handler(log, **params)
 
     return
 

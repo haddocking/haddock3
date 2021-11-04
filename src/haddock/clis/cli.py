@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import io
 import argparse
 import sys
 from argparse import ArgumentTypeError
@@ -88,8 +89,11 @@ def main(
     from haddock.gear.prepare_run import setup_run
     from haddock.core.exceptions import HaddockError, ConfigurationError
 
-
-    add_log_for_CLI(log, log_level)
+    add_stringio_handler(
+        log,
+        log_level=log_level,
+        formatter=log_formatters[log_level],
+        )
 
     # Special case only using print instead of logging
     log.info(get_initial_greeting())
@@ -100,6 +104,10 @@ def main(
     except HaddockError as err:
         log.error(err)
         raise err
+
+    log_temporary = log.handlers[-1].getvalue()
+    add_log_for_CLI(log, log_level, run_dir=other_params['run_dir'])
+    log.info(log_temporary)
 
     if not setup_only:
         try:

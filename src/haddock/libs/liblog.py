@@ -1,8 +1,10 @@
 import logging
+import io
 import sys
 from functools import partial
 from logging import StreamHandler, FileHandler
 from os import get_terminal_size
+from pathlib import Path
 
 
 try:
@@ -62,7 +64,7 @@ def add_handler(
     return ch
 
 
-def add_log_for_CLI(log, log_level):
+def add_log_for_CLI(log, log_level, run_dir):
     """Configure log for command-line clients."""
     llu = log_level.upper()
 
@@ -76,10 +78,15 @@ def add_log_for_CLI(log, log_level):
     if has_terminal:
         add_sysout_handler(log, **params)
 
-    add_logfile_handler(log, **params)
+    add_logfile_handler(
+        log,
+        stream=Path(run_dir, 'log'),
+        **params,
+        )
 
     return
 
 
 add_sysout_handler = partial(add_handler, handler=StreamHandler, stream=sys.stdout)
 add_logfile_handler = partial(add_handler, handler=FileHandler, stream='log')
+add_stringio_handler = partial(add_handler, handler=io.StringIO, stream='')

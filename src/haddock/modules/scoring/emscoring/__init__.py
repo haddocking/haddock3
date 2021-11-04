@@ -1,8 +1,8 @@
 """HADDOCK3 scoring module"""
-import logging
 from os import linesep
 from pathlib import Path
 
+from haddock import log
 from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
@@ -12,9 +12,6 @@ from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
-
-
-logger = logging.getLogger(__name__)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -62,7 +59,7 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def run(self, **params):
-        logger.info("Running [scoring] module")
+        log.info("Running [scoring] module")
 
         super().run(params)
 
@@ -88,10 +85,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        logger.info(f"Running CNS engine with {len(jobs)} jobs")
+        log.info(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs)
         engine.run()
-        logger.info("CNS engine has finished")
+        log.info("CNS engine has finished")
 
         # Check for generated output, fail it not all expected files are found
         expected = []

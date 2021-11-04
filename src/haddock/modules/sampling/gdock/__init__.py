@@ -1,5 +1,4 @@
 """HADDOCK3 gdock integration module"""
-import logging
 import os
 import re
 import subprocess
@@ -7,6 +6,7 @@ import sys
 
 from pathlib import Path
 
+from haddock import log
 from haddock.core.defaults import NUM_CORES
 from haddock.libs import libpdb
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
@@ -14,13 +14,8 @@ from haddock.libs.libutil import check_subprocess
 from haddock.modules import BaseHaddockModule, working_directory
 
 
-logger = logging.getLogger(__name__)
-
-
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
-
-
 
 
 def ambig2dic(ambig_f):
@@ -53,7 +48,7 @@ class HaddockModule(BaseHaddockModule):
         check_subprocess(f'{sys.executable} {gdock_exec}')
 
     def run(self, **params):
-        logger.info("Running [gdock] module")
+        log.info("Running [gdock] module")
 
         super().run(params)
 
@@ -85,7 +80,7 @@ class HaddockModule(BaseHaddockModule):
             chain_pdb = Path(self.path, pdb.name)
             segids, chains = libpdb.identify_chainseg(pdb)
             if set(segids) != set(chains):
-                logger.info("No chain IDs found, using segid information")
+                log.info("No chain IDs found, using segid information")
                 libpdb.swap_segid_chain(pdb, chain_pdb)
             input[chain] = chain_pdb
 

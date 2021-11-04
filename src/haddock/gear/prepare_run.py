@@ -1,6 +1,5 @@
 """Logic pertraining to preparing the run files and folders."""
 import importlib
-import logging
 import shutil
 from contextlib import contextmanager
 from functools import wraps
@@ -8,7 +7,7 @@ from pathlib import Path
 
 import toml
 
-from haddock import contact_us, haddock3_source_path
+from haddock import contact_us, haddock3_source_path, log
 from haddock.modules import modules_category
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -21,9 +20,6 @@ from haddock.libs.libutil import (
     )
 
 
-logger = logging.getLogger(__name__)
-
-
 @contextmanager
 def config_key_error():
     """Raise ConfigurationError on KeyError."""
@@ -31,7 +27,7 @@ def config_key_error():
         yield
     except KeyError as err:
         msg = f"Expected {err.args[0]!r} parameter in configuration file."
-        logger.debug(err)
+        log.debug(err)
         raise ConfigurationError(msg) from err
 
 

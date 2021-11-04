@@ -1,5 +1,4 @@
 """General utilities."""
-import logging
 import shutil
 import subprocess
 from copy import deepcopy
@@ -8,10 +7,8 @@ from operator import ge
 from os import cpu_count
 from pathlib import Path
 
+from haddock import log
 from haddock.core.exceptions import SetupError
-
-
-logger = logging.getLogger(__name__)
 
 
 check_subprocess = partial(
@@ -65,7 +62,7 @@ def zero_fill(number, digits=2):
 def remove_folder(folder):
     """Removes a folder if it exists."""
     if folder.exists():
-        logger.warning(f'{folder} exists and it will be REMOVED!')
+        log.warning(f'{folder} exists and it will be REMOVED!')
         shutil.rmtree(folder)
 
 
@@ -126,15 +123,15 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
 
     if njobs:
         ncores = min(n, njobs, max_cpus)
-        logger.info(
+        log.info(
             f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "
             "maximum available cores."
             )
         return ncores
 
-    logger.info(f"`njobs` not specified, evaluating initial value {n}...")
+    log.info(f"`njobs` not specified, evaluating initial value {n}...")
     ncores = min(n, max_cpus)
-    logger.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
+    log.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
     return ncores
 
 

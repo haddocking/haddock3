@@ -1,10 +1,10 @@
 """HADDOCK3 module to select a top cluster/model"""
-import logging
 from pathlib import Path
+
+from haddock import log
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libontology import ModuleIO
 
-logger = logging.getLogger(__name__)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
@@ -26,7 +26,7 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def run(self, **params):
-        logger.info("Running [seletopclusts] module")
+        log.info("Running [seletopclusts] module")
 
         super().run(params)
 
@@ -67,7 +67,7 @@ class HaddockModule(BaseHaddockModule):
             try:
                 target_id = list(sorted_dic.keys())[select_id - 1]
             except IndexError:
-                logger.warning(f'Cluster ranking #{select_id} not found,'
+                log.warning(f'Cluster ranking #{select_id} not found,'
                                ' skipping selection')
                 continue
 

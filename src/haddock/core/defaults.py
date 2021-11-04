@@ -1,12 +1,11 @@
 """All default parameters used by the framework"""
+import multiprocessing
 import os
 import sys
-import multiprocessing
-import logging
 from pathlib import Path
 
+from haddock import log
 
-logger = logging.getLogger(__name__)
 
 # Locate the CNS binary
 CNS_EXE = os.getenv("HADDOCK3_CNS_EXE")
@@ -14,7 +13,7 @@ if not CNS_EXE:
     bin_path = Path(__file__).resolve().parent.parent.parent.absolute()
     CNS_EXE = bin_path / "bin" / "cns"
     if not CNS_EXE.exists():
-        logger.error('HADDOCK3_CNS_EXE not defined and bin/cns not found')
+        log.error('HADDOCK3_CNS_EXE not defined and bin/cns not found')
         sys.exit()
 
 # Number of cores to use

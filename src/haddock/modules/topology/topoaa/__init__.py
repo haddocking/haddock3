@@ -1,8 +1,8 @@
 """CNS Topology creation and management module"""
-import logging
 import shutil
 from pathlib import Path
 
+from haddock import log
 from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
@@ -17,8 +17,6 @@ from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 
-
-logger = logging.getLogger(__name__)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
@@ -64,8 +62,8 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def run(self, molecules, **params):
-        logger.info("Running [allatom] module")
-        logger.info("Generating topologies")
+        log.info("Running [allatom] module")
+        log.info("Generating topologies")
 
         super().run(params)
 
@@ -76,20 +74,20 @@ class HaddockModule(BaseHaddockModule):
 
         models = []
         for i, molecule in enumerate(molecules):
-            logger.info(f"{i + 1} - {molecule.file_name}")
+            log.info(f"{i + 1} - {molecule.file_name}")
 
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_name.name)
             shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models
-            logger.info(f"Split models if needed for {step_molecule_path}")
+            log.info(f"Split models if needed for {step_molecule_path}")
             ens = libpdb.split_ensemble(step_molecule_path)
             splited_models = sorted(ens)
 
             # Sanitize the different PDB files
             for model in splited_models:
-                logger.info(f"Sanitizing molecule {model.name}")
+                log.info(f"Sanitizing molecule {model.name}")
                 models.append(model)
                 libpdb.sanitize(model, overwrite=True)
 
@@ -98,7 +96,7 @@ class HaddockModule(BaseHaddockModule):
                                                       self.path,
                                                       self.recipe_str,
                                                       self.params)
-                logger.info("Topology CNS input created in"
+                log.info("Topology CNS input created in"
                             f" {topology_filename}")
 
                 # Add new job to the pool
@@ -114,10 +112,10 @@ class HaddockModule(BaseHaddockModule):
                 jobs.append(job)
 
         # Run CNS engine
-        logger.info(f"Running CNS engine with {len(jobs)} jobs")
+        log.info(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs)
         engine.run()
-        logger.info("CNS engine has finished")
+        log.info("CNS engine has finished")
 
         # Check for generated output, fail it not all expected files
         #  are found

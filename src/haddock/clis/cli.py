@@ -5,7 +5,7 @@ import sys
 from argparse import ArgumentTypeError
 from functools import partial
 
-from haddock import current_version
+from haddock import current_version, log
 from haddock.libs.libutil import file_exists
 from haddock.gear.restart_run import add_restart_arg
 
@@ -93,20 +93,17 @@ def main(
     from haddock.gear.prepare_run import setup_run
     from haddock.core.exceptions import HaddockError, ConfigurationError
 
-    # Configuring logging
-    logging.basicConfig(
-        level=log_level,
-        format="[%(asctime)s] %(name)s:L%(lineno)d %(levelname)s - %(message)s",
-        )
+
+    add_log_for_CLI(log, log_level)
 
     # Special case only using print instead of logging
-    logging.info(get_initial_greeting())
+    log.info(get_initial_greeting())
 
     try:
         params, other_params = setup_run(recipe, restart_from=restart)
 
     except HaddockError as err:
-        logging.error(err)
+        log.error(err)
         raise err
 
     if not setup_only:
@@ -122,10 +119,10 @@ def main(
 
         except HaddockError as err:
             raise err
-            logging.error(err)
+            log.error(err)
 
     # Finish
-    logging.info(get_adieu())
+    log.info(get_adieu())
 
 
 if __name__ == "__main__":

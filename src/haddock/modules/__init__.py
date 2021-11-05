@@ -25,6 +25,13 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
+general_parameters_affecting_modules = {'ncores', 'cns_exec'}
+"""These parameters are general parameters that may be applicable to modules
+specifically. Therefore, they should be considered as part of the "default"
+module's parameters. Usually, this set is used to filter parameters during
+the run prepraration phase. See, `gear.prepare_run`."""
+
+
 class BaseHaddockModule(ABC):
     def __init__(self, order, path, params, cns_script=""):
         """
@@ -81,6 +88,8 @@ class BaseHaddockModule(ABC):
     @abstractmethod
     def run(self, params):
         self.update_params(**params)
+        self.params.setdefault('ncores', None)
+        self.params.setdefault('cns_exec', None)
 
     @classmethod
     @abstractmethod

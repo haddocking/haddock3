@@ -109,7 +109,7 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
     int
         A correct number of cores according to specifications.
     """
-    max_cpus = max_cpus or cpu_count() - 1
+    max_cpus = max_cpus or max(cpu_count() - 1, 1)
 
     if n is None:
         return max_cpus

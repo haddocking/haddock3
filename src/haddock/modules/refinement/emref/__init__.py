@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "emref.toml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 def generate_emref(identifier, input_file, step_path, recipe_str,

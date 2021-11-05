@@ -105,15 +105,18 @@ class HaddockModule(BaseHaddockModule):
                     f"{model.stem}.{Format.CNS_OUTPUT}",
                     )
 
-                job = CNSJob(topology_filename,
-                             output_filename,
-                             cns_folder=self.cns_folder_path)
+                job = CNSJob(
+                    topology_filename,
+                    output_filename,
+                    cns_folder=self.cns_folder_path,
+                    cns_exec=self.params['cns_exec'],
+                    )
 
                 jobs.append(job)
 
         # Run CNS engine
         log.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Scheduler(jobs)
+        engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
         log.info("CNS engine has finished")
 

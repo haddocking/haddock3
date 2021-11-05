@@ -63,7 +63,7 @@ class HaddockModule(BaseHaddockModule):
                 )
             contact_jobs.append(job)
 
-        contact_engine = Scheduler(contact_jobs)
+        contact_engine = Scheduler(contact_jobs, ncores=self.params['ncores'])
         contact_engine.run()
 
         contact_file_l = []

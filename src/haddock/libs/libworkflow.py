@@ -25,11 +25,16 @@ class WorkflowManager:
 
 class Workflow:
     """Represents a set of stages to be executed by HADDOCK"""
-    def __init__(self, content, run_dir=None):
+    def __init__(self, content, ncores=None, run_dir=None, cns_exec=None, **ig):
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, (stage_name, params) in enumerate(content.items()):
             log.info(f"Reading instructions of [{stage_name}] step")
+
+            # uses gobal ncores parameter unless module-specific value
+            # hasn't been used
+            params.setdefault('ncores', ncores)
+            params.setdefault('cns_exec', cns_exec)
 
             try:
                 _ = Step(
@@ -48,7 +53,13 @@ class Workflow:
 class Step:
     """Represents a Step of the Workflow."""
 
-    def __init__(self, module_name, order=None, run_dir=None, **config_params):
+    def __init__(
+            self,
+            module_name,
+            order=None,
+            run_dir=None,
+            **config_params,
+            ):
         self.config = config_params
         self.module_name = module_name
         self.order = order

@@ -5,7 +5,6 @@ import subprocess
 from pathlib import Path
 
 from haddock import log
-from haddock.core.defaults import NUM_CORES
 from haddock.libs import libpdb
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libutil import check_subprocess
@@ -94,7 +93,7 @@ class HaddockModule(BaseHaddockModule):
         with working_directory(self.path):
             steps = self.params["steps"]
             scoring = self.params["scoring"]
-            cores = NUM_CORES
+            cores = self.params['ncores'] or 1
             cmd = f"lightdock3.py setup.json {steps} -c {cores} -s {scoring}"
             subprocess.call(cmd, shell=True)
 

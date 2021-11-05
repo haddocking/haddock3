@@ -106,6 +106,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS engine
         log.info(f"Running CNS engine with {len(jobs)} jobs")
+        engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
         log.info("CNS engine has finished")
 

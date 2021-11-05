@@ -25,7 +25,7 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-general_parameters_affecting_modules = {'ncores'}
+general_parameters_affecting_modules = {'ncores', 'cns_exec'}
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"
 module's parameters. Usually, this set is used to filter parameters during

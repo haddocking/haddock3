@@ -6,13 +6,12 @@ from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
 
-import toml
-
 from haddock import contact_us, haddock3_source_path
-from haddock.modules import modules_category
 from haddock.core.exceptions import ConfigurationError, ModuleError
+from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
+from haddock.modules import modules_category
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
@@ -72,7 +71,7 @@ def setup_run(workflow_path, restart_from=None):
         A dictionary with the parameters for the haddock3 modules.
         A dictionary with the general run parameters.
     """
-    params = toml.load(workflow_path)
+    params = read_config(workflow_path)
 
     # validates the configuration file
     validate_params(params)
@@ -139,8 +138,9 @@ def validate_modules(params):
 
     Raises ConfigurationError if module does not exist.
     """
-    for module in params['order']:
-        if module not in modules_category.keys():
+    keys = set(params) - set(config_mandatory_general_parameters)
+    for module in keys:
+        if get_module_name(module) not in modules_category.keys():
             _msg = (
                 f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "
@@ -154,15 +154,16 @@ def validate_modules_params(params):
     """Validates individual parameters for each module."""
 
     for module_name, args in params.items():
+        _module_name = get_module_name(module_name)
         pdef = Path(
             haddock3_source_path,
             'modules',
-            modules_category[module_name],
-            module_name,
-            'defaults.toml',
+            modules_category[_module_name],
+            _module_name,
+            'defaults.cfg',
             ).resolve()
 
-        defaults = toml.load(pdef)
+        defaults = read_config(pdef)
         if not defaults:
             return
 

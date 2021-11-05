@@ -5,6 +5,7 @@ import shutil
 from pathlib import Path
 
 from haddock.core.exceptions import HaddockError, StepError
+from haddock.gear.config_reader import get_module_name
 from haddock.libs.libutil import zero_fill
 from haddock.modules import modules_category
 
@@ -35,7 +36,7 @@ class Workflow:
 
             try:
                 _ = Step(
-                    stage_name,
+                    get_module_name(stage_name),
                     order=num_stage,
                     run_dir=run_dir,
                     **params,

@@ -4,12 +4,11 @@ import contextlib
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-import toml
-
 from haddock import log
+from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import StepError
+from haddock.gear.config_reader import read_config
 from haddock.libs.libontology import ModuleIO
-from haddock.core.defaults import MODULE_PATH_NAME, MODULE_IO_FILE
 
 
 modules_folder = Path(__file__).resolve().parent
@@ -31,10 +30,10 @@ class BaseHaddockModule(ABC):
 
         Parameters
         ----------
-        params : dict or path to toml file
-            A dictionary or a path to a toml file containing the initial
-            module parameters. Usually this is defined by the default
-            params.
+        params : dict or path to HADDOCK3 configuration file
+            A dictionary or a path to an HADDOCK3 configuration file
+            containing the initial module parameters. Usually this is
+            defined by the default params.
         """
         self.order = order
         self.path = path
@@ -66,9 +65,9 @@ class BaseHaddockModule(ABC):
             self._params = path_or_dict
         else:
             try:
-                self._params = toml.load(path_or_dict)
+                self._params = read_config(path_or_dict)
             except FileNotFoundError as err:
-                _msg = f"Default configuration file path not found: {str(path_or_dict)!r}"
+                _msg = f"Default configuration file not found: {str(path_or_dict)!r}"
                 raise FileNotFoundError(_msg) from err
             except TypeError as err:
                 _msg = (

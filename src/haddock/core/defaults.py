@@ -17,7 +17,8 @@ if not cns_exec.exists():
         'CNS executable `bin/cns` not found. '
         'Did you installed HADDOCK3 properly?'
         )
-    sys.exit()
+    if 'TOXTESTING' not in os.environ:
+        sys.exit()
 
 # Module input and generated data will be stored in folder starting by
 #  this prefix

@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name='haddock3',
-    version='0.0.3-alpha',
+    version='3.0.0',
     description='Haddock 3.',
     long_description='',#long_description,
     long_description_content_type='text/x-rst',
@@ -39,13 +39,14 @@ setup(
     classifiers=[
         # complete classifier list:
         # http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 3 - Alpha',
-        #'Development Status :: 4 - Beta',
+        #'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Operating System :: POSIX',
+        'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
-        'Operating System :: Microsoft',
+        #'Operating System :: Microsoft',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         ],

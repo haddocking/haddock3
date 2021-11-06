@@ -1,22 +1,21 @@
 graft docs
-graft src
+graft src/haddock
 
-include *.rst
 include *.md
+include *.rst
 include LICENSE
+include requirements.txt
+include requirements.yml
 
-exclude .appveyor.yml
+exclude .gitmodules
 exclude .bumpversion.cfg
-exclude .codacy.yaml
 exclude .coveragerc
-exclude .cookiecutterrc
-exclude .editorconfig
 exclude .readthedocs.yml
-exclude .codeclimate.yml
 exclude tox.ini
-exclude .travis.yml
 
 prune devtools
+prune examples
+prune src/fcc
 prune tests
 
 global-exclude *.py[cod] __pycache__/* *.so *.dylib 

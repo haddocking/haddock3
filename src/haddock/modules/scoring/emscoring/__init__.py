@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 def generate_scoring(model, course_path, recipe_str, defaults):
@@ -81,15 +81,18 @@ class HaddockModule(BaseHaddockModule):
             output_filename = (self.path /
                                f"{Path(model.file_name).stem}_scoring.out")
 
-            job = CNSJob(scoring_filename,
-                         output_filename,
-                         cns_folder=self.cns_folder_path)
+            job = CNSJob(
+                scoring_filename,
+                output_filename,
+                cns_folder=self.cns_folder_path,
+                cns_exec=self.params['cns_exec'],
+                )
 
             jobs.append(job)
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Scheduler(jobs)
+        engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
         logger.info("CNS engine has finished")
 

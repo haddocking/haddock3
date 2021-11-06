@@ -4,7 +4,7 @@ import shlex
 import subprocess
 import sys
 
-from haddock.core.defaults import CNS_EXE, NUM_CORES
+from haddock.core.defaults import cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
 from haddock.libs.libparallel import Scheduler
 
@@ -45,7 +45,7 @@ class CNSJob:
             input_file,
             output_file,
             cns_folder='.',
-            cns_exec=CNS_EXE,
+            cns_exec=None,
             ):
         """
         :param input_file: input CNS script
@@ -57,6 +57,24 @@ class CNSJob:
         self.output_file = output_file
         self.cns_folder = cns_folder
         self.cns_exec = cns_exec
+
+    @property
+    def cns_exec(self):
+        return self._cns_exec
+
+    @cns_exec.setter
+    def cns_exec(self, cns_exec_path):
+        if cns_exec_path is None:
+            cns_exec_path = cns_exec  # global cns_exec
+
+        if not os.access(cns_exec_path, mode=os.X_OK):
+            raise ValueError(
+                f'{str(cns_exec_path)!r} binary file not found, '
+                'or is not executable.'
+                )
+
+        self._cns_exec = cns_exec_path
+
 
     def run(self):
         """Run this CNS job script"""

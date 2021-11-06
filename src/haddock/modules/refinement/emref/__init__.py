@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "emref.toml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 def generate_emref(identifier, input_file, step_path, recipe_str,
@@ -99,13 +99,18 @@ class HaddockModule(BaseHaddockModule):
             structure_file = self.path / f"emref_{idx}.pdb"
             refined_structure_list.append(structure_file)
 
-            job = CNSJob(inp_file, out_file, cns_folder=self.cns_folder_path)
+            job = CNSJob(
+                inp_file,
+                out_file,
+                cns_folder=self.cns_folder_path,
+                cns_exec=self.params['cns_exec'],
+                )
 
             jobs.append(job)
 
         # Run CNS engine
         logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Scheduler(jobs)
+        engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
         logger.info("CNS engine has finished")
 

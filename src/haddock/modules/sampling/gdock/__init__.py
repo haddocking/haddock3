@@ -7,7 +7,6 @@ import sys
 
 from pathlib import Path
 
-from haddock.core.defaults import NUM_CORES
 from haddock.libs import libpdb
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libutil import check_subprocess
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.toml")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 
@@ -95,8 +94,14 @@ class HaddockModule(BaseHaddockModule):
         input_toml = '' + os.linesep
         input_toml += '[main]' + os.linesep
         input_toml += 'identifier = "gdock-integration"' + os.linesep
-        input_toml += f'number_of_processors = {NUM_CORES}' + os.linesep
+
+        # this is needed because 'ncores' is defined in BaseHaddockModule
+        # by default as None
+        ncores = self.params['ncores'] or 1
+        input_toml += f'number_of_processors = {ncores}' + os.linesep
+
         input_toml += '[restraints]' + os.linesep
+
         for chain in ambig_dic:
             reslist = list(set(ambig_dic[chain]))
             input_toml += f'{chain} = {reslist}' + os.linesep

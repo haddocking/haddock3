@@ -15,6 +15,6 @@ FCC_path = Path(
 
 # version
 version = "3.0.0"
-v_major, v_minor, v_patch = current_version.split('.')
+v_major, v_minor, v_patch = version.split('.')
 
 contact_us = 'https://github.com/haddocking/haddock3/issues'

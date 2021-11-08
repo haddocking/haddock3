@@ -1,0 +1,28 @@
+# tests required for Pull Requests
+# but should not run after push to master
+name: PR Requirements
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install virtualenv tox
+
+    # asserts developer added additions to CHANGELOG
+    - name: Test PR requirements
+      run: tox -e prreqs

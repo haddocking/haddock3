@@ -1,20 +1,16 @@
 """HADDOCK3 FCC clustering module"""
-import logging
 import os
 from pathlib import Path
 
-import toml
-
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
-from haddock import FCC_path
+from haddock import FCC_path, log
+from haddock.gear.config_reader import read_config
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import Job
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 
-
-logger = logging.getLogger(__name__)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
@@ -28,7 +24,7 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls):
-        dcfg = toml.load(DEFAULT_CONFIG)
+        dcfg = read_config(DEFAULT_CONFIG)
         exec_path = Path(FCC_path, dcfg['executable'])
 
         if not os.access(exec_path, mode=os.F_OK):
@@ -40,7 +36,7 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def run(self, **params):
-        logger.info("Running [clustfcc] module")
+        log.info("Running [clustfcc] module")
 
         super().run(params)
 
@@ -53,7 +49,7 @@ class HaddockModule(BaseHaddockModule):
         topologies = first_model.topology
 
         # Calculate the contacts for each model
-        logger.info('Calculating contacts')
+        log.info('Calculating contacts')
         contact_jobs = []
         for model in models_to_cluster:
             pdb_f = Path(model.path, model.file_name)
@@ -77,7 +73,7 @@ class HaddockModule(BaseHaddockModule):
                 #  there is no way of knowing how many models are not in contact, it can be
                 #  only one, or could be all of them.
                 not_found.append(job.input.name)
-                logger.warning(f'Contact was not calculated for {job.input.name}')
+                log.warning(f'Contact was not calculated for {job.input.name}')
             else:
                 contact_file_l.append(str(job.output))
 
@@ -86,7 +82,7 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 
-        logger.info('Calculating the FCC matrix')
+        log.info('Calculating the FCC matrix')
         parsed_contacts = calc_fcc_matrix.parse_contact_file(contact_file_l, False)
 
         # Imporant: matrix is a generator object, be careful with it
@@ -103,7 +99,7 @@ class HaddockModule(BaseHaddockModule):
         fh.close()
 
         # Cluster
-        logger.info('Clustering...')
+        log.info('Clustering...')
         pool = cluster_fcc.read_matrix(
             fcc_matrix_f,
             self.params['fraction_cutoff'],
@@ -136,7 +132,7 @@ class HaddockModule(BaseHaddockModule):
                         pdb = models_to_cluster[element - 1]
                         cluster_dic[cluster_id].append(pdb)
         else:
-            logger.warning('No clusters were found')
+            log.warning('No clusters were found')
 
         # Save module information
         io = ModuleIO()

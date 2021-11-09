@@ -1,19 +1,16 @@
 """All default parameters used by the framework"""
+import multiprocessing
 import os
 import sys
-import multiprocessing
-import logging
 from pathlib import Path
 
-from haddock import haddock3_repository_path, haddock3_source_path
+from haddock import haddock3_repository_path, haddock3_source_path, log
 
-
-logger = logging.getLogger(__name__)
 
 # Locate the CNS binary
 cns_exec = Path(haddock3_repository_path, "bin", "cns")
 if not cns_exec.exists():
-    logger.error(
+    log.error(
         'CNS executable `bin/cns` not found. '
         'Did you installed HADDOCK3 properly?'
         )

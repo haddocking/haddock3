@@ -7,5 +7,6 @@ dependencies:
     - pip
     - numpy
     - jsonpickle
+    - tox
     - pip:
         - pdb-tools

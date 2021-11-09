@@ -1,5 +1,5 @@
 """
-In-house implementation of toml config files for HADDOCK3.
+In-house implementation of enhanced toml-like config files for HADDOCK3.
 
 (Likely) It does not implement all features of TOML files, but it does implement
 the features needed for HADDOCK3. The config reader:

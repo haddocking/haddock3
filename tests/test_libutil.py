@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from haddock.libs.libutil import file_exists, non_negative_int
+from haddock.libs.libutil import file_exists, non_negative_int, parse_ncores
 
 
 @pytest.mark.parametrize(

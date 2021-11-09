@@ -1,17 +1,15 @@
 """Workflow module logic"""
 import os
-import logging
 import contextlib
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from haddock.core.defaults import MODULE_PATH_NAME, MODULE_IO_FILE
+from haddock import log
+from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
 from haddock.libs.libontology import ModuleIO
 
-
-logger = logging.getLogger(__name__)
 
 modules_folder = Path(__file__).resolve().parent
 
@@ -104,7 +102,7 @@ class BaseHaddockModule(ABC):
     def finish_with_error(self, message=""):
         if not message:
             message = "Module has failed"
-        logger.error(message)
+        log.error(message)
         raise SystemExit
 
     def _load_previous_io(self):

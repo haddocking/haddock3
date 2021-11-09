@@ -1,11 +1,11 @@
-"""Command line messages"""
+"""Greeting messages for the command line clients."""
 import os
 import random
 import sys
 from datetime import datetime
 from functools import partial
 
-from haddock import version, log
+from haddock import version
 
 
 international_good_byes = [
@@ -21,7 +21,7 @@ international_good_byes = [
 
 
 def get_initial_greeting():
-    """Initial greeting message"""
+    """Create initial greeting message."""
     now = datetime.now().replace(second=0, microsecond=0)
     python_version = sys.version
     message = (

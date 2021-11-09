@@ -1,6 +1,7 @@
 """HADDOCK3 workflow logic"""
 import importlib
 import shutil
+import sys
 from pathlib import Path
 
 from haddock import log
@@ -89,4 +90,9 @@ class Step:
             path=self.working_path)
 
         # Run module
-        module.run(**self.config)
+        try:
+            module.run(**self.config)
+        except KeyboardInterrupt:
+            logger.info("You have halted subprocess execution by hitting Ctrl+c")
+            logger.info("Exiting...")
+            sys.exit()

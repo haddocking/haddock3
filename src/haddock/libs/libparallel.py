@@ -70,14 +70,18 @@ class Scheduler:
 
             log.info(f"{self.num_tasks} tasks finished")
 
-        except KeyboardInterrupt:
+        except KeyboardInterrupt as err:
             # Q: why have a keyboard interrupt here?
+            # A: To have a controlled break if the user Ctrl+c during CNS run
             self.terminate()
+            # this raises sends the error to libs.libworkflow.Step
+            # if Scheduler is used independently the error will propagate to
+            # whichever has to catch it
+            raise err
 
     def terminate(self):
 
-        log.warning("Something went wrong")
         for task in self.task_list:
             task.terminate()
 
-        log.warning("The workers have stopped")
+        log.info("The workers terminated in a controlled way")

@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 from functools import partial
 
-from haddock import current_version, log
+from haddock import version, log
 
 
 international_good_byes = [
@@ -30,7 +30,7 @@ def get_initial_greeting():
                f"""#                                            #{os.linesep}"""
                f"""##############################################{os.linesep}"""
                f"""{os.linesep}"""
-               f"""Starting HADDOCK {current_version} on {now}{os.linesep}"""
+               f"""Starting HADDOCK {version} on {now}{os.linesep}"""
                f"""{os.linesep}"""
                f"""Python {python_version}{os.linesep}"""
                )

@@ -93,6 +93,6 @@ class Step:
         try:
             module.run(**self.config)
         except KeyboardInterrupt:
-            logger.info("You have halted subprocess execution by hitting Ctrl+c")
-            logger.info("Exiting...")
+            log.info("You have halted subprocess execution by hitting Ctrl+c")
+            log.info("Exiting...")
             sys.exit()

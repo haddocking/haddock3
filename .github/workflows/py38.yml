@@ -32,8 +32,8 @@ jobs:
       run: |
         pwd
         ls -lsa
-        cd bin
-        touch cns
+        mkdir bin
+        touch bin/cns
         cd src/fcc/src
         chmod u+x Makefile
         ./Makefile

@@ -36,15 +36,26 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
 
     3.  `tox -e build` simulates building the HADDOCK3 package.
 
-    4.  `tox -e prreqs` adds further confirmations you don't forget anything before sending your Pull Request.
-
-    5.  If you want to submit high-quality code, you may wish to run `tox -e radon` to assess your code cyclomatic complexity.
+    4.  If you want to submit high-quality code, you may wish to run `tox -e radon` to assess your code cyclomatic complexity.
 
 5.  You can work on these `tox` tests until they all pass green before submitting your PR.
 
-6.  If you have difficulties with `tox`, let us know. These `tox` tests are the same that run on the GitHub Actions once you send the PR. So, sending the PR is another way to ensure all tests pass.
+6.  Add a list of your new additions to the `CHANGELOG.md` file by adding a new sub-header as described bellow. This is mandatory for `tox -e build` to pass.
 
-7.  Submit your PR if you haven't done so yet :wink:
+```markdown
+# Changelog
+
+## new_version
+
+* your change one
+* your change two
+
+(... the rest of the file ...)
+```
+
+7.  If you have difficulties with `tox`, let us know. These `tox` tests are the same that run on the GitHub Actions once you send the PR. So, sending the PR is another way to ensure all tests pass.
+
+8.  Submit your PR if you haven't done so yet :wink:
 
     1.  Now, GitHub allows submitting "Draft PRs" you can use this option to let us know you are working on some new good stuff so we can help you from the beginning.
 

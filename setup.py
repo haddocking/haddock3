@@ -15,18 +15,18 @@ def read(*names, **kwargs):
 
 
 # activate once added, do not remove
-#long_description = '{}\n{}'.format(
-#    read('README.rst'),
-#    read(join('docs', 'CHANGELOG.rst')),
-#    )
+long_description = '{}\n{}'.format(
+    read('README.md'),
+    read('CHANGELOG.md'),
+    )
 
 
 setup(
     name='haddock3',
-    version='0.0.3-alpha',
+    version='3.0.0',
     description='Haddock 3.',
-    long_description='',#long_description,
-    long_description_content_type='text/x-rst',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license='Apache License 2.0',
     author='HADDOCK',
     author_email='A.M.J.J.Bonvin@uu.nl',
@@ -39,13 +39,14 @@ setup(
     classifiers=[
         # complete classifier list:
         # http://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'Development Status :: 3 - Alpha',
-        #'Development Status :: 4 - Beta',
+        #'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: Apache Software License',
         'Natural Language :: English',
         'Operating System :: POSIX',
+        'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
-        'Operating System :: Microsoft',
+        #'Operating System :: Microsoft',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         ],

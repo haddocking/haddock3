@@ -28,7 +28,6 @@ dictionaries see `test/test_config_reader.py`.
 """
 import ast
 import re
-from contextlib import contextmanager
 from datetime import datetime
 
 
@@ -44,7 +43,7 @@ _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 _string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
 
 # https://regex101.com/r/6X4j7n/1
-_number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |#|$)')
+_number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+E\-?\d+|-?\d+\.?\d*E\d+)(?: |#|$)')  # noqa: #501
 
 # https://regex101.com/r/K6yXbe/1
 _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
@@ -61,14 +60,24 @@ _false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 
 
 class NoGroupFoundError(Exception):
+    """
+    Exception if no group is found.
+
+    Used for single line.
+    """
+
     pass
 
 
 class ConfigFormatError(Exception):
+    """Exception if there is a format error."""
+
     pass
 
 
 class DuplicatedParameterError(Exception):
+    """Exception if duplicated parameters are found."""
+
     pass
 
 
@@ -129,7 +138,6 @@ def _read_config(fin):
                 raise DuplicatedParameterError(_msg)
             d1[value_key] = value
 
-
     return _remove_trailing_zeros_in_headers(d)
 
 
@@ -139,27 +147,28 @@ def _update_key_number(key, d, sep='.', offset=0):
 
 
 def _read_value(line, fin):
-        # evals if key:value are defined in a single line
-        try:
-            key, value = _get_one_line_group(line)
-        except NoGroupFoundError:
-            pass
-        else:
-            return key, value
+    """Read values defined in one line."""
+    # evals if key:value are defined in a single line
+    try:
+        key, value = _get_one_line_group(line)
+    except NoGroupFoundError:
+        pass
+    else:
+        return key, value
 
-        # evals if key:value is defined in multiple lines
-        mll_group = _list_multiliner_re.match(line)
+    # evals if key:value is defined in multiple lines
+    mll_group = _list_multiliner_re.match(line)
 
-        if mll_group:
-            key = mll_group[1]
-            idx = line.find('[')
-            # need to send `fin` and not `pure_lines`
-            block = line[idx:] + _get_list_block(fin)
-            list_ = _eval_list_str(block)
-            return key, list_
+    if mll_group:
+        key = mll_group[1]
+        idx = line.find('[')
+        # need to send `fin` and not `pure_lines`
+        block = line[idx:] + _get_list_block(fin)
+        list_ = _eval_list_str(block)
+        return key, list_
 
-        # if the flow reaches here...
-        raise ValueError(f'Can\'t process this line: {line!r}')
+    # if the flow reaches here...
+    raise ValueError(f'Can\'t process this line: {line!r}')
 
 
 def _is_correct_line(line):
@@ -184,7 +193,7 @@ def _process_line(line):
 
 
 def _replace_bool(s):
-    "Replace booleans and try to parse."""
+    """Replace booleans and try to parse."""
     s = s.replace('true', 'True')
     s = s.replace('false', 'False')
     return s
@@ -192,7 +201,7 @@ def _replace_bool(s):
 
 def _eval_list_str(s):
     """
-    Evaluates a string to a list.
+    Evaluate a string to a list.
 
     List string must be already enclosed in brackets `[]`.
     """
@@ -245,7 +254,7 @@ def _get_list_block(fin):
 
 
 def _remove_trailing_zeros_in_headers(d):
-    """The suffix '.0' is removed from keys."""
+    """Remove the suffix '.0' from keys."""
     d1 = {}
     for key, value in d.items():
         if isinstance(value, dict) and key.endswith('.0'):
@@ -256,7 +265,7 @@ def _remove_trailing_zeros_in_headers(d):
 
 
 def get_module_name(name):
-    """Gets the name according to the config parser."""
+    """Get the name according to the config parser."""
     return name.split('.')[0]
 
 

@@ -45,6 +45,7 @@ def test_sub_header_re(line, expected):
         ],
     )
 def test_main_header_re_wrong(line):
+    """Test main header wrong."""
     assert config_reader._main_header_re.match(line) is None
 
 
@@ -59,6 +60,7 @@ def test_main_header_re_wrong(line):
         ],
     )
 def test_sub_header_re_wrong(line):
+    """Test sub header wrong."""
     assert config_reader._sub_header_re.match(line) is None
 
 
@@ -91,6 +93,7 @@ def test_string_re(line, name, value):
         ],
     )
 def test_string_re_wrong(line):
+    """Test string wrong examples."""
     assert config_reader._string_re.match(line) is None
 
 
@@ -122,6 +125,7 @@ def test_none_re(line, name, value):
         ],
     )
 def test_none_re_wrong(line):
+    """Test None wrong examples."""
     assert config_reader._none_re.match(line) is None
 
 
@@ -157,6 +161,7 @@ def test_none_re_wrong(line):
         ],
     )
 def test_number_re(line, number):
+    """Test number regex."""
     result = config_reader._number_re.match(line)
     assert result[1] == line.split('=')[0].strip()
     assert result[2] == number
@@ -177,7 +182,8 @@ def test_number_re(line, number):
         "value = 10-10E19",
         ],
     )
-def test_number_re_wront(line):
+def test_number_re_wrong(line):
+    """Test number regex wrong examples."""
     assert config_reader._number_re.match(line) is None
 
 
@@ -185,11 +191,20 @@ def test_number_re_wront(line):
     'line,name,value',
     [
         ("ports = [ 8000, 8001, 8002 ]", "ports", "[ 8000, 8001, 8002 ]"),
-        ('_data = [ ["gamma", "delta"], [1, 2] ] # valid comment', "_data", '[ ["gamma", "delta"], [1, 2] ]'),
-        ('_data = [ ["gamma", "delta"], [1, 2] ]# valid comment\n', "_data", '[ ["gamma", "delta"], [1, 2] ]'),
+        (
+            '_data = [ ["gamma", "delta"], [1, 2] ] # valid comment',
+            "_data",
+            '[ ["gamma", "delta"], [1, 2] ]',
+            ),
+        (
+            '_data = [ ["gamma", "delta"], [1, 2] ]# valid comment\n',
+            "_data",
+            '[ ["gamma", "delta"], [1, 2] ]',
+            ),
         ("ports = [8000]]]", "ports", "[8000]]]"),
         ("ports=[8000]", "ports", "[8000]"),
-        # wrong bracket formation are accepted. It will then raise error when evaluating
+        # wrong bracket closing are accepted at this stage,
+        # It will then raise error when evaluating
         ],
     )
 def test_list_one_liner_re(line, name, value):
@@ -222,7 +237,7 @@ def test_list_one_liner_re_wrong(line):
         ],
     )
 def test_list_multi_liner(line):
-    "Test regex captures the first line of a multiline list."""
+    """Test regex captures the first line of a multiline list."""
     assert config_reader._list_multiliner_re.match(line)
 
 
@@ -235,7 +250,7 @@ def test_list_multi_liner(line):
         ],
     )
 def test_list_multi_liner_wrong(line):
-    "Test regex captures the first line of a multiline list."""
+    """Test regex captures the first line of a multiline list."""
     assert config_reader._list_multiliner_re.match(line) is None
 
 
@@ -309,7 +324,7 @@ def test_eval_list_string(s, expected):
         ('# this is a comment', True),
         ('value = 123', False),
         ('', True),
-        ('    # other comment', False), # expects striped lines
+        ('    # other comment', False),  # expects striped lines
         ],
     )
 def test_is_comment(line, expected):
@@ -324,10 +339,10 @@ def test_is_comment(line, expected):
         ('# this is a comment', False),
         ('value = 123', True),
         ('', False),
-        ('    # other comment', True), # expects striped lines
+        ('    # other comment', True),  # expects striped lines
         ],
     )
-def test_is_comment(line, expected):
+def test_is_correct_line(line, expected):
     """Test if line if comment."""
     r = config_reader._is_correct_line(line)
     assert r == expected
@@ -410,8 +425,7 @@ _config_example_dict_2 = {
         },
     }
 
-_config_example_2 = \
-"""num1 = 10
+_config_example_2 = """num1 = 10
 [module]
 name = ["../some/file", "../some/otherfile"]
 [module.d1]
@@ -426,8 +440,7 @@ list_ = [ 1,
 """
 
 # this examples shows the behaviour of subkey repetition
-_config_example_3 = \
-"""
+_config_example_3 = """
 val = 1
 [header]
 [header.d1]
@@ -455,7 +468,7 @@ _config_example_dict_3 = {
         (_config_example_3, _config_example_dict_3),
         ],
     )
-def test_read_config(config,expected):
+def test_read_config(config, expected):
     """Test read config."""
     r = config_reader._read_config((i for i in config.split(os.linesep)))
     assert r == expected
@@ -480,8 +493,7 @@ name1 = "good"
 name1 = "bad"
 """
 
-_config_broken_4 = \
-"""
+_config_broken_4 = """
 val = 1
 [header]
 [header.d1]
@@ -489,6 +501,7 @@ val2 = 10
 [header.d1]
 val2 = 20
 """
+
 
 @pytest.mark.parametrize(
     'config, error',
@@ -500,5 +513,6 @@ val2 = 20
         ],
     )
 def test_config_format_errors(config, error):
+    """Test broken configs and errors."""
     with pytest.raises(error):
         config_reader._read_config((i for i in config.split(os.linesep)))

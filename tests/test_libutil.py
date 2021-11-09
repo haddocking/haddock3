@@ -1,8 +1,9 @@
+"""Test libutil."""
 from pathlib import Path
 
 import pytest
 
-from haddock.libs.libutil import file_exists, non_negative_int, parse_ncores
+from haddock.libs.libutil import file_exists, non_negative_int
 
 
 @pytest.mark.parametrize(
@@ -44,7 +45,7 @@ def test_file_exists(i, expected):
     'i',
     [
         'some_bad.path',
-        Path(__file__).parent, # this is a folder
+        Path(__file__).parent,  # this is a folder
         ],
     )
 def test_file_exists_wrong(i):

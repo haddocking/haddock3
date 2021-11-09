@@ -3,7 +3,6 @@ Test general implementation in haddock3 modules.
 
 Ensures all modules follow the same compatible architecture.
 """
-import importlib
 from pathlib import Path
 
 import pytest
@@ -27,6 +26,7 @@ def test_there_are_config_examples():
 
 @pytest.fixture(params=examples_cfg_files)
 def example_config(request):
+    """Give Examples's configuration files."""
     return request.param
 
 

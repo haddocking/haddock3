@@ -15,18 +15,18 @@ def read(*names, **kwargs):
 
 
 # activate once added, do not remove
-#long_description = '{}\n{}'.format(
-#    read('README.rst'),
-#    read(join('docs', 'CHANGELOG.rst')),
-#    )
+long_description = '{}\n{}'.format(
+    read('README.md'),
+    read('CHANGELOG.md'),
+    )
 
 
 setup(
     name='haddock3',
     version='3.0.0',
     description='Haddock 3.',
-    long_description='',#long_description,
-    long_description_content_type='text/x-rst',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license='Apache License 2.0',
     author='HADDOCK',
     author_email='A.M.J.J.Bonvin@uu.nl',

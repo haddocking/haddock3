@@ -1,10 +1,10 @@
 """HADDOCK3 module to select a top cluster/model"""
-import logging
 from pathlib import Path
+
+from haddock import log
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libontology import Format, ModuleIO
 
-logger = logging.getLogger(__name__)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
@@ -26,7 +26,7 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def run(self, **params):
-        logger.info("Running [seletop] module")
+        log.info("Running [seletop] module")
 
         super().run(params)
 
@@ -41,7 +41,7 @@ class HaddockModule(BaseHaddockModule):
         models_to_select.sort(key=lambda x: x.score)
 
         if len(models_to_select) < self.params['select']:
-            logger.warning('Number of models to be selected is larger'
+            log.warning('Number of models to be selected is larger'
                            ' than generated models, selecting ALL')
 
         # select the models based on the parameter

@@ -1,16 +1,13 @@
 """HADDOCK3 workflow logic"""
 import importlib
-import logging
 import shutil
 from pathlib import Path
 
+from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
 from haddock.libs.libutil import zero_fill
 from haddock.modules import modules_category
-
-
-logger = logging.getLogger(__name__)
 
 
 class WorkflowManager:
@@ -32,7 +29,7 @@ class Workflow:
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, (stage_name, params) in enumerate(content.items()):
-            logger.info(f"Reading instructions of [{stage_name}] step")
+            log.info(f"Reading instructions of [{stage_name}] step")
 
             # uses gobal ncores parameter unless module-specific value
             # hasn't been used
@@ -49,7 +46,7 @@ class Workflow:
                 self.steps.append(_)
 
             except StepError as re:
-                logger.error(f"Error found while parsing course {stage_name}")
+                log.error(f"Error found while parsing course {stage_name}")
                 raise HaddockError from re
 
 
@@ -74,7 +71,7 @@ class Step:
 
     def execute(self):
         if self.working_path.exists():
-            logger.warning(f"Found previous run ({self.working_path}),"
+            log.warning(f"Found previous run ({self.working_path}),"
                            " removed")
             shutil.rmtree(self.working_path)
         self.working_path.resolve().mkdir(parents=True, exist_ok=False)

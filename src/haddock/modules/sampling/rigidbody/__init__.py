@@ -1,8 +1,8 @@
 """HADDOCK3 rigid-body docking module"""
-import logging
 from pathlib import Path
 from os import linesep
 
+from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import generate_default_header, load_ambig
 from haddock.libs.libcns import load_workflow_params, prepare_multiple_input
@@ -11,8 +11,6 @@ from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 
-
-logger = logging.getLogger(__name__)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
@@ -70,7 +68,7 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def run(self, **params):
-        logger.info("Running [rigidbody] module")
+        log.info("Running [rigidbody] module")
 
         super().run(params)
 
@@ -110,10 +108,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        logger.info(f"Running CNS engine with {len(jobs)} jobs")
+        log.info(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        logger.info("CNS engine has finished")
+        log.info("CNS engine has finished")
 
         # Get the weights according to CNS parameters
         _weight_keys = \

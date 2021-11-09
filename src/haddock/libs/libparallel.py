@@ -1,11 +1,8 @@
 """Module in charge of parallelizing the execution of tasks"""
-import logging
 from multiprocessing import Process
 
+from haddock import log
 from haddock.libs.libutil import parse_ncores
-
-
-logger = logging.getLogger(__name__)
 
 
 class Worker(Process):
@@ -13,12 +10,12 @@ class Worker(Process):
     def __init__(self, tasks):
         super(Worker, self).__init__()
         self.tasks = tasks
-        logger.info(f"Worker ready with {len(self.tasks)} tasks")
+        log.info(f"Worker ready with {len(self.tasks)} tasks")
 
     def run(self):
         for task in self.tasks:
             task.run()
-        logger.info(f"{self.name} executed")
+        log.info(f"{self.name} executed")
 
 
 class Scheduler:
@@ -51,7 +48,7 @@ class Scheduler:
 
         self.task_list = [Worker(jobs) for jobs in job_list]
 
-        logger.info(f"{self.num_tasks} tasks ready.")
+        log.info(f"{self.num_tasks} tasks ready.")
 
     @property
     def num_processes(self):
@@ -60,7 +57,7 @@ class Scheduler:
     @num_processes.setter
     def num_processes(self, n):
         self._ncores = parse_ncores(n)
-        logger.info(f"Scheduler configurated for {self._ncores} cpu cores.")
+        log.info(f"Scheduler configurated for {self._ncores} cpu cores.")
 
     def run(self):
 
@@ -71,7 +68,7 @@ class Scheduler:
             for task in self.task_list:
                 task.join()
 
-            logger.info(f"{self.num_tasks} tasks finished")
+            log.info(f"{self.num_tasks} tasks finished")
 
         except KeyboardInterrupt:
             # Q: why have a keyboard interrupt here?
@@ -79,8 +76,8 @@ class Scheduler:
 
     def terminate(self):
 
-        logger.warning("Something went wrong")
+        log.warning("Something went wrong")
         for task in self.task_list:
             task.terminate()
 
-        logger.warning("The workers have stopped")
+        log.warning("The workers have stopped")

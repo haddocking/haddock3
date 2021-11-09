@@ -1,17 +1,15 @@
 """Running Lightdock as a module"""
-import logging
 import shutil
 import subprocess
 
 from pathlib import Path
 
+from haddock import log
 from haddock.libs import libpdb
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libutil import check_subprocess
 from haddock.modules import BaseHaddockModule, working_directory
 
-
-logger = logging.getLogger(__name__)
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
@@ -35,7 +33,7 @@ class HaddockModule(BaseHaddockModule):
         check_subprocess('lightdock3.py -h')
 
     def run(self, **params):
-        logger.info("Running [sampling-lightdock] module")
+        log.info("Running [sampling-lightdock] module")
 
         super().run(params)
 
@@ -52,7 +50,7 @@ class HaddockModule(BaseHaddockModule):
         _path = Path(model.path, model.file_name)
         segids, chains = libpdb.identify_chainseg(_path)
         if set(segids) != set(chains):
-            logger.info("No chain IDs found, using segid information")
+            log.info("No chain IDs found, using segid information")
             libpdb.swap_segid_chain(Path(model.path) / model.file_name,
                                         self.path / model.file_name)
         else:
@@ -76,7 +74,7 @@ class HaddockModule(BaseHaddockModule):
                            f"{lig_chain}.{Format.PDB}")
 
         # Setup
-        logger.info("Running LightDock setup")
+        log.info("Running LightDock setup")
         with working_directory(self.path):
             swarms = self.params["swarms"]
             glowworms = self.params["glowworms"]
@@ -91,7 +89,7 @@ class HaddockModule(BaseHaddockModule):
             subprocess.call(cmd, shell=True)
 
         # Simulation
-        logger.info("Running LightDock simulation")
+        log.info("Running LightDock simulation")
         with working_directory(self.path):
             steps = self.params["steps"]
             scoring = self.params["scoring"]
@@ -102,7 +100,7 @@ class HaddockModule(BaseHaddockModule):
         # Clustering
 
         # Ranking
-        logger.info("Generating ranking")
+        log.info("Generating ranking")
         with working_directory(self.path):
             steps = self.params["steps"]
             swarms = self.params["swarms"]
@@ -111,7 +109,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Generate top, requires a hack to use original structures (H, OXT,
         #  etc.)
-        logger.info("Generating top structures")
+        log.info("Generating top structures")
         with working_directory(self.path):
             # Save structures, needs error control
             shutil.copyfile(self.path / receptor_pdb_file, self.path /

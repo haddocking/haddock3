@@ -1,15 +1,12 @@
 """Command line messages"""
-import logging
 import os
 import random
 import sys
 from datetime import datetime
 from functools import partial
 
-from haddock import current_version
+from haddock import current_version, log
 
-
-logger = logging.getLogger(__name__)
 
 international_good_byes = [
     "Adéu-siau",

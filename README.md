@@ -13,7 +13,7 @@ Cheers!
 
 ## 1. Installation
 
-To install HADDOCK3 follow instructions in [INSTALL](INSTALL.md) file.
+To install HADDOCK3 follow the instructions in the [INSTALL](INSTALL.md) file.
 
 ## 2. Examples
 
@@ -26,5 +26,5 @@ haddock3 scoring.toml
 
 ## 3. Contribute
 
-If you want to contribute to HADDOCK3 development, read the
+If you want to contribute to HADDOCK3's development, read the
 [CONTRIBUTING](CONTRIBUTING.md) file for instructions.

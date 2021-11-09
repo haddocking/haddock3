@@ -36,7 +36,7 @@ jobs:
         touch bin/cns
         cd src/fcc/src
         chmod u+x Makefile
-        ./Makefile 2>%1 >/dev/null
+        ./Makefile 2>%1 >/dev/null || true
         cd -
 
 

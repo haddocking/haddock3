@@ -30,11 +30,11 @@ jobs:
 
     - name: Install FCC
       run: |
+        touch bin/cns
         cd src/fcc/src
         chmod u+x Makefile
         ./Makefile
         cd -
-        touch bin/cns
 
 
     - name: Test

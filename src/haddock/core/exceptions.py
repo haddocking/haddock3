@@ -38,7 +38,7 @@ class CNSRunningError(HaddockError):
 
 
 class HaddockModuleError(HaddockError):
-    """General error in an HADDOCK3 module."""
+    """General error in a HADDOCK3 module."""
 
     pass
 

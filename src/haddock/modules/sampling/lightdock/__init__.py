@@ -1,4 +1,4 @@
-"""Run Lightdock as an HADDOCK3 module."""
+"""Run Lightdock as a HADDOCK3 module."""
 import shutil
 import subprocess
 from pathlib import Path

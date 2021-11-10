@@ -40,7 +40,7 @@ class BaseHaddockModule(ABC):
         Parameters
         ----------
         params : dict or path to HADDOCK3 configuration file
-            A dictionary or a path to an HADDOCK3 configuration file
+            A dictionary or a path to a HADDOCK3 configuration file
             containing the initial module parameters. Usually this is
             defined by the default params.
         """

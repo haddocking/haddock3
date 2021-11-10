@@ -3,7 +3,6 @@ import shutil
 import subprocess
 from copy import deepcopy
 from functools import partial
-from operator import ge
 from os import cpu_count
 from pathlib import Path
 
@@ -33,6 +32,7 @@ def get_result_or_same_in_list(function, value):
 
 
 def make_list_if_string(item):
+    """Put `item` into a list."""
     if isinstance(item, str):
         return [item]
     return item
@@ -55,12 +55,12 @@ def copy_files_to_dir(paths, directory):
 
 
 def zero_fill(number, digits=2):
-    """Makes a number string zero filled to the left."""
+    """Make a number string zero filled to the left."""
     return str(number).zfill(digits)
 
 
 def remove_folder(folder):
-    """Removes a folder if it exists."""
+    """Remove a folder if it exists."""
     if folder.exists():
         log.warning(f'{folder} exists and it will be REMOVED!')
         shutil.rmtree(folder)
@@ -174,7 +174,7 @@ def file_exists(
         emsg="`path` is not a file or does not exist",
         ):
     """
-    Asserts file exist.
+    Assert if file exist.
 
     Parameters
     ----------

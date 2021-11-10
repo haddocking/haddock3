@@ -1,10 +1,9 @@
+"""Manage logging and logging helper functions."""
 import logging
 import io
 import sys
 from functools import partial
 from logging import StreamHandler, FileHandler
-from os import get_terminal_size
-from pathlib import Path
 
 
 log_file_name = 'log'
@@ -64,8 +63,8 @@ def add_log_for_CLI(log, log_level, logfile):
     llu = log_level.upper()
 
     params = {
-        'log_level': log_level,
-        'formatter': log_formatters[log_level],
+        'log_level': llu,
+        'formatter': log_formatters[llu],
         }
 
     log.handlers.clear()
@@ -74,7 +73,7 @@ def add_log_for_CLI(log, log_level, logfile):
     return
 
 
-add_sysout_handler = partial(add_handler, handler=StreamHandler, stream=sys.stdout)
-add_syserr_handler = partial(add_handler, handler=StreamHandler, stream=sys.stderr, log_level='ERROR')
-add_logfile_handler = partial(add_handler, handler=FileHandler, stream=log_file_name)
-add_stringio_handler = partial(add_handler, handler=StreamHandler, stream=io.StringIO())
+add_sysout_handler = partial(add_handler, handler=StreamHandler, stream=sys.stdout)  # noqa: E501
+add_syserr_handler = partial(add_handler, handler=StreamHandler, stream=sys.stderr, log_level='ERROR')  # noqa: E501
+add_logfile_handler = partial(add_handler, handler=FileHandler, stream=log_file_name)  # noqa: E501
+add_stringio_handler = partial(add_handler, handler=StreamHandler, stream=io.StringIO())  # noqa: E501

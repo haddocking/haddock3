@@ -1,4 +1,4 @@
-"""HADDOCK3 rigid-body docking module"""
+"""HADDOCK3 rigid-body docking module."""
 from pathlib import Path
 from os import linesep
 
@@ -16,7 +16,14 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-def generate_docking(identifier, input_files, step_path, recipe_str, defaults, ambig=None):
+def generate_docking(
+        identifier,
+        input_files,
+        step_path,
+        recipe_str,
+        defaults,
+        ambig=None,
+        ):
     """Generate the .inp file that will run the docking."""
     # prepare the CNS header that will read the input
 
@@ -58,6 +65,7 @@ def generate_docking(identifier, input_files, step_path, recipe_str, defaults, a
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 module for rigid body sampling."""
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "rigidbody.cns"
@@ -65,9 +73,11 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls):
+        """Confirm module is installed."""
         return
 
     def run(self, **params):
+        """Execute module."""
         log.info("Running [rigidbody] module")
 
         super().run(params)
@@ -76,11 +86,20 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_dock = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_dock = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
-        # TODO: Make the topology aquisition generic, here its expecting this module
-        #  to be preceeded by topology
-        topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
+        # TODO: Make the topology aquisition generic,
+        # here its expecting this module
+        # to be preceeded by topology
+        topologies = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.TOPOLOGY
+            ]
 
         # Sampling
         structure_list = []

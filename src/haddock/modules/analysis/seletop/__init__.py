@@ -1,4 +1,4 @@
-"""HADDOCK3 module to select a top cluster/model"""
+"""HADDOCK3 module to select a top cluster/model."""
 from pathlib import Path
 
 from haddock import log
@@ -11,6 +11,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 module to select top cluster/model."""
 
     def __init__(
             self,
@@ -23,9 +24,11 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls):
+        """Confirm if module is installed."""
         return
 
     def run(self, **params):
+        """Execute module."""
         log.info("Running [seletop] module")
 
         super().run(params)
@@ -35,14 +38,20 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error('This module cannot come after one'
                                    ' that produced an iterable')
 
-        models_to_select = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_select = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
         # sort the models based on their score
         models_to_select.sort(key=lambda x: x.score)
 
         if len(models_to_select) < self.params['select']:
-            log.warning('Number of models to be selected is larger'
-                           ' than generated models, selecting ALL')
+            log.warning(
+                'Number of models to be selected is larger'
+                ' than generated models, selecting ALL'
+                )
 
         # select the models based on the parameter
         selected_models = models_to_select[:self.params['select']]

@@ -1,4 +1,4 @@
-"""Workflow module logic"""
+"""HADDOCK3 modules."""
 import os
 import contextlib
 from abc import ABC, abstractmethod
@@ -31,9 +31,11 @@ the run prepraration phase. See, `gear.prepare_run`."""
 
 
 class BaseHaddockModule(ABC):
+    """HADDOCK3 module's base class."""
+
     def __init__(self, order, path, params, cns_script=""):
         """
-        Base class for any HADDOCK module
+        HADDOCK3 modules base class.
 
         Parameters
         ----------
@@ -64,6 +66,7 @@ class BaseHaddockModule(ABC):
 
     @property
     def params(self):
+        """Configuration parameters."""  # noqa: D401
         return self._params
 
     @params.setter
@@ -74,7 +77,10 @@ class BaseHaddockModule(ABC):
             try:
                 self._params = read_config(path_or_dict)
             except FileNotFoundError as err:
-                _msg = f"Default configuration file not found: {str(path_or_dict)!r}"
+                _msg = (
+                    "Default configuration file not found: "
+                    f"{str(path_or_dict)!r}"
+                    )
                 raise FileNotFoundError(_msg) from err
             except TypeError as err:
                 _msg = (
@@ -85,6 +91,7 @@ class BaseHaddockModule(ABC):
 
     @abstractmethod
     def run(self, params):
+        """Execute the module."""
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
@@ -100,6 +107,7 @@ class BaseHaddockModule(ABC):
         return
 
     def finish_with_error(self, message=""):
+        """Finish with error message."""
         if not message:
             message = "Module has failed"
         log.error(message)
@@ -116,6 +124,7 @@ class BaseHaddockModule(ABC):
         return io
 
     def previous_path(self):
+        """Give the path from the previous calculation."""
         previous = sorted(list(self.path.resolve().parent.glob('[0-9][0-9]*/')))
         try:
             return previous[self.order - 1]
@@ -129,7 +138,7 @@ class BaseHaddockModule(ABC):
 
 @contextlib.contextmanager
 def working_directory(path):
-    """Changes working directory and returns to previous on exit"""
+    """Change working directory and returns to previous on exit."""
     prev_cwd = Path.cwd()
     os.chdir(path)
     try:

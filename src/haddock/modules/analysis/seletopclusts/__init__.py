@@ -1,4 +1,4 @@
-"""HADDOCK3 module to select a top cluster/model"""
+"""HADDOCK3 module to select a top cluster/model."""
 from pathlib import Path
 
 from haddock import log
@@ -11,6 +11,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 class HaddockModule(BaseHaddockModule):
+    """Haddock Module for 'seletopclusts'."""
 
     def __init__(
             self,
@@ -23,9 +24,11 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls):
+        """Confirm if module is installed."""
         return
 
     def run(self, **params):
+        """Execute the module's protocol."""
         log.info("Running [seletopclusts] module")
 
         super().run(params)
@@ -45,7 +48,10 @@ class HaddockModule(BaseHaddockModule):
             cluster_id = int(cluster_id)
             # sort the models inside the cluster based on its score
             # TODO: refactor this, its ugly :p
-            list_to_be_sorted = [(e, e.score) for e in self.previous_io.output[0][str(cluster_id)]]
+            list_to_be_sorted = [
+                (e, e.score)
+                for e in self.previous_io.output[0][str(cluster_id)]
+                ]
             list_to_be_sorted.sort(key=lambda x: x[1])
             structure_list = [e[0] for e in list_to_be_sorted]
             cluster_dic[cluster_id] = structure_list
@@ -67,8 +73,10 @@ class HaddockModule(BaseHaddockModule):
             try:
                 target_id = list(sorted_dic.keys())[select_id - 1]
             except IndexError:
-                log.warning(f'Cluster ranking #{select_id} not found,'
-                               ' skipping selection')
+                log.warning(
+                    f'Cluster ranking #{select_id} not found,'
+                    ' skipping selection'
+                    )
                 continue
 
             if self.params['top_models'] == 'all':

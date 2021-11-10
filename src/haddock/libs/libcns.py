@@ -1,15 +1,16 @@
-"""CNS scripts util functions"""
+"""CNS scripts util functions."""
 from os import linesep
 
-from haddock.libs.libmath import RandomNumberGenerator
-from haddock.libs import libpdb
 from haddock.core import cns_paths
+from haddock.libs import libpdb
+from haddock.libs.libmath import RandomNumberGenerator
 
 
 RND = RandomNumberGenerator()
 
 
 def generate_default_header(protonation=None):
+    """Generate CNS default header."""
     param = load_ff_parameters(cns_paths.parameters_file)
     top = load_ff_topology(cns_paths.topology_file)
     link = load_link(cns_paths.link_file)
@@ -25,7 +26,7 @@ def generate_default_header(protonation=None):
 
 
 def load_workflow_params(default_params):
-    """Writes the values at the header section"""
+    """Write the values at the header section."""
     param_header = f'{linesep}! Parameters{linesep}'
 
     for param, v in default_params.items():
@@ -64,7 +65,7 @@ def load_workflow_params(default_params):
 
 
 def load_ff_parameters(forcefield_parameters):
-    """Add force-field specific parameters to its appropriate places"""
+    """Add force-field specific parameters to its appropriate places."""
     ff_param_header = f'{linesep}! FF parameters{linesep}'
     ff_param_header += f'parameter{linesep}'
     ff_param_header += f'  @@{forcefield_parameters}{linesep}'
@@ -74,7 +75,7 @@ def load_ff_parameters(forcefield_parameters):
 
 
 def load_ff_topology(forcefield_topology):
-    """Add force-field specific topology to its appropriate places"""
+    """Add force-field specific topology to its appropriate places."""
     ff_top_header = f'{linesep}! Toplogy{linesep}'
     ff_top_header += f'topology{linesep}'
     ff_top_header += f'  @@{forcefield_topology}{linesep}'
@@ -84,7 +85,7 @@ def load_ff_topology(forcefield_topology):
 
 
 def load_link(mol_link):
-    """Add the link header"""
+    """Add the link header."""
     link_header = f'{linesep}! Link file{linesep}'
     link_header += f'eval ($link_file = "{mol_link}" ){linesep}'
 
@@ -92,7 +93,7 @@ def load_link(mol_link):
 
 
 def load_trans_vectors(trans_vectors):
-    """Add translation vectors"""
+    """Add translation vectors."""
     trans_header = f'{linesep}! Translation vectors{linesep}'
     i = 0
     for vector_id in trans_vectors:
@@ -104,7 +105,7 @@ def load_trans_vectors(trans_vectors):
 
 
 def load_tensor(tensor):
-    """Add tensor information"""
+    """Add tensor information."""
     tensor_header = f'{linesep}! Tensors{linesep}'
     for tensor_id in tensor:
         tensor_file = tensor[tensor_id]
@@ -114,7 +115,7 @@ def load_tensor(tensor):
 
 
 def load_axis(axis):
-    """Add axis"""
+    """Add axis."""
     axis_header = f'{linesep}! Axis{linesep}'
     for axis_id in axis:
         axis_file = axis[axis_id]
@@ -124,7 +125,7 @@ def load_axis(axis):
 
 
 def load_scatter(scatter_lib):
-    """Add scatter library"""
+    """Add scatter library."""
     scatter_header = f'{linesep}! Scatter lib{linesep}'
     scatter_header += f'eval ($scatter_lib = "{scatter_lib}" ){linesep}'
 
@@ -132,7 +133,7 @@ def load_scatter(scatter_lib):
 
 
 def load_waterbox(waterbox_param):
-    """Add waterbox information"""
+    """Add waterbox information."""
     water_header = f'{linesep}! Water box{linesep}'
     water_header += f'eval ($boxtyp20 = "{waterbox_param}" ){linesep}'
 
@@ -140,37 +141,37 @@ def load_waterbox(waterbox_param):
 
 
 def load_ambig(ambig_f):
-    """Add ambig file"""
+    """Add ambig file."""
     ambig_str = f'eval ($ambig_fname="{str(ambig_f)}"){linesep}'
     return ambig_str
 
 
 def load_unambig(unambig_f):
-    """Add unambig file"""
+    """Add unambig file."""
     unambig_str = f'eval ($unambig_fname="{str(unambig_f)}"){linesep}'
     return unambig_str
 
 
 def load_hbond(hbond_f):
-    """Add hbond file"""
+    """Add hbond file."""
     hbond_str = f'eval ($hbond_fname="{hbond_f}"){linesep}'
     return hbond_str
 
 
 def load_dihe(dihe_f):
-    """Add dihedral file"""
+    """Add dihedral file."""
     dihe_str = f'eval ($dihe_fname="{dihe_f}"){linesep}'
     return dihe_str
 
 
 def load_tensor_tbl(tensor_f):
-    """Add tensor tbl file"""
+    """Add tensor tbl file."""
     tensor_str = f'eval ($tensor_tbl="{tensor_f}"){linesep}'
     return tensor_str
 
 
 def prepare_output(output_psf_filename, output_pdb_filename):
-    """Output of the CNS file"""
+    """Output of the CNS file."""
     output = f'{linesep}! Output structure{linesep}'
     output += ("eval ($output_psf_filename="
                f" \"{output_psf_filename}\"){linesep}")
@@ -180,7 +181,7 @@ def prepare_output(output_psf_filename, output_pdb_filename):
 
 
 def load_protonation_state(protononation):
-    """Prepare the CNS protononation"""
+    """Prepare the CNS protononation."""
     protonation_header = ''
     if protononation and isinstance(protononation, dict):
         protonation_header += f'{linesep}! Protonation states{linesep}'
@@ -216,6 +217,7 @@ def load_protonation_state(protononation):
 
 # This is used by docking
 def prepare_multiple_input(pdb_input_list, psf_input_list):
+    """Prepare multiple input files."""
     input_str = f'{linesep}! Input structure{linesep}'
     for psf in psf_input_list:
         input_str += f'structure{linesep}'

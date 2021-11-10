@@ -1,6 +1,6 @@
 """HADDOCK3 modules."""
-import os
 import contextlib
+import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 

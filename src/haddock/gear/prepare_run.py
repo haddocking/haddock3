@@ -10,15 +10,15 @@ from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.modules import (
-    general_parameters_affecting_modules,
-    modules_category,
-    )
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
-    remove_folder,
     remove_dict_keys,
+    remove_folder,
+    )
+from haddock.modules import (
+    general_parameters_affecting_modules,
+    modules_category,
     )
 
 

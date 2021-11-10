@@ -1,9 +1,9 @@
 """Manage logging and logging helper functions."""
-import logging
 import io
+import logging
 import sys
 from functools import partial
-from logging import StreamHandler, FileHandler
+from logging import FileHandler, StreamHandler
 
 
 log_file_name = 'log'

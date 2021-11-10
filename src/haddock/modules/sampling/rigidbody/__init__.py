@@ -1,11 +1,15 @@
 """HADDOCK3 rigid-body docking module."""
-from pathlib import Path
 from os import linesep
+from pathlib import Path
 
 from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.libs.libcns import generate_default_header, load_ambig
-from haddock.libs.libcns import load_workflow_params, prepare_multiple_input
+from haddock.libs.libcns import (
+    generate_default_header,
+    load_ambig,
+    load_workflow_params,
+    prepare_multiple_input,
+    )
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob

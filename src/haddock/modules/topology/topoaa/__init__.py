@@ -3,13 +3,13 @@ import shutil
 from pathlib import Path
 
 from haddock import log
+from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
     prepare_output,
     prepare_single_input,
     )
-from haddock.libs import libpdb
 from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libstructure import make_molecules

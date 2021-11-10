@@ -2,9 +2,7 @@
 import os
 from datetime import datetime
 
-
 import pytest
-
 
 from haddock.gear import config_reader
 

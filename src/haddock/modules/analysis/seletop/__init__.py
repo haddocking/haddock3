@@ -2,8 +2,8 @@
 from pathlib import Path
 
 from haddock import log
-from haddock.modules import BaseHaddockModule
 from haddock.libs.libontology import Format, ModuleIO
+from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent

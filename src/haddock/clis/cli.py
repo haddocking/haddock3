@@ -7,7 +7,7 @@ from functools import partial
 from pathlib import Path
 
 from haddock import log, version
-from haddock.libs.libutil import file_exists
+from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.liblog import (
     add_log_for_CLI,
     add_loglevel_arg,
@@ -15,7 +15,7 @@ from haddock.libs.liblog import (
     log_file_name,
     log_formatters,
     )
-from haddock.gear.restart_run import add_restart_arg
+from haddock.libs.libutil import file_exists
 
 
 # Command line interface parser
@@ -91,10 +91,10 @@ def main(
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # anti-pattern to speed up CLI initiation
-    from haddock.libs.libworkflow import WorkflowManager
+    from haddock.core.exceptions import HaddockError
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
-    from haddock.core.exceptions import HaddockError
+    from haddock.libs.libworkflow import WorkflowManager
 
     # the io.StringIO handler is a trick to save the log while run_dir
     # is not read from the configuration file and the log can be saved

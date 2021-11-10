@@ -1,7 +1,6 @@
 """Run Lightdock as an HADDOCK3 module."""
 import shutil
 import subprocess
-
 from pathlib import Path
 
 from haddock import log

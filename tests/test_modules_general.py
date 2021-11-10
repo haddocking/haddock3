@@ -7,8 +7,8 @@ import importlib
 
 import pytest
 
-from haddock.modules import modules_category
 from haddock.gear.config_reader import read_config
+from haddock.modules import modules_category
 
 
 @pytest.fixture(params=modules_category.items())

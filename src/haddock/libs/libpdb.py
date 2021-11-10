@@ -2,9 +2,9 @@
 import os
 from pathlib import Path
 
-from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_segxchain import place_seg_on_chain
 from pdbtools.pdb_splitchain import split_chain
+from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_tidy import tidy_pdbfile
 
 from haddock.core.cns_paths import topology_file

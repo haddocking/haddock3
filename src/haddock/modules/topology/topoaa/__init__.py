@@ -1,16 +1,15 @@
-"""CNS Topology creation and management module"""
+"""Create and manage CNS all-atom topology."""
 import shutil
 from pathlib import Path
 
 from haddock import log
+from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
     prepare_output,
     prepare_single_input,
     )
-from haddock.core.exceptions import StepError
-from haddock.libs import libpdb
 from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libstructure import make_molecules
@@ -24,7 +23,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 def generate_topology(input_pdb, step_path, recipe_str, defaults,
                       protonation=None):
-    """Generate a HADDOCK topology file from input_pdb"""
+    """Generate a HADDOCK topology file from input_pdb."""
     general_param = load_workflow_params(defaults)
 
     param, top, link, topology_protonation, \
@@ -52,6 +51,7 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults,
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 module to create CNS all-atom topologies."""
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
@@ -59,9 +59,11 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls):
+        """Confirm if module is installed."""
         return
 
     def run(self, molecules, **params):
+        """Execute module."""
         log.info("Running [allatom] module")
         log.info("Generating topologies")
 
@@ -96,8 +98,7 @@ class HaddockModule(BaseHaddockModule):
                                                       self.path,
                                                       self.recipe_str,
                                                       self.params)
-                log.info("Topology CNS input created in"
-                            f" {topology_filename}")
+                log.info("Topology CNS input created in {topology_filename}")
 
                 # Add new job to the pool
                 output_filename = Path(
@@ -126,12 +127,16 @@ class HaddockModule(BaseHaddockModule):
         not_found = []
         for model in models:
             model_name = model.stem
-            processed_pdb = (self.path / f"{model_name}_haddock.{Format.PDB}")
+            processed_pdb = Path(
+                self.path,
+                f"{model_name}_haddock.{Format.PDB}"
+                )
             if not processed_pdb.is_file():
                 not_found.append(processed_pdb.name)
-            processed_topology = (self.path /
-                                  f"{model_name}_haddock"
-                                  f".{Format.TOPOLOGY}")
+            processed_topology = Path(
+                self.path,
+                f"{model_name}_haddock.{Format.TOPOLOGY}"
+                )
             if not processed_topology.is_file():
                 not_found.append(processed_topology.name)
             topology = TopologyFile(processed_topology,

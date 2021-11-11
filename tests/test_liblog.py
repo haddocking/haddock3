@@ -45,6 +45,6 @@ def test_add_loglevel_arg_error():
     ap = argparse.ArgumentParser()
     liblog.add_loglevel_arg(ap)
     with pytest.raises(SystemExit) as err:
-        cmd = ap.parse_args('--log-level BAD'.split())
+        ap.parse_args('--log-level BAD'.split())
 
     assert err.value.code == 2

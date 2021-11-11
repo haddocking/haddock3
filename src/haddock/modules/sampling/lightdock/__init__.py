@@ -1,7 +1,6 @@
-"""Running Lightdock as a module"""
+"""Run Lightdock as a HADDOCK3 module."""
 import shutil
 import subprocess
-
 from pathlib import Path
 
 from haddock import log
@@ -16,6 +15,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 Lightdock module."""
 
     def __init__(
             self,
@@ -33,12 +33,17 @@ class HaddockModule(BaseHaddockModule):
         check_subprocess('lightdock3.py -h')
 
     def run(self, **params):
+        """Execute module."""
         log.info("Running [sampling-lightdock] module")
 
         super().run(params)
 
         # Get the models generated in previous step
-        models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_score = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
         # Check if multiple models are provided
         if len(models_to_score) > 1:
@@ -51,12 +56,16 @@ class HaddockModule(BaseHaddockModule):
         segids, chains = libpdb.identify_chainseg(_path)
         if set(segids) != set(chains):
             log.info("No chain IDs found, using segid information")
-            libpdb.swap_segid_chain(Path(model.path) / model.file_name,
-                                        self.path / model.file_name)
+            libpdb.swap_segid_chain(
+                Path(model.path, model.file_name),
+                Path(self.path, model.file_name),
+                )
         else:
             # Copy original model to this working path
-            shutil.copyfile(Path(model.path) / model.file_name, self.path /
-                            model.file_name)
+            shutil.copyfile(
+                Path(model.path, model.file_name),
+                Path(self.path, model.file_name),
+                )
 
         model_with_chains = self.path / model.file_name
         # Split by chain
@@ -112,14 +121,22 @@ class HaddockModule(BaseHaddockModule):
         log.info("Generating top structures")
         with working_directory(self.path):
             # Save structures, needs error control
-            shutil.copyfile(self.path / receptor_pdb_file, self.path /
-                            f"tmp_{receptor_pdb_file}")
-            shutil.copyfile(self.path / ligand_pdb_file, self.path /
-                            f"tmp_{ligand_pdb_file}")
-            shutil.copy(self.path / receptor_pdb_file, self.path /
-                        f"lightdock_{receptor_pdb_file}")
-            shutil.copy(self.path / ligand_pdb_file, self.path /
-                        f"lightdock_{ligand_pdb_file}")
+            shutil.copyfile(
+                Path(self.path, receptor_pdb_file),
+                Path(self.path, f"tmp_{receptor_pdb_file}"),
+                )
+            shutil.copyfile(
+                Path(self.path, ligand_pdb_file),
+                Path(self.path, f"tmp_{ligand_pdb_file}")
+                )
+            shutil.copy(
+                Path(self.path, receptor_pdb_file),
+                Path(self.path, f"lightdock_{receptor_pdb_file}"),
+                )
+            shutil.copy(
+                Path(self.path, ligand_pdb_file),
+                Path(self.path, f"lightdock_{ligand_pdb_file}"),
+                )
             # Create top
             steps = self.params["steps"]
             top = self.params["top"]

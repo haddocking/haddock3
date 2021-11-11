@@ -1,16 +1,15 @@
-"""Running CNS scripts"""
+"""Run subprocess jobs."""
 import os
 import shlex
 import subprocess
-import sys
 
 from haddock.core.defaults import cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
-from haddock.libs.libparallel import Scheduler
 
 
 class Job:
-    """A job to be executed by the engine"""
+    """A job to be executed by the engine."""
+
     def __init__(self, input, output, executable, *args):
         self.input = input
         self.output = output
@@ -18,6 +17,7 @@ class Job:
         self.args = args
 
     def run(self):
+        """Execute subprocess job."""
         cmd = " ".join([
             os.fspath(self.executable),
             ''.join(map(str, self.args)),  # empty string if no args
@@ -39,7 +39,8 @@ class Job:
 
 
 class CNSJob:
-    """A CNS job script"""
+    """A CNS job script."""
+
     def __init__(
             self,
             input_file,
@@ -48,6 +49,8 @@ class CNSJob:
             cns_exec=None,
             ):
         """
+        CNS subprocess.
+
         :param input_file: input CNS script
         :param output_file: CNS output
         :cns_folder: absolute execution path
@@ -60,6 +63,7 @@ class CNSJob:
 
     @property
     def cns_exec(self):
+        """CNS executable path."""
         return self._cns_exec
 
     @cns_exec.setter
@@ -75,9 +79,8 @@ class CNSJob:
 
         self._cns_exec = cns_exec_path
 
-
     def run(self):
-        """Run this CNS job script"""
+        """Run this CNS job script."""
         with open(self.input_file) as inp, \
                 open(self.output_file, 'w+') as outf:
 

@@ -17,7 +17,7 @@ _arg_non_neg_int = partial(
 
 
 def add_restart_arg(parser):
-    """Adds `--restart` option to argument parser."""
+    """Add `--restart` option to argument parser."""
     parser.add_argument(
         "--restart",
         type=_arg_non_neg_int,

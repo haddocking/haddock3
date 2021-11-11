@@ -1,4 +1,4 @@
-"""HADDOCK3 workflow logic"""
+"""HADDOCK3 workflow logic."""
 import importlib
 import shutil
 import sys
@@ -12,20 +12,22 @@ from haddock.modules import modules_category
 
 
 class WorkflowManager:
-    """The WorkflowManager reads the workflow and executes them."""
+    """Read and execute workflows."""
+
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start
         # Create a workflow from a TOML file
         self.recipe = Workflow(workflow_params, **other_params)
 
     def run(self):
-        """High level workflow composer"""
+        """High level workflow composer."""
         for step in self.recipe.steps[self.start:]:
             step.execute()
 
 
 class Workflow:
-    """Represents a set of stages to be executed by HADDOCK"""
+    """Represent a set of stages to be executed by HADDOCK."""
+
     def __init__(self, content, ncores=None, run_dir=None, cns_exec=None, **ig):
         # Create the list of steps contained in this workflow
         self.steps = []
@@ -71,9 +73,9 @@ class Step:
             )
 
     def execute(self):
+        """Execute simulation step."""
         if self.working_path.exists():
-            log.warning(f"Found previous run ({self.working_path}),"
-                           " removed")
+            log.warning(f"Found previous run ({self.working_path}), removed")
             shutil.rmtree(self.working_path)
         self.working_path.resolve().mkdir(parents=True, exist_ok=False)
 

@@ -4,16 +4,16 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 import importlib
-from pathlib import Path
 
 import pytest
 
-from haddock.modules import modules_category
 from haddock.gear.config_reader import read_config
+from haddock.modules import modules_category
 
 
 @pytest.fixture(params=modules_category.items())
 def module(request):
+    """Give imported HADDOCK3 modules."""
     module_name, category = request.param
     mod = ".".join(['haddock', 'modules', category, module_name])
     module = importlib.import_module(mod)

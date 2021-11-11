@@ -48,7 +48,8 @@ def test_restart_cli(i, expected):
     (-1, -10, '-1230', -50000),
     )
 def test_arg_non_neg_error(n):
-    with pytest.raises(argparse.ArgumentTypeError) as exit:
+    """Test non-negative int."""
+    with pytest.raises(argparse.ArgumentTypeError):
         restart_run._arg_non_neg_int(n)
 
 
@@ -57,9 +58,10 @@ def test_arg_non_neg_error(n):
     (-1, -10, '-1230', -50000),
     )
 def test_restart_cli_error(n):
+    """Test --restart number with error."""
     ap = argparse.ArgumentParser()
     restart_run.add_restart_arg(ap)
     with pytest.raises(SystemExit) as exit:
-        cmd = ap.parse_args(f'--restart {n}'.split())
+        ap.parse_args(f'--restart {n}'.split())
     assert exit.type == SystemExit
     assert exit.value.code == 2

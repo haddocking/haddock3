@@ -1,9 +1,8 @@
-"""HADDOCK3 gdock integration module"""
+"""HADDOCK3 gdock integration module."""
 import os
 import re
 import subprocess
 import sys
-
 from pathlib import Path
 
 from haddock import log
@@ -18,7 +17,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 def ambig2dic(ambig_f):
-    """Read an ambig.tbl file and convert it to a dictionary"""
+    """Read an ambig.tbl file and convert it to a dictionary."""
     ambig_regex = r"resid\s*(\d*)\s*and\s*segid\s*(\w)"
     ambig_dic = {}
     with open(ambig_f) as fh:
@@ -35,6 +34,7 @@ def ambig2dic(ambig_f):
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 gdock module."""
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         super().__init__(order, path, initial_params)
@@ -47,6 +47,7 @@ class HaddockModule(BaseHaddockModule):
         check_subprocess(f'{sys.executable} {gdock_exec}')
 
     def run(self, **params):
+        """Execute module."""
         log.info("Running [gdock] module")
 
         super().run(params)
@@ -61,13 +62,21 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(f'{gdock_exec} not found')
 
         # Get the models generated in previous step
-        models_to_dock = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_dock = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
         if '00_topoaa' not in Path(models_to_dock[0].path).stem:
             _msg = 'This module must come after Topology generation'
             self.finish_with_error(_msg)
 
-        topologies = [p for p in self.previous_io.output if p.file_type == Format.TOPOLOGY]
+        topologies = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.TOPOLOGY
+            ]
 
         input_a = Path(models_to_dock[0].path, models_to_dock[0].file_name)
         input_b = Path(models_to_dock[1].path, models_to_dock[1].file_name)

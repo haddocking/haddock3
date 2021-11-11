@@ -1,4 +1,4 @@
-"""HADDOCK3 FCC clustering module"""
+"""HADDOCK3 FCC clustering module."""
 import os
 from pathlib import Path
 
@@ -6,10 +6,10 @@ from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
 from haddock.gear.config_reader import read_config
+from haddock.libs.libontology import Format, ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import Job
 from haddock.modules import BaseHaddockModule
-from haddock.libs.libontology import Format, ModuleIO, PDBFile
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -17,6 +17,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 module for clustering with FCC."""
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = False
@@ -24,6 +25,7 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls):
+        """Confirm if FCC is installed and available."""
         dcfg = read_config(DEFAULT_CONFIG)
         exec_path = Path(FCC_path, dcfg['executable'])
 
@@ -36,6 +38,7 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def run(self, **params):
+        """Execute module."""
         log.info("Running [clustfcc] module")
 
         super().run(params)
@@ -43,10 +46,11 @@ class HaddockModule(BaseHaddockModule):
         contact_executable = Path(FCC_path, self.params['executable'])
 
         # Get the models generated in previous step
-        models_to_cluster = [p for p in self.previous_io.output if p.file_type == Format.PDB]
-
-        first_model = models_to_cluster[0]
-        topologies = first_model.topology
+        models_to_cluster = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
         # Calculate the contacts for each model
         log.info('Calculating contacts')
@@ -69,9 +73,9 @@ class HaddockModule(BaseHaddockModule):
         not_found = []
         for job in contact_jobs:
             if not job.output.exists():
-                # NOTE: If there is no output, most likely the models are not in contact
-                #  there is no way of knowing how many models are not in contact, it can be
-                #  only one, or could be all of them.
+                # NOTE: If there is no output, most likely the models are not in
+                # contact there is no way of knowing how many models are not in
+                # contact, it can be only one, or could be all of them.
                 not_found.append(job.input.name)
                 log.warning(f'Contact was not calculated for {job.input.name}')
             else:
@@ -83,10 +87,10 @@ class HaddockModule(BaseHaddockModule):
                                    f" {not_found}")
 
         log.info('Calculating the FCC matrix')
-        parsed_contacts = calc_fcc_matrix.parse_contact_file(contact_file_l, False)
+        parsed_contacts = calc_fcc_matrix.parse_contact_file(contact_file_l, False)  # noqa: E501
 
         # Imporant: matrix is a generator object, be careful with it
-        matrix = calc_fcc_matrix.calculate_pairwise_matrix(parsed_contacts, False)
+        matrix = calc_fcc_matrix.calculate_pairwise_matrix(parsed_contacts, False)  # noqa: E501
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this

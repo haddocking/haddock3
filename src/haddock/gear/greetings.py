@@ -1,11 +1,11 @@
-"""Command line messages"""
+"""Greeting messages for the command line clients."""
 import os
 import random
 import sys
 from datetime import datetime
 from functools import partial
 
-from haddock import version, log
+from haddock import version
 
 
 international_good_byes = [
@@ -21,19 +21,21 @@ international_good_byes = [
 
 
 def get_initial_greeting():
-    """Initial greeting message"""
+    """Create initial greeting message."""
     now = datetime.now().replace(second=0, microsecond=0)
     python_version = sys.version
-    message = (f"""{os.linesep}##############################################{os.linesep}"""
-               f"""#                                            #{os.linesep}"""
-               f"""#                 HADDOCK 3                  #{os.linesep}"""
-               f"""#                                            #{os.linesep}"""
-               f"""##############################################{os.linesep}"""
-               f"""{os.linesep}"""
-               f"""Starting HADDOCK {version} on {now}{os.linesep}"""
-               f"""{os.linesep}"""
-               f"""Python {python_version}{os.linesep}"""
-               )
+    message = (
+        f"""{os.linesep}"""
+        f"""##############################################{os.linesep}"""
+        f"""#                                            #{os.linesep}"""
+        f"""#                 HADDOCK 3                  #{os.linesep}"""
+        f"""#                                            #{os.linesep}"""
+        f"""##############################################{os.linesep}"""
+        f"""{os.linesep}"""
+        f"""Starting HADDOCK {version} on {now}{os.linesep}"""
+        f"""{os.linesep}"""
+        f"""Python {python_version}{os.linesep}"""
+        )
     return message
 
 
@@ -44,7 +46,7 @@ def get_greetings(options, how_many=3, sep=" ", exclamation="!"):
 
 
 def get_adieu():
-    """Final message"""
+    """Create end-run greeting message."""
     end = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     bye = get_goodbye_greetings()
     message = (f"""Finished at {end}. {bye}""")

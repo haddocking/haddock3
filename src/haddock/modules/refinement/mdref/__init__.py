@@ -1,23 +1,33 @@
-"""HADDOCK3 rigid-body docking module"""
+"""HADDOCK3 module for water refinement."""
 from os import linesep
 from pathlib import Path
 
 from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
-from haddock.modules import BaseHaddockModule
-from haddock.libs.libsubprocess import CNSJob
-from haddock.libs.libcns import generate_default_header, load_ambig
-from haddock.libs.libcns import load_workflow_params, prepare_multiple_input
-from haddock.libs.libparallel import Scheduler
+from haddock.libs.libcns import (
+    generate_default_header,
+    load_ambig,
+    load_workflow_params,
+    prepare_multiple_input,
+    )
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import CNSJob
+from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
-                      ambig=None):
+def generate_waterref(
+        identifier,
+        input_file,
+        step_path,
+        recipe_str,
+        defaults,
+        ambig=None,
+        ):
     """Generate the .inp file that will run the docking."""
     # prepare the CNS header that will read the input
 
@@ -55,6 +65,7 @@ def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 module for water refinement."""
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "mdref.cns"
@@ -62,9 +73,11 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls):
+        """Confirm if module is installed."""
         return
 
     def run(self, **params):
+        """Execute module."""
         log.info("Running [mdref] module")
 
         super().run(params)
@@ -73,11 +86,14 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_refine = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_refine = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
         first_model = models_to_refine[0]
         topologies = first_model.topology
-
 
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):

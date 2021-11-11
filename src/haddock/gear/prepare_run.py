@@ -10,15 +10,15 @@ from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.modules import (
-    general_parameters_affecting_modules,
-    modules_category,
-    )
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
-    remove_folder,
     remove_dict_keys,
+    remove_folder,
+    )
+from haddock.modules import (
+    general_parameters_affecting_modules,
+    modules_category,
     )
 
 
@@ -34,6 +34,7 @@ def config_key_error():
 
 
 def with_config_error(func):
+    """Add config error context."""
     @wraps(func)
     def wrapper(*args, **kwargs):
         with config_key_error():
@@ -43,7 +44,7 @@ def with_config_error(func):
 
 def setup_run(workflow_path, restart_from=None):
     """
-    Setup HADDOCK3 run.
+    Set up HADDOCK3 run.
 
     This function performs several actions in a pipeline.
 
@@ -90,7 +91,6 @@ def setup_run(workflow_path, restart_from=None):
         list(general_params.keys()),
         )
 
-
     validate_modules_params(modules_params)
     validate_installed_modules(modules_params)
 
@@ -124,7 +124,7 @@ def validate_params(params):
 
 
 def check_mandatory_argments_are_present(params):
-    """Confirms order key exists in config."""
+    """Confirm order key exists in config."""
     for arg in config_mandatory_general_parameters:
         if arg not in params:
             _msg = (
@@ -162,8 +162,7 @@ def validate_modules(params):
 
 @with_config_error
 def validate_modules_params(modules_params):
-    """Validates individual parameters for each module."""
-
+    """Validate individual parameters for each module."""
     for module_name, args in modules_params.items():
         _module_name = get_module_name(module_name)
         pdef = Path(
@@ -192,7 +191,7 @@ def validate_modules_params(modules_params):
 
 
 def validate_installed_modules(params):
-    """Validate if third party-libraries are installed"""
+    """Validate if third party-libraries are installed."""
     for module_name in params.keys():
         module_import_name = '.'.join([
             'haddock',
@@ -288,7 +287,7 @@ def copy_ambig_files(module_params, directory):
         for key, value in step_dict.items():
             if key == 'ambig':
                 ambig_f = Path(value).resolve()
-                new_loc = Path(directory , step, 'ambig.tbl')
+                new_loc = Path(directory, step, 'ambig.tbl')
                 new_loc.parent.mkdir(exist_ok=True)
 
                 try:

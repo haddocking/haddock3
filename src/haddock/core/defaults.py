@@ -1,10 +1,8 @@
-"""All default parameters used by the framework"""
-import multiprocessing
-import os
+"""All default parameters used by the framework."""
 import sys
 from pathlib import Path
 
-from haddock import haddock3_repository_path, haddock3_source_path, log
+from haddock import haddock3_repository_path, log
 
 
 # Locate the CNS binary

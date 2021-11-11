@@ -1,9 +1,8 @@
 """HADDOCK3 library."""
 import logging
-from os import get_terminal_size
 from pathlib import Path
 
-from haddock.libs.liblog import add_sysout_handler, add_syserr_handler
+from haddock.libs.liblog import add_syserr_handler, add_sysout_handler
 
 
 log = logging.getLogger(__name__)

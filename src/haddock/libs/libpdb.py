@@ -1,10 +1,10 @@
-"""Parse molecular structures in PDB format"""
+"""Parse molecular structures in PDB format."""
 import os
 from pathlib import Path
 
-from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_segxchain import place_seg_on_chain
 from pdbtools.pdb_splitchain import split_chain
+from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_tidy import tidy_pdbfile
 
 from haddock.core.cns_paths import topology_file
@@ -13,7 +13,7 @@ from haddock.modules import working_directory
 
 
 def get_supported_residues(haddock_topology):
-    """Read the topology file and identify which data is supported"""
+    """Read the topology file and identify which data is supported."""
     supported = []
     with open(haddock_topology) as input_handler:
         for line in input_handler:
@@ -38,10 +38,7 @@ _to_keep = get_supported_residues(topology_file)
 
 
 def split_ensemble(pdb_file_path):
-    """"
-    Split a PDB file into multiple structures if different models
-        are found
-    """
+    """Split a multimodel PDB file into different structures."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()
     with open(pdb_file_path) as input_handler:
         with working_directory(abs_path):
@@ -51,7 +48,7 @@ def split_ensemble(pdb_file_path):
 
 
 def split_by_chain(pdb_file_path):
-    """"Split a PDB file into multiple structures for each chain"""
+    """Split a PDB file into multiple structures for each chain."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()
     with open(pdb_file_path) as input_handler:
         with working_directory(abs_path):
@@ -61,7 +58,7 @@ def split_by_chain(pdb_file_path):
 
 
 def tidy(pdb_file_path, new_pdb_file_path):
-    """"Tidy PDB structure"""
+    """Tidy PDB structure."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()
     with open(pdb_file_path) as input_handler:
         with working_directory(abs_path):
@@ -69,8 +66,9 @@ def tidy(pdb_file_path, new_pdb_file_path):
                 for line in tidy_pdbfile(input_handler):
                     output_handler.write(line)
 
+
 def swap_segid_chain(pdb_file_path, new_pdb_file_path):
-    """"Add to the Chain ID column the found Segid"""
+    """Add to the Chain ID column the found Segid."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()
     with open(pdb_file_path) as input_handler:
         with working_directory(abs_path):
@@ -80,7 +78,7 @@ def swap_segid_chain(pdb_file_path, new_pdb_file_path):
 
 
 def sanitize(pdb_file_path, overwrite=True):
-    """Sanitize a PDB file"""
+    """Sanitize a PDB file."""
     good_lines = []
     with open(pdb_file_path) as input_handler:
         for line in input_handler:
@@ -112,7 +110,7 @@ def sanitize(pdb_file_path, overwrite=True):
 
 
 def identify_chainseg(pdb_file_path):
-    """"Return segID OR chainID"""
+    """Return segID OR chainID."""
     segids = []
     chains = []
     with open(pdb_file_path) as input_handler:

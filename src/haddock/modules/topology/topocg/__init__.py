@@ -1,3 +1,4 @@
+"""Create and manage CNS coarse-grained-atom topology."""
 # to be developed
 # adding dummy interfaces to pass the tests
 from pathlib import Path

@@ -1,43 +1,49 @@
-"""Running Lightdock as a module"""
-import logging
+"""Run Lightdock as a HADDOCK3 module."""
 import shutil
 import subprocess
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
-from haddock.ontology import Format, ModuleIO, PDBFile
-from haddock.pdbutil import PDBFactory
-from haddock.modules import working_directory
-from haddock.defaults import NUM_CORES
+
+from haddock import log
+from haddock.libs import libpdb
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libutil import check_subprocess
+from haddock.modules import BaseHaddockModule, working_directory
 
 
-logger = logging.getLogger(__name__)
-
-
-LIGHTDOCK_DEFAULT_CONFIG = "lightdock.toml"
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 Lightdock module."""
 
     def __init__(
             self,
             order,
             path,
             *ignore,
-            default_config=LIGHTDOCK_DEFAULT_CONFIG,
+            initial_params=DEFAULT_CONFIG,
             **everything,
             ):
-        recipe_path = Path(__file__).resolve().parent.absolute()
-        defaults = recipe_path / default_config
-        super().__init__(order, path, defaults=defaults)
+        super().__init__(order, path, initial_params)
+
+    @classmethod
+    def confirm_installation(cls):
+        """Confirm this module is installed."""
+        check_subprocess('lightdock3.py -h')
 
     def run(self, **params):
-        logger.info("Running [sampling-lightdock] module")
+        """Execute module."""
+        log.info("Running [sampling-lightdock] module")
 
-        # Apply module information to defaults
-        self.patch_defaults(params)
+        super().run(params)
 
         # Get the models generated in previous step
-        models_to_score = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_score = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
         # Check if multiple models are provided
         if len(models_to_score) > 1:
@@ -47,38 +53,42 @@ class HaddockModule(BaseHaddockModule):
         model = models_to_score[0]
         # Check if chain IDs are present
         _path = Path(model.path, model.file_name)
-        segids, chains = PDBFactory.identify_chainseg(_path)
+        segids, chains = libpdb.identify_chainseg(_path)
         if set(segids) != set(chains):
-            logger.info("No chain IDs found, using segid information")
-            PDBFactory.swap_segid_chain(Path(model.path) / model.file_name,
-                                        self.path / model.file_name)
+            log.info("No chain IDs found, using segid information")
+            libpdb.swap_segid_chain(
+                Path(model.path, model.file_name),
+                Path(self.path, model.file_name),
+                )
         else:
             # Copy original model to this working path
-            shutil.copyfile(Path(model.path) / model.file_name, self.path /
-                            model.file_name)
+            shutil.copyfile(
+                Path(model.path, model.file_name),
+                Path(self.path, model.file_name),
+                )
 
         model_with_chains = self.path / model.file_name
         # Split by chain
-        new_models = PDBFactory.split_by_chain(model_with_chains)
+        new_models = libpdb.split_by_chain(model_with_chains)
         if model_with_chains in new_models:
             self.finish_with_error(f"Input {model_with_chains} cannot be"
                                    " split by chain")
 
         # Receptor and ligand PDB structures
-        rec_chain = self.defaults["params"]["receptor_chains"][0]
-        lig_chain = self.defaults["params"]["ligand_chains"][0]
+        rec_chain = self.params["receptor_chains"][0]
+        lig_chain = self.params["ligand_chains"][0]
         receptor_pdb_file = (f"{Path(model.file_name).stem}_"
                              f"{rec_chain}.{Format.PDB}")
         ligand_pdb_file = (f"{Path(model.file_name).stem}_"
                            f"{lig_chain}.{Format.PDB}")
 
         # Setup
-        logger.info("Running LightDock setup")
+        log.info("Running LightDock setup")
         with working_directory(self.path):
-            swarms = self.defaults["params"]["swarms"]
-            glowworms = self.defaults["params"]["glowworms"]
-            noxt = self.defaults["params"]["noxt"]
-            noh = self.defaults["params"]["noh"]
+            swarms = self.params["swarms"]
+            glowworms = self.params["glowworms"]
+            noxt = self.params["noxt"]
+            noh = self.params["noh"]
             cmd = (f"lightdock3_setup.py {receptor_pdb_file}"
                    f" {ligand_pdb_file} -s {swarms} -g {glowworms}")
             if noxt:
@@ -88,51 +98,59 @@ class HaddockModule(BaseHaddockModule):
             subprocess.call(cmd, shell=True)
 
         # Simulation
-        logger.info("Running LightDock simulation")
+        log.info("Running LightDock simulation")
         with working_directory(self.path):
-            steps = self.defaults["params"]["steps"]
-            scoring = self.defaults["params"]["scoring"]
-            cores = NUM_CORES
+            steps = self.params["steps"]
+            scoring = self.params["scoring"]
+            cores = self.params['ncores'] or 1
             cmd = f"lightdock3.py setup.json {steps} -c {cores} -s {scoring}"
             subprocess.call(cmd, shell=True)
 
         # Clustering
 
         # Ranking
-        logger.info("Generating ranking")
+        log.info("Generating ranking")
         with working_directory(self.path):
-            steps = self.defaults["params"]["steps"]
-            swarms = self.defaults["params"]["swarms"]
+            steps = self.params["steps"]
+            swarms = self.params["swarms"]
             cmd = f"lgd_rank.py {swarms} {steps}"
             subprocess.call(cmd, shell=True)
 
         # Generate top, requires a hack to use original structures (H, OXT,
         #  etc.)
-        logger.info("Generating top structures")
+        log.info("Generating top structures")
         with working_directory(self.path):
             # Save structures, needs error control
-            shutil.copyfile(self.path / receptor_pdb_file, self.path /
-                            f"tmp_{receptor_pdb_file}")
-            shutil.copyfile(self.path / ligand_pdb_file, self.path /
-                            f"tmp_{ligand_pdb_file}")
-            shutil.copy(self.path / receptor_pdb_file, self.path /
-                        f"lightdock_{receptor_pdb_file}")
-            shutil.copy(self.path / ligand_pdb_file, self.path /
-                        f"lightdock_{ligand_pdb_file}")
+            shutil.copyfile(
+                Path(self.path, receptor_pdb_file),
+                Path(self.path, f"tmp_{receptor_pdb_file}"),
+                )
+            shutil.copyfile(
+                Path(self.path, ligand_pdb_file),
+                Path(self.path, f"tmp_{ligand_pdb_file}")
+                )
+            shutil.copy(
+                Path(self.path, receptor_pdb_file),
+                Path(self.path, f"lightdock_{receptor_pdb_file}"),
+                )
+            shutil.copy(
+                Path(self.path, ligand_pdb_file),
+                Path(self.path, f"lightdock_{ligand_pdb_file}"),
+                )
             # Create top
-            steps = self.defaults["params"]["steps"]
-            top = self.defaults["params"]["top"]
+            steps = self.params["steps"]
+            top = self.params["top"]
             cmd = (f"lgd_top.py {receptor_pdb_file} {ligand_pdb_file}"
                    f" rank_by_scoring.list {top}")
             subprocess.call(cmd, shell=True)
 
         # Tidy top files
         expected = []
-        top = self.defaults["params"]["top"]
+        top = self.params["top"]
         for i in range(top):
             file_name = f"top_{i+1}.{Format.PDB}"
             tidy_file_name = f"haddock_top_{i+1}.{Format.PDB}"
-            PDBFactory.tidy(self.path / file_name, self.path / tidy_file_name)
+            libpdb.tidy(self.path / file_name, self.path / tidy_file_name)
             expected.append(PDBFile(tidy_file_name,
                                     topology=model.topology,
                                     path=self.path))

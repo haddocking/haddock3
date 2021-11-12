@@ -1,19 +1,33 @@
-"""HADDOCK3 rigid-body docking module"""
-import logging
+"""HADDOCK3 module for water refinement."""
 from os import linesep
 from pathlib import Path
+
+from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
+from haddock.libs.libcns import (
+    generate_default_header,
+    load_ambig,
+    load_workflow_params,
+    prepare_multiple_input,
+    )
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
-from haddock.engine import CNSJob, Engine
-from haddock.cns.util import generate_default_header, load_ambig
-from haddock.cns.util import load_workflow_params, prepare_multiple_input
-from haddock.ontology import Format, ModuleIO, PDBFile
-
-logger = logging.getLogger(__name__)
 
 
-def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
-                      ambig=None):
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
+
+
+def generate_waterref(
+        identifier,
+        input_file,
+        step_path,
+        recipe_str,
+        defaults,
+        ambig=None,
+        ):
     """Generate the .inp file that will run the docking."""
     # prepare the CNS header that will read the input
 
@@ -51,26 +65,35 @@ def generate_waterref(identifier, input_file, step_path, recipe_str, defaults,
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 module for water refinement."""
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent.absolute()
-        cns_script = recipe_path / "cns" / "mdref.cns"
-        defaults = recipe_path / "cns" / "mdref.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+        cns_script = RECIPE_PATH / "cns" / "mdref.cns"
+        super().__init__(order, path, initial_params, cns_script)
+
+    @classmethod
+    def confirm_installation(cls):
+        """Confirm if module is installed."""
+        return
 
     def run(self, **params):
-        logger.info("Running [mdref] module")
+        """Execute module."""
+        log.info("Running [mdref] module")
+
+        super().run(params)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
         # Get the models generated in previous step
-        models_to_refine = [p for p in self.previous_io.output if p.file_type == Format.PDB]
+        models_to_refine = [
+            p
+            for p in self.previous_io.output
+            if p.file_type == Format.PDB
+            ]
 
         first_model = models_to_refine[0]
         topologies = first_model.topology
-
-        weights = {'vdw': 1.0, 'elec': 0.2, 'desol': 1.0, 'air': 0.1}
 
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine):
@@ -79,38 +102,51 @@ class HaddockModule(BaseHaddockModule):
                 model,
                 self.path,
                 self.recipe_str,
-                self.defaults,
-                ambig=params.get('ambig', None),
+                self.params,
+                ambig=self.params.get('ambig', None),
                 )
 
             out_file = self.path / f"waterref_{idx}.out"
             structure_file = self.path / f"waterref_{idx}.pdb"
             refined_structure_list.append(structure_file)
 
-            job = CNSJob(inp_file, out_file, cns_folder=self.cns_folder_path)
+            job = CNSJob(
+                inp_file,
+                out_file,
+                cns_folder=self.cns_folder_path,
+                cns_exec=self.params['cns_exec'],
+                )
 
             jobs.append(job)
 
         # Run CNS engine
-        logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Engine(jobs)
+        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        logger.info("CNS engine has finished")
+        log.info("CNS engine has finished")
 
-        # Check for generated output, fail it not all expected files are found
+        # Get the weights from the defaults
+        _weight_keys = \
+            ('w_vdw_2', 'w_elec_2', 'w_desolv_2', 'w_air_2', 'w_bsa_2')
+        weights = {e: self.params[e] for e in _weight_keys}
+
         expected = []
         not_found = []
         for model in refined_structure_list:
             if not model.exists():
                 not_found.append(model.name)
 
-            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
+            haddock_score = \
+                HaddockModel(model).calc_haddock_score(**weights)
 
             pdb = PDBFile(model, path=self.path)
             pdb.topology = topologies
             pdb.score = haddock_score
             expected.append(pdb)
+
         if not_found:
+            # Check for generated output,
+            # fail if not all expected files are found
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 

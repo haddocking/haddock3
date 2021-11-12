@@ -1,15 +1,15 @@
-"""Workflow module logic"""
-import os
-import logging
+"""HADDOCK3 modules."""
 import contextlib
+import os
+from abc import ABC, abstractmethod
 from pathlib import Path
-import toml
-from haddock.error import StepError
-from haddock.ontology import ModuleIO
-from haddock.defaults import MODULE_PATH_NAME, MODULE_IO_FILE, TOPOLOGY_PATH
 
+from haddock import log
+from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.exceptions import StepError
+from haddock.gear.config_reader import read_config
+from haddock.libs.libontology import ModuleIO
 
-logger = logging.getLogger(__name__)
 
 modules_folder = Path(__file__).resolve().parent
 
@@ -23,18 +23,36 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-class BaseHaddockModule:
-    """Base class for any HADDOCK module"""
-    def __init__(self, order, path, cns_script="", defaults=""):
+general_parameters_affecting_modules = {'ncores', 'cns_exec'}
+"""These parameters are general parameters that may be applicable to modules
+specifically. Therefore, they should be considered as part of the "default"
+module's parameters. Usually, this set is used to filter parameters during
+the run prepraration phase. See, `gear.prepare_run`."""
+
+
+class BaseHaddockModule(ABC):
+    """HADDOCK3 module's base class."""
+
+    def __init__(self, order, path, params, cns_script=""):
+        """
+        HADDOCK3 modules base class.
+
+        Parameters
+        ----------
+        params : dict or path to HADDOCK3 configuration file
+            A dictionary or a path to a HADDOCK3 configuration file
+            containing the initial module parameters. Usually this is
+            defined by the default params.
+        """
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
 
         if cns_script:
-            self.cns_folder_path = cns_script.resolve().parent.absolute()
+            self.cns_folder_path = cns_script.resolve().parent
             self.cns_protocol_path = cns_script
-        if defaults:
-            self.defaults_path = defaults
+
+        self.params = params
 
         try:
             with open(self.cns_protocol_path) as input_handler:
@@ -45,22 +63,54 @@ class BaseHaddockModule:
         except AttributeError:
             # No CNS-like module
             pass
-        try:
-            self.defaults = toml.load(self.defaults_path)
-        except FileNotFoundError:
-            _msg = f"Error while opening defaults {self.defaults_path}"
-            raise StepError(_msg)
-        except AttributeError:
-            # No CNS-like module
-            pass
 
-    def run(self, module_information):
-        raise NotImplementedError()
+    @property
+    def params(self):
+        """Configuration parameters."""  # noqa: D401
+        return self._params
+
+    @params.setter
+    def params(self, path_or_dict):
+        if isinstance(path_or_dict, dict):
+            self._params = path_or_dict
+        else:
+            try:
+                self._params = read_config(path_or_dict)
+            except FileNotFoundError as err:
+                _msg = (
+                    "Default configuration file not found: "
+                    f"{str(path_or_dict)!r}"
+                    )
+                raise FileNotFoundError(_msg) from err
+            except TypeError as err:
+                _msg = (
+                    "Argument does not satisfy condition, must be path or "
+                    f"dict. {type(path_or_dict)} given."
+                    )
+                raise TypeError(_msg) from err
+
+    @abstractmethod
+    def run(self, params):
+        """Execute the module."""
+        self.update_params(**params)
+        self.params.setdefault('ncores', None)
+        self.params.setdefault('cns_exec', None)
+
+    @classmethod
+    @abstractmethod
+    def confirm_installation(self):
+        """
+        Confirm the third-party software needed for the module is installed.
+
+        HADDOCK3's own modules should just return.
+        """
+        return
 
     def finish_with_error(self, message=""):
+        """Finish with error message."""
         if not message:
             message = "Module has failed"
-        logger.error(message)
+        log.error(message)
         raise SystemExit
 
     def _load_previous_io(self):
@@ -74,22 +124,21 @@ class BaseHaddockModule:
         return io
 
     def previous_path(self):
+        """Give the path from the previous calculation."""
         previous = sorted(list(self.path.resolve().parent.glob('[0-9][0-9]*/')))
         try:
-            return previous[-2]
+            return previous[self.order - 1]
         except IndexError:
             return self.path
 
-    def patch_defaults(self, module_parameters):
-        """Apply custom module parameters given to defaults dictionary"""
-        for k in module_parameters:
-            if k in self.defaults["params"]:
-                self.defaults["params"][k] = module_parameters[k]
+    def update_params(self, **parameters):
+        """Update defaults parameters with run-specific parameters."""
+        self._params.update(parameters)
 
 
 @contextlib.contextmanager
 def working_directory(path):
-    """Changes working directory and returns to previous on exit"""
+    """Change working directory and returns to previous on exit."""
     prev_cwd = Path.cwd()
     os.chdir(path)
     try:

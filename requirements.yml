@@ -6,8 +6,7 @@ dependencies:
     - python==3.8
     - pip
     - numpy
-    - toml
     - jsonpickle
+    - tox
     - pip:
         - pdb-tools
-        - lightdock

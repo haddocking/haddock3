@@ -1,7 +1,8 @@
-"""Class that represents a Haddock model"""
+"""Represent an Haddock model."""
 
 
 class HaddockModel:
+    """Represent HADDOCK model."""
 
     def __init__(self, pdb_f):
         self.energies = self._load_energies(pdb_f)
@@ -14,8 +15,11 @@ class HaddockModel:
                 if line.startswith('REMARK'):
                     # TODO: use regex to do this
                     if 'energies' in line:
-                        energy_values = list(map(float, line.rstrip().split(':')[-1].split(',')))
-                        total,bonds,angles,improper,dihe,vdw,elec,air,cdih,coup,rdcs,vean,dani,xpcs,rg = energy_values
+                        energy_values = list(map(
+                            float,
+                            line.rstrip().split(':')[-1].split(',')
+                            ))
+                        total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, rdcs, vean, dani, xpcs, rg = energy_values  # noqa: E501
                         energy_dic['total'] = total
                         energy_dic['bonds'] = bonds
                         energy_dic['angles'] = angles
@@ -35,17 +39,18 @@ class HaddockModel:
                         bsa = float(line.rstrip().split(':')[-1])
                         energy_dic['bsa'] = bsa
                     if 'Desolvation energy' in line:
-                        desol = float(line.rstrip().split(':')[-1])
-                        energy_dic['desol'] = desol
+                        desolv = float(line.rstrip().split(':')[-1])
+                        energy_dic['desolv'] = desolv
 
         return energy_dic
 
     def calc_haddock_score(self, **weights):
         """Calculate the haddock score based on the weights and energies."""
         weighted_terms = []
-        for component in weights:
-            weight = weights[component]
-            value = self.energies[component]
+        for key in weights:
+            component_id = key.split('_')[1]
+            weight = weights[key]
+            value = self.energies[component_id]
             weighted_terms.append(value * weight)
 
         # the haddock score is simply the sum of the weighted terms

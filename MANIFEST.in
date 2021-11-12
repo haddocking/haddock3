@@ -1,0 +1,23 @@
+graft docs
+graft src/haddock
+
+include *.md
+include *.rst
+include LICENSE
+include requirements.txt
+include requirements.yml
+
+exclude .gitmodules
+exclude .bumpversion.cfg
+exclude .coveragerc
+exclude .readthedocs.yml
+exclude tox.ini
+
+prune devtools
+prune examples
+prune src/fcc
+prune tests
+
+global-exclude *.py[cod] __pycache__/* *.so *.dylib 
+global-exclude tags
+global-exclude *.swp

@@ -1,22 +1,37 @@
-"""HADDOCK3 module to select a top cluster/model"""
-import logging
+"""HADDOCK3 module to select a top cluster/model."""
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
-from haddock.ontology import ModuleIO
 
-logger = logging.getLogger(__name__)
+from haddock import log
+from haddock.libs.libontology import ModuleIO
+from haddock.modules import BaseHaddockModule
+
+
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 class HaddockModule(BaseHaddockModule):
+    """Haddock Module for 'seletopclusts'."""
 
-    def __init__(self, order, path, *ignore, **everything):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = ''
-        defaults = recipe_path / "seletopclusts.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(
+            self,
+            order,
+            path,
+            *ignore,
+            init_params=DEFAULT_CONFIG,
+            **everything):
+        super().__init__(order, path, init_params)
+
+    @classmethod
+    def confirm_installation(cls):
+        """Confirm if module is installed."""
+        return
 
     def run(self, **params):
-        logger.info("Running [seletopclusts] module")
+        """Execute the module's protocol."""
+        log.info("Running [seletopclusts] module")
+
+        super().run(params)
 
         # Get the models generated in previous step
         if not type(self.previous_io) == iter:
@@ -33,7 +48,10 @@ class HaddockModule(BaseHaddockModule):
             cluster_id = int(cluster_id)
             # sort the models inside the cluster based on its score
             # TODO: refactor this, its ugly :p
-            list_to_be_sorted = [(e, e.score) for e in self.previous_io.output[0][str(cluster_id)]]
+            list_to_be_sorted = [
+                (e, e.score)
+                for e in self.previous_io.output[0][str(cluster_id)]
+                ]
             list_to_be_sorted.sort(key=lambda x: x[1])
             structure_list = [e[0] for e in list_to_be_sorted]
             cluster_dic[cluster_id] = structure_list
@@ -49,21 +67,23 @@ class HaddockModule(BaseHaddockModule):
 
         # how many models should we output?
         models = []
-        for select_id in params['top_cluster']:
+        for select_id in self.params['top_cluster']:
             # which cluster should we retrieve?
             # top_cluster = 1 == the best one, should be index 0
             try:
                 target_id = list(sorted_dic.keys())[select_id - 1]
             except IndexError:
-                logger.warning(f'Cluster ranking #{select_id} not found,'
-                               ' skipping selection')
+                log.warning(
+                    f'Cluster ranking #{select_id} not found,'
+                    ' skipping selection'
+                    )
                 continue
 
-            if params['top_models'] == 'all':
+            if self.params['top_models'] == 'all':
                 for pdb in cluster_dic[target_id]:
                     models.append(pdb)
             else:
-                for pdb in cluster_dic[target_id][:params['top_models']]:
+                for pdb in cluster_dic[target_id][:self.params['top_models']]:
                     models.append(pdb)
 
         # Save module information

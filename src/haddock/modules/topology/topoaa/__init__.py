@@ -1,23 +1,29 @@
-"""CNS Topology creation and management module"""
-import logging
+"""Create and manage CNS all-atom topology."""
 import shutil
 from pathlib import Path
-from haddock.modules import BaseHaddockModule
-from haddock.structure import Molecule, make_molecules
-from haddock.pdbutil import PDBFactory
-from haddock.engine import CNSJob, Engine
-from haddock.cns.util import (load_workflow_params, generate_default_header,
-                              prepare_output, prepare_single_input)
-from haddock.ontology import ModuleIO, Format, PDBFile, TopologyFile
-from haddock.error import StepError
-from haddock.defaults import TOPOLOGY_PATH
 
-logger = logging.getLogger(__name__)
+from haddock import log
+from haddock.libs import libpdb
+from haddock.libs.libcns import (
+    generate_default_header,
+    load_workflow_params,
+    prepare_output,
+    prepare_single_input,
+    )
+from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libstructure import make_molecules
+from haddock.libs.libsubprocess import CNSJob
+from haddock.modules import BaseHaddockModule
+
+
+RECIPE_PATH = Path(__file__).resolve().parent
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
 def generate_topology(input_pdb, step_path, recipe_str, defaults,
                       protonation=None):
-    """Generate a HADDOCK topology file from input_pdb"""
+    """Generate a HADDOCK topology file from input_pdb."""
     general_param = load_workflow_params(defaults)
 
     param, top, link, topology_protonation, \
@@ -45,48 +51,54 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults,
 
 
 class HaddockModule(BaseHaddockModule):
+    """HADDOCK3 module to create CNS all-atom topologies."""
 
-    def __init__(self, order, path):
-        recipe_path = Path(__file__).resolve().parent
-        cns_script = recipe_path / "cns" / "generate-topology.cns"
-        defaults = recipe_path / "cns" / "generate-topology.toml"
-        super().__init__(order, path, cns_script, defaults)
+    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+        cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
+        super().__init__(order, path, initial_params, cns_script)
 
-    def run(self, **params):
-        logger.info("Running [allatom] module")
-        logger.info("Generating topologies")
+    @classmethod
+    def confirm_installation(cls):
+        """Confirm if module is installed."""
+        return
 
-        molecules = make_molecules(params['molecules'])
+    def run(self, molecules, **params):
+        """Execute module."""
+        log.info("Running [allatom] module")
+        log.info("Generating topologies")
+
+        super().run(params)
+
+        molecules = make_molecules(molecules)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
         models = []
         for i, molecule in enumerate(molecules):
-            logger.info(f"{i + 1} - {molecule.file_name}")
+            log.info(f"{i + 1} - {molecule.file_name}")
 
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_name.name)
             shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models
-            logger.info(f"Split models if needed for {step_molecule_path}")
-            ens = PDBFactory.split_ensemble(step_molecule_path)
+            log.info(f"Split models if needed for {step_molecule_path}")
+            ens = libpdb.split_ensemble(step_molecule_path)
             splited_models = sorted(ens)
 
             # Sanitize the different PDB files
             for model in splited_models:
-                logger.info(f"Sanitizing molecule {model.name}")
+                log.info(f"Sanitizing molecule {model.name}")
                 models.append(model)
-                PDBFactory.sanitize(model, overwrite=True)
+                libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
                 topology_filename = generate_topology(model,
                                                       self.path,
                                                       self.recipe_str,
-                                                      self.defaults)
-                logger.info("Topology CNS input created in"
-                            f" {topology_filename}")
+                                                      self.params)
+                log.info("Topology CNS input created in {topology_filename}")
 
                 # Add new job to the pool
                 output_filename = Path(
@@ -94,17 +106,20 @@ class HaddockModule(BaseHaddockModule):
                     f"{model.stem}.{Format.CNS_OUTPUT}",
                     )
 
-                job = CNSJob(topology_filename,
-                             output_filename,
-                             cns_folder=self.cns_folder_path)
+                job = CNSJob(
+                    topology_filename,
+                    output_filename,
+                    cns_folder=self.cns_folder_path,
+                    cns_exec=self.params['cns_exec'],
+                    )
 
                 jobs.append(job)
 
         # Run CNS engine
-        logger.info(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Engine(jobs)
+        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        logger.info("CNS engine has finished")
+        log.info("CNS engine has finished")
 
         # Check for generated output, fail it not all expected files
         #  are found
@@ -112,12 +127,16 @@ class HaddockModule(BaseHaddockModule):
         not_found = []
         for model in models:
             model_name = model.stem
-            processed_pdb = (self.path / f"{model_name}_haddock.{Format.PDB}")
+            processed_pdb = Path(
+                self.path,
+                f"{model_name}_haddock.{Format.PDB}"
+                )
             if not processed_pdb.is_file():
                 not_found.append(processed_pdb.name)
-            processed_topology = (self.path /
-                                  f"{model_name}_haddock"
-                                  f".{Format.TOPOLOGY}")
+            processed_topology = Path(
+                self.path,
+                f"{model_name}_haddock.{Format.TOPOLOGY}"
+                )
             if not processed_topology.is_file():
                 not_found.append(processed_topology.name)
             topology = TopologyFile(processed_topology,

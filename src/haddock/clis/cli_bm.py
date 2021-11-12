@@ -14,6 +14,8 @@ import string
 import sys
 from pathlib import Path
 
+from haddock import log
+
 
 capital_and_digits = tuple(string.digits + string.ascii_uppercase)
 
@@ -21,7 +23,8 @@ capital_and_digits = tuple(string.digits + string.ascii_uppercase)
 def _dir_path(path):
     path = Path(path)
     if not path.is_dir():
-        raise argparse.ArgumentTypeError(f'{path!r} is not a directory.')
+        _p = str(path.resolve())
+        raise argparse.ArgumentTypeError(f'{_p!r} is not a directory.')
     return path
 
 
@@ -31,7 +34,6 @@ def _is_valid(f, cap_and_dig=capital_and_digits):
         f.name.startswith(cap_and_dig) \
         and f.is_dir()
     return _is_valid
-
 
 
 def create_cfg(run_dir, receptor_f, ligand_f, ambig_f):
@@ -81,7 +83,7 @@ cool1_steps = 500
 #sampling = 400
 
 [mdref]
-ambig = {(ambig_f)!r}
+ambig = {str(ambig_f)!r}
 #sampling = 400
 cool1_steps = 10
 noecv = false
@@ -89,7 +91,7 @@ noecv = false
     return cfg_str
 
 
-def create_torque_job(job_name, **job_params):
+def create_torque_job(job_name, path, **job_params):
     """
     Create HADDOCK3 Alcazer job file.
 
@@ -112,13 +114,13 @@ f"""#!/usr/bin/env tcsh
 #PBS -q medium
 #PBS -l nodes=1:ppn=48
 #PBS -S /bin/tcsh
-#PBS -o haddock.out
-#PBS -e haddock.err
+#PBS -o {str(path)}/haddock.out
+#PBS -e {str(path)}/haddock.err
 """
-    return job_setup(header, **job_params)
+    return job_setup(header, path, **job_params)
 
 
-def create_slurm_job(job_name, **job_params):
+def create_slurm_job(job_name, path, **job_params):
     """
     Create HADDOCK3 Alcazer job file.
 
@@ -141,28 +143,44 @@ f"""#!/usr/bin/env bash
 #SBATCH -p medium
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=48
-#SBATCH -o haddock.out
-#SBATCH -e haddock.err
+#SBATCH -o {str(path)}/haddock.out
+#SBATCH -e {str(path)}/haddock.err
 """
-    return job_setup(header, **job_params)
+    return job_setup(header, path, **job_params)
 
 
 def job_setup(header, path, conf_f):
+    """
+    Write body for the job script.
+
+    Parameters
+    ----------
+    header : str
+        Configures queue manager system.
+
+    path : Path or str
+        Path where results will be stored. Must be synchronized with the
+        `run_dir` path in the configuration file.
+
+    conf_f : Path or str
+        Path to the configuration file.
+    """
     job = \
-"""{header}
+f"""{header}
 
 source $HOME/miniconda3/etc/profile.d/conda.sh
 conda activate haddock3
 
+cd {str(path)}
 touch RUNNING
-haddock3 {str(cfg_f)}
+haddock3 {str(conf_f)}
 rm RUNNING
 
-if ( -f {path}run-ti/ss.stats ) then
-    touch DONE
-else
-    touch FAIL
-endif"""
+#if ( -f {str(path)}/run-ti/ss.stats ) then
+#    touch DONE
+#else
+#    touch FAIL
+#endif"""
     return job
 
 
@@ -213,12 +231,30 @@ def maincli():
     cli(ap, main)
 
 
-def main():
-    """Run main logic."""
-    cmd = ap.parse_args()
+def main(benchmark_path, results_path, job_sys='torque'):
+    """
+    Create configuration and job scripts for HADDOCK3 benchmarking.
 
-    _ = (f for f in cmd.benchmark_path.glob('*') if _is_valid(f))
+    Developed for https://github.com/haddocking/BM5-clean
+
+    Parameters
+    ----------
+    benchmark_path : Path
+        The path to the benchmark models folder. In BM5-clean would be
+        the 'HADDOCK-ready' folder.
+
+    results_path : Path
+        Where the results will be saved. A subfolder for each model in
+        `benchmark_path` will be created.
+
+    job_sys : str
+        A key for `job_system` dictionary.
+    """
+    log.info('*** Creating benchmark scripts')
+
+    _ = (f for f in benchmark_path.glob('*') if _is_valid(f))
     source_folders = sorted(_)
+    log.info(f'* creating {len(source_folders)} benchmark jobs')
 
     for source_path in source_folders:
         pdb_id = source_path.name
@@ -226,25 +262,32 @@ def main():
         ligand = Path(source_path, f'{pdb_id}_l_u.pdb').resolve()
         receptor = Path(source_path, f'{pdb_id}_r_u.pdb').resolve()
 
-        results_p = Path(cmd.results_path, pdb_id).resolve()
+        results_p = Path(results_path, pdb_id).resolve()
         results_p.mkdir(exist_ok=True, parents=True)
 
-        cfg_file = Path(cmd.results_path, pdb_id, 'run.cfg').resolve()
-        job_file = Path(cmd.results_path, pdb_id, 'run.job').resolve()
+        cfg_file = Path(results_path, pdb_id, 'run.cfg').resolve()
+        job_file = Path(results_path, pdb_id, 'run.job').resolve()
 
+        run_folder = Path(results_p, 'run').resolve()
         #
         cfg_str = create_cfg(
-            results_p.resolve(),
+            run_folder,
             receptor,
             ligand,
             Path(source_path, 'ambig.tbl'),
             )
 
-        job_str = job_system[cmd.job_sys](results_p, cfg_file, pdb_id)
+        job_str = job_system[job_sys](
+            pdb_id,
+            path=results_p,
+            conf_f=cfg_file,
+            )
         #
 
         cfg_file.write_text(cfg_str)
         job_file.write_text(job_str)
+
+    log.info('* done')
 
 
 if __name__ == '__main__':

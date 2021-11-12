@@ -150,7 +150,7 @@ noecv = false
     return cfg_str
 
 
-def create_torque_job(job_name, path, **job_params):
+def create_torque_job(job_name, scenario, path, **job_params):
     """
     Create HADDOCK3 Alcazer job file.
 
@@ -169,7 +169,7 @@ def create_torque_job(job_name, path, **job_params):
     """
     header = \
 f"""#!/usr/bin/env tcsh
-#PBS -N {job_name}-BM5
+#PBS -N {job_name}-{scenario}-BM5
 #PBS -q medium
 #PBS -l nodes=1:ppn=48
 #PBS -S /bin/tcsh
@@ -179,7 +179,7 @@ f"""#!/usr/bin/env tcsh
     return job_setup(header, path, **job_params)
 
 
-def create_slurm_job(job_name, path, **job_params):
+def create_slurm_job(job_name, scenario, path, **job_params):
     """
     Create HADDOCK3 Alcazer job file.
 
@@ -198,7 +198,7 @@ def create_slurm_job(job_name, path, **job_params):
     """
     header = \
 f"""#!/usr/bin/env bash
-#SBATCH -J {job_name}-BM5
+#SBATCH -J {job_name}-{scenario}-BM5
 #SBATCH -p medium
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=48
@@ -281,22 +281,6 @@ ap.add_argument(
     )
 
 
-def load_args(ap):
-    """Load argument parser args."""
-    return ap.parse_args()
-
-
-def cli(ap, main):
-    """Command-line interface entry point."""
-    cmd = load_args(ap)
-    main(**vars(cmd))
-
-
-def maincli():
-    """Execute main client."""
-    cli(ap, main)
-
-
 def process_example(source_path, results_path, create_job_func):
     """
     Process each model example for benchmarking.
@@ -343,6 +327,7 @@ def process_example(source_path, results_path, create_job_func):
 
         job_str = create_job_func(
             pdb_id,
+            scenario=scn_name,
             path=model_folder,
             conf_f=cfg_file,
             )
@@ -351,6 +336,22 @@ def process_example(source_path, results_path, create_job_func):
         job_file.write_text(job_str)
 
     return
+
+
+def load_args(ap):
+    """Load argument parser args."""
+    return ap.parse_args()
+
+
+def cli(ap, main):
+    """Command-line interface entry point."""
+    cmd = load_args(ap)
+    main(**vars(cmd))
+
+
+def maincli():
+    """Execute main client."""
+    cli(ap, main)
 
 
 def main(benchmark_path, results_path, job_sys='torque'):

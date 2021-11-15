@@ -20,6 +20,11 @@ FCC_path = Path(
     'fcc',
     )
 
+bin_path = Path(
+    Path(__file__).resolve().parents[2],
+    'bin'
+    )
+
 
 # version
 version = "3.0.0"

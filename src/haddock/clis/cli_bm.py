@@ -223,8 +223,11 @@ def job_setup(header, run_path, conf_f):
     conf_f : Path or str
         Path to the configuration file.
     """
-    conda_sh = Path(Path(sys.executable).parent,
-                    '../../../etc/profile.d/conda.sh')
+    conda_sh = Path(
+        Path(sys.executable).parents[2],
+        'etc', 'profile.d', 'conda.sh'
+        )
+
     job = \
 f"""{header}
 
@@ -244,6 +247,11 @@ job_systems = {
 scenarios = {
     'true-interface': create_cfg_scn_1,
     'center-of-mass': create_cfg_scn_2,
+    }
+
+scenarios_acronym = {
+    'true-interface': 'ti',
+    'center-of-mass': 'com',
     }
 
 ap = argparse.ArgumentParser(description='Setup HADDOCK3 benchmark.')
@@ -337,7 +345,7 @@ def process_target(source_path, result_path, create_job_func):
 
         job_str = create_job_func(
             pdb_id,
-            scenario=scn_name,
+            scenario=scenarios_acronym[scn_name],
             root_path=root_p,
             run_path=run_folder,
             conf_f=cfg_file.relative_to(root_p),

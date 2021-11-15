@@ -14,6 +14,7 @@ A `BM folder` is a folder with the characteristics of:
 import argparse
 import string
 import sys
+import shutil
 from functools import partial
 from pathlib import Path
 
@@ -73,23 +74,20 @@ molecules = [
     ]
 
 [topoaa]
-autohis = true
 
 [rigidbody]
 ambig = {str(ambig_f)!r}
-sampling = 400
+sampling = 1000
 noecv = false
+
+[seletop]
+select = 200
 
 [flexref]
 ambig = {str(ambig_f)!r}
-cool1_steps = 500
-#sampling = 400
 
 [mdref]
 ambig = {str(ambig_f)!r}
-#sampling = 400
-cool1_steps = 10
-noecv = false
 """
     return cfg_str
 
@@ -179,9 +177,9 @@ f"""#!/usr/bin/env tcsh
     return job_setup(header, path, **job_params)
 
 
-def create_slurm_job(job_name, scenario, path, **job_params):
+def create_slurm_job(job_name, scenario, root_path, run_path, **job_params):
     """
-    Create HADDOCK3 Alcazer job file.
+    Create HADDOCK3 Slurm Batch job file.
 
     Parameters
     ----------
@@ -202,13 +200,14 @@ f"""#!/usr/bin/env bash
 #SBATCH -p medium
 #SBATCH --nodes=1
 #SBATCH --tasks-per-node=48
-#SBATCH -o {str(path)}/haddock.out
-#SBATCH -e {str(path)}/haddock.err
+#SBATCH --output=/dev/null
+#SBATCH --error=logs/{scenario}-haddock.err
+#SBATCH --workdir={root_path}
 """
-    return job_setup(header, path, **job_params)
+    return job_setup(header, run_path, **job_params)
 
 
-def job_setup(header, path, conf_f):
+def job_setup(header, run_path, conf_f):
     """
     Write body for the job script.
 
@@ -217,29 +216,23 @@ def job_setup(header, path, conf_f):
     header : str
         Configures queue manager system.
 
-    path : Path or str
+    run_path : Path or str
         Path where results will be stored. Must be synchronized with the
         `run_dir` path in the configuration file.
 
     conf_f : Path or str
         Path to the configuration file.
     """
+    conda_sh = Path(Path(sys.executable).parent,
+                    '../../../etc/profile.d/conda.sh')
     job = \
 f"""{header}
 
-source $HOME/miniconda3/etc/profile.d/conda.sh
+source {str(conda_sh)}
 conda activate haddock3
 
-cd {str(path)}
-touch RUNNING
 haddock3 {str(conf_f)}
-rm RUNNING
-
-#if ( -f {str(path)}/run-ti/ss.stats ) then
-#    touch DONE
-#else
-#    touch FAIL
-#endif"""
+"""
     return job
 
 
@@ -267,30 +260,30 @@ ap.add_argument(
     )
 
 ap.add_argument(
-    "results_path",
-    help="Where results will be stored.",
+    "output_path",
+    help="Where the executed benchmark will be stored.",
     type=_dir_path,
     )
 
 ap.add_argument(
     '--job-sys',
     dest='job_sys',
-    help='The system where the jobs will be run. Default `torque`.',
+    help='The system where the jobs will be run. Default `slurm`.',
     choices=list(job_systems.keys()),
-    default='torque',
+    default='slurm',
     )
 
 
-def process_example(source_path, results_path, create_job_func):
+def process_target(source_path, result_path, create_job_func):
     """
     Process each model example for benchmarking.
 
     Parameters
     ----------
     source_path : Path
-        The folder path to the model example.
+        The folder path to the target.
 
-    results_path : Path
+    result_path : Path
         The path where the results for the different scenarios will be
         saved.
 
@@ -302,34 +295,54 @@ def process_example(source_path, results_path, create_job_func):
     """
     pdb_id = source_path.name
 
-    ligand = Path(source_path, f'{pdb_id}_l_u.pdb').resolve()
-    receptor = Path(source_path, f'{pdb_id}_r_u.pdb').resolve()
+    # Define the root directory
+    root_p = Path(result_path, pdb_id).resolve()
+    root_p.mkdir(exist_ok=True, parents=True)
 
-    results_p = Path(results_path, pdb_id).resolve()
-    results_p.mkdir(exist_ok=True, parents=True)
+    # Define the input directory
+    #  all files required for the different scenarios
+    #  should be inside this folder
+    input_p = Path(root_p, 'input')
+    input_p.mkdir(exist_ok=True, parents=True)
+
+    ligand = shutil.copy(Path(source_path, f'{pdb_id}_l_u.pdb'), input_p)
+    receptor = shutil.copy(Path(source_path, f'{pdb_id}_r_u.pdb'), input_p)
+    ambig_tbl = shutil.copy(Path(source_path, 'ambig.tbl'), input_p)
+
+    ligand = Path(ligand).relative_to(root_p)
+    receptor = Path(receptor).relative_to(root_p)
+    ambig_tbl = Path(ambig_tbl).relative_to(root_p)
+
+    # Define the job folder
+    #  all job files should be here
+    job_p = Path(root_p, 'jobs')
+    job_p.mkdir(exist_ok=True, parents=True)
+
+    # Define the logs folder
+    log_p = Path(root_p, 'logs')
+    log_p.mkdir(exist_ok=True, parents=True)
 
     for scn_name, scn_func in scenarios.items():
 
-        model_folder = Path(results_path, pdb_id, scn_name).resolve()
-        model_folder.mkdir(exist_ok=True, parents=True)
+        run_folder = Path(result_path, pdb_id, f'run-{scn_name}')
+        run_folder = run_folder.relative_to(root_p)
 
-        cfg_file = Path(model_folder, 'run.cfg').resolve()
-        job_file = Path(model_folder, 'run.job').resolve()
-
-        run_folder = Path(results_p, scn_name, 'run').resolve()
+        cfg_file = Path(input_p, f'{scn_name}.cfg')
+        job_file = Path(job_p, f'{scn_name}.job')
 
         cfg_str = scn_func(
             run_folder,
             receptor,
             ligand,
-            Path(source_path, 'ambig.tbl'),
+            ambig_tbl,
             )
 
         job_str = create_job_func(
             pdb_id,
             scenario=scn_name,
-            path=model_folder,
-            conf_f=cfg_file,
+            root_path=root_p,
+            run_path=run_folder,
+            conf_f=cfg_file.relative_to(root_p),
             )
 
         cfg_file.write_text(cfg_str)
@@ -369,7 +382,7 @@ def list_sizes(valid_bm_folders):
     return {k: v for k, v in sorted(size_dic.items(), key=lambda item: item[1])}
 
 
-def main(benchmark_path, results_path, job_sys='torque'):
+def main(benchmark_path, output_path, job_sys='slurm'):
     """
     Create configuration and job scripts for HADDOCK3 benchmarking.
 
@@ -381,22 +394,22 @@ def main(benchmark_path, results_path, job_sys='torque'):
         The path to the benchmark models folder. In BM5-clean would be
         the 'HADDOCK-ready' folder.
 
-    results_path : Path
+    output_path : Path
         Where the results will be saved. A subfolder for each model in
         `benchmark_path` will be created.
 
     job_sys : str
         A key for `job_systems` dictionary.
     """
-    log.info('*** Creating benchmark scripts')
+    log.info('*** Preparing Benchnark scripts')
 
     valid_bm_folders = (f for f in benchmark_path.glob('*') if _is_valid(f))
     source_folders = list_sizes(valid_bm_folders).keys()
-    log.info(f'* creating {len(source_folders)} benchmark jobs')
+    log.info(f'* Creating benchmark jobs for {len(source_folders)} targets')
 
     pe = partial(
-        process_example,
-        results_path=results_path,
+        process_target,
+        result_path=output_path,
         create_job_func=job_systems[job_sys],
         )
 

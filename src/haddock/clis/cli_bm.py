@@ -314,10 +314,12 @@ def process_target(source_path, result_path, create_job_func):
     ligand = shutil.copy(Path(source_path, f'{pdb_id}_l_u.pdb'), input_p)
     receptor = shutil.copy(Path(source_path, f'{pdb_id}_r_u.pdb'), input_p)
     ambig_tbl = shutil.copy(Path(source_path, 'ambig.tbl'), input_p)
+    target = shutil.copy(Path(source_path, 'ana_scripts', 'target.pdb'), input_p)  # noqa: E501
 
     ligand = Path(ligand).relative_to(root_p)
     receptor = Path(receptor).relative_to(root_p)
     ambig_tbl = Path(ambig_tbl).relative_to(root_p)
+    target = Path(target).relative_to(root_p)
 
     # Define the job folder
     #  all job files should be here

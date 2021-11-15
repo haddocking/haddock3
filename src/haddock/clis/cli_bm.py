@@ -290,8 +290,6 @@ def process_target(source_path, result_path, create_job_func):
     create_job_func : callable
         A function to create the job script. This is an argument because
         there are several queue systems available. See `job_systems`.
-
-
     """
     pdb_id = source_path.name
 

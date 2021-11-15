@@ -12,9 +12,9 @@ A `BM folder` is a folder with the characteristics of:
     https://github.com/haddocking/BM5-clean
 """
 import argparse
+import shutil
 import string
 import sys
-import shutil
 from functools import partial
 from pathlib import Path
 

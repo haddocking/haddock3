@@ -324,7 +324,7 @@ def process_target(source_path, result_path, create_job_func):
 
     for scn_name, scn_func in scenarios.items():
 
-        run_folder = Path(result_path, pdb_id, f'run-{scn_name}')
+        run_folder = Path(result_path, pdb_id, f'run-{scn_name}').resolve()
         run_folder = run_folder.relative_to(root_p)
 
         cfg_file = Path(input_p, f'{scn_name}.cfg')

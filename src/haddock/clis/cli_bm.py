@@ -354,6 +354,21 @@ def maincli():
     cli(ap, main)
 
 
+def list_sizes(valid_bm_folders):
+    """List the sizes of the BM5 Targets."""
+    size_dic = {}
+    for bm_folder in valid_bm_folders:
+        reference_strct = Path(bm_folder, 'ana_scripts/target.pdb')
+        size = 0
+        with open(reference_strct, 'r') as fh:
+            for line in fh.readlines():
+                if line.startswith('ATOM') and 'CA' in line[11:16]:
+                    size += 1
+        size_dic[bm_folder] = size
+
+    return {k: v for k, v in sorted(size_dic.items(), key=lambda item: item[1])}
+
+
 def main(benchmark_path, results_path, job_sys='torque'):
     """
     Create configuration and job scripts for HADDOCK3 benchmarking.
@@ -375,8 +390,8 @@ def main(benchmark_path, results_path, job_sys='torque'):
     """
     log.info('*** Creating benchmark scripts')
 
-    _ = (f for f in benchmark_path.glob('*') if _is_valid(f))
-    source_folders = sorted(_)
+    valid_bm_folders = (f for f in benchmark_path.glob('*') if _is_valid(f))
+    source_folders = list_sizes(valid_bm_folders).keys()
     log.info(f'* creating {len(source_folders)} benchmark jobs')
 
     pe = partial(

@@ -148,7 +148,7 @@ class HaddockModule(BaseHaddockModule):
 
     def run(self, **params):
         """Execute module."""
-        log.info("Running [capricalc] module")
+        log.info("Running [caprieval] module")
 
         super().run(params)
 

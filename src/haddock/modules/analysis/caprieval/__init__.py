@@ -95,7 +95,7 @@ def write_coords(output_name, coor_list):
 
 
 def load_contacts(pdb_f, cutoff):
-    """Load residue-based contacts"""
+    """Load residue-based contacts."""
     con_list = []
     structure = read_pdb(pdb_f)
     for atom_i, atom_j in get_intermolecular_contacts(structure, cutoff):
@@ -168,6 +168,7 @@ def identify_interface(pdb_f, cutoff):
 
 
 class CAPRI:
+    """CAPRI class."""
 
     def __init__(self, reference, model_list, atoms):
         self.reference = reference
@@ -185,7 +186,6 @@ class CAPRI:
 
     def irmsd(self, cutoff=10.):
         """Calculate the I-RMSD."""
-
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
 
@@ -214,7 +214,6 @@ class CAPRI:
 
     def lrmsd(self, receptor_chain, ligand_chain):
         """Calculate the L-RMSD."""
-
         ref_resdic = read_res(self.reference)
 
         ref_receptor_resdic = copy.deepcopy(ref_resdic)
@@ -280,11 +279,7 @@ class CAPRI:
         return self.lrmsd_dic
 
     def ilrmsd(self, ligand_chain, cutoff):
-        """Calculate the Interface Ligand RMSD"""
-
-        # align on the surface
-        #  calculate on the ligands
-
+        """Calculate the Interface Ligand RMSD."""
         ref_resdic = read_res(self.reference)
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)

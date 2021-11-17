@@ -50,15 +50,15 @@ class Job:
     def __init__(self, job_f, job_system):
         self.job_filename = job_f
 
-        self.job_system = job_system_launch[job_system]
+        self.job_system = job_system
 
         # previous jog path
         job_stem = job_f.stem
         self.job_run_folder = Path(job_f.parents[1], f'run-{job_stem}')
-        print(self.job_run_folder)
 
         self.check_done = Path(self.job_run_folder, 'DONE')
         self.check_running = Path(self.job_run_folder, 'RUNNING')
+        self.check_available = Path(self.job_run_folder, 'AVAILABLE')
         self.check_fail = Path(self.job_run_folder, 'FAIL')
         self.status = None
 
@@ -66,6 +66,7 @@ class Job:
             self.check_done,
             self.check_running,
             self.check_fail,
+            self.check_available
             ]
 
     def get_status(self):
@@ -80,14 +81,12 @@ class Job:
             if _file.exists():
                 self.status = _file.stem
                 break
-        else:
-            self.status = 'AVAILABLE'
-
         return self.status
 
     def submit(self):
         """Submit job."""
         subprocess.run([self.job_system, self.job_filename])
+        print('Job sent: ', [self.job_system, self.job_filename])
 
 
 def get_current_jobs(grep='BM5'):
@@ -155,7 +154,9 @@ def filter_available(job_list, status='AVAILABLE'):
     list
         The list with the `Job`s with matching `status`.
     """
-    return [j for j in job_list if j.get_status() == status]
+    jobs = [j for j in job_list if j.get_status() == status]
+    print(f'Number of {status} jobs: {len(jobs)}.')
+    return jobs
 
 
 def main(benchmark_path, job_limit=10, job_sys='slurm'):
@@ -167,7 +168,8 @@ def main(benchmark_path, job_limit=10, job_sys='slurm'):
 
     job_list.sort(key=calc_size, reverse=True)
 
-    jobs = [Job(j, job_sys) for j in job_list]
+    _jobsys = job_system_launch[job_sys]
+    jobs = [Job(j, _jobsys) for j in job_list]
     available_jobs = filter_available(jobs)
 
     while available_jobs:
@@ -175,13 +177,16 @@ def main(benchmark_path, job_limit=10, job_sys='slurm'):
         # 0 is added to avoid going to negative values in case a job
         # had been manually submitted.
         empty_spots = max(0, job_limit - get_current_jobs())
+        print('empty spots: ', empty_spots)
 
         for i in range(empty_spots):
             available_jobs[i].submit()
             time.sleep(5)
 
         # chill
+        print('chilling for 120 seconds...')
         time.sleep(120)
+
         available_jobs = filter_available(jobs)
 
     return

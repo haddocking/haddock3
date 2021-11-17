@@ -175,7 +175,55 @@ noecv = false
     return cfg_str
 
 
-def create_torque_job(job_name, scenario, path, **job_params):
+def create_job(
+        create_job_header,
+        create_job_body,
+        create_job_tail,
+        job_name_prefix,
+        scenario_name,
+        job_name_suffix,
+        queue_name,
+        ncores,
+        work_dir,
+        run_dir,
+        #
+        config_file,
+        ):
+    """."""
+    # create job header
+    job_name = f'{job_name_prefix}-{scenario_name}-{job_name_suffix}'
+    std_out = str(Path('logs', 'haddock.out'))
+    std_err = str(Path('logs', 'haddock.err'))
+
+    job_header = create_job_header(
+        job_name,
+        work_dir=work_dir,
+        stdout_path=std_out,
+        stderr_path=std_err,
+        queue=queue_name,
+        ncores=ncores,
+        )
+
+    available_flag = str(Path(run_dir, 'AVAILABLE'))
+    running_flag = str(Path(run_dir, 'RUNNING'))
+    done_flag = str(Path(run_dir, 'DONE'))
+    fail_flag = str(Path(run_dir, 'FAIL'))
+
+    job_body = create_job_body(available_flag, running_flag, config_file)
+
+    job_tail = create_job_tail(std_err, done_flag, fail_flag)
+
+    return job_header + job_body + job_tail
+
+
+def create_torque_header(
+        job_name,
+        work_dir,
+        stdout_path,
+        stderr_path,
+        queue='medium',
+        ncores=48,
+        ):
     """
     Create HADDOCK3 Alcazer job file.
 
@@ -194,17 +242,25 @@ def create_torque_job(job_name, scenario, path, **job_params):
     """
     header = \
 f"""#!/usr/bin/env tcsh
-#PBS -N {job_name}-{scenario}-BM5
-#PBS -q medium
-#PBS -l nodes=1:ppn=48
+#PBS -N {job_name}
+#PBS -q {queue}
+#PBS -l nodes=1:ppn={str(ncores)}
 #PBS -S /bin/tcsh
-#PBS -o {str(path)}/haddock.out
-#PBS -e {str(path)}/haddock.err
+#PBS -o {stdout_path}
+#PBS -e {stderr_path}
+#PBS -wd {work_dir}
 """
-    return job_setup(header, path, **job_params)
+    return header
 
 
-def create_slurm_job(job_name, scenario, root_path, run_path, **job_params):
+def create_slurm_header(
+        job_name,
+        work_dir,
+        stdout_path,
+        stderr_path,
+        queue='medium',
+        ncores=48,
+        ):
     """
     Create HADDOCK3 Slurm Batch job file.
 
@@ -223,18 +279,18 @@ def create_slurm_job(job_name, scenario, root_path, run_path, **job_params):
     """
     header = \
 f"""#!/usr/bin/env bash
-#SBATCH -J {job_name}-{scenario}-BM5
-#SBATCH -p medium
+#SBATCH -J {job_name}
+#SBATCH -p {queue}
 #SBATCH --nodes=1
-#SBATCH --tasks-per-node=48
-#SBATCH --output=/dev/null
-#SBATCH --error=logs/{scenario}-haddock.err
-#SBATCH --workdir={root_path}
+#SBATCH --tasks-per-node={str(ncores)}
+#SBATCH --output={stdout_path}
+#SBATCH --error={stderr_path}
+#SBATCH --workdir={work_dir}
 """
-    return job_setup(header, run_path, **job_params)
+    return header
 
 
-def job_setup(header, run_path, conf_f):
+def setup_haddock3_job(available_flag, running_flag, conf_f):
     """
     Write body for the job script.
 
@@ -251,24 +307,41 @@ def job_setup(header, run_path, conf_f):
         Path to the configuration file.
     """
     conda_sh = Path(
-        Path(sys.executable).parents[2],
+        Path(sys.executable).parents[3],
         'etc', 'profile.d', 'conda.sh'
         )
 
-    job = \
-f"""{header}
-
+    job_body = \
+f"""
 source {str(conda_sh)}
 conda activate haddock3
 
+rm {str(available_flag)}
+touch {str(running_flag)}
 haddock3 {str(conf_f)}
+rm {str(running_flag)}
 """
-    return job
+    return job_body
 
 
-job_systems = {
-    'torque': create_torque_job,
-    'slurm': create_slurm_job,
+def process_job_execution_status(stderr, done, fail):
+    """Add execution status tail to job."""
+    tail = \
+f"""
+if [ -s {stderr} ]; then
+    # the file is not empty
+    touch {str(fail)}
+else
+    # the file is empty
+    touch {str(done)}
+fi
+"""
+    return tail
+
+
+create_job_header_funcs = {
+    'torque': create_torque_header,
+    'slurm': create_slurm_header,
     }
 
 benchmark_scenarios = {
@@ -309,7 +382,7 @@ ap.add_argument(
     '--job-sys',
     dest='job_sys',
     help='The system where the jobs will be run. Default `slurm`.',
-    choices=list(job_systems.keys()),
+    choices=list(create_job_header_funcs.keys()),
     default='slurm',
     )
 
@@ -322,6 +395,21 @@ ap.add_argument(
         'Useful to test the benchmark daemon.'
         ),
     action='store_true',
+    )
+
+ap.add_argument(
+    '-qu',
+    '--queue-name',
+    dest='queue_name',
+    help='The name of the queue where to send the jobs.',
+    default='medium',
+    )
+
+ap.add_argument(
+    '-n',
+    '--ncores',
+    help='Maximum number of processors to use.',
+    default=48,
     )
 
 
@@ -340,7 +428,8 @@ def process_target(source_path, result_path, create_job_func, scenarios):
 
     create_job_func : callable
         A function to create the job script. This is an argument because
-        there are several queue systems available. See `job_systems`.
+        there are several queue systems available. See
+        `create_job_header_funcs`.
     """
     pdb_id = source_path.name
 
@@ -376,24 +465,31 @@ def process_target(source_path, result_path, create_job_func, scenarios):
     for scn_name, scn_func in scenarios.items():
 
         run_folder = Path(result_path, pdb_id, f'run-{scn_name}').resolve()
-        run_folder = run_folder.relative_to(root_p)
+        run_folder.mkdir(parents=True, exist_ok=True)
+
+        available_file = Path(run_folder, 'AVAILABLE')
+        available_file.touch()
+
+        run_folder_rel = run_folder.relative_to(root_p)
+
+        run_job_folder = Path(run_folder_rel, 'run')
 
         cfg_file = Path(input_p, f'{scn_name}.cfg')
         job_file = Path(job_p, f'{scn_name}.job')
 
         cfg_str = scn_func(
-            run_folder,
+            run_job_folder,
             receptor,
             ligand,
             ambig_tbl,
             )
 
         job_str = create_job_func(
-            pdb_id,
-            scenario=scenarios_acronym[scn_name],
-            root_path=root_p,
-            run_path=run_folder,
-            conf_f=cfg_file.relative_to(root_p),
+            job_name_prefix=pdb_id,
+            scenario_name=scenarios_acronym[scn_name],
+            work_dir=root_p,
+            run_dir=run_folder_rel,
+            config_file=cfg_file.relative_to(root_p),
             )
 
         cfg_file.write_text(cfg_str)
@@ -418,7 +514,14 @@ def maincli():
     cli(ap, main)
 
 
-def main(benchmark_path, output_path, job_sys='slurm', test_daemon=False):
+def main(
+        benchmark_path,
+        output_path,
+        job_sys='slurm',
+        test_daemon=False,
+        queue_name='medium',
+        ncores=48,
+        ):
     """
     Create configuration and job scripts for HADDOCK3 benchmarking.
 
@@ -435,7 +538,7 @@ def main(benchmark_path, output_path, job_sys='slurm', test_daemon=False):
         `benchmark_path` will be created.
 
     job_sys : str
-        A key for `job_systems` dictionary.
+        A key for `create_job_header_funcs` dictionary.
     """
     log.info('*** Preparing Benchnark scripts')
 
@@ -445,10 +548,20 @@ def main(benchmark_path, output_path, job_sys='slurm', test_daemon=False):
 
     _scenarios = test_scenarios if test_daemon else benchmark_scenarios
 
+    _create_job_func = partial(
+        create_job,
+        create_job_header=create_job_header_funcs[job_sys],
+        create_job_body=setup_haddock3_job,
+        create_job_tail=process_job_execution_status,
+        queue_name=queue_name,
+        ncores=ncores,
+        job_name_suffix='BM5',
+        )
+
     pe = partial(
         process_target,
         result_path=output_path,
-        create_job_func=job_systems[job_sys],
+        create_job_func=_create_job_func,
         scenarios=_scenarios
         )
 

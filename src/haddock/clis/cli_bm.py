@@ -40,6 +40,33 @@ def _is_valid(f, cap_and_dig=capital_and_digits):
     return _is_valid
 
 
+def create_cfg_test_daemon(
+        run_dir,
+        receptor_f,
+        ligand_f,
+        *ignore,
+        **everythinelse):
+    """
+    Create HADDOCK3 configuration file just for topology.
+
+    This function is usefull to use test the benchmark daemon.
+    """
+    cfg_str = \
+f"""
+run_dir = {str(run_dir)!r}
+ncores = 2
+
+molecules = [
+    {str(receptor_f)!r},
+    {str(ligand_f)!r}
+    ]
+
+[topoaa]
+
+"""
+    return cfg_str
+
+
 def create_cfg_scn_1(run_dir, receptor_f, ligand_f, ambig_f):
     """
     Create HADDOCK3 configuration file.
@@ -244,14 +271,19 @@ job_systems = {
     'slurm': create_slurm_job,
     }
 
-scenarios = {
+benchmark_scenarios = {
     'true-interface': create_cfg_scn_1,
     'center-of-mass': create_cfg_scn_2,
+    }
+
+test_scenarios = {
+    'test-daemon': create_cfg_test_daemon,
     }
 
 scenarios_acronym = {
     'true-interface': 'ti',
     'center-of-mass': 'com',
+    'test-daemon': 'tdmn',
     }
 
 ap = argparse.ArgumentParser(description='Setup HADDOCK3 benchmark.')
@@ -281,8 +313,19 @@ ap.add_argument(
     default='slurm',
     )
 
+ap.add_argument(
+    '-td',
+    '--test-daemon',
+    dest='test_daemon',
+    help=(
+        'Creates configuration files just with the `topology` module. '
+        'Useful to test the benchmark daemon.'
+        ),
+    action='store_true',
+    )
 
-def process_target(source_path, result_path, create_job_func):
+
+def process_target(source_path, result_path, create_job_func, scenarios):
     """
     Process each model example for benchmarking.
 
@@ -375,7 +418,7 @@ def maincli():
     cli(ap, main)
 
 
-def main(benchmark_path, output_path, job_sys='slurm'):
+def main(benchmark_path, output_path, job_sys='slurm', test_daemon=False):
     """
     Create configuration and job scripts for HADDOCK3 benchmarking.
 
@@ -400,10 +443,13 @@ def main(benchmark_path, output_path, job_sys='slurm'):
     source_folders = sorted(_)
     log.info(f'* Creating benchmark jobs for {len(source_folders)} targets')
 
+    _scenarios = test_scenarios if test_daemon else benchmark_scenarios
+
     pe = partial(
         process_target,
         result_path=output_path,
         create_job_func=job_systems[job_sys],
+        scenarios=_scenarios
         )
 
     for source_path in source_folders:

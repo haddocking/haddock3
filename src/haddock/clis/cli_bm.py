@@ -4,8 +4,25 @@ Prepare HADDOCK3 benchmark configuration files and job scripts.
 Creates HADDOCK3 configuration files and job files. Details on each
 parameter are explained in the `-h` menu.
 
-There's also a test flag that generates jobs only with `topology` creation. This
-feature helps testing the `haddock3-dmn` client.
+There's also a test flag that generates jobs only with `topology`
+creation. This feature helps testing the `haddock3-dmn` client.
+
+The state of the jobs is identified by a file tag:
+    - AVAILABLE
+    - RUNNING
+    - DONE
+    - FAIL
+
+At start, all jobs have the AVAILABLE tag, and this tag is upgraded as
+the job completes. To know which jobs are in each state, navigate to the
+<output dir> and grep the tags, for example:
+
+    grep -r "AVAILABLE" .
+    grep -r "RUNNING" .
+    grep -r "DONE" .
+    grep -r "FAIL" .
+
+Jobs are identified as FAIL if there are messages in the stderr file.
 
 USAGE:
     haddock3-bm -h

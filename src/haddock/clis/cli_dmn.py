@@ -1,11 +1,14 @@
 r"""
 HADDOCK3 benchmark submission daemon.
 
-6   (_) L|J
-6   (")  |
-6   /_\--|
-6 _/\ /  |
-6   _W_  |
+   (_) L|J
+   (")  |
+   /_\--|
+ _/\ /  |
+   _W_  |
+
+Usage:
+    haddock3-dmn <benchmark folder>  --job-limit <num>
 """
 import argparse
 import os
@@ -21,16 +24,22 @@ job_system_launch = {
     }
 
 
-ap = argparse.ArgumentParser(description='HADDOCK3 benchmark submission daemon.')  # noqa: E501
+ap = argparse.ArgumentParser(
+    prog='HADDOCK3 benchmark submission daemon.',
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+
 ap.add_argument(
     "benchmark_path",
     help='Path to the benchmark folder as prepared by `haddock3-bm` interface.',
     type=Path,
     )
+
 ap.add_argument(
     "--job-limit",
     dest='job_limit',
-    help="How many jobs should run at the same time.",
+    help="How many jobs should run at the same time. Default: 10",
     default=10,
     type=int,
     )

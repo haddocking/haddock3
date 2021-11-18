@@ -4,9 +4,14 @@ Prepare HADDOCK3 benchmark configuration files and job scripts.
 Creates HADDOCK3 configuration files and job files. Details on each
 parameter are explained in the `-h` menu.
 
+There's also a test flag that generates jobs only with `topology` creation. This
+feature helps testing the `haddock3-dmn` client.
+
 USAGE:
     haddock3-bm -h
-    haddock3-bm <BM folder> <results folder> --job-sys [OPTION]
+    haddock3-bm <BM dir> <output dir> --job-sys <option>
+    haddock3-bm <BM dir> <output dir> --job-sys <option> -n <num cores>
+    haddock3-bm <BM dir> <output dir> --job-sys <option> -n <num cores> -td
 
 A `BM folder` is a folder with the characteristics of:
     https://github.com/haddocking/BM5-clean
@@ -339,80 +344,6 @@ fi
     return tail
 
 
-create_job_header_funcs = {
-    'torque': create_torque_header,
-    'slurm': create_slurm_header,
-    }
-
-benchmark_scenarios = {
-    'true-interface': create_cfg_scn_1,
-    'center-of-mass': create_cfg_scn_2,
-    }
-
-test_scenarios = {
-    'test-daemon': create_cfg_test_daemon,
-    }
-
-scenarios_acronym = {
-    'true-interface': 'ti',
-    'center-of-mass': 'com',
-    'test-daemon': 'tdmn',
-    }
-
-ap = argparse.ArgumentParser(description='Setup HADDOCK3 benchmark.')
-ap.add_argument(
-    "benchmark_path",
-    help=(
-        'Location of BM5 folder. '
-        'This folder should have a subfolder for each model. '
-        'We expected each subfolder to have the name of a PDBID. '
-        'That is, folder starting with capital letters or numbers '
-        'will be considered.'
-        ),
-    type=_dir_path,
-    )
-
-ap.add_argument(
-    "output_path",
-    help="Where the executed benchmark will be stored.",
-    type=_dir_path,
-    )
-
-ap.add_argument(
-    '--job-sys',
-    dest='job_sys',
-    help='The system where the jobs will be run. Default `slurm`.',
-    choices=list(create_job_header_funcs.keys()),
-    default='slurm',
-    )
-
-ap.add_argument(
-    '-td',
-    '--test-daemon',
-    dest='test_daemon',
-    help=(
-        'Creates configuration files just with the `topology` module. '
-        'Useful to test the benchmark daemon.'
-        ),
-    action='store_true',
-    )
-
-ap.add_argument(
-    '-qu',
-    '--queue-name',
-    dest='queue_name',
-    help='The name of the queue where to send the jobs.',
-    default='medium',
-    )
-
-ap.add_argument(
-    '-n',
-    '--ncores',
-    help='Maximum number of processors to use.',
-    default=48,
-    )
-
-
 def process_target(source_path, result_path, create_job_func, scenarios):
     """
     Process each model example for benchmarking.
@@ -498,6 +429,88 @@ def process_target(source_path, result_path, create_job_func, scenarios):
     return
 
 
+create_job_header_funcs = {
+    'torque': create_torque_header,
+    'slurm': create_slurm_header,
+    }
+
+benchmark_scenarios = {
+    'true-interface': create_cfg_scn_1,
+    'center-of-mass': create_cfg_scn_2,
+    }
+
+test_scenarios = {
+    'test-daemon': create_cfg_test_daemon,
+    }
+
+scenarios_acronym = {
+    'true-interface': 'ti',
+    'center-of-mass': 'com',
+    'test-daemon': 'tdmn',
+    }
+
+ap = argparse.ArgumentParser(
+    prog='HADDOCK3 benchmark setup.',
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+
+ap.add_argument(
+    "benchmark_path",
+    help=(
+        'Location of BM5 folder. '
+        'This folder should have a subfolder for each model. '
+        'We expected each subfolder to have the name of a PDBID. '
+        'That is, folder starting with capital letters or numbers '
+        'will be considered.'
+        ),
+    type=_dir_path,
+    )
+
+ap.add_argument(
+    "output_path",
+    help="Where the prepared jobs and the executed benchmark will be stored.",
+    type=_dir_path,
+    )
+
+ap.add_argument(
+    '--job-sys',
+    dest='job_sys',
+    help='The system where the jobs will be run. Default `slurm`.',
+    choices=list(create_job_header_funcs.keys()),
+    default='slurm',
+    )
+
+ap.add_argument(
+    '-td',
+    '--test-daemon',
+    dest='test_daemon',
+    help=(
+        'Creates configuration files just with the `topology` module. '
+        'Useful to test the benchmark daemon. Default `False`.'
+        ),
+    action='store_true',
+    )
+
+ap.add_argument(
+    '-qu',
+    '--queue-name',
+    dest='queue_name',
+    help=(
+        'The name of the queue where to send the jobs. '
+        'Default \'medium\'.'
+        ),
+    default='medium',
+    )
+
+ap.add_argument(
+    '-n',
+    '--ncores',
+    help='Maximum number of processors to use. Default: 48',
+    default=48,
+    )
+
+
 def load_args(ap):
     """Load argument parser args."""
     return ap.parse_args()
@@ -518,9 +531,9 @@ def main(
         benchmark_path,
         output_path,
         job_sys='slurm',
-        test_daemon=False,
-        queue_name='medium',
         ncores=48,
+        queue_name='medium',
+        test_daemon=False,
         ):
     """
     Create configuration and job scripts for HADDOCK3 benchmarking.
@@ -538,7 +551,21 @@ def main(
         `benchmark_path` will be created.
 
     job_sys : str
-        A key for `create_job_header_funcs` dictionary.
+        A key for `create_job_header_funcs` dictionary. These relate to
+        the queue managing software installed in your system. Examples
+        are 'slurm' and 'torque'.
+
+    ncores : int
+        The number of CPUs to use in the created jobs.
+
+    queue_name : str
+        The name of the queue where the jobs will be sent. This depends
+        on your system configurations.
+
+    test-daemon : bool
+        If `True`, generates short jobs where only the `topology` will
+        be created. This facilitates testing the `haddoc3 benchmark
+        daemon`.
     """
     log.info('*** Preparing Benchnark scripts')
 

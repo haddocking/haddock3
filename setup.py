@@ -73,7 +73,7 @@ setup(
         'console_scripts': [
             'haddock3 = haddock.clis.cli:maincli',
             'haddock3-bm = haddock.clis.cli_bm:maincli',
-            'haddock3-bmd = haddock.clis.cli_bmd:maincli',
+            'haddock3-dmn = haddock.clis.cli_dmn:maincli',
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

@@ -94,8 +94,8 @@ class Job:
 
     def submit(self):
         """Submit job."""
-        subprocess.run([self.job_system, self.job_filename])
-        print('Job sent: ', [self.job_system, self.job_filename])
+        subprocess.run([self.job_system, str(self.job_filename)])
+        print('Job sent: ', [self.job_system, str(self.job_filename)])
 
 
 def get_current_jobs(grep='BM5'):
@@ -112,7 +112,7 @@ def get_current_jobs(grep='BM5'):
     int
         The number of jobs with the word `grep` in their name.
     """
-    concurrent_cmd = "qstat -a | awk '{print $4}' | grep ' + grep + ' | wc -l"
+    concurrent_cmd = "qstat -a | awk '{print $4}' | grep " + grep + " | wc -l"
     p = subprocess.Popen(
         concurrent_cmd,
         shell=True,

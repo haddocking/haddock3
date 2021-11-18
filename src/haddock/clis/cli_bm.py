@@ -17,10 +17,10 @@ At start, all jobs have the AVAILABLE tag, and this tag is upgraded as
 the job completes. To know which jobs are in each state, navigate to the
 <output dir> and grep the tags, for example:
 
-    grep -r "AVAILABLE" .
-    grep -r "RUNNING" .
-    grep -r "DONE" .
-    grep -r "FAIL" .
+    find . -name "AVAILABLE"
+    find . -name "RUNNING"
+    find . -name "DONE"
+    find . -name "FAIL"
 
 Jobs are identified as FAIL if there are messages in the stderr file.
 

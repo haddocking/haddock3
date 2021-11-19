@@ -10,17 +10,13 @@ from fccpy import read_pdb
 from fccpy.contacts import get_intermolecular_contacts
 from pdbtools import pdb_segxchain
 
-from haddock import bin_path, log
-from haddock.gear.config_reader import read_config
+from haddock import log
 from haddock.libs.libontology import Format, ModuleIO
 from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
-
-# FIXME: Add this as a parameter
-BACKBONE_ATOMS = ['C', 'CA', 'N', 'O']
 
 
 def add_chain_from_segid(pdb_path):
@@ -391,15 +387,6 @@ class HaddockModule(BaseHaddockModule):
     @classmethod
     def confirm_installation(cls):
         """Confirm if contact executable is compiled."""
-        dcfg = read_config(DEFAULT_CONFIG)
-        exec_path = Path(bin_path, dcfg['contact_exec'])
-
-        if not os.access(exec_path, mode=os.F_OK):
-            raise Exception(f'Required {str(exec_path)} file does not exist.')
-
-        if not os.access(exec_path, mode=os.X_OK):
-            raise Exception(f'Required {str(exec_path)} file is not executable')
-
         return
 
     def run(self, **params):
@@ -420,11 +407,16 @@ class HaddockModule(BaseHaddockModule):
             if p.file_type == Format.PDB
             ]
 
-        reference = Path(self.params['reference'])
-        if not reference:
-            # This was not defined, we cannot move on
-            _msg = 'reference structure not defined'
-            self.finish_with_error(_msg)
+        if not self.params['reference']:
+            # No reference was given, use the lowest
+            log.info('No reference was given, using best ranking structure'
+                     ' from previous step')
+            #  by default modes_to_calc should have been sorted by the module
+            #  that produced it
+            target_model = models_to_calc[0]
+            reference = Path(target_model.path, target_model.file_name)
+        else:
+            reference = Path(self.params['reference'])
 
         log.info(f'Using {reference} as reference structure')
 

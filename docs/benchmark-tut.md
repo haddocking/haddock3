@@ -33,9 +33,9 @@ command:
 
 ```
 # first, make a new folder where you want the runs to be stored
-mkdir <folder-where-the-BM-jobs-will-be-created> haddock3-bm
-BM5-clean/HADDOCK-ready <folder-where-the-BM-jobs-will-be-created>
-[OPTIONS] ```
+mkdir <folder-where-the-BM-jobs-will-be-created>
+haddock3-bm BM5-clean/HADDOCK-ready <folder-where-the-BM-jobs-will-be-created> [OPTIONS]
+```
 
 `[OPTIONS]` are optional :relaxed:. Look at the `haddock3-bm -h` help
 menu and select which ones better adapt to your system.

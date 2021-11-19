@@ -52,6 +52,22 @@ ap.add_argument(
     default='slurm',
     )
 
+ap.add_argument(
+    '--restart',
+    help='Restart the RUNNING jobs.',
+    action='store_true',
+    )
+
+ap.add_argument(
+    '--short-first',
+    dest='short_first',
+    help=(
+        'Sort jobs by size in ascending order. If not given jobs are order by '
+        'size in descending order: the biggest first.'
+        ),
+    action='store_true',
+    )
+
 
 class Job:
     """Job task."""
@@ -97,6 +113,13 @@ class Job:
         subprocess.run([self.job_system, str(self.job_filename)])
         print('Job sent: ', [self.job_system, str(self.job_filename)])
 
+    def restart(self):
+        """Restart the status of the job to `AVAILABLE`."""
+        self.check_done.unlink(missing_ok=True)
+        self.check_running.unlink(missing_ok=True)
+        self.check_fail.unlink(missing_ok=True)
+        self.check_available.touch(exist_ok=True)
+
 
 def get_current_jobs(grep='BM5'):
     """
@@ -120,7 +143,9 @@ def get_current_jobs(grep='BM5'):
         stderr=subprocess.STDOUT,
         )
     output = p.communicate()[0]
-    return int(output.decode('utf-8'))
+    njobs = int(output.decode('utf-8'))
+    print(f'Found {njobs} in the queue.')
+    return njobs
 
 
 def load_args(ap):
@@ -168,17 +193,29 @@ def filter_available(job_list, status='AVAILABLE'):
     return jobs
 
 
-def main(benchmark_path, job_limit=10, job_sys='slurm'):
+def main(
+        benchmark_path,
+        job_limit=10,
+        job_sys='slurm',
+        restart=False,
+        short_first=False,
+        ):
     """."""
     job_list = list(benchmark_path.glob('*/jobs/*.job'))
 
     if not job_list:
         sys.exit('+ ERROR! No jobs found in folder: {str(benchmark_path)!r}')
 
-    job_list.sort(key=calc_size, reverse=True)
+    job_list.sort(key=calc_size, reverse=not(short_first))
 
     _jobsys = job_system_launch[job_sys]
     jobs = [Job(j, _jobsys) for j in job_list]
+
+    if restart:
+        running_jobs = filter_available(jobs, status='RUNNING')
+        for _job in running_jobs:
+            _job.restart()
+
     available_jobs = filter_available(jobs)
 
     while available_jobs:

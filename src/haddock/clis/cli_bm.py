@@ -62,6 +62,14 @@ def _is_valid(f, cap_and_dig=capital_and_digits):
     return _is_valid
 
 
+def get_conda_path():
+    """Get conda source path."""
+    return Path(
+        Path(sys.executable).parents[3],
+        'etc', 'profile.d', 'conda.sh'
+        )
+
+
 def create_cfg_test_daemon(
         run_dir,
         receptor_f,
@@ -328,10 +336,7 @@ def setup_haddock3_job(available_flag, running_flag, conf_f):
     conf_f : Path or str
         Path to the configuration file.
     """
-    conda_sh = Path(
-        Path(sys.executable).parents[3],
-        'etc', 'profile.d', 'conda.sh'
-        )
+    conda_sh = get_conda_path()
 
     job_body = \
 f"""
@@ -446,6 +451,37 @@ def process_target(source_path, result_path, create_job_func, scenarios):
     return
 
 
+def make_daemon_job(
+        create_job_func,
+        workdir,
+        target_dir,
+        job_name='HD3-dmn',
+        stdout_path='daemon.out',
+        stderr_path='daemon.err',
+        queue='short',
+        ):
+    """Make a daemon-ready job."""
+    job_header = create_job_func(
+        job_name,
+        workdir,
+        stdout_path=stdout_path,
+        stderr_path=stderr_path,
+        queue=queue,
+        ncores=1,
+        )
+
+    conda_sh = get_conda_path()
+
+    job = f"""{job_header}
+
+source {str(conda_sh)}
+conda activate haddock3
+
+haddock3-dmn {str(target_dir)}
+"""
+    return job
+
+
 create_job_header_funcs = {
     'torque': create_torque_header,
     'slurm': create_slurm_header,
@@ -491,6 +527,7 @@ ap.add_argument(
     )
 
 ap.add_argument(
+    '-js',
     '--job-sys',
     dest='job_sys',
     help='The system where the jobs will be run. Default `slurm`.',
@@ -527,6 +564,17 @@ ap.add_argument(
     default=48,
     )
 
+ap.add_argument(
+    '-s',
+    '--suffix',
+    help=(
+        'A common suffix for all jobs. Defaults to \'BM5\'. Avoid using '
+        'long names because the job-name has a limited amount of characters.'
+        ),
+    default='BM5',
+    type=str,
+    )
+
 
 def load_args(ap):
     """Load argument parser args."""
@@ -551,6 +599,7 @@ def main(
         ncores=48,
         queue_name='medium',
         test_daemon=False,
+        suffix='BM5',
         ):
     """
     Create configuration and job scripts for HADDOCK3 benchmarking.
@@ -583,6 +632,9 @@ def main(
         If `True`, generates short jobs where only the `topology` will
         be created. This facilitates testing the `haddoc3 benchmark
         daemon`.
+
+    suffix : str
+        A common suffix for all jobs. Avoid using more than three chars.
     """
     log.info('*** Preparing Benchnark scripts')
 
@@ -599,7 +651,7 @@ def main(
         create_job_tail=process_job_execution_status,
         queue_name=queue_name,
         ncores=ncores,
-        job_name_suffix='BM5',
+        job_name_suffix=suffix,
         )
 
     pe = partial(
@@ -611,6 +663,15 @@ def main(
 
     for source_path in source_folders:
         pe(source_path)
+
+    dmn_job = make_daemon_job(
+        create_job_header_funcs[job_sys],
+        Path.cwd(),
+        output_path,
+        queue=queue_name,
+        )
+
+    Path(output_path, 'hd3-daemon.job').write_text(dmn_job)
 
     log.info('* done')
 

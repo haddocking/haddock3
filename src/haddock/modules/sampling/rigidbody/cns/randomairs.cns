@@ -11,14 +11,14 @@
 !
 
 if ($data.ncomponents > 2) then
-  evaluate ($errfile = "RUN:FAILED")
-  fileexist $errfile end
-  if ($result eq false) then
-    set display=$errfile end
-    display RANDOM DEFINITION OF AIRS FROM SOLVENT ACCESSIBLE RESIDUES ONLY
-    display SUPPORTED FOR TWO MOLECULES. USE CENTER-OF-MASS RESTRAINTS INSTEAD
-    close $errfile end
-  end if
+    evaluate ($errfile = "FAILED")
+    fileexist $errfile end
+    if ($result eq false) then
+        set display=$errfile end
+        display RANDOM DEFINITION OF AIRS FROM SOLVENT ACCESSIBLE RESIDUES ONLY
+        display SUPPORTED FOR TWO MOLECULES. USE CENTER-OF-MASS RESTRAINTS INSTEAD
+        close $errfile end
+    end if
 end if
 !
 ! first calculate accessible surface area
@@ -59,6 +59,7 @@ do (store3 = store3 / 178.50) (resn GLN)
 do (store3 = store3 / 238.76) (resn ARG)
 do (store3 = store3 / 116.50) (resn SER)
 do (store3 = store3 / 116.50) (resn SEP)
+do (store3 = store3 / 116.50) (resn PNS)
 do (store3 = store3 / 139.27) (resn THR)
 do (store3 = store3 / 139.27) (resn DDZ)
 do (store3 = store3 / 139.27) (resn TOP)
@@ -68,12 +69,13 @@ do (store3 = store3 / 212.76) (resn TYR)
 do (store3 = store3 / 212.76) (resn TYP)
 do (store3 = store3 / 212.76) (resn PTR)
 do (store3 = store3 / 212.76) (resn TYS)
+do (store3 = store3 / 402.89) (resn QSR)
 ! DNA/RNA bases 
-do (store3 = store3 / 170.0) (resn ADE)
-do (store3 = store3 / 170.0) (resn CYT)
-do (store3 = store3 / 170.0) (resn GUA)
-do (store3 = store3 / 170.0) (resn THY)
-do (store3 = store3 / 170.0) (resn URI)
+do (store3 = store3 / 170.0) (resn A or resn DA)
+do (store3 = store3 / 170.0) (resn C or resn DC)
+do (store3 = store3 / 170.0) (resn G or resn DG)
+do (store3 = store3 / 170.0) (resn T or resn DT)
+do (store3 = store3 / 170.0) (resn U)
 !
 ! Define random AIR restraints 
 !
@@ -83,40 +85,44 @@ do (store4 = 0) (all)
 ! Check if flexible segments defined from which to sample random AIRs
 evaluate($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
-  evaluate($nchain1 = $nchain1 + 1)
-  evaluate($fcounter=0)
-  evaluate($samplesurf = false)
+    evaluate($nchain1 = $nchain1 + 1)
+    evaluate($fcounter=0)
+    evaluate($samplesurf = false)
 
-  if ($Toppar.nseg_$nchain1 = 0) then
-    evaluate($samplesurf = true)
-  end if
-  if ($Toppar.nseg_$nchain1 = -1) then
-    evaluate($samplesurf = true)
-  end if
+    if ($Toppar.nseg_$nchain1 = 0) then
+        evaluate($samplesurf = true)
+    end if
+    if ($Toppar.nseg_$nchain1 = -1) then
+        evaluate($samplesurf = true)
+    end if
 
-  if ($samplesurf eq true) then
-    do (store5 = $nchain1) (segid $Toppar.prot_segid_$nchain1)
-    display RANDOM AIRS SAMPLED FROM ENTIRE SURFACE FOR MOLECULE $nchain1
-  else
-    evaluate ($numseg = abs($Toppar.nseg_$nchain1))
-    display RANDOM AIRS SAMPLED FROM SEMI-FLEXIBLE SEGMENTS FOR MOLECULE $nchain1
-    while ($fcounter < $numseg) loop Xflex
-      evaluate($fcounter=$fcounter + 1)
-      do (store5 = $nchain1) ( resid $Toppar.start_seg_$nchain1_$fcounter : $Toppar.end_seg_$nchain1_$fcounter
-                               and segid $Toppar.prot_segid_$nchain1)
-      display FLEXIBLE SEGMENT NR $fcounter FROM $Toppar.start_seg_$nchain1_$fcounter TO $Toppar.end_seg_$nchain1_$fcounter
-    end loop Xflex
-  end if
+    if ($samplesurf eq true) then
+        do (store5 = $nchain1) (segid $Toppar.prot_segid_$nchain1)
+        display RANDOM AIRS SAMPLED FROM ENTIRE SURFACE FOR MOLECULE $nchain1
+    else
+        evaluate ($numseg = abs($Toppar.nseg_$nchain1))
+        display RANDOM AIRS SAMPLED FROM SEMI-FLEXIBLE SEGMENTS FOR MOLECULE $nchain1
+        while ($fcounter < $numseg) loop Xflex
+            evaluate($fcounter=$fcounter + 1)
+            do (store5 = $nchain1) ( resid $Toppar.start_seg_$nchain1_$fcounter : $Toppar.end_seg_$nchain1_$fcounter
+                                     and segid $Toppar.prot_segid_$nchain1)
+            display FLEXIBLE SEGMENT NR $fcounter FROM $Toppar.start_seg_$nchain1_$fcounter TO $Toppar.end_seg_$nchain1_$fcounter
+        end loop Xflex
+    end if
 end loop nloop1
 
-for $atom_id in id ( tag and (attr store5 ne 0)) loop count
-  do (store4 = $icount) (byres (id $atom_id))
-  show sum (store3) (byres (id $atom_id))
-  do (store2 = $result) (byres (id $atom_id))
-  evaluate ($icount = $icount + 1)
-end loop count
+!
+! Filter out lipids
+!
+do (store3 = 0) ( resn DPP or resn PCW or resn PEE)
+do (store5 = 0) ( resn DPP or resn PCW or resn PEE)
 
-set message=on echo=on end
+for $atom_id in id ( tag and (attr store5 ne 0)) loop count
+    do (store4 = $icount) (byres (id $atom_id))
+    show sum (store3) (byres (id $atom_id))
+    do (store2 = $result) (byres (id $atom_id))
+    evaluate ($icount = $icount + 1)
+end loop count
 
 show min(store4) (segid $Toppar.prot_segid_1 and (attr store5 ne 0))
 evaluate ($rmin = $result)
@@ -127,24 +133,24 @@ evaluate ($rmax = $result)
 evaluate ($nres = $rmax - $rmin + 1)
 display $nres RESIDUE IN MOLECULE A SELECTED FOR RANDOM AIR DEFINITION
 if ($nres < 1) then
-  display NO RESIDUES IN DEFINED FLEXIBLE SEGMENTS FOR MOLECULE A
-  display RANDOM RESTRAINTS DEFINITION FAILED
-  display STOPPING...
-  stop
+    display NO RESIDUES IN DEFINED FLEXIBLE SEGMENTS FOR MOLECULE A
+    display RANDOM RESTRAINTS DEFINITION FAILED
+    display STOPPING...
+    stop
 end if
 
 if ($nres = 1) then
-  evaluate ($iselres1 = $rmax)
+    evaluate ($iselres1 = $rmax)
 else
-  evaluate ($done = 0)
-  while ($done = 0) loop trial
-    evaluate ($iselres1 = 0)
-    evaluate ($iselres1 = int(ran() * $rmax) + 1)
-    show sum (store3) (attribute store4 = $iselres1)
-    if ($result > 0.2) then
-      evaluate ($done = 1)
-    end if
-  end loop trial
+    evaluate ($done = 0)
+    while ($done = 0) loop trial
+        evaluate ($iselres1 = 0)
+        evaluate ($iselres1 = int(ran() * $rmax) + 1)
+        show sum (store3) (attribute store4 = $iselres1)
+        if ($result > 0.2) then
+            evaluate ($done = 1)
+        end if
+    end loop trial
 end if
 
 show min(store4) (segid $Toppar.prot_segid_2 and (attr store5 ne 0))
@@ -156,24 +162,24 @@ evaluate ($rmax = $result)
 display $nres RESIDUE IN MOLECULE B SELECTED FOR RANDOM AIR DEFINITION
 evaluate ($nres = $rmax - $rmin + 1)
 if ($nres < 1) then
-  display NO RESIDUES IN DEFINED FLEXIBLE SEGMENTS FOR MOLECULE B
-  display RANDOM RESTRAINTS DEFINITION FAILED
-  display STOPPING...
-  stop
+    display NO RESIDUES IN DEFINED FLEXIBLE SEGMENTS FOR MOLECULE B
+    display RANDOM RESTRAINTS DEFINITION FAILED
+    display STOPPING...
+    stop
 end if
 
 if ($nres = 1) then
-  evaluate ($iselres2 = $rmax)
+    evaluate ($iselres2 = $rmax)
 else
-  evaluate ($done = 0)
-  while ($done = 0) loop trial
-    evaluate ($iselres2 = 0)
-    evaluate ($iselres2 = int(ran() * ($rmax-$rmin+1)) + $rmin)
-    show sum (store3) (attribute store4 = $iselres2)
-    if ($result > 0.2) then
-      evaluate ($done = 1)
-    end if
-  end loop trial
+    evaluate ($done = 0)
+    while ($done = 0) loop trial
+        evaluate ($iselres2 = 0)
+        evaluate ($iselres2 = int(ran() * ($rmax-$rmin+1)) + $rmin)
+        show sum (store3) (attribute store4 = $iselres2)
+        if ($result > 0.2) then
+            evaluate ($done = 1)
+        end if
+    end loop trial
 end if
 
 show (resid) (attribute store4 = $iselres1 and tag)
@@ -198,43 +204,42 @@ display $selnam1 $selres1 $selseg1
 noe class ambig end
 
 noe
-   assign (resid $selres1 and segid $Toppar.prot_segid_1)
-          (attr store2 > 0.2 and segid $Toppar.prot_segid_2 and 
-           attr store5 ne 0 and (resid $selres2 or (resid $selres2) around 7.5)) 2.0 2.0 0.0
-   assign (resid $selres2 and segid $Toppar.prot_segid_2)
-          (attr store2 > 0.2 and segid $Toppar.prot_segid_1 and 
-           attr store5 ne 0 and (resid $selres1 or (resid $selres1) around 7.5)) 2.0 2.0 0.0
+    assign (resid $selres1 and segid $Toppar.prot_segid_1)
+           (attr store2 > 0.2 and segid $Toppar.prot_segid_2 and 
+            attr store5 ne 0 and (resid $selres2 or (resid $selres2) around 7.5)) 2.0 2.0 0.0
+    assign (resid $selres2 and segid $Toppar.prot_segid_2)
+           (attr store2 > 0.2 and segid $Toppar.prot_segid_1 and 
+            attr store5 ne 0 and (resid $selres1 or (resid $selres1) around 7.5)) 2.0 2.0 0.0
 end
 
 for $id in id ((resid $selres1 and attr store2 > 0.2) around 5.0 and tag and segid $selseg1 and not resid $selres1) loop neighbors1
-  show (resid) (id $id)
-  evaluate ($inres = $result)
-  show (segid) (id $id)
-  evaluate ($inseg = $result)
-  show (resn) (id $id)
-  evaluate ($inrsn = $result)
-  display $inrsn $inres $inseg
-  noe
-      assign (resid $inres and segid $Toppar.prot_segid_1)
-              (attr store2 > 0.2 and segid $Toppar.prot_segid_2 and 
-               attr store5 ne 0 and (resid $selres2 or (resid $selres2) around 7.5)) 2.0 2.0 0.0
-  end
+    show (resid) (id $id)
+    evaluate ($inres = $result)
+    show (segid) (id $id)
+    evaluate ($inseg = $result)
+    show (resn) (id $id)
+    evaluate ($inrsn = $result)
+    display $inrsn $inres $inseg
+    noe
+        assign (resid $inres and segid $Toppar.prot_segid_1)
+               (attr store2 > 0.2 and segid $Toppar.prot_segid_2 and 
+                attr store5 ne 0 and (resid $selres2 or (resid $selres2) around 7.5)) 2.0 2.0 0.0
+    end
 end loop neighbors1
 
 for $id in id ((resid $selres2 and attr store2 > 0.2) around 5.0 and tag and segid $selseg2 and not resid $selres2) loop neighbors2
-  show (resid) (id $id)
-  evaluate ($inres = $result)
-  show (segid) (id $id)
-  evaluate ($inseg = $result)
-  show (resn) (id $id)
-  evaluate ($inrsn = $result)
-  display $inrsn $inres $inseg
-  noe
-      assign (resid $inres and segid $Toppar.prot_segid_2)
-              (attr store2 > 0.2 and segid $Toppar.prot_segid_1 and 
-               attr store5 ne 0 and (resid $selres1 or (resid $selres1) around 7.5)) 2.0 2.0 0.0
-  end
+    show (resid) (id $id)
+    evaluate ($inres = $result)
+    show (segid) (id $id)
+    evaluate ($inseg = $result)
+    show (resn) (id $id)
+    evaluate ($inrsn = $result)
+    display $inrsn $inres $inseg
+    noe
+        assign (resid $inres and segid $Toppar.prot_segid_2)
+               (attr store2 > 0.2 and segid $Toppar.prot_segid_1 and 
+                attr store5 ne 0 and (resid $selres1 or (resid $selres1) around 7.5)) 2.0 2.0 0.0
+    end
 end loop neighbors2
 
 close $dispname end
-set message=off end

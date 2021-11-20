@@ -268,7 +268,7 @@ def prepare_single_input(pdb_input, psf_input=None):
     for i, segid in enumerate(chainsegs):
         input_str += f'eval ($prot_segid_{i+1}="{segid}"){linesep}'
 
-    seed = RND.randint(100, 999)
+    seed = RND.randint(100, 99999)
     input_str += f'eval ($seed={seed}){linesep}'
 
     return input_str

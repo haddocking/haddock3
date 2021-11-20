@@ -58,6 +58,8 @@ def generate_docking(
     output = f"{linesep}! Output structure{linesep}"
     output += (f"eval ($output_pdb_filename="
                f" \"{output_pdb_filename}\"){linesep}")
+    output += (f"eval ($count="
+               f"{identifier}){linesep}")
     inp = default_params + param + top + input_str + output \
         + topology_protonation + ambig_str + recipe_str
 

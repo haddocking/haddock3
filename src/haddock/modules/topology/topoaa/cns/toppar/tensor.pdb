@@ -1,0 +1,25 @@
+REMARK FILENAME="/Users/abonvin/haddock2.1/toppar/tensor.pdb"
+REMARK topology file for dipolar coupling calculations
+REMARK DATE:19-Nov-2007  11:56:26       created by user: abonvin
+REMARK VERSION:1.2
+ATOM      1  X   ANI   995       3.000   0.000   0.000  1.00  0.00      ANI 
+ATOM      2  Y   ANI   995       0.000   3.000   0.000  1.00  0.00      ANI 
+ATOM      3  Z   ANI   995       0.000   0.000   3.000  1.00  0.00      ANI 
+ATOM      4  OO  ANI   995       0.000   0.000   0.000  1.00  0.00      ANI 
+ATOM      5  X   ANI   996       3.000   0.000   0.000  1.00  0.00      ANI 
+ATOM      6  Y   ANI   996       0.000   3.000   0.000  1.00  0.00      ANI 
+ATOM      7  Z   ANI   996       0.000   0.000   3.000  1.00  0.00      ANI 
+ATOM      8  OO  ANI   996       0.000   0.000   0.000  1.00  0.00      ANI 
+ATOM      9  X   ANI   997       3.000   0.000   0.000  1.00  0.00      ANI 
+ATOM     10  Y   ANI   997       0.000   3.000   0.000  1.00  0.00      ANI 
+ATOM     11  Z   ANI   997       0.000   0.000   3.000  1.00  0.00      ANI 
+ATOM     12  OO  ANI   997       0.000   0.000   0.000  1.00  0.00      ANI 
+ATOM     13  X   ANI   998       3.000   0.000   0.000  1.00  0.00      ANI 
+ATOM     14  Y   ANI   998       0.000   3.000   0.000  1.00  0.00      ANI 
+ATOM     15  Z   ANI   998       0.000   0.000   3.000  1.00  0.00      ANI 
+ATOM     16  OO  ANI   998       0.000   0.000   0.000  1.00  0.00      ANI 
+ATOM     17  X   ANI   999       3.000   0.000   0.000  1.00  0.00      ANI 
+ATOM     18  Y   ANI   999       0.000   3.000   0.000  1.00  0.00      ANI 
+ATOM     19  Z   ANI   999       0.000   0.000   3.000  1.00  0.00      ANI 
+ATOM     20  OO  ANI   999       0.000   0.000   0.000  1.00  0.00      ANI 
+END

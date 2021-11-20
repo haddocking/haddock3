@@ -1,0 +1,706 @@
+remark file topallhdg.hemes
+
+set message off echo off end
+
+autogenerate
+  angles=true
+  dihedrals=false
+end
+
+mass CPA  12.011
+mass CPB  12.011
+mass CPM  12.011
+mass CYC  12.011
+mass CT   12.011
+mass C    12.011
+mass NPH  14.007
+mass NPH1 14.007
+mass NPH2 14.007
+mass CYN  14.007
+mass OC   15.9994
+mass FEH  55.847
+mass HA   1.008
+ 
+ 
+residue HEB ! Heme b
+  group
+    atom FE   type=FEH  charge= 0.24 end
+    atom NA   type=NPH  charge=-0.18 end
+    atom NB   type=NPH  charge=-0.18 end
+    atom NC   type=NPH  charge=-0.18 end
+    atom ND   type=NPH  charge=-0.18 end
+  group
+    atom C1A  type=CPA  charge= 0.12 end
+    atom CHA  type=CPM  charge=-0.10 end
+    atom HA   type=HA   charge= 0.10 end
+    atom C4D  type=CPA  charge= 0.12 end
+  group
+    atom C1B  type=CPA  charge= 0.12 end
+    atom CHB  type=CPM  charge=-0.10 end
+    atom HB   type=HA   charge= 0.10 end
+    atom C4A  type=CPA  charge= 0.12 end
+  group
+    atom C1C  type=CPA  charge= 0.12 end
+    atom CHC  type=CPM  charge=-0.10 end
+    atom HC   type=HA   charge= 0.10 end
+    atom C4B  type=CPA  charge= 0.12 end
+  group
+    atom C1D  type=CPA  charge= 0.12 end
+    atom CHD  type=CPM  charge=-0.10 end
+    atom HD   type=HA   charge= 0.10 end
+    atom C4C  type=CPA  charge= 0.12 end
+  group
+    atom C2A  type=CPB  charge=-0.06 end
+    atom CAA  type=CT   charge=-0.18 end
+    atom HAA1 type=HA   charge= 0.09 end
+    atom HAA2 type=HA   charge= 0.09 end
+  group
+    atom CBA  type=CT   charge=-0.28 end
+    atom HBA1 type=HA   charge= 0.09 end
+    atom HBA2 type=HA   charge= 0.09 end
+    atom CGA  type=C    charge= 0.62 end
+    atom O1A  type=OC   charge=-0.76 end
+    atom O2A  type=OC   charge=-0.76 end
+  group
+    atom C3A  type=CPB  charge=-0.06 end
+    atom CMA  type=CT   charge=-0.27 end
+    atom HMA1 type=HA   charge= 0.09 end
+    atom HMA2 type=HA   charge= 0.09 end
+    atom HMA3 type=HA   charge= 0.09 end
+  group
+    atom C2B  type=CPB  charge=-0.06 end
+    atom CMB  type=CT   charge=-0.27 end
+    atom HMB1 type=HA   charge= 0.09 end
+    atom HMB2 type=HA   charge= 0.09 end
+    atom HMB3 type=HA   charge= 0.09 end
+  group
+    atom C3B  type=CPB  charge=-0.06 end
+    atom CAB  type=C    charge=-0.20 end
+    atom HAB  type=HA   charge= 0.20 end
+    atom CBB  type=C    charge=-0.20 end
+    atom HBB1 type=HA   charge= 0.10 end
+    atom HBB2 type=HA   charge= 0.10 end
+  group
+    atom C2C  type=CPB  charge=-0.06 end
+    atom CMC  type=CT   charge=-0.27 end
+    atom HMC1 type=HA   charge= 0.09 end
+    atom HMC2 type=HA   charge= 0.09 end
+    atom HMC3 type=HA   charge= 0.09 end
+  group
+    atom C3C  type=CPB  charge=-0.06 end
+    atom CAC  type=C    charge=-0.20 end
+    atom HAC  type=HA   charge= 0.20 end
+    atom CBC  type=C    charge=-0.20 end
+    atom HBC1 type=HA   charge= 0.10 end
+    atom HBC2 type=HA   charge= 0.10 end
+  group
+    atom C2D  type=CPB  charge=-0.06 end
+    atom CMD  type=CT   charge=-0.27 end
+    atom HMD1 type=HA   charge= 0.09 end
+    atom HMD2 type=HA   charge= 0.09 end
+    atom HMD3 type=HA   charge= 0.09 end
+  group
+    atom C3D  type=CPB  charge=-0.06 end
+    atom CAD  type=CT   charge=-0.18 end
+    atom HAD1 type=HA   charge= 0.09 end
+    atom HAD2 type=HA   charge= 0.09 end
+  group
+    atom CBD  type=CT   charge=-0.28 end
+    atom HBD1 type=HA   charge= 0.09 end
+    atom HBD2 type=HA   charge= 0.09 end
+    atom CGD  type=C    charge= 0.62 end
+    atom O1D  type=OC   charge=-0.76 end
+    atom O2D  type=OC   charge=-0.76 end
+ 
+  bond FE   NA     
+  bond FE   NB     
+  bond FE   NC     
+  bond FE   ND     
+  bond NA   C1A    
+  bond C1A  C2A    
+  bond C2A  C3A    
+  bond C3A  C4A    
+  bond NA   C4A    
+  bond C2A  CAA    
+  bond CAA  CBA    
+  bond CBA  CGA    
+  bond CGA  O1A    
+  bond CGA  O2A    
+  bond C3A  CMA    
+  bond CHB  C4A    
+  bond CHB  C1B    
+  bond NB   C1B    
+  bond C1B  C2B    
+  bond C2B  C3B    
+  bond C3B  C4B    
+  bond NB   C4B    
+  bond C2B  CMB    
+  bond C3B  CAB    
+  bond CAB  CBB    
+  bond CHC  C4B    
+  bond CHC  C1C    
+  bond NC   C1C    
+  bond C1C  C2C    
+  bond C2C  C3C    
+  bond C3C  C4C    
+  bond NC   C4C    
+  bond C2C  CMC    
+  bond C3C  CAC    
+  bond CAC  CBC    
+  bond CHD  C4C    
+  bond CHD  C1D    
+  bond ND   C1D    
+  bond C1D  C2D    
+  bond C2D  C3D    
+  bond C3D  C4D    
+  bond ND   C4D    
+  bond C2D  CMD    
+  bond C3D  CAD    
+  bond CAD  CBD    
+  bond CBD  CGD    
+  bond CGD  O1D    
+  bond CGD  O2D    
+  bond CHA  C4D    
+  bond CHA  C1A    
+  bond CHA  HA     
+  bond CHB  HB     
+  bond CHC  HC     
+  bond CHD  HD     
+  bond CAA  HAA1   
+  bond CAA  HAA2   
+  bond CBA  HBA1   
+  bond CBA  HBA2   
+  bond CMA  HMA1   
+  bond CMA  HMA2   
+  bond CMA  HMA3   
+  bond CMB  HMB1   
+  bond CMB  HMB2   
+  bond CMB  HMB3   
+  bond CAB  HAB    
+  bond CBB  HBB1   
+  bond CBB  HBB2   
+  bond CMC  HMC1   
+  bond CMC  HMC2   
+  bond CMC  HMC3   
+  bond CAC  HAC    
+  bond CBC  HBC1   
+  bond CBC  HBC2   
+  bond CMD  HMD1   
+  bond CMD  HMD2   
+  bond CMD  HMD3   
+  bond CAD  HAD1   
+  bond CAD  HAD2   
+  bond CBD  HBD1
+  bond CBD  HBD2
+
+  omit angle NA FE NC
+  omit angle NB FE ND
+ 
+  improper C2A  C1A  C3A  CAA    
+  improper C3A  C2A  C4A  CMA    
+  improper C2B  C1B  C3B  CMB    
+  improper C3B  C2B  C4B  CAB    
+  improper C2C  C1C  C3C  CMC    
+  improper C3C  C2C  C4C  CAC    
+  improper C2D  C1D  C3D  CMD    
+  improper C3D  C2D  C4D  CAD    
+  improper CGA  CBA  O2A  O1A    
+  improper CGD  CBD  O2D  O1D    
+  improper C4A  NA   C1A  C2A    
+  improper C1A  NA   C4A  C3A    
+  improper C4B  NB   C1B  C2B    
+  improper C1B  NB   C4B  C3B    
+  improper C4C  NC   C1C  C2C    
+  improper C1C  NC   C4C  C3C    
+  improper C4D  ND   C1D  C2D    
+  improper C1D  ND   C4D  C3D    
+  improper NA   C1A  C2A  C3A    
+  improper NA   C4A  C3A  C2A    
+  improper NB   C1B  C2B  C3B    
+  improper NB   C4B  C3B  C2B    
+  improper NC   C1C  C2C  C3C    
+  improper NC   C4C  C3C  C2C    
+  improper ND   C1D  C2D  C3D    
+  improper ND   C4D  C3D  C2D    
+  improper NA   C1A  CHA  C4D    
+  improper NA   C4A  CHB  C1B    
+  improper NB   C1B  CHB  C4A    
+  improper NB   C4B  CHC  C1C    
+  improper NC   C1C  CHC  C4B    
+  improper NC   C4C  CHD  C1D    
+  improper ND   C1D  CHD  C4C    
+  improper ND   C4D  CHA  C1A    
+  improper CHA  C1A  C4D  HA     
+  improper CHB  C1B  C4A  HB     
+  improper CHC  C1C  C4B  HC     
+  improper CHD  C1D  C4C  HD     
+  improper C1A  C2A  CHA  NA     
+  improper C4A  C3A  CHB  NA     
+  improper C1B  C2B  CHB  NB     
+  improper C4B  C3B  CHC  NB     
+  improper C1C  C2C  CHC  NC     
+  improper C4C  C3C  CHD  NC     
+  improper C1D  C2D  CHD  ND     
+  improper C4D  C3D  CHA  ND     
+  improper NA   C1A  C4A  FE     
+  improper NB   C1B  C4B  FE     
+  improper NC   C1C  C4C  FE     
+  improper ND   C1D  C4D  FE     
+  improper CAB  CBB  C3B  HAB    
+  improper HAB  CAB  CBB  HBB2   
+  improper CBB  CAB  HBB2 HBB1   
+  improper CAC  CBC  C3C  HAC    
+  improper HAC  CAC  CBC  HBC2   
+  improper CBC  CAC  HBC2 HBC1   
+  improper HMA1 HMA2 C2A  HMA3
+  improper HMB1 HMB2 C2B  HMB3
+  improper HMC1 HMC2 C2C  HMC3
+  improper HMD1 HMD2 C2D  HMD3
+
+  dihedral C1A  C2A  CAA  CBA
+  dihedral C2A  CAA  CBA  CGA
+  dihedral CAA  CBA  CGA  O1A
+  dihedral C2D  C3D  CAD  CBD
+  dihedral C3D  CAD  CBD  CGD
+  dihedral CAD  CBD  CGD  O1D
+  dihedral C2B  C3B  CAB  CBB
+  dihedral C2C  C3C  CAC  CBC
+  dihedral C2A  C3A  CMA  HMA1
+  dihedral C1B  C2B  CMB  HMB1
+  dihedral C1C  C2C  CMC  HMC1
+  dihedral C1D  C2D  CMD  HMD1
+ 
+end
+
+residue HEC ! Heme c
+  group
+    atom FE   type=FEH  charge= 0.24 end
+    atom NA   type=NPH  charge=-0.18 end
+    atom NB   type=NPH  charge=-0.18 end
+    atom NC   type=NPH  charge=-0.18 end
+    atom ND   type=NPH  charge=-0.18 end
+  group
+    atom C1A  type=CPA  charge= 0.12 end
+    atom CHA  type=CPM  charge=-0.10 end
+    atom HA   type=HA   charge= 0.10 end
+    atom C4D  type=CPA  charge= 0.12 end
+  group
+    atom C1B  type=CPA  charge= 0.12 end
+    atom CHB  type=CPM  charge=-0.10 end
+    atom HB   type=HA   charge= 0.10 end
+    atom C4A  type=CPA  charge= 0.12 end
+  group
+    atom C1C  type=CPA  charge= 0.12 end
+    atom CHC  type=CPM  charge=-0.10 end
+    atom HC   type=HA   charge= 0.10 end
+    atom C4B  type=CPA  charge= 0.12 end
+  group
+    atom C1D  type=CPA  charge= 0.12 end
+    atom CHD  type=CPM  charge=-0.10 end
+    atom HD   type=HA   charge= 0.10 end
+    atom C4C  type=CPA  charge= 0.12 end
+  group
+    atom C2A  type=CPB  charge=-0.06 end
+    atom CAA  type=CT   charge=-0.18 end
+    atom HAA1 type=HA   charge= 0.09 end
+    atom HAA2 type=HA   charge= 0.09 end
+  group
+    atom CBA  type=CT   charge=-0.28 end
+    atom HBA1 type=HA   charge= 0.09 end
+    atom HBA2 type=HA   charge= 0.09 end
+    atom CGA  type=C    charge= 0.62 end
+    atom O1A  type=OC   charge=-0.76 end
+    atom O2A  type=OC   charge=-0.76 end
+  group
+    atom C3A  type=CPB  charge=-0.06 end
+    atom CMA  type=CT   charge=-0.27 end
+    atom HMA1 type=HA   charge= 0.09 end
+    atom HMA2 type=HA   charge= 0.09 end
+    atom HMA3 type=HA   charge= 0.09 end
+  group
+    atom C2B  type=CPB  charge=-0.06 end
+    atom CMB  type=CT   charge=-0.27 end
+    atom HMB1 type=HA   charge= 0.09 end
+    atom HMB2 type=HA   charge= 0.09 end
+    atom HMB3 type=HA   charge= 0.09 end
+  group
+    atom C3B  type=CPB  charge=-0.06 end
+    atom CAB  type=CT   charge=-0.20 end
+    atom HAB  type=HA   charge= 0.20 end
+  group
+    atom CBB  type=CT   charge=-0.27 end
+    atom HBB1 type=HA   charge= 0.09 end
+    atom HBB2 type=HA   charge= 0.09 end
+    atom HBB3 type=HA   charge= 0.09 end
+  group
+    atom C2C  type=CPB  charge=-0.06 end
+    atom CMC  type=CT   charge=-0.27 end
+    atom HMC1 type=HA   charge= 0.09 end
+    atom HMC2 type=HA   charge= 0.09 end
+    atom HMC3 type=HA   charge= 0.09 end
+  group
+    atom C3C  type=CPB  charge=-0.06 end
+    atom CAC  type=CT   charge=-0.20 end
+    atom HAC  type=HA   charge= 0.20 end
+  group
+    atom CBC  type=CT   charge=-0.27 end
+    atom HBC1 type=HA   charge= 0.09 end
+    atom HBC2 type=HA   charge= 0.09 end
+    atom HBC3 type=HA   charge= 0.09 end
+  group
+    atom C2D  type=CPB  charge=-0.06 end
+    atom CMD  type=CT   charge=-0.27 end
+    atom HMD1 type=HA   charge= 0.09 end
+    atom HMD2 type=HA   charge= 0.09 end
+    atom HMD3 type=HA   charge= 0.09 end
+  group
+    atom C3D  type=CPB  charge=-0.06 end
+    atom CAD  type=CT   charge=-0.18 end
+    atom HAD1 type=HA   charge= 0.09 end
+    atom HAD2 type=HA   charge= 0.09 end
+  group
+    atom CBD  type=CT   charge=-0.28 end
+    atom HBD1 type=HA   charge= 0.09 end
+    atom HBD2 type=HA   charge= 0.09 end
+    atom CGD  type=C    charge= 0.62 end
+    atom O1D  type=OC   charge=-0.76 end
+    atom O2D  type=OC   charge=-0.76 end
+ 
+  bond FE   NA     
+  bond FE   NB     
+  bond FE   NC     
+  bond FE   ND     
+  bond NA   C1A    
+  bond C1A  C2A    
+  bond C2A  C3A    
+  bond C3A  C4A    
+  bond NA   C4A    
+  bond C2A  CAA    
+  bond CAA  CBA    
+  bond CBA  CGA    
+  bond CGA  O1A    
+  bond CGA  O2A    
+  bond C3A  CMA    
+  bond CHB  C4A    
+  bond CHB  C1B    
+  bond NB   C1B    
+  bond C1B  C2B    
+  bond C2B  C3B    
+  bond C3B  C4B    
+  bond NB   C4B    
+  bond C2B  CMB    
+  bond C3B  CAB    
+  bond CAB  CBB    
+  bond CHC  C4B    
+  bond CHC  C1C    
+  bond NC   C1C    
+  bond C1C  C2C    
+  bond C2C  C3C    
+  bond C3C  C4C    
+  bond NC   C4C    
+  bond C2C  CMC    
+  bond C3C  CAC    
+  bond CAC  CBC    
+  bond CHD  C4C    
+  bond CHD  C1D    
+  bond ND   C1D    
+  bond C1D  C2D    
+  bond C2D  C3D    
+  bond C3D  C4D    
+  bond ND   C4D    
+  bond C2D  CMD    
+  bond C3D  CAD    
+  bond CAD  CBD    
+  bond CBD  CGD    
+  bond CGD  O1D    
+  bond CGD  O2D    
+  bond CHA  C4D    
+  bond CHA  C1A    
+  bond CHA  HA     
+  bond CHB  HB     
+  bond CHC  HC     
+  bond CHD  HD     
+  bond CAA  HAA1   
+  bond CAA  HAA2   
+  bond CBA  HBA1   
+  bond CBA  HBA2   
+  bond CMA  HMA1   
+  bond CMA  HMA2   
+  bond CMA  HMA3   
+  bond CMB  HMB1   
+  bond CMB  HMB2   
+  bond CMB  HMB3   
+  bond CAB  HAB    
+  bond CBB  HBB1   
+  bond CBB  HBB2   
+  bond CBB  HBB3
+  bond CMC  HMC1   
+  bond CMC  HMC2   
+  bond CMC  HMC3   
+  bond CAC  HAC    
+  bond CBC  HBC1   
+  bond CBC  HBC2   
+  bond CBC  HBC3
+  bond CMD  HMD1   
+  bond CMD  HMD2   
+  bond CMD  HMD3   
+  bond CAD  HAD1   
+  bond CAD  HAD2   
+  bond CBD  HBD1
+  bond CBD  HBD2
+
+  omit angle NA FE NC
+  omit angle NB FE ND
+ 
+  improper C2A  C1A  C3A  CAA    
+  improper C3A  C2A  C4A  CMA    
+  improper C2B  C1B  C3B  CMB    
+  improper C3B  C2B  C4B  CAB    
+  improper C2C  C1C  C3C  CMC    
+  improper C3C  C2C  C4C  CAC    
+  improper C2D  C1D  C3D  CMD    
+  improper C3D  C2D  C4D  CAD    
+  improper CGA  CBA  O2A  O1A    
+  improper CGD  CBD  O2D  O1D    
+  improper C4A  NA   C1A  C2A    
+  improper C1A  NA   C4A  C3A    
+  improper C4B  NB   C1B  C2B    
+  improper C1B  NB   C4B  C3B    
+  improper C4C  NC   C1C  C2C    
+  improper C1C  NC   C4C  C3C    
+  improper C4D  ND   C1D  C2D    
+  improper C1D  ND   C4D  C3D    
+  improper NA   C1A  C2A  C3A    
+  improper NA   C4A  C3A  C2A    
+  improper NB   C1B  C2B  C3B    
+  improper NB   C4B  C3B  C2B    
+  improper NC   C1C  C2C  C3C    
+  improper NC   C4C  C3C  C2C    
+  improper ND   C1D  C2D  C3D    
+  improper ND   C4D  C3D  C2D    
+  improper NA   C1A  CHA  C4D    
+  improper NA   C4A  CHB  C1B    
+  improper NB   C1B  CHB  C4A    
+  improper NB   C4B  CHC  C1C    
+  improper NC   C1C  CHC  C4B    
+  improper NC   C4C  CHD  C1D    
+  improper ND   C1D  CHD  C4C    
+  improper ND   C4D  CHA  C1A    
+  improper CHA  C1A  C4D  HA     
+  improper CHB  C1B  C4A  HB     
+  improper CHC  C1C  C4B  HC     
+  improper CHD  C1D  C4C  HD     
+  improper C1A  C2A  CHA  NA     
+  improper C4A  C3A  CHB  NA     
+  improper C1B  C2B  CHB  NB     
+  improper C4B  C3B  CHC  NB     
+  improper C1C  C2C  CHC  NC     
+  improper C4C  C3C  CHD  NC     
+  improper C1D  C2D  CHD  ND     
+  improper C4D  C3D  CHA  ND     
+  improper NA   C1A  C4A  FE     
+  improper NB   C1B  C4B  FE     
+  improper NC   C1C  C4C  FE     
+  improper ND   C1D  C4D  FE     
+  improper HBB1 HBB2 CAB  HBB3
+  improper HBC1 HBC2 CAC  HBC3
+  improper HMA1 HMA2 C3A  HMCA
+  improper HMC1 HMC2 C2C  HMC3
+  improper HMD1 HMD2 C2D  HMD3
+
+  dihedral C1A  C2A  CAA  CBA
+  dihedral C2A  CAA  CBA  CGA
+  dihedral CAA  CBA  CGA  O1A
+  dihedral C2D  C3D  CAD  CBD
+  dihedral C3D  CAD  CBD  CGD
+  dihedral CAD  CBD  CGD  O1D
+  dihedral C2B  C3B  CAB  CBB
+  dihedral C3B  CAB  CBB  HBB1
+  dihedral C2C  C3C  CAC  CBC
+  dihedral C3C  CAC  CBC  HBC1
+  dihedral C2A  C3A  CMA  HMA1
+  dihedral C1B  C2B  CMB  HMB1
+  dihedral C1C  C2C  CMC  HMC1
+  dihedral C1D  C2D  CMD  HMD1
+ 
+end
+
+residue CYA ! Cyanide ion
+  group
+    atom C    type=CYC  charge= 0.00 end
+    atom N    type=CYN  charge= 0.00 end
+
+  bond C    N
+end
+
+presidue PCYA ! Patch residue for 1=CYA and 2=HEC
+  add bond  1C   2FE
+
+  add angle 1N   1C   2FE
+  add angle 1C   2FE  2NA 
+  add angle 1C   2FE  2NB 
+  add angle 1C   2FE  2NC 
+  add angle 1C   2FE  2ND 
+end
+
+presidue PHEM ! Patch residue for 1=HIS and 2=HEB, or 2=HEC
+  add bond  1NE2 2FE
+
+  add angle 1CD2 1NE2 2FE
+  add angle 1CE1 1NE2 2FE
+  add angle 1NE2 2FE  2NA
+  add angle 1NE2 2FE  2NB
+  add angle 1NE2 2FE  2NC
+  add angle 1NE2 2FE  2ND
+end
+
+presidue PHCB ! Patch residue for 1=CYS and 2=HEC (CAB carbon)
+  delete atom 1HG end
+
+  modify atom 1SG charge= 0.00 end
+  
+  add bond  1SG  2CAB
+
+  add angle 1CB  1SG  2CAB
+  add angle 1SG  2CAB 2C3B
+  add angle 1SG  2CAB 2HAB
+  add angle 1SG  2CAB 2CBB
+
+  add dihedral 1CA  1CB  1SG  2CAB
+  add dihedral 1CB  1SG  2CAB 2C3B
+  add dihedral 1SG  2CAB 2C3B 2C2B
+
+  add improper 1SG  2CBB 2C3B 2HAB
+end
+
+presidue PHEB ! Patch residue for 1=CYS and 2=HEB (FE)
+  delete atom 1HG end
+
+  modify atom 1SG charge= 0.00 end
+  
+  add bond  1SG  2FE  
+
+  add angle 1CB  1SG   2FE  
+  add angle 1SG  2FE   2NA
+  add angle 1SG  2FE   2NB
+  add angle 1SG  2FE   2NC
+  add angle 1SG  2FE   2ND
+end
+
+presidue PHCH ! Patch residue for 1=CPZ and 2=HEB (FE)
+  add bond  1N1 2FE   
+
+  modify atom 1N1 charge= 0.00 end
+  
+  add angle 1C2  1N1   2FE  
+  add angle 1N1  2FE   2NA
+  add angle 1N1  2FE   2NB
+  add angle 1N1  2FE   2NC
+  add angle 1N1  2FE   2ND
+end
+
+presidue PHCC ! Patch residue for 1=CYS and 2=HEC (CAC carbon)
+  delete atom 1HG end
+
+  modify atom 1SG charge= 0.00 end
+  
+  add bond  1SG  2CAC
+
+  add angle 1CB  1SG  2CAC
+  add angle 1SG  2CAC 2C3C
+  add angle 1SG  2CAC 2HAC
+  add angle 1SG  2CAC 2CBC
+
+  add dihedral 1CA  1CB  1SG  2CAC
+  add dihedral 1CB  1SG  2CAC 2C3C
+  add dihedral 1SG  2CAC 2C3C 2C2C
+
+  add improper 1SG  2CBC 2C3C 2HAC
+end
+
+AUTOGENERATE  ANGLES=FALSE  END
+MASS  CN11  13.0190   ! equivalent to  CR61
+MASS  CN10  13.0190   ! equivalent to  CR61
+MASS  CN9   12.0110   ! equivalent to    CB
+MASS  CNL   15.0350   ! equivalent to   CH3
+MASS  CN8   13.0190   ! equivalent to  CR61
+MASS  CN7   13.0190   ! equivalent to  CR61
+MASS  CN6   12.0110   ! equivalent to    CB
+MASS  CN4   12.0110   ! equivalent to    CB
+MASS  CN2   13.0190   ! equivalent to  CR51
+MASS  NN1   14.0067   ! equivalent to  NR5*
+MASS  CN5   13.0190   ! equivalent to  CR51
+MASS  NN3   14.0067   ! equivalent to   NR5
+
+Residue CPH  
+GROUP
+  ATOM C11  TYPE= CN11 CHARGE=-0.007 END
+  ATOM C10  TYPE= CN10 CHARGE=-0.007 END
+  ATOM C9   TYPE= CN9  CHARGE= 0.007 END
+  ATOM CL   TYPE= CNL  CHARGE= 0.034 END
+  ATOM C8   TYPE= CN8  CHARGE=-0.007 END
+  ATOM C7   TYPE= CN7  CHARGE=-0.007 END
+  ATOM C6   TYPE= CN6  CHARGE= 0.007 END
+  ATOM C4   TYPE= CN4  CHARGE= 0.099 END
+  ATOM C2   TYPE= CN2  CHARGE=-0.007 END
+  ATOM N1   TYPE= NN1  CHARGE= 0.159 END
+  ATOM C5   TYPE= CN5  CHARGE=-0.007 END
+  ATOM N3   TYPE= NN3  CHARGE=-0.284 END
+
+  BOND C11  C10 
+  BOND C11  C6  
+  BOND C10  C9  
+  BOND C9   CL  
+  BOND C9   C8  
+  BOND C8   C7  
+  BOND C7   C6  
+  BOND C6   C4  
+  BOND C4   C2  
+  BOND C4   N3  
+  BOND C2   N1  
+  BOND N1   C5  
+  BOND C5   N3  
+  BOND FE   N1
+
+  ANGLE C10  C11  C6  
+  ANGLE C11  C10  C9  
+  ANGLE C10  C9   CL  
+  ANGLE C10  C9   C8  
+  ANGLE CL   C9   C8  
+  ANGLE C9   C8   C7  
+  ANGLE C8   C7   C6  
+  ANGLE C11  C6   C7  
+  ANGLE C11  C6   C4  
+  ANGLE C7   C6   C4  
+  ANGLE C6   C4   C2  
+  ANGLE C6   C4   N3  
+  ANGLE C2   C4   N3  
+  ANGLE C4   C2   N1  
+  ANGLE C2   N1   C5  
+  ANGLE N1   C5   N3  
+  ANGLE C4   N3   C5  
+  ANGLE N1   FE   NA 
+  ANGLE N1   FE   NB 
+  ANGLE N1   FE   NC 
+  ANGLE N1   FE   ND 
+  ANGLE C2   N1   FE  
+
+  IMPROPER C9   C10  C8   CL  
+  IMPROPER C6   C4   C7   C11 
+  IMPROPER C4   C6   C2   N3  
+  IMPROPER C4   C2   N1   C5  
+  IMPROPER C2   N1   C5   N3  
+  IMPROPER N1   C5   N3   C4  
+  IMPROPER C5   N3   C4   C2  
+  IMPROPER N3   C4   C2   N1  
+  IMPROPER C11  C10  C9   C8  
+  IMPROPER C10  C9   C8   C7  
+  IMPROPER C9   C8   C7   C6  
+  IMPROPER C8   C7   C6   C11 
+  IMPROPER C7   C6   C11  C10 
+  IMPROPER C6   C11  C10  C9  
+
+  DIHEDRAL C11  C6   C4   N3  
+END
+
+set echo=true end

@@ -1,0 +1,518 @@
+Remarks Parameters for Fragment-based Ligand Binding Site Mapping
+Remarks created by acpype (Rev: 7268) on Mon Apr 13 10:01:53 2015
+
+set echo=false end
+
+{ Bonds: atomType1 atomType2 kb r0 }
+BOND    c__    n__    478.2   1.3450
+BOND    c__    o__    648.0   1.2140
+BOND    c__   c3__    328.3   1.5080
+BOND    c__   ca__    349.7   1.4870
+BOND    c__   h4__    310.5   1.1123
+BOND    c__   h5__    319.4   1.1053
+BOND    n__   hn__    410.2   1.0090
+BOND   c1__   c3__    368.3   1.4700
+BOND   c3__    n__    330.6   1.4600
+BOND   c3__   c3__    303.1   1.5350
+BOND   c3__   h1__    335.9   1.0930
+BOND   c3__   hc__    337.3   1.0920
+BOND   c3__   oh__    314.1   1.4260
+BOND   c3__   os__    301.5   1.4390
+BOND   ca__   ca__    478.4   1.3870
+BOND   ca__   ha__    344.3   1.0870
+BOND   ca__   oh__    386.1   1.3620
+BOND   n1__   c1__   1014.5   1.1380
+BOND   n3__   c3__    320.6   1.4700
+BOND   n3__   hn__    394.1   1.0180
+BOND   oh__   ho__    369.6   0.9740
+{ Bonds: from Cagliari }
+BOND    C_    O_    648.0   1.2140
+BOND    C_   CT_    328.3   1.5080 
+BOND    C_   O2_    648.0   1.2140
+BOND    S_   CM_    280.0   1.7360
+BOND   CD_    C_    449.9   1.4060
+BOND   CD_    N_    390.5   1.4070
+BOND   CM_   CD_    549.0   1.3500
+BOND   CM_   CT_    317.0   1.5100
+BOND   CM_   HA_    367.0   1.0800
+BOND   CT_    N_    330.6   1.4600
+BOND   CT_    S_    227.0   1.8100
+BOND   CT_   CT_    303.1   1.5350
+BOND   CT_   H1_    335.9   1.0930
+BOND   CT_   HC_    337.3   1.0920
+BOND   CT_   HP_    340.0   1.0900
+BOND   CT_   N3_    367.0   1.4710
+BOND   CT_   OH_    314.1   1.4260
+BOND   N3_    H_    434.0   1.0100
+BOND   NT_    H_    434.0   1.0100
+BOND   NT_   CM_    486.3   1.3400
+BOND   NT_   CT_    367.0   1.4710
+BOND   OH_   HO_    369.6   0.9740
+BOND    N_    H_    410.2   1.0090
+BOND   CA_   HA_    344.3   1.0870
+BOND    C_    N_    478.2   1.3450
+BOND   CM_   OH_    425.4   1.3330
+BOND   CD_   CT_    317.0   1.5100
+BOND    C_   CA_    349.7   1.4870
+BOND   CT_   CA_    317.0   1.5100
+BOND   CA_   CA_    478.4   1.3870
+BOND   CA_   OH_    386.1   1.3620
+BOND   CA_   N2_    481.0   1.3400
+BOND   N2_   CT_    337.0   1.4630
+
+{ Angles: aType1 aType2 aType3 kt t0 }
+ANGLe    c__    n__   hn__     49.2   118.46
+ANGLe    c__   c3__   hc__     47.2   109.68
+ANGLe    c__   ca__   ca__     64.6   120.14
+ANGLe    n__    c__    n__     74.8   113.38
+ANGLe    n__    c__   c3__     67.9   115.15
+ANGLe    n__    c__   h5__     52.4   112.19
+ANGLe    n__   c3__   h1__     49.8   109.32
+ANGLe    o__    c__    n__     75.8   122.03
+ANGLe    o__    c__   c3__     68.0   123.11
+ANGLe    o__    c__   ca__     68.7   123.44
+ANGLe    o__    c__   h4__     54.3   120.93
+ANGLe    o__    c__   h5__     53.9   123.26
+ANGLe   c1__   c3__   hc__     48.2   109.75
+ANGLe   c3__    c__   c3__     62.8   116.05
+ANGLe   c3__    c__   h4__     46.1   114.40
+ANGLe   c3__    n__    c__     63.9   121.35
+ANGLe   c3__    n__   c3__     63.1   115.56
+ANGLe   c3__   c3__   c3__     63.2   110.63
+ANGLe   c3__   c3__   h1__     46.4   110.07
+ANGLe   c3__   c3__   hc__     46.4   110.05
+ANGLe   c3__   c3__   oh__     67.7   109.43
+ANGLe   c3__   n3__   hn__     47.1   109.92
+ANGLe   c3__   oh__   ho__     47.1   108.16
+ANGLe   c3__   os__   c3__     62.4   112.45
+ANGLe   ca__    c__   h4__     46.5   115.14
+ANGLe   ca__   ca__   ca__     67.2   119.97
+ANGLe   ca__   ca__   ha__     48.5   120.01
+ANGLe   ca__   ca__   oh__     69.8   119.94
+ANGLe   ca__   oh__   ho__     48.9   109.47
+ANGLe   h1__   c3__   h1__     39.2   109.55
+ANGLe   h1__   c3__   oh__     51.0   109.88
+ANGLe   hc__   c3__   hc__     39.4   108.35
+ANGLe   hn__    n__   hn__     39.7   117.85
+ANGLe   hn__   n3__   hn__     41.3   107.13
+ANGLe   n1__   c1__   c3__     58.1   178.50
+ANGLe   n3__   c3__   h1__     49.4   109.92
+ANGLe   os__   c3__   h1__     50.8   108.82
+{ Angles: from Cagliari }
+ANGLe    C_   CD_    N_     69.0   116.06
+ANGLe    C_   CT_   CT_     63.0   111.10
+ANGLe    C_   CT_   HC_     47.2   109.68
+ANGLe    C_   CT_   HP_     50.0   109.50
+ANGLe    C_   CT_   N3_     80.0   111.20
+ANGLe    H_   N3_    H_     35.0   109.50
+ANGLe    H_   NT_    H_     35.0   109.50
+ANGLe    H_   NT_   CM_     49.1   119.38
+ANGLe    H_   NT_   CT_     50.0   109.50
+ANGLe    N_    C_   CT_     67.9   115.15
+ANGLe    O_    C_   CT_     68.0   123.11
+ANGLe    S_   CM_   CD_     62.8   122.86
+ANGLe    S_   CM_   CT_     61.6   119.66
+ANGLe   CD_    C_   O2_     72.8   119.12
+ANGLe   CD_    N_    C_     65.1   122.15
+ANGLe   CD_    N_   CT_     63.1   119.98
+ANGLe   CD_   CM_   CT_     64.3   123.42
+ANGLe   CM_   CD_    C_     67.9   120.70
+ANGLe   CM_   CD_    N_     68.9   123.20
+ANGLe   CM_   CT_   CT_     63.0   111.00
+ANGLe   CM_   CT_   HC_     50.0   109.50
+ANGLe   CM_   NT_   CT_     64.7   117.79
+ANGLe   CT_    N_    C_     63.9   121.35
+ANGLe   CT_    N_   CT_     63.1   115.56
+ANGLe   CT_    S_   CM_     61.9   100.37
+ANGLe   CT_   CT_    N_     80.0   109.70
+ANGLe   CT_   CT_    S_     50.0   114.70
+ANGLe   CT_   CT_   CT_     63.2   110.63
+ANGLe   CT_   CT_   H1_     46.4   110.07
+ANGLe   CT_   CT_   HC_     46.4   110.05
+ANGLe   CT_   CT_   HP_     50.0   109.50
+ANGLe   CT_   CT_   N3_     80.0   111.20
+ANGLe   CT_   CT_   OH_     67.7   109.43
+ANGLe   CT_   N3_    H_     50.0   109.50
+ANGLe   CT_   N3_   CT_     50.0   109.50
+ANGLe   CT_   OH_   HO_     47.1   108.16
+ANGLe   H1_   CT_    N_     49.8   109.32
+ANGLe   H1_   CT_    S_     50.0   109.50
+ANGLe   H1_   CT_   H1_     39.2   109.55
+ANGLe   H1_   CT_   OH_     51.0   109.88
+ANGLe   HC_   CT_   HC_     39.4   108.35
+ANGLe   HP_   CT_   HP_     35.0   109.50
+ANGLe   HP_   CT_   N3_     50.0   109.50
+ANGLe   NT_   CM_   HA_     51.3   118.70
+ANGLe   NT_   CM_   NT_     73.5   118.47
+ANGLe   NT_   CT_   CT_     80.0   111.20
+ANGLe   NT_   CT_   H1_     50.0   109.50
+ANGLe   O2_    C_   O2_     80.0   126.00
+ANGLe    C_    N_    H_     49.2   118.46
+ANGLe    H_    N_    H_     39.7   117.85
+ANGLe   CM_   OH_   HO_     49.9   108.98
+ANGLe   CD_   CT_   HC_     50.0   109.50
+ANGLe   HC_   CT_   CA_     50.0   109.50
+ANGLe   CA_   OH_   HO_     48.9   109.47
+ANGLe   CA_   CA_   HA_     48.5   120.01
+ANGLe   N2_   CT_   H1_     50.0   109.50
+ANGLe    O_    C_   CD_     72.8   119.12
+ANGLe    C_   CD_    C_     66.6   118.88
+ANGLe   CD_    C_   CT_     64.8   116.42
+ANGLe   CD_    C_    N_     70.8   115.08
+ANGLe    C_   CT_   OH_     68.7   108.70
+ANGLe    C_   CT_   CM_     64.1   111.32
+ANGLe    O_    C_    N_     75.8   122.03
+ANGLe   CT_   CT_   CD_     63.5   111.44
+ANGLe   CT_   CM_   OH_     68.5   115.04
+ANGLe   OH_   CT_   CM_     68.2   110.21
+ANGLe   CM_   CD_   CT_     70.0   120.00
+ANGLe   OH_   CM_   CD_     71.6   122.07
+ANGLe   CD_    C_   CA_     67.2   116.78
+ANGLe    C_   CA_   CA_     64.6   120.14
+ANGLe    C_   CD_   CT_     63.9   119.70
+ANGLe    O_    C_   CA_     68.7   123.44
+ANGLe   CT_   CT_   CA_     63.0   114.00
+ANGLe   CT_   CA_   CA_     70.0   120.00
+ANGLe   CA_   CA_   CA_     67.2   119.97
+ANGLe   CA_   CA_   N2_     69.6   120.00
+ANGLe   CA_   CA_   OH_     69.8   119.94
+ANGLe   CA_   N2_   CT_     50.0   123.20
+ANGLe   CT_   N2_   CT_     64.0   110.90
+
+
+
+
+{ Proper Dihedrals: aType1 aType2 aType3 aType4 kt period phase }
+DIHEdral    c__    n__   c3__   h1__           0.000    0     0.00
+DIHEdral    c__   ca__   ca__   ca__           3.625    2   180.00
+DIHEdral    c__   ca__   ca__   ha__           3.625    2   180.00
+DIHEdral    n__    c__    n__   hn__           2.500    2   180.00
+DIHEdral    n__    c__   c3__   hc__           0.000    2   180.00
+DIHEdral    o__    c__   ca__   ca__           1.000    2   180.00
+DIHEdral   c3__    c__    n__   hn__           2.500    2   180.00
+DIHEdral   c3__    c__   c3__   hc__           0.000    2   180.00
+DIHEdral   c3__    n__    c__    o__           2.500    2   180.00
+DIHEdral   c3__    n__    c__   h5__           2.500    2   180.00
+DIHEdral   c3__    n__   c3__   h1__           0.000    0     0.00
+DIHEdral   c3__   c3__   c3__   hc__           0.160    3     0.00
+DIHEdral   c3__   os__   c3__   h1__           0.383    3     0.00
+DIHEdral   ca__   ca__   ca__   ca__           3.625    2   180.00
+DIHEdral   ca__   ca__   ca__   ha__           3.625    2   180.00
+DIHEdral   ca__   ca__   oh__   ho__           0.900    2   180.00
+DIHEdral   h1__   c3__    n__    c__           0.000    0     0.00
+DIHEdral   h1__   c3__    n__   c3__           0.000    0     0.00
+DIHEdral   h1__   c3__   c3__   c3__           0.156    3     0.00
+DIHEdral   h1__   c3__   c3__   hc__           0.156    3     0.00
+DIHEdral   h1__   c3__   oh__   ho__           0.167    3     0.00
+DIHEdral   h1__   c3__   os__   c3__           0.383    3     0.00
+DIHEdral   h4__    c__   c3__   hc__           0.000    2   180.00
+DIHEdral   h4__    c__   ca__   ca__           1.000    2   180.00
+DIHEdral   ha__   ca__   ca__   ca__           3.625    2   180.00
+DIHEdral   ha__   ca__   ca__   ha__           3.625    2   180.00
+DIHEdral   hc__   c3__   c3__   c3__           0.160    3     0.00
+DIHEdral   hc__   c3__   c3__   h1__           0.156    3     0.00
+DIHEdral   hc__   c3__   c3__   hc__           0.150    3     0.00
+DIHEdral   hn__   n3__   c3__   h1__           0.300    3     0.00
+DIHEdral   n1__   c1__   c3__   hc__           0.000    2   180.00
+DIHEdral   oh__   c3__   c3__   c3__           0.156    3     0.00
+DIHEdral   oh__   ca__   ca__   ca__           3.625    2   180.00
+DIHEdral   oh__   ca__   ca__   ha__           3.625    2   180.00
+DIHEdral    o__    c__    n__   hn__  MULT 2   2.000    1     0.00
+                                           2.500    2   180.00
+DIHEdral    o__    c__   c3__   hc__  MULT 2   0.800    1     0.00
+                                           0.080    3   180.00
+DIHEdral   c3__   c3__   c3__   c3__  MULT 3   0.200    1   180.00
+                                           0.250    2   180.00
+                                           0.180    3     0.00
+DIHEdral   oh__   c3__   c3__   hc__  MULT 2   0.250    1     0.00
+                                           0.000    0     0.00
+DIHEdral   c3__   c3__   oh__   ho__  MULT 2   0.250    1     0.00
+                                           0.160    3     0.00
+DIHEdral   ho__   oh__   c3__   c3__  MULT 2   0.250    1     0.00
+                                           0.160    3     0.00
+DIHEdral   hc__   c3__   c3__   oh__  MULT 2   0.250    1     0.00
+                                           0.000    0     0.00
+
+{ Proper Dihedrals: from Cagliari }
+DIHEdral    C_   CD_    N_    C_           0.650    2   180.00
+DIHEdral    C_   CD_    N_   CT_           0.650    2   180.00
+DIHEdral    C_   CD_   CM_   CT_           6.650    2   180.00
+DIHEdral    C_   CT_   CT_   CT_           0.156    3     0.00
+DIHEdral    C_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral    C_   CT_   CT_   HC_           0.156    3     0.00
+DIHEdral    C_   CT_   CT_   OH_           0.156    3     0.00
+DIHEdral    C_   CT_   N3_    H_           0.156    3     0.00
+DIHEdral    C_   CT_   N3_   CT_           0.156    3     0.00
+DIHEdral    H_   N3_   CT_   CT_           0.156    3     0.00
+DIHEdral    H_   N3_   CT_   HP_           0.156    3     0.00
+DIHEdral    H_   NT_   CM_   HA_           0.300    2   180.00
+DIHEdral    H_   NT_   CM_   NT_           0.300    2   180.00
+DIHEdral    H_   NT_   CT_   CT_           0.300    3     0.00
+DIHEdral    H_   NT_   CT_   H1_           0.300    3     0.00
+DIHEdral    N_    C_   CT_   HC_           0.000    2   180.00
+DIHEdral    N_    C_   CT_   HP_           0.000    0     0.00
+DIHEdral    N_    C_   CT_   N3_           0.000    0     0.00
+DIHEdral    N_   CT_   CT_    C_           0.156    3     0.00
+DIHEdral    N_   CT_   CT_   CT_           0.156    3     0.00
+DIHEdral    N_   CT_   CT_   HC_           0.156    3     0.00
+DIHEdral    O_    C_   CT_   CT_           0.000    0     0.00
+DIHEdral    O_    C_   CT_   HP_           0.000    0     0.00
+DIHEdral    O_    C_   CT_   N3_           0.000    0     0.00
+DIHEdral    S_   CM_   CD_    C_           6.650    2   180.00
+DIHEdral    S_   CM_   CD_    N_           6.650    2   180.00
+DIHEdral    S_   CM_   CT_   CT_           0.000    0     0.00
+DIHEdral    S_   CM_   CT_   HC_           0.000    0     0.00
+DIHEdral   CD_    N_    C_    O_           2.500    2   180.00
+DIHEdral   CD_    N_    C_   CT_           2.500    2   180.00
+DIHEdral   CD_    N_   CT_   CT_           0.000    0     0.00
+DIHEdral   CD_    N_   CT_   H1_           0.000    0     0.00
+DIHEdral   CD_   CM_   CT_   CT_           0.000    0     0.00
+DIHEdral   CD_   CM_   CT_   HC_           0.000    0     0.00
+DIHEdral   CM_   CD_    N_   CT_           0.650    2   180.00
+DIHEdral   CM_   CT_   CT_    N_           0.156    3     0.00
+DIHEdral   CM_   CT_   CT_   CT_           0.156    3     0.00
+DIHEdral   CM_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral   CM_   CT_   CT_   HC_           0.156    3     0.00
+DIHEdral   CM_   NT_   CT_   CT_           0.300    3     0.00
+DIHEdral   CM_   NT_   CT_   H1_           0.300    3     0.00
+DIHEdral   CT_    N_    C_    O_           2.500    2   180.00
+DIHEdral   CT_    N_    C_   CT_           2.500    2   180.00
+DIHEdral   CT_    N_   CT_   H1_           0.000    0     0.00
+DIHEdral   CT_    S_   CM_   CT_           1.100    2   180.00
+DIHEdral   CT_   CM_   CD_    N_           6.650    2   180.00
+DIHEdral   CT_   CT_    C_    O_           0.000    0     0.00
+DIHEdral   CT_   CT_    S_   CM_           0.333    3     0.00
+DIHEdral   CT_   CT_   CT_    C_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_    N_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_    S_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_   HC_           0.160    3     0.00
+DIHEdral   CT_   CT_   CT_   HP_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_   N3_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_   OH_           0.156    3     0.00
+DIHEdral   CT_   CT_   N3_    H_           0.156    3     0.00
+DIHEdral   CT_   CT_   N3_   CT_           0.156    3     0.00
+DIHEdral   CT_   N3_   CT_   CT_           0.156    3     0.00
+DIHEdral   CT_   N3_   CT_   HP_           0.156    3     0.00
+DIHEdral   H1_   CT_    N_    C_           0.000    0     0.00
+DIHEdral   H1_   CT_    N_   CT_           0.000    0     0.00
+DIHEdral   H1_   CT_    S_   CM_           0.333    3     0.00
+DIHEdral   H1_   CT_   CT_    C_           0.156    3     0.00
+DIHEdral   H1_   CT_   CT_    S_           0.156    3     0.00
+DIHEdral   H1_   CT_   CT_   CT_           0.156    3     0.00
+DIHEdral   H1_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral   H1_   CT_   CT_   HC_           0.156    3     0.00
+DIHEdral   H1_   CT_   OH_   HO_           0.167    3     0.00
+DIHEdral   HA_   CM_   NT_    H_           0.300    2   180.00
+DIHEdral   HA_   CM_   NT_   CT_           0.300    2   180.00
+DIHEdral   HC_   CT_   CT_    N_           0.156    3     0.00
+DIHEdral   HC_   CT_   CT_    S_           0.156    3     0.00
+DIHEdral   HC_   CT_   CT_   CT_           0.160    3     0.00
+DIHEdral   HC_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral   HC_   CT_   CT_   HC_           0.150    3     0.00
+DIHEdral   HC_   CT_   CT_   HP_           0.156    3     0.00
+DIHEdral   HC_   CT_   CT_   N3_           0.156    3     0.00
+DIHEdral   HP_   CT_   CT_    S_           0.156    3     0.00
+DIHEdral   HP_   CT_   CT_   CT_           0.156    3     0.00
+DIHEdral   HP_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral   HP_   CT_   N3_    H_           0.156    3     0.00
+DIHEdral   HP_   CT_   N3_   CT_           0.156    3     0.00
+DIHEdral   N3_   CT_   CT_    S_           0.156    3     0.00
+DIHEdral   N3_   CT_   CT_   CT_           0.156    3     0.00
+DIHEdral   N3_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral   NT_   CM_   NT_    H_           0.300    2   180.00
+DIHEdral   NT_   CM_   NT_   CT_           0.300    2   180.00
+DIHEdral   NT_   CT_   CT_    S_           0.156    3     0.00
+DIHEdral   NT_   CT_   CT_   H1_           0.156    3     0.00
+DIHEdral   O2_    C_   CD_    N_           2.175    2   180.00
+DIHEdral    C_    N_   CT_   CT_  MULT 4   2.000    1     0.00
+                                           2.000    2     0.00
+                                           0.400    3     0.00
+                                           0.000    0     0.00
+DIHEdral   CT_   CT_    C_    N_  MULT 4   0.200    1     0.00
+                                           0.200    2     0.00
+                                           0.400    3     0.00
+                                           0.000    0     0.00
+DIHEdral    O_    C_   CT_   HC_  MULT 2   0.800    1     0.00
+                                           0.080    3   180.00
+DIHEdral   HC_   CT_   CT_   OH_  MULT 2   0.250    1     0.00
+                                           0.000    0     0.00
+DIHEdral    N_    C_   CT_   CT_  MULT 4   0.200    1     0.00
+                                           0.200    2     0.00
+                                           0.400    3     0.00
+                                           0.000    0     0.00
+DIHEdral   CM_   CD_    N_    C_  MULT 2   1.200    1   180.00
+                                           0.650    2   180.00
+DIHEdral   CM_   CD_    C_   O2_  MULT 2   2.175    2   180.00
+                                           0.300    3     0.00
+DIHEdral   CT_   CT_   OH_   HO_  MULT 2   0.250    1     0.00
+                                           0.160    3     0.00
+DIHEdral   CT_    S_   CM_   CD_  MULT 2   1.100    2   180.00
+                                           0.700    3   180.00
+DIHEdral   CT_   CT_    N_    C_  MULT 4   2.000    1     0.00
+                                           2.000    2     0.00
+                                           0.400    3     0.00
+                                           0.000    0     0.00
+DIHEdral   CT_   CT_   CT_   CT_  MULT 3   0.200    1   180.00
+                                           0.250    2   180.00
+                                           0.180    3     0.00
+DIHEdral    C_   CD_   CT_   HC_           0.000    0     0.00
+DIHEdral    C_   CA_   CA_   CA_           3.625    2   180.00
+DIHEdral   CA_   CA_   CA_   CA_           3.625    2   180.00
+DIHEdral   CT_   CA_   CA_   CA_           3.625    2   180.00
+DIHEdral   OH_   CT_   CM_   CD_           0.000    0     0.00
+DIHEdral   CT_   CT_   CM_   OH_           0.000    0     0.00
+DIHEdral   CA_   CA_   CA_   N2_           3.625    2   180.00
+DIHEdral    O_    C_   CT_   CM_           0.000    0     0.00
+DIHEdral    O_    C_   CD_   CT_           2.175    2   180.00
+DIHEdral   HA_   CA_   CA_   N2_           3.625    2   180.00
+DIHEdral   HC_   CT_   CT_   CA_           0.156    3     0.00
+DIHEdral   CT_   CD_    C_   CA_           2.175    2   180.00
+DIHEdral   CD_   CT_   CT_   CA_           0.156    3     0.00
+DIHEdral   CM_   CD_    C_    O_  MULT 2   2.175    2   180.00
+                                           0.300    3     0.00
+DIHEdral   HP_   CT_   CT_   HC_           0.156    3     0.00
+DIHEdral    O_    C_   CD_    C_           2.175    2   180.00
+DIHEdral   CA_   CA_   CA_   OH_           3.625    2   180.00
+DIHEdral    C_   CA_   CA_   OH_           3.625    2   180.00
+DIHEdral   CT_   CM_   OH_   HO_           1.050    2   180.00
+DIHEdral   HC_   CT_   CT_   CD_           0.156    3     0.00
+DIHEdral    C_   CT_   CM_   CD_           0.000    0     0.00
+DIHEdral    O_    C_    N_    H_  MULT 2   2.000    1     0.00
+                                           2.500    2   180.00
+DIHEdral   HC_   CT_   CA_   CA_           0.000    0     0.00
+DIHEdral   CM_   CD_   CT_   CT_           0.000    0     0.00
+DIHEdral   CM_   CD_    C_   CA_           2.175    2   180.00
+DIHEdral    C_   CT_   CM_   OH_           0.000    0     0.00
+DIHEdral   CM_   CD_   CT_   HC_           0.000    0     0.00
+DIHEdral    O_    C_   CT_   OH_           0.000    0     0.00
+DIHEdral   CT_   N2_   CT_   H1_           0.000    0     0.00
+DIHEdral   OH_   CM_   CD_   CT_           6.650    2   180.00
+DIHEdral   CD_   CT_   CT_   HC_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_   CM_           0.156    3     0.00
+DIHEdral   CD_    C_   CT_   CT_           0.000    0     0.00
+DIHEdral   CT_   CT_   CD_    C_           0.000    0     0.00
+DIHEdral    C_   CT_   OH_   HO_           0.167    3     0.00
+DIHEdral   CA_   CA_   N2_   CT_           2.400    2   180.00
+DIHEdral    C_   CD_    C_    N_           2.175    2   180.00
+DIHEdral   CA_   CA_   OH_   HO_           0.900    2   180.00
+DIHEdral   CT_   CM_   CD_    C_           6.650    2   180.00
+DIHEdral    C_   CD_    C_    O_           2.175    2   180.00
+DIHEdral   CT_   CT_   CD_   CM_           0.000    0     0.00
+DIHEdral   HO_   OH_   CA_   CA_           0.900    2   180.00
+DIHEdral    C_   CA_   CA_   CT_           3.625    2   180.00
+DIHEdral   HO_   OH_   CT_   CM_           0.167    3     0.00
+DIHEdral   OH_   CA_   CA_   HA_           3.625    2   180.00
+DIHEdral    C_   CD_    C_   CT_           2.175    2   180.00
+DIHEdral   CT_   CM_   CD_   CT_           6.650    2   180.00
+DIHEdral   CD_    C_   CT_   OH_           0.000    0     0.00
+DIHEdral   OH_   CM_   CD_    C_           6.650    2   180.00
+DIHEdral   CD_    C_   CT_   CM_           0.000    0     0.00
+DIHEdral   CD_    C_   CT_   HP_           0.000    0     0.00
+DIHEdral   N3_   CT_   CT_   HC_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_   CA_           0.156    3     0.00
+DIHEdral   OH_   CA_   CA_   CA_           3.625    2   180.00
+DIHEdral   HO_   OH_   CM_   CD_           1.050    2   180.00
+DIHEdral   CA_   CA_   CA_   HA_           3.625    2   180.00
+DIHEdral   HA_   CA_   CA_   HA_           3.625    2   180.00
+DIHEdral   CT_   CT_   CM_   CD_           0.000    0     0.00
+DIHEdral   HC_   CT_   CT_   CM_           0.156    3     0.00
+DIHEdral   CT_   CT_   CT_   CD_           0.156    3     0.00
+DIHEdral   CA_   N2_   CT_   H1_           0.000    0     0.00
+DIHEdral    O_    C_   CA_   CA_           1.000    2   180.00
+DIHEdral   HA_   CA_   CA_   CA_           3.625    2   180.00
+DIHEdral   CT_   CA_   CA_   N2_           3.625    2   180.00
+DIHEdral   CT_   CT_   CA_   CA_           0.000    0     0.00
+DIHEdral   CD_    C_   CT_   N3_           0.000    0     0.00
+DIHEdral   CD_    C_   CA_   CA_           3.625    2   180.00
+DIHEdral   OH_   CT_   CM_   OH_           0.000    0     0.00
+DIHEdral   CD_    C_    N_    H_           2.500    2   180.00
+DIHEdral    C_   CD_   CT_   CT_           0.000    0     0.00
+DIHEdral   H1_   CT_   N2_   CT_           0.000    0     0.00
+
+
+
+
+{ Improper Dihedrals: aType1 aType2 aType3 aType4 kt period phase }
+IMPRoper    c__   c3__    n__   c3__           1.1    2   180.00
+IMPRoper    c__   ca__   ca__   ca__           1.1    2   180.00
+IMPRoper    c__   hn__    n__   hn__           1.1    2   180.00
+IMPRoper    o__    c__    n__    n__          10.5    2   180.00
+IMPRoper    o__    c__    n__   c3__          10.5    2   180.00
+IMPRoper    o__    c__   c3__   c3__          10.5    2   180.00
+IMPRoper    o__    c__   h4__   c3__          10.5    2   180.00
+IMPRoper    o__    c__   h4__   ca__          10.5    2   180.00
+IMPRoper   ca__   ca__   ca__   ha__           1.1    2   180.00
+IMPRoper   h5__    n__    c__    o__          10.5    2   180.00
+IMPRoper   ha__   ca__   ca__   ca__           1.1    2   180.00
+IMPRoper   oh__   ca__   ca__   ca__           1.1    2   180.00
+
+{ Improper Dihedrals: from Cagliari }
+
+IMPRoper    C_   CD_    N_   CT_           1.1    2   180.00
+IMPRoper    C_   CM_   CD_    N_           1.1    2   180.00
+IMPRoper    C_   CT_    N_   CT_           1.1    2   180.00
+IMPRoper   CD_   CT_   CM_    S_           1.1    2   180.00
+IMPRoper   CD_   O2_    C_   O2_          10.5    2   180.00
+IMPRoper   CT_    N_    C_    O_          10.5    2   180.00
+IMPRoper   HA_   NT_   CM_   NT_           1.1    2   180.00
+IMPRoper   CA_   CA_   CA_   CT_           1.1    2   180.00
+IMPRoper    O_    C_   CT_   CD_          10.5    2   180.00
+IMPRoper   CA_   CT_   N2_   CT_           1.1    2   180.00
+IMPRoper   CA_   CD_    C_    O_          10.5    2   180.00
+IMPRoper   CA_   CA_   CA_   N2_           1.1    2   180.00
+IMPRoper    C_    C_   CD_    C_           1.1    2   180.00
+IMPRoper    C_   CA_   CA_   CA_           1.1    2   180.00
+IMPRoper   CA_   CA_   CA_   HA_           1.1    2   180.00
+IMPRoper    C_    H_    N_    H_           1.1    2   180.00
+IMPRoper    C_   CM_   CD_   CT_           1.1    2   180.00
+IMPRoper   CD_    N_    C_    O_          10.5    2   180.00
+IMPRoper   CD_   CT_    C_    O_          10.5    2   180.00
+IMPRoper   CD_   CT_   CM_   OH_           1.1    2   180.00
+IMPRoper   CA_   CA_   CA_   OH_           1.1    2   180.00
+
+
+
+
+{ Nonbonded: Type Emin sigma; (1-4): Emin/2 sigma }
+NONBonded    c__    0.086000    3.399670    0.043000    3.399670
+NONBonded    n__    0.170000    3.249999    0.085000    3.249999
+NONBonded    o__    0.210000    2.959922    0.105000    2.959922
+NONBonded   c1__    0.210000    3.399670    0.105000    3.399670
+NONBonded   c3__    0.109400    3.399670    0.054700    3.399670
+NONBonded   ca__    0.086000    3.399670    0.043000    3.399670
+NONBonded   h1__    0.015700    2.471353    0.007850    2.471353
+NONBonded   h4__    0.015000    2.510553    0.007500    2.510553
+NONBonded   h5__    0.015000    2.421463    0.007500    2.421463
+NONBonded   ha__    0.015000    2.599642    0.007500    2.599642
+NONBonded   hc__    0.015700    2.649533    0.007850    2.649533
+NONBonded   hn__    0.015700    1.069078    0.007850    1.069078
+NONBonded   ho__    0.000000    0.000000    0.000000    0.000000
+NONBonded   n1__    0.170000    3.249999    0.085000    3.249999
+NONBonded   n3__    0.170000    3.249999    0.085000    3.249999
+NONBonded   oh__    0.210400    3.066473    0.105200    3.066473
+NONBonded   os__    0.170000    3.000012    0.085000    3.000012
+
+{ Nonbonded: Type Emin sigma; (1-4): Emin/2 sigma - from Cagliari }
+NONBonded    C_    0.086000    3.399670    0.043000    3.399670
+NONBonded    H_    0.015700    1.069078    0.007850    1.069078
+NONBonded    N_    0.170000    3.249999    0.085000    3.249999
+NONBonded    O_    0.210000    2.959922    0.105000    2.959922
+NONBonded    S_    0.250000    3.563595    0.125000    3.563595
+NONBonded   CD_    0.086000    3.399670    0.043000    3.399670
+NONBonded   CM_    0.086000    3.399670    0.043000    3.399670
+NONBonded   CT_    0.109400    3.399670    0.054700    3.399670
+NONBonded   H1_    0.015700    2.471353    0.007850    2.471353
+NONBonded   HA_    0.015000    2.599642    0.007500    2.599642
+NONBonded   HC_    0.015700    2.649533    0.007850    2.649533
+NONBonded   HO_    0.000000    0.000000    0.000000    0.000000
+NONBonded   HP_    0.015700    1.959977    0.007850    1.959977
+NONBonded   N3_    0.170000    3.249999    0.085000    3.249999
+NONBonded   NT_    0.170000    3.249999    0.085000    3.249999
+NONBonded   O2_    0.210000    2.959922    0.105000    2.959922
+NONBonded   OH_    0.210400    3.066473    0.105200    3.066473
+NONBonded   CA_    0.086000    3.399670    0.043000    3.399670
+NONBonded   N2_    0.170000    3.249999    0.085000    3.249999
+
+
+set echo=true end

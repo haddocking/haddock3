@@ -10,10 +10,6 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-! module sa_ltad_hightemp.cns
-! torsion dynamics high temperature phase
-
-!module(SaProtocol;Data;Toppar)
 
 evaluate ($calcsteps= $SaProtocol.initiosteps)
 evaluate ($printsteps= max(int($calcsteps/10),1))
@@ -45,42 +41,6 @@ do (vz = maxwell($bath)) (all)
 
 
 restraints dihedral scale $Data.dihedrals_hot end
-
-evaluate ($nrdc=1)
-while ($nrdc <= $data.numrdc) loop rdc
-  !for the vean statement:
-  evaluate( $k_cen_$nrdc = $data.ini_cen_hot_$nrdc)
-  evaluate( $k_bor_$nrdc = $data.ini_bor_hot_$nrdc)
-  evaluate( $cln = "rd" + encode($nrdc) )
-  if ($Data.flags.sani eq true) then
-    sani class $cln force $Data.rdc_hot_$nrdc end
-  end if
-  if ($Data.flags.vean eq true) then
-    vean class $cln force $k_bor_$nrdc $k_cen_$nrdc end
-  end if
-  if ($Data.flags.xrdc eq true) then
-    xrdc class $cln force $Data.rdc_hot_$nrdc  end
-  end if
-  evaluate ($nrdc = $nrdc + 1)
-end loop rdc
-
-evaluate ($ndani=1)
-while ($ndani <= $data.numdani) loop dani
-  if ($Data.flags.dani eq true) then
-    evaluate( $cln = "da" + encode($ndani) )
-    dani class $cln force $Data.dan_hot_$ndani end
-  end if
-  evaluate ($ndani = $ndani + 1)
-end loop dani
-
-evaluate ($npcs=1)
-while ($npcs <= $data.numpcs) loop pcs
-  if ($Data.flags.xpcs eq true) then
-    evaluate( $cln = "pc" + encode($npcs) )
-    xpcs class $cln force $Data.pcs_hot_$npcs end
-  end if
-  evaluate ($npcs= $npcs + 1)
-end loop pcs
 
 evaluate ($reassign = TRUE)
 

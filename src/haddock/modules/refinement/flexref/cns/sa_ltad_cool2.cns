@@ -11,11 +11,6 @@
 ! ***********************************************************************
 !
 
-!module(SaProtocol;Data;Toppar)
-
-! module sa_ltad_cool2.cns
-! torsion dynamics cooling
-
 evaluate ($ncycle = 10)
 
 evaluate ($asy_add = ($Data.asy_cool2-$Data.asy_cool1)/$ncycle)
@@ -43,64 +38,6 @@ noe
 end
 
 restraints dihedral   scale=$Data.dihedrals_cool2   end
-
-
-evaluate ($nrdc=1)
-while ($nrdc <= $data.numrdc) loop rdc
-  evaluate( $k_sani_$nrdc  = $Data.rdc_cool1_$nrdc)
-  evaluate( $k_cen_$nrdc = $Data.ini_cen_cool2_$nrdc)
-  evaluate( $cen_fac_$nrdc = ( $Data.fin_cen_cool2_$nrdc / $Data.ini_cen_cool2_$nrdc)^( 1 / $ncycle))
-  evaluate( $k_bor_$nrdc = $Data.ini_bor_cool2_$nrdc)
-  evaluate( $bor_fac_$nrdc = ( $Data.fin_bor_cool2_$nrdc / $Data.ini_bor_cool2_$nrdc)^( 1 / $ncycle))
-  if ($Data.rdc_cool1_$nrdc > 0) then
-    evaluate( $sani_fac_$nrdc = ( $Data.rdc_cool2_$nrdc / $Data.rdc_cool1_$nrdc)^( 1 / $ncycle))
-  else
-    evaluate( $sani_fac_$nrdc = 0)
-  end if
-  evaluate ($cln = "rd" + encode($nrdc) )
-  if ($Data.flags.vean eq true) then
-    vean class $cln force $k_bor_$nrdc $k_cen_$nrdc end
-  end if
-  if ($Data.flags.sani eq true) then
-    sani class $cln force $k_sani_$nrdc end
-  end if
-  if ($Data.flags.xrdc eq true) then
-    xrdc class $cln force $k_sani_$nrdc end
-  end if
-  evaluate ($nrdc = $nrdc + 1)
-end loop rdc
-
-
-evaluate ($ndani=1)
-while ($ndani <= $data.numdani) loop dani
-  evaluate( $k_dani_$ndani  = $Data.dan_cool1_$ndani)
-  if ($Data.dan_cool1_$ndani > 0) then
-    evaluate( $dani_fac_$ndani = ( $Data.dan_cool2_$ndani / $Data.dan_cool1_$ndani)^( 1 / $ncycle))
-  else
-    evaluate( $dani_fac_$ndani = 0)
-  end if
-  evaluate ($cln = "da" + encode($ndani) )
-  if ($Data.flags.dani eq true) then
-    dani class $cln force $Data.dan_hot_$ndani end
-  end if
-  dani class $cln force $k_dani_$ndani end
-  evaluate ($ndani = $ndani + 1)
-end loop dani
-
-evaluate ($npcs=1)
-while ($npcs <= $data.numpcs) loop pcs
-  if ($Data.flags.xpcs eq true) then
-    evaluate( $k_xpcs_$npcs  = $Data.pcs_cool1_$npcs)
-    if ($Data.pcs_hot_$npcs > 0) then
-      evaluate( $xpcs_fac_$npcs = ( $Data.pcs_cool2_$npcs / $Data.pcs_cool1_$npcs)^( 1 / $ncycle))
-    else
-      evaluate( $xpcs_fac_$npcs = 0)
-    end if
-    evaluate ($cln = "pc" + encode($npcs) )
-    xpcs class $cln force $k_xpcs_$npcs end
-  end if
-  evaluate ($npcs= $npcs + 1)
-end loop pcs
 
 
 evaluate ($interstep = ($SaProtocol.inter_fin_cool2 - $SaProtocol.inter_init_cool2)/($ncycle-1))
@@ -155,46 +92,6 @@ while ($i_cool < $ncycle) loop cool
       evaluate ($k_hbond = $k_hbond*$hbond_fac)
       evaluate ($asy=$asy+$asy_add)
       evaluate ($masy=$masy+$masy_add)
-
-
-      evaluate ($nrdc=1)
-      while ($nrdc <= $data.numrdc) loop rdc
-        evaluate ($k_bor_$nrdc = $k_bor_$nrdc * $bor_fac_$nrdc)
-        evaluate ($k_cen_$nrdc = $k_cen_$nrdc * $cen_fac_$nrdc)
-        evaluate ($cln = "rd" + encode($nrdc) )
-        evaluate ($k_sani_$nrdc = $k_sani_$nrdc * $sani_fac_$nrdc)
-        if ($Data.flags.vean eq true) then
-          vean class $cln force $k_bor_$nrdc $k_cen_$nrdc end
-        end if
-        evaluate ($k_sani_$nrdc = $k_sani_$nrdc * $sani_fac_$nrdc)
-        if ($Data.flags.sani eq true) then
-          sani class $cln force $k_sani_$nrdc end
-        end if
-        if ($Data.flags.xrdc eq true) then
-          xrdc class $cln force $k_sani_$nrdc end
-        end if
-        evaluate ($nrdc = $nrdc + 1)
-      end loop rdc
-
-      if ($Data.flags.xpcs eq true) then
-        evaluate ($npcs=1)
-        while ($npcs <= $data.numpcs) loop pcs
-          evaluate ($k_xpcs_$npcs = $k_xpcs_$npcs * $xpcs_fac_$npcs)
-	  evaluate ($cln = "pc" + encode($npcs) )
-          xpcs class $cln force $k_xpcs_$npcs end
-          evaluate ($npcs= $npcs + 1)
-        end loop pcs
-      end if
-
-      if ($Data.flags.dani eq true) then
-        evaluate ($ndani=1)
-        while ($ndani <= $data.numdani) loop dani
-          evaluate ($k_dani_$ndani = $k_dani_$ndani * $dani_fac_$ndani)
-	  evaluate ($cln = "pc" + encode($ndani) )
-          dani class $cln force $k_dani_$ndani end
-          evaluate ($ndani = $ndani + 1)
-        end loop dani
-      end if
 
 
       if ($Data.scaling eq TRUE) then

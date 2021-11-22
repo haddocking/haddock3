@@ -17,8 +17,6 @@ evaluate ($nfletot = 150)
 inline @RUN:flex_segment.cns
 
 evaluate ($numtrees=$data.ncomponents)
-!@RUN:numtrees.cns(numtrees=$numtrees; Data; Toppar;)
-!@RUN:numtrees.cns
 inline @RUN:numtrees.cns
 
 
@@ -122,7 +120,7 @@ dyna tors
      eval($nchain1 = 0)
      while ($nchain1 < $data.ncomponents) loop nloop1
        eval($nchain1 = $nchain1 + 1)
-       fix group (segid $Toppar.prot_segid_$nchain1 and
+       fix group (segid $prot_segid_$nchain1 and
                   not (attribute store5 = $nchain1)
 		  and not ((resn WAT or resn HOH or resn TIP*)))
      end loop nloop1

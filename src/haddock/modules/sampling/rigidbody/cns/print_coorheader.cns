@@ -184,28 +184,8 @@ evaluate ($procwat = false)
 if ($refine.keepwater eq true) then
     evaluate ($procwat = true)
 end if  
-if ($data.waterdock eq true) then
-    evaluate ($procwat = true)
-end if  
 
 if ($procwat eq true) then
-    if ($iteration eq 2) then
-        do (store3 = 0) (all)
-        eval($nchain1 = 0)
-        while ($nchain1 < $data.ncomponents) loop nloop1
-            eval($nchain1 = $nchain1 + 1)
-            eval($nchain2 = $nchain1)
-            while ($nchain2 < $data.ncomponents) loop nloop2
-                eval($nchain2 = $nchain2 + 1)
-                do (store3 = 1) (byres ((resn WAT or resn HOH or resn TIP* or resn DMS) and (segid $Toppar.prot_segid_$nchain1) around 3.5
-                                          and (segid $Toppar.prot_segid_$nchain2) around 3.5))
-            end loop nloop2
-        end loop nloop1
-        dele sele=(attr store3=0 and (resn DMS or resn WAT or resn HOH or resn TIP*)) end
-    end if
-    if ($iteration ne 0) then
-        ident (store3) (not all)
-    end if
     flag exclude * include vdw elec  end
 
     eval($nchain1 = 0)
@@ -267,16 +247,16 @@ else
     evaluate ($elec_water_water = 0.0)
 end if
 
-! File name
-evaluate ($initialstruct = $file - "PREVIT:")
-evaluate($ncount = 0)
 
 set remarks=reset end
 set remarks=accumulate end
 remarks ===============================================================
-remarks HADDOCK run for $Filenames.fileroot
-remarks initial structure: $initialstruct
-!remarks final NOE weights: unambig $Data.unamb_cool3 amb: $Data.amb_cool3
+remarks HADDOCK run for $output_pdb_filename
+eval($nchain = 0)
+while ($nchain < $data.ncomponents ) loop inpstr
+    evaluate ($nchain = $nchain + 1)
+    remarks initial structure: $input_pdb_filename_$nchain
+end loop inpstr
 remarks ===============================================================
 remarks            total,bonds,angles,improper,dihe,vdw,elec,air,cdih,coup,rdcs,vean,dani,xpcs,rg
 remarks energies: $enerall, $bondall, $anglall, $imprall, $diheall, $vdwall, $elecall, $noeall, $cdihall, $coupall, $saniall, $veanall, $daniall, $xpcsall, $rgall
@@ -307,6 +287,7 @@ remarks ===============================================================
 remarks buried surface area: $saburied
 remarks ===============================================================
 set remark accumulate end
+evaluate($ncount = 0)
 while ($ncount < $data.ncomponents) loop waterremark
     evaluate ($ncount = $ncount +1)
     remarks water - chain_$ncount: $ener_water_$ncount $vdw_water_$ncount $elec_water_$ncount

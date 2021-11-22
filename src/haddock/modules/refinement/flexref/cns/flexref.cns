@@ -16,13 +16,10 @@ else
     set message=off echo=off end
 end if
 
-eval ($iteration = 1)
-
 !==================================================================!
 ! Initialisation of variables
 !==================================================================!
 
-evaluate ($saprotocol.crossdock=$crossdock)
 evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.tadhigh_t=$tadhigh_t)
 evaluate ($saprotocol.t1_init=$tadinit1_t)
@@ -41,7 +38,6 @@ evaluate ($saprotocol.inter_fin_cool3=$fin_cool3)
 evaluate ($saprotocol.tempstep=50)
 evaluate ($saprotocol.timestep=$timestep)
 evaluate ($saprotocol.tadfactor=$tadfactor)
-evaluate ($saprotocol.emstepstrans=$emstepstrans)
 evaluate ($saprotocol.initiosteps=$initiosteps)
 evaluate ($saprotocol.cool1_steps=$cool1_steps)
 evaluate ($saprotocol.cool2_steps=$cool2_steps)
@@ -49,24 +45,22 @@ evaluate ($saprotocol.cool3_steps=$cool3_steps)
 evaluate ($saprotocol.fbeta=100)
 evaluate ($saprotocol.mass=100)
 
-evaluate ($iterations.ini_count    =1)
-evaluate ($iterations.w_vdw        =$w_vdw_$iteration)
-evaluate ($iterations.w_elec       =$w_elec_$iteration)
-evaluate ($iterations.w_dist       =$w_dist_$iteration)
-evaluate ($iterations.w_rg         =$w_rg_$iteration)
-evaluate ($iterations.w_sani       =$w_sani_$iteration)
-evaluate ($iterations.w_xrdc       =$w_xrdc_$iteration)
-evaluate ($iterations.w_xpcs       =$w_xpcs_$iteration)
-evaluate ($iterations.w_dani       =$w_dani_$iteration)
-evaluate ($iterations.w_vean       =$w_vean_$iteration)
-evaluate ($iterations.w_cdih       =$w_cdih_$iteration)
-evaluate ($iterations.w_sym        =$w_sym_$iteration)
-evaluate ($iterations.w_zres       =$w_zres_$iteration)
-evaluate ($iterations.w_bsa        =$w_bsa_$iteration)
-evaluate ($iterations.w_deint      =$w_deint_$iteration)
-evaluate ($iterations.w_desolv     =$w_desolv_$iteration)
-evaluate ($iterations.anastruc     =$anastruc_$iteration)
-evaluate ($iterations.w_lcc        =$w_lcc_$iteration)
+evaluate ($ini_count    =1)
+evaluate ($w_vdw        =$w_vdw )
+evaluate ($w_elec       =$w_elec )
+evaluate ($w_dist       =$w_dist )
+evaluate ($w_rg         =$w_rg )
+evaluate ($w_sani       =$w_sani )
+evaluate ($w_xrdc       =$w_xrdc )
+evaluate ($w_xpcs       =$w_xpcs )
+evaluate ($w_dani       =$w_dani )
+evaluate ($w_vean       =$w_vean )
+evaluate ($w_cdih       =$w_cdih )
+evaluate ($w_sym        =$w_sym )
+evaluate ($w_zres       =$w_zres )
+evaluate ($w_bsa        =$w_bsa )
+evaluate ($w_deint      =$w_deint )
+evaluate ($w_desolv     =$w_desolv )
 
 
 evaluate ($data.ncomponents=$ncomponents)
@@ -74,8 +68,6 @@ evaluate ($data.ncomponents=$ncomponents)
 evaluate ($nmol=1)
 while ($nmol <= $data.ncomponents) loop mol
     evaluate ($toppar.fix_origin_$nmol=$fix_origin_$nmol)
-    evaluate ($toppar.dna_$nmol=$dna_$nmol)
-    evaluate ($toppar.cyclicpept_$nmol = $cyclicpept_$nmol)
     evaluate ($toppar.shape_$nmol = $shape_$nmol)
     evaluate ($toppar.cg_$nmol = $cg_$nmol)
     evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
@@ -233,27 +225,6 @@ while ($nsym <=$numc6sym) loop sym
     evaluate ($nsym = $nsym + 1)
 end loop sym
 
-if ( data.numc2sym eq 6) then
-!  evaluate ($saprotocol.rotate180_it0 = false)
-    evaluate ($saprotocol.rotate180_it1 = false)
-end if
-if ( data.numc3sym ne 0) then
-!  evaluate ($saprotocol.rotate180_it0 = false)
-   evaluate ($saprotocol.rotate180_it1 = false)
-end if
-if ( data.numc4sym ne 0) then
-!  evaluate ($saprotocol.rotate180_it0 = false)
-    evaluate ($saprotocol.rotate180_it1 = false)
-end if
-if ( data.numc5sym ne 0) then
-!  evaluate ($saprotocol.rotate180_it0 = false)
-    evaluate ($saprotocol.rotate180_it1 = false)
-end if
-if ( data.numc6sym ne 0) then
-!  evaluate ($saprotocol.rotate180_it0 = false)
-    evaluate ($saprotocol.rotate180_it1 = false)
-end if
-
 
 !Dihedrals, DNA and distance restraints
 evaluate ($Data.dnarest =$dnarest_on)
@@ -274,10 +245,6 @@ evaluate ($Data.flags.plan =  false)
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.scaling=$air_scaling)
-evaluate ($data.totnoe_unamb=$tot_unamb)
-evaluate ($data.unamb_firstit=$unamb_firstit)
-evaluate ($data.unamb_lastit=$unamb_lastit)
 evaluate ($data.unamb_hot=$unamb_hot)
 evaluate ($data.unamb_cool1=$unamb_cool1)
 evaluate ($data.unamb_cool2=$unamb_cool2)
@@ -285,16 +252,11 @@ evaluate ($data.unamb_cool3=$unamb_cool3)
 evaluate ($data.noecv=$noecv)
 evaluate ($data.ncvpart=$ncvpart)
 
-evaluate ($data.totnoe_amb=$tot_amb)
-evaluate ($data.amb_firstit=$amb_firstit)
-evaluate ($data.amb_lastit=$amb_lastit)
 evaluate ($data.amb_hot=$amb_hot)
 evaluate ($data.amb_cool1=$amb_cool1)
 evaluate ($data.amb_cool2=$amb_cool2)
 evaluate ($data.amb_cool3=$amb_cool3)
 
-evaluate ($data.hbond_firstit=$hbond_firstit)
-evaluate ($data.hbond_lastit=$hbond_lastit)
 evaluate ($data.hbond_hot=$hbond_hot)
 evaluate ($data.hbond_cool1=$hbond_cool1)
 evaluate ($data.hbond_cool2=$hbond_cool2)
@@ -332,9 +294,9 @@ evaluate ($data.ksurf=$ksurf)
 
 !Electrostatics:
 evaluate ($Data.flags.dihed =$dihedflag)
-evaluate ($Data.flags.elec1 =$elecflag_1)
-evaluate ($Data.epsilon1 =$epsilon_1)
-evaluate ($Data.dielec1  =$dielec_1)
+evaluate ($Data.flags.elec =$elecflag)
+evaluate ($Data.epsilon =$epsilon)
+evaluate ($Data.dielec  =$dielec)
 
 !Interaction matrix:
 evaluate ($nmol1=1)
@@ -399,13 +361,13 @@ if ($Data.flags.dihed eq true) then
   flag include dihed end
 end if
 
-if ($Data.flags.elec1 eq true) then
+if ($Data.flags.elec eq true) then
     flag include elec end
-    if ($Data.dielec1 eq rdie) then
-        parameter nbonds eps=$Data.epsilon1 rdie shift switch end end
+    if ($Data.dielec eq rdie) then
+        parameter nbonds eps=$Data.epsilon rdie shift switch end end
         ! shift statement needed first to activate switch (CNS bug?)
     else
-        parameter nbonds eps=$Data.epsilon1 cdie end end
+        parameter nbonds eps=$Data.epsilon cdie end end
     end if
     parameter nbonds ? end end
 else
@@ -441,7 +403,7 @@ if ($Data.noecv eq true) then
     display evaluate (&npart=&currentpart)
     close $fileseed end
 else
-    evaluate ($seed = max($iteration,1)*$count*$Saprotocol.iniseed)
+    evaluate ($seed = $count*$Saprotocol.iniseed)
 end if
 set seed $seed end
 
@@ -523,15 +485,9 @@ if ($Data.ranair eq true) then
     @RUN:contactairs.cns
 
     !Read back in hbond data
-    if ($Data.hbond_lastit ge &iteration) then
-        if ($Data.hbond_firstit le &iteration) then
-            if ($Data.hbonds_on eq true) then
-                fileexist $hbond_fname end
-                if ($result eq true) then
-                    noe @@$hbond_fname end
-                end if
-            end if
-        end if
+    fileexist $hbond_fname end
+    if ($result eq true) then
+        noe @@$hbond_fname end
     end if
 
     noe
@@ -642,6 +598,8 @@ if ($failure eq false) then
     {* Stage 1 ======================================= rigid body high temperature search*}
 
     if ($SaProtocol.initiosteps > 0) then
+        evaluate ($nfletot = 150)
+        inline @RUN:flex_segment.cns
         @RUN:torsiontop.cns
         eval ($torsiondone = true)
         @RUN:sa_ltad_hightemp.cns
@@ -651,6 +609,8 @@ if ($failure eq false) then
 
     if ($SaProtocol.cool1_steps > 0) then
         if ($torsiondone ne true) then
+            evaluate ($nfletot = 150)
+            inline @RUN:flex_segment.cns
             @RUN:torsiontop.cns
             eval ($torsiondone = true)
         end if
@@ -665,7 +625,9 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        @RUN:torsiontop_flex.cns
+        evaluate ($nfletot = 150)
+        inline @RUN:flex_segment_side.cns
+        @RUN:torsiontop.cns
         eval ($torsiondone = true)
         evaluate ($SaProtocol.tadfactor = 1)
         @RUN:sa_ltad_cool2.cns
@@ -678,7 +640,9 @@ if ($failure eq false) then
         if ($torsiondone eq true) then
             dyna tors topo reset end end
         end if
-        @RUN:torsiontop_flex_back.cns
+        evaluate ($nfletot = 150)
+        inline @RUN:flex_segment_back.cns
+        @RUN:torsiontop.cns
         eval ($torsiondone = true)
         evaluate ($SaProtocol.tadfactor = 1)
         @RUN:sa_ltad_cool3.cns
@@ -716,15 +680,15 @@ flag include bond angle dihe impr vdw end
 
 evaluate ($elec = 0.0)
 evaluate ($eintfree = 0.0)
-if ($Data.flags.elec1 eq true) then
+if ($Data.flags.elec eq true) then
     flag include elec end
 end if
 
-if ($Data.dielec1 eq rdie) then
-    parameter nbonds eps=$Data.epsilon1 rdie shift switch end end
+if ($Data.dielec eq rdie) then
+    parameter nbonds eps=$Data.epsilon rdie shift switch end end
     ! shift statement needed first to activate switch (CNS bug?)
 else
-    parameter nbonds eps=$Data.epsilon1 cdie end end
+    parameter nbonds eps=$Data.epsilon cdie end end
 end if
 parameter nbonds ? end end
 inline @RUN:calc_free-ene.cns
@@ -746,7 +710,7 @@ energy end
 
 evaluate ($elec = 0.0)
 evaluate ($eintcplx = 0.0)
-if ($Data.flags.elec1 eq true) then
+if ($Data.flags.elec eq true) then
     flag include elec end
 end if
 

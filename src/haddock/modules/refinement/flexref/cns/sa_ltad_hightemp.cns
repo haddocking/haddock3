@@ -2,7 +2,7 @@
 !    Perform the high-temperature rigid-body MD of it1
 !
 ! ***********************************************************************
-! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
 ! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
 ! * All rights reserved.                                                *
 ! * This code is part of the HADDOCK software and governed by its       *
@@ -45,25 +45,25 @@ restraints dihedral scale $Data.dihedrals_hot end
 evaluate ($reassign = TRUE)
 
 if ($Data.scaling eq TRUE) then
-  inline @RUN:set_noe_scale.cns
+    inline @RUN:set_noe_scale.cns
 end if
 
 noe
-  scale dist  $Data.unamb_hot
-  scale ambi  $Data.amb_hot
-  scale hbon  $Data.hbond_hot
+    scale dist  $Data.unamb_hot
+    scale ambi  $Data.amb_hot
+    scale hbon  $Data.hbond_hot
 end
 
 evaluate ($kinter = $SaProtocol.inter_init_rigid)
 inline @RUN:scale_inter.cns
 
 dyna tors
-  reassign $reassign
-  timestep=$timestep
-  nstep=$calcsteps
-  nprint=$printsteps
-  ntrfrq=0
-  tcoupling = true  temperature = $bath
+    reassign $reassign
+    timestep=$timestep
+    nstep=$calcsteps
+    nprint=$printsteps
+    ntrfrq=0
+    tcoupling = true  temperature = $bath
 end
 
 evaluate ($reassign = FALSE)

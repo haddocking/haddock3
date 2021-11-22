@@ -2,7 +2,7 @@
 !    Perform the first simulated annealing stage of it1
 !
 ! ***********************************************************************
-! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
 ! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
 ! * All rights reserved.                                                *
 ! * This code is part of the HADDOCK software and governed by its       *
@@ -48,22 +48,22 @@ evaluate ($printsteps = int($calcsteps / 4))
 evaluate ($timestep = $SaProtocol.timestep*$SaProtocol.tadfactor)
 
 if ($Data.unamb_hot = 0) then
-  evaluate ($Data.unamb_hot = 0.000001)
+    evaluate ($Data.unamb_hot = 0.000001)
 end if
 if ($Data.unamb_cool1 = 0) then
-  evaluate ($Data.unamb_cool1 = 0.000001)
+    evaluate ($Data.unamb_cool1 = 0.000001)
 end if
 if ($Data.amb_hot = 0)then
-  evaluate ($Data.amb_hot = 0.000001)
+    evaluate ($Data.amb_hot = 0.000001)
 end if
 if ($Data.amb_cool1 = 0) then
-  evaluate ($Data.amb_cool1 = 0.000001)
+    evaluate ($Data.amb_cool1 = 0.000001)
 end if
 if ($Data.hbond_hot = 0) then
-  evaluate ($Data.hbond_hot = 0.000001)
+    evaluate ($Data.hbond_hot = 0.000001)
 end if
 if ($Data.hbond_cool1 = 0) then
-  evaluate ($Data.hbond_cool1 = 0.000001)
+    evaluate ($Data.hbond_cool1 = 0.000001)
 end if
 
 evaluate ($k_unamb= $Data.unamb_hot)
@@ -85,61 +85,46 @@ evaluate ($reassign = TRUE)
 evaluate ($i_cool = 0)
 while ($i_cool < $ncycle) loop cool
 
-      evaluate ($i_cool=$i_cool+1)
+    evaluate ($i_cool=$i_cool+1)
 
-      evaluate ($bath  = $bath  - $tempstep)
-      evaluate ($k_unamb = $k_unamb*$unamb_fac)
-      evaluate ($k_amb = $k_amb*$amb_fac)
-      evaluate ($k_hbond = $k_hbond*$hbond_fac)
-      evaluate ($asy=$asy+$asy_add)
-      evaluate ($masy=$masy+$masy_add)
+    evaluate ($bath  = $bath  - $tempstep)
+    evaluate ($k_unamb = $k_unamb*$unamb_fac)
+    evaluate ($k_amb = $k_amb*$amb_fac)
+    evaluate ($k_hbond = $k_hbond*$hbond_fac)
+    evaluate ($asy=$asy+$asy_add)
+    evaluate ($masy=$masy+$masy_add)
 
+    noe
+        scale dist $k_unamb
+        scale ambi $k_amb
+        scale hbon $k_hbond
+        asym ambi $asy
+        asym dist $asy
+        asym hbon $asy
+        masym ambi $masy
+        masym dist $masy
+        masym hbon $masy
+    end
 
-      if ($Data.scaling eq TRUE) then
-        inline @RUN:set_noe_scale.cns
-        noe
-           scale dist $Data.unamb_cool1
-           scale ambi $Data.amb_cool1
-           scale hbon $Data.hbond_cool1
-           asym ambi $asy
-           asym dist $asy
-           asym hbon $asy
-           masym ambi $masy
-           masym dist $masy
-           masym hbon $masy
-        end
-      else
-        noe
-           scale dist $k_unamb
-           scale ambi $k_amb
-           scale hbon $k_hbond
-           asym ambi $asy
-           asym dist $asy
-           asym hbon $asy
-           masym ambi $masy
-           masym dist $masy
-           masym hbon $masy
-        end
-      end if
+    !scale intermolecular interactions
+    inline @RUN:scale_inter.cns
+    evaluate ($kinter = $kinter + $interstep)
 
-      !scale intermolecular interactions
-      inline @RUN:scale_inter.cns
-      evaluate ($kinter = $kinter + $interstep)
+    dyna tors
+       reassign $reassign
+       timestep=$timestep
+       nstep=$calcsteps
+       nprint=$printsteps
+       ntrfrq=0
+       tcoupling = true  temperature = $bath
+    end
 
-      dyna tors
-         reassign $reassign
-         timestep=$timestep
-         nstep=$calcsteps
-         nprint=$printsteps
-         ntrfrq=0
-         tcoupling = true  temperature = $bath
-      end
-
-      energy end
-      if ($ener > 99999999) then
+    energy end
+    if ($ener > 99999999) then
         display ENERGY PROBLEM, THE SYSTEM IS BLOWING UP: ==> STOPPING
-	stop
-      end if
-      evaluate ($reassign = FALSE)
+        stop
+    end if
+    evaluate ($reassign = FALSE)
+    
 end loop cool
 

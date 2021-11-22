@@ -132,7 +132,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the weights from the defaults
         _weight_keys = \
-            ('w_vdw_1', 'w_elec_1', 'w_desolv_1', 'w_air_1', 'w_bsa_1')
+            ('w_vdw', 'w_elec', 'w_desolv', 'w_air', 'w_bsa')
         weights = {e: self.params[e] for e in _weight_keys}
 
         expected = []

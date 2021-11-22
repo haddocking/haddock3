@@ -1,0 +1,2 @@
+ assign (resid 400 and name FE  ) (resid  15 and name NE2 )   1.99  0.05  0.05
+ assign (resid 400 and name FE  ) (resid  50 and name SD  )   2.33  0.05  0.05

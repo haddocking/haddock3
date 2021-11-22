@@ -1,0 +1,45 @@
+REMARK FILENAME="tensor_para.pdb"
+REMARK topology file for dipolar coupling calculations
+REMARK DATE:16-Mar-2011  11:48:12       created by user: christophe
+REMARK VERSION:1.3
+ATOM      1  X   XAN   990       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM      2  Y   XAN   990       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM      3  Z   XAN   990       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM      4  OO  XAN   990       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM      5  X   XAN   991       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM      6  Y   XAN   991       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM      7  Z   XAN   991       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM      8  OO  XAN   991       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM      9  X   XAN   992       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     10  Y   XAN   992       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     11  Z   XAN   992       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     12  OO  XAN   992       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     13  X   XAN   993       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     14  Y   XAN   993       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     15  Z   XAN   993       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     16  OO  XAN   993       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     17  X   XAN   994       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     18  Y   XAN   994       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     19  Z   XAN   994       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     20  OO  XAN   994       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     21  X   XAN   995       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     22  Y   XAN   995       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     23  Z   XAN   995       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     24  OO  XAN   995       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     25  X   XAN   996       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     26  Y   XAN   996       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     27  Z   XAN   996       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     28  OO  XAN   996       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     29  X   XAN   997       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     30  Y   XAN   997       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     31  Z   XAN   997       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     32  OO  XAN   997       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     33  X   XAN   998       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     34  Y   XAN   998       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     35  Z   XAN   998       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     36  OO  XAN   998       0.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     37  X   XAN   999       3.000   0.000   0.000  1.00  0.00      XAN 
+ATOM     38  Y   XAN   999       0.000   3.000   0.000  1.00  0.00      XAN 
+ATOM     39  Z   XAN   999       0.000   0.000   3.000  1.00  0.00      XAN 
+ATOM     40  OO  XAN   999       0.000   0.000   0.000  1.00  0.00      XAN 
+END

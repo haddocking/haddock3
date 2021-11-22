@@ -140,7 +140,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the weights according to CNS parameters
         _weight_keys = \
-            ('w_vdw_0', 'w_elec_0', 'w_desolv_0', 'w_air_0', 'w_bsa_0')
+            ('w_vdw', 'w_elec', 'w_desolv', 'w_air', 'w_bsa')
         weights = {e: self.params[e] for e in _weight_keys}
 
         expected = []

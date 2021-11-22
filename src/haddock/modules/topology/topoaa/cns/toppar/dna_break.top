@@ -1,0 +1,14 @@
+PRESidue DNUC        ! patch for deletion of nucleic acid linkage
+                     ! i.e. it deletes the link the previous RNA residue (-) with
+                     ! the current one (+)
+ DELETE BOND -O3' +P
+ DELETE ANGLE -C3' -O3' +P
+ DELETE ANGLE -O3' +P  +OP1
+ DELETE ANGLE -O3' +P  +O1P
+ DELETE ANGLE -O3' +P  +OP2
+ DELETE ANGLE -O3' +P  +O2P
+ DELETE ANGLE -O3' +P  +O5'
+
+END {DNUC}
+
+

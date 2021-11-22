@@ -1,0 +1,25 @@
+REMARK FILENAME="/Users/abonvin/haddock2.1/toppar/tensor_dani.pdb"
+REMARK topology file for dipolar coupling calculations
+REMARK DATE:19-Nov-2007  11:59:42       created by user: abonvin
+REMARK VERSION:1.2
+ATOM      1  X   DAN   995       3.000   0.000   0.000  1.00  0.00      DAN 
+ATOM      2  Y   DAN   995       0.000   3.000   0.000  1.00  0.00      DAN 
+ATOM      3  Z   DAN   995       0.000   0.000   3.000  1.00  0.00      DAN 
+ATOM      4  OO  DAN   995       0.000   0.000   0.000  1.00  0.00      DAN 
+ATOM      5  X   DAN   996       3.000   0.000   0.000  1.00  0.00      DAN 
+ATOM      6  Y   DAN   996       0.000   3.000   0.000  1.00  0.00      DAN 
+ATOM      7  Z   DAN   996       0.000   0.000   3.000  1.00  0.00      DAN 
+ATOM      8  OO  DAN   996       0.000   0.000   0.000  1.00  0.00      DAN 
+ATOM      9  X   DAN   997       3.000   0.000   0.000  1.00  0.00      DAN 
+ATOM     10  Y   DAN   997       0.000   3.000   0.000  1.00  0.00      DAN 
+ATOM     11  Z   DAN   997       0.000   0.000   3.000  1.00  0.00      DAN 
+ATOM     12  OO  DAN   997       0.000   0.000   0.000  1.00  0.00      DAN 
+ATOM     13  X   DAN   998       3.000   0.000   0.000  1.00  0.00      DAN 
+ATOM     14  Y   DAN   998       0.000   3.000   0.000  1.00  0.00      DAN 
+ATOM     15  Z   DAN   998       0.000   0.000   3.000  1.00  0.00      DAN 
+ATOM     16  OO  DAN   998       0.000   0.000   0.000  1.00  0.00      DAN 
+ATOM     17  X   DAN   999       3.000   0.000   0.000  1.00  0.00      DAN 
+ATOM     18  Y   DAN   999       0.000   3.000   0.000  1.00  0.00      DAN 
+ATOM     19  Z   DAN   999       0.000   0.000   3.000  1.00  0.00      DAN 
+ATOM     20  OO  DAN   999       0.000   0.000   0.000  1.00  0.00      DAN 
+END

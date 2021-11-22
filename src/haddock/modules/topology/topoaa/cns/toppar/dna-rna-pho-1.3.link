@@ -1,0 +1,87 @@
+remarks  file toppar/dna-rna-pho.link
+remarks  macro to define nucleic acid links and terminii
+remarks  this file uses a 5' phosphate group
+remarks
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+checkversion 1.3
+
+link  nuc  head - DA  tail + DA end
+link  nuc  head - DA  tail + DC end
+link  nuc  head - DA  tail + DG end
+link  nuc  head - DA  tail + DT end
+link  nuc  head - DA  tail + DJ end
+
+link  nuc  head - DC  tail + DA end
+link  nuc  head - DC  tail + DC end
+link  nuc  head - DC  tail + DG end
+link  nuc  head - DC  tail + DT end
+link  nuc  head - DC  tail + DJ end
+
+link  nuc  head - DG  tail + DA end
+link  nuc  head - DG  tail + DC end
+link  nuc  head - DG  tail + DG end
+link  nuc  head - DG  tail + DT end
+link  nuc  head - DG  tail + DJ end
+
+link  nuc  head - DT  tail + DA end
+link  nuc  head - DT  tail + DC end
+link  nuc  head - DT  tail + DG end
+link  nuc  head - DT  tail + DT end
+link  nuc  head - DT  tail + DJ end
+
+link  nuc  head - DJ  tail + DA end
+link  nuc  head - DJ  tail + DC end
+link  nuc  head - DJ  tail + DG end
+link  nuc  head - DJ  tail + DT end
+link  nuc  head - DJ  tail + DJ end
+
+
+link  nuc  head - A  tail + A end
+link  nuc  head - A  tail + C end
+link  nuc  head - A  tail + G end
+link  nuc  head - A  tail + U end
+
+link  nuc  head - C  tail + A end
+link  nuc  head - C  tail + C end
+link  nuc  head - C  tail + G end
+link  nuc  head - C  tail + U end
+
+link  nuc  head - G  tail + A end
+link  nuc  head - G  tail + C end
+link  nuc  head - G  tail + G end
+link  nuc  head - G  tail + U end
+
+link  nuc  head - U  tail + A end
+link  nuc  head - U  tail + C end
+link  nuc  head - U  tail + G end
+link  nuc  head - U  tail + U end
+
+
+first 5pho tail + A end
+first 5pho tail + C end
+first 5pho tail + G end
+first 5pho tail + U end
+
+first 5pho tail + DA end
+first 5pho tail + DC end
+first 5pho tail + DG end
+first 5pho tail + DT end
+first 5pho tail + DJ end
+
+
+last  3ter head - A end
+last  3ter head - C end
+last  3ter head - G end
+last  3ter head - U end
+
+last  3ter head - DA end
+last  3ter head - DC end
+last  3ter head - DG end
+last  3ter head - DT end
+last  3ter head - DJ end
+
+
+set message=$old_message echo=$old_echo end

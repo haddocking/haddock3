@@ -1,0 +1,250 @@
+remarks file toppar/carbohydrate.param
+REMARKS Parameter file for pyranose sugars
+REMARKS Alexandre Bonvin - adapted to use unique atom types for sugar-specific atoms
+REMARKS Joao Rodrigues 11-June-2020
+REMARKS Parameters updated to Feng, PLoS One, 2017
+REMARKS PMC 5726640
+
+REMARKS Bill Weis 10-July-1988
+REMARKS Additions for atom type combinations not covered in PARAM19X.PRO.
+REMARKS Needed additions are for ether oxygen and aliphatic carbon in all-atom
+REMARKS representation used for sugars (type CC).  Ditto for type HA.
+REMARKS Values from J. Brady glucose parameters unless noted.
+REMARKS These should be sufficient for refinement.  
+
+REMARKS Additions 6-March-1992 Bill Weis
+REMARKS New atom types CCA, CCE,  OASfor the C1 & O1 positions to account 
+REMARKS for different BOND and ANGLe values due to the anomeric effect.
+REMARKS More accurate equilibrium values for BOND ANGLe around this oxygen 
+REMARKS in glycosidic linkages.  CCE for equatorial O1, CCA for 
+REMAKRS axial O1.   For free sugar, keep OH1 as O1 atomtype; changed to OA
+REMARKS for linkages. 
+REMARKS References: G.A. Jeffrey (1990) Acta Cryst B46, 89-103; 
+REMARKS K. Hirotsu & A.Shimada, (1974) Bull. Chem. Soc. Japan, 47, 1872-1879.
+
+REMARKS  This set has been modified to be roughly consistent with
+REMARKS  the csd-derived protein parameters of Engh and Huber.
+REMARKS  New atom type CC6 for exocyclic 6 carbon
+REMARKS  Bill Weis 5/11/92
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+checkversion 1.3
+
+BOND CCS  OES    1000.0    1.438 ! closer to crystal structures
+BOND CCE  OES    1000.0    1.428 
+BOND CCA  OES    1000.0    1.419 
+BOND CCS  CCS    1000.0    1.526 ! adjusted to Jeffries
+BOND CCS  CC6    1000.0    1.516 
+BOND CCE  CCS    1000.0    1.526
+BOND CCA  CCS    1000.0    1.526
+BOND CCS  HAS    1000.0    1.099 
+BOND CC6  HAS    1000.0    1.099 
+BOND CCE  HAS    1000.0    1.099 
+BOND CCA  HAS    1000.0    1.099 
+BOND CCS  OH1    1000.0    1.420 
+BOND CC6  OH1    1000.0    1.420
+BOND CCE  OH1    1000.0    1.385  !force constant as for other exocylic OH
+BOND CCA  OH1    1000.0    1.398  !  "       "    "   "    "     "      "
+BOND CCE  OAS    1000.0    1.385  !  "       "    "   "    "     "      "
+BOND CCA  OAS    1000.0    1.398  !  "       "    "   "    "     "      "
+BOND CCS  OAS    1000.0    1.44   !force constant as for other exocylic OH
+BOND CC6  OAS    1000.0    1.44 
+BOND CCS  NH1    1000.0    1.45   !as extended atom carbon-N
+BOND CCE  NH1    1000.0    1.45   !as extended atom carbon-N
+BOND CCA  NH1    1000.0    1.45   !as extended atom carbon-N
+BOND CCS  C      1000.0    1.52   !"    "       "     "   -C
+BOND CCE  C      1000.0    1.52
+BOND CCA  C      1000.0    1.52
+
+
+ANGLe H    OH1  CCS   500.0   109.35
+ANGLe H    OH1  CC6   500.0   109.35 
+ANGLe H    OH1  CCE   500.0   109.35
+ANGLe H    OH1  CCA   500.0   109.35
+ANGLe HAS  CCS  HAS   500.0   107.85
+ANGLe HAS  CC6  HAS   500.0   107.85
+ANGLe HAS  CCS  CCS   500.0   108.72
+ANGLe HAS  CC6  CCS   500.0   108.72 
+ANGLe HAS  CCS  CC6   500.0   108.72
+ANGLe HAS  CCS  CCE   500.0   108.72
+ANGLe HAS  CCS  CCA   500.0   108.72
+ANGLe HAS  CCE  CCS   500.0   108.72
+ANGLe HAS  CCA  CCS   500.0   108.72
+ANGLe HAS  CCS  OH1   500.0   109.89
+ANGLe HAS  CC6  OH1   500.0   109.89 
+ANGLe HAS  CCE  OH1   500.0   109.89
+ANGLe HAS  CCA  OH1   500.0   109.89
+ANGLe HAS  CCS  OAS   500.0   109.89
+ANGLe HAS  CC6  OAS   500.0   109.89 
+ANGLe HAS  CCE  OAS   500.0   109.89
+ANGLe HAS  CCA  OAS   500.0   109.89
+ANGLe HAS  CCS  OES   500.0   107.24
+ANGLe HAS  CCE  OES   500.0   107.24
+ANGLe HAS  CCA  OES   500.0   107.24
+ANGLe CCS  CCS  CCS   500.0   110.40
+ANGLe CCS  CCS  CC6   500.0   112.50
+ANGLe CCE  CCS  CCS   500.0   110.40
+ANGLe CCA  CCS  CCS   500.0   110.40
+ANGLe CCS  CC6  OH1   500.0   111.20 
+ANGLe CCS  CCE  OH1   500.0   109.70
+ANGLe CCS  CCA  OH1   500.0   109.70
+ANGLe CCE  CCS  OH1   500.0   109.70
+ANGLe CCA  CCS  OH1   500.0   109.70
+ANGLe CCS  CCS  OH1   500.0   109.70
+ANGLe CCS  CCS  OES   500.0   110.00
+ANGLe CC6  CCS  OES   500.0   107.20 
+ANGLe CCS  CCE  OES   500.0   110.00
+ANGLe CCS  CCA  OES   500.0   110.00
+ANGLe CCS  CCS  OAS   500.0   109.70
+ANGLe CCS  CC6  OAS   500.0   109.70 !guess for 1-6 links 
+ANGLe CCS  CCE  OAS   500.0   109.70
+ANGLe CCS  CCA  OAS   500.0   109.70
+ANGLe CCE  CCS  OAS   500.0   109.70
+ANGLe CCA  CCS  OAS   500.0   109.70
+ANGLe CCS  OES  CCE   500.0   112.0
+ANGLe CCS  OES  CCA   500.0   114.0
+ANGLe OES  CCE  OH1   500.0   108.0
+ANGLe OES  CCE  OAS   500.0   108.0
+ANGLe OES  CCA  OH1   500.0   112.1 
+ANGLe OES  CCA  OAS   500.0   112.1 
+ANGLe CCE  OAS  CCS   500.0   116.0
+ANGLe CCA  OAS  CCS   500.0   115.0
+ANGLe CCE  OAS  CC6   500.0   116.0
+ANGLe CCA  OAS  CC6   500.0   111.5 !alpha 1,6 link 
+ANGLe O    C    CCS   500.0   120.0 !Mo & Jensen, Acta B, 31, 2867 (1975), 8/30/93
+ANGLe C    CCS  HAS   500.0   109.5 !  8/30/93
+ANGLe CCS  CCS  NH1   500.0   110.0
+ANGLe CCE  CCS  NH1   500.0   110.0
+ANGLe CCA  CCS  NH1   500.0   110.0
+ANGLe CCS  CCE  NH1   500.0   110.0
+ANGLe CCS  CCA  NH1   500.0   110.0
+ANGLe HAS  CCS  NH1   500.0   109.5
+ANGLe HAS  CCE  NH1   500.0   109.5
+ANGLe HAS  CCA  NH1   500.0   109.5
+ANGLe CCS  NH1  H     500.0   120.0
+ANGLe CCE  NH1  H     500.0   120.0
+ANGLe CCA  NH1  H     500.0   120.0
+ANGLe CCS  NH1  C     500.0   120.0
+ANGLe CCE  NH1  C     500.0   120.0
+ANGLe CCA  NH1  C     500.0   120.0
+ANGLe NH1  CCS  OES   500.0   110.7 !A complete guess
+ANGLe NH1  CCE  OES   500.0   110.7 !A complete guess
+ANGLe NH1  CCA  OES   500.0   110.7 !A complete guess
+ANGLe NH1  C    CCS   500.0   117.5
+ANGLe C    CCE  OH1   500.0   109.5 !A complete guess for SIA O2
+ANGLe C    CCA  OH1   500.0   109.5 !A complete guess for SIA O2
+ANGLe C    CCE  OAS   500.0   109.5 !A complete guess for SIA O2
+ANGLe C    CCA  OAS   500.0   109.5 !A complete guess for SIA O2
+ANGLe O    C    CCE   500.0   121.5
+ANGLe O    C    CCA   500.0   121.5
+ANGLe C    CCE  HAS   500.0   109.5
+ANGLe C    CCA  HAS   500.0   109.5
+ANGLe CCE  C    OC    500.0   118.75
+ANGLe CCA  C    OC    500.0   118.75
+ANGLe C    CCE  OES   500.0   107.24
+ANGLe C    CCA  OES   500.0   107.24
+ANGLe C    CCE  CCS   500.0   108.72
+ANGLe C    CCA  CCS   500.0   108.72
+
+
+DIHEdral  X    CCS   CCS   X      2.0  3   0.0
+DIHEdral  X    CCS   CC6   X      2.0  3   0.0 
+DIHEdral  X    CCE   CCS   X      2.0  3   0.0
+DIHEdral  X    CCA   CCS   X      2.0  3   0.0
+DIHEdral  X    CCS   OH1   X      2.0  3   0.0
+DIHEdral  X    CC6   OH1   X      2.0  3   0.0 
+DIHEdral  X    CCE   OH1   X      2.0  3   0.0
+DIHEdral  X    CCA   OH1   X      2.0  3   0.0
+DIHEdral  X    CCS   OAS   X      2.0  3   0.0
+DIHEdral  X    CC6   OAS   X      2.0  3   0.0 
+DIHEdral  X    CCE   OAS   X      2.0  3   0.0
+DIHEdral  X    CCA   OAS   X      2.0  3   0.0
+DIHEdral  X    CCS   OES   X      2.0  3   0.0
+DIHEdral  X    CCE   OES   X      2.0  3   0.0
+DIHEdral  X    CCA   OES   X      2.0  3   0.0
+DIHEdral  HAS  CCS   NH1   H      2.0  3 180.0 !for NAG and NANA
+DIHEdral  X    CCS   NH1   X      2.0  3   0.0 !beta link to Asn Nd1
+DIHEdral  X    CCE   NH1   X      2.0  3   0.0 !beta link to Asn Nd1
+DIHEdral  X    CCA   NH1   X      2.0  3   0.0 !beta link to Asn Nd1
+DIHEdral  X    C     CCE   X      2.0  3   0.0
+DIHEdral  X    C     CCA   X      2.0  3   0.0
+DIHEdral  X    C     CCS   X      2.0  3   0.0 ! N-acetyl in NAG, 8/30/93
+DIHEdral  CCS  NH1   C     CCS    2.0  2   0.0 ! peptide plane in NAG
+                                               !   guess - PDA 8/99
+
+IMPRoper  CCS X    X    CCS    500.0     0  35.26439 
+IMPRoper  CCE X    X    CCS    500.0     0  35.26439 
+IMPRoper  CCA X    X    CCS    500.0     0  35.26439 
+IMPRoper  OH1 X    X    CCS    500.0     0  35.26439 
+IMPRoper  OH1 X    X    CCE    500.0     0  35.26439 
+IMPRoper  OH1 X    X    CCA    500.0     0  35.26439 
+IMPRoper  OAS X    X    CCS    500.0     0  35.26439 
+IMPRoper  OAS X    X    CCE    500.0     0  35.26439 
+IMPRoper  OAS X    X    CCA    500.0     0  35.26439 
+IMPRoper  CCS X    X    OES    500.0     0  35.26439 
+IMPRoper  CCE X    X    OES    500.0     0  35.26439 
+IMPRoper  CCA X    X    OES    500.0     0  35.26439
+IMPRoper  C   X    X    CCE    500.0     0   0.0 !NANA acid planarity
+IMPRoper  C   X    X    CCA    500.0     0   0.0 !NANA acid planarity
+IMPRoper  HAS OES  OH1  CCS    500.00    0  67.6
+IMPRoper  HAS OH1  OES  CCS    500.00    0  67.7 !beta-D C1
+IMPRoper  C   OH1  OES  CCS    500.00    0  67.7 !SIA alpha-L C2
+IMPRoper  C   OH1  CCS  OES    500.00    0  67.7 !SIA alpha-L C2
+IMPRoper  OH1 C    CCS  OES    500.00    0  67.7 !SIA beta-L C2
+IMPRoper  HAS OH1  CCA  CCS    500.00    0  66.8 !MAN,FUC C2
+IMPRoper  HAS OH1  CCE  CCS    500.00    0  66.8
+IMPRoper  HAS OAS  CCA  CCS    500.00    0  66.8
+IMPRoper  HAS OAS  CCE  CCS    500.00    0  66.8
+IMPRoper  HAS CCA  OH1  CCS    500.00    0  66.8 !GLC,GLA,FCA,XYP C2
+IMPRoper  HAS CCE  OH1  CCS    500.00    0  66.8
+IMPRoper  HAS CCA  OAS  CCS    500.00    0  66.8 
+IMPRoper  HAS CCE  OAS  CCS    500.00    0  66.8
+IMPRoper  HAS HAS  CCE  CCS    500.00    0  70.3 !SIA C3
+IMPRoper  HAS HAS  CCS  CCE    500.00    0  70.3 !SIA C3
+IMPRoper  HAS HAS  CCA  CCS    500.00    0  70.3
+IMPRoper  HAS OH1  CCS  CCS    500.00    0  66.9 !MAN,GLC,GLA,NAG,FCA,XYP C3 - A2G,FCA,SIA C4 - SIA C7,C8
+IMPRoper  HAS OAS  CCS  CCS    500.00    0  66.9
+IMPRoper  HAS CCS  OH1  CCS    500.00    0  66.8 !FUC C3 MAN,GLC,GLA,NAG,FUC,XYP C4
+IMPRoper  HAS CCS  CCS  OH1    500.00    0  66.8 !NGA C4
+IMPRoper  HAS CCS  OAS  CCS    500.00    0  66.8
+IMPRoper  HAS CCS  OES  CC6    500.00    0  66.8 !MAN,GLC,GLA,NAG,FCA C5
+IMPRoper  HAS OES  CCS  CC6    500.00    0  66.8 !FUC C5
+IMPRoper  HAS HAS  OH1  CCS    500.00    0  70.3 !GLC,GLA,MAN,NAG,A2G C6
+IMPRoper  HAS HAS  OAS  CCS    500.00    0  70.3
+IMPRoper  HAS CCA  NH1  CCS    500.00    0  66.8 !NAG,A2G C2
+IMPRoper  HAS CCE  NH1  CCS    500.00    0  66.8
+IMPRoper  HAS CCS  NH1  CCS    500.00    0  66.8 !SIA C5
+IMPRoper  HAS CCS  CCS  OES    500.00    0  66.8 !SIA C6
+IMPRoper  HAS HAS  CCS  OH1    500.00    0  70.3 !SIA C9
+IMPRoper  HAS HAS  OES  CCS    500.00    0  70.3 !XYP C5
+IMPRoper  HAS CCS  CCS  NH1    500.00    0  66.8 !SIA C5
+IMPRoper  HAS CCS  OES  CCS    500.00    0  66.8 !SIA C6
+IMPRoper  HAS HAS  OH1  CCS    500.00    0  70.3 !SIA C9
+IMPRoper  HAS HAS  OES  CCS    500.00    0  70.3 !XYP C5
+IMPRoper  NH1 CCE  H    C      500.00    0   0.0 !B1N
+IMPRoper  HAS NH1  OES  CCS    500.00    0  67.7 !B1N beta-D C1
+IMPRoper  HAS OAS  OES  CCS    500.00    0  67.7 !B12,B14,A12L,A13L,A14L,A16L beta-D C1
+IMPRoper  HAS OES  OAS  CCS    500.00    0  67.6 !A12,A13,A14,A16,B12L,B14L alpha-D C1
+IMPRoper  C   CCS  NH1  O      500.00    0   0.0 !NAG,SIA planar
+IMPRoper  NH1 C    CCS  H      500.00    0   0.0 !NAG,SIA planar
+IMPRoper  CCS NH1  C    CCS    500.00    0 180.0 !NAG,SIA trans peptide
+
+
+{Asn-NAG}
+ANGLe  CH2E C    NH1     500.00    116.3225 {Asn CB-CG-ND2}
+IMPRoper  C   CH2E O    NH1    500.00    0  0.0124 {Asn CG-CB-OD1-ND2}
+
+! Values matching the OPLS one for proteins
+NONBonded  HAS     0.050   0.500       0.004    0.500
+NONBONDed  CCS     0.105   3.750       0.013    3.750
+NONBONDed  CC6     0.105   3.750       0.013    3.750
+NONBONDed  CCE     0.105   3.750       0.013    3.750
+NONBONDed  CCA     0.105   3.750       0.013    3.750
+NONBONDed  OES     0.210   2.960       0.021    2.960
+NONBONDed  OAS     0.210   2.960       0.021    2.960
+
+set message=$old_message echo=$old_echo end
+
+

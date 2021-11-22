@@ -99,7 +99,7 @@ class HaddockModule(BaseHaddockModule):
         topologies = first_model.topology
 
         refined_structure_list = []
-        for idx, model in enumerate(models_to_refine):
+        for idx, model in enumerate(1, models_to_refine):
             inp_file = generate_flexref(
                 idx,
                 model,

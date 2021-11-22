@@ -44,6 +44,7 @@ setup(
         'Operating System :: POSIX',
         'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         ],
     project_urls={
@@ -60,7 +61,7 @@ setup(
         'Protein docking',
         'Proteins',
         ],
-    python_requires='>=3.9, <3.10',
+    python_requires='>=3.8, <3.10',
     install_requires=[
         # not added on purpose
         ],

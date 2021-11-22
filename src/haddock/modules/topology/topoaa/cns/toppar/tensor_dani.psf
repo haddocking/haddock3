@@ -1,0 +1,132 @@
+data_cns_mtf
+
+_cns_mtf.title
+; FILENAME="/Users/abonvin/haddock2.1/toppar/tensor_dani.psf"
+  topology file for dipolar coupling calculations
+  DATE:19-Nov-2007  11:59:42       created by user: abonvin
+  VERSION:1.2
+;
+
+loop_
+_cns_mtf_atom.id
+_cns_mtf_atom.segment_id
+_cns_mtf_atom.residue_id
+_cns_mtf_atom.residue_name
+_cns_mtf_atom.atom_name
+_cns_mtf_atom.chemical_type
+_cns_mtf_atom.charge
+_cns_mtf_atom.atom_mass
+1 'DAN' '995' 'DAN' 'X' 'XX' 0.00000 100.000
+2 'DAN' '995' 'DAN' 'Y' 'YY' 0.00000 100.000
+3 'DAN' '995' 'DAN' 'Z' 'ZZ' 0.00000 100.000
+4 'DAN' '995' 'DAN' 'OO' 'OO' 0.00000 100.000
+5 'DAN' '996' 'DAN' 'X' 'XX' 0.00000 100.000
+6 'DAN' '996' 'DAN' 'Y' 'YY' 0.00000 100.000
+7 'DAN' '996' 'DAN' 'Z' 'ZZ' 0.00000 100.000
+8 'DAN' '996' 'DAN' 'OO' 'OO' 0.00000 100.000
+9 'DAN' '997' 'DAN' 'X' 'XX' 0.00000 100.000
+10 'DAN' '997' 'DAN' 'Y' 'YY' 0.00000 100.000
+11 'DAN' '997' 'DAN' 'Z' 'ZZ' 0.00000 100.000
+12 'DAN' '997' 'DAN' 'OO' 'OO' 0.00000 100.000
+13 'DAN' '998' 'DAN' 'X' 'XX' 0.00000 100.000
+14 'DAN' '998' 'DAN' 'Y' 'YY' 0.00000 100.000
+15 'DAN' '998' 'DAN' 'Z' 'ZZ' 0.00000 100.000
+16 'DAN' '998' 'DAN' 'OO' 'OO' 0.00000 100.000
+17 'DAN' '999' 'DAN' 'X' 'XX' 0.00000 100.000
+18 'DAN' '999' 'DAN' 'Y' 'YY' 0.00000 100.000
+19 'DAN' '999' 'DAN' 'Z' 'ZZ' 0.00000 100.000
+20 'DAN' '999' 'DAN' 'OO' 'OO' 0.00000 100.000
+-1 ' ' ' ' ' ' ' ' ' ' -1.00000 -1.00000
+
+loop_
+_cns_mtf_bond.id[1]
+_cns_mtf_bond.id[2]
+1 4
+2 4
+3 4
+5 8
+6 8
+7 8
+9 12
+10 12
+11 12
+13 16
+14 16
+15 16
+17 20
+18 20
+19 20
+-1 -1
+
+loop_
+_cns_mtf_angle.id[1]
+_cns_mtf_angle.id[2]
+_cns_mtf_angle.id[3]
+1 4 2
+1 4 3
+2 4 3
+5 8 6
+5 8 7
+6 8 7
+9 12 10
+9 12 11
+10 12 11
+13 16 14
+13 16 15
+14 16 15
+17 20 18
+17 20 19
+18 20 19
+-1 -1 -1
+
+loop_
+_cns_mtf_dihedral.id[1]
+_cns_mtf_dihedral.id[2]
+_cns_mtf_dihedral.id[3]
+_cns_mtf_dihedral.id[4]
+-1 -1 -1 -1
+
+loop_
+_cns_mtf_improper.id[1]
+_cns_mtf_improper.id[2]
+_cns_mtf_improper.id[3]
+_cns_mtf_improper.id[4]
+-1 -1 -1 -1
+
+loop_
+_cns_mtf_explicit_nonbonded_exclusion.inb
+-1
+
+loop_
+_cns_mtf_explicit_nonbonded_exclusion.iblo
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+0
+-1
+
+loop_
+_cns_mtf_group_linked_list.first_atom_id
+0
+4
+8
+12
+16
+-1
+

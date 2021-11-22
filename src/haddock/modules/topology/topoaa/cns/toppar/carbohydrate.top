@@ -1,0 +1,2741 @@
+REMARKS toppar/carbohydrate.top 
+REMARKS for use with carbohydrate.param for N-linked glycans
+REMARKS ==========================================================
+REMARKS Joao Rodrigues 11-June-2020
+REMARKS Topologies updated to Feng, PLoS One, 2017
+REMARKS PMC 5726640
+REMARKS Alexandre Bonvin July-2020
+REMARKS Patches added for GAL-SIA 2-3 and 2.6 linkages
+REMARKS ----------------------------------------------------------
+REMARKS Currently supported carbohydrates and their anomers:
+REMARK (codes in parenthesis are commonly used alternatives - currently not recognized by CNS):
+REMARKS GLC:       alpha-D-glucopyranose
+REMARKS BGC:       beta -D-glucopyranose  
+REMARKS GLA:       alpha-D-galactopyranose
+REMARKS GAL (GLB): beta- D-galactopyranose
+REMARKS MAN:       alpha-D-mannopyranose
+REMARKS BMA:       beta -D-mannopyronose
+REMARKS NDG:       2-N-acetyl-alpha-D-glucopyranose
+REMARKS A2G:       2-N-acetyl-alpha-D-glucopyranose, different stereochemistry at C4
+REMARKS NAG:       2-N-acetyl-beta-D-glucopyranose
+REMARKS NGA:       2-N-acetyl-beta-D-galactopyranose
+REMARKS FUC:       alpha-L-fucopyranose
+REMARKS FUL:       beta -L-fucopyranose
+REMARKS FCA:       alpha-D-fucopyranose
+REMARKS FCB:       beta -D-fucopyranose
+REMARKS SIA:       alpha-N-acetyl neuraminic acid
+REMARKS SIB:       beta-N-acetyl neuraminic acid - A. Bonvin
+REMARKS XYP:       beta-D-xylopyranose
+REMARKS ----------------------------------------------------------
+REMARKS Links
+REMARKS B1N: N-linked glycan beta link from NAG and NDG to ASN (asparagine)
+!            note: PDB files with unusual NDG to ASN links are likely incorrect assignments 
+!            they will be forced into the beta anomer by the B1N link.
+REMARKS B12: beta(1,2)  link from BGC, GAL, BMA, NAG, FCB, XYP to any
+REMARKS B14: beta(1,4)  link from BGC, GAL, BMA, NAG, FCB, XYP to any
+REMARKS A12: alpha(1,2) link from GLC, GLA, MAN, NDG, A2G, FCA to any
+REMARKS A13: alpha(1,3) link from GLC, GLA, MAN, NDG, A2G, FCA to any
+REMARKS A14: alpha(1,4) link from GLC, GLA, MAN, NDG, A2G, FCA to any
+REMARKS A16: alpha(1,6) link from GLC, GLA, MAN, NDG, A2G, FCA to any
+REMARKS B12L: beta(1,2)  link from FUL to any
+REMARKS B14L: beta(1,4)  link from FUL to any
+REMARKS A12L: alpha(1,2) link from FUC to any
+REMARKS A13L: alpha(1,3) link from FUC to any
+REMARKS A14L: alpha(1,4) link from FUC to any
+REMARKS A16L: alpha(1,6) link from FUC to any
+REMARKS A23: alpha(2,3) link from GAL to SIA, SIB
+REMARKS A23S: alpha(2,3) link from SIA to GAL
+REMARKS A26: alpha(2,6) link from GAL to SIA, SIB
+REMARKS A26S: alpha(2,6)  link from SIA, SIB to GAL
+REMARKS RAM: alpha-L-rhamnose
+REMARKS GXL: alpha-L-galactopyranose
+REMARKS B13: beta(1,3)  link from beta-D-sugar to any
+REMARKS B13L: beta(1,3)  link from beta-L-sugar to any
+REMARKS B16: beta(1,6)  link from beta-D-sugar to any
+REMARKS B16L: beta(1,6)  link from beta-L-sugar to any
+REMARKS B1S: beta link from C1(D-) to Ser OG.
+REMARKS A1S: alpha link from C1(D-) to Ser OG.
+REMARKS B1T: beta link from C1(D-) to Thr OG1.
+REMARKS A1T: alpha link from C1(D-) to Thr OG1.
+REMARKS B1C: beta link from C1(D-) to Cys SG.
+REMARKS A1C: alpha link from C1(D-) to Cys SG.
+REMARKS B1SL: beta link from C1(L-) to Ser OG.
+REMARKS A1SL: alpha link from C1(L-) to Ser OG.
+REMARKS B1TL: beta link from C1(L-) to Thr OG1.
+REMARKS A1TL: alpha link from C1(L-) to Thr OG1.
+REMARKS B1CL: beta link from C1(L-) to Cys SG.
+REMARKS A1CL: alpha link from C1(L-) to Cys SG.
+
+! History:
+! Bill Weis 10-July-1988:
+! Charges taken from John Brady's glucose topology file for ring,
+!   others from protein parameter file.
+! Idealized values for impropers at ring carbons to allow simple 
+!   construction of various anomers/epimers.
+! Any other hexose or link can be easily constructed by analogy to these.
+
+! Additions 6-March-1992 Bill Weis for use with PARAM2.CHO
+! New atom types CCA, CCE,  OA for the C1 & O1 positions to account
+! for different bond and angle values due to the anomeric effect.
+! More accurate equilibrium values for bond angle around this oxygen
+! in glycosidic linkages.  CCE for equatorial O1, CCA for
+! axial O1.   For free sugar, keep OH1 as O1 atomtype; changed to OA
+! for linkages.
+! References: G.A. Jeffrey (1990) Acta Cryst B46, 89-103;
+! K. Hirotsu & A.Shimada, (1974) Bull. Chem. Soc. Japan, 47, 1872-1879.
+!
+! Additional CC6 atomtype for exocyclic carbon 5/11/92 
+! New nomenclature, pairs of anomers for each pyranose sugar, generic links, ATB 12-Dec-2009
+!
+! added impropers that define anomers using non-hydrogen atoms, ATB 12/06/09
+!
+! added additional residues: FCA, FCB, A2G, ATB 12/07/09
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+checkversion 1.3
+
+AUTOGENERATE ANGLES=TRUE END
+{*===========================*}
+ 
+{default masses -- only those not in the protein topology protein.top}
+MASS   CCS   12.01100! carbohydrate carbon
+MASS   CC6   12.01100! carbohydrate carbon, exocyclic C6 
+MASS   CCE   12.01100! carbohydrate carbon, equatorial C1
+MASS   CCA   12.01100! carbohydrate carbon, axial C1
+MASS   OES   15.99940! ether oxygen
+MASS   OAS   15.99940! ether oxygen in glycosidic bond 
+MASS   HAS    1.00800! aliphatic hydrogen
+
+!-------------------------------------------------------------------
+
+
+RESIdue GLC  !alpha-D-glucopyranose ! alpha-anomer of BGC, ATB 12/06/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 H1 O5 C2   ! alpha-anomer
+!  IMPRoper C1 O5 O1 C2   ! alpha-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 C1 O2 C3
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+END
+
+RESIdue BGC  !beta-D-glucopyranose ! (formerly called GLC)
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 O5 H1 C2    ! beta-anomer
+!  IMPRoper C1 O1 O5 C2    ! beta-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 C1 O2 C3
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue GLA  !alpha-D-galactopyranose ! alpha anomer form of GAL, ATB 12/06/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 H1 O5 C2  ! alpha-anomer
+!  IMPRoper C1 O5 O1 C2  ! alpha anomer definition using non-hydrogen atoms
+
+!  IMPRoper C2 C1 O2 C3
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 O4 C3 C5  {Axial C4}
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+END
+
+RESIdue GAL  !beta-D-galactopyranose 
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 O5 H1 C2  ! beta-anomer
+!  IMPRoper C1 O1 O5 C2  ! beta anomer definition using non-hydrogen atoms
+
+!  IMPRoper C2 C1 O2 C3
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 O4 C3 C5  {Axial C4}
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue MAN  !alpha-D-mannopyranose  ! was formerly beta form, ATB 06/12/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 H1 O5 C2    ! alpha-anomer
+!  IMPRoper C1 O5 O1 C2    ! alpha-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 O2 C1 C3 {axial C2}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 O2 C1 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+END
+
+RESIdue BMA  !beta-D-mannopyranose  ! formerly called MAN
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 O5 H1 C2    ! beta-anomer
+!  IMPRoper C1 O1 O5 C2    ! beta-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 O2 C1 C3 {axial C2}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 O2 C1 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue NDG  !2-N-Acetyl-alpha-D-glucopyranose, ATB 12/06/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.000   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM N2   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN2  TYPE=H    CHARge= 0.250   END
+  ATOM C7   TYPE=C    CHARge= 0.550   END
+  ATOM O7   TYPE=O    CHARge=-0.550   END 
+  ATOM C8   TYPE=CCS  CHARge=-0.300   END
+  ATOM H81  TYPE=HAS  CHARge= 0.100   END
+  ATOM H82  TYPE=HAS  CHARge= 0.100   END
+  ATOM H83  TYPE=HAS  CHARge= 0.100   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END  ! is called O in PDB convention ! is renamed after topology generation in module mtfautogenerate ATB 12/07/09
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 N2
+  BOND N2 HN2
+  BOND N2 C7
+  BOND C7 O7
+  BOND C7 C8
+  BOND C8 H81
+  BOND C8 H82
+  BOND C8 H83
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 N2 HN2
+  DIHEDRAL C2 N2 C7 C8
+  DIHEDRAL N2 C7 C8 H81
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 H1 O5 C2    ! alpha-anomer
+!  IMPRoper C1 O5 O1 C2    ! alpha-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 C1 N2 C3
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 N2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+  IMPRoper C2 N2 C7 C8 {trans peptide}
+
+END
+
+RESIdue NAG  !2-N-Acetyl-beta-D-glucopyranose 
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.000   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM N2   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN2  TYPE=H    CHARge= 0.250   END
+  ATOM C7   TYPE=C    CHARge= 0.550   END
+  ATOM O7   TYPE=O    CHARge=-0.550   END 
+  ATOM C8   TYPE=CCS  CHARge=-0.300   END
+  ATOM H81  TYPE=HAS  CHARge= 0.100   END
+  ATOM H82  TYPE=HAS  CHARge= 0.100   END
+  ATOM H83  TYPE=HAS  CHARge= 0.100   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 N2
+  BOND N2 HN2
+  BOND N2 C7
+  BOND C7 O7
+  BOND C7 C8
+  BOND C8 H81
+  BOND C8 H82
+  BOND C8 H83
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 N2 HN2
+  DIHEDRAL C2 N2 C7 C8
+  DIHEDRAL N2 C7 C8 H81
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 O5 H1 C2    ! beta-anomer
+!  IMPRoper C1 O1 O5 C2    ! beta-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 C1 N2 C3
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 N2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+  IMPRoper C2 N2 C7 C8 {trans peptide}
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue NGA  !2-N-Acetyl-beta-D-galactopyranose 
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.000   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM N2   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN2  TYPE=H    CHARge= 0.250   END
+  ATOM C7   TYPE=C    CHARge= 0.550   END
+  ATOM O7   TYPE=O    CHARge=-0.550   END 
+  ATOM C8   TYPE=CCS  CHARge=-0.300   END
+  ATOM H81  TYPE=HAS  CHARge= 0.100   END
+  ATOM H82  TYPE=HAS  CHARge= 0.100   END
+  ATOM H83  TYPE=HAS  CHARge= 0.100   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 N2
+  BOND N2 HN2
+  BOND N2 C7
+  BOND C7 O7
+  BOND C7 C8
+  BOND C8 H81
+  BOND C8 H82
+  BOND C8 H83
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 N2 HN2
+  DIHEDRAL C2 N2 C7 C8
+  DIHEDRAL N2 C7 C8 H81
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 O5 H1 C2    ! beta-anomer
+!  IMPRoper C1 O1 O5 C2    ! beta-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 C1 N2 C3
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 N2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 C5 O4  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+  IMPRoper C2 N2 C7 C8 {trans peptide}
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue MAG  !2-N-Acetyl-beta-D-glucopyranose + Methyl at O1
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OAS  CHARge=-0.400   END
+  ATOM CM   TYPE=CCS  CHARge=-0.150   END
+  ATOM HM1  TYPE=HAS  CHARge= 0.100   END
+  ATOM HM2  TYPE=HAS  CHARge= 0.100   END
+  ATOM HM3  TYPE=HAS  CHARge= 0.100   END
+  ATOM C2   TYPE=CCS  CHARge= 0.000   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM N2   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN2  TYPE=H    CHARge= 0.250   END
+  ATOM C7   TYPE=C    CHARge= 0.550   END
+  ATOM O7   TYPE=O    CHARge=-0.550   END 
+  ATOM C8   TYPE=CCS  CHARge=-0.300   END
+  ATOM H81  TYPE=HAS  CHARge= 0.100   END
+  ATOM H82  TYPE=HAS  CHARge= 0.100   END
+  ATOM H83  TYPE=HAS  CHARge= 0.100   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 CM
+  BOND CM HM1
+  BOND CM HM2
+  BOND CM HM3
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 N2
+  BOND N2 HN2
+  BOND N2 C7
+  BOND C7 O7
+  BOND C7 C8
+  BOND C8 H81
+  BOND C8 H82
+  BOND C8 H83
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 CM
+  DIHEDRAL H2 C2 N2 HN2
+  DIHEDRAL C2 N2 C7 C8
+  DIHEDRAL N2 C7 C8 H81
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 O5 H1 C2    ! beta-anomer
+!  IMPRoper C1 O1 O5 C2    ! beta-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 C1 N2 C3
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 N2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+  IMPRoper C2 N2 C7 C8 {trans peptide}
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue A2G  !2-N-Acetyl-alpha-D-galactopyranose, different stereochemistry at C4 ! new residue ATB 12/07/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.000   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM N2   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN2  TYPE=H    CHARge= 0.250   END
+  ATOM C7   TYPE=C    CHARge= 0.550   END
+  ATOM O7   TYPE=O    CHARge=-0.550   END 
+  ATOM C8   TYPE=CCS  CHARge=-0.300   END
+  ATOM H81  TYPE=HAS  CHARge= 0.100   END
+  ATOM H82  TYPE=HAS  CHARge= 0.100   END
+  ATOM H83  TYPE=HAS  CHARge= 0.100   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END  ! is called O in PDB convention ! is renamed after topology generation in module mtfautogenerate, ATB 12/07/09
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 N2
+  BOND N2 HN2
+  BOND N2 C7
+  BOND C7 O7
+  BOND C7 C8
+  BOND C8 H81
+  BOND C8 H82
+  BOND C8 H83
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 N2 HN2
+  DIHEDRAL C2 N2 C7 C8
+  DIHEDRAL N2 C7 C8 H81
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+!  IMPRoper C1 H1 O5 C2    ! alpha-anomer
+!  IMPRoper C1 O5 O1 C2    ! alpha-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+!  IMPRoper C2 C1 N2 C3
+  IMPRoper N2 C7 C2 HN2 {planar N}
+  IMPRoper C7 C8 N2 O7  {planar C}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 O4 C3 C5 !!!<<<<< only difference to NDG  !?? check!!!
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 N2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+  IMPRoper C2 N2 C7 C8 {trans peptide}
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue FUC  !alpha-L-fucopyranose, ! alpha anomer of FUL
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge=-0.300   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM H63  TYPE=HAS  CHARge= 0.100   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 H63
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 H61
+
+{ This is an L-sugar, so impropers are reversed to maintain ring }
+{ geometry equivalent to D-hexoses }
+!  IMPRoper C1 O5 H1 C2    ! alpha-anomer
+!  IMPRoper C1 O1 O5 C2    ! alpha-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+! L-form definition
+!  IMPRoper C2 O2 C1 C3
+!  IMPRoper C3 C2 O3 C4
+!  IMPRoper C4 C3 O4 C5 {Axial C4}
+!  IMPRoper C5 C4 C6 O5
+
+  IMPRoper H1 O1 O5 C2  {L alpha C1=D beta}
+  IMPRoper H2 O2 C1 C3  {C2}
+  IMPRoper H3 C2 O3 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 O5 C4 C6  {C5}
+
+END
+
+RESIdue FUL  !beta-L-fucopyranose (formerly called FUC), ATB 12/06/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge=-0.300   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM H63  TYPE=HAS  CHARge= 0.100   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 H63
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 H61
+
+{ This is an L-sugar, so impropers are reversed to maintain ring }
+{ geometry equivalent to D-hexoses }
+!  IMPRoper C1 H1 O5 C2    ! beta-anomer
+!  IMPRoper C1 O5 O1 C2    ! beta-anomer definition using non-hydrogen atoms, ATB 12/06/09
+
+! L-form definition
+!  IMPRoper C2 O2 C1 C3
+!  IMPRoper C3 C2 O3 C4
+!  IMPRoper C4 C3 O4 C5 {Axial C4}
+!  IMPRoper C5 C4 C6 O5
+
+  IMPRoper H1 O5 O1 C2  {L beta C1=D alpha}
+  IMPRoper H2 O2 C1 C3  {C2}
+  IMPRoper H3 C2 O3 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 O5 C4 C6  {C5}
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue FCA  !alpha-D-fucopyranose, ! alpha anomer of FCB, ! new residue, ATB 12/07/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge=-0.300   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM H63  TYPE=HAS  CHARge= 0.100   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 H63
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 H61
+
+{ anomer definition for D-sugars }
+!  IMPRoper C1 H1 O5 C2    ! alpha-anomer
+!  IMPRoper C1 O5 O1 C2    ! alpha-anomer definition using non-hydrogen atoms
+
+! D-form definition:
+!  IMPRoper C2 C1 O2 C3
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 O4 C3 C5  {Axial C4}
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O5 O1 C2  {alpha C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+
+END
+
+RESIdue FCB  !beta-D-fucopyranose ! new residue ATB 12/07/09
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge=-0.300   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM H63  TYPE=HAS  CHARge= 0.100   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 H63
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 H61
+
+{ anomer definition for D-sugar }
+!  IMPRoper C1 O5 H1 C2    ! beta-anomer
+!  IMPRoper C1 O1 O5 C2    ! beta-anomer definition using non-hydrogen atoms
+
+! D-form definition:
+!  IMPRoper C2 C1 O2 C3
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 O4 C3 C5  {Axial C4}
+!  IMPRoper C5 C6 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 C4 O5 C6  {C5}
+
+END
+
+
+!-------------------------------------------------------------------
+
+RESIdue SIA {alpha-N-acetyl neuraminic acid}
+ GROUP
+  ATOM C1   TYPE=C    CHARge= 0.360   END
+  ATOM O1A  TYPE=OC   CHARge=-0.600   END
+  ATOM O1B  TYPE=OC   CHARge=-0.600   END
+  ATOM C2   TYPE=CCE  CHARge= 0.290   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge=-0.200   END
+  ATOM H31  TYPE=HAS  CHARge= 0.100   END
+  ATOM H32  TYPE=HAS  CHARge= 0.100   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.000   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM N5   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN5  TYPE=H    CHARge= 0.250   END
+  ATOM C10  TYPE=C    CHARge= 0.550   END
+  ATOM O10  TYPE=O    CHARge=-0.550   END
+  ATOM C11  TYPE=CCS  CHARge=-0.300   END
+  ATOM H111 TYPE=HAS  CHARge= 0.100   END
+  ATOM H112 TYPE=HAS  CHARge= 0.100   END
+  ATOM H113 TYPE=HAS  CHARge= 0.100   END
+  ATOM C6   TYPE=CCS  CHARge= 0.100   END
+  ATOM H6   TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OES  CHARge=-0.400   END
+  ATOM C7   TYPE=CCS  CHARge= 0.150   END
+  ATOM H7   TYPE=HAS  CHARge= 0.100   END
+  ATOM O7   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO7  TYPE=H    CHARge= 0.400   END
+  ATOM C8   TYPE=CCS  CHARge= 0.150   END
+  ATOM H8   TYPE=HAS  CHARge= 0.100   END
+  ATOM O8   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO8  TYPE=H    CHARge= 0.400   END
+  ATOM C9   TYPE=CCS  CHARge= 0.050   END
+  ATOM H91  TYPE=HAS  CHARge= 0.100   END
+  ATOM H92  TYPE=HAS  CHARge= 0.100   END
+  ATOM O9   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO9  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1A  
+  BOND C1 O1B
+  BOND C1 C2
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 O6
+  BOND C2 C3
+  BOND C3 H31
+  BOND C3 H32
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 N5
+  BOND N5 HN5
+  BOND N5 C10
+  BOND C10 O10
+  BOND C10 C11
+  BOND C11 H111
+  BOND C11 H112
+  BOND C11 H113
+  BOND C5 C6
+  BOND C6 H6
+  BOND C6 C7
+  BOND C7 H7
+  BOND C7 O7
+  BOND O7 HO7
+  BOND C7 C8
+  BOND C8 H8
+  BOND C8 O8
+  BOND O8 HO8
+  BOND C8 C9
+  BOND C9 H91
+  BOND C9 H92
+  BOND C9 O9
+  BOND O9 HO9
+  BOND C6 O6
+  
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 C6
+  DIHEDRAL C4 C5 C6 O6
+  DIHEDRAL C5 C6 O6 C2
+  DIHEDRAL O6 C2 C3 C4
+  DIHEDRAL C1 C2 O2 HO2
+  DIHEDRAL O2 C2 C1 O1A
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 N5 HN5
+  DIHEDRAL C5 N5 C10 C11
+  DIHEDRAL N5 C10 C11 H111
+  DIHEDRAL H6 C6 C7 C8
+  DIHEDRAL H6 C6 C7 O7
+  DIHEDRAL C6 C7 C8 C9
+  DIHEDRAL C6 C7 C8 O8
+  DIHEDRAL C7 C8 C9 O9
+  DIHEDRAL C8 C9 O9 HO9
+
+{ This is an L-sugar, so impropers are reversed to maintain ring }
+{ geometry equivalent to D-hexoses }
+
+  IMPRoper C1  O1A O1B C2  !planar acid
+!  IMPRoper C2  C1 O6 C3 {axial acid, i.e. alpha configuration}
+!  IMPRoper C2  O6  O2  C3   ! included improper using non-hydrogen atoms, ATB 12/06/09
+!  IMPRoper C3  H31 C2  C4  
+!  IMPRoper C4  C3  O4  C5
+!  IMPRoper C5  N5  C4  C6
+  IMPRoper N5  C10 C5  HN5 !planar N-acetyl N
+  IMPRoper C10 C11 N5  O10 !planar N-acetyl C
+!  IMPRoper C6  C5  C7  O6
+!  IMPRoper C7  C6  O7  C8
+!  IMPRoper C8  C7  O8  C9
+
+  IMPRoper C1  O2  C3  O6 {C2 L alpha=D beta}
+  IMPRoper H31 H32 C4  C2 {C3}
+  IMPRoper H4  O4  C5  C3 {C4}
+  IMPRoper H5  C4  C6  N5 {C5}
+  IMPRoper H6  C7  O6  C5 {C6}
+  IMPRoper H7  O7  C8  C6 {C7}
+  IMPRoper H8  O8  C9  C7 {C8}
+  IMPRoper H91 H92 O9  C8 {C9}
+  IMPRoper C5  N5  C10 C11 {trans peptide}
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue SIB {beta-N-acetyl neuraminic acid}
+ GROUP
+  ATOM C1   TYPE=C    CHARge= 0.360   END
+  ATOM O1A  TYPE=OC   CHARge=-0.600   END
+  ATOM O1B  TYPE=OC   CHARge=-0.600   END
+  ATOM C2   TYPE=CCE  CHARge= 0.290   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge=-0.200   END
+  ATOM H31  TYPE=HAS  CHARge= 0.100   END
+  ATOM H32  TYPE=HAS  CHARge= 0.100   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.000   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM N5   TYPE=NH1  CHARge=-0.350   END
+  ATOM HN5  TYPE=H    CHARge= 0.250   END
+  ATOM C10  TYPE=C    CHARge= 0.550   END
+  ATOM O10  TYPE=O    CHARge=-0.550   END
+  ATOM C11  TYPE=CCS  CHARge=-0.300   END
+  ATOM H111 TYPE=HAS  CHARge= 0.100   END
+  ATOM H112 TYPE=HAS  CHARge= 0.100   END
+  ATOM H113 TYPE=HAS  CHARge= 0.100   END
+  ATOM C6   TYPE=CCS  CHARge= 0.100   END
+  ATOM H6   TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OES  CHARge=-0.400   END
+  ATOM C7   TYPE=CCS  CHARge= 0.150   END
+  ATOM H7   TYPE=HAS  CHARge= 0.100   END
+  ATOM O7   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO7  TYPE=H    CHARge= 0.400   END
+  ATOM C8   TYPE=CCS  CHARge= 0.150   END
+  ATOM H8   TYPE=HAS  CHARge= 0.100   END
+  ATOM O8   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO8  TYPE=H    CHARge= 0.400   END
+  ATOM C9   TYPE=CCS  CHARge= 0.050   END
+  ATOM H91  TYPE=HAS  CHARge= 0.100   END
+  ATOM H92  TYPE=HAS  CHARge= 0.100   END
+  ATOM O9   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO9  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1A  
+  BOND C1 O1B
+  BOND C1 C2
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 O6
+  BOND C2 C3
+  BOND C3 H31
+  BOND C3 H32
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 N5
+  BOND N5 HN5
+  BOND N5 C10
+  BOND C10 O10
+  BOND C10 C11
+  BOND C11 H111
+  BOND C11 H112
+  BOND C11 H113
+  BOND C5 C6
+  BOND C6 H6
+  BOND C6 C7
+  BOND C7 H7
+  BOND C7 O7
+  BOND O7 HO7
+  BOND C7 C8
+  BOND C8 H8
+  BOND C8 O8
+  BOND O8 HO8
+  BOND C8 C9
+  BOND C9 H91
+  BOND C9 H92
+  BOND C9 O9
+  BOND O9 HO9
+  BOND C6 O6
+  
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 C6
+  DIHEDRAL C4 C5 C6 O6
+  DIHEDRAL C5 C6 O6 C2
+  DIHEDRAL O6 C2 C3 C4
+  DIHEDRAL C1 C2 O2 HO2
+  DIHEDRAL O2 C2 C1 O1A
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 N5 HN5
+  DIHEDRAL C5 N5 C10 C11
+  DIHEDRAL N5 C10 C11 H111
+  DIHEDRAL H6 C6 C7 C8
+  DIHEDRAL H6 C6 C7 O7
+  DIHEDRAL C6 C7 C8 C9
+  DIHEDRAL C6 C7 C8 O8
+  DIHEDRAL C7 C8 C9 O9
+  DIHEDRAL C8 C9 O9 HO9
+
+{ This is an L-sugar, so impropers are reversed to maintain ring }
+{ geometry equivalent to D-hexoses }
+
+  IMPRoper C1  O1A O1B C2  !planar acid
+!  IMPRoper C2  C1 O6 C3 {axial acid, i.e. alpha configuration}
+!  IMPRoper C2  O6  O2  C3   ! included improper using non-hydrogen atoms, ATB 12/06/09
+!  IMPRoper C3  H31 C2  C4  
+!  IMPRoper C4  C3  O4  C5
+!  IMPRoper C5  N5  C4  C6
+  IMPRoper N5  C10 C5  HN5 !planar N-acetyl N
+  IMPRoper C10 C11 N5  O10 !planar N-acetyl C
+!  IMPRoper C6  C5  C7  O6
+!  IMPRoper C7  C6  O7  C8
+!  IMPRoper C8  C7  O8  C9
+
+  IMPRoper O2  C1  C3  O6 {C2 beta}
+  IMPRoper H31 H32 C4  C2 {C3}
+  IMPRoper H4  O4  C5  C3 {C4}
+  IMPRoper H5  C4  C6  N5 {C5}
+  IMPRoper H6  C7  O6  C5 {C6}
+  IMPRoper H7  O7  C8  C6 {C7}
+  IMPRoper H8  O8  C9  C7 {C8}
+  IMPRoper H91 H92 O9  C8 {C9}
+  IMPRoper C5  N5  C10 C11 {trans peptide}
+
+END
+
+!-------------------------------------------------------------------
+
+RESIdue XYP  !beta-D-xylopyranose 
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM H51  TYPE=HAS  CHARge= 0.100   END
+  ATOM H52  TYPE=HAS  CHARge= 0.100   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H51
+  BOND C5 H52
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+
+!  IMPRoper C1 O5 H1 C2    ! beta-anomer
+!  IMPRoper C1 O1 O5 C2    ! beta-anomer using non-hydrogen atoms
+
+!  IMPRoper C2 C1 O2 C3 {equatorial C2}
+!  IMPRoper C3 O3 C2 C4
+!  IMPRoper C4 C3 O4 C5
+!  IMPRoper C5 H51 C4 O5
+
+  IMPRoper H1 O1 O5 C2  {beta C1}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 O3 C2 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H51 H52 O5 C4  {C5}
+
+END
+
+!-------------------------------------------------------------------
+RESIdue RAM  !alpha-L-rhampyranose
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge=-0.300   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM H63  TYPE=HAS  CHARge= 0.100   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 H63
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 H61
+
+  IMPRoper H1 O1 O5 C2  {L alpha C1=D beta}
+  IMPRoper H2 C1 O2 C3  {C2}
+  IMPRoper H3 C2 O3 C4  {C3}
+  IMPRoper H4 O4 C3 C5  {C4}
+  IMPRoper H5 O5 C4 C6  {C5}
+
+END
+
+!-------------------------------------------------------------------
+RESIdue GXL  !alpha-L-galactopyranose 
+ GROUP
+  ATOM C1   TYPE=CCE  CHARge= 0.350   END
+  ATOM H1   TYPE=HAS  CHARge= 0.100   END
+  ATOM O1   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO1  TYPE=H    CHARge= 0.400   END
+  ATOM C2   TYPE=CCS  CHARge= 0.150   END
+  ATOM O2   TYPE=OH1  CHARge=-0.650   END
+  ATOM H2   TYPE=HAS  CHARge= 0.100   END
+  ATOM HO2  TYPE=H    CHARge= 0.400   END
+  ATOM C3   TYPE=CCS  CHARge= 0.150   END
+  ATOM H3   TYPE=HAS  CHARge= 0.100   END
+  ATOM O3   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO3  TYPE=H    CHARge= 0.400   END
+  ATOM C4   TYPE=CCS  CHARge= 0.150   END
+  ATOM H4   TYPE=HAS  CHARge= 0.100   END
+  ATOM O4   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO4  TYPE=H    CHARge= 0.400   END
+  ATOM C5   TYPE=CCS  CHARge= 0.100   END
+  ATOM H5   TYPE=HAS  CHARge= 0.100   END
+  ATOM O5   TYPE=OES  CHARge=-0.400   END
+  ATOM C6   TYPE=CC6  CHARge= 0.050   END
+  ATOM H61  TYPE=HAS  CHARge= 0.100   END
+  ATOM H62  TYPE=HAS  CHARge= 0.100   END
+  ATOM O6   TYPE=OH1  CHARge=-0.650   END
+  ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+  BOND C1 O1  
+  BOND C1 H1
+  BOND O1 HO1
+  BOND C1 O5
+  BOND C1 C2
+  BOND C2 H2 
+  BOND C2 O2
+  BOND O2 HO2
+  BOND C2 C3
+  BOND C3 H3
+  BOND C3 O3
+  BOND O3 HO3
+  BOND C3 C4
+  BOND C4 H4
+  BOND C4 O4
+  BOND O4 HO4
+  BOND C4 C5
+  BOND C5 H5
+  BOND C5 C6
+  BOND C6 H61
+  BOND C6 H62
+  BOND C6 O6
+  BOND O6 HO6
+  BOND C5 O5
+
+  DIHEDRAL C1 C2 C3 C4
+  DIHEDRAL C2 C3 C4 C5
+  DIHEDRAL C3 C4 C5 O5
+  DIHEDRAL C4 C5 O5 C1
+  DIHEDRAL C5 O5 C1 C2
+  DIHEDRAL O5 C1 C2 C3
+  DIHEDRAL H1 C1 O1 HO1
+  DIHEDRAL H2 C2 O2 HO2
+  DIHEDRAL H3 C3 O3 HO3
+  DIHEDRAL H4 C4 O4 HO4
+  DIHEDRAL H5 C5 C6 O6
+  DIHEDRAL C5 C6 O6 H61
+
+  IMPRoper H1 O1 O5 C2  {alpha C1(L) = beta C1(D)}
+  IMPRoper H2 O2 C1 C3  {C2}
+  IMPRoper H3 C2 O3 C4  {C3}
+  IMPRoper H4 C3 O4 C5  {C4}
+  IMPRoper H5 O5 C4 C6  {C5}
+  IMPRoper H61 H62 O6 C5  !stereo C6
+
+END
+
+!-------------------------------------------------------------------
+!-------------------------------------------------------------------
+
+PRESidue B1N {beta link from NAG C1 to Asn Nd2}
+ MODIfy  ATOM +ND2  TYPE=NH1 CHARge=-0.35  END
+ MODIfy  ATOM +HD22          CHARge= 0.25  END
+ DELEte  ATOM +HD21                        END
+ MODIfy  ATOM -C1            CHARge= 0.20  END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +ND2   
+ 
+ ADD ANGLe +CG   +ND2   -C1  
+ ADD ANGLe +HD22 +ND2   -C1  
+ ADD ANGLe +ND2  -C1    -C2  
+ ADD ANGLe +ND2  -C1    -O5  
+ ADD ANGLe +ND2  -C1    -H1  
+
+ !ADD DIHEdral  +CB   +CG    +ND2  -C1  !trans peptide bond
+ !ADD DIHEdral  +CG   +ND2   -C1   -C2  
+ !ADD DIHEdral  +CG   +ND2   -C1   -O5  
+ ADD DIHEdral  +CG   +ND2   -C1   -H1  
+
+ {respecify planar ND2 as removed HD21 above }
+ { Note that we take this from the protein parameter file NH1 X X C, which has }
+ { a stronger restraint on this (for peptide planes) than the Asn side chain }
+ ADD IMPRoper  +ND2  -C1  +HD22   +CG  
+
+ {re-specify beta-anomer ATB 12/26/10}
+! IMPRoper -C1 +ND2 -O5 -C2    ! beta-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +ND2 -O5 -C2    ! beta-anomer definition using non-hydrogen atoms
+
+END
+
+!-------------------------------------------------------------------
+
+
+PRESidue B12 {beta(1,2) link}
+ MODIfy  ATOM +O2   TYPE=OAS CHARge=-0.40  END
+ MODIfy  ATOM +C2            CHARge= 0.10  END
+ DELEte  ATOM +HO2                         END
+ MODIfy  ATOM -C1            CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O2 
+
+ ADD ANGle +C2  +O2  -C1  
+ ADD ANGle +O2  -C1  -H1  
+ ADD ANGle +O2  -C1  -O5  
+ ADD ANGle +O2  -C1  -C2  
+
+ ADD DIHEdral  +C2  +O2  -C1  -H1 
+ ADD DIHEdral  +C2  +O2  -C1  -O5 
+ ADD DIHEdral  +C2  +O2  -C1  -C2 
+
+ {re-specify beta-anomer ATB 12/26/10  - except for FUL}
+! IMPRoper -C1 +O2 -O5 -C2    ! beta-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +O2 -O5 -C2    ! beta-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue B14 {beta(1,4) link}
+ MODIfy  ATOM +O4   TYPE=OAS CHARge=-0.40  END
+ MODIfy  ATOM +C4            CHARge= 0.10  END
+ DELEte  ATOM +HO4                         END
+ MODIfy  ATOM -C1            CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O4 
+
+ ADD ANGle +C4  +O4  -C1  
+ ADD ANGle +O4  -C1  -H1  
+ ADD ANGle +O4  -C1  -O5  
+ ADD ANGle +O4  -C1  -C2  
+
+ ADD DIHEdral  +C4  +O4  -C1  -H1 
+ ADD DIHEdral  +C4  +O4  -C1  -O5 
+ ADD DIHEdral  +C4  +O4  -C1  -C2 
+ 
+ {re-specify beta-anomer ATB 12/26/10 - except for FUL}
+! IMPRoper -C1 +O4 -O5 -C2    ! beta-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +O4 -O5 -C2    ! beta-anomer definition using non-hydrogen atoms
+
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A12 {alpha(1,2) link}
+ MODIfy  ATOM +O2   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C2            CHARge= 0.10  END
+ DELEte  ATOM +HO2                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O2 
+
+ ADD ANGle +C2  +O2  -C1  
+ ADD ANGle +O2  -C1  -H1  
+ ADD ANGle +O2  -C1  -O5  
+ ADD ANGle +O2  -C1  -C2  
+
+ ADD DIHEdral  +C2  +O2  -C1  -H1 
+ ADD DIHEdral  +C2  +O2  -C1  -O5 
+ ADD DIHEdral  +C2  +O2  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - except FUC}
+! IMPRoper -C1 -O5 +O2 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O2 -C2    ! alpha-anomer definition using non-hydrogen atoms
+
+END
+
+!-------------------------------------------------------------------
+
+
+PRESidue A13 {alpha(1,3) link}
+ MODIfy  ATOM +O3   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C3            CHARge= 0.10  END
+ DELEte  ATOM +HO3                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O3 
+
+ ADD ANGle +C3  +O3  -C1  
+ ADD ANGle +O3  -C1  -H1  
+ ADD ANGle +O3  -C1  -O5  
+ ADD ANGle +O3  -C1  -C2  
+
+ ADD DIHEdral  +C3  +O3  -C1  -H1 
+ ADD DIHEdral  +C3  +O3  -C1  -O5 
+ ADD DIHEdral  +C3  +O3  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - except FUC}
+! IMPRoper -C1 -O5 +O3 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O3 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A14 {alpha(1,4) link}
+ MODIfy  ATOM +O4   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C4            CHARge= 0.10  END
+ DELEte  ATOM +HO4                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O4 
+
+ ADD ANGle +C4  +O4  -C1  
+ ADD ANGle +O4  -C1  -H1  
+ ADD ANGle +O4  -C1  -O5  
+ ADD ANGle +O4  -C1  -C2  
+
+ ADD DIHEdral  +C4  +O4  -C1  -H1 
+ ADD DIHEdral  +C4  +O4  -C1  -O5 
+ ADD DIHEdral  +C4  +O4  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - except FUC}
+! IMPRoper -C1 -O5 +O4 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O4 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A16 { alpha(1,6) link }
+ MODIfy  ATOM +O6   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C6            CHARge= 0.00  END
+ DELEte  ATOM +HO6                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O6 
+
+ ADD ANGle +C6  +O6  -C1  
+ ADD ANGle +O6  -C1  -H1  
+ ADD ANGle +O6  -C1  -O5  
+ ADD ANGle +O6  -C1  -C2   
+
+ ADD DIHEdral  +C6  +O6  -C1  -H1 
+ ADD DIHEdral  +C6  +O6  -C1  -O5 
+ ADD DIHEdral  +C6  +O6  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - except FUC}
+! IMPRoper -C1 -O5 +O6 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O6 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue B12L {FUL beta(1,2) link}
+ MODIfy  ATOM +O2   TYPE=OAS CHARge=-0.40  END
+ MODIfy  ATOM +C2            CHARge= 0.10  END
+ DELEte  ATOM +HO2                         END
+ MODIfy  ATOM -C1            CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O2 
+
+ ADD ANGle +C2  +O2  -C1  
+ ADD ANGle +O2  -C1  -H1  
+ ADD ANGle +O2  -C1  -O5  
+ ADD ANGle +O2  -C1  -C2  
+
+ ADD DIHEdral  +C2  +O2  -C1  -H1 
+ ADD DIHEdral  +C2  +O2  -C1  -O5 
+ ADD DIHEdral  +C2  +O2  -C1  -C2 
+
+ {re-specify beta-anomer ATB 12/26/10  - for FUL}
+! IMPRoper -C1 -O5 +O2 -C2    ! beta-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O2 -C2    ! beta-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue B14L {FUL beta(1,4) link}
+ MODIfy  ATOM +O4   TYPE=OAS CHARge=-0.40  END
+ MODIfy  ATOM +C4            CHARge= 0.10  END
+ DELEte  ATOM +HO4                         END
+ MODIfy  ATOM -C1            CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O4 
+
+ ADD ANGle +C4  +O4  -C1  
+ ADD ANGle +O4  -C1  -H1  
+ ADD ANGle +O4  -C1  -O5  
+ ADD ANGle +O4  -C1  -C2  
+
+ ADD DIHEdral  +C4  +O4  -C1  -H1 
+ ADD DIHEdral  +C4  +O4  -C1  -O5 
+ ADD DIHEdral  +C4  +O4  -C1  -C2 
+ 
+ {re-specify beta-anomer ATB 12/26/10 - for FUL}
+! IMPRoper -C1 -O5 +O4 -C2    ! beta-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O4 -C2    ! beta-anomer definition using non-hydrogen atoms
+
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A12L {FUC alpha(1,2) link}
+ MODIfy  ATOM +O2   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C2            CHARge= 0.10  END
+ DELEte  ATOM +HO2                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O2 
+
+ ADD ANGle +C2  +O2  -C1  
+ ADD ANGle +O2  -C1  -H1  
+ ADD ANGle +O2  -C1  -O5  
+ ADD ANGle +O2  -C1  -C2  
+
+ ADD DIHEdral  +C2  +O2  -C1  -H1 
+ ADD DIHEdral  +C2  +O2  -C1  -O5 
+ ADD DIHEdral  +C2  +O2  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - FUC}
+! IMPRoper -C1 +O2 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +O2 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+
+END
+
+!-------------------------------------------------------------------
+
+
+PRESidue A13L {FUC alpha(1,3) link}
+ MODIfy  ATOM +O3   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C3            CHARge= 0.10  END
+ DELEte  ATOM +HO3                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O3 
+
+ ADD ANGle +C3  +O3  -C1  
+ ADD ANGle +O3  -C1  -H1  
+ ADD ANGle +O3  -C1  -O5  
+ ADD ANGle +O3  -C1  -C2  
+
+ ADD DIHEdral  +C3  +O3  -C1  -H1 
+ ADD DIHEdral  +C3  +O3  -C1  -O5 
+ ADD DIHEdral  +C3  +O3  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - FUC}
+! IMPRoper -C1 +O3 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +O3 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A14L {FUC alpha(1,4) link}
+ MODIfy  ATOM +O4   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C4            CHARge= 0.10  END
+ DELEte  ATOM +HO4                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O4 
+
+ ADD ANGle +C4  +O4  -C1  
+ ADD ANGle +O4  -C1  -H1  
+ ADD ANGle +O4  -C1  -O5  
+ ADD ANGle +O4  -C1  -C2  
+
+ ADD DIHEdral  +C4  +O4  -C1  -H1 
+ ADD DIHEdral  +C4  +O4  -C1  -O5 
+ ADD DIHEdral  +C4  +O4  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - FUC}
+! IMPRoper -C1 +O4 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +O4 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A16L {FUC alpha(1,6) link }
+ MODIfy  ATOM +O6   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C6            CHARge= 0.00  END
+ DELEte  ATOM +HO6                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O6 
+
+ ADD ANGle +C6  +O6  -C1  
+ ADD ANGle +O6  -C1  -H1  
+ ADD ANGle +O6  -C1  -O5  
+ ADD ANGle +O6  -C1  -C2   
+
+ ADD DIHEdral  +C6  +O6  -C1  -H1 
+ ADD DIHEdral  +C6  +O6  -C1  -O5 
+ ADD DIHEdral  +C6  +O6  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - FUC}
+! IMPRoper -C1 +O6 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +O6 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+{Links for SIA (sialic acid) -- input anomer is assumed ALPHA, i.e. glycosidic }
+{ oxygen is equatorial to the NANA ring }
+
+PRESidue A23 {alpha(2,3) link for NANA}
+
+ MODIfy  ATOM +O3   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C3            CHARge= 0.10  END
+ DELEte  ATOM +HO3                         END
+ MODIfy  ATOM -C2            CHARge= 0.24  END 
+ DELEte  ATOM -O2                          END
+ DELEte  ATOM -HO2                         END
+
+ ADD BOND -C2  +O3 
+
+ ADD ANGle +C3  +O3  -C2  
+ ADD ANGle +O3  -C2  -C1  
+ ADD ANGle +O3  -C2  -O6   
+ ADD ANGle +O3  -C2  -C3  
+
+ ADD DIHEdral  +C3  +O3  -C2  -C1 
+ ADD DIHEdral  +C3  +O3  -C2  -O6 
+ ADD DIHEdral  +C3  +O3  -C2  -C3 
+ ADD DIHEdral  +O3  -C2  -C1  -O1A
+ 
+END
+
+PRESidue A26 {alpha(2,6) link for NANA}
+ MODIfy  ATOM +O6   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C6            CHARge= 0.00  END
+ DELEte  ATOM +HO6                         END
+ MODIfy  ATOM -C2            CHARge= 0.24  END 
+ DELEte  ATOM -O2                          END
+ DELEte  ATOM -HO2                         END
+
+ ADD BOND -C2  +O6 
+
+ ADD ANGle +C6  +O6  -C2  
+ ADD ANGle +O6  -C2  -C1  
+ ADD ANGle +O6  -C2  -O6  
+ ADD ANGle +O6  -C2  -C3  
+
+ ADD DIHEdral  +C6  +O6  -C2  -C1 
+ ADD DIHEdral  +C6  +O6  -C2  -O6 
+ ADD DIHEdral  +C6  +O6  -C2  -C3  
+ ADD DIHEdral  +O6  -C2  -C1  -O1A
+ 
+
+END
+
+PRESidue A26S {alpha(2,6) link for SIA}
+ MODIfy  ATOM +O6   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C6            CHARge= 0.00  END
+ DELEte  ATOM +HO6                         END
+ MODIfy  ATOM -C2            CHARge= 0.24  END 
+ DELEte  ATOM -O2                          END
+ DELEte  ATOM -HO2                         END
+
+ ADD BOND -C2  +O6 
+
+ ADD ANGle +C6  +O6  -C2  
+ ADD ANGle +O6  -C2  -C1  
+ ADD ANGle +O6  -C2  -O6  
+ ADD ANGle +O6  -C2  -C3  
+
+ ADD DIHEdral  +C6  +O6  -C2  -C1 
+ ADD DIHEdral  +C6  +O6  -C2  -O6 
+ ADD DIHEdral  +C6  +O6  -C2  -C3  
+ ADD DIHEdral  +O6  -C2  -C1  -O1A
+ 
+ IMPRoper -C1 +O6 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+
+END
+
+
+!-------------------------------------------------------------------
+
+PRESidue A1S {alpha link from C1 to Ser OG}
+! MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.38   END {cns v1.2}
+ MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.365  END {cns v1.3}
+ DELEte  ATOM +HG                          END
+ MODIfy  ATOM -C1  TYPE=CCA CHARge= 0.20   END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG   
+ 
+ ADD ANGLe +CB   +OG   -C1  
+ ADD ANGLe +OG  -C1    -C2  
+ ADD ANGLe +OG  -C1    -O5  
+ ADD ANGLe +OG  -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG  -C1
+ ADD DIHEdral  +CB   +OG   -C1  -H1
+
+ ADD IMPRoper -H1 -O5 +OG -C2  {alpha}
+
+END
+
+PRESidue B1S {beta link from C1 to Ser OG}
+! MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.38   END {cns1.2}
+ MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.365  END {cns 1.3}
+ DELEte  ATOM +HG                          END
+ MODIfy  ATOM -C1           CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG   
+ 
+ ADD ANGLe +CB   +OG   -C1  
+ ADD ANGLe +OG  -C1    -C2  
+ ADD ANGLe +OG  -C1    -O5  
+ ADD ANGLe +OG  -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG  -C1
+ ADD DIHEdral  +CB   +OG   -C1  -H1
+
+ ADD IMPRoper -H1 +OG -O5 -C2  {beta}
+
+END
+
+PRESidue B1SL {beta link from L-C1 to Ser OG}
+! MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.38   END {cns v1.2}
+ MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.365  END {cns v1.3}
+ DELEte  ATOM +HG                          END
+ MODIfy  ATOM -C1           CHARge= 0.20   END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG   
+ 
+ ADD ANGLe +CB   +OG   -C1  
+ ADD ANGLe +OG  -C1    -C2  
+ ADD ANGLe +OG  -C1    -O5  
+ ADD ANGLe +OG  -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG  -C1
+ ADD DIHEdral  +CB   +OG   -C1  -H1
+
+ ADD IMPRoper -H1 -O5 +OG -C2  {alpha}
+
+END
+
+PRESidue A1SL {alpha link from L-C1 to Ser OG}
+! MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.38   END {cns1.2}
+ MODIfy  ATOM +OG  TYPE=OAS CHARge=-0.365  END {cns 1.3}
+ DELEte  ATOM +HG                          END
+ MODIfy  ATOM -C1  TYPE=CCA CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG   
+ 
+ ADD ANGLe +CB   +OG   -C1  
+ ADD ANGLe +OG  -C1    -C2  
+ ADD ANGLe +OG  -C1    -O5  
+ ADD ANGLe +OG  -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG  -C1
+ ADD DIHEdral  +CB   +OG   -C1  -H1
+
+ ADD IMPRoper -H1 +OG -O5 -C2  {beta}
+
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A1T {alpha link from C1 to Thr OG1}
+! MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.38   END {cns 1.2}
+ MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END {cns 1.3}
+! MODIfy  ATOM +CB TYPE=CH1E                END {cns 1.2}
+ DELEte  ATOM +HG1                         END
+ MODIfy  ATOM -C1  TYPE=CCA CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG1   
+ 
+ ADD ANGLe +CB   +OG1  -C1  
+ ADD ANGLe +OG1 -C1    -C2  
+ ADD ANGLe +OG1 -C1    -O5  
+ ADD ANGLe +OG1 -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG1 -C1
+ ADD DIHEdral  +CB   +OG1  -C1  -H1
+
+ ADD IMPRoper -H1 -O5 +OG1 -C2  {alpha}
+
+END
+
+PRESidue B1T {beta link from C1 to Thr OG1}
+! MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.38   END {cns 1.2}
+ MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END {cns 1.3}
+! MODIfy  ATOM +CB TYPE=CH1E                END {cns 1.2}
+ DELEte  ATOM +HG1                         END
+ MODIfy  ATOM -C1           CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG1
+ 
+ ADD ANGLe +CB   +OG1  -C1  
+ ADD ANGLe +OG1 -C1    -C2  
+ ADD ANGLe +OG1 -C1    -O5  
+ ADD ANGLe +OG1 -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG1 -C1
+ ADD DIHEdral  +CB   +OG1  -C1  -H1
+
+ ADD IMPRoper -H1 +OG1 -O5 -C2  {beta}
+
+END
+
+PRESidue B1TL {beta link from L-C1 to Thr OG1}
+! MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.38   END {cns 1.2}
+ MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END {cns 1.3}
+! MODIfy  ATOM +CB TYPE=CH1E                END {cns 1.2}
+ DELEte  ATOM +HG1                         END
+ MODIfy  ATOM -C1           CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG1   
+ 
+ ADD ANGLe +CB   +OG1  -C1  
+ ADD ANGLe +OG1 -C1    -C2  
+ ADD ANGLe +OG1 -C1    -O5  
+ ADD ANGLe +OG1 -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG1 -C1
+ ADD DIHEdral  +CB   +OG1  -C1  -H1
+
+ ADD IMPRoper -H1 -O5 +OG1 -C2  {alpha}
+
+END
+
+PRESidue A1TL {alpha link from L-C1 to Thr OG1}
+! MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.38   END {cns 1.2}
+ MODIfy  ATOM +OG1 TYPE=OAS CHARge=-0.365  END {cns 1.3}
+! MODIfy  ATOM +CB TYPE=CH1E                END {cns 1.2}
+ DELEte  ATOM +HG1                         END
+ MODIfy  ATOM -C1  TYPE=CCA CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +OG1
+ 
+ ADD ANGLe +CB   +OG1  -C1  
+ ADD ANGLe +OG1 -C1    -C2  
+ ADD ANGLe +OG1 -C1    -O5  
+ ADD ANGLe +OG1 -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +OG1 -C1
+ ADD DIHEdral  +CB   +OG1  -C1  -H1
+
+ ADD IMPRoper -H1 +OG1 -O5 -C2  {beta}
+
+END
+
+!-------------------------------------------------------------------
+
+PRESidue A1C {alpha link from C1 to Cys SG}
+! MODIfy  ATOM +SG TYPE=S  CHARge=0.000   END {cns 1.2}
+ MODIfy  ATOM +SG TYPE=S  CHARge=-0.180  END {cns 1.3}
+ DELEte  ATOM +HG                         END
+ MODIfy  ATOM -C1  TYPE=CCA CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +SG
+ 
+ ADD ANGLe +CB   +SG  -C1  
+ ADD ANGLe +SG -C1    -C2  
+ ADD ANGLe +SG -C1    -O5  
+ ADD ANGLe +SG -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +SG -C1
+ ADD DIHEdral  +CB   +SG  -C1  -H1
+
+ ADD IMPRoper -H1 -O5 +SG -C2  {alpha}
+
+END
+
+PRESidue B1C {beta link from C1 to Cys SG}
+! MODIfy  ATOM +SG TYPE=S  CHARge=0.000   END {cns 1.2}
+ MODIfy  ATOM +SG TYPE=S  CHARge=-0.180  END {cns 1.3}
+ DELEte  ATOM +HG                         END
+ MODIfy  ATOM -C1           CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +SG
+ 
+ ADD ANGLe +CB   +SG  -C1  
+ ADD ANGLe +SG -C1    -C2  
+ ADD ANGLe +SG -C1    -O5  
+ ADD ANGLe +SG -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +SG -C1
+ ADD DIHEdral  +CB   +SG  -C1  -H1
+
+ ADD IMPRoper -H1 +SG -O5 -C2  {beta}
+
+END
+
+PRESidue B1CL {beta link from L-C1 to Cys SG}
+! MODIfy  ATOM +SG TYPE=S  CHARge=0.000   END {cns 1.2}
+ MODIfy  ATOM +SG TYPE=S  CHARge=-0.180  END {cns 1.3}
+ DELEte  ATOM +HG                         END
+ MODIfy  ATOM -C1          CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +SG
+ 
+ ADD ANGLe +CB   +SG  -C1  
+ ADD ANGLe +SG -C1    -C2  
+ ADD ANGLe +SG -C1    -O5  
+ ADD ANGLe +SG -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +SG -C1
+ ADD DIHEdral  +CB   +SG  -C1  -H1
+
+ ADD IMPRoper -H1 -O5 +SG -C2  {alpha}
+
+END
+
+PRESidue A1CL {alpha link from L-C1 to Cys SG}
+! MODIfy  ATOM +SG TYPE=S  CHARge=0.000   END {cns 1.2}
+ MODIfy  ATOM +SG TYPE=S  CHARge=-0.180  END {cns 1.3}
+ DELEte  ATOM +HG                         END
+ MODIfy  ATOM -C1 TYPE=CCA  CHARge= 0.20   END
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND  -C1  +SG
+ 
+ ADD ANGLe +CB   +SG  -C1  
+ ADD ANGLe +SG -C1    -C2  
+ ADD ANGLe +SG -C1    -O5  
+ ADD ANGLe +SG -C1    -H1  
+
+ ADD DIHEdral  +CA   +CB   +SG -C1
+ ADD DIHEdral  +CB   +SG  -C1  -H1
+
+ ADD IMPRoper -H1 +SG -O5 -C2  {beta}
+
+END
+
+!-------------------------------------------------------------------
+PRESidue B13 {beta(1,3) link}
+ MODIfy  ATOM +O3   TYPE=OAS CHARge=-0.40  END
+ MODIfy  ATOM +C3            CHARge= 0.10  END
+ DELEte  ATOM +HO3                         END
+ MODIfy  ATOM -C1            CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O3 
+
+ ADD ANGle +C3  +O3  -C1  
+ ADD ANGle +O3  -C1  -H1  
+ ADD ANGle +O3  -C1  -O5  
+ ADD ANGle +O3  -C1  -C2  
+
+ ADD DIHEdral  +C3  +O3  -C1  -H1 
+ ADD DIHEdral  +C3  +O3  -C1  -O5 
+ ADD DIHEdral  +C3  +O3  -C1  -C2 
+ 
+ IMPRoper -H1 +O3 -O5 -C2 
+
+END
+
+!-------------------------------------------------------------------
+PRESidue B13L {beta(1,3) link for L-sugar}
+ MODIfy  ATOM +O3   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C3            CHARge= 0.10  END
+ DELEte  ATOM +HO3                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O3 
+
+ ADD ANGle +C3  +O3  -C1  
+ ADD ANGle +O3  -C1  -H1  
+ ADD ANGle +O3  -C1  -O5  
+ ADD ANGle +O3  -C1  -C2  
+
+ ADD DIHEdral  +C3  +O3  -C1  -H1 
+ ADD DIHEdral  +C3  +O3  -C1  -O5 
+ ADD DIHEdral  +C3  +O3  -C1  -C2 
+
+ IMPRoper -H1 -O5 +O3 -C2
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue B16 { beta(1,6) link }
+ MODIfy  ATOM +O6   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C6            CHARge= 0.00  END
+ DELEte  ATOM +HO6                         END
+ MODIfy  ATOM -C1            CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O6 
+
+ ADD ANGle +C6  +O6  -C1  
+ ADD ANGle +O6  -C1  -H1  
+ ADD ANGle +O6  -C1  -O5  
+ ADD ANGle +O6  -C1  -C2   
+
+ ADD DIHEdral  +C6  +O6  -C1  -H1 
+ ADD DIHEdral  +C6  +O6  -C1  -O5 
+ ADD DIHEdral  +C6  +O6  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - except FUC}
+! IMPRoper -C1 -O5 +O6 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 +O6 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+PRESidue B16L {FUC alpha(1,6) link }
+ MODIfy  ATOM +O6   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C6            CHARge= 0.00  END
+ DELEte  ATOM +HO6                         END
+ MODIfy  ATOM -C1            CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O6 
+
+ ADD ANGle +C6  +O6  -C1  
+ ADD ANGle +O6  -C1  -H1  
+ ADD ANGle +O6  -C1  -O5  
+ ADD ANGle +O6  -C1  -C2   
+
+ ADD DIHEdral  +C6  +O6  -C1  -H1 
+ ADD DIHEdral  +C6  +O6  -C1  -O5 
+ ADD DIHEdral  +C6  +O6  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - FUC}
+! IMPRoper -C1 +O6 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O6 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ 
+END
+
+!-------------------------------------------------------------------
+
+set message=$old_message echo=$old_echo end
+
+

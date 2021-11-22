@@ -1,0 +1,221 @@
+remark  file parallhdg.hemes
+
+set message off echo off end
+
+evaluate ($kbon = 1000)
+evaluate ($kang =  500)
+evaluate ($kchi =  500)
+evaluate ($kpla =  500)
+evaluate ($kdih =    0)
+
+ bond      FEH  NPH                $kbon     1.96
+ bond      CPA  NPH                $kbon     1.38
+ bond      FEH  NPH1               $kbon     1.96
+ bond      FEH  NPH2               $kbon     1.96
+ bond      CPA  NPH1               $kbon     1.38
+ bond      CPA  NPH2               $kbon     1.38
+ bond      CPA  CPB                $kbon     1.44
+ bond      CPA  CPM                $kbon     1.37
+ bond      CPB  CPB                $kbon     1.35
+ bond      CPB  CT                 $kbon     1.49
+ bond      CPB  C                  $kbon     1.38
+ bond      CPM  HA                 $kbon     1.09
+ bond      C    C                  $kbon     1.53
+ bond      C    OC                 $kbon     1.25
+ bond      CT   C                  $kbon     1.53
+ bond      CT   CT                 $kbon     1.53
+ bond      C    HA                 $kbon     1.08
+ bond      CT   HA                 $kbon     1.08
+ bond      CT   S                  $kbon     1.81
+ bond      CT   SH1E               $kbon     1.81
+ bond      FEH  NB                 $kbon     2.10  ! Histidine ligand
+ bond      FEH  CYC                $kbon     1.85  ! Cyanide ligand
+ bond      CYC  CYN                $kbon     1.26  ! Cyanide ion
+ bond	   FEH	S		   $kbon     2.30  ! Cystein ligand
+
+ angle     NPH  FEH  NPH           $kang     90.0
+ angle     FEH  NPH  CPA           $kang    128.0
+ angle     NPH  CPA  CPB           $kang    111.6
+ angle     NPH  CPA  CPM           $kang    124.4
+ angle     NPH1 FEH  NPH2          $kang     90.0
+ angle     NPH1 FEH  NPH1          $kang    180.0  !add angle
+ angle     NPH2 FEH  NPH2          $kang    180.0  !add angle
+ angle     FEH  NPH1 CPA           $kang    128.0
+ angle     FEH  NPH2 CPA           $kang    128.0
+ angle     NPH1 CPA  CPB           $kang    111.6
+ angle     NPH1 CPA  CPM           $kang    124.4
+ angle     NPH2 CPA  CPB           $kang    111.6
+ angle     NPH2 CPA  CPM           $kang    124.4
+ angle     C    C    HA            $kang    109.5
+ angle     C    C    CT            $kang    109.5
+ angle     C    CT   CT            $kang    109.5
+ angle     C    CT   HA            $kang    109.5
+ angle     CH2E SH1E CT            $kang     97.2
+ angle     CPA  NPH  CPA           $kang    103.9
+ angle     CPA  NPH1 CPA           $kang    103.9
+ angle     CPA  NPH2 CPA           $kang    103.9
+ angle     CPA  CPB  CPB           $kang    106.5
+ angle     CPA  CPB  CT            $kang    126.8
+ angle     CPA  CPB  C             $kang    126.8
+ angle     CPA  CPM  CPA           $kang    125.1
+ angle     CPA  CPM  HA            $kang    117.4
+ angle     CPB  CPA  CPM           $kang    124.0
+ angle     CPB  CPB  CT            $kang    126.8
+ angle     CPB  CPB  C             $kang    126.8
+ angle     CPB  CT   CT            $kang    113.0
+ angle     CPB  C    C             $kang    121.5
+ angle     CPB  CT   HA            $kang    109.5
+ angle     CPB  C    HA            $kang    120.0
+ angle     CT   CT   HA            $kang    109.5
+ angle     CT   CT   S             $kang    109.5
+ angle     CT   CT   SH1E          $kang    109.5
+ angle     CT   C    OC            $kang    118.0
+ angle     HA   CT   HA            $kang    109.5
+ angle     HA   CT   S             $kang    109.5
+ angle     HA   CT   SH1E          $kang    109.5
+ angle     HA   C    HA            $kang    118.0
+ angle     CV   NB   FEH             0.0    120.0 ! Histidine ligand, allow bending
+ angle     CR   NB   FEH             0.0    130.0 ! Histidine ligand, allow bending
+ angle     NB   FEH  NPH           $kang     90.0 ! Histidine ligand
+ angle     CYC  FEH  NPH           $kang     90.0 ! Cyanide ligand
+ angle     NB   FEH  NPH1          $kang     90.0 ! Histidine ligand
+ angle     CYC  FEH  NPH1          $kang     90.0 ! Cyanide ligand
+ angle     NB   FEH  NPH2          $kang     90.0 ! Histidine ligand
+ angle     CYC  FEH  NPH2          $kang     90.0 ! Cyanide ligand
+ angle     CYN  CYC  FEH           $kang    180.0 ! Cyanide ligand
+ angle     S    CT   CPB           $kang    106.0 ! Heme c thioether linkage
+ angle     SH1E CT   CPB           $kang    106.0 ! Heme c thioether linkage
+ angle     OC   C    OC            $kang    123.4
+ angle     CB   S    FEH           $kang    109.7 ! Cystein ligand
+ angle     S    FEH  NPH1          $kang     90.0 ! Cystein ligand
+ angle     S    FEH  NPH2          $kang     90.0 ! Cystein ligand
+
+ 
+ improper  CPA  NPH  CPA  CPB      $kpla    0    0.0
+ improper  NPH  CPA  CPB  CPB      $kpla    0    0.0
+ improper  NPH  CPA  CPM  CPA      $kpla    0    0.0
+ improper  CPA  NPH1 CPA  CPB      $kpla    0    0.0
+ improper  NPH1 CPA  CPB  CPB      $kpla    0    0.0
+ improper  NPH1 CPA  CPM  CPA      $kpla    0    0.0
+ improper  CPA  NPH2 CPA  CPB      $kpla    0    0.0
+ improper  NPH2 CPA  CPB  CPB      $kpla    0    0.0
+ improper  NPH2 CPA  CPM  CPA      $kpla    0    0.0
+ improper  HA   C    C    HA       $kpla    0    0.0
+ improper  HA   HA   C    C        $kpla    0    0.0
+ improper  HA   CPB  C    C        $kpla    0    0.0
+ improper  HA   CT   HA   HA       $kpla    0  -65.0
+ improper  HA   CPB  HA   HA       $kpla    0  -65.0
+
+ improper  CPB  CPA  CPB  CT       $kchi    0    0.0
+ improper  CPB  CPB  CPA  CT       $kchi    0    0.0
+ improper  CPB  CPB  CPA  C        $kchi    0    0.0
+ improper  CPM  CPA  CPA  HA       $kchi    0    0.0
+ improper  CPA  CPB  CPM  NPH1     $kchi    0    0.0
+ improper  NPH1 CPA  CPA  FEH      $kchi    0    0.0
+ improper  CPA  CPB  CPM  NPH2     $kchi    0    0.0
+ improper  NPH2 CPA  CPA  FEH      $kchi    0    0.0
+ improper  CPA  CPB  CPM  NPH      $kchi    0    0.0
+ improper  NPH  CPA  CPA  FEH      $kchi    0    0.0
+ improper  C    X    X    OC       $kchi    0    0.0
+
+
+ improper  S    CT   CPB  HA       $kchi    0   69.7
+ improper  SH1E CT   CPB  HA       $kchi    0   69.7
+
+ dihedral  CPA  CPA  CT   CT       $kdih    3    0.0
+ dihedral  CPB  CT   CT   C        $kdih    3    0.0
+ dihedral  CT   CT   C    OC       $kdih    3    0.0
+ dihedral  CPB  CPB  C    C        $kdih    2  180.0
+ dihedral  X    CT   CT   X        $kdih    3    0.0
+ dihedral  X    CT   S    X        $kdih    2    0.0
+ dihedral  X    CT   SH1E X        $kdih    2    0.0
+ dihedral  X    CH2E SH1E X        $kdih    2    0.0
+ dihedral  X    CPA  CT   X        $kdih    3    0.0
+ dihedral  X    CPB  CT   X        $kdih    3    0.0
+
+
+
+ nonbonded  FEH     0.0001   1.0565      0.0001   1.0565
+ nonbonded  NPH     0.1592   3.0068      0.1592   3.0068
+ nonbonded  NPH1    0.1592   3.0068      0.1592   3.0068
+ nonbonded  NPH2    0.1592   3.0068      0.1592   3.0068
+ nonbonded  CYN     0.1592   3.0068      0.1592   3.0068
+ nonbonded  CPA     0.1200   3.3409      0.1200   3.3409
+ nonbonded  CPB     0.1200   3.3409      0.1200   3.3409
+ nonbonded  CPM     0.1200   3.3409      0.1200   3.3409
+ nonbonded  CYC     0.1200   3.3409      0.1200   3.3409
+ nonbonded  CT      0.1200   3.3409      0.1200   3.3409
+ nonbonded  HA      0.05     0.50        0.004    0.50
+ nonbonded  OC      0.210    2.960       0.021    2.960
+ NONBonded  C       0.105    3.750       0.013    3.750
+
+evaluate ($pd_x = 1.0)
+
+eval ($pd_v=$pd_x* 20000.0) BOND  CN11  CN10 $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN11  CN6  $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN10  CN9  $pd_v   1.390
+eval ($pd_v=$pd_x* 16000.0) BOND  CN9   CNL  $pd_v   1.530
+eval ($pd_v=$pd_x* 20000.0) BOND  CN9   CN8  $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN8   CN7  $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN7   CN6  $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN6   CN4  $pd_v   1.390
+eval ($pd_v=$pd_x* 20000.0) BOND  CN4   CN2  $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CN4   NN3  $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CN2   NN1  $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  NN1   CN5  $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  CN5   NN3  $pd_v   1.330
+eval ($pd_v=$pd_x* 20000.0) BOND  FEH   NN1  $pd_v   2.300
+
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN10  CN11  CN6  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN11  CN10  CN9  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN10  CN9   CNL  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN10  CN9   CN8  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CNL   CN9   CN8  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN9   CN8   CN7  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN8   CN7   CN6  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN11  CN6   CN7  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN11  CN6   CN4  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN7   CN6   CN4  $pd_v 120.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN6   CN4   CN2  $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN6   CN4   NN3  $pd_v 126.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2   CN4   NN3  $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN4   CN2   NN1  $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2   NN1   CN5  $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN1   CN5   NN3  $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN4   NN3   CN5  $pd_v 108.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN1   FEH   NPH1 $pd_v  90.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  NN1   FEH   NPH2 $pd_v  90.000
+eval ($pd_v=$pd_x*   800.0) ANGLE  CN2   NN1   FEH  $pd_v 125.100
+
+eval ($pd_v=$pd_x*   800.0) IMPR  CN9   CN10  CN8   CNL  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN6   CN4   CN7   CN11 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN4   CN6   CN2   NN3  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN4   CN2   NN1   CN5  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN2   NN1   CN5   NN3  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN1   CN5   NN3   CN4  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN5   NN3   CN4   CN2  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  NN3   CN4   CN2   NN1  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN11  CN10  CN9   CN8  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN10  CN9   CN8   CN7  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN9   CN8   CN7   CN6  $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN8   CN7   CN6   CN11 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN7   CN6   CN11  CN10 $pd_v 0   0.000
+eval ($pd_v=$pd_x*   800.0) IMPR  CN6   CN11  CN10  CN9  $pd_v 0   0.000
+
+eval ($pd_v=$pd_x*    19.6) DIHE  CN11  CN6   CN4   NN3  $pd_v 2 180.000
+
+
+NONBONDED  CN11  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN10  0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN9   0.10000 3.29633 0.10000 3.02906
+NONBONDED  CNL   0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN8   0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN7   0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN6   0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN4   0.10000 3.29633 0.10000 3.02906
+NONBONDED  CN2   0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN1   0.10000 2.67270 0.10000 2.40543
+NONBONDED  CN5   0.10000 3.29633 0.10000 3.02906
+NONBONDED  NN3   0.10000 2.67270 0.10000 2.40543
+
+set message on echo on end

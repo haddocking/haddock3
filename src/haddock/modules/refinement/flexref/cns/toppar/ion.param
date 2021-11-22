@@ -1,0 +1,122 @@
+remarks file toppar/ion.param
+remarks nonbonded parameters for common ions
+remarks new parameters derived from literature for single atom species
+remarks PDA 02/09/99
+
+set echo=off end
+
+! checkversion 1.1
+
+BOND  OLF SLF          1480.000    1.475
+BOND  OHF PHF          1489.209    1.485
+BOND  OWF W            1489.209    1.730
+
+ANGLE OLF SLF OLF       337.400  109.400
+ANGLE OHF PHF OHF      1337.074  119.600
+ANGLE OWF W   OWF      1337.074  119.600
+
+!                  eps     sigma       eps(1:4) sigma(1:4)
+!               (kcal/mol)  (A)       (kcal/mol)   (A)
+!                 --------------------------------------
+
+{- neutral radii -}
+{- from: Teatum, Gschneider & Waber. (1960) Compilation of calculated data
+         useful in predicting metallurgical behaviour of the elements in
+         binary alloy systems, LE-2345, Los Alamos Scientific Laboratory -}
+
+NONBonded  LI     0.01  2.783     0.01  2.783
+NONBonded   F     0.01  2.619     0.01  2.619
+NONBonded  NA     0.01  3.405     0.01  3.405
+NONBonded  MG     0.01  2.854     0.01  2.854
+NONBonded  AL     0.01  2.552     0.01  2.552
+NONBonded  CL     0.01  3.118     0.01  3.118
+NONBonded   K     0.01  4.234     0.01  4.234
+NONBonded  AR     0.01  3.200     0.01  3.200
+NONBonded  CA     0.01  3.517     0.01  3.517
+NONBonded   V     0.01  2.398     0.01  2.398
+NONBonded  CR     0.01  2.284     0.01  2.284
+NONBonded  MN     0.01  2.252     0.01  2.252
+NONBonded  FE     0.01  2.270     0.01  2.270
+NONBonded  NI     0.01  2.220     0.01  2.220
+NONBonded  CO     0.01  2.231     0.01  2.231
+NONBonded  CU     0.01  2.277     0.01  2.277
+NONBonded  ZN     0.01  2.484     0.01  2.484
+NONBonded  AS     0.01  3.296     0.01  3.296
+NONBonded  BR     0.01  3.296     0.01  3.296
+NONBonded  KR     0.01  3.400     0.01  3.400
+NONBonded  SR     0.01  3.833     0.01  3.833
+NONBonded  MO     0.01  2.495     0.01  2.495
+NONBonded  AG     0.01  2.575     0.01  2.575
+NONBonded  CD     0.01  2.794     0.01  2.794
+NONBonded   I     0.01  3.528     0.01  3.528
+NONBonded  XE     0.01  3.564     0.01  3.564
+NONBonded  CS     0.01  4.866     0.01  4.866
+NONBonded  HO     0.01  3.147     0.01  3.147
+NONBonded  YB     0.01  3.100     0.01  3.100
+NONBonded  OS     0.01  2.411     0.01  2.411
+NONBonded  IR     0.01  2.418     0.01  2.418
+NONBonded  PT     0.01  2.471     0.01  2.471
+NONBonded  AU     0.01  2.569     0.01  2.569
+NONBonded  HG     0.01  2.803     0.01  2.803
+NONBonded  PB     0.01  3.118     0.01  3.118
+NONBonded   U     0.01  2.780     0.01  2.780
+
+{- ionic radii -}
+{- from: Shannon (1976) Revised effective ionic radii in halides and
+         chalcogenides, Acta Cryst. A32, 751. -}
+
+NONBonded  LI+1   0.01  1.604     0.01  1.604
+NONBonded   F-1   0.01  2.120     0.01  2.120
+NONBonded  NA+1   0.01  2.067     0.01  2.067
+NONBonded  MG+2   0.01  1.532     0.01  1.532
+NONBonded  AL+3   0.01  1.203     0.01  1.203
+NONBonded  CL-1   0.01  2.976     0.01  2.976
+NONBonded   K+1   0.01  2.708     0.01  2.708
+NONBonded  CA+2   0.41  2.440     0.41  2.440  ! added 13-06-2012 AB
+!NONBonded  CA+2   0.01  2.031     0.01  2.031
+NONBonded   V+2   0.01  1.657     0.01  1.657
+NONBonded   V+3   0.01  1.390     0.01  1.390
+NONBonded  CR+2   0.01  1.550     0.01  1.550
+NONBonded  CR+3   0.01  1.345     0.01  1.345
+NONBonded  MN+2   0.01  1.443     0.01  1.443
+NONBonded  MN+3   0.01  1.283     0.01  1.283
+NONBonded  FE+2   0.01  1.336     0.01  1.336
+NONBonded  FE+3   0.01  1.229     0.01  1.229
+NONBonded  NI+2   0.01  1.479     0.01  1.479
+NONBonded  CO+2   0.01  1.408     0.01  1.408
+NONBonded  CO+3   0.01  1.221     0.01  1.221
+NONBonded  CU+1   0.01  1.621     0.01  1.621
+NONBonded  CU+2   0.01  1.550     0.01  1.550
+NONBonded  ZN+2   0.01  1.568     0.01  1.568
+NONBonded  BR-1   0.01  3.243     0.01  3.243
+NONBonded  SR+2   0.01  2.352     0.01  2.352
+NONBonded  MO+3   0.01  1.479     0.01  1.479
+NONBonded  AG+1   0.01  2.299     0.01  2.299
+NONBonded  CD+2   0.01  1.942     0.01  1.942
+NONBonded   I-1   0.01  3.671     0.01  3.671
+NONBonded  CS+1   0.01  3.225     0.01  3.225
+NONBonded  HO+3   0.01  1.855     0.01  1.855
+NONBonded  YB+2   0.01  2.067     0.01  2.067
+NONBonded  YB+3   0.01  1.796     0.01  1.796
+NONBonded  OS+4   0.01  1.372     0.01  1.372
+NONBonded  IR+3   0.01  1.461     0.01  1.461
+NONBonded  PT+2   0.01  1.675     0.01  1.675
+NONBonded  AU+1   0.01  2.691     0.01  2.691
+NONBonded  AU+3   0.01  1.764     0.01  1.764
+NONBonded  HG+1   0.01  2.370     0.01  2.370
+NONBonded  HG+2   0.01  2.067     0.01  2.067
+NONBonded  PB+2   0.01  2.370     0.01  2.370
+NONBonded   U+3   0.01  2.076     0.01  2.076
+NONBonded   U+4   0.01  1.835     0.01  1.835
+
+{- multi-atom species -}
+{- source of parameters unknown, therefore possibly in error -} 
+
+NONBonded   SLF   0.01  3.368     0.01  3.368
+NONBonded   OLF   0.01  2.851     0.01  2.851
+NONBonded   PHF   0.01  3.385     0.01  3.385
+NONBonded   OHF   0.01  2.729     0.01  2.729
+NONBonded     W   0.01  2.305     0.01  2.305
+NONBonded   OWF   0.01  2.729     0.01  2.729
+
+set echo=on end

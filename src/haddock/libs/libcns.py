@@ -224,8 +224,12 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
         input_str += f'  @@{psf}{linesep}'
         input_str += f'end{linesep}'
 
+    ncount = 1
     for pdb in pdb_input_list:
         input_str += f'coor @@{pdb}{linesep}'
+        input_str += (f"eval ($input_pdb_filename_{ncount}="
+                      f" \"{pdb}\"){linesep}")
+        ncount += 1
 
     ncomponents = len(psf_input_list)
     input_str += f'eval ($ncomponents={ncomponents}){linesep}'

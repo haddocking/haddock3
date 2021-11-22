@@ -1,0 +1,1247 @@
+remarks file toppar/dna-rna-allatom.top
+remarks  dna-rna-allatom-hj-opls-1.3.param
+remarks  all-hydrogen dna/rna parameters using the OPLS force field
+
+!RNA PARAMETER FILE 'FRAMEWORK' FROM PARALLHDG.DNA AND ATOM NAMES
+! AND HEAVY ATOM PARAMETERS FROM DNA-RNA.PARAM
+!INCLUDES ALL NONEXCHANGEABLE HYDROGEN TERMS FOR BOND, ANGLE, AND
+!IMPROPERS WITH ENERGY CONSTANT VARIABLES: $kchbond, $kchangle, AND $kchimpr.
+!BOND, ANGLE, AND IMPROPERS WERE ESTIMATED FROM VALUES FROM THE STANDARD 
+!NUCLEOTIDES OF INSIGHTII 95.0 (BIOSYM/MOLECULAR SIMULATIONS).
+!CREATED 2/24/96 -- JASON P. RIFE AND PETER B. MOORE
+!ADDED OPLSX SECTION 6/2/07 -- HENRY JONKER 
+!ADAPTED/CLEANED FOR HADDOCK -- ALEXANDRE BONVIN
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+ 
+if ( $exist_par_nonbonded = false ) then
+  evaluate ($par_nonbonded = "OPLSX")
+end if
+
+checkversion 1.3
+
+
+evaluate ($kchbond = 2000) 
+evaluate ($kchangle = 1000)
+evaluate ($kchimpr = 1000)
+
+
+!the generic bonds were taken from param11.dna with 3*kq
+BOND  C5R  OH       876.000    1.4300     ! 5' end
+BOND  C5D  OH       876.000    1.4300     ! 5' end
+BOND  C3R  OH       876.000    1.4300     ! 3' end
+BOND  C3D  OH       876.000    1.4300     ! 3' end
+BOND  O2R  HO      1350.000    0.9572
+
+!Phos.  - combined RNA/DNA statistics used 
+!                      kq       x_eq       sigma
+BOND  P    O1P     1489.209    1.485      ! 0.015  Phos
+BOND  P    O2P     1489.209    1.485      ! 0.015  P
+BOND  P    O5R     3350.720    1.593      ! 0.010  P
+BOND  P    OH      3350.720    1.593      ! 0.010  P	! For 5pho patch
+BOND  P    O3R     2326.889    1.607      ! 0.012  P
+
+!Sugars
+!RNA statistics
+BOND  O5R  C5R     1709.551    1.425      ! 0.014  Sugar
+BOND  C5R  C4R     1982.674    1.510      ! 0.013  S
+BOND  C4R  C3R     2769.190    1.524      ! 0.011  S
+BOND  C3R  C2R     2769.190    1.525      ! 0.011  S
+BOND  C2R  C1R     3350.720    1.528      ! 0.010  S
+BOND  O4R  C1R     2326.888    1.414      ! 0.012  S
+BOND  O4R  C4R     2326.888    1.453      ! 0.012  S
+BOND  O3R  C3R     1982.674    1.423      ! 0.013  S
+BOND  C2R  O2R     1982.674    1.413      ! 0.013  S
+
+!DNA statistics
+BOND  O5R  C5D     1709.551    1.427      ! 0.014  Sugar
+BOND  C5R  C4D     5235.500    1.511      ! 0.008  S
+BOND  C5D  C4D     5235.500    1.511      ! 0.008  S
+BOND  C4D  C3D     3350.720    1.528      ! 0.010  S
+BOND  C3D  C2D     3350.720    1.518      ! 0.010  S
+BOND  C2D  C1D     1709.551    1.521      ! 0.014  S
+BOND  O4D  C1D     1982.674    1.420      ! 0.013  S
+BOND  O4D  C4D     2769.190    1.446      ! 0.011  S
+BOND  O3R  C3D     1982.674    1.431      ! 0.013  S
+BOND  C4D  C3R     3350.720    1.528      ! 0.010  S ! for 3ter terminus
+BOND  C3R  C2D     3350.720    1.518      ! 0.010  S ! for 3ter terminus
+
+!hydrogen/carbon
+BOND  C4R  HR      $kchbond   1.09               
+BOND  C3R  HR      $kchbond   1.09               
+BOND  C2R  HR      $kchbond   1.09              
+BOND  C1R  HR      $kchbond   1.09               
+BOND  C5R  HR      $kchbond   1.09               
+
+BOND  C4D  HR      $kchbond   1.09               
+BOND  C3D  HR      $kchbond   1.09               
+BOND  C2D  HR      $kchbond   1.09              
+BOND  C1D  HR      $kchbond   1.09               
+BOND  C5D  HR      $kchbond   1.09               
+
+!Bases
+!base specific bonds taken from param11.dna , 3*kq
+BOND  O2U  HO      1350.000    0.957      ! UR
+BOND  HN   NNA     1416.000    1.010      ! URA
+BOND  HN   N1T     1416.000    1.010      ! Infer.
+BOND  HN   N1C     1416.000    1.010
+BOND  HN   N9G     1416.000    1.010
+BOND  HN   N9A     1416.000    1.010
+BOND  HN   N9P     1416.000    1.010
+BOND  HN   N3U     1416.000    1.010
+BOND  HN   N3T     1416.000    1.010
+BOND  H2   N2      1416.000    1.010
+BOND  H2   N4C     1416.000    1.010
+BOND  H2   N2G     1416.000    1.010
+BOND  H2   N6A     1416.000    1.010
+
+BOND  HO   OH      1350.000    0.960      ! PARAM7 (IR stretch 3400 cm-1)
+
+!Base sugar joint bonds (scale from sugar)
+!                      kq       x_eq       sigma
+BOND  C1R  N1T     1709.551    1.473      ! 0.014  Base
+BOND  C1R  N1U     4136.691    1.469      ! 0.009  B
+BOND  C1R  N1C     2326.889    1.470      ! 0.012  B
+BOND  C1R  N9G     4136.691    1.459      ! 0.009  B
+BOND  C1R  N9A     3350.720    1.462      ! 0.010  B
+BOND  C1R  N9P     3350.720    1.462      ! 0.010  B
+
+BOND  C1D  N1T     1709.551    1.473      ! 0.014  B   !DNA
+BOND  C1D  N1U     4136.691    1.469      ! 0.009  B
+BOND  C1D  N1C     2326.889    1.470      ! 0.012  B
+BOND  C1D  N9G     4136.691    1.459      ! 0.009  B
+BOND  C1D  N9A     3350.720    1.462      ! 0.010  B
+BOND  C1D  N9P     3350.720    1.462      ! 0.010  B
+
+!cytosine                      kq          x_eq  sigma
+BOND       C2C    ON          1370.370    1.240 !0.009  B
+BOND       C4C    N4C         1370.370    1.335 !0.009  B
+BOND       N1C    C2C         1110.000    1.397 !0.010  B
+BOND       N1C    C6C         3083.333    1.367 !0.006  B
+BOND       C2C    NC          1734.375    1.353 !0.008  B
+BOND       NC     C4C         2265.306    1.335 !0.007  B
+BOND       C4C    C5C         1734.375    1.425 !0.008  B
+BOND       C5C    C6C         1734.375    1.339 !0.008  B
+BOND       C5C    HR          $kchbond    1.09               
+BOND       C6C    HR          $kchbond    1.09               
+
+!baseJ                        kq          x_eq  sigma
+BOND       C5T    C3J         1734.375    1.339 !0.008  B
+BOND       N3T    HN          1416.000    1.010
+BOND       OH     H4J         1350.000    0.9572
+
+!thymine
+BOND       N1T    C2T         1734.375    1.376 !0.008  B
+BOND       C2T    N3T         1734.375    1.373 !0.008  B
+BOND       N3T    C4T         1734.375    1.382 !0.008  B
+BOND       C4T    C5T         1370.370    1.445 !0.009  B
+BOND       C5T    C6T         2265.306    1.339 !0.007  B
+BOND       C6T    N1T         2265.306    1.378 !0.007  B
+BOND       C2T    ON          1734.375    1.220 !0.008  B
+BOND       C4T    ON          1370.370    1.228 !0.009  B
+BOND       C5T    CC3E        3083.333    1.496 !0.006  B
+BOND       C6T    HR          $kchbond    1.09               
+BOND       CC3E   HR          $kchbond    1.09               
+
+!basej
+BOND	   C3J    H1J         $kchbond    1.0969
+BOND       C3J    H2J         $kchbond    1.0961
+BOND       NJ     HN          403.2       1.0129
+BOND       CDJ    H4J         $kchbond    1.0817
+BOND       C3J    HCJ         330.6       1.0969
+BOND       OH     C3J         316.7       1.4233
+BOND       C3J    C3J         300.9       1.5375
+BOND       C3J    OSJ         308.6       1.4316
+BOND       C3J    CCJ         334.8       1.5015
+BOND       CCJ    CJ          371.0       1.4676
+BOND       CCJ    CDJ         500.9       1.3729
+BOND       CJ     NJ          427.6       1.3789
+BOND       CJ     OJ          637.7       1.2183
+BOND       CDJ    NJ          425.1       1.3807
+BOND       NJ     C3J         328.7       1.4619
+
+!adenine
+BOND       NC     C2A         1370.370    1.339 !0.009  B
+BOND       C2A    N3A         1370.370    1.331 !0.009  B
+BOND       N3A    C4A         3083.333    1.344 !0.006  B
+BOND       C4A    C5A         2265.306    1.383 !0.007  B
+BOND       C5A    C6A         1370.370    1.406 !0.009  B
+BOND       C6A    NC          2265.306    1.351 !0.007  B
+BOND       C5A    N7A         3083.333    1.388 !0.006  B
+BOND       N7A    C8A         2265.306    1.311 !0.007  B
+BOND       C8A    N9A         1734.375    1.373 !0.008  B
+BOND       N9A    C4A         3083.333    1.374 !0.006  B
+BOND       C6A    N6A         1734.375    1.335 !0.008  B
+BOND       C8A    HR          $kchbond    1.08               
+BOND       C2A    HR          $kchbond    1.09               
+
+!purine
+BOND       NC     C2P         1370.370    1.339 !0.009  B
+BOND       C2P    N3P         1370.370    1.331 !0.009  B
+BOND       N3P    C4P         3083.333    1.344 !0.006  B
+BOND       C4P    C5P         2265.306    1.383 !0.007  B
+BOND       C5P    C6P         1370.370    1.406 !0.009  B
+BOND       C6P    NC          2265.306    1.351 !0.007  B
+BOND       C5P    N7P         3083.333    1.388 !0.006  B
+BOND       N7P    C8P         2265.306    1.311 !0.007  B
+BOND       C8P    N9P         1734.375    1.373 !0.008  B
+BOND       N9P    C4P         3083.333    1.374 !0.006  B
+BOND       C6P    HR          $kchbond    1.09  !0.008  B
+BOND       C8P    HR          $kchbond    1.08               
+BOND       C2P    HR          $kchbond    1.09               
+
+!guanine
+BOND       NNA    C2G         1734.375    1.373 !0.008  B
+BOND       C2G    N3G         1734.375    1.323 !0.008  B
+BOND       N3G    C4G         2265.306    1.350 !0.007  B 
+BOND       C4G    C5G         2265.306    1.379 !0.007  B
+BOND       C5G    C6G         1110.000    1.419 !0.010  B 
+BOND       C6G    NNA         2265.306    1.391 !0.007  B 
+BOND       C5G    N7G         3083.333    1.388 !0.006  B 
+BOND       N7G    C8G         3083.333    1.305 !0.006  B 
+BOND       C8G    N9G         2265.306    1.374 !0.007  B 
+BOND       N9G    C4G         1734.375    1.375 !0.008  B
+BOND       C2G    N2G         1110.000    1.341 !0.010  B
+BOND       C6G    O6G         1370.370    1.237 !0.009  B
+BOND       C8G    HR          $kchbond    1.08               
+
+!uracil
+BOND       C2U    ON          1370.370    1.219 !0.009  B
+BOND       C4U    ON          1734.375    1.232 !0.008  B
+BOND       N1U    C2U         1370.370    1.381 !0.009  B
+BOND       N1U    C6U         1370.370    1.375 !0.009  B
+BOND       C2U    N3U         2265.306    1.373 !0.007  B
+BOND       N3U    C4U         1370.370    1.380 !0.009  B
+BOND       C4U    C5U         1370.370    1.431 !0.009  B
+BOND       C5U    C6U         1370.370    1.337 !0.009  B
+BOND       C5U    HR          $kchbond    1.09               
+BOND       C6U    HR          $kchbond    1.09               
+
+!Phos.
+!the ANGLe s were taken from param11.dna with 3*kq
+ANGLe       HO     OH     C5R        139.500  107.300 
+ANGLe       HO     O5R    C5R        139.500  107.300 
+ANGLe       HO     OH     C5D        139.500  107.300 
+ANGLe       HO     O5R    C5D        139.500  107.300 
+ANGLe       HO     O3R    P          139.500  107.300
+ANGLe       HO     OH	  P          139.500  107.300 ! For 5pho patch 
+ANGLe       HO     O2R    C2R        139.500  107.300 
+ANGLe       OH     P      O3R        144.300  102.600 !
+ANGLe       OH     P      O5R        144.300  102.600 !
+ANGLe       OH     P      O1P        296.700  108.230 !
+ANGLe       OH     P      O2P        296.700  108.230 !
+ANGLe       OH     C5R    C4R        210.000  112.000 ! 
+ANGLe       OH     C5D    C4D        210.000  112.000 ! 
+ANGLe       OH     C5R    C4D        210.000  112.000 ! 
+ANGLe       C4D    C3D    OH         139.500  111.000 ! 
+ANGLe       C4R    C3R    OH         139.500  111.000 ! 
+ANGLe       C2D    C3D    OH         139.500  111.000 ! 
+ANGLe       C2R    C3R    OH         139.500  111.000 ! 
+ANGLe       C3R    OH     HO         139.500  107.300 !
+ANGLe       C3D    OH     HO         139.500  107.300 !
+ANGLe       C4D    C3R    OH         139.500  111.000 ! for 3ter terminus
+ANGLe       C2D    C3R    OH         139.500  111.000 ! for 3ter terminus
+
+!Phos.  - combined RNA/DNA statistics used 
+!                                      kq      x_eq  sigma
+ANGLe       O1P    P      O2P       1337.074  119.600 !1.5 P 
+ANGLe       O5R    P      O1P        357.719  108.100 !2.9 P
+ANGLe       O5R    P      O2P        412.677  108.300 !2.7 P 
+ANGLe       O3R    P      O5R        833.356  104.000 !1.9 P 
+ANGLe       O2P    P      O3R        293.791  108.300 !3.2 P
+ANGLe       O1P    P      O3R        293.791  107.400 !3.2 P 
+
+ANGLe       O5R    C5R    C4R       1534.906  110.200 !1.4 P 
+ANGLe       P      O5R    C5R       1175.163  120.900 !1.6 P 
+ANGLe       P      O3R    C3R       2089.178  119.700 !1.2 P
+
+ANGLe       O5R    C5R    C4D       1534.906  110.200 !1.4 P !DNA
+ANGLe       O5R    C5D    C4D       1534.906  110.200 !1.4 P !DNA
+ANGLe       P      O5R    C5D       1175.163  120.900 !1.6 P
+ANGLe       P      O3R    C3D       2089.178  119.700 !1.2 P
+
+!Sugars
+!RNA statistics
+!                                      kq      x_eq  sigma
+ANGLe       O4R    C4R    C3R        561.212  105.500 !1.4 S
+ANGLe       C5R    C4R    C3R        488.878  115.500 !1.5 S
+ANGLe       C5R    C4R    O4R        561.212  109.200 !1.4 S
+ANGLe       C1R    O4R    C4R       1357.996  109.600 !0.9 S
+ANGLe       C4R    C3R    C2R       1099.976  102.700 !1.0 S
+ANGLe       C3R    C2R    C1R       1357.996  101.500 !0.9 S
+ANGLe       O4R    C1R    C2R        561.212  106.400 !1.4 S
+ANGLe       N1T    C1R    C2R        429.678  113.400 !1.6 S
+ANGLe       N1C    C1R    C2R        429.678  113.400 !1.6 S
+ANGLe       N1U    C1R    C2R        429.678  113.400 !1.6 S
+ANGLe       N9G    C1R    C2R        429.678  113.400 !1.6 S
+ANGLe       N9A    C1R    C2R        429.678  113.400 !1.6 S
+ANGLe       N9P    C1R    C2R        429.678  113.400 !1.6 S
+ANGLe       O4R    C1R    N1T       1099.976  108.200 !1.0 S
+ANGLe       O4R    C1R    N1C       1099.976  108.200 !1.0 S
+ANGLe       O4R    C1R    N1U       1099.976  108.200 !1.0 S
+ANGLe       O4R    C1R    N9A       1099.976  108.200 !1.0 S
+ANGLe       O4R    C1R    N9P       1099.976  108.200 !1.0 S
+ANGLe       O4R    C1R    N9G       1099.976  108.200 !1.0 S
+ANGLe       C1R    C2R    O2R        357.719  110.600 !2.9 S scale from phos.
+ANGLe       C3R    C2R    O2R        357.719  113.300 !2.9 S scale from phos.
+ANGLe       C4R    C3R    O3R        445.032  110.500 !2.6 S scale from phos.
+ANGLe       C2R    C3R    O3R        383.726  111.000 !2.8 S scale from phos.
+
+!DNA statistics
+ANGLe       O4D    C4D    C3D       1099.976  105.600 !1.0 S
+ANGLe       C5D    C4D    C3D        488.878  114.700 !1.5 S
+ANGLe       C5R    C4D    C3D        488.878  114.700 !1.5 S
+ANGLe       C5D    C4D    O4D        429.678  109.400 !1.6 S
+ANGLe       C5R    C4D    O4D        429.678  109.400 !1.6 S
+ANGLe       C1D    O4D    C4D        650.874  109.700 !1.3 S
+ANGLe       C4D    C3D    C2D       1099.976  103.200 !1.0 S
+ANGLe       C3D    C2D    C1D        650.874  102.700 !1.3 S
+ANGLe       O4D    C1D    C2D        909.071  106.100 !1.1 S
+ANGLe       N1T    C1D    C2D        488.878  114.200 !1.5 S
+ANGLe       N1C    C1D    C2D        488.878  114.200 !1.5 S
+ANGLe       N1U    C1D    C2D        488.878  114.200 !1.5 S
+ANGLe       N9G    C1D    C2D        488.878  114.200 !1.5 S
+ANGLe       N9A    C1D    C2D        488.878  114.200 !1.5 S
+ANGLe       N9P    C1D    C2D        488.878  114.200 !1.5 S
+ANGLe       O4D    C1D    N1T       1357.996  107.800 !0.9 S
+ANGLe       O4D    C1D    N1C       1357.996  107.800 !0.9 S
+ANGLe       O4D    C1D    N1U       1357.996  107.800 !0.9 S
+ANGLe       O4D    C1D    N9A       1357.996  107.800 !0.9 S
+ANGLe       O4D    C1D    N9P       1357.996  107.800 !0.9 S
+ANGLe       O4D    C1D    N9G       1357.996  107.800 !0.9 S
+ANGLe       C4D    C3D    O3R        621.574  110.300 !2.2 S scale from phos.
+ANGLe       C2D    C3D    O3R        412.677  110.600 !2.7 S scale from phos.
+ANGLe       O4D    C4D    C3R       1099.976  105.600 !1.0 S ! for 3ter terminus
+ANGLe       C5R    C4D    C3R        488.878  114.700 !1.5 S ! for 3ter terminus
+ANGLe       C5D    C4D    C3R        488.878  114.700 !1.5 S ! for 3ter terminus
+ANGLe       C4D    C3R    C2D       1099.976  103.200 !1.0 S ! for 3ter terminus
+ANGLe       C3R    C2D    C1D        650.874  102.700 !1.3 S ! for 3ter terminus
+ANGLe       C4D    C3R    O3R        621.574  110.300 !2.2 S ! for 3ter terminus
+ANGLe       C2D    C3R    O3R        412.677  110.600 !2.7 S ! for 3ter terminus
+
+
+!Ribose terms involving non-exchageables
+ANGLe       OH     C5R    HR        $kchangle     109.83      
+ANGLe       O5R    C5R    HR        $kchangle     109.83      
+ANGLe       HR     C5R    HR        $kchangle     109.11      
+ANGLe       C4R    C5R    HR        $kchangle     109.11      
+ANGLe       C5R    C4R    HR        $kchangle     107.93      
+ANGLe       HR     C4R    C3R       $kchangle     107.13      
+ANGLe       HR     C4R    O4R       $kchangle     113.74      
+ANGLe       HR     C3R    C4R       $kchangle     111.35      
+ANGLe       HR     C3R    O3R       $kchangle     105.87      
+ANGLe       HR     C3R    OH        $kchangle     105.87      
+ANGLe       HR     C3R    C2R       $kchangle     112.27      
+ANGLe       HR     C2R    C3R       $kchangle     111.41      
+ANGLe       HR     C2R    O2R       $kchangle     113.07      
+ANGLe       HR     C2R    C1R       $kchangle     112.38      
+ANGLe       HR     C1R    C2R       $kchangle     111.95      
+ANGLe       HR     C1R    N1C       $kchangle     107.70      
+ANGLe       HR     C1R    N1U       $kchangle     107.70      
+ANGLe       HR     C1R    N1T       $kchangle     107.70      
+ANGLe       HR     C1R    N9A       $kchangle     107.70      
+ANGLe       HR     C1R    N9P       $kchangle     107.70      
+ANGLe       HR     C1R    N9G       $kchangle     107.70      
+ANGLe       HR     C1R    O4R       $kchangle     106.86      
+
+!Deoxyribose terms involving non-exchageables
+!
+ANGLe       OH     C5D    HR        $kchangle     109.70      
+ANGLe       O5R    C5D    HR        $kchangle     109.70      
+ANGLe       HR     C5D    HR        $kchangle     109.17      
+ANGLe       C4D    C5D    HR        $kchangle     109.17      
+ANGLe       C4D    C5R    HR        $kchangle     109.17      
+ANGLe       C5D    C4D    HR        $kchangle     107.78      
+ANGLe       C5R    C4D    HR        $kchangle     107.78      
+ANGLe       HR     C4D    C3D       $kchangle     106.91      
+ANGLe       HR     C4D    C3R       $kchangle     106.91      ! for 3ter terminus
+ANGLe       HR     C4D    O4D       $kchangle     112.98      
+ANGLe       HR     C3D    C4D       $kchangle     111.16      
+ANGLe       HR     C3R    C4D       $kchangle     111.16      
+ANGLe       HR     C3D    O3R       $kchangle     109.34      
+ANGLe       HR     C3D    OH        $kchangle     109.34      
+ANGLe       HR     C3D    C2D       $kchangle     111.98      
+ANGLe       HR     C3R    C2D       $kchangle     111.98     ! for 3ter terminus
+ANGLe       HR     C2D    C3D       $kchangle     111.36      
+ANGLe       HR     C2D    C3R       $kchangle     111.36     ! for 3ter terminus
+ANGLe       HR     C2D    HR        $kchangle     107.52      
+ANGLe       HR     C2D    C1D       $kchangle     112.29      
+ANGLe       HR     C1D    C2D       $kchangle     110.94      
+ANGLe       HR     C1D    N1C       $kchangle     108.25      
+ANGLe       HR     C1D    N1U       $kchangle     108.25 
+ANGLe       HR     C1D    N1T       $kchangle     108.25      
+ANGLe       HR     C1D    N9A       $kchangle     108.25      
+ANGLe       HR     C1D    N9P       $kchangle     108.25      
+ANGLe       HR     C1D    N9G       $kchangle     108.25     
+ANGLe       HR     C1D    O4D       $kchangle     107.95      
+
+!Bases
+!cytosine                            kq       x_eq   sigma
+ANGLe       C6C    N1C    C2C       2277.447  120.300 !0.40 B
+ANGLe       N1C    C2C    NC         743.656  119.200 !0.70 B
+ANGLe       C2C    NC     C4C       1457.566  119.900 !0.50 B
+ANGLe       NC     C4C    C5C       2277.447  121.900 !0.40 B
+ANGLe       C4C    C5C    C6C       1457.566  117.400 !0.50 B
+ANGLe       C5C    C6C    N1C       1457.566  121.000 !0.50 B
+ANGLe       N1C    C2C    ON        1012.199  118.900 !0.60 B
+ANGLe       NC     C2C    ON         743.656  121.900 !0.70 B
+ANGLe       NC     C4C    N4C        743.656  118.000 !0.70 B
+ANGLe       C5C    C4C    N4C        743.656  120.200 !0.70 B
+ANGLe       C6C    N1C    C1R        763.873  120.800 !1.20 B scale from sugar
+ANGLe       C2C    N1C    C1R        909.071  118.800 !1.10 B scale from sugar
+ANGLe       C6C    N1C    C1D        763.873  120.800 !1.20 B !DNA
+ANGLe       C2C    N1C    C1D        909.071  118.800 !1.10 B
+ANGLe       C4C    N4C    H2        $kchangle 120.000 !from param11.dna, 3*keq 
+ANGLe       H2     N4C    H2        $kchangle 120.000 
+ANGLe       N1C    C6C    HR        $kchangle  119.63          
+ANGLe       C5C    C6C    HR        $kchangle  119.36          
+ANGLe       C4C    C5C    HR        $kchangle  121.54          
+ANGLe       C6C    C5C    HR        $kchangle  121.54          
+
+!thymine                            kq        x_eq    sigma
+ANGLe       C6T    N1T    C2T       1457.566  121.300 !0.50 B
+ANGLe       N1T    C2T    N3T       1012.199  114.600 !0.60 B
+ANGLe       C2T    N3T    C4T       1012.199  127.200 !0.60 B
+ANGLe       N3T    C4T    C5T       1012.199  115.200 !0.60 B
+ANGLe       C4T    C5T    C6T       1012.199  118.000 !0.60 B
+ANGLe       C5T    C6T    N1T       1012.199  123.700 !0.60 B
+ANGLe       N1T    C2T    ON         569.362  123.100 !0.80 B
+ANGLe       N3T    C2T    ON        1012.199  122.300 !0.60 B
+ANGLe       N3T    C4T    ON        1012.199  119.900 !0.60 B
+ANGLe       C5T    C4T    ON         743.656  124.900 !0.70 B
+ANGLe       C4T    C5T    CC3E      1012.199  119.000 !0.60 B
+ANGLe       C6T    C5T    CC3E      1012.199  122.900 !0.60 B
+ANGLe       C6T    N1T    C1R        488.878  120.400 !1.50 B scale from sugar
+ANGLe       C2T    N1T    C1R        429.678  118.200 !1.60 B scale from sugar
+ANGLe       C6T    N1T    C1D        488.878  120.400 !1.50 B !DNA
+ANGLe       C2T    N1T    C1D        429.678  118.200 !1.60 B
+ANGLe       C2T    N3T    HN        $kchangle 116.500  !from param11.dna, 3*keq 
+ANGLe       C4T    N3T    HN        $kchangle 116.500  
+ANGLe 	    C5T    CC3E   HR        $kchangle  109.50
+ANGLe       HR     CC3E   HR        $kchangle  109.44
+ANGLe       N1T    C6T    HR        $kchangle  119.52          
+ANGLe       C5T    C6T    HR        $kchangle  119.52          
+
+!baseJ
+ANGLe       C6T    C5T    C3J       1457.566  117.400
+ANGLe       C4T    C5T    C3J       1457.566  117.400
+ANGLe       C5T    C3J    OSJ        743.656  124.900
+ANGLe       C5T    C3J    H1J       $kchangle 121.54          
+ANGLe       OH     C3J    H1J       $kchangle  110.26
+ANGLe       C3J    C3J    H1J       $kchangle  109.56
+ANGLe       C3J    C3J    H2J       $kchangle  110.22
+ANGLe       OSJ    C3J    H2J       $kchangle  109.58
+ANGLe       OSJ    C3J    H1J       $kchangle  109.78
+ANGLe       H1J    C3J    H1J       $kchangle  109.58
+ANGLe       CCJ    C3J    H1J       $kchangle  109.64
+ANGLe       CCJ    CDJ    H4J       $kchangle  128.48
+ANGLe       CJ     NJ     HN        $kchangle  117.55
+ANGLe       OH     C3J    C3J       $kchangle  110.19
+ANGLe       C3J    C3J    C3J       $kchangle  111.51
+ANGLe       C3J    C3J    OSJ       $kchangle  107.97
+ANGLe       C3J    OSJ    C3J       $kchangle  112.48
+ANGLe       C3J    OH     HO        $kchangle  107.30
+ANGLe       OSJ    C3J    OSJ       $kchangle  108.29
+ANGLe       OSJ    C3J    CCJ       $kchangle   108.90
+ANGLe       C3J    CCJ    CJ        $kchangle  117.76
+ANGLe       C3J    CCJ    CDJ       $kchangle  119.45
+ANGLe       CCJ    CJ     NJ        $kchangle  112.70
+ANGLe       CCJ    CJ     OJ        $kchangle  123.93
+ANGLe       CCJ    CDJ    NJ        $kchangle  121.33
+ANGLe       CJ     CCJ    CDJ       $kchangle  121.35
+ANGLe       CJ     NJ     CJ        $kchangle  127.08
+ANGLe       NJ     CJ     OJ        $kchangle  123.05
+ANGLe       NJ     CJ     NJ        $kchangle  113.56
+ANGLe       CDJ    NJ     C3J       $kchangle  120.85
+ANGLe       CDJ    NJ     CJ        $kchangle  123.27
+ANGLe       NJ     C3J    C3J       $kchangle  111.61
+ANGLe       NJ     C3J    OSJ       $kchangle  109.13
+ANGLe       C3J    NJ     CJ        $kchangle  120.69
+
+
+!adenine                            kq        x_eq    sigma
+ANGLe       C6A    NC     C2A       1012.199  118.600 !0.60 B
+ANGLe       NC     C2A    N3A       1457.566  129.300 !0.50 B
+ANGLe       C2A    N3A    C4A       1457.566  110.600 !0.50 B
+ANGLe       N3A    C4A    C5A        743.656  126.800 !0.70 B
+ANGLe       C4A    C5A    C6A       1457.566  117.000 !0.50 B
+ANGLe       C5A    C6A    NC        1457.566  117.700 !0.50 B
+ANGLe       C4A    C5A    N7A       1457.566  110.700 !0.50 B
+ANGLe       C5A    N7A    C8A       1457.566  103.900 !0.50 B
+ANGLe       N7A    C8A    N9A       1457.566  113.800 !0.50 B
+ANGLe       C8A    N9A    C4A       2277.447  105.800 !0.40 B
+ANGLe       N9A    C4A    C5A       2277.447  105.800 !0.40 B
+ANGLe       N3A    C4A    N9A        569.362  127.400 !0.80 B
+ANGLe       C6A    C5A    N7A        743.656  132.300 !0.70 B
+ANGLe       NC     C6A    N6A       1012.199  118.600 !0.60 B
+ANGLe       C5A    C6A    N6A        569.362  123.700 !0.80 B
+ANGLe       C8A    N9A    C1R        339.499  127.700 !1.80 B scale from sugar
+ANGLe       C4A    N9A    C1R        339.499  126.300 !1.80 B scale from sugar
+ANGLe       C8A    N9A    C1D        339.499  127.700 !1.80 B !DNA
+ANGLe       C4A    N9A    C1D        339.499  126.300 !1.80 B
+ANGLe       C6A    N6A    H2         105.000  120.000  !from param11.dna, 3*keq 
+ANGLe       H2     N6A    H2         105.000  120.000
+ANGLe       N7A    C8A    HR        $kchangle  123.16          
+ANGLe       N9A    C8A    HR        $kchangle  123.16          
+ANGLe       NC     C2A    HR        $kchangle  115.54          
+ANGLe       N3A    C2A    HR        $kchangle  115.54          
+
+!purine                             kq        x_eq    sigma
+ANGLe       C6P    NC     C2P       1012.199  118.600 !0.60 B
+ANGLe       NC     C2P    N3P       1457.566  129.300 !0.50 B
+ANGLe       C2P    N3P    C4P       1457.566  110.600 !0.50 B
+ANGLe       N3P    C4P    C5P        743.656  126.800 !0.70 B
+ANGLe       C4P    C5P    C6P       1457.566  117.000 !0.50 B
+ANGLe       C5P    C6P    NC        1457.566  117.700 !0.50 B
+ANGLe       C4P    C5P    N7P       1457.566  110.700 !0.50 B
+ANGLe       C5P    N7P    C8P       1457.566  103.900 !0.50 B
+ANGLe       N7P    C8P    N9P       1457.566  113.800 !0.50 B
+ANGLe       C8P    N9P    C4P       2277.447  105.800 !0.40 B
+ANGLe       N9P    C4P    C5P       2277.447  105.800 !0.40 B
+ANGLe       N3P    C4P    N9P        569.362  127.400 !0.80 B
+ANGLe       C6P    C5P    N7P        743.656  132.300 !0.70 B
+ANGLe       NC     C6P    HR        $kchangle  115.54 !0.60 B
+ANGLe       C5P    C6P    HR        $kchangle  115.54 !0.80 B
+ANGLe       C8P    N9P    C1R        339.499  127.700 !1.80 B scale from sugar
+ANGLe       C4P    N9P    C1R        339.499  126.300 !1.80 B scale from sugar
+ANGLe       C8P    N9P    C1D        339.499  127.700 !1.80 B !DNA
+ANGLe       C4P    N9P    C1D        339.499  126.300 !1.80 B
+ANGLe       N7P    C8P    HR        $kchangle  123.16          
+ANGLe       N9P    C8P    HR        $kchangle  123.16          
+ANGLe       NC     C2P    HR        $kchangle  115.54          
+ANGLe       N3P    C2P    HR        $kchangle  115.54          
+
+!guanine                             kq        x_eq    sigma
+ANGLe       C6G    NNA    C2G       1012.199  125.100 !0.60 B
+ANGLe       NNA    C2G    N3G       1012.199  123.900 !0.60 B
+ANGLe       C2G    N3G    C4G       1457.566  111.900 !0.50 B
+ANGLe       N3G    C4G    C5G       1457.566  128.600 !0.50 B
+ANGLe       C4G    C5G    C6G       1012.199  118.800 !0.60 B
+ANGLe       C5G    C6G    NNA       1457.566  111.500 !0.50 B
+ANGLe       C4G    C5G    N7G       2277.447  110.800 !0.40 B
+ANGLe       C5G    N7G    C8G       1457.566  104.300 !0.50 B
+ANGLe       N7G    C8G    N9G       1457.566  113.100 !0.50 B
+ANGLe       C8G    N9G    C4G       2277.447  106.400 !0.40 B
+ANGLe       N9G    C4G    C5G       2277.447  105.400 !0.40 B
+ANGLe       N3G    C4G    N9G       1012.199  126.000 !0.60 B
+ANGLe       C6G    C5G    N7G       1012.199  130.400 !0.60 B
+ANGLe       NNA    C2G    N2G        449.866  116.20  !0.90 B
+ANGLe       N3G    C2G    N2G        743.656  119.900 !0.70 B
+ANGLe       NNA    C6G    O6G       1012.199  119.900 !0.60 B
+ANGLe       C5G    C6G    O6G       1012.199  128.600 !0.60 B
+ANGLe       C8G    N9G    C1R        650.874  127.000 !1.30 B scale from sugar
+ANGLe       C4G    N9G    C1R        650.874  126.500 !1.30 B scale from sugar
+ANGLe       C8G    N9G    C1D        650.874  127.000 !1.30 B !DNA
+ANGLe       C4G    N9G    C1D        650.874  126.500 !1.30 B
+ANGLe       C2G    N2G    H2         105.000  120.000  !from param11.dna, 3*keq 
+ANGLe       H2     N2G    H2         105.000  120.000
+ANGLe       C2G    NNA    HN         105.000  119.300
+ANGLe       C6G    NNA    HN         105.000  119.300
+ANGLe       N7G    C8G    HR        $kchangle  122.91          
+ANGLe       N9G    C8G    HR        $kchangle  122.91          
+
+!uracile                             kq        x_eq    sigma
+ANGLe       C6U    N1U    C2U       1012.199  121.000 !0.60 B
+ANGLe       N1U    C2U    N3U       1012.199  114.900 !0.60 B
+ANGLe       C2U    N3U    C4U       1012.199  127.000 !0.60 B
+ANGLe       N3U    C4U    C5U       1012.199  114.600 !0.60 B
+ANGLe       C4U    C5U    C6U       1012.199  119.700 !0.60 B
+ANGLe       C5U    C6U    N1U       1457.566  122.700 !0.50 B
+ANGLe       N1U    C2U    ON         743.656  122.800 !0.70 B
+ANGLe       N3U    C2U    ON         743.656  122.200 !0.70 B
+ANGLe       N3U    C4U    ON         743.656  119.400 !0.70 B
+ANGLe       C5U    C4U    ON        1012.199  125.900 !0.60 B
+ANGLe       C6U    N1U    C1R        561.212  121.200 !1.40 B
+ANGLe       C2U    N1U    C1R        763.872  117.700 !1.20 B
+ANGLe       C6U    N1U    C1D        561.212  121.200 !1.40 B !DNA
+ANGLe       C2U    N1U    C1D        763.872  117.700 !1.20 B
+ANGLe       C4U    ON     HO         105.000  120.000 !from param11.dna, 3*keq 
+ANGLe       C2U    N3U    HN         105.000  116.500 
+ANGLe       C4U    N3U    HN         105.000  116.500  
+ANGLe       N1U    C6U    HR        $kchangle  119.38          
+ANGLe       C5U    C6U    HR        $kchangle  119.38          
+ANGLe       C4U    C5U    HR        $kchangle  119.56          
+ANGLe       C6U    C5U    HR        $kchangle  119.56          
+
+
+!IMPRopers to keep the two purine rings parallel:
+!guanine
+IMPRoper    C8G  C4G  C5G  NNA  250.0  2  180.000
+IMPRoper    C8G  C5G  C4G  C2G  250.0  2  180.000
+IMPRoper    N3G  C4G  C5G  N7G  250.0  2  180.000
+IMPRoper    C6G  C5G  C4G  N9G  250.0  2  180.000
+!adenine
+IMPRoper    C8A  C4A  C5A  N9A  250.0  2  180.000 ! WYE AND PATCHED RESIDUES
+IMPRoper    C8A  C5A  C4A  C2A  250.0  2  180.000
+IMPRoper    C8A  C4A  C5A  NC   250.0  2  180.000 
+IMPRoper    N3A  C4A  C5A  N7A  250.0  2  180.000
+IMPRoper    C6A  C5A  C4A  N9A  250.0  2  180.000
+!purine
+IMPRoper    C8P  C4P  C5P  N9P  250.0  2  180.000 ! WYE AND PATCHED RESIDUES
+IMPRoper    C8P  C5P  C4P  C2P  250.0  2  180.000
+IMPRoper    C8P  C4P  C5P  NC   250.0  2  180.000 
+IMPRoper    N3P  C4P  C5P  N7P  250.0  2  180.000
+IMPRoper    C6P  C5P  C4P  N9P  250.0  2  180.000
+
+
+!other base specific non-exch hydrogen IMPRopers
+IMPRoper    HR   C4C  C6C  C5C  $kchimpr    0    0.000
+IMPRoper    HR   N1C  C5C  C6C  $kchimpr    0    0.000
+IMPRoper    HR   C4U  C6U  C5U  $kchimpr    0    0.000
+IMPRoper    HR   N1U  C5U  C6U  $kchimpr    0    0.000
+IMPRoper    HR   N1T  C5T  C6T  $kchimpr    0    0.000
+IMPRoper    HR   N7A  N9A  C8A  $kchimpr    0    0.000
+IMPRoper    HR   NC   N3A  C2A  $kchimpr    0    0.000
+IMPRoper    HR   N7P  N9P  C8P  $kchimpr    0    0.000
+IMPRoper    HR   NC   N3P  C2P  $kchimpr    0    0.000
+IMPRoper    HR   NC   C5P  C6P  $kchimpr    0    0.000
+IMPRoper    HR   N7G  N9G  C8G  $kchimpr    0    0.000
+
+!Impropers for ribose chirality
+IMPRoper    HR   C2R  O4R  N9A    $kchimpr    0    -65.000!C1R
+IMPRoper    HR   C2R  O4R  N9P    $kchimpr    0    -65.000!C1R
+IMPRoper    HR   C2R  O4R  N9G    $kchimpr    0    -65.000!C1R
+IMPRoper    HR   C2R  O4R  N1C    $kchimpr    0    -65.000!C1R
+IMPRoper    HR   C2R  O4R  N1U    $kchimpr    0    -65.000!C1R
+IMPRoper    HR   C2R  O4R  N1T    $kchimpr    0    -65.000!C1R
+
+IMPRoper    HR   C3R  C1R  O2R    $kchimpr    0    65.000!C2R
+IMPRoper    HR   C4R  C2R  O3R    $kchimpr    0    60.300!C3R 
+IMPRoper    HR   C4R  C2R  OH     $kchimpr    0    60.300!C3R; TERMINAL RES 
+IMPRoper    HR   C5R  C3R  O4R    $kchimpr    0    70.300!C4R 
+IMPRoper    HR   O5R  HR   C4R    $kchimpr    0    72.000!C5R; 
+IMPRoper    HR   OH   HR   C4R    $kchimpr    0    72.000!C5R; TERMINAL RES
+
+!Impropers for deoxyribose chirality
+IMPRoper    HR   C2D  O4D  N9A    $kchimpr    0    -65.280!C1D
+IMPRoper    HR   C2D  O4D  N9P    $kchimpr    0    -65.280!C1D
+IMPRoper    HR   C2D  O4D  N9G    $kchimpr    0    -65.280!C1D
+IMPRoper    HR   C2D  O4D  N1C    $kchimpr    0    -65.280!C1D
+IMPRoper    HR   C2D  O4D  N1T    $kchimpr    0    -65.280!C1D
+IMPRoper    HR   C2D  O4D  N1U    $kchimpr    0    -65.280!C1D
+
+IMPRoper    HR   C3D  HR   C1D    $kchimpr    0    -73.500!C2D
+IMPRoper    HR   C3R  HR   C1D    $kchimpr    0    -73.500!C2D ! for 3ter terminus
+IMPRoper    HR   C4D  C2D  O3R    $kchimpr    0    62.660!C3D 
+IMPRoper    HR   C4D  C2D  OH     $kchimpr    0    62.660!C3D; TERMINAL RES 
+IMPRoper    HR   C5R  C3D  O4D    $kchimpr    0    70.220!C4D 
+IMPRoper    HR   C5R  C3R  O4D    $kchimpr    0    70.220!C4D 
+IMPRoper    HR   C5D  C3D  O4D    $kchimpr    0    70.220!C4D 
+IMPRoper    HR   C5D  C3R  O4D    $kchimpr    0    70.220!C4D  ! for 3ter terminus
+IMPRoper    HR   O5R  HR   C4D    $kchimpr    0    71.430!C5D; 
+IMPRoper    HR   OH   HR   C4D    $kchimpr    0    71.430!C5D; TERMINAL RES
+
+!Impropers taken from param11.dna , 3*kq
+IMPRoper    C5R  X    X    C2R   94.5  0   35.260
+IMPRoper    C5R  X    X    C1R   94.5  0   35.260
+IMPRoper    OH   X    X    C3R   94.5  0   35.260
+IMPRoper    OH   X    X    C4R   94.5  0   35.260
+IMPRoper    OH   X    X    C1R   94.5  0   35.260
+IMPRoper    O3R  X    X    C3R   94.5  0   35.260
+IMPRoper    O5R  X    X    C1R   94.5  0   35.260
+IMPRoper    O2R  X    X    C2R   94.5  0   35.260
+IMPRoper    C4R  O5R  C1R  N1T   94.5  0   35.260
+IMPRoper    C4R  O5R  C1R  N1C   94.5  0   35.260
+IMPRoper    C4R  O5R  C1R  N9G   94.5  0   35.260
+IMPRoper    C4R  O5R  C1R  N9A   94.5  0   35.260
+IMPRoper    C4R  O5R  C1R  N9P   94.5  0   35.260
+IMPRoper    C5R  O4R  C3R  C4R   94.5  0   35.260  
+IMPRoper    N1T  C2R  O4R  C1R   94.5  0   35.260  
+IMPRoper    N1C  C2R  O4R  C1R   94.5  0   35.260
+IMPRoper    N9A  C2R  O4R  C1R   94.5  0   35.260  
+IMPRoper    N9P  C2R  O4R  C1R   94.5  0   35.260  
+IMPRoper    N9G  C2R  O4R  C1R   94.5  0   35.260  
+IMPRoper    C4R  O5R  C1R  N1U   94.5  0   35.260
+IMPRoper    N1U  C2R  O4R  C1R   94.5  0   35.260  
+
+IMPRoper    C5D  X    X    C2D   94.5  0   35.260  !DNA
+IMPRoper    C5D  X    X    C1D   94.5  0   35.260
+IMPRoper    OH   X    X    C3D   94.5  0   35.260
+IMPRoper    OH   X    X    C3R   94.5  0   35.260 ! for 3ter terminus
+IMPRoper    OH   X    X    C4D   94.5  0   35.260
+IMPRoper    OH   X    X    C1D   94.5  0   35.260
+IMPRoper    O3R  X    X    C3D   94.5  0   35.260
+IMPRoper    O3R  X    X    C3R   94.5  0   35.260 ! for 3ter terminus
+IMPRoper    O5R  X    X    C1D   94.5  0   35.260
+IMPRoper    C4D  O5R  C1D  N1T   94.5  0   35.260
+IMPRoper    C4D  O5R  C1D  N1C   94.5  0   35.260
+IMPRoper    C4D  O5R  C1D  N9G   94.5  0   35.260
+IMPRoper    C4D  O5R  C1D  N9A   94.5  0   35.260
+IMPRoper    C4D  O5R  C1D  N9P   94.5  0   35.260
+IMPRoper    C5D  O4D  C3D  C4D   94.5  0   35.260  
+IMPRoper    C5D  O4D  C3R  C4D   94.5  0   35.260  ! for 3ter terminus
+IMPRoper    N1T  C2D  O4D  C1D   94.5  0   35.260  
+IMPRoper    N1C  C2D  O4D  C1D   94.5  0   35.260
+IMPRoper    N9A  C2D  O4D  C1D   94.5  0   35.260  
+IMPRoper    N9P  C2D  O4D  C1D   94.5  0   35.260  
+IMPRoper    N9G  C2D  O4D  C1D   94.5  0   35.260  
+IMPRoper    C4D  O5R  C1D  N1U   94.5  0   35.260
+IMPRoper    N1U  C2D  O4D  C1D   94.5  0   35.260  
+
+!the following impropers were taken from param11x.dna
+!the higher kq was used to enforce the ring planarity 
+!cytosine
+IMPRoper    C4C  X    X    ON  2400.0  0    0.000
+IMPRoper    C4C  X    X    N1C  250.0  0    0.000
+IMPRoper    C6C  X    X    NC   250.0  0    0.000
+IMPRoper    C4C  X    X    N2  2400.0  0    0.000
+IMPRoper    C2C  X    X    ON  2400.0  0    0.000
+!infer
+IMPRoper    C1R  C2C  C6C  N1C 2400.0  0    0.000
+IMPRoper    C1D  C2C  C6C  N1C 2400.0  0    0.000
+IMPRoper    N4C  NC   C5C  C4C 2400.0  0    0.000
+IMPRoper    C2C  NC   C4C  C5C  250.0  0    0.000
+IMPRoper    C5C  C6C  N1C  C2C  250.0  0    0.000
+IMPRoper    H2   C4C  H2   N4C  250.0  0    0.000
+IMPRoper    C5C  C4C  N4C  H2  2000.0  0    0.000
+
+!uracil
+IMPRoper    C4U  X    X    ON  2400.0  0    0.000
+IMPRoper    C4U  X    X    N1U  250.0  0    0.000
+IMPRoper    C6U  X    X    N3U  250.0  0    0.000
+IMPRoper    C4U  X    X    N2  2400.0  0    0.000
+IMPRoper    C2U  X    X    ON  2400.0  0    0.000
+IMPRoper    C1R  C2U  C6U  N1U 2400.0  0    0.000
+IMPRoper    C1D  C2U  C6U  N1U 2400.0  0    0.000
+IMPRoper    ON   N3U  C5U  C4U  250.0  0    0.000
+IMPRoper    C2U  N3U  C4U  C5U  250.0  0    0.000
+IMPRoper    C5U  C6U  N1U  C2U  250.0  0    0.000
+IMPRoper    H2   C4U  H2   ON   250.0  0    0.000
+IMPRoper    HN   C2U  C4U  N3U  250.0  0    0.000
+
+!thymidine
+IMPRoper    C4T  X    X    ON  2400.0  0    0.000
+IMPRoper    C4T  X    X    N1T  250.0  0    0.000
+IMPRoper    C6T  X    X    N3T  250.0  0    0.000
+IMPRoper    C4T  X    X    N2  2400.0  0    0.000
+IMPRoper    C2T  X    X    ON  2400.0  0    0.000
+IMPRoper    C1R  C2T  C6T  N1T 2400.0  0    0.000
+IMPRoper    C1D  C2T  C6T  N1T 2400.0  0    0.000
+IMPRoper    ON   N3T  C5T  C4T  250.0  0    0.000
+IMPRoper    C2T  N3T  C4T  C5T  250.0  0    0.000
+IMPRoper    C5T  C6T  N1T  C2T  250.0  0    0.000
+IMPRoper    H2   C4T  H2   ON   250.0  0    0.000
+IMPRoper    CC3E C4T  C6T  C5T  250.0  0    0.000
+
+!basej
+IMPRoper    HR  C6T  C5T   N1T  250.0  0   180.00
+IMPRoper    HN  C2T  C4T    NC  250.0  0   180.00
+IMPRoper    HN  N3T  C2T   C4T  250.0  0   180.00
+IMPRoper   C4T  C3J  C5T   C3J  250.0  0   180.00
+IMPRoper   C3J  C5T  C4T   C6T  250.0  0   180.00
+IMPRoper   C5T  N5Y  C4T    ON  250.0  0   180.00
+IMPRoper   C2T  C1D  N1T   C3J  250.0  0   180.00
+IMPRoper   C5T   HR  C3J   N1T  250.0  0   180.00
+IMPRoper    NC  N1T  C2T    ON  250.0  0   180.00
+IMPRoper   H1J  C3J  OSJ   C3J  500.0  0    66.8
+IMPRoper   H1J  OH   C3J   C3J  500.0  0    66.9
+IMPRoper   H1J  C3J  OH    C3J  500.0  0    66.8
+IMPRoper   H1J  H1J  OH    C3J  500.0  0    70.3
+IMPRoper   H2J  OSJ  OSJ   C3J  500.0  0   -67.6
+
+
+!infer
+IMPRoper    HN   C2T  C4T  N3T  250.0  0    0.000
+
+! The ring-spanning impropers have been left out.
+!adenine
+IMPRoper    N2A  N3A  NC   C2A  250.0  0    0.000
+IMPRoper    H2   C2A  H2   N2A  250.0  0    0.000
+IMPRoper    C4A  C5A  N7A  C8A  250.0  0    0.000
+IMPRoper    C5A  C4A  N9A  C8A  250.0  0    0.000
+IMPRoper    C4A  X    X    NC   250.0  0    0.000
+IMPRoper    C2A  X    X    N9A  250.0  0    0.000
+IMPRoper    C2A  X    X    C5A  250.0  0    0.000
+IMPRoper    C6A  C5A  C4A  N3A  250.0  0    0.000
+IMPRoper    C5A  X    X    N9A  250.0  0    0.000
+IMPRoper    C6A  X    X    N6A 2400.0  0    0.000
+IMPRoper    H2   X    X    N6A  250.0  0    0.000
+
+!infer
+IMPRoper    C1R  C4A  C8A  N9A 2400.0  0    0.000
+IMPRoper    C1D  C4A  C8A  N9A 2400.0  0    0.000
+IMPRoper    N9A  C4A  C5A  N7A  250.0  0    0.000
+IMPRoper    N7A  C8A  N9A  C4A  250.0  0    0.000
+IMPRoper    N3A  C2A  NC   C6A  250.0  0    0.000
+IMPRoper    C5A  C6A  N6A  H2  2000.0  0    0.000
+
+! The ring-spanning impropers have been left out.
+!purine
+IMPRoper    N2P  N3P  NC   C2P  250.0  0    0.000
+IMPRoper    C4P  C5P  N7P  C8P  250.0  0    0.000
+IMPRoper    C5P  C4P  N9P  C8P  250.0  0    0.000
+IMPRoper    C4P  X    X    NC   250.0  0    0.000
+IMPRoper    C2P  X    X    N9P  250.0  0    0.000
+IMPRoper    C2P  X    X    C5P  250.0  0    0.000
+IMPRoper    C6P  C5P  C4P  N3P  250.0  0    0.000
+IMPRoper    C5P  X    X    N9P  250.0  0    0.000
+
+!infer
+IMPRoper    C1R  C4P  C8P  N9P 2400.0  0    0.000
+IMPRoper    C1D  C4P  C8P  N9P 2400.0  0    0.000
+IMPRoper    N9P  C4P  C5P  N7P  250.0  0    0.000
+IMPRoper    N7P  C8P  N9P  C4P  250.0  0    0.000
+IMPRoper    N3P  C2P  NC   C6P  250.0  0    0.000
+
+! The ring-spanning impropers have been left out.
+!guanine
+IMPRoper    C4G  C5G  N7G  C8G  250.0  0    0.000
+IMPRoper    C5G  C4G  N9G  C8G  250.0  0    0.000
+IMPRoper    C4G  X    X    NNA  250.0  0    0.000
+IMPRoper    C2G  X    X    N9G  250.0  0    0.000
+IMPRoper    C2G  X    X    C5G  250.0  0    0.000
+IMPRoper    C6G  C5G  C4G  N3G  250.0  0    0.000
+IMPRoper    C5G  X    X    N9G  250.0  0    0.000
+IMPRoper    C6G  X    X    O6G 2400.0  0    0.000
+IMPRoper    C2G  X    X    N2G 2400.0  0    0.000
+
+!infer
+IMPRoper    C1R  C4G  C8G  N9G 2400.0  0    0.000
+IMPRoper    C1D  C4G  C8G  N9G 2400.0  0    0.000
+IMPRoper    N9G  C4G  C5G  N7G  250.0  0    0.000
+IMPRoper    N7G  C8G  N9G  C4G  250.0  0    0.000
+IMPRoper    N3G  C2G  NNA  C6G  250.0  0    0.000
+IMPRoper    H2   H2   C2G  N2G  250.0  0    0.000
+IMPRoper    HN   C2G  C6G  NNA 2000.0  0    0.000
+IMPRoper    N3G  C2G  N2G  H2  2000.0  0    0.000
+
+!dihedrals baseJ
+DIHEdral  X    C3J   OSJ   X      2.0  3   0.0
+
+
+if ($par_nonbonded eq "PROLSQ") then
+!                  type    2 x van der Waals radius       correction applied for hbond
+evaluate ($vdw_radius_C=        3.7)   
+evaluate ($vdw_radius_N=        3.0)                             {-0.1}
+evaluate ($vdw_radius_O=        2.9)                             {-0.1}
+evaluate ($vdw_radius_S=        3.6)
+evaluate ($vdw_radius_FE=       2.4)
+evaluate ($vdw_radius_H=        1.6)                             {!!!-0.8 MN}
+evaluate ($vdw_radius_HH=       1.6)                             {-0.8}
+evaluate ($vdw_radius_P=        3.8)
+evaluate ($vdw_radius_I=        4.3)
+evaluate ($vdw_radius_C_SP2=    3.4)
+
+
+{ convert radii into sigmas }
+evaluate ($vdw_radius_C   = $vdw_radius_C    / 2^(1/6))
+evaluate ($vdw_radius_N   = $vdw_radius_N    / 2^(1/6))
+evaluate ($vdw_radius_O   = $vdw_radius_O    / 2^(1/6))
+evaluate ($vdw_radius_S   = $vdw_radius_S    / 2^(1/6))
+evaluate ($vdw_radius_FE  = $vdw_radius_FE   / 2^(1/6))
+evaluate ($vdw_radius_H   = $vdw_radius_H    / 2^(1/6))
+evaluate ($vdw_radius_HH  = $vdw_radius_HH   / 2^(1/6))
+evaluate ($vdw_radius_P   = $vdw_radius_P    / 2^(1/6))
+evaluate ($vdw_radius_I   = $vdw_radius_I    / 2^(1/6))
+evaluate ($vdw_radius_C_SP2=$vdw_radius_C_SP2/ 2^(1/6))
+
+{ compute 1-4 sigmas }
+evaluate ($vdw_radius14_C   = $vdw_radius_C    -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_N   = $vdw_radius_N    -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_O   = $vdw_radius_O    -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_S   = $vdw_radius_S    -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_FE  = $vdw_radius_FE   -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_H   = $vdw_radius_H    -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_HH  = $vdw_radius_HH   -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_P   = $vdw_radius_P    -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_I   = $vdw_radius_I    -0.3/ 2^(1/6))
+evaluate ($vdw_radius14_C_SP2=$vdw_radius_C_SP2-0.3/ 2^(1/6))
+
+evaluate ($vdw_eps=0.1)
+
+!
+!                  eps     sigma             eps(1:4) sigma(1:4)
+NONBonded  C5R    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C1R    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C2R    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C3R    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C4R    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+
+NONBonded  C5D    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C1D    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C2D    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C3D    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C4D    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+
+NONBonded  HN      $vdw_eps $vdw_radius_HH   $vdw_eps $vdw_radius14_HH 
+NONBonded  H2      $vdw_eps $vdw_radius_HH   $vdw_eps $vdw_radius14_HH 
+NONBonded  HO      $vdw_eps $vdw_radius_HH   $vdw_eps $vdw_radius14_HH  
+NONBonded  HR      $vdw_eps $vdw_radius_H    $vdw_eps $vdw_radius14_H   
+!
+NONBonded  O3R      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O4R      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O4D      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O5R      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O1P      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O2P      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O1PH     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O2PH     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+
+NONBonded  P        $vdw_eps $vdw_radius_P    $vdw_eps $vdw_radius14_P
+
+NONBonded  C2      $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C3      $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  CB      $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  CE      $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  CH      $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+
+NONBonded  N2      $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N3U     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  NNA     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  NB      $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  NC      $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+
+NONBonded  NH2E    $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  NS      $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N1T     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N3T     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N1C     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N9A     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N9G     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N1U     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+
+NONBonded  ON      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O2R     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  OH      $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  O5H     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+
+NONBonded  SD      $vdw_eps $vdw_radius_S    $vdw_eps $vdw_radius14_S
+
+NONBonded  C6C     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C5C     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C4C     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C2C     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C6U     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C5U     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C4U     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C2U     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C8A     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C6A     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C5A     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C4A     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C2A     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C8G     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C6G     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C5G     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C4G     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C2G     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C6T     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C5T     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C4T     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  C2T     $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+
+NONBonded  N4C     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  O4U     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  N7G     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N3G     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N2G     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N3A     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N7A     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  N6A     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+NONBonded  O6G     $vdw_eps $vdw_radius_O    $vdw_eps $vdw_radius14_O
+NONBonded  CC3E    $vdw_eps $vdw_radius_C    $vdw_eps $vdw_radius14_C
+NONBonded  N2A     $vdw_eps $vdw_radius_N    $vdw_eps $vdw_radius14_N
+
+NONBonded  I5U     $vdw_eps $vdw_radius_I    $vdw_eps $vdw_radius14_I
+
+
+elseif ($par_nonbonded eq "OPLSX") then
+! these are OPLS values derived from W.L. Jorgensen. 2/92
+! included in 2007 by Henry Jonker
+{ suggested values for refinement in H2O
+  NBONds
+    CUTNB=12   WMIN=1.5
+    REPEl = 0.0     cdie shift     
+    TOLErance = 0.5      NBXMOD = 5
+    ctonnb=5.5 ctofnb=11.0 
+  END
+}
+evaluate ($repel_radius = 0.0)
+
+NONBonded  C5R     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C1R     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C2R     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C3R     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C4R     0.050   3.800       0.006    3.800	! opls CT
+
+NONBonded  C5D     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C1D     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C2D     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C3D     0.050   3.800       0.006    3.800	! opls CT
+NONBonded  C4D     0.050   3.800       0.006    3.800	! opls CT
+
+NONBonded  H       0.050   0.500       0.004    0.500
+NONBonded  HA      0.050   0.500       0.004    0.500
+NONBonded  HR      0.050   0.500       0.004    0.500
+NONBonded  HC      0.050   0.500       0.004    0.500
+NONBonded  HN      0.050   0.500       0.004    0.500
+NONBonded  H2      0.050   0.500       0.004    0.500
+NONBonded  HO      0.050   0.500       0.004    0.500
+
+NONBonded  O3R     0.170   3.000       0.021    3.000	! opls OS
+NONBonded  O4R     0.170   3.000       0.021    3.000	! opls OS
+NONBonded  O4D     0.170   3.000       0.021    3.000	! opls OS
+NONBonded  O5R     0.170   3.000       0.021    3.000	! opls OS
+NONBonded  O1P     0.210   2.960       0.026    2.960	! opls O2
+NONBonded  O2P     0.210   2.960       0.026    2.960	! opls O2
+NONBonded  O2R     0.170   3.070       0.021    3.070	! opls OH
+NONBonded  ON      0.210   2.960       0.026    2.960	! opls O
+NONBonded  O6G     0.210   2.960       0.026    2.960	! opls O
+
+NONBonded  P       0.200   3.740       0.025    3.740	! opls P
+
+NONBonded  N2      0.170   3.250       0.021    3.250	! opls N2
+NONBonded  N4C     0.170   3.250       0.021    3.250	! opls N2
+NONBonded  N2G     0.170   3.250       0.021    3.250	! opls N2
+NONBonded  N6A     0.170   3.250       0.021    3.250	! opls N2
+
+NONBonded  N3U     0.170   3.250       0.021    3.250	! opls NA
+NONBonded  N3T     0.170   3.250       0.021    3.250	! opls NA
+NONBonded  NNA     0.170   3.250       0.021    3.250	! opls NA
+NONBonded  N1C     0.170   3.250       0.021    3.250	! opls NA
+NONBonded  N9A     0.170   3.250       0.021    3.250	! opls NA
+NONBonded  N9G     0.170   3.250       0.021    3.250	! opls NA
+NONBonded  N1U     0.170   3.250       0.021    3.250	! opls NA
+NONBonded  N1T     0.170   3.250       0.021    3.250	! opls NA
+
+NONBonded  N7G     0.170   3.250       0.021    3.250	! opls NB
+NONBonded  N7A     0.170   3.250       0.021    3.250	! opls NB
+
+NONBonded  NC      0.170   3.250       0.021    3.250	! opls NC
+NONBonded  N3G     0.170   3.250       0.021    3.250	! opls NC
+NONBonded  N3A     0.170   3.250       0.021    3.250	! opls NC
+
+NONBonded  C6C     0.080   3.500       0.010    3.500	! opls CM
+NONBonded  C5C     0.080   3.500       0.010    3.500	! opls CM
+NONBonded  C4C     0.080   3.500       0.010    3.500	! opls CA
+NONBonded  C2C     0.105   3.750       0.013    3.750	! opls C
+NONBonded  C6U     0.080   3.500       0.010    3.500	! opls CM
+NONBonded  C5U     0.080   3.500       0.010    3.500	! opls CM
+NONBonded  C4U     0.105   3.750       0.013    3.750	! opls C
+NONBonded  C2U     0.105   3.750       0.013    3.750	! opls C
+NONBonded  C8A     0.080   3.500       0.010    3.500	! opls CK
+NONBonded  C6A     0.080   3.500       0.010    3.500	! opls CA
+NONBonded  C5A     0.080   3.500       0.010    3.500	! opls CB
+NONBonded  C4A     0.080   3.500       0.010    3.500	! opls CB
+NONBonded  C2A     0.080   3.500       0.010    3.500	! opls CA
+NONBonded  C8G     0.080   3.500       0.010    3.500	! opls CK
+NONBonded  C6G     0.105   3.750       0.013    3.750	! opls C
+NONBonded  C5G     0.080   3.500       0.010    3.500	! opls CB
+NONBonded  C4G     0.080   3.500       0.010    3.500	! opls CB
+NONBonded  C2G     0.080   3.500       0.010    3.500	! opls CA
+NONBonded  C6T     0.080   3.500       0.010    3.500	! opls CM
+NONBonded  C5T     0.080   3.500       0.010    3.500	! opls CM
+NONBonded  C4T     0.105   3.750       0.013    3.750	! opls C
+NONBonded  C2T     0.105   3.750       0.013    3.750	! opls C
+NONBonded  CC3E    0.080   3.500       0.010    3.500	! opls CT
+
+! I don't know why the next ones are there; probably old parameters HJ
+NONBonded  C2      0.118   3.800       0.015    3.800	! opls C2  
+NONBonded  C3      0.160   3.910       0.020    3.910	! opls C3  
+NONBonded  CB      0.145   3.750       0.018    3.750	! opls CB
+NONBonded  CE      0.080   3.500       0.010    3.500	! opls CA
+NONBonded  CH      0.080   3.800       0.010    3.800	! opls CH
+NONBonded  NB      0.170   3.250       0.021    3.250	! opls NB
+NONBonded  NH2E    0.170   3.250       0.021    3.250	! opls N2
+NONBonded  NS      0.170   3.250       0.021    3.250	! opls NA
+NONBonded  N2A     0.170   3.250       0.021    3.250	! opls N2
+NONBonded  OH      0.170   3.070       0.021    3.070	! opls OH
+NONBonded  O5H     0.170   3.070       0.021    3.070	! opls OH
+NONBonded  O4U     0.210   2.960       0.026    2.960	! opls O
+NONBonded  O1PH    0.170   3.070       0.021    3.070	! opls OH
+NONBonded  O2PH    0.170   3.070       0.021    3.070	! opls OH
+NONBonded  SD      0.250   3.550       0.031    3.550	! opls S
+
+!basej
+NONBonded  OH      0.210   3.066       0.105    3.066
+NONBonded  C3J     0.109   3.400       0.055    3.400
+NONBonded  OSJ     0.170   3.000       0.085    3.000
+NONBonded  CCJ     0.086   3.400       0.043    3.400
+NONBonded  CJ      0.086   3.400       0.043    3.400
+NONBonded  NJ      0.170   3.250       0.085    3.250
+NONBonded  OJ      0.210   2.960       0.105    2.960
+NONBonded  CDJ     0.086   3.400       0.043    3.400
+NONBonded  P       0.200   3.742       0.100    3.742
+NONBonded  HO      0.000   0.000       0.000    0.000
+NONBonded  H1J     0.016   2.471       0.008    2.471
+NONBonded  H2J     0.016   2.293       0.008    2.293
+NONBonded  HN      0.016   1.069       0.008    1.069
+NONBonded  H4J     0.016   2.511       0.008    2.511
+NONBonded  HCJ     0.016   2.650       0.008    2.650
+
+
+else
+!                   Lennard-Jones parameters
+!                                       ------1-4-------
+!                  epsilon   sigma       epsilon   sigma
+!                 (Kcal/mol)   (A)      (Kcal/mol) (A)
+! Taken from Rossky Karplus and Rahman BIOPOLY (1979)
+! 0.05 ADDED TO RADII TO IMPRoperOVE ON NUCL.ACID STACKING/LN
+!
+!                  eps     sigma       eps(1:4) sigma(1:4)
+NONBonded  C5R     0.0900   3.2970      0.0900   3.2970
+NONBonded  C1R     0.0900   3.2970      0.0900   3.2970
+NONBonded  C2R     0.0900   3.2970      0.0900   3.2970
+NONBonded  C3R     0.0900   3.2970      0.0900   3.2970
+NONBonded  C4R     0.0900   3.2970      0.0900   3.2970
+
+NONBonded  C5D     0.0900   3.2970      0.0900   3.2970  !DNA
+NONBonded  C1D     0.0900   3.2970      0.0900   3.2970
+NONBonded  C2D     0.0900   3.2970      0.0900   3.2970
+NONBonded  C3D     0.0900   3.2970      0.0900   3.2970
+NONBonded  C4D     0.0900   3.2970      0.0900   3.2970
+
+NONBonded  HN      0.0045   1.6040      0.0045   1.6040
+NONBonded  H2      0.0045   1.6040      0.0045   1.6040
+NONBonded  HR      0.0045   1.6040      0.0045   1.6040 
+!
+! give it the same as th Hn from RKR
+NONBonded  HO      0.0045   1.6040      0.0045   1.6040 
+
+!
+! THIS STILL IS AN EXTENDED ATOM
+NONBonded  O3R      0.2304   2.7290      0.2304   2.7290
+NONBonded  O4R      0.2304   2.7290      0.2304   2.7290
+NONBonded  O4D      0.2304   2.7290      0.2304   2.7290
+NONBonded  O5R      0.2304   2.7290      0.2304   2.7290
+NONBonded  O1P      0.2304   2.7290      0.2304   2.7290
+NONBonded  O2P      0.2304   2.7290      0.2304   2.7290
+NONBonded  P        0.5849   3.3854      0.5849   3.3854
+
+!bases
+NONBonded  C2      0.0900   3.2970      0.0900   3.2970
+NONBonded  C3      0.0900   3.2970      0.0900   3.2970
+NONBonded  CB      0.0900   3.2970      0.0900   3.2970
+NONBonded  CE      0.0900   3.2970      0.0900   3.2970
+NONBonded  CH      0.0900   3.2970      0.0900   3.2970
+
+NONBonded  N2      0.1600   2.8591      0.1600   2.8591
+NONBonded  N3U     0.1600   2.8591      0.1600   2.8591
+NONBonded  N3T     0.1600   2.8591      0.1600   2.8591
+NONBonded  NNA     0.1600   2.8591      0.1600   2.8591
+NONBonded  NB      0.1600   2.8591      0.1600   2.8591
+NONBonded  NC      0.1600   2.8591      0.1600   2.8591
+
+NONBonded  NH2E    0.1600   3.0291      0.1600   3.0291
+NONBonded  NS      0.1600   2.8591      0.1600   2.8591
+NONBonded  N1T     0.1600   2.8591      0.1600   2.8591
+NONBonded  N1C     0.1600   2.8591      0.1600   2.8591
+NONBonded  N9A     0.1600   2.8591      0.1600   2.8591
+NONBonded  N9P     0.1600   2.8591      0.1600   2.8591
+NONBonded  N9G     0.1600   2.8591      0.1600   2.8591
+NONBonded  N1U     0.1600   2.8591      0.1600   2.8591
+NONBonded  ON      0.2304   2.7290      0.2304   2.7290
+NONBonded  O2R     0.2304   2.7290      0.2304   2.7290
+NONBonded  OH      0.2304   2.5508      0.2304   2.5508
+NONBonded  SD      0.3515   2.6727      0.3515   2.6727  ! G U E S S
+NONBonded  O2      0.2304   2.7290      0.2304   2.7290 
+
+! NEW
+NONBonded  C6C      0.0900   3.2970      0.0900   3.2970
+NONBonded  C5C      0.0900   3.2970      0.0900   3.2970
+NONBonded  C4C      0.0900   3.2970      0.0900   3.2970
+NONBonded  C2C      0.0900   3.2970      0.0900   3.2970
+NONBonded  C6U      0.0900   3.2970      0.0900   3.2970
+NONBonded  C5U      0.0900   3.2970      0.0900   3.2970
+NONBonded  C4U      0.0900   3.2970      0.0900   3.2970
+NONBonded  C2U      0.0900   3.2970      0.0900   3.2970
+NONBonded  C8A      0.0900   3.2970      0.0900   3.2970
+NONBonded  C6A      0.0900   3.2970      0.0900   3.2970
+NONBonded  C5A      0.0900   3.2970      0.0900   3.2970
+NONBonded  C4A      0.0900   3.2970      0.0900   3.2970
+NONBonded  C2A      0.0900   3.2970      0.0900   3.2970
+NONBonded  C8P      0.0900   3.2970      0.0900   3.2970
+NONBonded  C6P      0.0900   3.2970      0.0900   3.2970
+NONBonded  C5P      0.0900   3.2970      0.0900   3.2970
+NONBonded  C4P      0.0900   3.2970      0.0900   3.2970
+NONBonded  C2P      0.0900   3.2970      0.0900   3.2970
+NONBonded  C8G      0.0900   3.2970      0.0900   3.2970
+NONBonded  C6G      0.0900   3.2970      0.0900   3.2970
+NONBonded  C5G      0.0900   3.2970      0.0900   3.2970
+NONBonded  C4G      0.0900   3.2970      0.0900   3.2970
+NONBonded  C2G      0.0900   3.2970      0.0900   3.2970
+NONBonded  C6T      0.0900   3.2970      0.0900   3.2970
+NONBonded  C5T      0.0900   3.2970      0.0900   3.2970
+NONBonded  C4T      0.0900   3.2970      0.0900   3.2970
+NONBonded  C2T      0.0900   3.2970      0.0900   3.2970
+NONBonded  N4C      0.1600   2.8591      0.1600   2.8591
+NONBonded  O4U      0.2304   2.7290      0.2304   2.7290
+NONBonded  N7G      0.1600   2.8591      0.1600   2.8591
+NONBonded  N3G      0.1600   2.8591      0.1600   2.8591
+NONBonded  N2G      0.1600   2.8591      0.1600   2.8591
+NONBonded  N3A      0.1600   2.8591      0.1600   2.8591
+NONBonded  N7A      0.1600   2.8591      0.1600   2.8591
+NONBonded  N6A      0.1600   2.8591      0.1600   2.8591
+NONBonded  O6G      0.2304   2.7290      0.2304   2.7290
+NONBonded  CC3E     0.0900   3.2970      0.0900   3.2970
+NONBonded  N2A      0.1600   2.8591      0.1600   2.8591
+NONBonded  N2P      0.1600   2.8591      0.1600   2.8591
+NONBonded  N3P      0.1600   2.8591      0.1600   2.8591
+NONBonded  N7P      0.1600   2.8591      0.1600   2.8591
+
+! special solute-solute hydrogen bonding potential parameters
+!AEXP 4
+!REXP 6 
+
+!HAEX 4 
+
+!AAEX 2
+! "all" possible combinations of HB-pairs in nucleic acids:
+!  WELL DEPTHS DEEPENED BY 0.5 KCAL TO IMPROVE BASEPAIR ENERGIES /LN
+!  AND DISTANCES INCREASED BY 0.05
+!                   Emin      Rmin
+!                (Kcal/mol)   (A)
+!hbond  N*   O*      -14.0       2.95
+!hbond  N*   N*      -14.5       3.05
+!hbond  O*   O*      -15.75      2.80
+!hbond  O*   N*      -15.50      2.90
+
+! the following NBFIXes are for DNA-DNA hydrogen bonding 
+
+! terms
+!                                         ------1-4------
+!                   A           B           A          B
+!           [Kcal/(mol A^12)] [Kcal/(mol A^6)]
+!
+nbfix  HO   ON      0.05       0.1      0.05       0.1
+nbfix  HO   O3R     0.05       0.1      0.05       0.1
+nbfix  HO   O5R     0.05       0.1      0.05       0.1
+nbfix  HO   OH      0.05       0.1      0.05       0.1
+nbfix  HO   O2R     0.05       0.1      0.05       0.1
+nbfix  HO   NC      0.05       0.1      0.05       0.1
+
+ 
+nbfix  HR   ON       0.05       0.1      0.05       0.1
+nbfix  HR   O2       0.05       0.1      0.05       0.1
+nbfix  HR   O5R      0.05       0.1      0.05       0.1
+nbfix  HR   O4R      0.05       0.1      0.05       0.1
+nbfix  HR   O4D      0.05       0.1      0.05       0.1
+nbfix  HR   O3R      0.05       0.1      0.05       0.1
+nbfix  HR   O2R      0.05       0.1      0.05       0.1
+nbfix  HR   OH       0.05       0.1      0.05       0.1
+nbfix  HR   N7A      0.05       0.1      0.05       0.1
+nbfix  HR   N7P      0.05       0.1      0.05       0.1
+nbfix  HR   N7G      0.05       0.1      0.05       0.1
+nbfix  HR   N3A      0.05       0.1      0.05       0.1
+nbfix  HR   N3P      0.05       0.1      0.05       0.1
+nbfix  HR   N3G      0.05       0.1      0.05       0.1
+
+
+nbfix  HN   ON      0.05       0.1      0.05       0.1
+nbfix  HN   O2R     0.05       0.1      0.05       0.1
+nbfix  HN   OH      0.05       0.1      0.05       0.1
+nbfix  HN   NC      0.05       0.1      0.05       0.1
+
+nbfix  H2   ON      0.05       0.1      0.05       0.1
+nbfix  H2   O2R     0.05       0.1      0.05       0.1
+nbfix  H2   OH      0.05       0.1      0.05       0.1
+
+nbfix  H2   NC      0.05       0.1      0.05       0.1
+
+end if
+
+
+set message=$old_message echo=$old_echo end
+

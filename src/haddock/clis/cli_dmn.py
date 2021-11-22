@@ -1,6 +1,9 @@
 r"""
 HADDOCK3 benchmark submission daemon.
 
+For more information read our benchmark tutorial at `docs/benchmark.tut`
+in HADDOCK3 repository site: https://github.com/haddocking/haddock3
+
    (_) L|J
    (")  |
    /_\--|
@@ -8,7 +11,8 @@ HADDOCK3 benchmark submission daemon.
    _W_  |
 
 Usage:
-    haddock3-dmn <benchmark folder>  --job-limit <num>
+    haddock3-dmn -h
+    haddock3-dmn <benchmark folder>  --job-limit <num> [OPTIONS]
 """
 import argparse
 import os
@@ -18,12 +22,14 @@ import time
 from pathlib import Path
 
 
+# options for the different job queue systems supported
 job_system_launch = {
     'slurm': 'sbatch',
     'torque': 'qsub',
     }
 
 
+# prepares client arguments
 ap = argparse.ArgumentParser(
     prog='HADDOCK3 benchmark submission daemon.',
     description=__doc__,
@@ -54,7 +60,7 @@ ap.add_argument(
 
 ap.add_argument(
     '--restart',
-    help='Restart the RUNNING jobs.',
+    help='Restart the RUNNING jobs. DONE jobs won\'t be touched.',
     action='store_true',
     )
 
@@ -70,12 +76,24 @@ ap.add_argument(
 
 
 class Job:
-    """Job task."""
+    """
+    Job task.
 
-    def __init__(self, job_f, job_system):
+    Controls the status of each job.
+
+    Parameters
+    ----------
+    job_f : pathlib.Path
+        The path to the job file.
+
+    launch_command : str
+        The command to launch the job. For example `sbatch`.
+    """
+
+    def __init__(self, job_f, launch_command):
         self.job_filename = job_f
 
-        self.job_system = job_system
+        self.launch_command = launch_command
 
         # previous jog path
         job_stem = job_f.stem
@@ -98,7 +116,8 @@ class Job:
         """
         Get job status.
 
-        If job has no status assigned in the disk, assigns 'AVAILABLE'.
+        The job status depends on the present of files: `AVAILABLE`,
+        `RUNNING`, `DONE`, and `FAIL` created by `haddock-bm` jobs.
 
         Status is assigned to `self.status` and returned.
         """
@@ -109,12 +128,21 @@ class Job:
         return self.status
 
     def submit(self):
-        """Submit job."""
-        subprocess.run([self.job_system, str(self.job_filename)])
-        print('Job sent: ', [self.job_system, str(self.job_filename)])
+        """
+        Submit job.
+
+        Run command `$launch_command $job_filename`.
+        """
+        subprocess.run([self.launch_command, str(self.job_filename)])
+        print('Job sent: ', [self.launch_command, str(self.job_filename)])
 
     def restart(self):
-        """Restart the status of the job to `AVAILABLE`."""
+        """
+        Restart the status of the job to `AVAILABLE`.
+
+        Does this by removing all status files and creating the file
+        `AVAILABLE`.
+        """
         self.check_done.unlink(missing_ok=True)
         self.check_running.unlink(missing_ok=True)
         self.check_fail.unlink(missing_ok=True)
@@ -123,7 +151,9 @@ class Job:
 
 def get_current_jobs(grep='BM5'):
     """
-    Get current jobs for which job-name has the `grep` word.
+    Get current number of jobs for which job-name has the `grep` word.
+
+    List of jobs is retrieve using the command `qstat`.
 
     Parameters
     ----------
@@ -148,6 +178,44 @@ def get_current_jobs(grep='BM5'):
     return njobs
 
 
+def calc_size(job_path):
+    """
+    Calculate the size of the job.
+
+    Expects the job file to be in a folder structure as defined by
+    `haddock3-bm`.
+
+    The size of the jobs is defined by the number of carbon-alpha lines
+    in the `target.pdb` file.
+    """
+    target_pdb = Path(job_path.parents[1], 'input', 'target.pdb')
+    lines = target_pdb.read_text().split(os.linesep)
+    size = sum(1 for line in lines if line[11:16].strip() == 'CA')
+    return size
+
+
+def filter_by_status(job_list, status='AVAILABLE'):
+    """
+    Filter jobs by their status.
+
+    Only jobs with `status` are accepted.
+
+    Parameters
+    ----------
+    job_list : list of Job objects.
+
+    Returns
+    -------
+    list
+        The list with the `Job`s with matching `status`.
+    """
+    jobs = [j for j in job_list if j.get_status() == status]
+    print(f'Number of {status} jobs: {len(jobs)}.')
+    return jobs
+
+
+# command-line client helper functions
+# load_args, cli, maincli
 def load_args(ap):
     """Load argument parser args."""
     return ap.parse_args()
@@ -164,35 +232,6 @@ def maincli():
     cli(ap, main)
 
 
-def calc_size(job_path):
-    """
-    Calculate the size of the job.
-
-    Expects the job file to be in a folder structure as defined by
-    `haddock3-bm`.
-    """
-    target_pdb = Path(job_path.parents[1], 'input', 'target.pdb')
-    lines = target_pdb.read_text().split(os.linesep)
-    size = sum(1 for line in lines if line[11:16].strip() == 'CA')
-    return size
-
-
-def filter_available(job_list, status='AVAILABLE'):
-    """
-    Filter jobs by their availability.
-
-    Only jobs with `status` are accepted.
-
-    Returns
-    -------
-    list
-        The list with the `Job`s with matching `status`.
-    """
-    jobs = [j for j in job_list if j.get_status() == status]
-    print(f'Number of {status} jobs: {len(jobs)}.')
-    return jobs
-
-
 def main(
         benchmark_path,
         job_limit=10,
@@ -200,41 +239,87 @@ def main(
         restart=False,
         short_first=False,
         ):
-    """."""
+    """
+    Execute the benchmark daemon.
+
+    The parameters defined here are the same as defined in the client
+    arguments.
+
+    This is the main function of the client. If you want to run the
+    daemon withOUT using the command line and instead importing its
+    functionalities and setting it up from another pythong script, you
+    should import this function.
+
+    >>> from haddock.clis.cli_dmn import main
+
+    Parameters
+    ----------
+    benchmark_path : pathlib.Path
+        The path of the benchmark folder as created by the `haddock3-bm`
+        interface.
+
+    job_limit : int
+        The max number of jobs to send to the queue.
+
+    job_sys : str
+        A key to the `job_system_launch` dictionary. Selects the queue
+        management system.
+
+    restart : bool
+        Whether to restart the `RUNNING` jobs that might have been halted
+        in previous daemon runs. Defaults to False.
+
+    short_first : bool
+        Whether to sort jobs by their size in ascending manner. That is,
+        the shorted jobs first. Defaults to False, the longer first.
+    """
+    # lists of all the job files in the benchmark_path folder
     job_list = list(benchmark_path.glob('*/jobs/*.job'))
 
+    # breaks if no jobs are found
     if not job_list:
         sys.exit('+ ERROR! No jobs found in folder: {str(benchmark_path)!r}')
 
+    # sorts the job list
     job_list.sort(key=calc_size, reverse=not(short_first))
 
+    # create the job objects according to the queue managing systme
     _jobsys = job_system_launch[job_sys]
     jobs = [Job(j, _jobsys) for j in job_list]
 
+    # restart previously (halted) `RUNNING` jobs - if selected.
     if restart:
-        running_jobs = filter_available(jobs, status='RUNNING')
+        running_jobs = filter_by_status(jobs, status='RUNNING')
         for _job in running_jobs:
             _job.restart()
 
-    available_jobs = filter_available(jobs)
+    # Lists the available jobs (those with status `AVAILABLE`)
+    available_jobs = filter_by_status(jobs)
 
+    # runs the daemon loop, only if there are available jobs :-)
     while available_jobs:
 
+        # get the number of available queue slots according to the
+        # job limit parameter
+        #
         # 0 is added to avoid going to negative values in case a job
         # had been manually submitted.
-        empty_spots = max(0, job_limit - get_current_jobs())
-        print('empty spots: ', empty_spots)
+        empty_slots = max(0, job_limit - get_current_jobs())
+        print('empty slots: ', empty_slots)
 
-        for i in range(empty_spots):
+        # send jobs if there are empty slots
+        for i in range(empty_slots):
             available_jobs[i].submit()
             time.sleep(5)
 
-        # chill
+        # chill before repeating the process.
         print('chilling for 120 seconds...')
         time.sleep(120)
 
-        available_jobs = filter_available(jobs)
+        # refreshes the available_jobs list
+        available_jobs = filter_by_status(jobs)
 
+    # done
     return
 
 

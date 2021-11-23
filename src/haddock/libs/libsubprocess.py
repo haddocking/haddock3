@@ -3,7 +3,7 @@ import os
 import shlex
 import subprocess
 
-from haddock import toppar_path
+from haddock import toppar_path as global_toppar
 from haddock.core.defaults import cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
 
@@ -50,9 +50,12 @@ class CNSJob:
             modpath,
             config_path,
             cns_exec=None,
+            toppar=None,
             ):
         """
         CNS subprocess.
+
+        To execute the job, call the `.run()` method.
 
         Parameters
         ----------
@@ -78,6 +81,11 @@ class CNSJob:
         cns_exec : str of pathlib.Path, optional
             The path to the CNS exec. If not provided defaults to the
             global configuration in HADDOCK3.
+
+        toppar : str of pathlib.Path, optional
+            Path to the folder containing CNS topology parameters.
+            If `None` is given defaults to `cns/toppar` inside HADDOCK3
+            source code.
         """
         self.input_file = input_file
         self.output_file = output_file
@@ -85,6 +93,7 @@ class CNSJob:
         self.modpath = modpath
         self.config_path = config_path
 
+        self.toppar = toppar or global_toppar
         self.cns_exec = cns_exec
 
     @property
@@ -114,7 +123,7 @@ class CNSJob:
                 'MODDIR': self.modpath,
                 'MODULE': self.cns_folder,
                 'RUN': self.config_path,
-                'TOPPAR': toppar_path,
+                'TOPPAR': self.toppar,
                 }
             p = subprocess.Popen(
                 self.cns_exec,

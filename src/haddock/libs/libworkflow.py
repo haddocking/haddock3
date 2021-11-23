@@ -28,7 +28,14 @@ class WorkflowManager:
 class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
 
-    def __init__(self, content, ncores=None, run_dir=None, cns_exec=None, **ig):
+    def __init__(
+            self,
+            content,
+            ncores=None,
+            run_dir=None,
+            cns_exec=None,
+            config_path=None,
+            **ig):
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, (stage_name, params) in enumerate(content.items()):
@@ -38,6 +45,7 @@ class Workflow:
             # hasn't been used
             params.setdefault('ncores', ncores)
             params.setdefault('cns_exec', cns_exec)
+            params.setdefault('config_path', config_path)
 
             try:
                 _ = Step(

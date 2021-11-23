@@ -109,6 +109,8 @@ def setup_run(workflow_path, restart_from=None):
     # the workflow, the "other parameters" can be expanded in the future
     # by a function if needed
 
+    general_params['config_path'] = Path(workflow_path).resolve()
+
     return modules_params, general_params
 
 

@@ -94,6 +94,8 @@ class HaddockModule(BaseHaddockModule):
                 scoring_filename,
                 output_filename,
                 cns_folder=self.cns_folder_path,
+                modpath=self.path,
+                config_path=self.params['config_path'],
                 cns_exec=self.params['cns_exec'],
                 )
 

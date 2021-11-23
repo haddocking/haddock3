@@ -109,7 +109,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Sampling
         structure_list = []
-        for idx in range(params['sampling']):
+        for idx in range(1, params['sampling'] + 1):
             inp_file = generate_docking(
                 idx,
                 models_to_dock,

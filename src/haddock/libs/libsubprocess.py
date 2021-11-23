@@ -3,6 +3,7 @@ import os
 import shlex
 import subprocess
 
+from haddock import toppar_path
 from haddock.core.defaults import cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
 
@@ -45,20 +46,45 @@ class CNSJob:
             self,
             input_file,
             output_file,
-            cns_folder='.',
+            cns_folder,
+            modpath,
+            config_path,
             cns_exec=None,
             ):
         """
         CNS subprocess.
 
-        :param input_file: input CNS script
-        :param output_file: CNS output
-        :cns_folder: absolute execution path
-        :cns_exec: CNS binary including absolute path
+        Parameters
+        ----------
+        input_file : str or pathlib.Path
+            The path to the .inp CNS file.
+
+        output_file : str or pathlib.Path
+            The path to the .out CNS file, where the standard output
+            will be saved.
+
+        cns_folder : str of pathlib.Path
+            The path where the CNS scripts needed for the module reside.
+            For example, `modules/rigidibody/cns`.
+
+        mod_path : str of pathlib.Path
+            Path where the results of the haddock3 module executing this
+            CNS job will be saved.
+
+        config_path : str of pathlib.Path
+            Path of the haddock3 configuration file. Will be used to
+            manage paths in relative manner.
+
+        cns_exec : str of pathlib.Path, optional
+            The path to the CNS exec. If not provided defaults to the
+            global configuration in HADDOCK3.
         """
         self.input_file = input_file
         self.output_file = output_file
         self.cns_folder = cns_folder
+        self.modpath = modpath
+        self.config_path = config_path
+
         self.cns_exec = cns_exec
 
     @property
@@ -84,7 +110,12 @@ class CNSJob:
         with open(self.input_file) as inp, \
                 open(self.output_file, 'w+') as outf:
 
-            env = {'RUN': self.cns_folder}
+            env = {
+                'MODDIR': self.modpath,
+                'MODULE': self.cns_folder,
+                'RUN': self.config_path,
+                'TOPPAR': toppar_path,
+                }
             p = subprocess.Popen(
                 self.cns_exec,
                 stdin=inp,

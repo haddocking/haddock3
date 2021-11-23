@@ -10,31 +10,31 @@
 ! ***********************************************************************
 
 {* protein parameter file *}
-eval ($prot_parameter_infile="RUN:toppar/protein-allhdg5-4.param")
+eval ($prot_parameter_infile="TOPPAR:protein-allhdg5-4.param")
 
 {* nucleic acid parameter file *}
-eval ($nucl_parameter_infile="RUN:toppar/dna-rna-allatom-hj-opls-1.3.param")
+eval ($nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param")
 
 {* carbohydrate parameter file *}
-eval ($carbo_parameter_infile="RUN:toppar/carbohydrate.param")
+eval ($carbo_parameter_infile="TOPPAR:carbohydrate.param")
 
 {* solvent parameter file *}
-eval ($solv_parameter_infile="RUN:toppar/water-allhdg5-4.param")
+eval ($solv_parameter_infile="TOPPAR:water-allhdg5-4.param")
 
 {* ligand parameter file *}
-eval ($cofac_parameter_infile="RUN:toppar/ligand.param")
+eval ($cofac_parameter_infile="TOPPAR:ligand.param")
 
 {* fragment probes parameter file *}
-eval ($ligands_parameter_infile="RUN:toppar/fragment_probes.param")
+eval ($ligands_parameter_infile="TOPPAR:fragment_probes.param")
 
 {* ion parameter file *}
-eval ($ion_parameter_infile="RUN:toppar/ion.param")
+eval ($ion_parameter_infile="TOPPAR:ion.param")
 
 {* heme parameter file *}
-eval ($heme_parameter_infile="RUN:toppar/hemes-allhdg.param")
+eval ($heme_parameter_infile="TOPPAR:hemes-allhdg.param")
 
 {* shape parameter file *}
-eval ($shape_parameter_infile="RUN:toppar/shape.param")
+eval ($shape_parameter_infile="TOPPAR:shape.param")
 
 parameter
     @@$prot_parameter_infile

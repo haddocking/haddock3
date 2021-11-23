@@ -120,7 +120,7 @@ if ($Data.flags.dani  eq TRUE) then
 end if
 
 {====>} {* define ASA-based solvation parameters *}
-inline @RUN:def_solv_param.cns
+inline @MODULE:def_solv_param.cns
 
 {====>} {* buried surface area and desolvation*}
 evaluate ($nchain1 = 0)

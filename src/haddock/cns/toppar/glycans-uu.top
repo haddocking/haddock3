@@ -1,0 +1,5719 @@
+SET
+	ECHO false
+	MESSage false
+END
+
+AUTOGENERATE ANGLES=TRUE END
+{*===========================*}
+
+!***************************************************!
+!*                                                 *!
+!* Masses of atom types used in this topology file *!
+!*                                                 *!
+!***************************************************!
+
+! Atoms specific to pyranose form
+MASS   CR    12.01100	! Carbon of the ring
+MASS   OR    15.99940	! Oxygen of the ring
+
+! Atoms specific to furanose form, flat atoms
+MASS   CRF   12.01100	! Carbon of the ring, flat
+MASS   ORF   15.99940	! Oxygen of the ring, flat
+MASS   CRV   12.01100	! Carbon of the ring, envelope
+MASS   ORV   15.99940	! Oxygen of the ring, envelope
+
+! All other atoms
+MASS   C     12.01100	! Carbon of a carbonyl group
+MASS   CH1E  12.01100   ! Carbon out of the ring, linked to 1 H
+MASS   CH2E  12.01100   ! Carbon out of the ring, linked to 2 H
+MASS   CH3E  12.01100   ! Carbon out of the ring, linked to 3 H
+MASS   O     15.99940   ! Oxygen in C=O (keton)
+MASS   OH1   15.99940   ! Oxygen linked to 1 H
+MASS   OA    15.99940   ! Oxygen in glycosidic bond
+MASS   OC    15.99940   ! Oxygen in COOH
+MASS   OUF   15.9994    ! Sulphate anion oxygen
+MASS   OT    15.99940   ! TIPS3P water oxygen
+MASS   NH1   14.00700   ! Nitrogen, linked to 1 H
+MASS   SUF   32.0600    ! Sulphate anion sulphur
+MASS   H      1.00800   ! Hydrogen
+MASS   HT     1.00800   ! TIPS3P water hydrogen
+
+
+
+!***************************************!
+!*                                     *!
+!*          P Y R A N O S E S          *!
+!*                                     *!
+!***************************************!
+
+RESIdue GCP			! D-Glucopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H61
+	BOND C6   H62
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue GCF			! D-Glucofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue GTP			! D-Galactopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H61
+	BOND C6   H62
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C5   C3   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue GTF			! D-Galactofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C5   C3   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue MNP			! D-Mannopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H61
+	BOND C6   H62
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue MNF			! D-Manonofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue ALP			! D-Allopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H61
+	BOND C6   H62
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue ALF			! D-Allofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue ARP			! D-Altropyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H61
+	BOND C6   H62
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue ARF			! D-Altrofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue GLP			! D-Gulopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H61
+	BOND C6   H62
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C5   C3   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue GLF			! D-Gulofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C5   C3   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue IDP			! D-Idopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H61
+	BOND C6   H62
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C5   C3   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue IDF			! D-Idofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C5   C3   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue TLP			! D-Talopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O5
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND O4 HO4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+	BOND C5 O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper O4   C3   C5   H4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue TLF			! D-Talofuranose
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.650   END
+	ATOM C5   TYPE=CH1E CHARge= 0.150   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END	
+	ATOM C6   TYPE=CH2E CHARge= 0.050   END
+	ATOM H61  TYPE=H    CHARge= 0.100   END
+	ATOM H62  TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C1 O1
+	BOND C1 H1
+	BOND O1 HO1
+	BOND C1 O4
+	BOND C1 C2
+	BOND C2 H2 
+	BOND C2 O2
+	BOND O2 HO2
+	BOND C2 C3
+	BOND C3 H3
+	BOND C3 O3
+	BOND O3 HO3
+	BOND C3 C4
+	BOND C4 H4
+	BOND C4 O4
+	BOND C4 C5
+	BOND C5 H5
+	BOND C5 O5
+	BOND O5 HO5
+	BOND C5 C6
+	BOND C6 H61
+	BOND C6 H62
+	BOND C6 O6
+	BOND O6 HO6
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C5   C3   O4
+	IMPRoper H5   O5   C4   C6
+	IMPRoper H61  H62  C5   O6
+END
+
+RESIdue PCP			! D-Psicopyranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C2   O11
+	IMPRoper C11  C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue PCF			! D-Psicofuranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CRV  CHARge= 0.450   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C1   O11
+	IMPRoper C11  C2   O4   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue FTP			! D-Fructopyranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C2   O11
+	IMPRoper C11  C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue FTF			! D-Fructofuranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CRV  CHARge= 0.450   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C1   O11
+	IMPRoper C11  C2   O4   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue SBP			! D-Sorbopyranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C2   O11
+	IMPRoper C11  C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue SBF			! D-Sorbofuranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CRV  CHARge= 0.450   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C1   O11
+	IMPRoper C11  C2   O4   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue TTP			! D-Tagatopyranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C2   O11
+	IMPRoper C11  C2   O5   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue TTF			! D-Tagatofuranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CRV  CHARge= 0.450   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H111 H112 C1   O11
+	IMPRoper C11  C2   O4   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue NAA			! Neuraminic acid
+        GROUP
+	ATOM C11  TYPE=C    CHARge= 0.500   END
+	ATOM O111 TYPE=OC   CHARge=-0.500   END
+	ATOM O112 TYPE=OH1  CHARge=-0.450   END
+	ATOM HO12 TYPE=H    CHARge= 0.450   END
+	ATOM C1   TYPE=CR   CHARge= 0.450   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge=-0.100   END
+	ATOM H21  TYPE=H    CHARge= 0.050   END
+	ATOM H22  TYPE=H    CHARge= 0.050   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.000   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM N4   TYPE=NH1  CHARge=-0.350   END
+	ATOM HN4  TYPE=H    CHARge= 0.250   END
+	ATOM CN4  TYPE=C    CHARge= 0.550   END
+	ATOM OCN4 TYPE=O    CHARge=-0.550   END
+	ATOM CCN4 TYPE=CH3E CHARge=-0.300   END
+	ATOM HC41 TYPE=H    CHARge= 0.100   END
+	ATOM HC42 TYPE=H    CHARge= 0.100   END
+	ATOM HC43 TYPE=H    CHARge= 0.100   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H5   TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+	ATOM C6   TYPE=CH1E CHARge= 0.150   END
+	ATOM H6   TYPE=H    CHARge= 0.100   END
+	ATOM O6   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO6  TYPE=H    CHARge= 0.400   END
+	ATOM C7   TYPE=CH1E CHARge= 0.150   END
+	ATOM H7   TYPE=H    CHARge= 0.100   END
+	ATOM O7   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO7  TYPE=H    CHARge= 0.400   END
+	ATOM C8   TYPE=CH2E CHARge= 0.050   END
+	ATOM H81  TYPE=H    CHARge= 0.100   END
+	ATOM H82  TYPE=H    CHARge= 0.100   END
+	ATOM O8   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO8  TYPE=H    CHARge= 0.400   END
+
+	! Bonds
+	BOND C11  O111
+	BOND C11  O112
+	BOND O112 HO12
+	BOND C11  C1
+	BOND C1   O5
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   C2
+	BOND C2   H21
+	BOND C2   H22
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   N4
+	BOND N4   HN4
+	BOND N4   CN4
+	BOND CN4  OCN4
+	BOND CN4  CCN4
+	BOND CCN4 HC41
+	BOND CCN4 HC42
+	BOND CCN4 HC43
+	BOND C4   C5
+	BOND C5   O5
+	BOND C5   H5
+	BOND C5   C6
+	BOND C6   H6
+	BOND C6   O6
+	BOND O6   HO6
+	BOND C6   C7
+	BOND C7   H7
+	BOND C7   O7
+	BOND O7   HO7
+	BOND C7   C8
+	BOND C8   H81
+	BOND C8   H82
+	BOND C8   O8
+	BOND O8   HO8
+	
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+
+	IMPRoper C11  C2   O5   O1
+	IMPRoper H21  C3   C1   H22
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C5   C3   N4
+	IMPRoper H5   C4   O5   C6
+	
+	! Improper angles for chirality of side chains
+	IMPRoper H6   O6   C5   C7
+	IMPRoper H7   O7   C6   C8
+	IMPRoper H81  H82  C7   O8
+
+	! Improper angle for planar C1 of the carboxyl group
+	IMPRoper C11  C1   O112 O111	! Carboxylic group
+	
+	! Improper angles for maintenance of the N-Acetyl group
+	IMPRoper N4   C4   HN4  CN4	! N planar in N-Acetyl group 
+	IMPRoper CN4  N4   CCN4 OCN4	! C planar in N-Acetyl group (Carbonyl function)
+	IMPRoper OCN4 CN4  N4   HN4	! N-H and C=O trans in N-Acetyl group
+	IMPRoper HC41 HC42 CN4  HC43
+END
+
+!***************************************!
+!*                                     *!
+!*          F U R A N O S E S          *!
+!*                                     *!
+!***************************************!
+
+RESIdue RBP			! D-Ribopyranose
+	GROUP
+	ATOM C1   TYPE=CR   CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CR   CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CR   CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CR   CHARge= 0.150   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO4  TYPE=H    CHARge= 0.400   END
+	ATOM C5   TYPE=CR   CHARge= 0.100   END
+	ATOM H51  TYPE=H    CHARge= 0.050   END
+	ATOM H52  TYPE=H    CHARge= 0.050   END
+	ATOM O5   TYPE=OR   CHARge=-0.400   END
+
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O5
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND O4   HO4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+
+	! Improper angles for maintenance of the ring
+	IMPRoper C1   C3   C2   C4
+	IMPRoper C2   C3   C4   C5
+	IMPRoper C3   C5   C4   O5
+	IMPRoper C4   C5   O5   C1
+	IMPRoper C5   C1   O5   C2
+	IMPRoper O5   C1   C2   C3
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O5   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   C3   C5   O4
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue RBF			! D-Ribofuranose, envelope form, C1 out of the plan
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+	
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O4   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   O4   C3   C5
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue ANF			! D-Arabinofuranose, envelope form, C1 out of the plan
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+	
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O4   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H4   O4   C3   C5
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue XLF			! D-Xylofuranose, envelope form, C1 out of the plan
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+	
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O4   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   O4   C3   C5
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue LXF			! D-Lyxofuranose, envelope form, C1 out of the plan
+	GROUP
+	ATOM C1   TYPE=CRV  CHARge= 0.350   END
+	ATOM H1   TYPE=H    CHARge= 0.100   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H4   TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+	ATOM C5   TYPE=CH2E CHARge= 0.050   END
+	ATOM H51  TYPE=H    CHARge= 0.100   END
+	ATOM H52  TYPE=H    CHARge= 0.100   END
+	ATOM O5   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO5  TYPE=H    CHARge= 0.400   END
+	
+	! Bonds
+	BOND C1   O1
+	BOND C1   H1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2 
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H4
+	BOND C4   O4
+	BOND C4   C5
+	BOND C5   H51
+	BOND C5   H52
+	BOND C5   O5
+	BOND O5   HO5
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper H1   C2   O4   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C4   C2   O3
+	IMPRoper H4   O4   C3   C5
+	IMPRoper H51  H52  C4   O5
+END
+
+RESIdue RLF			! D-Ribulofuranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CRV  CHARge= 0.450   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H41  TYPE=H    CHARge= 0.100   END
+	ATOM H42  TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H41
+	BOND C4   H42
+	BOND C4   O4
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper C11  C2   O4   O1
+	IMPRoper H2   C1   C3   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H41  H42  C3   O4
+END
+
+RESIdue LLF			! D-Ribulofuranose
+	GROUP
+	ATOM C11  TYPE=CH2E CHARge= 0.050   END
+	ATOM H111 TYPE=H    CHARge= 0.100   END
+	ATOM H112 TYPE=H    CHARge= 0.100   END
+	ATOM O11  TYPE=OH1  CHARge=-0.650   END
+	ATOM HO11 TYPE=H    CHARge= 0.400   END
+	ATOM C1   TYPE=CRV  CHARge= 0.450   END
+	ATOM O1   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO1  TYPE=H    CHARge= 0.400   END
+	ATOM C2   TYPE=CRF  CHARge= 0.150   END
+	ATOM H2   TYPE=H    CHARge= 0.100   END
+	ATOM O2   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO2  TYPE=H    CHARge= 0.400   END
+	ATOM C3   TYPE=CRF  CHARge= 0.150   END
+	ATOM H3   TYPE=H    CHARge= 0.100   END
+	ATOM O3   TYPE=OH1  CHARge=-0.650   END
+	ATOM HO3  TYPE=H    CHARge= 0.400   END
+	ATOM C4   TYPE=CRF  CHARge= 0.100   END
+	ATOM H41  TYPE=H    CHARge= 0.100   END
+	ATOM H42  TYPE=H    CHARge= 0.100   END
+	ATOM O4   TYPE=ORF  CHARge=-0.400   END
+
+
+	! Bonds
+	BOND C11  O11
+	BOND O11  HO11
+	BOND C11  H111
+	BOND C11  H112
+	BOND C11  C1
+
+	BOND C1   O1
+	BOND O1   HO1
+	BOND C1   O4
+	BOND C1   C2
+	BOND C2   H2
+	BOND C2   O2
+	BOND O2   HO2
+	BOND C2   C3
+	BOND C3   H3
+	BOND C3   O3
+	BOND O3   HO3
+	BOND C3   C4
+	BOND C4   H41
+	BOND C4   H42
+	BOND C4   O4
+
+	! Improper angles for maintenance of the ring
+	IMPROPER C1   C2   C3   C4
+	IMPROPER C2   C3   C4   O4
+	IMPROPER C3   O4   C4   C1
+
+	! Improper angles for chirality of substituants
+	IMPRoper C11  C2   O4   O1
+	IMPRoper H2   C3   C1   O2
+	IMPRoper H3   C2   C4   O3
+	IMPRoper H41  H42  C3   O4
+END
+
+!*****************************!
+!                             !
+! Topology of water molecules !
+!                             !
+!*****************************!
+RESIdue TIP3			! TIPS3P WATER MODEL
+	GROUp
+	ATOM OH2  TYPE=OT   CHARge= -0.834  END
+	ATOM H1   TYPE=HT   CHARge=  0.417  END
+	ATOM H2   TYPE=HT   CHARge=  0.417  END
+
+	BOND OH2  H1
+	BOND OH2  H2
+
+	ACCEptor OH2  " "
+	DONOr H1 OH2
+	DONOr H2 OH2
+END
+
+
+!**************************************************!
+!*                                                *!
+!*     SOME PATCHES TO MODIFY MONOSACCHARIDES     *!
+!*                                                *!
+!**************************************************!
+
+PRESidue L1RF		! Mutarotation for furanoses
+			! O  H		H  O
+			! \\/		 \//
+			!  C		 C
+			!  |      -->    | 
+			! -C-		-C-
+			!  |		 |
+			! -C-		-C-
+			!  |             |
+	DELEte	IMPRoper H1   C2   O4   O1
+	ADD	IMPRoper H1   O4   C2   O1
+END
+
+PRESidue R1LF		! Mutarotation  for furanoses
+			! H  O		O  H
+			!  \//		\\/
+			!   C		 C
+			!   |     -->	 | 
+			!  -C-		-C-
+			!   |		 |
+			!  -C-		-C-
+			!   |            |
+	DELEte	IMPRoper H1   O4   C2   O1
+	ADD	IMPRoper H1   C2   O4   O1
+END
+
+PRESidue L1RP		! Mutarotation for pyranoses
+			! O  H		H  O
+			! \\/		 \//
+			!  C		 C
+			!  |      -->    | 
+			! -C-		-C-
+			!  |		 |
+			! -C-		-C-
+			!  |             |
+	DELEte	IMPRoper H1   C2   O5   O1
+	ADD	IMPRoper H1   O5   C2   O1
+END
+
+PRESidue R1LP		! Mutarotation for pyranoses
+			! H  O		O  H
+			!  \//		\\/
+			!   C		 C
+			!   |     -->	 | 
+			!  -C-		-C-
+			!   |		 |
+			!  -C-		-C-
+			!   |            |
+	DELEte	IMPRoper H1   O5   C2   O1
+	ADD	IMPRoper H1   C2   O5   O1
+END
+
+PRESidue L1RG		! Mutarotation for furanoses
+			! O  C		C  O
+			! \\/		 \//
+			!  C		 C
+			!  |      -->    | 
+			! -C-		-C-
+			!  |		 |
+			! -C-		-C-
+			!  |             |
+	DELEte	IMPRoper H1   C2   O4   C11
+	ADD	IMPRoper H1   O4   C2   C11
+END
+
+PRESidue R1LG		! Mutarotation  for furanoses
+			! H  O		O  H
+			!  \//		\\/
+			!   C		 C
+			!   |     -->	 | 
+			!  -C-		-C-
+			!   |		 |
+			!  -C-		-C-
+			!   |            |
+	DELEte	IMPRoper H1   O4   C2   C11
+	ADD	IMPRoper H1   C2   O4   C11
+END
+
+PRESidue L1RQ		! Mutarotation for pyranoses
+			! O  H		H  O
+			! \\/		 \//
+			!  C		 C
+			!  |      -->    | 
+			! -C-		-C-
+			!  |		 |
+			! -C-		-C-
+			!  |             |
+	DELEte	IMPRoper H1   C2   O5   C11
+	ADD	IMPRoper H1   O5   C2   C11
+END
+
+PRESidue R1LQ		! Mutarotation for pyranoses
+			! H  O		O  H
+			!  \//		\\/
+			!   C		 C
+			!   |     -->	 | 
+			!  -C-		-C-
+			!   |		 |
+			!  -C-		-C-
+			!   |            |
+	DELEte	IMPRoper H1   O5   C2   C11
+	ADD	IMPRoper H1   C2   O5   C11
+END
+
+PRESidue R1LS		! Mutarotation for the Sialic acid
+	DELEte	IMPRoper C11  C2   O5   O1
+	ADD	IMPRoper C11  O5   C2   O1
+END
+
+PRESidue L1RS		! Mutarotation for the Sialic acid
+	DELEte	IMPRoper C11  O5   C2   O1
+	ADD	IMPRoper C11  C2   O5   O1
+END
+
+PRESidue R2L		! OH2 goes to the left side from the right side in the Fisher's representation
+	DELEte	IMPRoper H2   C1   C3   O2
+	ADD	IMPRoper H2   C3   C1   O2
+END
+PRESidue L2R		! OH2 goes to the right side from the left side in the Fisher's representation
+	DELEte	IMPRoper H2   C3   C1   O2
+	ADD	IMPRoper H2   C1   C3   O2
+END
+
+PRESidue R3L		! OH2 goes to the left side from the right side in the Fisher's representation
+	DELEte	IMPRoper H3   C2   C4   O3
+	ADD	IMPRoper H3   C4   C2   O3
+END
+PRESidue L3R		! OH2 goes to the right side from the left side in the Fisher's representation
+	DELEte	IMPRoper H3   C4   C2   O3
+	ADD	IMPRoper H3   C2   C4   O3
+END
+
+PRESidue R4L		! OH4 goes to the left side from the right side in the Fisher's representation
+	DELEte	IMPRoper H4   C3   C5   O4
+	ADD	IMPRoper H4   C5   C3   O4
+END
+PRESidue L4R		! OH4 goes to the right side from the left side in the Fisher's representation
+	DELEte	IMPRoper H4   C5   C3   O4
+	ADD	IMPRoper H4   C3   C5   O4
+END
+
+PRESidue R5L		! OH5 goes to the left side from the right side in the Fisher's representation
+	DELEte	IMPRoper H5   O5   C4   C6
+	ADD	IMPRoper H5   C4   O5   C6
+END
+PRESidue L5R		! OH2 goes to the right side from the left side in the Fisher's representation
+	DELEte	IMPRoper H5   C4   O5   C6
+	ADD	IMPRoper H5   O5   C4   C6
+END
+
+! Deoxydation
+PRESidue H1P		! From OH1 to H in a pyranose (OH is on the right side in Fisher's representation)
+	DELETE	ATOM O1                             END
+	DELETE	ATOM HO1                            END
+	DELETE	ATOM H1                             END
+	ADD	ATOM H11  TYPE=H    CHARge= 0.050   END
+	ADD	ATOM H12  TYPE=H    CHARge= 0.050   END
+	MODIfy	ATOM C1             CHARge= 0.100   END
+
+	ADD	BOND C1   H11
+	ADD	BOND C1   H12
+
+	ADD	ANGLe C2   C1   H11
+	ADD	ANGLe C2   C1   H12
+	ADD	ANGLe O5   C1   H12
+	ADD	ANGLe O5   C1   H11
+	ADD	ANGLe H11  C1   H12
+
+	ADD	IMPRoper H11  C2   O5   H12
+END
+
+PRESidue H1F		! From OH1 to H in a furanose (OH is on the right side in Fisher's representation)
+	DELETE	ATOM O1                             END
+	DELETE	ATOM HO1                            END
+	DELETE	ATOM H1                             END
+	ADD	ATOM H11  TYPE=H    CHARge= 0.050   END
+	ADD	ATOM H12  TYPE=H    CHARge= 0.050   END
+	MODIfy	ATOM C1             CHARge= 0.100   END
+
+	ADD	BOND C1   H11
+	ADD	BOND C1   H12
+
+	ADD	ANGLe C2   C1   H11
+	ADD	ANGLe C2   C1   H12
+	ADD	ANGLe O4   C1   H12
+	ADD	ANGLe O4   C1   H11
+	ADD	ANGLe H11  C1   H12
+
+	ADD	IMPRoper H11  C2   O4   H12
+END
+
+PRESidue H1LQ		! From OH1 to H in a pyranose (OH is on the right side in Fisher's representation)
+	DELETE	ATOM O1                             END
+	DELETE	ATOM HO1                            END
+	ADD	ATOM H2   TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.100   END
+
+	ADD	BOND C1   H2
+
+	ADD	ANGLe C2   C1   H2
+	ADD	ANGLe O5   C1   H2
+	ADD	ANGLe C11  C1   H2
+
+	ADD	IMPRoper C11  C2   O5   H2
+END
+
+PRESidue H1RQ		! From OH1 to H in a pyranose (OH is on the right side in Fisher's representation)
+	DELETE	ATOM O1                             END
+	DELETE	ATOM HO1                            END
+	ADD	ATOM H2   TYPE=H    CHARge= 0.050   END
+	MODIfy	ATOM H1             CHARge= 0.050   END
+	MODIfy	ATOM C1             CHARge= 0.100   END
+
+	ADD	BOND C1   H2
+
+	ADD	ANGLe C2   C1   H2
+	ADD	ANGLe O5   C1   H2
+	ADD	ANGLe C11  C1   H2
+
+	ADD	IMPRoper C11  O5   C2   H2
+END
+
+PRESidue H1LG		! From OH1 to H in a pyranose (OH is on the right side in Fisher's representation)
+	DELETE	ATOM O1                             END
+	DELETE	ATOM HO1                            END
+	ADD	ATOM H2   TYPE=H    CHARge= 0.050   END
+	MODIfy	ATOM H1             CHARge= 0.050   END
+	MODIfy	ATOM C1             CHARge= 0.100   END
+
+	ADD	BOND C1   H2
+
+	ADD	ANGLe C2   C1   H2
+	ADD	ANGLe O4   C1   H2
+	ADD	ANGLe C11  C1   H2
+
+	ADD	IMPRoper C11  C2   O4   H2
+END
+
+PRESidue H1RG		! From OH1 to H in a pyranose (OH is on the right side in Fisher's representation)
+	DELETE	ATOM O1                             END
+	DELETE	ATOM HO1                            END
+	ADD	ATOM H2   TYPE=H    CHARge= 0.050   END
+	MODIfy	ATOM H1             CHARge= 0.050   END
+	MODIfy	ATOM C1             CHARge= 0.100   END
+
+	ADD	BOND C1   H2
+
+	ADD	ANGLe C2   C1   H2
+	ADD	ANGLe O4   C1   H2
+	ADD	ANGLe C11  C1   H2
+
+	ADD	IMPRoper C11  O4   C2   H2
+END
+
+PRESidue H2		! From OH2 to H (OH is on the right side in Fisher's representation)
+	DELETE	ATOM O2                             END
+	DELETE	ATOM HO2                            END
+	DELETE	ATOM H2                             END
+	ADD	ATOM H21  TYPE=H    CHARge= 0.000   END
+	ADD	ATOM H22  TYPE=H    CHARge= 0.000   END
+	MODIfy	ATOM C2             CHARge= 0.000   END
+
+	ADD	BOND C2   H21
+	ADD	BOND C2   H22
+
+	ADD	ANGLe C3   C2   H21
+	ADD	ANGLe C3   C2   H22
+	ADD     ANGLe C1   C2   H21
+	ADD     ANGLe C1   C2   H21
+	ADD     ANGLe H21  C2   H22
+
+	ADD	IMPRoper H21  C1   C3   H22
+END
+
+PRESidue H3		! From OH3 to H (OH is on the left  side in Fisher's representation)
+	DELETE	ATOM O3                             END
+	DELETE	ATOM HO3                            END
+	DELETE	ATOM H3                             END
+	ADD	ATOM H31  TYPE=H    CHARge= 0.000   END
+	ADD	ATOM H32  TYPE=H    CHARge= 0.000   END
+	MODIfy	ATOM C3             CHARge= 0.000   END
+
+	ADD	BOND C3   H31
+	ADD	BOND C3   H32
+
+	ADD	ANGLe C4   C3   H31
+	ADD	ANGLe C4   C3   H32
+	ADD     ANGLe C2   C3   H31
+	ADD     ANGLe C2   C3   H31
+	ADD     ANGLe H31  C3   H32
+
+	ADD	IMPRoper H31  C2   C4   H32
+END
+
+PRESidue H4		! From OH4 to H (OH is on the left  side in Fisher's representation)
+	DELETE	ATOM O4                             END
+	DELETE	ATOM HO4                            END
+	DELETE	ATOM H4                             END
+	ADD	ATOM H41  TYPE=H    CHARge= 0.000   END
+	ADD	ATOM H42  TYPE=H    CHARge= 0.000   END
+	MODIfy	ATOM C4             CHARge= 0.000   END
+
+	ADD	BOND C4   H41
+	ADD	BOND C4   H42
+
+	ADD	ANGLe C5   C4   H41
+	ADD	ANGLe C5   C4   H42
+	ADD     ANGLe C3   C4   H41
+	ADD     ANGLe C3   C4   H41
+	ADD     ANGLe H41  C4   H42
+
+	ADD	IMPRoper H41  C3   C5   H42
+END
+
+PRESidue H56		! From OH5 to H
+	! For this patch, O5 is out of the ring
+	DELETE	ATOM O5                             END
+	DELETE	ATOM HO5                            END
+	DELETE	ATOM H5                             END
+	ADD	ATOM H51  TYPE=H    CHARge= 0.000   END
+	ADD	ATOM H52  TYPE=H    CHARge= 0.000   END
+	MODIfy	ATOM C5             CHARge= 0.000   END
+
+	ADD	BOND C5   H51
+	ADD	BOND C5   H52
+
+	ADD	ANGLe C6   C5   H51
+	ADD	ANGLe C6   C5   H52
+	ADD     ANGLe C4   C5   H51
+	ADD     ANGLe C4   C5   H52
+	ADD     ANGLe H51  C5   H52
+
+	ADD	IMPRoper H51  C4   C6   H52
+END
+
+PRESidue H5		! From OH5 to H
+	! For this patch, C5 is out of the ring (Furanose)
+	! C5 bears 1 OH and 2 H.
+	! C6 does NOT exist
+	DELETE	ATOM O5                             END
+	DELETE	ATOM HO5                            END
+	ADD	ATOM H53  TYPE=H    CHARge= 0.000   END
+	MODIfy	ATOM C5             CHARge= 0.000   END
+
+	ADD	BOND C5   H53
+
+	ADD     ANGLe C4   C5   H53
+	ADD     ANGLe H51  C5   H53
+	ADD     ANGLe H52  C5   H53
+
+	ADD	IMPRoper H51  C4   H53   H52
+END
+
+PRESidue C5LO		! Replacing the C(5)H2OH group by an OH one in a furanose  (O4 in L position)
+	DELEte  ATOM C5                             END
+	DELEte  ATOM O5                             END
+	DELEte  ATOM HO5                            END
+	DELEte  ATOM H51                            END
+	DELEte  ATOM H52                            END
+	ADD     ATOM O42  TYPE=OH1  CHARge=-0.650   END
+	ADD     ATOM HO42 TYPE=NH1  CHARge= 0.400   END
+	MODIfy  ATOM C4             CHARge= 0.350   END
+
+	! Bonds
+	ADD     BOND C4   O42
+	ADD     BOND O42  HO4
+
+	! Angles
+	ADD     ANGLe C3   C4   O42
+	ADD     ANGLe O4   C4   O42
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   C4   O5   O52
+END
+
+PRESidue C5RO		! Replacing the C(5)H2OH group by an OH one in a furanose  (O4 in R position)
+	DELEte  ATOM C5                             END
+	DELEte  ATOM O5                             END
+	DELEte  ATOM HO5                            END
+	DELEte  ATOM H51                            END
+	DELEte  ATOM H52                            END
+	ADD     ATOM O42  TYPE=OH1  CHARge=-0.650   END
+	ADD     ATOM HO42 TYPE=NH1  CHARge= 0.400   END
+	MODIfy  ATOM C4             CHARge= 0.350   END
+
+	! Bonds
+	ADD     BOND C4   O42
+	ADD     BOND O42  HO4
+
+	! Angles
+	ADD     ANGLe C3   C4   O42
+	ADD     ANGLe O4   C4   O42
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   O5   C4   O52
+END
+
+PRESidue C6LO		! Replacing the C(6)H2OH group by an OH one in a pyranose  (O5 in L position)
+	DELEte  ATOM C6                             END
+	DELEte  ATOM O6                             END
+	DELEte  ATOM HO6                            END
+	DELEte  ATOM H61                            END
+	DELEte  ATOM H62                            END
+	ADD     ATOM O52  TYPE=OH1  CHARge=-0.650   END
+	ADD     ATOM HO52 TYPE=NH1  CHARge= 0.400   END
+	MODIfy  ATOM C5             CHARge= 0.350   END
+
+	! Bonds
+	ADD     BOND C5   O52
+	ADD     BOND O52  HO5
+
+	! Angles
+	ADD     ANGLe C4   C5   O52
+	ADD     ANGLe O5   C5   O52
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   C4   O5   O52
+END
+
+PRESidue C6RO		! Replacing the C(6)H2OH group by an OH one in a pyranose (O5 in R position)
+	DELEte  ATOM C6                             END
+	DELEte  ATOM O6                             END
+	DELEte  ATOM HO6                            END
+	DELEte  ATOM H61                            END
+	DELEte  ATOM H62                            END
+	ADD     ATOM O52  TYPE=OH1  CHARge=-0.650   END
+	ADD     ATOM HO52 TYPE=H    CHARge= 0.400   END
+	MODIfy  ATOM C5             CHARge= 0.350   END
+
+	! Bonds
+	ADD     BOND C5   O52
+	ADD     BOND O52  HO52
+
+	! Angles
+	ADD     ANGLe C4   C5   O52
+	ADD     ANGLe O5   C5   O52
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   O5   C4   O52
+END
+
+PRESidue C5H		! From C(5)H2OH to H
+	! This patch removes the C5 and put H instead
+	! The charge of C4 is already 0.100 and does
+	! not need to be modified
+	DELETE  ATOM C5                             END
+	DELETE  ATOM O5                             END
+	DELETE  ATOM HO5                            END
+	DELETE  ATOM H51                            END
+	DELETE  ATOM H52                            END
+	DELETE  ATOM H4                             END
+	ADD	ATOM H41  TYPE=H    CHARge= 0.050   END
+	ADD	ATOM H42  TYPE=H    CHARge= 0.050   END
+
+	ADD 	BOND C4   H41
+	ADD	BOND C4   H42
+
+	ADD	ANGLe O4   C4   H41
+	ADD	ANGLe O4   C4   H42
+
+	ADD IMPRoper	H41  O4   C4   H42
+END
+
+PRESidue C6H		! From CH2OH(6) to H
+	! This patch removes the C6 and put H instead
+	! The charge of C5 is already 0.100 and does
+	! not need to be modified
+	DELETE  ATOM C6                             END
+	DELETE  ATOM O6                             END
+	DELETE  ATOM HO6                            END
+	DELETE  ATOM H61                            END
+	DELETE  ATOM H62                            END
+	DELETE  ATOM H5                             END
+	ADD	ATOM H51  TYPE=H    CHARge= 0.050   END
+	ADD	ATOM H52  TYPE=H    CHARge= 0.050   END
+
+	ADD 	BOND C5   H51
+	ADD	BOND C5   H52
+
+	ADD	ANGLe O5   C5   H51
+	ADD	ANGLe O5   C5   H52
+
+	ADD IMPRoper	H51  O5   C4   H52
+END
+
+PRESidue H6		! From OH6 to H
+	! For this patch, C6 is out of the ring
+	! C6 bears 1 OH and 2 H
+	! Charges are distributed like all methyls:
+	! -0.300 for the carbon and 0.100 for each H
+	DELETE	ATOM O6                             END
+	DELETE	ATOM HO6                            END
+	ADD	ATOM H63  TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C6             CHARge=-0.300   END
+
+	ADD	BOND C6   H63
+
+	ADD     ANGLe C5   C6   H63
+	ADD     ANGLe H61  C6   H63
+	ADD     ANGLe H62  C6   H63
+
+	ADD	IMPRoper H61  C5   H63   H62
+END
+
+PRESidue RChP		! Reversed Chair conformation of a pyranose
+	DELEte	IMPRoper C1   C3   C2   C4
+	DELEte	IMPRoper C2   C3   C4   C5
+	DELEte	IMPRoper C3   C5   C4   O5
+	DELEte	IMPRoper C4   C5   O5   C1
+	DELEte	IMPRoper C5   C1   O5   C2
+	DELEte	IMPRoper O5   C1   C2   C3
+
+	ADD	IMPRoper C1   C2   C3   C4
+	ADD	IMPRoper C2   C4   C3   C5
+	ADD	IMPRoper C3   C4   C5   O5
+	ADD	IMPRoper C4   O5   C5   C1
+	ADD	IMPRoper C5   O5   C1   C2
+	ADD	IMPRoper O5   C2   C1   C3
+END
+
+PRESidue E1E2		! From E1 Up to E2 Up in the envelop form (Furanose)
+	MODIfy	ATOM C1   TYPE=CRF                   END
+	MODIfy	ATOM C2   TYPE=CRV                   END
+	
+	DELEte	IMPRoper C1   C2   C3   C4
+	DELEte	IMPRoper C2   C3   C4   O4		
+	DELEte	IMPRoper C3   O4   C4   C1
+	ADD     IMPRoper C2   C3   C4   O4
+	ADD	IMPRoper C3   C4   O4   C1		
+	ADD	IMPRoper C4   C1   O4   C2
+END
+
+PRESidue E1E3		! From E1 Up to E3 Up in the envelop form (Furanose)
+	MODIfy	ATOM C1   TYPE=CRF                   END
+	MODIfy	ATOM C3   TYPE=CRV                   END
+	
+	DELEte	IMPRoper C1   C2   C3   C4
+	DELEte	IMPRoper C2   C3   C4   O4		
+	DELEte	IMPRoper C3   O4   C4   C1
+	ADD     IMPRoper C3   C4   O4   C1
+	ADD	IMPRoper C4   O4   C1   C2		
+	ADD	IMPRoper O4   C2   C1   C3
+END
+
+PRESidue E1E4		! From E1 Up to E4 Up in the envelop form (Furanose)
+	MODIfy	ATOM C1   TYPE=CRF                   END
+	MODIfy	ATOM C4   TYPE=CRV                   END
+	
+	DELEte	IMPRoper C1   C2   C3   C4
+	DELEte	IMPRoper C2   C3   C4   O4		
+	DELEte	IMPRoper C3   O4   C4   C1
+	ADD     IMPRoper C4   O4   C1   C2
+	ADD	IMPRoper O4   C1   C2   C3
+	ADD	IMPRoper C1   C3   C2   C4
+END
+
+PRESidue E1O4           ! From E1 Up to O4 Up in the envelop form (Furanose)
+	MODIfy  ATOM C1   TYPE=CRF                   END
+	MODIfy  ATOM C4   TYPE=ORV                   END
+
+	DELEte  IMPRoper C1   C2   C3   C4
+	DELEte  IMPRoper C2   C3   C4   O4
+	DELEte  IMPRoper C3   O4   C4   C1
+	ADD     IMPRoper C4   O4   C1   C2
+	ADD     IMPRoper O4   C1   C2   C3
+	ADD     IMPRoper C1   C3   C2   C4
+END
+
+PRESidue UD1F		! From C1 Up to Down in furanoses
+	DELEte	IMPROPER C1   C2   C3   C4
+	DELEte	IMPROPER C3   O4   C4   C1
+	ADD	IMPROPER C1   C3   C2   C4
+	ADD	IMPROPER C3   C4   O4   C1
+END
+
+PRESidue UD2F		! From C2 Up to Down in furanoses
+	DELEte	IMPRoper C2   C3   C4   O4
+	DELEte	IMPROPER C4   C1   O4   C2
+	ADD	IMPRoper C2   C4   C3   O4
+	ADD	IMPROPER C4   O4   C1   C2
+END
+
+PRESidue UD3F		! From C3 Up to Down in furanoses
+	DELEte	IMPRoper C3   C4   O4   C1
+	DELEte	IMPROPER O4   C2   C1   C3
+	ADD	IMPRoper C3   O4   C4   C1
+	ADD	IMPROPER O4   C1   C2   C3
+END
+
+PRESidue UD4F		! From O4 Up to Down in furanoses
+	DELEte	IMPRoper C4   O4   C1   C2
+	DELEte	IMPRoper C1   C3   C2   C4
+	ADD	IMPRoper C4   C1   O4   C2
+	ADD	IMPRoper C1   C2   C3   C4
+END
+
+PRESidue CB1		! Chair to boat conformation (C1 moves)
+	MODIfy	ATOM C1   TYPE=CRF                   END
+	MODIfy	ATOM C4   TYPE=CRF                   END
+
+	DELEte	IMPRoper C5   C1   O5   C2
+	DELEte	IMPRoper O5   C1   C2   C3
+	ADD	IMPRoper C5   O5   C1   C2
+	ADD	IMPRoper O5   C2   C1   C3
+END
+
+PRESidue CB2		! Chair to boat conformation (C2 moves)
+	MODIfy	ATOM C2   TYPE=CRF                   END
+	MODIfy	ATOM C5   TYPE=CRF                   END
+
+	DELEte	IMPRoper C1   C3   C2   C4
+	DELEte	IMPRoper O5   C1   C2   C3
+	ADD	IMPRoper C1   C2   C3   C4
+	ADD	IMPRoper O5   C2   C1   C3
+END
+
+PRESidue CB3		! Chair to boat conformation (C3 moves)
+	MODIfy	ATOM C3   TYPE=CRF                   END
+	MODIfy	ATOM O5   TYPE=ORF                   END
+
+	DELEte	IMPRoper C1   C3   C2   C4
+	DELEte	IMPRoper C2   C3   C4   C5
+	ADD	IMPRoper C1   C2   C3   C4
+	ADD	IMPRoper C2   C4   C3   C5
+END
+
+PRESidue CB4		! Chair to boat conformation (C4 moves)
+	MODIfy	ATOM C1   TYPE=CRF                   END
+	MODIfy	ATOM C4   TYPE=CRF                   END
+
+	DELEte	IMPRoper C2   C3   C4   C5
+	DELEte	IMPRoper C3   C5   C4   O5
+	ADD	IMPRoper C2   C4   C3   C5
+	ADD	IMPRoper C3   C4   C5   O5
+END
+
+PRESidue CB5		! Chair to boat conformation (C5 moves)
+	MODIfy	ATOM C5   TYPE=CRF                   END
+	MODIfy	ATOM C2   TYPE=CRF                   END
+
+	DELEte	IMPRoper C3   C5   C4   O5
+	DELEte	IMPRoper C4   C5   O5   C1
+	ADD	IMPRoper C3   C4   C5   O5
+	ADD	IMPRoper C4   O5   C5   C1
+END
+
+PRESidue CBO		! Chair to boat conformation (O5 moves)
+	MODIfy	ATOM O5   TYPE=ORF                   END
+	MODIfy	ATOM C3   TYPE=CRF                   END
+
+	DELEte	IMPRoper C4   C5   O5   C1
+	DELEte	IMPRoper C5   C1   O5   C2
+	ADD	IMPRoper C4   O5   C5   C1
+	ADD	IMPRoper C5   O5   C1   C2
+END
+
+PRESidue N1LP		! N-Acetylation of C1 (L sided) in a pyranose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O5   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe H1   C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H1   C2   O5   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N1RP		! N-Acetylation of C1 (R sided) in a pyranose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O5   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe H1   C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H1   O5   C2   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PREsidue S1OH		! Sulphatation of the OH group of C1
+	DELEte	ATOM HO1                            END
+	ADD     ATOM SO1  TYPE=SUF  CHARge= 0.520   END
+	ADD     ATOM OS11 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS12 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS13 TYPE=OUF  CHARge=-0.720   END
+	MODIfy  ATOM C1             CHARge= 0.465   END
+	MODIfy  ATOM O1             CHARge=-0.625   END
+
+	! Bonds
+	ADD	BOND O1   SO1
+	ADD	BOND SO1  OS11
+	ADD	BOND SO1  OS12
+	ADD	BOND SO1  OS13
+
+	! Angles
+	ADD	ANGLe C1   O1   SO1
+	ADD	ANGLe O1   SO1  OS11
+	ADD	ANGLe O1   SO1  OS12
+	ADD	ANGLe O1   SO1  OS13
+	ADD	ANGLe OS11 SO1  OS12
+	ADD	ANGLe OS11 SO1  OS13
+	ADD	ANGLe OS12 SO1  OS13
+END
+
+PREsidue S2OH		! Sulphatation of the OH group of C2
+	DELEte	ATOM HO2                            END
+	ADD     ATOM SO2  TYPE=SUF  CHARge= 0.520   END
+	ADD     ATOM OS21 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS22 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS23 TYPE=OUF  CHARge=-0.720   END
+	MODIfy  ATOM C2             CHARge= 0.265   END
+	MODIfy  ATOM O2             CHARge=-0.625   END
+
+	! Bonds
+	ADD	BOND O2   SO2
+	ADD	BOND SO2  OS21
+	ADD	BOND SO2  OS22
+	ADD	BOND SO2  OS23
+
+	! Angles
+	ADD	ANGLe C2   O2   SO2
+	ADD	ANGLe O2   SO2  OS21
+	ADD	ANGLe O2   SO2  OS22
+	ADD	ANGLe O2   SO2  OS23
+	ADD	ANGLe OS21 SO2  OS22
+	ADD	ANGLe OS21 SO2  OS23
+	ADD	ANGLe OS22 SO2  OS23
+END
+
+PREsidue S3OH		! Sulphatation of the OH group of C3
+	DELEte	ATOM HO3                            END
+	ADD     ATOM SO3  TYPE=SUF  CHARge= 0.520   END
+	ADD     ATOM OS31 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS32 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS33 TYPE=OUF  CHARge=-0.720   END
+	MODIfy  ATOM C3             CHARge= 0.265   END
+	MODIfy  ATOM O3             CHARge=-0.625   END
+
+	! Bonds
+	ADD	BOND O3   SO3
+	ADD	BOND SO3  OS31
+	ADD	BOND SO3  OS32
+	ADD	BOND SO3  OS33
+
+	! Angles
+	ADD	ANGLe C3   O3   SO3
+	ADD	ANGLe O3   SO3  OS31
+	ADD	ANGLe O3   SO3  OS32
+	ADD	ANGLe O3   SO3  OS33
+	ADD	ANGLe OS31 SO3  OS32
+	ADD	ANGLe OS31 SO3  OS33
+	ADD	ANGLe OS32 SO3  OS33
+END
+
+PREsidue S4OH		! Sulphatation of the OH group of C4
+	DELEte	ATOM HO4                            END
+	ADD     ATOM SO4  TYPE=SUF  CHARge= 0.520   END
+	ADD     ATOM OS41 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS42 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS43 TYPE=OUF  CHARge=-0.720   END
+	MODIfy  ATOM C4             CHARge= 0.265   END
+	MODIfy  ATOM O4             CHARge=-0.625   END
+
+	! Bonds
+	ADD	BOND O4   SO4
+	ADD	BOND SO4  OS41
+	ADD	BOND SO4  OS42
+	ADD	BOND SO4  OS43
+
+	! Angles
+	ADD	ANGLe C4   O4   SO4
+	ADD	ANGLe O4   SO4  OS41
+	ADD	ANGLe O4   SO4  OS42
+	ADD	ANGLe O4   SO4  OS43
+	ADD	ANGLe OS41 SO4  OS42
+	ADD	ANGLe OS41 SO4  OS43
+	ADD	ANGLe OS42 SO4  OS43
+END
+
+PREsidue S6OH		! Sulphatation of the OH group of C6
+	DELEte	ATOM HO6                            END
+	ADD     ATOM SO6  TYPE=SUF  CHARge= 0.520   END
+	ADD     ATOM OS61 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS62 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS63 TYPE=OUF  CHARge=-0.720   END
+	MODIfy  ATOM C6             CHARge= 0.265   END
+	MODIfy  ATOM O6             CHARge=-0.625   END
+
+	! Bonds
+	ADD	BOND O6   SO6
+	ADD	BOND SO6  OS61
+	ADD	BOND SO6  OS62
+	ADD	BOND SO6  OS63
+
+	! Angles
+	ADD	ANGLe C6   O6   SO6
+	ADD	ANGLe O6   SO6  OS61
+	ADD	ANGLe O6   SO6  OS62
+	ADD	ANGLe O6   SO6  OS63
+	ADD	ANGLe OS61 SO6  OS62
+	ADD	ANGLe OS61 SO6  OS63
+	ADD	ANGLe OS62 SO6  OS63
+END
+
+PRESidue N1LF		! N-Acetylation of C1 (L sided) in a furanose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O4   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe H1   C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H1   C2   O4   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N1RF		! N-Acetylation of C1 (R sided) in a furanose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O4   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe H1   C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H1   O4   C2   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N1LQ		! N-Acetylation of C1 (L sided) in a pyranose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O5   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe C11  C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper C11  C2   O5   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N1RQ		! N-Acetylation of C1 (R sided) in a pyranose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O5   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe C11  C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper C11  O5   C2   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N1LG		! N-Acetylation of C1 (L sided) in a furanose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O4   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe C11  C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper C11  C2   O4   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N1RG		! N-Acetylation of C1 (R sided) in a furanose
+	DELEte	ATOM O1                             END
+	DELEte	ATOM HO1                            END
+	ADD	ATOM N1   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN1  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN1  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN1 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN1 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC11 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC12 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC13 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C1             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C1   N1
+	ADD	BOND N1   HN1
+	ADD	BOND N1   CN1
+	ADD	BOND CN1  OCN1
+	ADD	BOND CN1  CCN1
+	ADD	BOND CCN1 HC11
+	ADD	BOND CCN1 HC12
+	ADD	BOND CCN1 HC13
+
+	! Angles
+	ADD	ANGLe O4   C1   N1
+	ADD	ANGLe C2   C1   N1
+	ADD	ANGLe C11  C1   N1
+	ADD	ANGLe C1   N1   HN1
+	ADD	ANGLe C1   N1   CN1
+	ADD	ANGLe N1   CN1  OCN1
+	ADD	ANGLe N1   CN1  CCN1
+	ADD	ANGLe CN1  CCN1 HC11
+	ADD	ANGLe CN1  CCN1 HC12
+	ADD	ANGLe CN1  CCN1 HC13
+	ADD	ANGLe HC11 CCN1 HC12
+	ADD	ANGLe HC11 CCN1 HC13
+	ADD	ANGLe HC12 CCN1 HC13
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper C11  O4   C2   N1
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N1   C1   HN1  CN1	! N planar in N-Acetyl group
+	ADD	IMPRoper CN1  N1   CCN1 OCN1	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN1 CN1  N1   HN1	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N2L		! N-Acetylation of C2 (L sided)
+	DELEte	ATOM O2                             END
+	DELEte	ATOM HO2                            END
+	ADD	ATOM N2   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN2  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN2  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN2 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN2 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC21 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC22 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC23 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C2             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C2   N2
+	ADD	BOND N2   HN2
+	ADD	BOND N2   CN2
+	ADD	BOND CN2  OCN2
+	ADD	BOND CN2  CCN2
+	ADD	BOND CCN2 HC21
+	ADD	BOND CCN2 HC22
+	ADD	BOND CCN2 HC23
+
+	! Angles
+	ADD	ANGLe C1   C2   N2
+	ADD	ANGLe C3   C2   N2
+	ADD	ANGLe H2   C2   N2
+	ADD	ANGLe C2   N2   HN2
+	ADD	ANGLe C2   N2   CN2
+	ADD	ANGLe N2   CN2  OCN2
+	ADD	ANGLs N2   CN2  CCN2
+	ADD	ANGLe CN2  CCN2 HC21
+	ADD	ANGLe CN2  CCN2 HC22
+	ADD	ANGLe CN2  CCN2 HC23
+	ADD	ANGLe HC21 CCN2 HC22
+	ADD	ANGLe HC21 CCN2 HC23
+	ADD	ANGLe HC22 CCN2 HC23
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H2   C3   C1   N2
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N2   C2   HN2  CN2	! N planar in N-Acetyl group
+	ADD	IMPRoper CN2  N2   CCN2 OCN2	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN2 CN2  N2   HN2	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue NS2L		! N-Acetylation of C2 (L sided)
+	DELEte	ATOM O2                             END
+	DELEte	ATOM HO2                            END
+	ADD	ATOM N2   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN2  TYPE=H    CHARge= 0.250   END
+	ADD     ATOM SN2  TYPE=SUF  CHARge= 1.160   END
+	ADD     ATOM OS21 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS22 TYPE=OUF  CHARge=-0.720   END
+	ADD     ATOM OS23 TYPE=OUF  CHARge=-0.720   END
+	MODIfy  ATOM C2             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C2   N2
+	ADD	BOND N2   HN2
+	ADD	BOND N2   SN2
+	ADD	BOND SN2  OS21
+	ADD	BOND SN2  OS22
+	ADD	BOND SN2  OS23
+
+	! Angles
+	ADD     ANGLe C1   C2   N2
+	ADD     ANGLe C3   C2   N2
+	ADD	ANGLe C2   N2   HN2
+	ADD	ANGLe C2   N2   SN2
+	ADD	ANGLe N2   SN2  OS21
+	ADD	ANGLe N2   SN2  OS22
+	ADD	ANGLe N2   SN2  OS23
+	ADD	ANGLe OS21 SN2  OS22
+	ADD	ANGLe OS21 SN2  OS23
+	ADD	ANGLe OS22 SN2  OS23
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H2   C1   C3   N2
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N2   C2   HN2  SN2	! N planar in N-Acetyl group
+END
+
+PRESidue N2R		! N-Acetylation of C2 (R sided)
+	DELEte	ATOM O2                             END
+	DELEte	ATOM HO2                            END
+	ADD	ATOM N2   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN2  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN2  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN2 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN2 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC21 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC22 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC23 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C2             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C2   N2
+	ADD	BOND N2   HN2
+	ADD	BOND N2   CN2
+	ADD	BOND CN2  OCN2
+	ADD	BOND CN2  CCN2
+	ADD	BOND CCN2 HC21
+	ADD	BOND CCN2 HC22
+	ADD	BOND CCN2 HC23
+
+	! Angles
+	ADD	ANGLe C1   C2   N2
+	ADD	ANGLe C3   C2   N2
+	ADD	ANGLe H2   C2   N2
+	ADD	ANGLe C2   N2   HN2
+	ADD	ANGLe C2   N2   CN2
+	ADD	ANGLe N2   CN2  OCN2
+	ADD	ANGLe N2   CN2  CCN2
+	ADD	ANGLe CN2  CCN2 HC21
+	ADD	ANGLe CN2  CCN2 HC22
+	ADD	ANGLe CN2  CCN2 HC23
+	ADD	ANGLe HC21 CCN2 HC22
+	ADD	ANGLe HC21 CCN2 HC23
+	ADD	ANGLe HC22 CCN2 HC23
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H2   C1   C3   N2
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N2   C2   HN2  CN2	! N planar in N-Acetyl group
+	ADD	IMPRoper CN2  N2   CCN2 OCN2	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN2 CN2  N2   HN2	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N3L		! N-Acetylation of C3 (L sided)
+	DELEte	ATOM O3                             END
+	DELEte	ATOM HO3                            END
+	ADD	ATOM N3   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN3  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN3  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN3 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN3 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC31 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC32 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC33 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C3             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C3   N3
+	ADD	BOND N3   HN3
+	ADD	BOND N3   CN3
+	ADD	BOND CN3  OCN3
+	ADD	BOND CN3  CCN3
+	ADD	BOND CCN3 HC31
+	ADD	BOND CCN3 HC32
+	ADD	BOND CCN3 HC33
+
+	! Angles
+	ADD	ANGLe C2   C3   N3
+	ADD	ANGLe C4   C3   N3
+	ADD	ANGLe H3   C3   N3
+	ADD	ANGLe C3   N3   HN3
+	ADD	ANGLe C3   N3   CN3
+	ADD	ANGLe N3   CN3  OCN3
+	ADD	ANGLe N3   CN3  CCN3
+	ADD	ANGLe CN3  CCN3 HC31
+	ADD	ANGLe CN3  CCN3 HC32
+	ADD	ANGLe CN3  CCN3 HC33
+	ADD	ANGLe HC31 CCN3 HC32
+	ADD	ANGLe HC31 CCN3 HC33
+	ADD	ANGLe HC32 CCN3 HC33
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H3   C4   C2   N3
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N3   C3   HN3  CN3	! N planar in N-Acetyl group
+	ADD	IMPRoper CN3  N3   CCN3 OCN3	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN3 CN3  N3   HN3	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N3R		! N-Acetylation of C3 (R sided)
+	DELEte	ATOM O3                             END
+	DELEte	ATOM HO3                            END
+	ADD	ATOM N3   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN3  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN3  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN3 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN3 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC31 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC32 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC33 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C3             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C3   N3
+	ADD	BOND N3   HN3
+	ADD	BOND N3   CN3
+	ADD	BOND CN3  OCN3
+	ADD	BOND CN3  CCN3
+	ADD	BOND CCN3 HC31
+	ADD	BOND CCN3 HC32
+	ADD	BOND CCN3 HC33
+
+	! Angles
+	ADD	ANGLe C2   C3   N3
+	ADD	ANGLe C4   C3   N3
+	ADD	ANGLe H3   C3   N3
+	ADD	ANGLe C3   N3   HN3
+	ADD	ANGLe C3   N3   CN3
+	ADD	ANGLe N3   CN3  OCN3
+	ADD	ANGLe N3   CN3  CCN3
+	ADD	ANGLe CN3  CCN3 HC31
+	ADD	ANGLe CN3  CCN3 HC32
+	ADD	ANGLe CN3  CCN3 HC33
+	ADD	ANGLe HC31 CCN3 HC32
+	ADD	ANGLe HC31 CCN3 HC33
+	ADD	ANGLe HC32 CCN3 HC33
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H3   C2   C4   N3
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N3   C3   HN3  CN3	! N planar in N-Acetyl group
+	ADD	IMPRoper CN3  N3   CCN3 OCN3	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN3 CN3  N3   HN3	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N4L		! N-Acetylation of C4 (L sided)
+	DELEte	ATOM O4                             END
+	DELEte	ATOM HO4                            END
+	ADD	ATOM N4   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN4  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN4  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN4 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN4 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC41 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC42 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC43 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C4             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C4   N4
+	ADD	BOND N4   HN4
+	ADD	BOND N4   CN4
+	ADD	BOND CN4  OCN4
+	ADD	BOND CN4  CCN4
+	ADD	BOND CCN4 HC41
+	ADD	BOND CCN4 HC42
+	ADD	BOND CCN3 HC33
+
+	! Angles
+	ADD	ANGLe C3   C4   N4
+	ADD	ANGLe C5   C4   N4
+	ADD	ANGLe H4   C4   N4
+	ADD	ANGLe C4   N4   HN4
+	ADD	ANGLe C4   N4   CN4
+	ADD	ANGLe N4   CN4  OCN4
+	ADD	ANGLe N4   CN4  CCN4
+	ADD	ANGLe CN4  CCN4 HC41
+	ADD	ANGLe CN4  CCN4 HC42
+	ADD	ANGLe CN4  CCN4 HC43
+	ADD	ANGLe HC41 CCN4 HC42
+	ADD	ANGLe HC41 CCN4 HC43
+	ADD	ANGLe HC42 CCN4 HC43
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H4   C5   C3   N4
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N4   C4   HN4  CN4	! N planar in N-Acetyl group
+	ADD	IMPRoper CN4  N4   CCN4 OCN4	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN4 CN4  N4   HN4	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N4R		! N-Acetylation of C4 (R sided)
+	DELEte	ATOM O4                             END
+	DELEte	ATOM HO4                            END
+	ADD	ATOM N4   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN4  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN4  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN4 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN4 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC41 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC42 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC43 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C4             CHARge= 0.000   END
+
+	! Bonds
+	ADD	BOND C4   N4
+	ADD	BOND N4   HN4
+	ADD	BOND N4   CN4
+	ADD	BOND CN4  OCN4
+	ADD	BOND CN4  CCN4
+	ADD	BOND CCN4 HC41
+	ADD	BOND CCN4 HC42
+	ADD	BOND CCN4 HC43
+
+	! Angles
+	ADD	ANGLe C3   C4   N4
+	ADD	ANGLe C5   C4   N4
+	ADD	ANGLe H4   C4   N4
+	ADD	ANGLe C4   N4   HN4
+	ADD	ANGLe C4   N4   CN4
+	ADD	ANGLe N4   CN4  OCN4
+	ADD	ANGLe N4   CN4  CCN4
+	ADD	ANGLe CN4  CCN4 HC41
+	ADD	ANGLe CN4  CCN4 HC42
+	ADD	ANGLe CN4  CCN4 HC43
+	ADD	ANGLe HC41 CCN4 HC42
+	ADD	ANGLe HC41 CCN4 HC43
+	ADD	ANGLe HC42 CCN4 HC43
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H4   C3   C5   N4
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N4   C4   HN4  CN4	! N planar in N-Acetyl group
+	ADD	IMPRoper CN4  N4   CCN4 OCN4	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN4 CN4  N4   HN4	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue C5LN		! N-Acetylation of C4 (O4 L sided) in a furanose
+	! For this patch, C4 is in the ring and C5 is removed
+	! The charge of C4 is brought to 0.200
+	! To compensate the charged N-Ac group
+	DELEte	ATOM C5                             END
+	DELEte	ATOM O5                             END
+	DELEte	ATOM HO5                            END
+	DELEte	ATOM H51                            END
+	DELEte	ATOM H52                            END
+	ADD	ATOM N4   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN4  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN4  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN4 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN4 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC41 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC42 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC43 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C4             CHARge= 0.200   END
+
+	! Bonds
+	ADD	BOND C4   N4
+	ADD	BOND N4   HN4
+	ADD	BOND N4   CN4
+	ADD	BOND CN4  OCN4
+	ADD	BOND CN4  CCN4
+	ADD	BOND CCN4 HC41
+	ADD	BOND CCN4 HC42
+	ADD	BOND CCN4 HC43
+
+	! Angles
+	ADD	ANGLe C3   C4   N4
+	ADD	ANGLe O4   C4   N4
+	ADD	ANGLe H4   C4   N4
+	ADD	ANGLe C4   N4   HN4
+	ADD	ANGLe C4   N4   CN4
+	ADD	ANGLe N4   CN4  OCN4
+	ADD	ANGLe N4   CN4  CCN4
+	ADD	ANGLe CN4  CCN4 HC41
+	ADD	ANGLe CN4  CCN4 HC42
+	ADD	ANGLe CN4  CCN4 HC43
+	ADD	ANGLe HC41 CCN4 HC42
+	ADD	ANGLe HC41 CCN4 HC43
+	ADD	ANGLe HC42 CCN4 HC43
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H4   O4   C3   N4
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N4   C4   HN4  CN4	! N planar in N-Acetyl group
+	ADD	IMPRoper CN4  N4   CCN4 OCN4	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN4 CN4  N4   HN4	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue C5RN		! N-Acetylation of C4 (O4 R sided) in a furanose
+	! For this patch, C4 is in the ring and C5 is removed
+	! The charge of C4 is brought to 0.200
+	! To compensate the charged N-Ac group
+	DELEte	ATOM C5                             END
+	DELEte	ATOM O5                             END
+	DELEte	ATOM HO5                            END
+	DELEte	ATOM H51                            END
+	DELEte	ATOM H52                            END
+	ADD	ATOM N4   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN4  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN4  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN4 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN4 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC41 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC42 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC43 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C4             CHARge= 0.200   END
+
+	! Bonds
+	ADD	BOND C4   N4
+	ADD	BOND N4   HN4
+	ADD	BOND N4   CN4
+	ADD	BOND CN4  OCN4
+	ADD	BOND CN4  CCN4
+	ADD	BOND CCN4 HC41
+	ADD	BOND CCN4 HC42
+	ADD	BOND CCN4 HC43
+
+	! Angles
+	ADD	ANGLe C3   C4   N4
+	ADD	ANGLe O4   C4   N4
+	ADD	ANGLe H4   C4   N4
+	ADD	ANGLe C4   N4   HN4
+	ADD	ANGLe C4   N4   CN4
+	ADD	ANGLe N4   CN4  OCN4
+	ADD	ANGLe N4   CN4  CCN4
+	ADD	ANGLe CN4  CCN4 HC41
+	ADD	ANGLe CN4  CCN4 HC42
+	ADD	ANGLe CN4  CCN4 HC43
+	ADD	ANGLe HC41 CCN4 HC42
+	ADD	ANGLe HC41 CCN4 HC43
+	ADD	ANGLe HC42 CCN4 HC43
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H4   C3   O4   N4
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N4   C4   HN4  CN4	! N planar in N-Acetyl group
+	ADD	IMPRoper CN4  N4   CCN4 OCN4	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN4 CN4  N4   HN4	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue C6LN		! N-Acetylation of C5 (O5 L sided) in a pyranose
+	! For this patch, C5 is in the ring and C6 is removed
+	! The charge of C5 is brought to 0.200
+	! To compensate the charged N-Ac group
+	DELEte	ATOM C6                             END
+	DELEte	ATOM O6                             END
+	DELEte	ATOM HO6                            END
+	DELEte	ATOM H61                            END
+	DELEte	ATOM H62                            END
+	ADD	ATOM N5   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN5  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN5  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN5 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN5 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC51 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC52 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC53 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C5             CHARge= 0.200   END
+
+	! Bonds
+	ADD	BOND C5   N5
+	ADD	BOND N5   HN5
+	ADD	BOND N5   CN5
+	ADD	BOND CN5  OCN5
+	ADD	BOND CN5  CCN5
+	ADD	BOND CCN5 HC51
+	ADD	BOND CCN5 HC52
+	ADD	BOND CCN5 HC53
+
+	! Angles
+	ADD	ANGLe C4   C5   N5
+	ADD	ANGLe O5   C5   N5
+	ADD	ANGLe H5   C5   N5
+	ADD	ANGLe C5   N5   HN5
+	ADD	ANGLe C5   N5   CN5
+	ADD	ANGLe N5   CN5  OCN5
+	ADD	ANGLe N5   CN5  CCN5
+	ADD	ANGLe CN5  CCN5 HC51
+	ADD	ANGLe CN5  CCN5 HC52
+	ADD	ANGLe CN5  CCN5 HC53
+	ADD	ANGLe HC51 CCN5 HC52
+	ADD	ANGLe HC51 CCN5 HC53
+	ADD	ANGLe HC52 CCN5 HC53
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   O5   C4   N5
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N5   C5   HN5  CN5	! N planar in N-Acetyl group
+	ADD	IMPRoper CN5  N5   CCN5 OCN5	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN5 CN5  N5   HN5	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue C6RN		! N-Acetylation of C5 (O5 R sided) in a pyranose
+	! For this patch, C5 is in the ring and C6 is removed
+	! The charge of C5  is brought to 0.200
+	! To compensate the charged N-Ac group
+	DELEte	ATOM C6                             END
+	DELEte	ATOM O6                             END
+	DELEte	ATOM HO6                            END
+	DELEte	ATOM H61                            END
+	DELEte	ATOM H62                            END
+	ADD	ATOM N5   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN5  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN5  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN5 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN5 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC51 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC52 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC53 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C5             CHARge= 0.200   END
+
+	! Bonds
+	ADD	BOND C5   N5
+	ADD	BOND N5   HN5
+	ADD	BOND N5   CN5
+	ADD	BOND CN5  OCN5
+	ADD	BOND CN5  CCN5
+	ADD	BOND CCN5 HC51
+	ADD	BOND CCN5 HC52
+	ADD	BOND CCN5 HC53
+
+	! Angles
+	ADD	ANGLe C4   C5   N5
+	ADD	ANGLe O5   C5   N5
+	ADD	ANGLe H5   C5   N5
+	ADD	ANGLe C5   N5   HN5
+	ADD	ANGLe C5   N5   CN5
+	ADD	ANGLe N5   CN5  OCN5
+	ADD	ANGLe N5   CN5  CCN5
+	ADD	ANGLe CN5  CCN5 HC51
+	ADD	ANGLe CN5  CCN5 HC52
+	ADD	ANGLe CN5  CCN5 HC53
+	ADD	ANGLe HC51 CCN5 HC52
+	ADD	ANGLe HC51 CCN5 HC53
+	ADD	ANGLe HC52 CCN5 HC53
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   C4   O5   N5
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N5   C5   HN5  CN5	! N planar in N-Acetyl group
+	ADD	IMPRoper CN5  N5   CCN5 OCN5	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN5 CN5  N5   HN5	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N5L6		! N-Acetylation of C5 (O5 in L position)
+	! For this patch, there C6 does exist(Furanose with 6 Carbons)
+	! C5 and C6 are out of the ring.
+	DELEte	ATOM O5                             END
+	DELEte	ATOM HO5                            END
+	ADD	ATOM N5   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN5  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN5  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN5 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN5 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC51 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC52 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC53 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C5             CHARge=-0.100   END
+
+	! Bonds
+	ADD	BOND C5   N5
+	ADD	BOND N5   HN5
+	ADD	BOND N5   CN5
+	ADD	BOND CN5  OCN5
+	ADD	BOND CN5  CCN5
+	ADD	BOND CCN5 HC51
+	ADD	BOND CCN5 HC52
+	ADD	BOND CCN5 HC53
+
+	! Angles
+	ADD	ANGLe C4   C5   N5
+	ADD	ANGLe H51  C5   N5
+	ADD	ANGLe H52  C5   N5
+	ADD	ANGLe C5   N5   HN5
+	ADD	ANGLe C5   N5   CN5
+	ADD	ANGLe N5   CN5  OCN5
+	ADD	ANGLe N5   CN5  CCN5
+	ADD	ANGLe CN5  CCN5 HC51
+	ADD	ANGLe CN5  CCN5 HC52
+	ADD	ANGLe CN5  CCN5 HC53
+	ADD	ANGLe HC51 CCN5 HC52
+	ADD	ANGLe HC51 CCN5 HC53
+	ADD	ANGLe HC52 CCN5 HC53
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   C4   N5   C6
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N5   C5   HN5  CN5	! N planar in N-Acetyl group
+	ADD	IMPRoper CN5  N5   CCN5 OCN5	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN5 CN5  N5   HN5	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N5R6		! N-Acetylation of C5 (O5 in R position)
+	! For this patch, C6 does exist (Furanose with 6 Carbons)
+	! C5 and C6 are out of the ring.
+	DELEte	ATOM O5                             END
+	DELEte	ATOM HO5                            END
+	ADD	ATOM N5   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN5  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN5  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN5 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN5 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC51 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC52 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC53 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C5             CHARge=-0.100   END
+
+	! Bonds
+	ADD	BOND C5   N5
+	ADD	BOND N5   HN5
+	ADD	BOND N5   CN5
+	ADD	BOND CN5  OCN5
+	ADD	BOND CN5  CCN5
+	ADD	BOND CCN5 HC51
+	ADD	BOND CCN5 HC52
+	ADD	BOND CCN5 HC53
+
+	! Angles
+	ADD	ANGLe C4   C5   N5
+	ADD	ANGLe H5   C5   N5
+	ADD	ANGLe C5   N5   HN5
+	ADD	ANGLe C5   N5   CN5
+	ADD	ANGLe N5   CN5  OCN5
+	ADD	ANGLe N5   CN5  CCN5
+	ADD	ANGLe CN5  CCN5 HC51
+	ADD	ANGLe CN5  CCN5 HC52
+	ADD	ANGLe CN5  CCN5 HC53
+	ADD	ANGLe HC51 CCN5 HC52
+	ADD	ANGLe HC51 CCN5 HC53
+	ADD	ANGLe HC52 CCN5 HC53
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H5   N5   C4   C6
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N5   C5   HN5  CN5	! N planar in N-Acetyl group
+	ADD	IMPRoper CN5  N5   CCN5 OCN5	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN5 CN5  N5   HN5	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N5		! N-Acetylation of C5
+	! For this patch, there is NO C6 (Furanose with 5 Carbons)
+	! C5 is out of the ring and bears 1 OH and 2 H.
+	DELEte	ATOM O5                             END
+	DELEte	ATOM HO5                            END
+	ADD	ATOM N5   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN5  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN5  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN5 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN5 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC51 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC52 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC53 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C5             CHARge=-0.100   END
+
+	! Bonds
+	ADD	BOND C5   N5
+	ADD	BOND N5   HN5
+	ADD	BOND N5   CN5
+	ADD	BOND CN5  OCN5
+	ADD	BOND CN5  CCN5
+	ADD	BOND CCN5 HC51
+	ADD	BOND CCN5 HC52
+	ADD	BOND CCN5 HC53
+
+	! Angles
+	ADD	ANGLe C4   C5   N5
+	ADD	ANGLe H51  C5   N5
+	ADD	ANGLe H52  C5   N5
+	ADD	ANGLe C5   N5   HN5
+	ADD	ANGLe C5   N5   CN5
+	ADD	ANGLe N5   CN5  OCN5
+	ADD	ANGLe N5   CN5  CCN5
+	ADD	ANGLe CN5  CCN5 HC51
+	ADD	ANGLe CN5  CCN5 HC52
+	ADD	ANGLe CN5  CCN5 HC53
+	ADD	ANGLe HC51 CCN5 HC52
+	ADD	ANGLe HC51 CCN5 HC53
+	ADD	ANGLe HC52 CCN5 HC53
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H51  H52  C4   N5
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N5   C5   HN5  CN5	! N planar in N-Acetyl group
+	ADD	IMPRoper CN5  N5   CCN5 OCN5	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN5 CN5  N5   HN5	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue N6		! N-Acetylation of C6
+	! For this patch, C6 is out of the ring and bears 1 OH and 2 H.
+	DELEte	ATOM O6                             END
+	DELEte	ATOM HO6                            END
+	ADD	ATOM N6   TYPE=NH1  CHARge=-0.350   END
+	ADD	ATOM HN6  TYPE=H    CHARge= 0.250   END
+	ADD	ATOM CN6  TYPE=C    CHARge= 0.550   END
+	ADD	ATOM OCN6 TYPE=O    CHARge=-0.550   END
+	ADD	ATOM CCN6 TYPE=CH3E CHARge=-0.300   END
+	ADD	ATOM HC61 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC62 TYPE=H    CHARge= 0.100   END
+	ADD	ATOM HC63 TYPE=H    CHARge= 0.100   END
+	MODIfy	ATOM C6             CHARge=-0.100   END
+
+	! Bonds
+	ADD	BOND C6   N6
+	ADD	BOND N6   HN6
+	ADD	BOND N6   CN6
+	ADD	BOND CN6  OCN6
+	ADD	BOND CN6  CCN6
+	ADD	BOND CCN6 HC61
+	ADD	BOND CCN6 HC62
+	ADD	BOND CCN6 HC63
+
+	! Angles
+	ADD	ANGLe C5   C6   N6
+	ADD	ANGLe H61  C6   N6
+	ADD	ANGLe H62  C6   N6
+	ADD	ANGLe C6   N6   HN6
+	ADD	ANGLe C6   N6   CN6
+	ADD	ANGLe N6   CN6  OCN6
+	ADD	ANGLe N6   CN6  CCN6
+	ADD     ANGLe CCN6 CN6  OCN6  
+	ADD	ANGLe CN6  CCN6 HC61
+	ADD	ANGLe CN6  CCN6 HC62
+	ADD	ANGLe CN6  CCN6 HC63
+	ADD	ANGLe HC61 CCN6 HC62
+	ADD	ANGLe HC61 CCN6 HC63
+	ADD	ANGLe HC62 CCN6 HC63
+
+	! Improper angles for chirality of substituants
+	ADD	IMPRoper H61  H62  C5   N6
+
+	! Improper angles for maintenance of the N-Acetyl group
+	ADD	IMPRoper N6   C6   HN6  CN6	! N planar in N-Acetyl group
+	ADD	IMPRoper CN6  N6   CCN6 OCN6	! C planar in N-Acetyl group
+	ADD	IMPRoper OCN6 CN6  N6   HN6	! N-H and C=O trans in N-Acetyl group
+END
+
+PRESidue C6Ca		! The C6(OH)H is replaced by a Carboxylique group
+	DELEte  ATOM O6                             END
+	DELEte  ATOM HO6                            END
+	DELEte  ATOM H61                            END
+	DELEte  ATOM H62                            END
+	ADD     ATOM O61  TYPE=OC   CHARge=-0.800   END
+	ADD     ATOM O62  TYPE=OC   CHARge=-0.800   END
+	MODIfy  ATOM C6   TYPE=C    CHARge= 0.700   END
+
+	! Bonds
+	ADD     BOND C6   O61
+	ADD     BOND C6   O62
+
+	! Angles
+	ADD     ANGLe C5   C6   O61
+	ADD     ANGLe C5   C6   O62
+
+	! Improper angle for planar C6 of the carboxyl group
+	IMPRoper C6  C5   O62  O61	! Carboxylic group
+END
+
+!**************************************************!
+!*                                                *!
+!*      SOME PATCHES TO LINK MONOSACCHARIDES      *!
+!*                                                *!
+!**************************************************!
+
+PRESidue 1LP1		! (1,1) link
+	DELEte	ATOM -O1                              END
+	DELEte	ATOM -HO1                             END
+	DELEte	ATOM +HO1                             END
+	MODIfy	ATOM +O1   TYPE=OA   CHARge=-0.40     END
+	MODIfy	ATOM +C1             CHARge= 0.30     END
+	MODIfy	ATOM -C1             CHARge= 0.30     END 
+
+	ADD	BOND -C1   +O1
+
+	ADD	ANGle +C1   +O1   -C1
+	ADD	ANGle +O1   -C1   -H1
+	ADD	ANGle +O1   -C1   -O5
+	ADD	ANGle +O1   -C1   -C2
+
+	ADD	IMPRoper -H1   -C2   -O5   +O1
+END
+
+PRESidue 1RP1		! (1,1) link
+	DELEte	ATOM -O1				END
+	DELEte	ATOM -HO1				END
+	DELEte	ATOM +HO1				END
+	MODIfy	ATOM +O1	TYPE=OA   CHARge=-0.40	END
+	MODIfy	ATOM +C1	          CHARge= 0.30	END
+	MODIfy	ATOM -C1	          CHARge= 0.30	END 
+
+	ADD	BOND -C1   +O1
+
+	ADD	ANGle +C1   +O1   -C1
+	ADD	ANGle +O1   -C1   -H1
+	ADD	ANGle +O1   -C1   -O5
+	ADD	ANGle +O1   -C1   -C2
+
+	ADD	IMPRoper -H1   -O5   -C2   +O1
+END
+
+PRESidue 1LF1		! (1,1) link
+	DELEte	ATOM -O1                              END
+	DELEte	ATOM -HO1                             END
+	DELEte	ATOM +HO1                             END
+	MODIfy	ATOM +O1   TYPE=OA   CHARge=-0.40     END
+	MODIfy	ATOM +C1             CHARge= 0.30     END
+	MODIfy	ATOM -C1             CHARge= 0.30     END 
+
+	ADD	BOND -C1   +O1
+
+	ADD	ANGle +C1   +O1   -C1
+	ADD	ANGle +O1   -C1   -H1
+	ADD	ANGle +O1   -C1   -O4
+	ADD	ANGle +O1   -C1   -C2
+
+	ADD	IMPRoper -H1   -C2   -O4   +O1
+END
+
+PRESidue 1RF1		! (1,1) link
+	DELEte	ATOM -O1				END
+	DELEte	ATOM -HO1				END
+	DELEte	ATOM +HO1				END
+	MODIfy	ATOM +O1	TYPE=OA   CHARge=-0.40	END
+	MODIfy	ATOM +C1	          CHARge= 0.30	END
+	MODIfy	ATOM -C1	          CHARge= 0.30	END 
+
+	ADD	BOND -C1   +O1
+
+	ADD	ANGle +C1   +O1   -C1
+	ADD	ANGle +O1   -C1   -H1
+	ADD	ANGle +O1   -C1   -O4
+	ADD	ANGle +O1   -C1   -C2
+
+	ADD	IMPRoper -H1   -O4   -C2   +O1
+END
+
+PRESidue 1LP2            ! (1,2) link
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O2
+
+        ADD     ANGle +C2   +O2   -C1
+        ADD     ANGle +O2   -C1   -H1
+        ADD     ANGle +O2   -C1   -O5
+        ADD     ANGle +O2   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O5   +O2
+END
+
+PRESidue 1RP2            ! (1,2) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO2                               END
+        MODIfy  ATOM +O2        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C2                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O2
+
+        ADD     ANGle +C2   +O2   -C1
+        ADD     ANGle +O2   -C1   -H1
+        ADD     ANGle +O2   -C1   -O5
+        ADD     ANGle +O2   -C1   -C2
+
+        ADD     IMPRoper -H1   -O5   -C2   +O2
+END
+
+PRESidue 1LF2            ! (1,2) link
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O2
+
+        ADD     ANGle +C2   +O2   -C1
+        ADD     ANGle +O2   -C1   -H1
+        ADD     ANGle +O2   -C1   -O4
+        ADD     ANGle +O2   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O4   +O2
+END
+
+PRESidue 1RF2            ! 1 - 2 link in furanoses
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO2                               END
+        MODIfy  ATOM +O2        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C2                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O2
+
+        ADD     ANGle +C2   +O2   -C1
+        ADD     ANGle +O2   -C1   -H1
+        ADD     ANGle +O2   -C1   -O4
+        ADD     ANGle +O2   -C1   -C2
+
+        ADD     IMPRoper -H1   -O4   -C2   +O2
+END
+
+PRESidue 1LP3            ! 1 -- 3 link in pyranoses
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O3
+
+        ADD     ANGle +C3   +O3   -C1
+        ADD     ANGle +O3   -C1   -H1
+        ADD     ANGle +O3   -C1   -O5
+        ADD     ANGle +O3   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O5   +O3
+END
+
+PRESidue 1RP3            ! (1,1) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO3                               END
+        MODIfy  ATOM +O3        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C3                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O3
+
+        ADD     ANGle +C3   +O3   -C1
+        ADD     ANGle +O3   -C1   -H1
+        ADD     ANGle +O3   -C1   -O5
+        ADD     ANGle +O3   -C1   -C2
+
+        ADD     IMPRoper -H1   -O5   -C2   +O3
+END
+
+PRESidue 1LF3            ! (1,3) link
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O3
+
+        ADD     ANGle +C3   +O3   -C1
+        ADD     ANGle +O3   -C1   -H1
+        ADD     ANGle +O3   -C1   -O4
+        ADD     ANGle +O3   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O4   +O3
+END
+
+PRESidue 1RF3            ! (1,1) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO3                               END
+        MODIfy  ATOM +O3        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C3                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O3
+
+        ADD     ANGle +C3   +O3   -C1
+        ADD     ANGle +O3   -C1   -H1
+        ADD     ANGle +O3   -C1   -O4
+        ADD     ANGle +O3   -C1   -C2
+
+        ADD     IMPRoper -H1   -O4   -C2   +O3
+END
+
+PRESidue 1LP4            ! (1,4) link
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O4
+
+        ADD     ANGle +C4   +O4   -C1
+        ADD     ANGle +O4   -C1   -H1
+        ADD     ANGle +O4   -C1   -O5
+        ADD     ANGle +O4   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O5   +O4
+END
+
+PRESidue 1RP4            ! (1,4) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO4                               END
+        MODIfy  ATOM +O4        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C4                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O4
+
+        ADD     ANGle +C4   +O4   -C1
+        ADD     ANGle +O4   -C1   -H1
+        ADD     ANGle +O4   -C1   -O5
+        ADD     ANGle +O4   -C1   -C2
+
+        ADD     IMPRoper -H1   -O5   -C2   +O4
+END
+
+PRESidue 1LF4            ! (1,4) link
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O4
+
+        ADD     ANGle +C4   +O4   -C1
+        ADD     ANGle +O4   -C1   -H1
+        ADD     ANGle +O4   -C1   -O4
+        ADD     ANGle +O4   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O4   +O4
+END
+
+PRESidue 1RF4            ! (1,4) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO4                               END
+        MODIfy  ATOM +O4        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C4                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O4
+
+        ADD     ANGle +C4   +O4   -C1
+        ADD     ANGle +O4   -C1   -H1
+        ADD     ANGle +O4   -C1   -O4
+        ADD     ANGle +O4   -C1   -C2
+
+        ADD     IMPRoper -H1   -O4   -C2   +O4
+END
+
+PRESidue 1LP5            ! (1,5) link (When L5 is out of the ring)
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O5
+
+        ADD     ANGle +C5   +O5   -C1
+        ADD     ANGle +O5   -C1   -H1
+        ADD     ANGle +O5   -C1   -O5
+        ADD     ANGle +O5   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O5   +O5
+END
+
+PRESidue 1RP5            ! (1,1) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO5                               END
+        MODIfy  ATOM +O5        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C5                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O5
+
+        ADD     ANGle +C5   +O5   -C1
+        ADD     ANGle +O5   -C1   -H1
+        ADD     ANGle +O5   -C1   -O5
+        ADD     ANGle +O5   -C1   -C2
+
+        ADD     IMPRoper -H1   -O5   -C2   +O5
+END
+
+PRESidue 1LF5            ! (1,5) link (When L5 is out of the ring)
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O5
+
+        ADD     ANGle +C5   +O5   -C1
+        ADD     ANGle +O5   -C1   -H1
+        ADD     ANGle +O5   -C1   -O4
+        ADD     ANGle +O5   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O4   +O5
+END
+
+PRESidue 1RF5            ! (1,1) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO5                               END
+        MODIfy  ATOM +O5        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C5                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O5
+
+        ADD     ANGle +C5   +O5   -C1
+        ADD     ANGle +O5   -C1   -H1
+        ADD     ANGle +O5   -C1   -O4
+        ADD     ANGle +O5   -C1   -C2
+
+        ADD     IMPRoper -H1   -O4   -C2   +O5
+END
+
+PRESidue 1LP6            ! (1,6) link
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O6
+
+        ADD     ANGle +C6   +O6   -C1
+        ADD     ANGle +O6   -C1   -H1
+        ADD     ANGle +O6   -C1   -O5
+        ADD     ANGle +O6   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O5   +O6
+END
+
+PRESidue 1RP6            ! (1,6) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO6                               END
+        MODIfy  ATOM +O6        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C6                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O6
+
+        ADD     ANGle +C6   +O6   -C1
+        ADD     ANGle +O6   -C1   -H1
+        ADD     ANGle +O6   -C1   -O5
+        ADD     ANGle +O6   -C1   -C2
+
+        ADD     IMPRoper -H1   -O5   -C2   +O6
+END
+
+PRESidue 1LF6            ! (1,6) link
+        DELEte  ATOM -O1                              END
+        DELEte  ATOM -HO1                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C1             CHARge= 0.30     END
+
+        ADD     BOND -C1   +O6
+
+        ADD     ANGle +C6   +O6   -C1
+        ADD     ANGle +O6   -C1   -H1
+        ADD     ANGle +O6   -C1   -O4
+        ADD     ANGle +O6   -C1   -C2
+
+        ADD     IMPRoper -H1   -C2   -O4   +O6
+END
+
+PRESidue 1RF6            ! (1,6) link
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO6                               END
+        MODIfy  ATOM +O6        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C6                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O6
+
+        ADD     ANGle +C6   +O6   -C1
+        ADD     ANGle +O6   -C1   -H1
+        ADD     ANGle +O6   -C1   -O4
+        ADD     ANGle +O6   -C1   -C2
+
+        ADD     IMPRoper -H1   -O4   -C2   +O6
+END
+
+PRESidue SLLS
+        DELEte  ATOM -O1                                END
+        DELEte  ATOM -HO1                               END
+        DELEte  ATOM +HO6                               END
+        MODIfy  ATOM +O6        TYPE=OA   CHARge=-0.40  END
+        MODIfy  ATOM +C6                  CHARge= 0.30  END
+        MODIfy  ATOM -C1                  CHARge= 0.30  END
+
+        ADD     BOND -C1   +O6
+
+        ADD     ANGle +C6   +O6   -C1
+        ADD     ANGle +O6   -C1   -C11
+        ADD     ANGle +O6   -C1   -O5
+        ADD     ANGle +O6   -C1   -C2
+
+        ADD     IMPRoper -C11   -O5   -C2   +O6
+END
+
+PRESidue 2L1            ! (2,1) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O1
+
+        ADD     ANGle +C1   +O1   -C2
+        ADD     ANGle +O1   -C2   -H1
+        ADD     ANGle +O1   -C2   -C1
+        ADD     ANGle +O1   -C2   -C3
+
+        ADD     IMPRoper -H2   -C3   -C1   +O1
+END
+
+PRESidue 2R1            ! (2,1) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O1
+
+        ADD     ANGle +C1   +O1   -C2
+        ADD     ANGle +O1   -C2   -H1
+        ADD     ANGle +O1   -C2   -C1
+        ADD     ANGle +O1   -C2   -C3
+
+        ADD     IMPRoper -H2   -C1   -C3   +O1
+END
+
+PRESidue 2L2            ! (2,2) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O2
+
+        ADD     ANGle +C2   +O2   -C2
+        ADD     ANGle +O2   -C2   -H1
+        ADD     ANGle +O2   -C2   -C1
+        ADD     ANGle +O2   -C2   -C3
+
+        ADD     IMPRoper -H2   -C3   -C1   +O2
+END
+
+PRESidue 2R2            ! (2,2) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O2
+
+        ADD     ANGle +C2   +O2   -C2
+        ADD     ANGle +O2   -C2   -H1
+        ADD     ANGle +O2   -C2   -C1
+        ADD     ANGle +O2   -C2   -C3
+
+        ADD     IMPRoper -H2   -C1   -C3   +O2
+END
+
+PRESidue 2L3            ! (2,3) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O3
+
+        ADD     ANGle +C3   +O3   -C2
+        ADD     ANGle +O3   -C2   -H1
+        ADD     ANGle +O3   -C2   -C1
+        ADD     ANGle +O3   -C2   -C3
+
+        ADD     IMPRoper -H2   -C3   -C1   +O3
+END
+
+PRESidue 2R3            ! (2,3) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O3
+
+        ADD     ANGle +C3   +O3   -C2
+        ADD     ANGle +O3   -C2   -H1
+        ADD     ANGle +O3   -C2   -C1
+        ADD     ANGle +O3   -C2   -C3
+
+        ADD     IMPRoper -H2   -C1   -C3   +O3
+END
+
+PRESidue 2L4            ! (2,4) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O4
+
+        ADD     ANGle +C4   +O4   -C2
+        ADD     ANGle +O4   -C2   -H1
+        ADD     ANGle +O4   -C2   -C1
+        ADD     ANGle +O4   -C2   -C3
+
+        ADD     IMPRoper -H2   -C3   -C1   +O4
+END
+
+PRESidue 2R4            ! (2,4) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O4
+
+        ADD     ANGle +C4   +O4   -C2
+        ADD     ANGle +O4   -C2   -H1
+        ADD     ANGle +O4   -C2   -C1
+        ADD     ANGle +O4   -C2   -C3
+
+        ADD     IMPRoper -H2   -C1   -C3   +O4
+END
+
+PRESidue 2L5            ! (2,5) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O5
+
+        ADD     ANGle +C5   +O5   -C2
+        ADD     ANGle +O5   -C2   -H1
+        ADD     ANGle +O5   -C2   -C1
+        ADD     ANGle +O5   -C2   -C3
+
+        ADD     IMPRoper -H2   -C3   -C1   +O5
+END
+
+PRESidue 2R5            ! (2,5) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O5
+
+        ADD     ANGle +C5   +O5   -C2
+        ADD     ANGle +O5   -C2   -H1
+        ADD     ANGle +O5   -C2   -C1
+        ADD     ANGle +O5   -C2   -C3
+
+        ADD     IMPRoper -H2   -C1   -C3   +O5
+END
+
+PRESidue 2L6            ! (2,6) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+	MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O6
+
+        ADD     ANGle +C6   +O6   -C2
+        ADD     ANGle +O6   -C2   -H2
+        ADD     ANGle +O6   -C2   -C1
+        ADD     ANGle +O6   -C2   -C3
+
+        ADD     IMPRoper -H2   -C3   -C1   +O6
+END
+
+PRESidue 2R6            ! (2,6) link
+        DELEte  ATOM -O2                              END
+        DELEte  ATOM -HO2                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C2             CHARge= 0.30     END
+
+        ADD     BOND -C2   +O6
+
+        ADD     ANGle +C6   +O6   -C2
+        ADD     ANGle +O6   -C2   -H2
+        ADD     ANGle +O6   -C2   -C1
+        ADD     ANGle +O6   -C2   -C3
+
+        ADD     IMPRoper -H2   -C1   -C3   +O6
+END
+
+PRESidue 3L1            ! (3,1) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O1
+
+        ADD     ANGle +C1   +O1   -C3
+        ADD     ANGle +O1   -C3   -H3
+        ADD     ANGle +O1   -C3   -C2
+        ADD     ANGle +O1   -C3   -C4
+
+        ADD     IMPRoper -H3   -C4   -C2   +O1
+END
+
+PRESidue 3R1            ! (3,1) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O1
+
+        ADD     ANGle +C1   +O1   -C3
+        ADD     ANGle +O1   -C3   -H3
+        ADD     ANGle +O1   -C3   -C2
+        ADD     ANGle +O1   -C3   -C4
+
+        ADD     IMPRoper -H3   -C2   -C4   +O1
+END
+
+PRESidue 3L2            ! (3,2) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O2
+
+        ADD     ANGle +C2   +O2   -C3
+        ADD     ANGle +O2   -C3   -H3
+        ADD     ANGle +O2   -C3   -C2
+        ADD     ANGle +O2   -C3   -C4
+
+        ADD     IMPRoper -H3   -C4   -C2   +O2
+END
+
+PRESidue 3R2            ! (3,2) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O2
+
+        ADD     ANGle +C2   +O2   -C3
+        ADD     ANGle +O2   -C3   -H3
+        ADD     ANGle +O2   -C3   -C2
+        ADD     ANGle +O2   -C3   -C4
+
+        ADD     IMPRoper -H3   -C2   -C4   +O2
+END
+
+PRESidue 3L3            ! (3,3) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O3
+
+        ADD     ANGle +C3   +O3   -C3
+        ADD     ANGle +O3   -C3   -H3
+        ADD     ANGle +O3   -C3   -C2
+        ADD     ANGle +O3   -C3   -C4
+
+        ADD     IMPRoper -H3   -C4   -C2   +O3
+END
+
+PRESidue 3R3            ! (3,3) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O3
+
+        ADD     ANGle +C3   +O3   -C3
+        ADD     ANGle +O3   -C3   -H3
+        ADD     ANGle +O3   -C3   -C2
+        ADD     ANGle +O3   -C3   -C4
+
+        ADD     IMPRoper -H3   -C2   -C4   +O3
+END
+
+PRESidue 3L4            ! (3,4) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O4
+
+        ADD     ANGle +C4   +O4   -C3
+        ADD     ANGle +O4   -C3   -H3
+        ADD     ANGle +O4   -C3   -C2
+        ADD     ANGle +O4   -C3   -C4
+
+        ADD     IMPRoper -H3   -C4   -C2   +O4
+END
+
+PRESidue 3R4            ! (3,4) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O4
+
+        ADD     ANGle +C4   +O4   -C3
+        ADD     ANGle +O4   -C3   -H3
+        ADD     ANGle +O4   -C3   -C2
+        ADD     ANGle +O4   -C3   -C4
+
+        ADD     IMPRoper -H3   -C2   -C4   +O4
+END
+
+PRESidue 3L5            ! (3,5) link when C5 is out of the ring
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O5
+
+        ADD     ANGle +C5   +O5   -C3
+        ADD     ANGle +O5   -C3   -H3
+        ADD     ANGle +O5   -C3   -C2
+        ADD     ANGle +O5   -C3   -C4
+
+        ADD     IMPRoper -H3   -C4   -C2   +O5
+END
+
+PRESidue 3R5            ! (3,5) link when C5 is out of the ring
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O5
+
+        ADD     ANGle +C5   +O5   -C3
+        ADD     ANGle +O5   -C3   -H3
+        ADD     ANGle +O5   -C3   -C2
+        ADD     ANGle +O5   -C3   -C4
+
+        ADD     IMPRoper -H3   -C2   -C4   +O5
+END
+
+PRESidue 3L6            ! (3,6) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O6
+
+        ADD     ANGle +C6   +O6   -C3
+        ADD     ANGle +O6   -C3   -H3
+        ADD     ANGle +O6   -C3   -C2
+        ADD     ANGle +O6   -C3   -C4
+
+        ADD     IMPRoper -H3   -C4   -C2   +O6
+END
+
+PRESidue 3R6            ! (3,6) link
+        DELEte  ATOM -O3                              END
+        DELEte  ATOM -HO3                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C3             CHARge= 0.30     END
+
+        ADD     BOND -C3   +O6
+
+        ADD     ANGle +C6   +O6   -C3
+        ADD     ANGle +O6   -C3   -H3
+        ADD     ANGle +O6   -C3   -C2
+        ADD     ANGle +O6   -C3   -C4
+
+        ADD     IMPRoper -H3   -C2   -C4   +O6
+END
+
+! These following patches, which involve C4, cannot
+! be applied on Fucoses
+PRESidue 4L1            ! (4,1) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O1
+
+        ADD     ANGle +C1   +O1   -C4
+        ADD     ANGle +O1   -C4   -H4
+        ADD     ANGle +O1   -C4   -C3
+        ADD     ANGle +O1   -C4   -C5
+
+        ADD     IMPRoper -H4   -C5   -C3   +O1
+END
+
+PRESidue 4R1            ! (4,1) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O1
+
+        ADD     ANGle +C1   +O1   -C4
+        ADD     ANGle +O1   -C4   -H4
+        ADD     ANGle +O1   -C4   -C3
+        ADD     ANGle +O1   -C4   -C5
+
+        ADD     IMPRoper -H4   -C3   -C5   +O1
+END
+
+PRESidue 4L2            ! (4,2) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O2
+
+        ADD     ANGle +C2   +O2   -C4
+        ADD     ANGle +O2   -C4   -H4
+        ADD     ANGle +O2   -C4   -C3
+        ADD     ANGle +O2   -C4   -C5
+
+        ADD     IMPRoper -H4   -C5   -C3   +O2
+END
+
+PRESidue 4R2            ! (4,2) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O2
+
+        ADD     ANGle +C2   +O2   -C4
+        ADD     ANGle +O2   -C4   -H4
+        ADD     ANGle +O2   -C4   -C3
+        ADD     ANGle +O2   -C4   -C5
+
+        ADD     IMPRoper -H4   -C3   -C5   +O2
+END
+
+PRESidue 4L3            ! (4,3) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O3
+
+        ADD     ANGle +C3   +O3   -C4
+        ADD     ANGle +O3   -C4   -H4
+        ADD     ANGle +O3   -C4   -C3
+        ADD     ANGle +O3   -C4   -C5
+
+        ADD     IMPRoper -H4   -C5   -C3   +O3
+END
+
+PRESidue 4R3            ! (4,3) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O3
+
+        ADD     ANGle +C3   +O3   -C4
+        ADD     ANGle +O3   -C4   -H4
+        ADD     ANGle +O3   -C4   -C3
+        ADD     ANGle +O3   -C4   -C5
+
+        ADD     IMPRoper -H4   -C3   -C5   +O3
+END
+
+PRESidue 4L4            ! (4,4) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O4
+
+        ADD     ANGle +C4   +O4   -C4
+        ADD     ANGle +O4   -C4   -H4
+        ADD     ANGle +O4   -C4   -C3
+        ADD     ANGle +O4   -C4   -C5
+
+        ADD     IMPRoper -H4   -C5   -C3   +O4
+END
+
+PRESidue 4R4            ! (4,4) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O4
+
+        ADD     ANGle +C4   +O4   -C4
+        ADD     ANGle +O4   -C4   -H4
+        ADD     ANGle +O4   -C4   -C3
+        ADD     ANGle +O2   -C4   -C5
+
+        ADD     IMPRoper -H4   -C3   -C5   +O4
+END
+
+PRESidue 4L5            ! (4,5) link when C5 is out of the ring
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O5
+
+        ADD     ANGle +C5   +O5   -C4
+        ADD     ANGle +O5   -C4   -H4
+        ADD     ANGle +O5   -C4   -C3
+        ADD     ANGle +O5   -C4   -C5
+
+        ADD     IMPRoper -H4   -C5   -C3   +O5
+END
+
+PRESidue 4R5            ! (4,5) link when C5 is out of the ring
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O5
+
+        ADD     ANGle +C5   +O5   -C4
+        ADD     ANGle +O5   -C4   -H4
+        ADD     ANGle +O5   -C4   -C3
+        ADD     ANGle +O5   -C4   -C5
+
+        ADD     IMPRoper -H4   -C3   -C5   +O5
+END
+
+PRESidue 4L6            ! (4,6) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O6
+
+        ADD     ANGle +C6   +O6   -C4
+        ADD     ANGle +O6   -C4   -H4
+        ADD     ANGle +O6   -C4   -C3
+        ADD     ANGle +O6   -C4   -C5
+
+        ADD     IMPRoper -H4   -C5   -C3   +O6
+END
+
+PRESidue 4R6            ! (4,6) link
+        DELEte  ATOM -O4                              END
+        DELEte  ATOM -HO4                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C4             CHARge= 0.30     END
+
+        ADD     BOND -C4   +O6
+
+        ADD     ANGle +C6   +O6   -C4
+        ADD     ANGle +O6   -C4   -H4
+        ADD     ANGle +O6   -C4   -C3
+        ADD     ANGle +O6   -C4   -C5
+
+        ADD     IMPRoper -H4   -C3   -C5   +O6
+END
+
+! These following patches, which involve C5, can be
+! applied only if C5 is out of the ring and C6 does
+! NOT exist like in a pentose in its furanose form
+PRESidue 51		! (5,1) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O1
+
+        ADD     ANGle +C1   +O1   -C5
+        ADD     ANGle +O1   -C5   -C4
+        ADD     ANGle +O1   -C5   -H51
+        ADD     ANGle +O1   -C5   -H52
+
+        ADD     IMPRoper -H51  -H52  -C4   +O1
+END
+
+PRESidue 52		! (5,2) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O2
+
+        ADD     ANGle +C2   +O2   -C5
+        ADD     ANGle +O2   -C5   -C4
+        ADD     ANGle +O2   -C5   -H51
+        ADD     ANGle +O2   -C5   -H52
+
+        ADD     IMPRoper -H51  -H52  -C4   +O2
+END
+
+PRESidue 53		! (5,3) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O3
+
+        ADD     ANGle +C3   +O3   -C5
+        ADD     ANGle +O3   -C5   -C4
+        ADD     ANGle +O3   -C5   -H51
+        ADD     ANGle +O3   -C5   -H52
+
+        ADD     IMPRoper -H51  -H52  -C4   +O3
+END
+
+PRESidue 54		! (5,4) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O4
+
+        ADD     ANGle +C4   +O4   -C5
+        ADD     ANGle +O4   -C5   -C4
+        ADD     ANGle +O4   -C5   -H51
+        ADD     ANGle +O4   -C5   -H52
+
+	ADD     IMPRoper -H51  -H52  -C4   +O4
+END
+
+PRESidue 55		! (5,5) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O5
+
+        ADD     ANGle +C5   +O5   -C5
+        ADD     ANGle +O5   -C5   -C4
+        ADD     ANGle +O5   -C5   -H51
+        ADD     ANGle +O5   -C5   -H52
+
+	ADD     IMPRoper -H51  -H52  -C4   +O5
+END
+
+PRESidue 56		! (5,6) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O6
+
+        ADD     ANGle +C6   +O6   -C5
+        ADD     ANGle +O6   -C5   -C4
+        ADD     ANGle +O6   -C5   -H51
+        ADD     ANGle +O6   -C5   -H52
+
+	ADD     IMPRoper -H51  -H52  -C4   +O6
+END
+
+! These following patches, which involve C5, can be
+! applied only if C5 is out of the ring and C6 there
+! like in an hexose in its furanose form
+PRESidue 5L61            ! (5,1) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O1
+
+        ADD     ANGle +C1   +O1   -C5
+        ADD     ANGle +O1   -C5   -H5
+        ADD     ANGle +O1   -C5   -C4
+        ADD     ANGle +O1   -C5   -C6
+
+        ADD     IMPRoper -H5   -C6   -C4   +O1
+END
+
+PRESidue 5R61            ! (5,1) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O1
+
+        ADD     ANGle +C1   +O1   -C5
+        ADD     ANGle +O1   -C5   -H5
+        ADD     ANGle +O1   -C5   -C4
+        ADD     ANGle +O1   -C5   -C6
+
+        ADD     IMPRoper -H5   -C4   -C6   +O1
+END
+
+PRESidue 5L62		! (5,2) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O2
+
+        ADD     ANGle +C2   +O2   -C5
+        ADD     ANGle +O2   -C5   -H5
+        ADD     ANGle +O2   -C5   -C4
+        ADD     ANGle +O2   -C5   -C6
+
+        ADD     IMPRoper -H5   -C6   -C4   +O2
+END
+
+PRESidue 5R62		! (5,2) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O2
+
+        ADD     ANGle +C2   +O2   -C5
+        ADD     ANGle +O2   -C5   -H5
+        ADD     ANGle +O2   -C5   -C4
+        ADD     ANGle +O2   -C5   -C6
+
+        ADD     IMPRoper -H5   -C4   -C6   +O2
+END
+
+PRESidue 5L63            ! (5,3) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O3
+
+        ADD     ANGle +C3   +O3   -C5
+        ADD     ANGle +O3   -C5   -H5
+        ADD     ANGle +O3   -C5   -C4
+        ADD     ANGle +O3   -C5   -C6
+
+        ADD     IMPRoper -H5   -C6   -C4   +O3
+END
+
+PRESidue 5R63            ! (5,3) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O3
+
+        ADD     ANGle +C3   +O3   -C5
+        ADD     ANGle +O3   -C5   -H5
+        ADD     ANGle +O3   -C5   -C4
+        ADD     ANGle +O3   -C5   -C6
+
+        ADD     IMPRoper -H5   -C4   -C6   +O3
+END
+
+PRESidue 5L64            ! (5,4) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O4
+
+        ADD     ANGle +C4   +O4   -C5
+        ADD     ANGle +O4   -C5   -H5
+        ADD     ANGle +O4   -C5   -C4
+        ADD     ANGle +O4   -C5   -C6
+
+        ADD     IMPRoper -H5   -C6   -C4   +O4
+END
+
+PRESidue 5R64            ! (5,4) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O4
+
+        ADD     ANGle +C4   +O4   -C5
+        ADD     ANGle +O4   -C5   -H5
+        ADD     ANGle +O4   -C5   -C4
+        ADD     ANGle +O4   -C5   -C6
+
+        ADD     IMPRoper -H5   -C4   -C6   +O4
+END
+
+PRESidue 5L65            ! (5,5) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O5
+
+        ADD     ANGle +C5   +O5   -C5
+        ADD     ANGle +O5   -C5   -H5
+        ADD     ANGle +O5   -C5   -C4
+        ADD     ANGle +O5   -C5   -C6
+
+        ADD     IMPRoper -H5   -C6   -C4   +O5
+END
+
+PRESidue 5R65            ! (5,5) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O5
+
+        ADD     ANGle +C5   +O5   -C5
+        ADD     ANGle +O5   -C5   -H5
+        ADD     ANGle +O5   -C5   -C4
+        ADD     ANGle +O5   -C5   -C6
+
+        ADD     IMPRoper -H5   -C4   -C6   +O5
+END
+
+PRESidue 5L66            ! (5,6) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O6
+
+        ADD     ANGle +C6   +O6   -C5
+        ADD     ANGle +O6   -C5   -H5
+        ADD     ANGle +O6   -C5   -C4
+        ADD     ANGle +O6   -C5   -C6
+
+        ADD     IMPRoper -H5   -C6   -C4   +O6
+END
+
+PRESidue 5R66            ! (5,6) link
+        DELEte  ATOM -O5                              END
+        DELEte  ATOM -HO5                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C5             CHARge= 0.30     END
+
+        ADD     BOND -C5   +O6
+
+        ADD     ANGle +C6   +O6   -C5
+        ADD     ANGle +O6   -C5   -H5
+        ADD     ANGle +O6   -C5   -C4
+        ADD     ANGle +O6   -C5   -C6
+
+        ADD     IMPRoper -H5   -C4   -C6   +O6
+END
+
+PRESidue 61            ! (6,1) link
+        DELEte  ATOM -O6                              END
+        DELEte  ATOM -HO6                             END
+        DELEte  ATOM +HO1                             END
+        MODIfy  ATOM +O1   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C1             CHARge= 0.30     END
+        MODIfy  ATOM -C6             CHARge= 0.30     END
+
+        ADD     BOND -C6   +O1
+
+        ADD     ANGle +C1   +O1   -C6
+        ADD     ANGle +O1   -C6   -H61
+        ADD     ANGle +O1   -C6   -H62
+        ADD     ANGle +O1   -C6   -C5
+
+        ADD     IMPRoper -H61  -H62  -C5   +O1
+END
+
+PRESidue 62            ! (6,2) link
+        DELEte  ATOM -O6                              END
+        DELEte  ATOM -HO6                             END
+        DELEte  ATOM +HO2                             END
+        MODIfy  ATOM +O2   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C2             CHARge= 0.30     END
+        MODIfy  ATOM -C6             CHARge= 0.30     END
+
+        ADD     BOND -C6   +O2
+
+        ADD     ANGle +C2   +O2   -C6
+        ADD     ANGle +O2   -C6   -H61
+        ADD     ANGle +O2   -C6   -H62
+        ADD     ANGle +O2   -C6   -C5
+
+        ADD     IMPRoper -H61  -H62  -C5   +O2
+END
+
+PRESidue 63            ! (6,3) link
+        DELEte  ATOM -O6                              END
+        DELEte  ATOM -HO6                             END
+        DELEte  ATOM +HO3                             END
+        MODIfy  ATOM +O3   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C3             CHARge= 0.30     END
+        MODIfy  ATOM -C6             CHARge= 0.30     END
+
+        ADD     BOND -C6   +O3
+
+        ADD     ANGle +C3   +O3   -C6
+        ADD     ANGle +O3   -C6   -H61
+        ADD     ANGle +O3   -C6   -H62
+        ADD     ANGle +O3   -C6   -C5
+
+        ADD     IMPRoper -H61  -H62  -C5   +O3
+END
+
+PRESidue 64            ! (6,4) link
+        DELEte  ATOM -O6                              END
+        DELEte  ATOM -HO6                             END
+        DELEte  ATOM +HO4                             END
+        MODIfy  ATOM +O4   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C4             CHARge= 0.30     END
+        MODIfy  ATOM -C6             CHARge= 0.30     END
+
+        ADD     BOND -C6   +O4
+
+        ADD     ANGle +C4   +O4   -C6
+        ADD     ANGle +O4   -C6   -H61
+        ADD     ANGle +O4   -C6   -H62
+        ADD     ANGle +O4   -C6   -C5
+
+        ADD     IMPRoper -H61  -H62  -C5   +O4
+END
+
+PRESidue 65            ! (6,5) link when C5 is out of the ring
+        DELEte  ATOM -O6                              END
+        DELEte  ATOM -HO6                             END
+        DELEte  ATOM +HO5                             END
+        MODIfy  ATOM +O5   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C5             CHARge= 0.30     END
+        MODIfy  ATOM -C6             CHARge= 0.30     END
+
+        ADD     BOND -C6   +O5
+
+        ADD     ANGle +C5   +O5   -C6
+        ADD     ANGle +O5   -C6   -H61
+        ADD     ANGle +O5   -C6   -H62
+        ADD     ANGle +O5   -C6   -C5
+
+        ADD     IMPRoper -H61  -H62  -C5   +O5
+END
+
+PRESidue 66            ! (6,6) link
+        DELEte  ATOM -O6                              END
+        DELEte  ATOM -HO6                             END
+        DELEte  ATOM +HO6                             END
+        MODIfy  ATOM +O6   TYPE=OA   CHARge=-0.40     END
+        MODIfy  ATOM +C6             CHARge= 0.30     END
+        MODIfy  ATOM -C6             CHARge= 0.30     END
+
+        ADD     BOND -C6   +O6
+
+        ADD     ANGle +C6   +O6   -C6
+        ADD     ANGle +O6   -C6   -H61
+        ADD     ANGle +O6   -C6   -H62
+        ADD     ANGle +O6   -C6   -C5
+
+        ADD     IMPRoper -H61  -H62  -C5   +O6
+END
+
+
+PRESidue THRG   ! Patch to link the C1 atom of a saccharide to THR OG1
+
+        DELETE ATOM 1HG1 END
+        DELETE ATOM 2O1  END
+        DELETE ATOM 2H1  END
+
+        ADD BOND 1OG1 2C1
+        ADD ANGLE 1CB 1OG1 2C1
+        ADD ANGLE 1OG1 2C1 2O5
+        ADD ANGLE 1OG1 2C1 2C2
+        ADD ANGLE 1OG1 2C1 2H1
+
+END
+
+SET
+        ECHO true
+	MESSage true
+END

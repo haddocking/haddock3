@@ -24,7 +24,7 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     else
         if ($nseg_$nchain1 < 0) then
             display AUTOMATIC DEFINITION OF FLEXIBLE SEGMENTS BASED ON INTERMOLECULAR PROXIMITY FOR MOLECULE $nchain1
-            inline @RUN:flexauto-neighbors.cns
+            inline @MODULE:flexauto-neighbors.cns
             do (store5 = 0) (name CA or name BB or name C or name N or name O)
         else
             display FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1

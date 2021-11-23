@@ -1,0 +1,443 @@
+!-----------------------------------------------------------------------------!
+! Topology file for CG nucleic acid based on martinize script and parameters  !
+! Authors: Rodrigo Honorato & Jorge Roel, MAY-2018                            !
+!-----------------------------------------------------------------------------!
+
+!------------!
+!  Backbone  !
+!------------!
+! DNA
+MASS NB1 72.00
+MASS NB2 45.00
+MASS NB3 45.00
+
+! RNA
+MASS RNB1 72.00 
+MASS RNB2 45.00
+MASS RNB3 45.00 ! MARTINI bead SNda
+
+!------------!
+! Sidechains !
+!------------!
+
+! DA 
+MASS ANS1 45.00
+MASS ANS2 45.00
+MASS ANS3 45.00
+
+! A 
+MASS ARS1 45.00
+MASS ARS2 45.00
+MASS ARS3 45.00
+
+! DC
+MASS CNS4 45.00
+MASS CNS3 45.00
+MASS CNS1 45.00
+
+! C
+MASS CRS1 45.00
+MASS CRS4 45.00
+MASS CRS3 45.00
+
+! DG
+MASS GNS2 45.00
+MASS GNS3 45.00
+MASS GNS1 45.00
+MASS GNS4 45.00
+
+! G
+MASS GRS1 45.00
+MASS GRS3 45.00
+MASS GRS4 45.00
+MASS GRS2 45.00
+
+! DT
+MASS TNS2 45.00
+MASS TNS1 45.00
+MASS TNS4 45.00
+
+! U
+MASS URS1 45.00
+MASS URS4 45.00
+MASS URS2 45.00
+
+
+
+! SPECIAL HBONDing
+! DNA
+MASS NH1 45.00
+MASS NH2 45.00
+MASS NH3 45.00
+MASS NH4 45.00
+MASS NH5 45.00
+MASS NH6 45.00
+MASS NH7 45.00
+MASS NH8 45.00
+! RNA
+MASS RH1 45.00
+MASS RH2 45.00
+MASS RH3 45.00
+MASS RH4 45.00
+MASS RH5 45.00
+MASS RH6 45.00
+MASS RH7 45.00
+MASS RH8 45.00
+
+!------------------------------!
+!     Nucleic Acid Topology    !
+!------------------------------!
+
+!------------------------------!
+!            DNA               !
+!------------------------------!
+
+RESIdue DA
+  GROUp
+    ATOM BB1  type=NB1     charge=0.000 end
+    ATOM BB2  type=NB2     charge=0.000 end
+    ATOM BB3  type=NB3     charge=0.000 end
+    ATOM SC1  type=ANS1    charge=0.000 end
+    ATOM SC2  type=ANS1    charge=0.000 end
+    ATOM SC3  type=ANS3    charge=0.000 end
+    ATOM SC4  type=ANS2    charge=0.000 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC2 SC4
+  BOND SC2 SC4
+  BOND SC3 SC4
+  BOND SC4 SC1
+
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB3 SC1 SC4
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC4
+  ANGLE SC2 SC3 SC4
+  ANGLE SC3 SC4 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+  DIHEdral BB2 BB3 SC1 SC4
+END
+
+!----------------------------------------------------------------!
+
+RESIdue DC
+  GROUp
+    ATOM BB1  type=NB1    charge=0.000 end
+    ATOM BB2  type=NB2    charge=0.000 end
+    ATOM BB3  type=NB3    charge=0.000 end
+    ATOM SC1  type=CNS1   charge=0.000 end
+    ATOM SC2  type=CNS4   charge=0.000 end
+    ATOM SC3  type=CNS3   charge=0.000 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC3 SC1
+
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB2 SC1 SC3
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC3
+  ANGLE SC2 SC3 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+  DIHEdral BB2 BB3 SC1 SC3
+
+END
+
+!----------------------------------------------------------------!
+
+RESIdue DG
+  GROUp
+    ATOM BB1  type=NB1    charge=0.000 end
+    ATOM BB2  type=NB2    charge=0.000 end
+    ATOM BB3  type=NB3    charge=0.000 end
+    ATOM SC1  type=GNS1   charge=0.000 end
+    ATOM SC2  type=GNS3   charge=0.000 end
+    ATOM SC3  type=GNS4   charge=0.000 end
+    ATOM SC4  type=GNS2   charge=0.000 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC2 SC4
+  BOND SC3 SC4
+  BOND SC4 SC1
+
+  ANGLE BB1 BB2 BB3
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB3 SC1 SC4
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC4
+  ANGLE SC2 SC3 SC4
+  ANGLE SC3 SC4 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+  DIHEdral BB2 BB3 SC1 SC4
+
+END
+
+!----------------------------------------------------------------!
+
+RESIdue DT
+  GROUp
+    ATOM BB1  type=NB1    charge=0.000 end
+    ATOM BB2  type=NB2    charge=0.000 end
+    ATOM BB3  type=NB3    charge=0.000 end
+    ATOM SC1  type=TNS1   charge=0.000 end
+    ATOM SC2  type=TNS4   charge=0.000 end
+    ATOM SC3  type=TNS2   charge=0.000 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC3 SC1
+
+  ANGLE BB1 BB2 BB3
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB2 SC1 SC3
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC3
+  ANGLE SC2 SC3 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+  DIHEdral BB2 BB3 SC1 SC3
+
+END
+
+!------------------------------!
+!            RNA               !
+!------------------------------!
+
+RESIdue A
+  GROUp
+    ATOM BB1  type=RNB1   charge=0.000 end
+    ATOM BB2  type=RNB2   charge=0.000 end
+    ATOM BB3  type=RNB3   charge=0.000 end
+    ATOM SC1  type=ARS1   charge=0.000 end
+    ATOM SC2  type=ARS1   charge=0.000 end
+    ATOM SC3  type=ARS2   charge=0.000 end
+    ATOM SC4  type=ARS3   charge=0.000 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC2 SC4
+  BOND SC2 SC4
+  BOND SC3 SC4
+  BOND SC4 SC1
+
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB3 SC1 SC4
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC4
+  ANGLE SC2 SC3 SC4
+  ANGLE SC3 SC4 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+  DIHEdral BB2 BB3 SC1 SC4
+  DIHEdral SC1 SC2 SC3 SC4
+END
+
+!----------------------------------------------------------------!
+
+RESIdue C
+  GROUp
+    ATOM BB1  type=RNB1   charge=0.000 end
+    ATOM BB2  type=RNB2   charge=0.000 end
+    ATOM BB3  type=RNB3   charge=0.000 end
+    ATOM SC1  type=CRS1   charge=0.000 end
+    ATOM SC2  type=CRS4   charge=0.000 end
+    ATOM SC3  type=CRS3   charge=0.000 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC3 SC1
+
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB2 SC1 SC3
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC3
+  ANGLE SC2 SC3 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+
+END
+
+!----------------------------------------------------------------!
+
+RESIdue G
+  GROUp
+    ATOM BB1  type=RNB1   charge=0.000 end
+    ATOM BB2  type=RNB2   charge=0.000 end
+    ATOM BB3  type=RNB3   charge=0.000 end
+    ATOM SC1  type=GRS1   charge=0.000 end
+    ATOM SC2  type=GRS3   charge=0.000 end
+    ATOM SC3  type=GRS4   charge=0.000 end
+    ATOM SC4  type=GRS2   charge=0.000 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC2 SC4
+  BOND SC3 SC4
+  BOND SC4 SC1
+
+  ANGLE BB1 BB2 BB3
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB3 SC1 SC4
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC4
+  ANGLE SC2 SC3 SC4
+  ANGLE SC3 SC4 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+  DIHEdral BB2 BB3 SC1 SC4
+  DIHEdral SC1 SC2 SC3 SC4
+
+END
+
+!----------------------------------------------------------------!
+
+RESIdue U
+
+  GROUp
+    ATOM BB1  type=RNB1   charge=0.00 end
+    ATOM BB2  type=RNB2   charge=0.00 end
+    ATOM BB3  type=RNB3   charge=0.00 end
+    ATOM SC1  type=URS1   charge=0.00 end
+    ATOM SC2  type=URS4   charge=0.00 end
+    ATOM SC3  type=URS2   charge=0.00 end
+
+  BOND BB1 BB2
+  BOND BB2 BB3
+  BOND BB3 SC1
+  BOND SC1 SC2
+  BOND SC2 SC3
+  BOND SC3 SC1
+
+  ANGLE BB1 BB2 BB3
+  ANGLE BB2 BB3 SC1
+  ANGLE BB3 SC1 SC2
+  ANGLE BB2 SC1 SC3
+  ANGLE SC1 SC2 SC3
+  ANGLE SC2 SC1 SC3
+  ANGLE SC2 SC3 SC1
+
+  DIHEdral BB1 BB2 BB3 SC1
+  DIHEdral BB2 BB3 SC1 SC2
+  DIHEdral BB2 BB3 SC1 SC3
+
+END
+!----------------------------------------------------------------!
+
+
+!--------------------------------!
+! Hydrogen Bonding nucleic acids !
+!--------------------------------!
+
+! DNA
+
+PRESidue DA1
+  MODIFY ATOM SC2   TYPE=NH1 END
+  MODIFY ATOM SC3   TYPE=NH2 END
+END
+
+PRESidue DC1
+  MODIFY ATOM SC2   TYPE=NH7 END
+  MODIFY ATOM SC3   TYPE=NH8 END
+END
+
+PRESidue DG1
+  MODIFY ATOM SC2   TYPE=NH3 END
+  MODIFY ATOM SC3   TYPE=NH4 END
+END
+
+PRESidue DT1
+  MODIFY ATOM SC2   TYPE=NH5 END
+  MODIFY ATOM SC3   TYPE=NH6 END
+END
+
+! RNA
+
+PRESidue A1
+  MODIFY ATOM SC2   TYPE=RH1 END
+  MODIFY ATOM SC3   TYPE=RH2 END
+END
+
+PRESidue C1
+  MODIFY ATOM SC2   TYPE=RH7 END
+  MODIFY ATOM SC3   TYPE=RH8 END
+END
+
+PRESidue G1
+  MODIFY ATOM SC2   TYPE=RH3 END
+  MODIFY ATOM SC3   TYPE=RH4 END
+END
+
+PRESidue U1
+  MODIFY ATOM SC2   TYPE=RH5 END
+  MODIFY ATOM SC3   TYPE=RH6 END
+END
+
+!----------------------------------------------------------------!
+
+!------------------------------!
+! Patch to create connectivity !
+!    *same for DNA and RNA*    !
+!------------------------------!
+
+PRESidue NUC 
+             ! patch for CG nucleic acid
+             ! (-) previous atom
+             ! (+) current atom
+
+  ! BB           
+  ADD BOND -BB3 +BB1
+  
+  ADD ANGLE -BB2 -BB3 +BB1
+  ADD ANGLE -BB3 +BB1 +BB2
+
+  ADD DIHEdral -BB1 -BB2 -BB3 +BB1
+  ADD DIHEdral -BB2 -BB3 +BB1 +BB2
+  ADD DIHEdral -BB3 +BB1 +BB2 +BB3
+  
+  ! SC
+  ADD ANGLE -SC1 -BB3 +BB1
+
+END
+
+!----------------------------------------------------------------
+

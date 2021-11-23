@@ -32,6 +32,6 @@ igroup
 
 end
 
-inline @RUN:charge-beads-interactions.cns
+inline @MODULE:charge-beads-interactions.cns
 
 

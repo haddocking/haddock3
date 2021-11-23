@@ -11,7 +11,7 @@
 !
 ! check if homomer
 
-inline @RUN:check-homomers.cns
+inline @MODULE:check-homomers.cns
 
 do (store4 = 0) (all)
 evaluate ($ncount = 0)
@@ -176,5 +176,5 @@ do (x = refx) (resn ANI or resn DAN or resn XAN or resn SHA)
 do (y = refy) (resn ANI or resn DAN or resn XAN or resn SHA)
 do (z = refz) (resn ANI or resn DAN or resn XAN or resn SHA)
 
-!evaluate ($outname = "RUN:" + "begin/" + $Filenames.fileroot + "_init_" + encode($count) + ".pdb")
+!evaluate ($outname = "MODULE:" + "begin/" + $Filenames.fileroot + "_init_" + encode($count) + ".pdb")
 !write coor format=pdbo output=$outname end

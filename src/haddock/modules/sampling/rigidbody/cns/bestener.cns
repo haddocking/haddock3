@@ -11,7 +11,7 @@
 ! ***********************************************************************
 !
 eval ($kinter = 1.0)
-@RUN:scale_inter_mini.cns
+@MODULE:scale_inter_mini.cns
 
 evaluate ($unamb_scale = $Data.unamb_cool3)
 evaluate ($ambig_scale = $Data.amb_cool3)
@@ -55,7 +55,7 @@ if ($Data.flags.sym eq true) then
 end if
 
 if ($SaProtocol.rigidtrans eq true) then
-    inline @RUN:bsa.cns
+    inline @MODULE:bsa.cns
 end if
 
 evaluate ($etot = $w_vdw  * $vdw)
@@ -95,7 +95,7 @@ else
 end if
 
 evaluate ($kinter = $SaProtocol.inter_rigid)
-@RUN:scale_inter_mini.cns
+@MODULE:scale_inter_mini.cns
 
 evaluate ($unamb_scale = $unamb_scale_store)
 evaluate ($ambig_scale = $ambig_scale_store)

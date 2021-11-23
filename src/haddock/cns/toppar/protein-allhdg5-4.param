@@ -7,7 +7,7 @@ remark   simulated annealing.
 remark   Original author: Michael Nilges, EMBL Heidelberg
 remark   Modifications: Mark A. Williams, UCL London
 remark   Several modifications for HADDOCK: Alexandre Bonvin, Utrecht Uni
-remark   Last modification 27-02-2014 
+remark   Last modification 06-02-2021 
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
 set message=off echo=off end
@@ -138,7 +138,6 @@ checkversion 1.3
  DIHEdral NC2  CH2E CH2E CH2E   1.000                  3   0.0000
  DIHEdral CH3E NC2  CH2E CH2E   1.000                  3 180.0000
 
-
  BOND  C    CH1E    1000.000 {sd=     0.001}      1.525
  BOND  C    CH2E    1000.000 {sd=     0.001}      1.516
  BOND  C    CH3E    1000.000 {sd=     0.001}      1.507   ! added EAB
@@ -199,6 +198,7 @@ checkversion 1.3
  BOND  CH3E HA      1000.000 {sd=     0.001}      1.080
  BOND  CH3E SM      1000.000 {sd=     0.001}      1.791
  BOND  CH3E SE      1000.000 {sd=     0.001}      1.791 ! for MSE
+ BOND  CH3E NH1     1000.000 {sd=     0.001}      1.430 ! for NME
  BOND  CR1E CR1E    1000.000 {sd=     0.001}      1.382
  BOND  CR1E CR1W    1000.000 {sd=     0.001}      1.400
  BOND  CR1E CW      1000.000 {sd=     0.001}      1.398
@@ -211,6 +211,7 @@ checkversion 1.3
  BOND  CR1H NH1     1000.000 {sd=     0.001}      1.374
  BOND  CR1H NR      1000.000 {sd=     0.001}      1.374
  BOND  CR1W CR1W    1000.000 {sd=     0.001}      1.368
+ BOND  CR1W CY2     1000.000 {sd=     0.001}      1.379
  BOND  CR1W CW      1000.000 {sd=     0.001}      1.393
  BOND  CR1W HA      1000.000 {sd=     0.001}      1.080
  BOND  CRH  HA      1000.000 {sd=     0.001}      1.080
@@ -218,7 +219,7 @@ checkversion 1.3
  BOND  CRH  NR      1000.000 {sd=     0.001}      1.319
  BOND  CRHH HA      1000.000 {sd=     0.001}      1.080
  BOND  CRHH NH1     1000.000 {sd=     0.001}      1.321
- BOND  CRHH NR     1000.000 {sd=     0.001}      1.321
+ BOND  CRHH NR      1000.000 {sd=     0.001}      1.321
  BOND  CW   CW      1000.000 {sd=     0.001}      1.409
  BOND  CW   NH1     1000.000 {sd=     0.001}      1.370
  BOND  CY2  OH1     1000.000 {sd=     0.001}      1.376
@@ -228,7 +229,6 @@ checkversion 1.3
  BOND  H    NH2     1000.000 {sd=     0.001}      0.980
  BOND  H    OH1     1000.000 {sd=     0.001}      0.960
  BOND  H    SH1E    1000.000 {sd=     0.001}      1.325 ! from CHARMM22
- BOND  HC   NC2     1000.000 {sd=     0.001}      1.000
  BOND  HC   NH3     1000.000 {sd=     0.001}      1.040
  BOND  S    S       1000.000 {sd=     0.001}      2.030
  BOND  CCIS  CH1E    1000.000 {sd=     0.001}      1.525 ! CCIS is for cis peptide bond
@@ -344,6 +344,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  C    NC2  HC       500.00 {sd=     0.031}    119.9992
  ANGLe  C    NH1  CH1E     500.00 {sd=     0.031}    121.6541
  ANGLe  C    NH1  CH2E     500.00 {sd=     0.031}    124.1226
+ ANGLe  C    NH1  CH3E     500.00 {sd=     0.031}    124.1226 ! for NME
  ANGLe  C    NH1  CH2G     500.00 {sd=     0.031}    120.5859
  ANGLe  C    NH1  H        500.00 {sd=     0.031}    119.2489
  ANGLe  C    NH2  H        500.00 {sd=     0.031}    118.1853
@@ -362,6 +363,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  C5   NH1  H        500.00 {sd=     0.031}    126.0497
  ANGLe  C5   NR   CRH      500.00 {sd=     0.031}    105.7163
  ANGLe  C5W  CH2E CH1E     500.00 {sd=     0.031}    113.5788
+ ANGLe  C5W  CH2E CH2E     500.00 {sd=     0.031}    113.5788
  ANGLe  C5W  CH2E HA       500.00 {sd=     0.031}    108.1831
  ANGLe  C5W  CR1E HA       500.00 {sd=     0.031}    124.5037
  ANGLe  C5W  CR1E NH1      500.00 {sd=     0.031}    110.0962
@@ -475,7 +477,6 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH2G C    OC       500.00 {sd=     0.031}    118.4971
  ANGLe  CH2G NH1  H        500.00 {sd=     0.031}    119.7297
  ANGLe  CH2G NH3  HC       500.00 {sd=     0.031}    109.4688
- ANGLe  CH2P CH2E HA       500.00 {sd=     0.031}    111.1127
  ANGLe  CH2P CH2P HA       500.00 {sd=     0.031}    110.3818
  ANGLe  CH2P CH1P OH1      500.00 {sd=     0.031}    110.3818
  ANGLe  CH2P CH1P OHP      500.00 {sd=     0.031}    110.3818
@@ -505,12 +506,15 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CR1E CR1E CW       500.00 {sd=     0.031}    118.6734
  ANGLe  CR1E CR1E CY       500.00 {sd=     0.031}    121.1348
  ANGLe  CR1E CR1E CY2      500.00 {sd=     0.031}    119.6224
+ ANGLe  CR1E CR1W CY2      500.00 {sd=     0.031}    119.6224
+ ANGLe  CR1E CR1E CY2      500.00 {sd=     0.031}    119.6224
  ANGLe  CR1E CR1E HA       500.00 {sd=     0.031}    119.9433
  ANGLe  CR1E CR1W CR1W     500.00 {sd=     0.031}    121.4832
  ANGLe  CR1E CR1W HA       500.00 {sd=     0.031}    118.7598
  ANGLe  CR1E CW   CW       500.00 {sd=     0.031}    118.8347
  ANGLe  CR1E CY   CR1E     500.00 {sd=     0.031}    118.1392
  ANGLe  CR1E CY2  CR1E     500.00 {sd=     0.031}    120.3463
+ ANGLe  CR1E CY2  CR1W     500.00 {sd=     0.031}    120.3463
  ANGLe  CR1E CY2  OH1      500.00 {sd=     0.031}    119.8269
  ANGLe  CR1E CY2  OHP      500.00 {sd=     0.031}    119.8269
  ANGLe  CR1E CY2  OUF      500.00 {sd=     0.031}    119.8269
@@ -524,12 +528,15 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CR1H NH1  H        500.00 {sd=     0.031}    125.5054
  ANGLe  CR1W CR1E HA       500.00 {sd=     0.031}    119.1706
  ANGLe  CR1W CR1W CW       500.00 {sd=     0.031}    117.4515
+ ANGLe  CR1W CR1W CY2      500.00 {sd=     0.031}    119.6224
  ANGLe  CR1W CR1W HA       500.00 {sd=     0.031}    120.2616
  ANGLe  CR1W CW   CW       500.00 {sd=     0.031}    122.4059
  ANGLe  CR1W CW   NH1      500.00 {sd=     0.031}    130.1860
+ ANGLe  CR1W CY2  OH1      500.00 {sd=     0.031}    119.8269
  ANGLe  CRH  NH1  H        500.00 {sd=     0.031}    126.0322
  ANGLe  CRHH NH1  H        500.00 {sd=     0.031}    125.1896
  ANGLe  CRHH NR   H        500.00 {sd=     0.031}    125.1896
+ ANGLe  CW   CR1E CY2      500.00 {sd=     0.031}    119.6224
  ANGLe  CW   CR1E HA       500.00 {sd=     0.031}    121.0317
  ANGLe  CW   CR1W HA       500.00 {sd=     0.031}    121.7822
  ANGLe  CW   CW   NH1      500.00 {sd=     0.031}    107.4081
@@ -537,6 +544,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CY   CH2E HA       500.00 {sd=     0.031}    108.0910
  ANGLe  CY   CR1E HA       500.00 {sd=     0.031}    119.1931
  ANGLe  CY2  CR1E HA       500.00 {sd=     0.031}    120.3261
+ ANGLe  CY2  CR1W HA       500.00 {sd=     0.031}    118.7598
  ANGLe  CY2  OH1  H        500.00 {sd=     0.031}    109.4984
  ANGLe  CY2  OHP  PP       500.00 {sd=     0.031}    120.0000
  ANGLe  CY2  OUF  SUF      500.00 {sd=     0.031}    120.0000
@@ -569,6 +577,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  HA   CH3E HA       500.00 {sd=     0.031}    109.4703
  ANGLe  HA   CH3E SM       500.00 {sd=     0.031}    109.4700
  ANGLe  HA   CH3E SE       500.00 {sd=     0.031}    109.4700 ! for MSE
+ ANGLe  HA   CH3E NH1	   500.00 {sd=     0.031}    120.7000 ! for NME
  ANGLe  HA   CR1E NH1      500.00 {sd=     0.031}    125.8803
  ANGLe  HA   CR1E NR       500.00 {sd=     0.031}    125.1878
  ANGLe  HA   CR1H NH1      500.00 {sd=     0.031}    126.4359
@@ -623,6 +632,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH2G CCIS  NH1      500.00 {sd=     0.031}    116.3225
  ANGLe  CH2G CCIS  O        500.00 {sd=     0.031}    120.6203
  ANGLe  CH2G CCIS  OC       500.00 {sd=     0.031}    118.4971
+ ANGLe  CH3E NH1   H	    500.00 {sd=     0.031}    117.1000 ! for NME
  ANGLe  N    CCIS  O        500.00 {sd=     0.031}    122.0016
  ANGLe  NC2  CCIS  NC2      500.00 {sd=     0.031}    119.7933
  ANGLe  NC2  CCIS  NH1      500.00 {sd=     0.031}    120.1034
@@ -653,6 +663,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLE  OR3  CD28  HD28     500.00  109.500
  ANGLE  OR3  CD28  HD29     500.00  109.500
  ANGLE  OR3  CD28  CD29     500.00  109.500
+
 
 ! Residue PNS
 eval ($pd_v=$pd_x*   760.0) ANGLE P    O3P  CD28 $pd_v 120.000
@@ -769,6 +780,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  HA   HA   C    HA        500.00 {sd=     0.031}    0    -70.4459 !EAB
  IMPRoper  C    CH1E O    NH2       500.00 {sd=     0.031}    0      0.0124
  IMPRoper  C    CH2E O    NH2       500.00 {sd=     0.031}    0      0.0124
+ IMPRoper  C    CH3E O    NH2       500.00 {sd=     0.031}    0      0.0124
  IMPRoper  C    CH2E OC   OC        500.00 {sd=     0.031}    0     -0.0137
  IMPRoper  C    CH2E OC   OH1       500.00 {sd=     0.031}    0     -0.0137
  IMPRoper  C    CH2G OC   OC        500.00 {sd=     0.031}    0      0.0223
@@ -789,7 +801,9 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  C5   NH1  CRHH NR        500.00 {sd=     0.031}    0     -0.0660
  IMPRoper  C5   NR   CRH  NH1       500.00 {sd=     0.031}    0      0.0250
  IMPRoper  C5W  CH1E HA   HA        500.00 {sd=     0.031}    0    -70.0142
+ IMPRoper  C5W  CH2E HA   HA        500.00 {sd=     0.031}    0    -70.0142
  IMPRoper  C5W  CW   CR1E CR1E      500.00 {sd=     0.031}    0   -179.9506
+ IMPRoper  C5W  CW   CR1E CY2       500.00 {sd=     0.031}    0   -179.9506
  IMPRoper  C5W  CW   CW   CR1W      500.00 {sd=     0.031}    0    179.9618
  IMPRoper  CF   CH1E HA   HA        500.00 {sd=     0.031}    0    -70.0169
  IMPRoper  CF   CR1E CR1E CR1E      500.00 {sd=     0.031}    0      0.0069
@@ -807,6 +821,9 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CH2E C    NH1  CH2G      500.00 {sd=     0.031}    0   -179.9916 !for iso-peptidebond with GLY (AB 2015-10)
  IMPRoper  CH1E C    NH1  CH1E      500.00 {sd=     0.031}    0   -180.0067
  IMPRoper  CH1E C    NH1  CH2E      500.00 {sd=     0.031}    0   -180.0067
+ IMPRoper  CH1E C    NH1  CH3E      500.00 {sd=     0.031}    0   -180.0067 ! for NME
+ IMPRoper  HA  	HA   CH3E NH1 	    500.00 {sd=     0.031}    0    35.2640  ! for NME
+ IMPRoper  CH2G C    NH1  CH3E      500.00 {sd=     0.031}    0   -180.0067 ! for NME
  IMPRoper  CH1E C    NH1  CH2G      500.00 {sd=     0.031}    0   -180.0018
  IMPRoper  CH1E C    NH2  H         500.00 {sd=     0.031}    0      0.0000 !c
  IMPRoper  CH1E C    NH1  H         500.00 {sd=     0.031}    0      0.0000 !c
@@ -820,16 +837,21 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CH1E CH1E HA   HA        500.00 {sd=     0.031}    0    -69.6639
  IMPRoper  CH1P CH1E HA   HA        500.00 {sd=     0.031}    0    -69.6639
  IMPRoper  CH2E C    N    HA        500.00 {sd=     0.031}    0     67.7957
+ IMPRoper  CH2E C    NH1  H         500.00 {sd=     0.031}    0      0.0000 !c
  IMPRoper  CH2E N    C    HA        500.00 {sd=     0.031}    0     67.7957 ! d-amino acid
  IMPRoper  CH2E CCIS N    HA        500.00 {sd=     0.031}    0     67.7957 ! cis pept
  IMPRoper  CH2E N    CCIS HA        500.00 {sd=     0.031}    0     67.7957 ! cis pept
  IMPRoper  CH2E C    NH1  HA        500.00 {sd=     0.031}    0     66.1640 ! d-amino acid
  IMPRoper  CH2E NH1  C    HA        500.00 {sd=     0.031}    0     66.1640
+ IMPRoper  CH2E NH1  HA   HA        500.00 {sd=     0.031}    0    -70.8745
+ IMPRoper  CH2E C    NH1  HA        500.00 {sd=     0.031}    0     66.1640
  IMPRoper  CH2E C    NH1  CH1E      500.00 {sd=     0.031}    0   -180.0067
+ IMPRoper  CH2E C    NH1  CH2E      500.00 {sd=     0.031}    0   -180.0067
  IMPRoper  CH2E NH1  C    CH1E      500.00 {sd=     0.031}    0   -180.0067 ! d-amino acid
  IMPRoper  CH2E CCIS NH1  HA        500.00 {sd=     0.031}    0     66.1640
  IMPRoper  CH2E NH1  CCIS HA        500.00 {sd=     0.031}    0     66.1640 ! d-amino acid
  IMPRoper  CH2E C    NH2  H         500.00 {sd=     0.031}    0      0.0000
+ IMPRoper  CH2E H    C    NH2       500.00 {sd=     0.031}    0      0.0032
  IMPRoper  CH2E C    NH3  HA        500.00 {sd=     0.031}    0     66.3265
  IMPRoper  CH2E NH3  C    HA        500.00 {sd=     0.031}    0     66.3265
  IMPRoper  CH2E C5W  CW   CW        500.00 {sd=     0.031}    0    179.9679
@@ -881,11 +903,13 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CR1E CR1E CR1E CR1E      500.00 {sd=     0.031}    0     -0.0034
  IMPRoper  CR1E CR1E CR1E HA        500.00 {sd=     0.031}    0    179.9935
  IMPRoper  CR1E CR1E CR1W CR1W      500.00 {sd=     0.031}    0     -0.0413
+ IMPRoper  CR1E CY2  CR1W CR1W      500.00 {sd=     0.031}    0     -0.0413
  IMPRoper  CR1E CR1E CR1W HA        500.00 {sd=     0.031}    0   -179.9535
  IMPRoper  CR1E CR1E CW   CW        500.00 {sd=     0.031}    0     -0.0109
  IMPRoper  CR1E CR1E CY   CR1E      500.00 {sd=     0.031}    0      0.0135
  IMPRoper  CR1E CR1E CY2  CR1E      500.00 {sd=     0.031}    0      0.0133
  IMPRoper  CR1E CR1E CY2  OH1       500.00 {sd=     0.031}    0   -179.9788
+ IMPRoper  CR1W CR1W CY2  OH1       500.00 {sd=     0.031}    0   -179.9788
  IMPRoper  CR1E CR1E CY2  OHP       500.00 {sd=     0.031}    0   -179.9788
  IMPRoper  CR1E CR1E CY2  OUF       500.00 {sd=     0.031}    0   -179.9788
  IMPRoper  CR1E CR1W CR1W CW        500.00 {sd=     0.031}    0      0.0360
@@ -894,6 +918,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CR1E CW   CW   NH1       500.00 {sd=     0.031}    0   -179.9720
  IMPRoper  CR1E CY   CR1E HA        500.00 {sd=     0.031}    0   -179.9985
  IMPRoper  CR1E CY2  CR1E HA        500.00 {sd=     0.031}    0    179.9891
+ IMPRoper  CR1E CY2  CR1W HA        500.00 {sd=     0.031}    0    179.9891
  IMPRoper  CR1E NH1  C5   HA        500.00 {sd=     0.031}    0     -0.0175
  IMPRoper  CR1E NH1  CRH  NR        500.00 {sd=     0.031}    0     -0.0206
  IMPRoper  CR1E NH1  CW   CR1W      500.00 {sd=     0.031}    0   -179.9685
@@ -906,27 +931,35 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CR1H NH1  CRHH NH1       500.00 {sd=     0.031}    0      0.0534
  IMPRoper  CR1H NR   CRHH NH1       500.00 {sd=     0.031}    0      0.0534
  IMPRoper  CR1W CR1E CR1E CW        500.00 {sd=     0.031}    0      0.0275
+ IMPRoper  CR1W CY2  CR1E CW        500.00 {sd=     0.031}    0      0.0275
  IMPRoper  CR1W CR1E CR1E HA        500.00 {sd=     0.031}    0   -179.9902
  IMPRoper  CR1W CR1W CR1E HA        500.00 {sd=     0.031}    0    179.9587
  IMPRoper  CR1W CR1W CW   CW        500.00 {sd=     0.031}    0     -0.0194
  IMPRoper  CR1W CR1W CW   NH1       500.00 {sd=     0.031}    0    179.9546
+ IMPRoper  CR1W CY2  CR1E HA        500.00 {sd=     0.031}    0    179.9891
+ IMPRoper  CR1W CR1W CY2  OH1       500.00 {sd=     0.031}    0   -179.9788
  IMPRoper  CRH  NH1  NR   HA        500.00 {sd=     0.031}    0      0.0429
  IMPRoper  CRH  NR   NH1  HA        500.00 {sd=     0.031}    0     -0.0123
  IMPRoper  CRHH NH1  NH1  HA        500.00 {sd=     0.031}    0      0.0414
  IMPRoper  CRHH NH1  NR   HA        500.00 {sd=     0.031}    0      0.0414
+ IMPRoper  CW   CW   CR1E CY2       500.00 {sd=     0.031}    0      0.0275
  IMPRoper  CW   CW   NH1  H         500.00 {sd=     0.031}    0    179.9788
  IMPRoper  CW   NH1  CR1E HA        500.00 {sd=     0.031}    0   -179.9528
  IMPRoper  CY   CH1E HA   HA        500.00 {sd=     0.031}    0    -70.0662
  IMPRoper  CY   CR1E CR1E CY2       500.00 {sd=     0.031}    0     -0.0270
  IMPRoper  CY   CR1E CR1E HA        500.00 {sd=     0.031}    0   -179.9841
+ IMPRoper  CY2  CR1W CR1W CW        500.00 {sd=     0.031}    0      0.0360
  IMPRoper  CY2  CR1E CR1E HA        500.00 {sd=     0.031}    0    179.9517
+ IMPRoper  CY2  CR1W CR1W HA        500.00 {sd=     0.031}    0    179.9517
  IMPRoper  H    C    CH2E NH1       500.00 {sd=     0.031}    0      0.0051
  IMPRoper  H    C    CH3E NH1       500.00 {sd=     0.031}    0      0.0051
  IMPRoper  H    C5   CRH  NH1       500.00 {sd=     0.031}    0      0.0263
  IMPRoper  H    CR1H CRHH NH1       500.00 {sd=     0.031}    0      0.0000  ! added for doubly protonated HIS, 1/10/12 Pieter Hendrickx
  IMPRoper  H    CR1E CRH  NH1       500.00 {sd=     0.031}    0      0.0000  ! added for doubly protonated HIS, 1/10/12 Pieter Hendrickx
  IMPRoper  H    C5   CRHH NH1       500.00 {sd=     0.031}    0      0.0282
+ IMPRoper  H    H    C    NH1       500.00 {sd=     0.031}    0      0.0032
  IMPRoper  H    H    C    NH2       500.00 {sd=     0.031}    0      0.0032
+ IMPRoper  HA   C    NH1  CH2E      500.00 {sd=     0.031}    0     66.1640
  IMPRoper  HA   CH1E HA   HA        500.00 {sd=     0.031}    0    -66.5692
  IMPRoper  HA   CH2E HA   HA        500.00 {sd=     0.031}    0    -66.5934
  IMPRoper  HA   HA   CH1E OH1       500.00 {sd=     0.031}    0    -69.8494
@@ -944,7 +977,8 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  HA   HA   CH2E SE        500.00 {sd=     0.031}    0    -72.4655 ! for MSE
  IMPRoper  HA   HA   CH2P N         500.00 {sd=     0.031}    0    -72.1561
  IMPRoper  HA   HA   CH1P N         500.00 {sd=     0.031}    0    -72.1561
- IMPRoper  OH1  HA   CH2P N         500.00 {sd=     0.031}    0    -66.1521
+ IMPRoper  CY   CR1E CR1E HA        500.00 {sd=     0.031}    0   -179.9841
+ IMPRoper  O    C    NH1  H         500.00 {sd=     0.031}    0   -179.9841
  IMPRoper  OH1  HA   CH1P N         500.00 {sd=     0.031}    0    -66.1521
  IMPRoper  OHP  HA   CH2P N         500.00 {sd=     0.031}    0    -66.1521
  IMPRoper  OHP  HA   CH1P N         500.00 {sd=     0.031}    0    -66.1521
@@ -1034,12 +1068,11 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  CH2P CCIS NH1  CH2P      500.00   0      0.0000 
 
 ! added impropers for Arg planarity to reduce chances of reaching singularity, ATB 8/12/10
-improper CH2E    NH1    C  NC2     500.0       0       0.0 ! omega torsion angle for ARG and to maintain proper NH1/NH2 stereochemistry
-improper C     NC2    NC2  NH1     500.0       0       0.0 
-improper NH1    C     NC2  HC      100.0       2     180.0 ! ARG -c-nh2 dihdedral angle 
+ improper CH2E    NH1    C  NC2     500.0       0       0.0 ! omega torsion angle for ARG and to maintain proper NH1/NH2 stereochemistry
+ improper C     NC2    NC2  NH1     500.0       0       0.0 
+ improper NH1    C     NC2  HC      100.0       2     180.0 ! ARG -c-nh2 dihdedral angle 
 
 ! Residue PNS
-
 eval ($pd_v=$pd_x*   160.1) IMPR CD28 O3P  HD28 HD29 $pd_v 0  35.264
 eval ($pd_v=$pd_x*   160.1) IMPR CD29 CD28 CD30 CD31 $pd_v 0  35.264
 eval ($pd_v=$pd_x*   160.1) IMPR CD30 CD29 HD31 HD32 $pd_v 0  35.264
@@ -1056,7 +1089,6 @@ eval ($pd_v=$pd_x*   160.1) IMPR CD43 CD42 HD44 HD45 $pd_v 0  35.264
 
 
 ! Residue DRG
-
 eval ($pd_v=$pd_x*   800.0) IMPR  CHAO  CHAS  CHAI  CHAJ $pd_v 0   0.000
 eval ($pd_v=$pd_x*   800.0) IMPR  CH_Y  CHA   OH_Y  OHXT $pd_v 0   0.000
 eval ($pd_v=$pd_x*   400.0) IMPR  CHAS  CHAC  NHAQ  CHAD $pd_v 0  35.264
@@ -1088,6 +1120,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  NH1  CH1E CH2E C      2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E C5     2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E C5W    2.00     3  0.0000
+ DIHEdral  NH1  CH2E CH2E C5W    2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E CF     2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E CH1E   2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E CH2E   2.00     3  0.0000
@@ -1124,6 +1157,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 ! CR3-CR2 (Planar) sidechain dihedrals (modified 09-MAR-00)
 
  DIHEdral  CR1E C5W  CH2E CH1E   1.00     2  0.0000 !Trp
+ DIHEdral  CW   C5W  CH2E CH2E   1.00     2  0.0000 !Qsr
  DIHEdral  CR1E CF   CH2E CH1E   1.00     2  0.0000 !Phe
  DIHEdral  NH1  C5   CH2E CH1E   0.60     1  0.0000 !His
  DIHEdral  CR1H C5   CH2E CH1E   0.80     2  0.0000 !His
@@ -1131,6 +1165,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  CR1E C5   CH2E CH1E   0.80     2  0.0000 !His
  DIHEdral  CH1E CH2E CY   CR1E   1.00     2  0.0000 !Tyr
  DIHEDral  CR1E CY2  OH1  H      2.00     2  90.000 !Tyr
+ DIHEDral  CR1W CY2  OH1  H      2.00     2  90.000 !Qsr
  DIHEDral  CR1E CY2  OHP  PP     2.00     2  90.000 !Ptr,Typ
  DIHEDral  CR1E CY2  OUF  SUF    2.00     2  90.000 !Tys
  DIHEdral  CH2E CH2E NH1  C      2.00     1  0.0000 !Arg 
@@ -1149,6 +1184,9 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  HA   CH3E CH1E CH2E   1.00     3  0.0000 !Leu  
  DIHEdral  HA   CH3E SM   CH2E   1.00     3  0.0000 !Met 
  DIHEdral  HA   CH3E SE   CH2E   1.00     3  0.0000 !MSE
+
+ ! added by M. Reau 01-06-21
+ DIHEdral  HA   CH3E NH1  H      1.00     3  0.0000 !NME
 
  ! added by Aart Nederveen July 3 2003
  DIHEdral  HA   CH3E CH1E CCIS      1.00     3  0.0000 !Ala
@@ -1781,6 +1819,7 @@ END
  NONBonded  SF      0.250    3.550       0.031    3.550 !same as other S
  NONBonded  FS      0.010    2.270       0.010    2.270 !taken from FE
 
+
  NBFIX      H   H      14.013   1.67074      14.013   1.67074
  NBFIX      H   HA    277.278   4.07473     277.278   4.07473
  NBFIX      H   HC     14.013   1.67074      14.013   1.67074
@@ -1924,15 +1963,15 @@ END
  NBFIx  H    NR         44.200        1.000          44.200        1.000
  NBFIx  H    O          44.200        1.000          44.200        1.000
  NBFIx  H    OC         44.200        1.000          44.200        1.000
- NBFIx  H    OH1         44.200        1.000          44.200        1.000
+ NBFIx  H    OH1        44.200        1.000          44.200        1.000
  NBFIx  HC   NR         44.200        1.000          44.200        1.000
  NBFIx  HC   O          44.200        1.000          44.200        1.000
  NBFIx  HC   OC         44.200        1.000          44.200        1.000
- NBFIx  HC   OH1         44.200        1.000          44.200        1.000
+ NBFIx  HC   OH1        44.200        1.000          44.200        1.000
 
  end if
 
-!------------------------------------------------------------------
 
 set message=$old_message echo=$old_echo end
+
 

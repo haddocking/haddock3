@@ -3,7 +3,7 @@
 !    including neighboring residues of residues making contacts
 !
 ! ***********************************************************************
-! * Copyright 2003-2018 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
 ! * All rights reserved.                                                *
 ! * This code is part of the HADDOCK software and governed by its       *
 ! * license. Please see the LICENSE file that should have been included *
@@ -24,10 +24,7 @@ for $id in id (tag and attr store5 >0 and not ((resn WAT or resn HOH or resn TIP
     evaluate ($inres = decode($result))
     evaluate ($preres = $inres)
     evaluate ($nexres = $inres)
-    if ($iteration = 1) then
-      evaluate ($preres = $preres - 1)
-!      evaluate ($nexres = $nexres + 1)
-    end if
+    evaluate ($preres = $preres - 1)
     do (store6 = $nchain1) (resid $preres and segid $Toppar.prot_segid_$nchain1)
     do (store6 = $nchain1) (resid $nexres and segid $Toppar.prot_segid_$nchain1)
 end loop flexres1

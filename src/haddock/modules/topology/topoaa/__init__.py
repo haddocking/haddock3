@@ -75,8 +75,8 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         models = []
-        for i, molecule in enumerate(molecules):
-            log.info(f"{i + 1} - {molecule.file_name}")
+        for i, molecule in enumerate(molecules, start=1):
+            log.info(f"{i} - {molecule.file_name}")
 
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_name.name)

@@ -15,8 +15,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        submodules: recursive
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2.2.2
@@ -28,20 +26,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install coverage[toml] tox
 
-    - name: Install FCC
-      run: |
-        pwd
-        ls -lsa
-        mkdir bin
-        touch bin/cns
-        cd src/fcc/src
-        chmod u+x Makefile
-        ./Makefile 2>%1 >/dev/null || true
-        cd -
-
-
     - name: Test
-      if: always()
       run: tox -e py39
 
     # from https://github.com/codecov/codecov-action

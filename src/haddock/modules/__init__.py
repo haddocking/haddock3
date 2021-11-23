@@ -106,6 +106,10 @@ class BaseHaddockModule(ABC):
         """
         return
 
+    def evaluate_expected(self, structure_list, weights, topologies):
+        """Evaluate expected models."""
+        return evaluate_expected(structure_list, weights, topologies, self.path)
+
     def finish_with_error(self, message=""):
         """Finish with error message."""
         if not message:
@@ -145,3 +149,24 @@ def working_directory(path):
         yield
     finally:
         os.chdir(prev_cwd)
+
+
+def evaluate_expected(structure_list, weights, topologies, path):
+    """Calculate haddock score for expected structures."""
+    not_found = [model for model in structure_list if not model.exists()]
+    if not_found:
+        # Check for generated output,
+        # fail if not all expected files are found
+        self.finish_with_error(f"Several files were not generated: {not_found}")
+
+    expected = [
+        PDBFile(
+            model,
+            path=path,
+            score=HaddockModel(model).calc_haddock_score(**weights),
+            topology=topologies,
+            )
+        for model in structure_list
+        ]
+
+    return expected

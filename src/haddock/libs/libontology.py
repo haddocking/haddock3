@@ -67,11 +67,13 @@ class ModuleIO:
                 self.input.extend(persistent)
             else:
                 self.input.append(persistent)
-        else:
+        elif mode == "o":
             if isinstance(persistent, list):
                 self.output.extend(persistent)
             else:
                 self.output.append(persistent)
+        else:
+            raise ValueError(f'`mode` got an unexpected value: {mode}')
 
     def save(self, path, filename=MODULE_IO_FILE):
         """Save Input/Output needed files by this module to disk."""

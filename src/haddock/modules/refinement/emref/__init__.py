@@ -137,25 +137,11 @@ class HaddockModule(BaseHaddockModule):
             ('w_vdw_2', 'w_elec_2', 'w_desolv_2', 'w_air_2', 'w_bsa_2')
         weights = {e: self.params[e] for e in _weight_keys}
 
-        expected = []
-        not_found = []
-        for model in refined_structure_list:
-            if not model.exists():
-                not_found.append(model.name)
-
-            haddock_score = \
-                HaddockModel(model).calc_haddock_score(**weights)
-
-            pdb = PDBFile(model, path=self.path)
-            pdb.score = haddock_score
-            pdb.topology = topologies
-            expected.append(pdb)
-
-        if not_found:
-            # Check for generated output,
-            # fail if not all expected files are found
-            self.finish_with_error("Several files were not generated:"
-                                   f" {not_found}")
+        expected = self.evaluate_expected(
+            refined_structure_list,
+            weights,
+            topologies,
+            )
 
         # Save module information
         io = ModuleIO()

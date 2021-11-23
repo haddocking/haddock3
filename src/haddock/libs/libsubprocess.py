@@ -2,6 +2,7 @@
 import os
 import shlex
 import subprocess
+from pathlib import Path
 
 from haddock import toppar_path as global_toppar
 from haddock.core.defaults import cns_exec
@@ -91,7 +92,7 @@ class CNSJob:
         self.output_file = output_file
         self.cns_folder = cns_folder
         self.modpath = modpath
-        self.config_path = config_path
+        self.config_path = Path(config_path).parent
 
         self.toppar = toppar or global_toppar
         self.cns_exec = cns_exec
@@ -120,11 +121,12 @@ class CNSJob:
                 open(self.output_file, 'w+') as outf:
 
             env = {
-                'MODDIR': self.modpath,
-                'MODULE': self.cns_folder,
-                'RUN': self.config_path,
-                'TOPPAR': self.toppar,
+                'MODDIR': str(self.modpath),
+                'MODULE': str(self.cns_folder),
+                'RUN': str(self.config_path),
+                'TOPPAR': str(self.toppar),
                 }
+            print(env)
             p = subprocess.Popen(
                 self.cns_exec,
                 stdin=inp,

@@ -3,19 +3,15 @@
 ## 1.1 Clone this repository:
 
 ```bash
-git clone --recursive https://github.com/haddocking/haddock3.git
+git clone https://github.com/haddocking/haddock3.git
 cd haddock3
-cd src/fcc/src
-chmod u+x Makefile
-./Makefile
-cd -
 ```
 
 ## 1.2 Create a virtual environment with Python 3.8+ and install dependencies:
 ### with `venv`
 
 ```bash
-virtualenv-3.8 venv
+virtualenv-3.9 venv
 source venv/bin/activate
 pip install -r requirements.txt
 python setup.py develop --no-deps
@@ -45,7 +41,7 @@ ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe 
 In the `github` folder of `haddock3` run:
 
 ```bash
-git pull --recurse-submodules
+git pull
 ```
 
 This will pull the latest changes to your local folder and because you

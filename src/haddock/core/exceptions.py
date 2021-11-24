@@ -19,6 +19,12 @@ class ModuleError(HaddockError):
     pass
 
 
+class MoleculeError(HaddockError):
+    """Error in a HADDOCK3 module."""
+
+    pass
+
+
 class StepError(HaddockError):
     """Error in a HADDOCK3 workflow step."""
 

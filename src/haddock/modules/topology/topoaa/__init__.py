@@ -1,5 +1,4 @@
 """Create and manage CNS all-atom topology."""
-import os
 from pathlib import Path
 
 from haddock import log
@@ -70,6 +69,9 @@ class HaddockModule(BaseHaddockModule):
         super().run(params)
 
         molecules = make_molecules(molecules)
+
+        # corrects errors in the input PDB files
+        # we can use this space to correct any errors nicely with pdb-tools
         clean_chainID_segID(molecules)
 
         # Pool of jobs to be executed by the CNS engine
@@ -81,8 +83,7 @@ class HaddockModule(BaseHaddockModule):
 
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_path.name)
-            step_molecule_path.write_text(os.linesep.join(molecule.lines))
-            #shutil.copyfile(molecule.file_name, step_molecule_path)
+            step_molecule_path.write_text(''.join(molecule.lines))
 
             # Split models
             log.info(f"Split models if needed for {step_molecule_path}")

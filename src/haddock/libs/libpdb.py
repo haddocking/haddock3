@@ -12,6 +12,24 @@ from haddock.libs.libutil import get_result_or_same_in_list
 from haddock.modules import working_directory
 
 
+slc_record = slice(0, 6)
+slc_serial = slice(6, 11)
+slc_name = slice(12, 16)
+slc_altloc = slice(16, 17)
+slc_resname = slice(17, 20)
+slc_chainid = slice(21, 22)
+slc_resseq = slice(22, 26)
+slc_icode = slice(26, 27)
+slc_x = slice(30, 38)
+slc_y = slice(38, 46)
+slc_z = slice(46, 54)
+slc_occ = slice(54, 60)
+slc_temp = slice(60, 66)
+slc_segid = slice(72, 76)
+slc_element = slice(76, 78)
+slc_model = slice(78, 80)
+
+
 def get_supported_residues(haddock_topology):
     """Read the topology file and identify which data is supported."""
     supported = []

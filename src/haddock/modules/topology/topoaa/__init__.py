@@ -1,5 +1,5 @@
 """Create and manage CNS all-atom topology."""
-import shutil
+import os
 from pathlib import Path
 
 from haddock import log
@@ -81,7 +81,7 @@ class HaddockModule(BaseHaddockModule):
 
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_path.name)
-            step_molecule_path.write_text('\n'.join(molecule.lines))
+            step_molecule_path.write_text(os.linesep.join(molecule.lines))
             #shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models

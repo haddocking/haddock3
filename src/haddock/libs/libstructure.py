@@ -3,7 +3,7 @@ import os
 import string
 from pathlib import Path
 
-from pdbtools import pdb_chainxseg, pdb_segxchain, pdb_chain
+from pdbtools import pdb_chainxseg, pdb_segxchain, pdb_chain, pdb_tidy
 
 
 slc_record = slice(0, 6)
@@ -86,14 +86,19 @@ def clean_chainID_segID(molecules):
 
     for mol in molecules:
         if not mol.chainid and mol.segid:
-            mol.lines = list(pdb_segxchain(mol.lines))
+            lines = pdb_segxchain(mol.lines)
 
         elif mol.chainid and not mol.segid:
-            mol.lines = list(pdb_chainxseg(mol.lines))
+            lines = pdb_chainxseg(mol.lines)
 
         elif not mol.chainid and not mol.segid:
             _chains = pdb_chain.run(mol.lines, remaining_chains.pop())
-            mol.lines = list(pdb_chainxseg.run(_chains))
+            lines = pdb_chainxseg.run(_chains)
 
         elif mol.chainid != mol.segid:
             raise ValueError('ChainID differs from segID')
+
+        else:
+            continue
+
+        mol.lines = list(pdb_tidy.run(lines))

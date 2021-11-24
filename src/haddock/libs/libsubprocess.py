@@ -126,7 +126,7 @@ class CNSJob:
                 'RUN': str(self.config_path),
                 'TOPPAR': str(self.toppar),
                 }
-            print(env)
+
             p = subprocess.Popen(
                 self.cns_exec,
                 stdin=inp,

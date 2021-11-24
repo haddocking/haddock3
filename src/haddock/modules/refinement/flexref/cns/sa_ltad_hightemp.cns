@@ -45,7 +45,7 @@ restraints dihedral scale $Data.dihedrals_hot end
 evaluate ($reassign = TRUE)
 
 if ($Data.scaling eq TRUE) then
-    inline @RUN:set_noe_scale.cns
+    inline @MODULE:set_noe_scale.cns
 end if
 
 noe
@@ -55,7 +55,7 @@ noe
 end
 
 evaluate ($kinter = $SaProtocol.inter_init_rigid)
-inline @RUN:scale_inter.cns
+inline @MODULE:scale_inter.cns
 
 dyna tors
     reassign $reassign

@@ -65,10 +65,10 @@ define(
 {===>} dbreak_cutoff=4.5;
 
 {* file containing patches to delete peptide links *}
-{===>} prot_break_infile="RUN:toppar/protein_break.top";
+{===>} prot_break_infile="TOPPAR:protein_break.top";
 
 {* file containing patches to delete nucleic acid links *}
-{===>} dna_break_infile="RUN:toppar/dna_break.top";
+{===>} dna_break_infile="TOPPAR:dna_break.top";
 
 {======================= automatic disulphide bonds ========================}
 
@@ -147,76 +147,76 @@ define(
 {================== protein topology and parameter files ===================}
 
 {* protein topology file *}
-{===>} prot_topology_infile="RUN:toppar/protein-allhdg5-4.top";
+{===>} prot_topology_infile="TOPPAR:protein-allhdg5-4.top";
 
 {* protein linkage file *}
-{===>} prot_link_infile="RUN:toppar/protein-allhdg5-4-noter.link";
+{===>} prot_link_infile="TOPPAR:protein-allhdg5-4-noter.link";
 
 {* protein parameter file *}
-{===>} prot_parameter_infile="RUN:toppar/protein-allhdg5-4.param";
+{===>} prot_parameter_infile="TOPPAR:protein-allhdg5-4.param";
 
 {================ nucleic acid topology and parameter files =================}
 
 {* nucleic acid topology file *}
-{===>} nucl_topology_infile="RUN:toppar/dna-rna-allatom-hj-opls-1.3.top";
+{===>} nucl_topology_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.top";
 
 {* nucleic acid linkage file *}
-{* use RUN:/toppar/dna-rna-pho.link for 5'-phosphate *}
-{===>} nucl_link_infile="RUN:/toppar/dna-rna-1.3.link";
+{* use TOPPAR:toppar/dna-rna-pho.link for 5'-phosphate *}
+{===>} nucl_link_infile="TOPPAR:dna-rna-1.3.link";
 
 {* nucleic acid parameter file *}
-{===>} nucl_parameter_infile="RUN:/toppar/dna-rna-allatom-hj-opls-1.3.param";
+{===>} nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param";
 
 {================= carbohydrate topology and parameter files ===============}
 
 {* carbohydrate topology file *}
-{===>} carbo_topology_infile="RUN:/toppar/carbohydrate.top";
+{===>} carbo_topology_infile="TOPPAR:carbohydrate.top";
 
 {* carbohydrate parameter file *}
-{===>} carbo_parameter_infile="RUN:/toppar/carbohydrate.param";
+{===>} carbo_parameter_infile="TOPPAR:carbohydrate.param";
 
 {================= solvent topology and parameter files ====================}
 
 {* solvent topology file *}
-{===>} solv_topology_infile="RUN:/toppar/water-allhdg5-4.top";
+{===>} solv_topology_infile="TOPPAR:water-allhdg5-4.top";
 
 {* solvent parameter file *}
-{===>} solv_parameter_infile="RUN:/toppar/water-allhdg5-4.param";
+{===>} solv_parameter_infile="TOPPAR:water-allhdg5-4.param";
 
 {================= cofactor topology and parameter files ===================}
 
 {* co-factor topology file *}
-{===>} cofac_topology_infile="RUN:/toppar/ligand.top";
+{===>} cofac_topology_infile="TOPPAR:ligand.top";
 
 {* co-factor linkage file *}
-{===>} cofac_link_infile="RUN:toppar/ligand.pep";
+{===>} cofac_link_infile="TOPPAR:ligand.pep";
 
 {* co-factor parameter file *}
-{===>} cofac_parameter_infile="RUN:/toppar/ligand.param";
+{===>} cofac_parameter_infile="TOPPAR:ligand.param";
 
 {================= known ligands topology and parameter files ==============}
 
 {* ligands topology file *}
-{===>} ligands_topology_infile="RUN:/toppar/fragment_probes.top";
+{===>} ligands_topology_infile="TOPPAR:fragment_probes.top";
 
 {* ligands parameter file *}
-{===>} ligands_parameter_infile="RUN:/toppar/fragment_probes.param";
+{===>} ligands_parameter_infile="TOPPAR:fragment_probes.param";
 
 {===================== ion topology and parameter files ====================}
 
 {* ion topology file *}
-{===>} ion_topology_infile="RUN:/toppar/ion.top";
+{===>} ion_topology_infile="TOPPAR:ion.top";
 
 {* ion parameter file *}
-{===>} ion_parameter_infile="RUN:/toppar/ion.param";
+{===>} ion_parameter_infile="TOPPAR:ion.param";
 
 {===================== heme topology and parameter files ====================}
 
 {* heme topology file *}
-{===>} heme_topology_infile="RUN:/toppar/hemes-allhdg.top";
+{===>} heme_topology_infile="TOPPAR:hemes-allhdg.top";
 
 {* heme parameter file *}
-{===>} heme_parameter_infile="RUN:/toppar/hemes-allhdg.param";
+{===>} heme_parameter_infile="TOPPAR:hemes-allhdg.param";
 
 {===================== default number of histidines for patching ===========}
 
@@ -381,7 +381,7 @@ end if
 ! patch clys refe=1=(resid 72) refe=2=(resid 148) end
 
 ! N-linked glycosylation patches
-inline @RUN:bondglycans.cns
+inline @MODULE:bondglycans.cns
 
 if ($delenph = true) then
     delete sele=(name H* and attr charge = 0) end
@@ -402,11 +402,11 @@ else
     set message=off echo=off end
 end if
 
-inline @RUN:/build-missing.cns
+inline @MODULE:build-missing.cns
 
 if ( &auto_break = true ) then
-    inline @RUN:prot_break.cns
-    inline @RUN:dna_break.cns
+    inline @MODULE:prot_break.cns
+    inline @MODULE:dna_break.cns
 end if
 
 
@@ -547,12 +547,12 @@ end if ! check for cyclic peptide
 
 ! check for covalently-linked hemeC
 
-inline @RUN:covalheme.cns
+inline @MODULE:covalheme.cns
 
 
 ! check for covalently-linked Acetylated Nter to CYS
 
-inline @RUN:coval-ace-cys.cns
+inline @MODULE:coval-ace-cys.cns
 
 evaluate ($ironclus=0)
  
@@ -700,12 +700,12 @@ end if
 
 delete selection=( &atom_delete ) end
 
-inline @RUN:build-missing.cns
+inline @MODULE:build-missing.cns
 
 !check for histidine protonation state if auto mode on
 !but only for the first model
 if ($autohis = true) then
-    inline @RUN:auto-his.cns
+    inline @MODULE:auto-his.cns
 end if
 
 energy end
@@ -796,7 +796,7 @@ do (segid = "    ") (all)
 do (segid = $prot_segid_1) (all)
 
 write structure output=$output_psf_filename end
-write coordinates output=$output_pdb_filename end
+write coordinates format=pdbo output=$output_pdb_filename end
 
 display OUTPUT: $output_pdb_filename
 display OUTPUT: $output_psf_filename

@@ -105,7 +105,7 @@ while ($i_cool < $ncycle) loop cool
     end
 
     !scale intermolecular interactions:
-    inline @RUN:scale_inter.cns
+    inline @MODULE:scale_inter.cns
     evaluate ($kinter = $kinter + $interstep)
 
     dyna tors

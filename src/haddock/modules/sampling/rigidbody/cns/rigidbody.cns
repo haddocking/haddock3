@@ -279,7 +279,7 @@ evaluate ($refine.keepwater = false)
 
 !==================================================================!
 
-@RUN:read_param.cns
+@MODULE:read_param.cns
 
 igroup
     interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
@@ -316,8 +316,8 @@ do (refz=z) (all)
 {* Read the distance restraints ================================ *}
 set seed $seed end
 set message=normal echo=on end
-!inline @RUN:read_data.cns
-inline @RUN:read_noes.cns  ! rigidbody version with only distance restraints support
+!inline @MODULE:read_data.cns
+inline @MODULE:read_noes.cns  ! rigidbody version with only distance restraints support
 
 {* set distance restraint energy flag =========================== *}
 if ($Data.flags.noe  =  TRUE) then
@@ -419,7 +419,7 @@ if ($Data.ranair eq true) then
         nrestraints = 100000     ! allocate space for NOEs
         ceiling 1000
     end
-    @RUN:randomairs.cns
+    @MODULE:randomairs.cns
 
     !Read back in hbond data
     fileexist $hbond_fname end
@@ -444,14 +444,14 @@ if ($Data.ranair eq true) then
     end
 end if
 
-@RUN:symmultimer.cns
+@MODULE:symmultimer.cns
 
 if ($Data.cmrest eq true ) then
-    @RUN:cm-restraints.cns
+    @MODULE:cm-restraints.cns
 end if
 
 if ($Data.surfrest eq true ) then
-    @RUN:surf-restraints.cns
+    @MODULE:surf-restraints.cns
 end if
 
 flag excl ncs end
@@ -471,8 +471,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     ! random placement of molecules
     if ($SaProtocol.randorien eq true) then
-        @RUN:separate.cns
-        @RUN:random_rotations.cns
+        @MODULE:separate.cns
+        @MODULE:random_rotations.cns
     end if
 
     evaluate ($unamb_scale = 1.0)
@@ -492,7 +492,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
     end
 
     evaluate ($kinter = $SaProtocol.inter_rigid)
-    @RUN:scale_inter_mini.cns
+    @MODULE:scale_inter_mini.cns
 
     ! a few rounds of rotational rigid body minimization for each independent chain
     evaluate ($imini = 0)
@@ -613,7 +613,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     end if ! ($Saprotocol.rigidtrans eq true)
 
-    inline @RUN:bestener.cns
+    inline @MODULE:bestener.cns
 
     if ($saprotocol.rotate180 eq true) then
         eval($nchain1 = 0)
@@ -624,8 +624,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
                 while ($nchain2 < $data.ncomponents) loop nloop3
                     eval($nchain2 = $nchain2 + 1)
                     if ($Toppar.shape_$nchain2 eq false) then
-                        @RUN:rotation180.cns
-                        inline @RUN:bestener.cns
+                        @MODULE:rotation180.cns
+                        inline @MODULE:bestener.cns
                     end if
                 end loop nloop3
             end if
@@ -637,7 +637,7 @@ end loop trials
 
 {* ===================== calculate complex internal energy *}
 evaluate ($kinter = 1.0)
-@RUN:scale_intra_only.cns
+@MODULE:scale_intra_only.cns
 
 flag include bond angle dihe impr vdw end
 
@@ -667,7 +667,7 @@ evaluate ($rms_test_noe = 0.0)
 evaluate ($violations_test_noe = 0)
 if ($Data.flags.sym eq true) then
     noe reset nres= 2000000 end
-    @RUN:symmultimer.cns
+    @MODULE:symmultimer.cns
     noe
         scale symm $Data.ksym
     end
@@ -681,7 +681,7 @@ if ($Data.flags.sym eq true) then
     noe reset end
     set message=normal echo=on end
     !read again the NOE data, needed to remove the symmetry restraints
-    @@RUN:read_noes.cns
+    @@MODULE:read_noes.cns
     if ( $log_level = verbose ) then
         set message=normal echo=on end
     else
@@ -722,9 +722,9 @@ flag incl bond angl impr noe end
 
 if ($data.ncomponents > 1) then
     evaluate ($kinter = 1.0)
-    @RUN:scale_inter_final.cns
+    @MODULE:scale_inter_final.cns
 else
-    @RUN:scale_intra_only.cns
+    @MODULE:scale_intra_only.cns
 end if
 
 energy end
@@ -734,7 +734,7 @@ evaluate ($noe = $bestair)
 evaluate ($etot = $etot + $noe)
 
 evaluate ($Data.flags.dihed = false)
-inline @RUN:print_coorheader.cns
+inline @MODULE:print_coorheader.cns
 
 if ($reorient eq true) then
     coor sele=(segid $Toppar.prot_segid_1) orient end

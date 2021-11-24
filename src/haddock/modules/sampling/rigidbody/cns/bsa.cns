@@ -11,7 +11,7 @@
 ! ***********************************************************************
 !
 {====>} {* define ASA-based solvation parameters *}
-inline @RUN:def_solv_param.cns
+inline @MODULE:def_solv_param.cns
 
 {====>} {* buried surface area and desolvation of single chains *}
 evaluate ($nchain1 = 0)

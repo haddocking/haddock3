@@ -336,7 +336,7 @@ evaluate ($whichMD="torsion")
 
 {* Read paramters and set various force field related variables *}
 
-@RUN:read_param.cns
+@MODULE:read_param.cns
 
 parameter
     bond  (resn WAT ) (resn WAT ) 1000 TOKEN
@@ -410,7 +410,7 @@ set seed $seed end
 
 {* Read the distance restraints ================================ *}
 set message=normal echo=on end
-inline @RUN:read_data.cns
+inline @MODULE:read_data.cns
 
 ! random removal of restaints
 if ($Data.noecv eq true) then
@@ -438,7 +438,7 @@ if ($NUMNOE = 0) then
         if ($Data.surfrest eq FALSE) then
             if ($Data.cmrest eq FALSE) then
                 if ($Data.ranair eq FALSE) then
-                    evaluate ($errfile = "RUN:WARNING")
+                    evaluate ($errfile = "MODDIR:WARNING")
                     fileexist $errfile end
                     if ($result eq false) then
                         set display=$errfile end
@@ -482,7 +482,7 @@ if ($Data.ranair eq true) then
         nrestraints = 100000     ! allocate space for NOEs
         ceiling 1000
     end
-    @RUN:contactairs.cns
+    @MODULE:contactairs.cns
 
     !Read back in hbond data
     fileexist $hbond_fname end
@@ -510,41 +510,44 @@ end if
 
 {* set the energy flags ======================================================== *}
 
-inline @RUN:setflags.cns
+inline @MODULE:setflags.cns
 
 
 {* Check for other restraints ================================================== *}
 
-@RUN:symmultimer.cns
+@MODULE:symmultimer.cns
 
 if ($Data.cmrest eq true ) then
-    @RUN:cm-restraints.cns
+    @MODULE:cm-restraints.cns
 end if
 
 ! use contact airs rather than surface restraints at it1
 if ($Data.surfrest eq true ) then
-    @RUN:contactairs.cns
+    @MODULE:contactairs.cns
 end if
 
 if ($Data.dnarest eq true ) then
-    @@$dna_rest_file
+    fileexist $dna_rest_fname end
+    if ($result eq true) then
+        @@$dna_rest_fname
+    end if
 end if
 
 if ($Data.ssdihed eq all ) then
-    @@$protein_ss_rest_all
+    inline @MODULE:protein-ss-restraints-all.cns
 end if
 if ($Data.ssdihed eq alpha ) then
-    @@$protein_ss_restraints_alpha
+    inline @MODULE:protein-ss-restraints-alpha.cns
 end if
 if ($Data.ssdihed eq alphabeta ) then
-    @@$protein_ss_restraints_alpha_beta
+    inline @MODULE:protein-ss-restraints-alpha-beta.cns
 end if
 
 
 {* Check for the presence of ions and add distance restraints / covalent bond == *}
 
-@RUN:restrain-ions.cns
-@RUN:covalions.cns
+@MODULE:restrain-ions.cns
+@MODULE:covalions.cns
 
 
 {* Check first for failed structures =========================================== *}
@@ -575,7 +578,7 @@ energy end
 fix sele=(resn SHA) end
 
 ! define flexible interface
-@RUN:flex_segment_back.cns
+@MODULE:flex_segment_back.cns
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP*)) end
 
 ! energy minimization
@@ -599,10 +602,10 @@ if ($failure eq false) then
 
     if ($SaProtocol.initiosteps > 0) then
         evaluate ($nfletot = 150)
-        inline @RUN:flex_segment.cns
-        @RUN:torsiontop.cns
+        inline @MODULE:flex_segment.cns
+        @MODULE:torsiontop.cns
         eval ($torsiondone = true)
-        @RUN:sa_ltad_hightemp.cns
+        @MODULE:sa_ltad_hightemp.cns
     end if
 
     {* Stage 2 ======================================= rigid body first slow cooling *}
@@ -610,12 +613,12 @@ if ($failure eq false) then
     if ($SaProtocol.cool1_steps > 0) then
         if ($torsiondone ne true) then
             evaluate ($nfletot = 150)
-            inline @RUN:flex_segment.cns
-            @RUN:torsiontop.cns
+            inline @MODULE:flex_segment.cns
+            @MODULE:torsiontop.cns
             eval ($torsiondone = true)
         end if
         evaluate ($SaProtocol.tadfactor = 4)
-        @RUN:sa_ltad_cool1.cns
+        @MODULE:sa_ltad_cool1.cns
     end if
 
     {* Stage 3 ======================================= second slow cooling *}
@@ -626,11 +629,11 @@ if ($failure eq false) then
             dyna tors topo reset end end
         end if
         evaluate ($nfletot = 150)
-        inline @RUN:flex_segment_side.cns
-        @RUN:torsiontop.cns
+        inline @MODULE:flex_segment_side.cns
+        @MODULE:torsiontop.cns
         eval ($torsiondone = true)
         evaluate ($SaProtocol.tadfactor = 1)
-        @RUN:sa_ltad_cool2.cns
+        @MODULE:sa_ltad_cool2.cns
     end if
 
     {* Stage 4 ============================================ third slow cooling *}
@@ -641,11 +644,11 @@ if ($failure eq false) then
             dyna tors topo reset end end
         end if
         evaluate ($nfletot = 150)
-        inline @RUN:flex_segment_back.cns
-        @RUN:torsiontop.cns
+        inline @MODULE:flex_segment_back.cns
+        @MODULE:torsiontop.cns
         eval ($torsiondone = true)
         evaluate ($SaProtocol.tadfactor = 1)
-        @RUN:sa_ltad_cool3.cns
+        @MODULE:sa_ltad_cool3.cns
     end if
     
 end if
@@ -653,7 +656,7 @@ end if
 {* Stage 5 =========================== final minimization *}
 
 ! define flexible segments and fix the remaining of the structure
-@RUN:flex_segment_back.cns
+@MODULE:flex_segment_back.cns
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP* or resn XAN)) end
 
 ! energy minimization
@@ -691,7 +694,7 @@ else
     parameter nbonds eps=$Data.epsilon cdie end end
 end if
 parameter nbonds ? end end
-inline @RUN:calc_free-ene.cns
+inline @MODULE:calc_free-ene.cns
 
 fix sele=(not all) end
 
@@ -706,7 +709,7 @@ evaluate ($kinter = 1.0)
 flag include bond angle dihe impr vdw end
 energy end
 
-@RUN:scale_intra_only.cns
+@MODULE:scale_intra_only.cns
 
 evaluate ($elec = 0.0)
 evaluate ($eintcplx = 0.0)
@@ -724,9 +727,9 @@ evaluate ($cdih=0.0)
 flag incl noe cdih end
 if ($Data.ncomponents > 1) then
     evaluate ($kinter = 1.0)
-    @RUN:scale_inter_final.cns
+    @MODULE:scale_inter_final.cns
 else
-    @RUN:scale_intra_only.cns
+    @MODULE:scale_intra_only.cns
 end if
 
 noe
@@ -745,7 +748,7 @@ evaluate ($zhar = 0.0)
 if ($Data.flags.sym  eq true) then
     ! calculatee first the symmetry energy
     noe reset nres= 1200000 end
-    @RUN:symmultimer.cns
+    @MODULE:symmultimer.cns
     noe
         scale symm $Data.ksym
     end
@@ -761,7 +764,7 @@ if ($Data.flags.sym  eq true) then
     noe reset end
     set message=normal echo=on end
     !read back all the distance restraints:
-    @@RUN:read_noes.cns
+    @@MODULE:read_noes.cns
 end if
 
 print threshold=0.3 noe
@@ -784,7 +787,7 @@ evaluate ($etot = $ener - $noe)
 evaluate ($noe = $eair)
 evaluate ($etot = $etot + $noe)
 
-inline @RUN:print_coorheader.cns
+inline @MODULE:print_coorheader.cns
 
 
 {* determine whether the final models should be reoriented along their principal *}

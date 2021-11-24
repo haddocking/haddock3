@@ -1,0 +1,410 @@
+!********************************************************!
+!*                                                      *!
+!*               Utrecht University, 2009               *!
+!*            M. Krzeminski, A.M.J.J Bomvin             *!
+!*                                                      *!
+!********************************************************!
+
+SET
+        ECHO false
+	MESSage false
+END
+
+!********************************************************!
+!*                                                      *!
+!*                    NON-BONDS                         *!
+!*     The following  parameters might be used with     *!
+!*                                                      *!
+!* NBXMOD    = 5	exclusion list (explicit)       *!
+!* ATOM			atom by atom cutoff             *!
+!* CDIE			normal dielectric constant      *!
+!* EPS       = 1.0	dielectric constant             *!
+!* SHIFt		shifted cut-off option          *!
+!* VSWItch		van der Waals switching         *!
+!* CUTNB     = 8.5	nonbonded interaction cutoff    *!
+!* CTONNB    = 6.5	switching function ON           *!
+!* CTOFNB    = 7.5      switching function OFF          *!
+!* TOLErance = 0.5	Tolerance (CTONB/CTOFNB)        *!
+!* E14FAC    = 0.4	1-4 electrostatic interactions  *!
+!* WMIN      = 1.5	minimum distance for warnings   *!
+!*                                                      *!
+!* Originally, CUTNB was set to 8.0. But errors occured *!
+!* owing to the tolerance and the fact that:            *!
+!*            CUTNB >= CTOFNB + 2*TOLErance             *!
+!*                                                      *!
+!********************************************************!
+!          Atom         eps           sigma       eps(1:4)    sigma(1:4)
+!          Type      (kcal/mol)        (A)       (kcal/mol)       (A)
+!          ------------------------------------------------------------
+NONBonded  CR          0.0903        3.2072        0.0903        3.2072	! Carbon of the ring
+NONBonded  CRF         0.0903        3.2072        0.0903        3.2072	! Carbon of the ring, flat
+NONBonded  CRV         0.0903        3.2072        0.0903        3.2072	! Carbon of the ring, envelope
+NONBonded  C           0.0903        3.2072        0.0903        3.2072	! Carbon of a carbonyl group
+NONBonded  CH1E        0.0903        3.2072        0.0903        3.2072	! Carbon out of the ring, linked to 1 H
+NONBonded  CH2E        0.0903        3.2072        0.0903        3.2072	! Carbon out of the ring, linked to 2 H
+NONBonded  CH3E        0.0903        3.2072        0.0903        3.2072	! Carbon out of the ring, linked to 3 H
+NONBonded  OR          0.1591        2.8509        0.1591        2.8509	! Oxygen of the ring
+NONBonded  ORF         0.1591        2.8509        0.1591        2.8509	! Oxygen of the ring, flat
+NONBonded  ORV         0.1591        2.8509        0.1591        2.8509	! Oxygen of the ring, envelope
+NONBonded  OH1         0.1591        2.8509        0.1591        2.8509	! Oxygen linked to 1 H
+NONBonded  OA          0.1591        2.8509        0.1591        2.8509	! Oxygen in glycosidic bond
+NONBonded  OC          0.1591        2.8509        0.1591        2.8509	! Oxygen in COOH
+NONBonded  O           0.1591        2.8509        0.1591        2.8509	! Oxygen in C=O (keton)
+NONBonded  NH1         0.170         3.250         0.021         3.250	! Nitrogen
+NONBonded  H           0.0045        2.6157        0.0045        2.6157	! Hydrogen
+NONBonded  OT          0.1521        3.1506        0.1521        3.1506	! TIP3P OXYGEN  PARAMETERS, adm jr., NBFIX obsolete
+NONBonded  HT          0.0460        0.4000        0.0460        0.4000	! TIP3P HYDROGEN PARAMETERS, adm jr., NBFIX obsolete
+
+NONBonded  SUF         0.01          3.368         0.01          3.368  ! From ion.param
+NONBonded  OUF         0.01          2.851         0.01          2.851  ! From ion.param
+
+!***************************************************!
+!*                                                 *!
+!*                   TIP3  MODEL                   *!
+!*                                                 *!
+!***************************************************!
+BOND  OT   HT   450.0    0.9572		! from TIPS3P geometry ( SHAKE w/PARAm)
+BOND  HT   HT     0.0    1.5139		! from TIPS3P geometry ( SHAKE w/PARAm)
+ANGLE HT   OT   HT   55.0    104.52	! FROM TIPS3P geometry
+
+
+!***************************************************!
+!*                                                 *!
+!*                      BONDS                      *!
+!*                                                 *!
+!***************************************************!
+BOND CR   CR     1284.0    1.526
+BOND CR   CRF    1284.0    1.526
+BOND CR   C      1342.404  1.52
+BOND CR   CH1E   1284.0    1.516	! Like CC--CC6
+BOND CR   CH2E   1284.0    1.516	! Like CC--CC6
+BOND CR   CH3E   1284.0    1.516	! Like CC--CC6
+BOND CR   OR     1780.2    1.428	! Average of CC--OE, CCE--OE and CCA--OE
+BOND CR   ORF    1780.2    1.428	! Like CR--OR
+BOND CR   ORV    1780.2    1.428	! Like CR--OR
+BOND CR   OH1    2005.8    1.420
+BOND CR   OA     2005.8    1.44		! As for other exocylic OH
+BOND CR   NH1    2631.111  1.45		! As extended atom carbon-N
+BOND CR   H       337.3    1.099
+
+BOND CRF  CRF    1284.0    1.526	! Assumed to be like CR--CR
+BOND CRF  CRV    1284.0    1.526	! Assumed to be like CR--CR
+BOND CRF  C      1342.404  1.52
+BOND CRF  CH1E   1284.0    1.516	! Like CC--CC6
+BOND CRF  CH2E   1284.0    1.516	! Like CC--CC6
+BOND CRF  CH3E   1284.0    1.516	! Like CC--CC6
+BOND CRF  OR     1780.2    1.428	! Really usefull ? 
+BOND CRF  ORF    1780.2    1.428	! Assumed to be like CR--OR
+BOND CRF  ORV    1780.2    1.438	! Assumed to be like CR--OR
+BOND CRF  OH1    2005.8    1.420 
+BOND CRF  OA     2005.8    1.44
+BOND CRF  NH1    2631.111  1.45 
+BOND CRF  H       337.3    1.099 
+
+BOND CRV  C      1342.404  1.52
+BOND CRV  CH1E   1284.0    1.516	! Like CC--CC6
+BOND CRV  CH2E   1284.0    1.516	! Like CC--CC6
+BOND CRV  CH3E   1284.0    1.516	! Like CC--CC6
+BOND CRV  ORF    1780.2    1.438
+BOND CRV  OH1    2005.8    1.420 
+BOND CRV  OA     2005.8    1.44
+BOND CRV  NH1    2631.111  1.45 
+BOND CRV  H       337.3    1.099 
+
+! The following parameters have been retrieved from parallhdg5.3.pro.
+! As the atom involved are exocyclic, such an assumption is possible.
+BOND C    CH1E   1000.0    1.525
+BOND C    CH2E   1000.0    1.516
+BOND C    CH3E   1000.0    1.507
+BOND C    OH1    1000.0    1.340
+BOND C    OC     1000.0    1.249
+BOND C    O      1000.0    1.231
+BOND C    NH1    1000.0    1.329
+BOND CH1E CH1E   1000.0    1.540
+BOND CH1E CH2E   1000.0    1.530
+BOND CH1E CH3E   1000.0    1.521
+BOND CH1E OH1    1000.0    1.433
+BOND CH1E NH1    1000.0    1.458
+BOND CH1E H      1000.0    1.080
+BOND CH2E CH3E   1000.0    1.513
+BOND CH2E OH1    1000.0    1.417
+BOND CH2E OA     2005.8    1.44 	! Like CC6--OA
+BOND CH2E NH1    1000.0    1.460
+BOND CH2E H      1000.0    1.080
+BOND CH3E H      1000.0    1.080
+BOND OH1  H      1000.0    0.960
+BOND NH1  H      1000.0    0.980
+
+! The following parameters have been retrieved from ion.param
+BOND OUF  SUF    1480.0    1.475	! Sulphate group (SO4)
+BOND OH1  SUF    1480.0    1.475        ! Like OUF--SUF
+BOND OUF  H      1000.0    0.960	! Like OH1--H
+BOND NH1  SUF    1480.0    1.62		! Distance taken from Tetrasulfur tetranitride (N4S4)
+
+!***************************************************!
+!*                                                 *!
+!*                     ANGLES                      *!
+!*                                                 *!
+!***************************************************!
+ANGLe CR   CR   CR   380.3    110.40
+ANGLe CR   CR   CRF  380.3    110.40
+ANGLe CR   CR   C    700.0    108.72	! Like C--CC[EA]--CC
+ANGLe CR   CR   CH1E 380.3    112.50	! Like CC--CC--CC6
+ANGLe CR   CR   CH2E 380.3    112.50
+ANGLe CR   CR   CH3E 380.3    112.50
+ANGLe CR   CR   OR   809.5    110.00
+ANGLe CR   CR   ORF  809.5    110.00
+ANGLe CR   CR   OH1  756.8    109.70
+ANGLe CR   CR   OA   809.5    109.70
+ANGLe CR   CR   NH1  650.0    110.0
+ANGLe CR   CR   H     43.04   108.72
+ANGLe CR   CRF  CR   380.3    110.40	! Usefull ?
+ANGLe CR   CRF  CRF  380.3    110.40	! Usefull ?
+ANGLe CR   CRF  CH1E 380.3    112.50	! Like CC--CC--CC6
+ANGLe CR   CRF  CH2E 380.3    112.50
+ANGLe CR   CRF  CH3E 380.3    112.50
+ANGLe CR   CRF  OR   809.5    110.00	! Usefull ?
+ANGLe CR   CRF  OH1  756.8    109.70	! Usefull ?
+ANGLe CR   CRF  H     43.04   108.72	! Usefull ?
+ANGLe CR   C    OC   500.00   118.0611	! Like CH2E--C--OC  in paralhdg5.3.pro
+ANGLe CR   C    OH1  500.00   118.0611	! Like CH2E--C--OC  in paralhdg5.3.pro
+ANGLe CR   C    NH1  500.00   116.1998	! Like CH1E--C--NH1 in paralhdg5.3.pro
+ANGLe CR   CH1E CH1E 500.00   110.3824	! Estimated from CH1E--CH1E--CH2E in paralhdg5.3.pro
+ANGLe CR   CH1E OH1  756.8    111.20 	! Like CC--CC6--OH1
+ANGLe CR   CH1E NH1  500.00   110.4763	! ! Like CH2E--CH1E--NH1 in paralhdg5.3.pro
+ANGLe CR   CH1E H     43.04   108.72	! Like CC--CC6--HA
+ANGLe CR   CH2E CH2E 500.00   110.3824	! Like CH1E--CH1E--CH2E in paralhdg5.3.pro
+ANGLe CR   CH2E NH1  500.00   111.9978	! Like CH2E--CH2E--NH1 in paralhdg5.3.pro
+ANGLe CR   CH2E OH1  756.8    111.20 	! Like CC--CC6--OH1
+ANGLe CR   CH2E OA   809.5    109.70
+ANGLe CR   CH2E H     43.04   108.72	! Like CC--CC6--HA
+ANGLe CR   CH3E H     43.04   108.72	! Like CC--CC6--HA
+ANGLe CR   OR   CR   906.9    112.00
+ANGLe CR   OR   CRF  906.9    112.00	! Usefull ?
+ANGLe CR   OH1  CH1E 906.9    112.00	! Usefull ?
+ANGLe CR   ORF  CR   906.9    112.00
+ANGLe CR   ORV  CR   906.9    112.00
+ANGLe CR   OH1  H     53.62   109.35
+ANGLe CR   OH1  SUF  500.00   120.00	! Like CY2--OUF--SUF from protein-allhdg5-4.param
+ANGLe CR   OA   CR   453.45   117.0	! Like CC--OA--CCE
+ANGLe CR   OA   CRF  453.45   117.0	! Like CC--OA--CCE
+ANGLe CR   OA   CRV  453.45   117.0	! Like CC--OA--CCE
+ANGLe CR   OA   CH2E 453.45   117.0	! To complete with CH1E and CH3E
+ANGLe CR   NH1  C    775.0    121.6541	! Estimated from CC--NH1--C
+ANGLe CR   NH1  H     35.0    119.2489	! Estimated from CC--NH1--H
+ANGLe CR   NH1  SUF  500.00   120.00	! Like CY2--OUF--SUF from protein-allhdg5-4.param
+ANGLe CRF  CR   CH2E 380.3    112.50
+ANGLe CRF  CR   OR   809.5    110.00
+ANGLe CRF  CR   ORF  809.5    110.00
+ANGLe CRF  CR   ORV  809.5    110.00
+ANGLe CRF  CR   OH1  756.8    109.70
+ANGLe CRF  CR   H     43.04   108.72
+ANGLe CRF  CRF  CRF  380.3    110.40
+ANGLe CRF  CRF  CRV  380.3    110.40
+ANGLe CRF  CRF  CH1E 380.3    112.50	! To complete with CH3E
+ANGLe CRF  CRF  CH2E 380.3    112.50
+ANGLe CRF  CRF  C    380.3    112.50
+ANGLe CRF  CRF  ORF  809.5    110.00
+ANGLe CRF  CRF  ORV  809.5    110.00
+ANGLe CRF  CRF  OH1  756.8    109.70
+ANGLe CRF  CRF  OA   809.5    109.70
+ANGLe CRF  CRF  NH1  650.0    110.0
+ANGLe CRF  CRF  H     43.04   108.72
+ANGLe CRF  CRV  CRF  380.3    110.40
+ANGLe CRF  CRV  CH2E 380.3    112.50	! To complete with CH1E and CH2E
+ANGLe CRF  CRV  C    380.3    112.50
+ANGLe CRF  CRV  ORF  809.5    110.00
+ANGLe CRF  CRV  OH1  756.8    109.70
+ANGLe CRF  CRV  OA   809.5    109.70
+ANGLe CRF  CRV  NH1  650.0    110.0
+ANGLe CRF  CRV  H     43.04   108.72
+ANGLe CRF  CH1E CH2E 500.00   110.3824	! Estimated from CH1E--CH1E--CH2E in paralhdg5.3.pro
+ANGLe CRF  CH1E OH1  756.8    111.20 
+ANGLe CRF  CH1E NH1  756.8    111.4875	! Like CH1E--CH1E--NH1 in paralhdg5.3.pro
+ANGLe CRF  CH1E H     43.04   108.72 
+ANGLe CRF  CH2E OH1  756.8    111.20 
+ANGLe CRF  CH2E OA   809.5    109.70
+ANGLe CRF  CH2E H     43.04   108.72 
+ANGLe CRF  ORF  CRF  906.9    112.00
+ANGLe CRF  ORF  CRV  906.9    112.00
+ANGLe CRF  ORV  CRF  906.9    112.00
+ANGLe CRF  OH1  H     53.62   109.35
+ANGLe CRF  OA   CRF  453.45   117.0	! Like CC--OA--CCE
+ANGLe CRF  OA   CRV  453.45   117.0	! Like CC--OA--CCE
+ANGLe CRF  OA   CH2E 453.45   117.0	! To complete with CH1E and CH3E
+ANGLe CRF  NH1  C    775.0    121.6541
+ANGLe CRF  NH1  H     35.0    119.2489
+ANGLe CRF  C    OC   500.00   118.0611	! Like CH2E--C--OC  in paralhdg5.3.pro
+ANGLe CRF  C    OH1  500.00   118.0611	! Like CH2E--C--OC  in paralhdg5.3.pro
+ANGLe CRF  C    NH1  500.00   116.1998	! Like CH1E--C--NH1 in paralhdg5.3.pro
+ANGLe CRV  CRF  CH2E 380.3    112.50	! To complete with CH1E and CH3E
+ANGLe CRV  CRF  C    380.3    112.50
+ANGLe CRV  CRF  ORF  809.5    110.00
+ANGLe CRV  CRF  OH1  756.8    109.70
+ANGLe CRV  CRF  OA   809.5    109.70
+ANGLe CRV  CRF  NH1  650.0    110.0
+ANGLe CRV  CRF  H     43.04   108.72
+ANGLe CRV  C    OC   500.00   118.0611	! Like CH2E--C--OC  in paralhdg5.3.pro
+ANGLe CRV  C    OH1  500.00   118.0611	! Like CH2E--C--OC  in paralhdg5.3.pro
+ANGLe CRV  C    NH1  500.00   116.1998	! Like CH1E--C--NH1 in paralhdg5.3.pro
+ANGLe CRV  CH2E OH1  756.8    111.20 
+ANGLe CRV  CH2E OA   809.5    109.70
+ANGLe CRV  CH2E H     43.04   108.72 
+ANGLe CRV  OH1  H     53.62   109.35
+ANGLe CRV  OA   CH2E 453.45   117.0	! To complete with CH1E and CH3E
+ANGLe CRV  NH1  C    775.0    121.6541
+ANGLe CRV  NH1  H     35.0    119.2489
+ANGLe C    CR   OR   850.0    107.24
+angle C    CR   OH1  700.0    109.5	! A complete guess for SIA O2
+angle C    CR   OA   700.0    109.5	! A complete guess for SIA O2
+ANGLe C    CR   H     43.04   108.72	! Like CC6--CC--HA
+ANGLe C    CRF  ORF  850.0    107.24
+ANGLe C    CRV  ORF  850.0    107.24
+ANGLe C    CRF  ORV  850.0    107.24
+ANGLe C    CH3E H    500.0    109.4726  ! Estimated from CH1E -- CH3E -- HA
+ANGLe C    NH1  CH1E 500.00   121.6541	! From parallhdg5.3.pro
+ANGLe C    NH1  CH2E 500.00   124.1226	! From parallhdg5.3.pro
+ANGLe C    OH1  H    500.0    109.4984	! Estimated from CY2--OH1--H in parallhdg5.3.pro
+ANGLe C    NH1  H    500.0    119.2489
+ANGLe CH1E CR   OR   809.5    107.20	! Like CC6--CC--OE
+ANGLe CH1E CR   H     43.04   108.72	! Like CC6--CC--HA
+ANGLe CH1E CRF  H     43.04   108.72	! Like CC6--CC--HA
+ANGLe CH1E CRF  OR   809.5    107.20	! Like CC6--CC--OE
+ANGLe CH1E CRF  ORF  809.5    107.20	! Like CC6--CC--OE
+ANGLe CH1E CH1E CH2E 500.00   110.3824	! From parallhdg5.3.pro
+ANGLe CH1E CH1E OH1  500.00   109.600	! From parallhdg5.3.pro
+ANGLe CH1E CH1E H    500.00   108.2775	! From parallhdg5.3.pro
+ANGLe CH1E CH2E OH1  500.00   111.0593	! From parallhdg5.3.pro
+ANGLe CH1E CH2E NH1  500.00   111.0593  ! Like CH1E--CH2E--OH1
+ANGLe CH1E CH2E H    500.00   109.2833	! From parallhdg5.3.pro
+ANGLe CH1E NH1  H    500.00   119.2367	! From parallhdg5.3.pro
+ANGLe CH1E OH1  H    500.00   109.5	! From parallhdg5.3.pro
+ANGLe CH2E CR   OR   809.5    107.20 
+ANGLe CH2E CR   ORF  809.5    107.20 
+ANGLe CH2E CR   ORV  809.5    107.20 
+ANGLe CH2E CRF  OR   809.5    107.20 
+ANGLe CH2E CR   OH1  500.00   109.300	! Like CH2E--CH1E--OH1 in parallhdg5.3.pro
+ANGLe CH2E CR   H     43.04   108.72
+ANGLe CH2E CRF  ORF  809.5    107.20
+ANGLe CH2E CRF  ORV  809.5    107.20
+ANGLe CH2E CRV  ORF  809.5    107.20
+ANGLe CH2E CRV  OH1  500.00   109.600	! Like CH1E--CH1E--OH1 From parallhdg5.3.pro
+ANGLe CH2E CRF  H     43.04   108.72
+ANGLe CH2E CRV  H     43.04   108.72
+ANGLe CH2E CH1E OH1  500.00   109.300	! From parallhdg5.3.pro
+ANGLe CH2E CH1E H    500.00   109.2487	! From parallhdg5.3.pro
+ANGLe CH2E NH1  H    500.00   118.0987	! From parallhdg5.3.pro
+ANGLe CH2E OH1  H    500.00   109.4969	! From parallhdg5.3.pro
+ANGLe CH2E OH1  SUF  500.00   120.00	! Like CY2--OUF--SUF from protein-allhdg5-4.param
+ANGLe CH3E C    NH1  500.0    116.1998	! Estimated from CH1E--C--NH1 in parallhdg5.3.pro
+ANGLe CH3E C    O    500.0    120.8258  ! Estimated from CH1E--C--O in parallhdg5.3.pro
+ANGLe OR   CR   H     45.16   107.24
+ANGLe OR   CR   OH1  925.6    108.0
+ANGLe OR   CR   OA   925.6    108.0
+ANGLe OR   CR   NH1  925.6    108.0
+ANGLe OR   CRF  OH1  925.6    108.0
+ANGLe OR   CRF  H     45.16   107.24
+ANGLe ORF  CR   OH1  925.6    108.0
+ANGLe ORF  CR   H     45.16   107.24
+ANGLe ORF  CRF  OH1  925.6    108.0
+ANGLe ORF  CRF  OA   925.6    108.0
+ANGLe ORF  CRF  H     45.16   107.24
+ANGLe ORF  CRV  OH1  925.6    108.0
+ANGLe ORF  CRV  NH1  925.6    108.0
+ANGLe ORF  CRV  OA   925.6    108.0
+ANGLe ORF  CRV  H     45.16   107.24
+ANGLe ORV  CRF  OH1  925.6    108.0
+ANGLe ORV  CRF  OA   925.6    108.0
+ANGLe ORV  CRF  H     45.16   107.24
+ANGLe OH1  CR   H     45.89   109.89
+ANGLe OH1  CRF  H     45.89   109.89
+ANGLe OH1  CRV  H     45.89   109.89
+ANGLe OH1  CH1E H    500.00   108.6930	! From parallhdg5.3.pro
+ANGLe OH1  CH2E H     45.89   109.89	! To complete with CH3E
+ANGLe OH1  C    OC   500.00   123.3548	! Like OC--C--OC in paralhdg5.3.pro
+ANGLe OH1  SUF  OUF  337.40   109.400   ! Like OUF--SUF--OUF
+ANGLe OA   CR   H     45.89   109.89
+ANGLe OA   CRF  H     45.89   109.89
+ANGLe OA   CRV  H     45.89   109.89
+ANGLe OA   CH2E H     45.89   109.89	! To complete with CH1E and CH3E
+ANGLe OC   C    OC   500.00   123.3548	! From paralhdg5.3.pro
+ANGLe O    C    NH1  500.0    122.9907
+ANGLe OUF  SUF  OUF  337.40   109.400	! From ion.param
+ANGLe OUF  SUF  NH1  500.00   106.34    ! Based on the average of http://xray.bmc.uu.se/hicup/SGN/sgn_xplor_par.txt
+ANGLe NH1  CR   H     45.0    109.5
+ANGLe NH1  CRF  H     45.0    109.5
+ANGLe NH1  CRV  H     45.0    109.5
+ANGLe NH1  CH1E H    500.00   108.0508	! Like HA--CH1E--NH1 in paralhdg5.3.pro
+ANGLe NH1  CH2E H    500.0    108.9030	! Like HA--CH2E--NH1 in paralhdg5.3.pro
+ANGLe H    CR   H     33.58   107.85
+ANGLe H    CRF  H     33.58   107.85
+ANGLe H    CRV  H     33.58   107.85
+ANGLe H    CH2E H    500.00   109.4074	! From paralhdg5.3.pro
+ANGLe H    CH3E H    500.00   109.4703	! From paralhdg5.3.pro
+
+!***************************************************!
+!*                                                 *!
+!*                 DIHEDRAL ANGLES                 *!
+!*                                                 *!
+!***************************************************!
+DIHEdral  X    CR    CR    X      3.0630  2   0.0	! Expected angle = 180
+DIHEdral  X    CR    CH2E  X      3.0630  3   0.0	! To complete with CH1E and CH3E
+DIHEdral  X    CR    OR    X      2.7834  3   0.0
+DIHEdral  X    CR    OH1   X      1.3293  3   0.0
+DIHEdral  X    CR    NH1   X      1.3293  3   0.0	! For 2-N-Acetyl-beta-d-glucose
+DIHEdral  X    CH2E  OH1   X      1.3293  3   0.0 
+DIHEdral  X    NH1   C     X      5.0     1   0.0	! Peptide plane and anti
+
+
+!***************************************************!
+!*                                                 *!
+!*                 IMPROPER ANGLES                 *!
+!*                                                 *!
+!***************************************************!
+! Maintenance of the ring
+IMPRoper  CR   X     X     CR   300.0    0  60.0
+IMPRoper  CR   X     X     OR   300.0    0  60.0
+IMPRoper  CRF  X     X     CRF  300.0    0   0.0
+IMPRoper  CRF  X     X     CRV  300.0    0  30.0
+IMPRoper  CRF  X     X     ORF  300.0    0   0.0
+IMPRoper  CRV  X     X     CRF  300.0    0  30.0
+IMPRoper  CRV  X     X     ORF  300.0    0  30.0
+
+! Chirality of carbons around the ring
+IMPRoper  C    X     X     OH1  300.0    0 -66.570	! Carboxylic group instead of H (i.e. NAA)
+IMPRoper  C    X     X     OA   300.0    0 -66.570
+IMPRoper  C    X     X     H    300.0    0 -66.570	! Carboxylic group instead of H (i.e. NAA)
+IMPRoper  CH2E X     X     OH1  300.0    0 -66.570	! For ketons in pyranose form
+IMPRoper  H    X     X     OH1  300.0    0 -66.570
+IMPRoper  H    X     X     OR   300.0    0 -66.570
+IMPRoper  H    X     X     ORF  300.0    0 -66.570
+IMPRoper  H    X     X     CH2E 300.0    0 -66.570
+IMPRoper  H    X     X     CH1E 300.0    0 -66.570
+IMPRoper  H    X     X     NH1  300.0    0 -66.570
+IMPRoper  H    X     X     H    300.0    0 -66.570
+
+! Glycosidic linkage
+IMPRoper  H    X     X     OA   300.0    0 -66.570
+IMPRoper  OH1  X     X     OA   300.0    0 -66.570
+
+! Carboxylic group
+IMPRoper  C    X     X     OC   300.0    0   0.00
+IMPRoper  C    X     X     O    300.0    0   0.00
+
+! N-acetylated tail
+IMPRoper  NH1  X     X     C    300.0    0   0.00	! N planar (With C=O)
+IMPRoper  NH1  X     X     SUF  300.0    0   0.00	! N planar (With SO3)
+IMPRoper  O    C     NH1   H    300.0    0 180.00	! N-H and C=O trans in N-Acetyl group
+
+! Phi and Psi angles
+!IMPRoper  H    CR    OA    CR   300.00   0 180.000	! Phi angle
+!IMPRoper  CR    OA    CR   H    300.00   0   0.000	! Psi angle
+!IMPRoper  H    CRF   OA    CRF  300.00   0 180.000	! Phi angle
+!IMPRoper  CRF   OA    CRF  H    300.00   0   0.000	! Psi angle
+
+IMPROPER   H     CC    NH1  H    300.00   0 180.000
+
+SET
+        ECHO true
+	MESSage true
+END

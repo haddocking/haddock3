@@ -274,10 +274,10 @@ RESIdue PB {lead}
     ATOM PB TYPE=PB CHARge=0.0 END
 END {PB}
 
-RESIdue U {uranium}
-  GROUp
-    ATOM U TYPE=U CHARge=0.0 END
-END {U}
+!RESIdue U {uranium}
+!  GROUp
+!    ATOM U TYPE=U CHARge=0.0 END
+!END {U}
 
 {- ============================ ionic states ============================== -}
 

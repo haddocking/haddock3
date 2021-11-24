@@ -26,7 +26,7 @@ def generate_waterref(
         step_path,
         recipe_str,
         defaults,
-        ambig=None,
+        ambig_fname=None,
         ):
     """Generate the .inp file that will run the docking."""
     # prepare the CNS header that will read the input
@@ -45,8 +45,8 @@ def generate_waterref(
 
     input_str = prepare_multiple_input([pdb], psf_list)
 
-    if ambig:
-        ambig_str = load_ambig(ambig)
+    if ambig_fname:
+        ambig_str = load_ambig(ambig_fname)
     else:
         ambig_str = ""
 
@@ -103,7 +103,7 @@ class HaddockModule(BaseHaddockModule):
                 self.path,
                 self.recipe_str,
                 self.params,
-                ambig=self.params.get('ambig', None),
+                ambig_fname=self.params['ambig_fname'],
                 )
 
             out_file = self.path / f"waterref_{idx}.out"

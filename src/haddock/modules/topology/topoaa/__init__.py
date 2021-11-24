@@ -12,7 +12,7 @@ from haddock.libs.libcns import (
     )
 from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.libs.libparallel import Scheduler
-from haddock.libs.libstructure import make_molecules
+from haddock.libs.libstructure import clean_chainID_segID, make_molecules
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 
@@ -70,17 +70,19 @@ class HaddockModule(BaseHaddockModule):
         super().run(params)
 
         molecules = make_molecules(molecules)
+        clean_chainID_segID(molecules)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
         models = []
         for i, molecule in enumerate(molecules, start=1):
-            log.info(f"{i} - {molecule.file_name}")
+            log.info(f"{i} - {molecule.file_path}")
 
             # Copy the molecule to the step folder
-            step_molecule_path = Path(self.path, molecule.file_name.name)
-            shutil.copyfile(molecule.file_name, step_molecule_path)
+            step_molecule_path = Path(self.path, molecule.file_path.name)
+            step_molecule_path.write_text('\n'.join(molecule.lines))
+            #shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models
             log.info(f"Split models if needed for {step_molecule_path}")

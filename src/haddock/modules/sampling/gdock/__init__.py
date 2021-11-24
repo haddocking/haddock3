@@ -93,7 +93,7 @@ class HaddockModule(BaseHaddockModule):
             input[chain] = chain_pdb
 
         # convert ambig to list
-        ambig_dic = ambig2dic(self.params.get('ambig', None))
+        ambig_dic = ambig2dic(self.params['ambig_fname'])
 
         input_toml = '' + os.linesep
         input_toml += '[main]' + os.linesep

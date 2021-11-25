@@ -1,4 +1,7 @@
 """I/O helper."""
+import os
+from pathlib import Path
+
 
 def open_files_to_lines(*files):
     """

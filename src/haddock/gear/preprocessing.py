@@ -3,9 +3,19 @@ Processes input PDB files to ensure compatibility with HADDOCK3.
 
 
 """
+import os
 from pathlib import Path
+from functools import partial
 
-from haddock.libs.libfunc import chainf, reduce_helper
+from pdbtools import (
+    pdb_selaltloc,
+    pdb_rplresname,
+    pdb_fixinsert,
+    pdb_keepcoord,
+    pdb_tidy,
+    )
+
+from haddock.libs.libfunc import chainf, chainfs, reduce_helper, vartial
 
 
 def process_pdb_files(*files, osuffix='_processed'):
@@ -66,6 +76,14 @@ def process_pdb(structures):
     # modify the input PDB and return the corrected lines
     # (in the like of pdbtools)
     individual_processing_steps = [
+        pdb_keepcoord.run,
+        pdb_selaltloc.run,
+        partial(pdb_rplresname.run, name_from='MSE', name_to='MET'),
+        partial(pdb_fixinsert.run, option_list=[]),
+        #
+        pdb_tidy.run,
+        #
+        partial(map, vartial(str.rstrip, os.linesep)),
         ]
 
     # these are the checks that are performed considering all the PDBs
@@ -75,7 +93,7 @@ def process_pdb(structures):
 
     # perform the individual processing steps
     processed_individually = [
-        chainf(structure, *individual_processing_steps)
+        list(chainf(structure, *individual_processing_steps))
         for structure in structures
         ]
 

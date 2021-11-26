@@ -256,6 +256,12 @@ topology
     if ( &BLANK%dna_break_infile = false ) then
         @@&dna_break_infile
     end if
+    fileexist $ligand_top_fname end
+    if ($result eq true) then
+        @@$ligand_top_fname
+    end if
+end if
+
 end
 
 parameter
@@ -282,6 +288,10 @@ parameter
     end if
     if ( &BLANK%heme_parameter_infile = false ) then
         @@&heme_parameter_infile
+    end if
+    fileexist $ligand_param_fname end
+    if ($result eq true) then
+        @@$ligand_param_fname
     end if
 end
 

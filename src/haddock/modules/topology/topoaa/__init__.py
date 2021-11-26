@@ -127,7 +127,6 @@ class HaddockModule(BaseHaddockModule):
         #  are found
         expected = {}
         not_found = []
-        # for i in models_dic:
         for i in models_dic:
             expected[i] = {}
             for j, model in enumerate(models_dic[i]):

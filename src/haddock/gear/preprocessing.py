@@ -117,7 +117,7 @@ def process_pdbs(structures):
         partial(remove_unsupported_nucleic_acids, user_defined=param),
         partial(remove_unsupported_modified_aa, user_defined=param),
         #
-        pdb_tidy.run,
+        partial(pdb_tidy.run, strict=True),
         #
         #partial(map, vartial(str.rstrip, os.linesep)),
         partial(map, lambda x: x.rstrip(os.linesep)),

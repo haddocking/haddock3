@@ -124,6 +124,11 @@ def solve_no_chainID_no_segID(lines):
     char is not repeated until the alphabet exhausts.
     If chainIDs and segIDs differ, copy chainIDs over segIDs.
 
+    Parameters
+    ----------
+    lines : list of str
+        The lines of a PDB file.
+
     Returns
     -------
     list

@@ -1,5 +1,6 @@
 """Parse molecular structures in PDB format."""
 import os
+from functools import partial
 from pathlib import Path
 
 from pdbtools.pdb_segxchain import place_seg_on_chain
@@ -213,5 +214,5 @@ def read_ATOM_section(lines, section_slice):
     return chaindids
 
 
-read_chainids = partial(read_ATOM_part, section_slice=slc_chainid)
-read_segids = partial(read_ATOM_part, section_slice=slc_segid)
+read_chainids = partial(read_ATOM_section, section_slice=slc_chainid)
+read_segids = partial(read_ATOM_section, section_slice=slc_segid)

@@ -217,6 +217,8 @@ class CAPRI:
 
         for model in self.model_list:
 
+            # This has no effect, but keep it here
+            #  for the next time we need to debug this function
             Q = copy.deepcopy(_Q)
 
             P, _ = load_coords(model,
@@ -247,9 +249,6 @@ class CAPRI:
         log.info(f'  Receptor chain = {receptor_chain}')
         log.info(f'  Ligand chain = {ligand_chain}')
         ref_resdic = read_res(self.reference)
-
-        ref_receptor_resdic = copy.deepcopy(ref_resdic)
-        del ref_receptor_resdic[ligand_chain]
 
         # Get reference coordinates
         _Q, chain_ranges = load_coords(self.reference,

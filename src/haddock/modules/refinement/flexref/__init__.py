@@ -97,9 +97,6 @@ class HaddockModule(BaseHaddockModule):
             if p.file_type == Format.PDB
             ]
 
-        first_model = models_to_refine[0]
-        topologies = first_model.topology
-
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine, start=1):
             inp_file = generate_flexref(
@@ -113,7 +110,8 @@ class HaddockModule(BaseHaddockModule):
 
             out_file = self.path / f"flexref_{idx}.out"
             structure_file = self.path / f"flexref_{idx}.pdb"
-            refined_structure_list.append(structure_file)
+            topologies = model.topology
+            refined_structure_list.append((structure_file, topologies))
 
             job = CNSJob(
                 inp_file,
@@ -139,14 +137,15 @@ class HaddockModule(BaseHaddockModule):
 
         expected = []
         not_found = []
-        for model in refined_structure_list:
-            if not model.exists():
-                not_found.append(model.name)
+        for element in refined_structure_list:
+            pdb_fname, topologies = element
+            if not pdb_fname.exists():
+                not_found.append(pdb_fname.name)
 
             haddock_score = \
-                HaddockModel(model).calc_haddock_score(**weights)
+                HaddockModel(pdb_fname).calc_haddock_score(**weights)
 
-            pdb = PDBFile(model, path=self.path)
+            pdb = PDBFile(pdb_fname, path=self.path)
             pdb.topology = topologies
             pdb.score = haddock_score
             expected.append(pdb)
@@ -159,6 +158,5 @@ class HaddockModule(BaseHaddockModule):
 
         # Save module information
         io = ModuleIO()
-        io.add(refined_structure_list)
         io.add(expected, "o")
         io.save(self.path)

@@ -1,4 +1,5 @@
 """HADDOCK3 rigid-body docking module."""
+from itertools import product
 from os import linesep
 from pathlib import Path
 
@@ -10,7 +11,7 @@ from haddock.libs.libcns import (
     load_workflow_params,
     prepare_multiple_input,
     )
-from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
@@ -22,7 +23,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 def generate_docking(
         identifier,
-        input_files,
+        input_list,
         step_path,
         recipe_str,
         defaults,
@@ -37,15 +38,13 @@ def generate_docking(
         trans_vec, tensor, scatter, \
         axis, water_box = generate_default_header()
 
-    # input_files is the ontology, unwrap it
     pdb_list = []
     psf_list = []
-    for element in input_files:
-        pdb = Path(element.path, element.file_name)
-        psf = Path(element.path, element.topology.file_name)
-
-        pdb_list.append(str(pdb))
-        psf_list.append(str(psf))
+    for element in input_list:
+        pdb_fname = element.full_name
+        psf_fname = element.topology.full_name
+        pdb_list.append(pdb_fname)
+        psf_list.append(psf_fname)
 
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
@@ -92,47 +91,77 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_dock = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.PDB
-            ]
+        #  The models from topology come in a dictionary
+        input_dic = {}
+        for i, model_dic in enumerate(self.previous_io.output):
+            input_dic[i] = []
+            for key in model_dic:
+                input_dic[i].append(model_dic[key])
 
-        # TODO: Make the topology aquisition generic,
-        # here its expecting this module
-        # to be preceeded by topology
-        topologies = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.TOPOLOGY
-            ]
+        if not self.params['crossdock']:
+            # docking should be paired
+            # A1-B1, A2-B2, A3-B3, etc
 
-        # Sampling
+            # check if all ensembles contain the same number of models
+            sub_lists = iter(input_dic.values())
+            _len = len(next(sub_lists))
+            if not all(len(sub) == _len for sub in sub_lists):
+                _msg = ('With crossdock=false, the number of models inside each'
+                        ' ensemble must be the same')
+                self.finish_with_error(_msg)
+
+            # prepare pairwise combinations
+            models_to_dock = [values for values in zip(*input_dic.values())]
+
+        elif self.params['crossdock']:
+            # All combinations should be sampled
+            # A1-B1, A1-B2, A3-B3, A2-B1, A2-B2, etc
+            # prepare combinations as cartesian product
+            models_to_dock = [values for values in product(*input_dic.values())]
+
+        # How many times each combination should be sampled,
+        #  cannot be smaller than 1
+        sampling_factor = int(params['sampling'] / len(models_to_dock))
+        if sampling_factor < 1:
+            self.finish_with_error('Sampling is smaller than the number'
+                                   ' of model combinations '
+                                   f'#model_combinations={len(models_to_dock)},'
+                                   f' sampling={params["sampling"]}.')
+
+        # Prepare the jobs
+        idx = 1
         structure_list = []
-        for idx in range(1, params['sampling'] + 1):
-            inp_file = generate_docking(
-                idx,
-                models_to_dock,
-                self.path,
-                self.recipe_str,
-                self.params,
-                ambig_fname=self.params['ambig_fname'],
-                )
+        for combination in models_to_dock:
 
-            out_file = self.path / f"rigidbody_{idx}.out"
-            structure_file = self.path / f"rigidbody_{idx}.pdb"
-            structure_list.append(structure_file)
+            for _i in range(sampling_factor):
+                inp_file = generate_docking(
+                    idx,
+                    combination,
+                    self.path,
+                    self.recipe_str,
+                    self.params,
+                    ambig_fname=self.params['ambig_fname'],
+                    )
 
-            job = CNSJob(
-                inp_file,
-                out_file,
-                cns_folder=self.cns_folder_path,
-                modpath=self.path,
-                config_path=self.params['config_path'],
-                cns_exec=self.params['cns_exec'],
-                )
+                log_fname = Path(self.path, f"rigidbody_{idx}.out")
+                output_pdb_fname = Path(self.path, f"rigidbody_{idx}.pdb")
 
-            jobs.append(job)
+                # Create a model for the expected output
+                model = PDBFile(output_pdb_fname, path=self.path)
+                model.topology = [e.topology for e in combination]
+                structure_list.append(model)
+
+                job = CNSJob(
+                    inp_file,
+                    log_fname,
+                    cns_folder=self.cns_folder_path,
+                    modpath=self.path,
+                    config_path=self.params['config_path'],
+                    cns_exec=self.params['cns_exec'],
+                    )
+                jobs.append(job)
+
+                idx += 1
 
         # Run CNS engine
         log.info(f"Running CNS engine with {len(jobs)} jobs")
@@ -145,27 +174,30 @@ class HaddockModule(BaseHaddockModule):
             ('w_vdw', 'w_elec', 'w_desolv', 'w_air', 'w_bsa')
         weights = {e: self.params[e] for e in _weight_keys}
 
-        expected = []
-        not_found = []
+        not_present = []
         for model in structure_list:
-            if not model.exists():
-                not_found.append(model.name)
+            if not model.is_present():
+                not_present.append(model.name)
 
-            haddock_score = HaddockModel(model).calc_haddock_score(**weights)
+            # Score the model
+            haddock_score = \
+                HaddockModel(model.full_name).calc_haddock_score(**weights)
 
-            pdb = PDBFile(model, path=self.path)
-            pdb.score = haddock_score
-            pdb.topology = topologies
-            expected.append(pdb)
+            model.score = haddock_score
 
-        if not_found:
-            # Check for generated output,
+        # Check for generated output
+        if len(not_present) == len(structure_list):
             # fail if not all expected files are found
-            self.finish_with_error("Several files were not generated:"
-                                   f" {not_found}")
+            self.finish_with_error("No models were generated.")
+
+        if not_present:
+            # also fail is some are not found
+            # Note: we can add some fault tolerancy here,
+            #  and only finish if a given % of models were not generated
+            self.finish_with_error(f"Several models were not generated"
+                                   f" {not_present}")
 
         # Save module information
         io = ModuleIO()
-        io.add(structure_list)
-        io.add(expected, "o")
+        io.add(structure_list, "o")
         io.save(self.path)

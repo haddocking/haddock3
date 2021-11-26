@@ -67,10 +67,13 @@ def read_res(pdb_f):
             if line.startswith('ATOM'):
                 chain = line[21]
                 resnum = int(line[22:26])
+                atom = line[12:16].strip()
                 if chain not in res_dic:
-                    res_dic[chain] = []
+                    res_dic[chain] = {}
                 if resnum not in res_dic[chain]:
-                    res_dic[chain].append(resnum)
+                    res_dic[chain][resnum] = []
+                if atom not in res_dic[chain][resnum]:
+                    res_dic[chain][resnum].append(atom)
     return res_dic
 
 
@@ -100,8 +103,9 @@ def load_contacts(pdb_f, cutoff):
     return set(con_list)
 
 
-def load_coords(pdb_f, filter_resdic=None, atoms=None):
+def load_coords(pdb_f, filter_resdic=None, atoms=None, ignore_missing=True):
     """Load coordinates from PDB."""
+    # ignore_missing = will use only atoms that are present in filter_resdic
     C = []
     chain_dic = {}
     idx = 0
@@ -123,16 +127,22 @@ def load_coords(pdb_f, filter_resdic=None, atoms=None):
                     if atom_name not in atoms:
                         continue
 
-                if filter_resdic:
-
+                if filter_resdic and ignore_missing:
                     if chain in filter_resdic:
                         if resnum in filter_resdic[chain]:
-                            # OK
+                            if atom_name in filter_resdic[chain][resnum]:
+                                C.append(np.asarray([x, y, z], dtype=float))
+                                chain_dic[chain].append(idx)
+                                idx += 1
+
+                elif filter_resdic and not ignore_missing:
+                    if chain in filter_resdic:
+                        if resnum in filter_resdic[chain]:
                             C.append(np.asarray([x, y, z], dtype=float))
                             chain_dic[chain].append(idx)
                             idx += 1
                 else:
-                    # append anyway
+
                     C.append(np.asarray([x, y, z], dtype=float))
                     chain_dic[chain].append(idx)
                     idx += 1
@@ -152,21 +162,31 @@ def identify_interface(pdb_f, cutoff):
     interface_resdic = {}
     for atom_i, atom_j in get_intermolecular_contacts(pdb, cutoff):
         if atom_i.chain not in interface_resdic:
-            interface_resdic[atom_i.chain] = []
+            interface_resdic[atom_i.chain] = {}
         if atom_j.chain not in interface_resdic:
-            interface_resdic[atom_j.chain] = []
+            interface_resdic[atom_j.chain] = {}
 
         if atom_i.resid not in interface_resdic[atom_i.chain]:
-            interface_resdic[atom_i.chain].append(atom_i.resid)
+            interface_resdic[atom_i.chain][atom_i.resid] = []
         if atom_j.resid not in interface_resdic[atom_j.chain]:
-            interface_resdic[atom_j.chain].append(atom_j.resid)
+            interface_resdic[atom_j.chain][atom_j.resid] = []
+
+        atom_i_name = atom_i.name.strip()
+        atom_j_name = atom_j.name.strip()
+
+        if atom_i_name not in interface_resdic[atom_i.chain][atom_i.resid]:
+            interface_resdic[atom_i.chain][atom_i.resid].append(atom_i_name)
+
+        if atom_j_name not in interface_resdic[atom_j.chain][atom_j.resid]:
+            interface_resdic[atom_j.chain][atom_j.resid].append(atom_j_name)
+
     return interface_resdic
 
 
 class CAPRI:
     """CAPRI class."""
 
-    def __init__(self, reference, model_list, atoms):
+    def __init__(self, reference, model_list, atoms, ignore_missing):
         self.reference = reference
         self.model_list = []
         self.irmsd_dic = {}
@@ -174,21 +194,24 @@ class CAPRI:
         self.ilrmsd_dic = {}
         self.fnat_dic = {}
         self.atoms = atoms
+        self.ignore_missing = ignore_missing
 
         for struct in model_list:
             pdb_f = Path(struct.path, struct.file_name)
             pdb_w_chain = add_chain_from_segid(pdb_f)
             self.model_list.append(pdb_w_chain)
 
-    def irmsd(self, cutoff=10.):
+    def irmsd(self, cutoff=5.):
         """Calculate the I-RMSD."""
+        log.info(f'  Using cutoff={cutoff}A')
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
         Q, _ = load_coords(self.reference,
                            filter_resdic=ref_interface_resdic,
-                           atoms=self.atoms)
+                           atoms=self.atoms,
+                           ignore_missing=self.ignore_missing)
         # Move to centroids
         Q = Q - centroid(Q)
 
@@ -196,20 +219,31 @@ class CAPRI:
 
             P, _ = load_coords(model,
                                filter_resdic=ref_interface_resdic,
-                               atoms=self.atoms)
+                               atoms=self.atoms,
+                               ignore_missing=self.ignore_missing)
 
-            P = P - centroid(P)
-            U = kabsch(P, Q)
-            P = np.dot(P, U)
-            i_rmsd = calc_rmsd(P, Q)
-            # write_coords('ref.pdb', P)
-            # write_coords('model.pdb', Q)
+            if P.shape != Q.shape:
+                log.warning('Cannot align these models,'
+                            ' the number of atoms is in the interface'
+                            ' is different.')
+                i_rmsd = float('nan')
+
+            else:
+                P = P - centroid(P)
+                U = kabsch(P, Q)
+                P = np.dot(P, U)
+                i_rmsd = calc_rmsd(P, Q)
+                # write_coords('ref.pdb', P)
+                # write_coords('model.pdb', Q)
+
             self.irmsd_dic[model] = i_rmsd
 
         return self.irmsd_dic
 
     def lrmsd(self, receptor_chain, ligand_chain):
         """Calculate the L-RMSD."""
+        log.info(f'  Receptor chain = {receptor_chain}')
+        log.info(f'  Ligand chain = {ligand_chain}')
         ref_resdic = read_res(self.reference)
 
         ref_receptor_resdic = copy.deepcopy(ref_resdic)
@@ -218,7 +252,8 @@ class CAPRI:
         # Get reference coordinates
         Q_all, chain_ranges = load_coords(self.reference,
                                           filter_resdic=ref_resdic,
-                                          atoms=self.atoms)
+                                          atoms=self.atoms,
+                                          ignore_missing=self.ignore_missing)
 
         receptor_start = chain_ranges[receptor_chain][0]
         receptor_end = chain_ranges[receptor_chain][1]
@@ -230,7 +265,8 @@ class CAPRI:
 
             P_all, _ = load_coords(model,
                                    filter_resdic=ref_resdic,
-                                   atoms=self.atoms)
+                                   atoms=self.atoms,
+                                   ignore_missing=self.ignore_missing)
 
             receptor_start = chain_ranges[receptor_chain][0]
             receptor_end = chain_ranges[receptor_chain][1]
@@ -276,6 +312,8 @@ class CAPRI:
 
     def ilrmsd(self, ligand_chain, cutoff):
         """Calculate the Interface Ligand RMSD."""
+        log.info(f'  Using cutoff={cutoff}A')
+        log.info(f'  Ligand chain = {ligand_chain}')
         ref_resdic = read_res(self.reference)
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
@@ -283,10 +321,13 @@ class CAPRI:
         # Load interface coordinates
         Q, chain_ranges = load_coords(self.reference,
                                       filter_resdic=ref_resdic,
-                                      atoms=self.atoms)
+                                      atoms=self.atoms,
+                                      ignore_missing=self.ignore_missing)
+
         Q_int, _ = load_coords(self.reference,
                                filter_resdic=ref_interface_resdic,
-                               atoms=self.atoms)
+                               atoms=self.atoms,
+                               ignore_missing=self.ignore_missing)
         # Move to centroids
         Q_int_centroid = centroid(Q_int)
         Q_int = Q_int - Q_int_centroid
@@ -297,11 +338,13 @@ class CAPRI:
 
             P_all, _ = load_coords(model,
                                    filter_resdic=ref_resdic,
-                                   atoms=self.atoms)
+                                   atoms=self.atoms,
+                                   ignore_missing=self.ignore_missing)
 
             P_int, _ = load_coords(model,
                                    filter_resdic=ref_interface_resdic,
-                                   atoms=self.atoms)
+                                   atoms=self.atoms,
+                                   ignore_missing=self.ignore_missing)
 
             P_int_centroid = centroid(P_int)
             P_int = P_int - P_int_centroid
@@ -333,6 +376,7 @@ class CAPRI:
 
     def fnat(self, cutoff=5.0):
         """Calculate the frequency of native contacts."""
+        log.info(f'  Using cutoff = {cutoff}A')
         ref_contacts = load_contacts(self.reference, cutoff)
         for model in self.model_list:
             model_contacts = load_contacts(model, cutoff)
@@ -422,7 +466,8 @@ class HaddockModule(BaseHaddockModule):
 
         capri = CAPRI(reference,
                       models_to_calc,
-                      atoms=self.params['atoms'])
+                      atoms=self.params['atoms'],
+                      ignore_missing=self.params['ignore_missing'])
 
         if self.params['fnat']:
             log.info(' Calculating FNAT')

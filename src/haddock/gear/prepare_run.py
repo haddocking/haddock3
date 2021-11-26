@@ -72,7 +72,6 @@ def setup_run(workflow_path, restart_from=None):
         A dictionary with the general run parameters.
     """
     params = read_config(workflow_path)
-
     # validates the configuration file
     validate_params(params)
 
@@ -80,16 +79,16 @@ def setup_run(workflow_path, restart_from=None):
     convert_params_to_path(params)
     copy_molecules_to_topology(params)
 
-    # get a dictionary without the general config keys
-    general_params = remove_dict_keys(
-        params,
-        list(modules_category.keys()),
-        )
+    modules_keys = [
+        k
+        for k in params.keys()
+        if get_module_name(k) in modules_category
+        ]
 
-    modules_params = remove_dict_keys(
-        params,
-        list(general_params.keys()),
-        )
+    # get a dictionary without the general config keys
+    general_params = remove_dict_keys(params, modules_keys)
+
+    modules_params = remove_dict_keys(params, list(general_params.keys()))
 
     validate_modules_params(modules_params)
     validate_installed_modules(modules_params)
@@ -198,8 +197,8 @@ def validate_installed_modules(params):
         module_import_name = '.'.join([
             'haddock',
             'modules',
-            modules_category[module_name],
-            module_name,
+            modules_category[get_module_name(module_name)],
+            get_module_name(module_name),
             ])
         module_lib = importlib.import_module(module_import_name)
         try:

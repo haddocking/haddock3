@@ -6,7 +6,7 @@ https://bianca.science.uu.nl/haddock2.4/library
 
 # must be defined as HETATM
 supported_carbohydrates = (
-    '2G',   # 2-N-acetyl-alpha-D-glucopyranose, different stereochemistry at C4
+    'A2G',   # 2-N-acetyl-alpha-D-glucopyranose, different stereochemistry at C4
     'BGC',  # beta-D-glucopyranose
     'BMA',  # beta-D-mannopyronose
     'FCA',  # alpha-D-fucopyranose

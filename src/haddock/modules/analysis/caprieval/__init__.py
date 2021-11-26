@@ -208,14 +208,16 @@ class CAPRI:
         ref_interface_resdic = identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
-        Q, _ = load_coords(self.reference,
-                           filter_resdic=ref_interface_resdic,
-                           atoms=self.atoms,
-                           ignore_missing=self.ignore_missing)
+        _Q, _ = load_coords(self.reference,
+                            filter_resdic=ref_interface_resdic,
+                            atoms=self.atoms,
+                            ignore_missing=self.ignore_missing)
         # Move to centroids
-        Q = Q - centroid(Q)
+        _Q -= centroid(_Q)
 
         for model in self.model_list:
+
+            Q = copy.deepcopy(_Q)
 
             P, _ = load_coords(model,
                                filter_resdic=ref_interface_resdic,
@@ -250,18 +252,21 @@ class CAPRI:
         del ref_receptor_resdic[ligand_chain]
 
         # Get reference coordinates
-        Q_all, chain_ranges = load_coords(self.reference,
-                                          filter_resdic=ref_resdic,
-                                          atoms=self.atoms,
-                                          ignore_missing=self.ignore_missing)
+        _Q, chain_ranges = load_coords(self.reference,
+                                       filter_resdic=ref_resdic,
+                                       atoms=self.atoms,
+                                       ignore_missing=self.ignore_missing)
 
         receptor_start = chain_ranges[receptor_chain][0]
         receptor_end = chain_ranges[receptor_chain][1]
-        Q_receptor = Q_all[receptor_start:receptor_end]
+        _Q_receptor = _Q[receptor_start:receptor_end]
 
         # loop goes here
         model = self.model_list[0]
         for model in self.model_list:
+
+            Q_all = copy.deepcopy(_Q)
+            Q_receptor = copy.deepcopy(_Q_receptor)
 
             P_all, _ = load_coords(model,
                                    filter_resdic=ref_resdic,
@@ -319,10 +324,10 @@ class CAPRI:
         ref_interface_resdic = identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
-        Q, chain_ranges = load_coords(self.reference,
-                                      filter_resdic=ref_resdic,
-                                      atoms=self.atoms,
-                                      ignore_missing=self.ignore_missing)
+        _Q, chain_ranges = load_coords(self.reference,
+                                       filter_resdic=ref_resdic,
+                                       atoms=self.atoms,
+                                       ignore_missing=self.ignore_missing)
 
         Q_int, _ = load_coords(self.reference,
                                filter_resdic=ref_interface_resdic,
@@ -334,7 +339,7 @@ class CAPRI:
 
         for model in self.model_list:
 
-            Q_all = copy.deepcopy(Q)
+            Q_all = copy.deepcopy(_Q)
 
             P_all, _ = load_coords(model,
                                    filter_resdic=ref_resdic,

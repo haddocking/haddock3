@@ -150,7 +150,7 @@ class HaddockModule(BaseHaddockModule):
                 pdb = PDBFile(processed_pdb,
                               topology,
                               path=self.path)
-                expected[i][j] = (pdb, topology)
+                expected[i][j] = pdb
 
         if not_found:
             self.finish_with_error("Several files were not generated:"

@@ -23,8 +23,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 def generate_docking(
         identifier,
-        pdb_list,
-        psf_list,
+        input_list,
         step_path,
         recipe_str,
         defaults,
@@ -38,6 +37,14 @@ def generate_docking(
     param, top, link, topology_protonation, \
         trans_vec, tensor, scatter, \
         axis, water_box = generate_default_header()
+
+    pdb_list = []
+    psf_list = []
+    for element in input_list:
+        pdb_fname = element.full_name
+        psf_fname = element.topology.full_name
+        pdb_list.append(pdb_fname)
+        psf_list.append(psf_fname)
 
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
@@ -126,15 +133,10 @@ class HaddockModule(BaseHaddockModule):
         structure_list = []
         for combination in models_to_dock:
 
-            #  generate docking takes a list with file names
-            pdb_fname_list = [e[0].full_name for e in combination]
-            psf_fname_list = [e[1].full_name for e in combination]
-
             for _i in range(sampling_factor):
                 inp_file = generate_docking(
                     idx,
-                    pdb_fname_list,
-                    psf_fname_list,
+                    combination,
                     self.path,
                     self.recipe_str,
                     self.params,
@@ -146,7 +148,7 @@ class HaddockModule(BaseHaddockModule):
 
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=self.path)
-                model.topology = [e[1] for e in combination]
+                model.topology = [e.topology for e in combination]
                 structure_list.append(model)
 
                 job = CNSJob(

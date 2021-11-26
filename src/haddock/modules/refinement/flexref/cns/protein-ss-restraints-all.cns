@@ -9,10 +9,10 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-{+ file: protein-ss-restraints.def       directory: protocols +}
+{+ file: protein-ss-restraints.def +}
 {+ description: Creates dihedral angle restraints to maintain conformation of the protein backbone +}
 {+ authors: Axel T. Brunger, and Paul D. Adams, +}
-            modified by Alexandre Bonvin for HADDOCK use +}
+{+ modified by Alexandre Bonvin for HADDOCK use +}
 
 {=========================================================================================================}
 {                        things below this line do not normally need to be changed                        }

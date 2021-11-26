@@ -260,8 +260,6 @@ topology
     if ($result eq true) then
         @@$ligand_top_fname
     end if
-end if
-
 end
 
 parameter

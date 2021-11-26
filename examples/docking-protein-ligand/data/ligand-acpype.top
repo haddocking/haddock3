@@ -1,0 +1,338 @@
+Remarks oseltamivir_zwitterion_CNS.top created by acpype (Rev: 7268) on Tue Oct  1 17:48:50 2013
+
+set echo=false end
+
+autogenerate angles=True dihedrals=True end
+
+{ atomType  mass }
+MASS c_      12.010
+MASS o_      16.000
+MASS ce_     12.010
+MASS c3_     12.010
+MASS n4_     14.010
+MASS n_      14.010
+MASS c2_     12.010
+MASS os_     16.000
+MASS hn_      1.008
+MASS hc_      1.008
+MASS hx_      1.008
+MASS h1_      1.008
+MASS ha_      1.008
+
+RESIdue G39
+
+GROUP
+
+{ atomName  atomType  Charge }
+ATOM C1    TYPE= c_    CHARGE=   0.9168 END
+ATOM O1A   TYPE= o_    CHARGE=  -0.7973 END
+ATOM O1B   TYPE= o_    CHARGE=  -0.7973 END
+ATOM C2    TYPE= ce_   CHARGE=  -0.1544 END
+ATOM C3    TYPE= c3_   CHARGE=  -0.0762 END
+ATOM C4    TYPE= c3_   CHARGE=   0.1155 END
+ATOM N4    TYPE= n4_   CHARGE=  -0.8406 END
+ATOM C5    TYPE= c3_   CHARGE=   0.0557 END
+ATOM N5    TYPE= n_    CHARGE=  -0.5579 END
+ATOM C6    TYPE= c3_   CHARGE=   0.1863 END
+ATOM C7    TYPE= c2_   CHARGE=  -0.2262 END
+ATOM O7    TYPE= os_   CHARGE=  -0.4256 END
+ATOM C8    TYPE= c3_   CHARGE=   0.1451 END
+ATOM C9    TYPE= c3_   CHARGE=  -0.0949 END
+ATOM C10   TYPE= c_    CHARGE=   0.6571 END
+ATOM O10   TYPE= o_    CHARGE=  -0.6601 END
+ATOM C11   TYPE= c3_   CHARGE=  -0.1791 END
+ATOM C81   TYPE= c3_   CHARGE=  -0.0949 END
+ATOM C82   TYPE= c3_   CHARGE=  -0.0931 END
+ATOM C91   TYPE= c3_   CHARGE=  -0.0931 END
+ATOM H01   TYPE= hn_   CHARGE=   0.4555 END
+ATOM H02   TYPE= hc_   CHARGE=   0.0372 END
+ATOM H03   TYPE= hc_   CHARGE=   0.0927 END
+ATOM H04   TYPE= hx_   CHARGE=   0.1007 END
+ATOM H05   TYPE= hn_   CHARGE=   0.4555 END
+ATOM H06   TYPE= h1_   CHARGE=   0.0997 END
+ATOM H07   TYPE= hn_   CHARGE=   0.3195 END
+ATOM H08   TYPE= h1_   CHARGE=   0.0447 END
+ATOM H09   TYPE= ha_   CHARGE=   0.1840 END
+ATOM H10   TYPE= h1_   CHARGE=   0.0217 END
+ATOM H11   TYPE= hc_   CHARGE=   0.0570 END
+ATOM H12   TYPE= hc_   CHARGE=   0.0804 END
+ATOM H13   TYPE= hc_   CHARGE=   0.0570 END
+ATOM H14   TYPE= hc_   CHARGE=   0.0372 END
+ATOM H15   TYPE= hc_   CHARGE=   0.0372 END
+ATOM H16   TYPE= hc_   CHARGE=   0.0927 END
+ATOM H17   TYPE= hn_   CHARGE=   0.4555 END
+ATOM H18   TYPE= hc_   CHARGE=   0.0570 END
+ATOM H19   TYPE= hc_   CHARGE=   0.0804 END
+ATOM H20   TYPE= hc_   CHARGE=   0.0570 END
+ATOM H21   TYPE= hc_   CHARGE=   0.0372 END
+ATOM H22   TYPE= hc_   CHARGE=   0.0372 END
+ATOM H23   TYPE= hc_   CHARGE=   0.0804 END
+ATOM H24   TYPE= hc_   CHARGE=   0.0372 END
+
+{ Bonds: atomName1  atomName2 }
+BOND C3    H03  
+BOND C3    H16  
+BOND C4    H04  
+BOND N4    H01  
+BOND N4    H05  
+BOND N4    H17  
+BOND C5    H06  
+BOND N5    H07  
+BOND C6    H08  
+BOND C7    H09  
+BOND C8    H10  
+BOND C9    H11  
+BOND C9    H18  
+BOND C11   H12  
+BOND C11   H19  
+BOND C11   H23  
+BOND C81   H13  
+BOND C81   H20  
+BOND C82   H14  
+BOND C82   H21  
+BOND C82   H24  
+BOND C91   H02  
+BOND C91   H15  
+BOND C91   H22  
+BOND C1    O1A  
+BOND C1    O1B  
+BOND C1    C2   
+BOND C2    C3   
+BOND C2    C7   
+BOND C3    C4   
+BOND C4    N4   
+BOND C4    C5   
+BOND C5    N5   
+BOND C5    C6   
+BOND N5    C10  
+BOND C6    C7   
+BOND C6    O7   
+BOND O7    C8   
+BOND C8    C9   
+BOND C8    C81  
+BOND C9    C91  
+BOND C10   O10  
+BOND C10   C11  
+BOND C81   C82  
+
+{ Angles: atomName1 atomName2 atomName3}
+ANGLe C2    C3    H03  
+ANGLe C2    C3    H16  
+ANGLe C2    C7    H09  
+ANGLe C3    C4    H04  
+ANGLe C4    C3    H03  
+ANGLe C4    C3    H16  
+ANGLe C4    N4    H01  
+ANGLe C4    N4    H05  
+ANGLe C4    N4    H17  
+ANGLe C4    C5    H06  
+ANGLe N4    C4    H04  
+ANGLe C5    C4    H04  
+ANGLe C5    N5    H07  
+ANGLe C5    C6    H08  
+ANGLe N5    C5    H06  
+ANGLe C6    C5    H06  
+ANGLe C6    C7    H09  
+ANGLe C7    C6    H08  
+ANGLe O7    C6    H08  
+ANGLe O7    C8    H10  
+ANGLe C8    C9    H11  
+ANGLe C8    C9    H18  
+ANGLe C8    C81   H13  
+ANGLe C8    C81   H20  
+ANGLe C9    C8    H10  
+ANGLe C9    C91   H02  
+ANGLe C9    C91   H15  
+ANGLe C9    C91   H22  
+ANGLe C10   N5    H07  
+ANGLe C10   C11   H12  
+ANGLe C10   C11   H19  
+ANGLe C10   C11   H23  
+ANGLe C81   C8    H10  
+ANGLe C81   C82   H14  
+ANGLe C81   C82   H21  
+ANGLe C81   C82   H24  
+ANGLe C82   C81   H13  
+ANGLe C82   C81   H20  
+ANGLe C91   C9    H11  
+ANGLe C91   C9    H18  
+ANGLe H01   N4    H05  
+ANGLe H01   N4    H17  
+ANGLe H02   C91   H15  
+ANGLe H02   C91   H22  
+ANGLe H03   C3    H16  
+ANGLe H05   N4    H17  
+ANGLe H11   C9    H18  
+ANGLe H12   C11   H19  
+ANGLe H12   C11   H23  
+ANGLe H13   C81   H20  
+ANGLe H14   C82   H21  
+ANGLe H14   C82   H24  
+ANGLe H15   C91   H22  
+ANGLe H19   C11   H23  
+ANGLe H21   C82   H24  
+ANGLe C1    C2    C3   
+ANGLe C1    C2    C7   
+ANGLe O1A   C1    O1B  
+ANGLe O1A   C1    C2   
+ANGLe O1B   C1    C2   
+ANGLe C2    C3    C4   
+ANGLe C2    C7    C6   
+ANGLe C3    C2    C7   
+ANGLe C3    C4    N4   
+ANGLe C3    C4    C5   
+ANGLe C4    C5    N5   
+ANGLe C4    C5    C6   
+ANGLe N4    C4    C5   
+ANGLe C5    N5    C10  
+ANGLe C5    C6    C7   
+ANGLe C5    C6    O7   
+ANGLe N5    C5    C6   
+ANGLe N5    C10   O10  
+ANGLe N5    C10   C11  
+ANGLe C6    O7    C8   
+ANGLe C7    C6    O7   
+ANGLe O7    C8    C9   
+ANGLe O7    C8    C81  
+ANGLe C8    C9    C91  
+ANGLe C8    C81   C82  
+ANGLe C9    C8    C81  
+ANGLe O10   C10   C11  
+
+{ Proper Dihedrals: name1 name2 name3 name4 }
+DIHEdral C1    C2    C3    H03  
+DIHEdral C1    C2    C3    H16  
+DIHEdral C1    C2    C7    H09  
+DIHEdral C2    C3    C4    H04  
+DIHEdral C2    C7    C6    H08  
+DIHEdral C3    C2    C7    H09  
+DIHEdral C3    C4    N4    H01  
+DIHEdral C3    C4    N4    H05  
+DIHEdral C3    C4    N4    H17  
+DIHEdral C3    C4    C5    H06  
+DIHEdral C4    C5    N5    H07  
+DIHEdral C4    C5    C6    H08  
+DIHEdral N4    C4    C3    H03  
+DIHEdral N4    C4    C3    H16  
+DIHEdral N4    C4    C5    H06  
+DIHEdral C5    C4    C3    H03  
+DIHEdral C5    C4    C3    H16  
+DIHEdral C5    C4    N4    H01  
+DIHEdral C5    C4    N4    H05  
+DIHEdral C5    C4    N4    H17  
+DIHEdral C5    C6    C7    H09  
+DIHEdral N5    C5    C4    H04  
+DIHEdral N5    C5    C6    H08  
+DIHEdral N5    C10   C11   H12  
+DIHEdral N5    C10   C11   H19  
+DIHEdral N5    C10   C11   H23  
+DIHEdral C6    C5    C4    H04  
+DIHEdral C6    C5    N5    H07  
+DIHEdral C6    O7    C8    H10  
+DIHEdral C7    C2    C3    H03  
+DIHEdral C7    C2    C3    H16  
+DIHEdral C7    C6    C5    H06  
+DIHEdral O7    C6    C5    H06  
+DIHEdral O7    C6    C7    H09  
+DIHEdral O7    C8    C9    H11  
+DIHEdral O7    C8    C9    H18  
+DIHEdral O7    C8    C81   H13  
+DIHEdral O7    C8    C81   H20  
+DIHEdral C8    O7    C6    H08  
+DIHEdral C8    C9    C91   H02  
+DIHEdral C8    C9    C91   H15  
+DIHEdral C8    C9    C91   H22  
+DIHEdral C8    C81   C82   H14  
+DIHEdral C8    C81   C82   H21  
+DIHEdral C8    C81   C82   H24  
+DIHEdral C9    C8    C81   H13  
+DIHEdral C9    C8    C81   H20  
+DIHEdral C10   N5    C5    H06  
+DIHEdral O10   C10   N5    H07  
+DIHEdral O10   C10   C11   H12  
+DIHEdral O10   C10   C11   H19  
+DIHEdral O10   C10   C11   H23  
+DIHEdral C11   C10   N5    H07  
+DIHEdral C81   C8    C9    H11  
+DIHEdral C81   C8    C9    H18  
+DIHEdral C82   C81   C8    H10  
+DIHEdral C91   C9    C8    H10  
+DIHEdral H01   N4    C4    H04  
+DIHEdral H02   C91   C9    H11  
+DIHEdral H02   C91   C9    H18  
+DIHEdral H03   C3    C4    H04  
+DIHEdral H04   C4    C3    H16  
+DIHEdral H04   C4    N4    H05  
+DIHEdral H04   C4    N4    H17  
+DIHEdral H04   C4    C5    H06  
+DIHEdral H06   C5    N5    H07  
+DIHEdral H06   C5    C6    H08  
+DIHEdral H08   C6    C7    H09  
+DIHEdral H10   C8    C9    H11  
+DIHEdral H10   C8    C9    H18  
+DIHEdral H10   C8    C81   H13  
+DIHEdral H10   C8    C81   H20  
+DIHEdral H11   C9    C91   H15  
+DIHEdral H11   C9    C91   H22  
+DIHEdral H13   C81   C82   H14  
+DIHEdral H13   C81   C82   H21  
+DIHEdral H13   C81   C82   H24  
+DIHEdral H14   C82   C81   H20  
+DIHEdral H15   C91   C9    H18  
+DIHEdral H18   C9    C91   H22  
+DIHEdral H20   C81   C82   H21  
+DIHEdral H20   C81   C82   H24  
+DIHEdral C1    C2    C3    C4   
+DIHEdral C1    C2    C7    C6   
+DIHEdral O1A   C1    C2    C3   
+DIHEdral O1A   C1    C2    C7   
+DIHEdral O1B   C1    C2    C3   
+DIHEdral O1B   C1    C2    C7   
+DIHEdral C2    C3    C4    N4   
+DIHEdral C2    C3    C4    C5   
+DIHEdral C2    C7    C6    C5   
+DIHEdral C2    C7    C6    O7   
+DIHEdral C3    C2    C7    C6   
+DIHEdral C3    C4    C5    N5   
+DIHEdral C3    C4    C5    C6   
+DIHEdral C4    C3    C2    C7   
+DIHEdral C4    C5    N5    C10  
+DIHEdral C4    C5    C6    C7   
+DIHEdral C4    C5    C6    O7   
+DIHEdral N4    C4    C5    N5   
+DIHEdral N4    C4    C5    C6   
+DIHEdral C5    N5    C10   O10  
+DIHEdral C5    N5    C10   C11  
+DIHEdral C5    C6    O7    C8   
+DIHEdral N5    C5    C6    C7   
+DIHEdral N5    C5    C6    O7   
+DIHEdral C6    C5    N5    C10  
+DIHEdral C6    O7    C8    C9   
+DIHEdral C6    O7    C8    C81  
+DIHEdral C7    C6    O7    C8   
+DIHEdral O7    C8    C9    C91  
+DIHEdral O7    C8    C81   C82  
+DIHEdral C9    C8    C81   C82  
+DIHEdral C81   C8    C9    C91  
+
+{ Improper Dihedrals: aName1 aName2 aName3 aName4 }
+! IMPRoper C10   C5    N5    H07  
+! IMPRoper C6    C2    C7    H09  
+! IMPRoper O1B   C1    O1A   C2   
+! IMPRoper C1    C7    C2    C3   
+! IMPRoper C11   N5    C10   O10  
+IMPRoper  C1   O1A  O1B  C2  ! chirality or flatness improper     0.25
+IMPRoper  C2   C1   C3   C7  ! chirality or flatness improper     0.37
+IMPRoper  C4   C3   N4   C5  ! chirality or flatness improper    33.19
+IMPRoper  C4   C3   N4   H04  ! chirality or flatness improper    33.19
+IMPRoper  C5   C4   N5   C6  ! chirality or flatness improper   -33.87
+IMPRoper  C5   C4   N5   H06  ! chirality or flatness improper   -33.87
+IMPRoper  C6   C5   C7   O7  ! chirality or flatness improper   -33.48
+IMPRoper  C6   C5   C7   H08  ! chirality or flatness improper   -33.48
+IMPRoper  C8   O7   C9   C81 ! chirality or flatness improper   -34.81
+IMPRoper  C8   O7   C9   H10 ! chirality or flatness improper   -34.81
+IMPRoper  C10  N5   O10  C11 ! chirality or flatness improper    -0.15
+
+END {RESIdue G39}
+
+set echo=true end

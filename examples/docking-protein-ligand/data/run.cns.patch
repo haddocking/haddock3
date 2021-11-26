@@ -1,0 +1,63 @@
+--- run.cns	2019-03-12 11:23:14.508739493 +0100
++++ ../run_ref_for_patch.cns	2019-03-12 11:22:44.943233064 +0100
+@@ -554,7 +554,7 @@
+ 
+ {* Remove non-polar hydrogens? *}
+ {+ choice: true false +}
+-{===>} delenph=true;
++{===>} delenph=false;
+ 
+ {* HADDOCK directory *}
+ {*  the absolute path of the HADDOCK program files *}
+@@ -3026,14 +3026,14 @@
+ {* Turn on/off and energy constants for distance restraints *}
+ {+ table: rows=3 "distances" "AIR (ambig)" "hbonds" cols=6 "firstIteration" "lastIteration" "hot" "cool1" "cool2" "cool3"+}
+ 
+-{===>} unamb_firstit=0;
++{===>} unamb_firstit=1;
+ {===>} unamb_lastit=2;
+ {===>} unamb_hot=10;
+ {===>} unamb_cool1=10;
+ {===>} unamb_cool2=50;
+ {===>} unamb_cool3=50;
+ {===>} amb_firstit=0;
+-{===>} amb_lastit=2;
++{===>} amb_lastit=0;
+ {===>} amb_hot=10;
+ {===>} amb_cool1=10;
+ {===>} amb_cool2=50;
+@@ -4465,10 +4465,10 @@
+ {===>} emstepstrans=1000;
+ 
+ {* number of MD steps for rigid body high temperature TAD *}
+-{===>} initiosteps=500;
++{===>} initiosteps=0;
+ 
+ {* number of MD steps during first rigid body cooling stage *}
+-{===>} cool1_steps=500;
++{===>} cool1_steps=0;
+ 
+ {* number of MD steps during second cooling stage with flexible side-chains at interface *}
+ {===>} cool2_steps=1000;
+@@ -4574,7 +4574,7 @@
+ {* Define the weights for the various terms for the sorting of structures (scoring) *}
+ {+ table: rows=15 "Evdw" "Eelec" "Eair" "Erg" "Esani" "Exrdc" "Expcs" "Edani" "Evean" "Ecdih" "Esym" "Ezres" "BSA" "dEint" "Edesolv"
+           cols=3 "Rigid body EM" "semi-flexible SA" "Water refinement" +}
+-{===>} w_vdw_0=0.01;
++{===>} w_vdw_0=1.0;
+ {===>} w_vdw_1=1.0;
+ {===>} w_vdw_2=1.0;
+ 
+@@ -4652,10 +4652,10 @@
+ 
+ {* Clustering method (RMSD or Fraction of Common Contacts (FCC)) *}
+ {+ choice: "RMSD" "FCC" +}
+-{===>} clust_meth="FCC";
++{===>} clust_meth="RMSD";
+ 
+ {* RMSD cutoff for clustering? (Recommended values: RMSD 7.5, FCC 0.60) *}
+-{===>} clust_cutoff=0.60;
++{===>} clust_cutoff=1.0;
+ 
+ {* Minimum cluster size? *}
+ {===>} clust_size=4;

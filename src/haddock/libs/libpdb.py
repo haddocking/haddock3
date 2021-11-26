@@ -207,11 +207,11 @@ def read_ATOM_section(lines, section_slice):
     """
     # read the chain ID
     chainids = set(
-        line[part_slice].strip()
+        line[section_slice].strip()
         for line in lines
         if line.startswith(('ATOM', 'HETATM'))
         )
-    return chaindids
+    return chainids
 
 
 read_chainids = partial(read_ATOM_section, section_slice=slc_chainid)

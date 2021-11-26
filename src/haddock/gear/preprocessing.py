@@ -14,9 +14,22 @@ from pdbtools import (
     pdb_fixinsert,
     pdb_keepcoord,
     pdb_tidy,
+    pdb_segxchain,
+    pdb_chainxseg,
+    pdb_chain,
     )
 
-from haddock.libs.libfunc import chainf, chainfs, reduce_helper
+from haddock import log
+from haddock.core.supported_molecules import (
+    supported_carbohydrates,
+    supported_ions,
+    supported_modified_amino_acids,
+    supported_multiatom_ions,
+    supported_nucleic_acids_bases,
+    )
+from haddock.libs.libio import open_files_to_lines
+from haddock.libs.libfunc import chainf
+from haddock.libs.libpdb import read_chainids, read_segids, slc_resname
 
 
 upper_case = list(string.ascii_uppercase)[::-1]
@@ -42,12 +55,11 @@ def process_pdb_files(*files, osuffix='_processed'):
     """
     files_content = open_files_to_lines(*files)
 
-    procfiles = process_structures(files_content)
+    procfiles = process_pdbs(files_content)
 
     # prepares output paths
-    f_paths = map(Path, files)
     o_paths = [
-        Path(f.parent, f.stem + osuffix, f.suffix)
+        Path(f.parent, f.stem + osuffix).with_suffix(f.suffix)
         for f in map(Path, files)
         ]
 
@@ -59,7 +71,7 @@ def process_pdb_files(*files, osuffix='_processed'):
 
 
 
-def process_pdb(structures):
+def process_pdbs(structures):
     """
     Processes and checks PDB file contents for HADDOCK3 compatibility.
 
@@ -78,6 +90,21 @@ def process_pdb(structures):
         The same data structure as `structures` but with the corrected
         (processed) content.
     """
+    # checks and log messages (do not alter the lines)
+    # input should be list and not a generator
+    checks = [
+        partial(check_supported_carbohydrates, user_defined=param),
+        partial(check_supported_ions, user_defined=param),
+        partial(check_supported_nucleic_acids, user_defined=param),
+        partial(check_supported_modified_aa, user_defined=param),
+        ]
+
+    for structure in structures:
+        for func in checks:
+            func(structure)
+
+
+
     # these are the processing or checking functions that should (if needed)
     # modify the input PDB and return the corrected lines
     # (in the like of pdbtools)
@@ -86,6 +113,11 @@ def process_pdb(structures):
         pdb_selaltloc.run,
         partial(pdb_rplresname.run, name_from='MSE', name_to='MET'),
         partial(pdb_fixinsert.run, option_list=[]),
+        #
+        partial(remove_unsupported_carbohydrates, user_defined=param),
+        partial(remove_unsupported_ions, user_defined=param),
+        partial(remove_unsupported_nucleic_acids, user_defined=param),
+        partial(remove_unsupported_modified_aa, user_defined=param),
         #
         pdb_tidy.run,
         #
@@ -113,6 +145,39 @@ def process_pdb(structures):
         check_func(processed_individually)
 
     return processed_individually
+
+
+def check_supported_molecules(
+        lines,
+        haddock3_defined=None,
+        user_defined=None,
+        ):
+    """."""
+    user_defined = user_defined or tuple()
+    haddock3_defined = haddock3_defined or tuple()
+    allowed = set(haddock3_defined) + set(user_defined)
+
+    not_allowed_found = set()
+
+    for line in lines:
+        if line.startswith(('ATOM', 'HETATM')):
+            residue = line[slc_resname]
+            if residue not in allowed:
+                not_allowed_found.add(residue)
+
+    for i in not_allowed_found:
+        log.warning(
+            f'* WARNING: {i!r} found and not supported. This '
+            'molecule will be removed.'
+            )
+
+    return
+
+
+check_supported_carbohydrates = partial(check_supported_molecules, haddock3_defined=supported_carbohydrates)  # noqa: E221,E501
+check_supported_ions          = partial(check_supported_molecules, haddock3_defined=supported_ions + supported_multiatom_ions)  # noqa: E221,E501
+check_supported_nucleic_acids = partial(check_supported_molecules, haddock3_defined=supported_nucleic_acids_bases)  # noqa: E221,E501
+check_supported_modified_aa   = partial(check_supported_molecules, haddock3_defined=supported_modified_amino_acids)  # noqa: E221,E501
 
 
 def solve_no_chainID_no_segID(lines):
@@ -148,7 +213,7 @@ def solve_no_chainID_no_segID(lines):
         new_lines = pdb_chainxseg.run(_chains)
 
     # gives priority to chains
-    elif chainds != segids:
+    elif chainids != segids:
         new_lines = pdb_chainxseg.run(lines)
 
     else:

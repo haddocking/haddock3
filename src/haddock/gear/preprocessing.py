@@ -21,11 +21,12 @@ from pdbtools import (
 
 from haddock import log
 from haddock.core.supported_molecules import (
+    supported_cofactors,
     supported_carbohydrates,
     supported_ions,
     supported_modified_amino_acids,
     supported_multiatom_ions,
-    supported_nucleic_acids_bases,
+    supported_nucleic_acid_bases,
     )
 from haddock.libs.libio import open_files_to_lines
 from haddock.libs.libfunc import chainf
@@ -93,16 +94,13 @@ def process_pdbs(structures):
     # checks and log messages (do not alter the lines)
     # input should be list and not a generator
     checks = [
-        partial(check_supported_carbohydrates, user_defined=param),
-        partial(check_supported_ions, user_defined=param),
-        partial(check_supported_nucleic_acids, user_defined=param),
-        partial(check_supported_modified_aa, user_defined=param),
+        partial(check_supported_hetatm, user_defined=param),
+        partial(check_supported_atom, user_defined=param),
         ]
 
     for structure in structures:
         for func in checks:
             func(structure)
-
 
 
     # these are the processing or checking functions that should (if needed)
@@ -151,6 +149,7 @@ def check_supported_molecules(
         lines,
         haddock3_defined=None,
         user_defined=None,
+        line_startswith=('ATOM', 'HETATM'),
         ):
     """."""
     user_defined = user_defined or tuple()
@@ -160,24 +159,41 @@ def check_supported_molecules(
     not_allowed_found = set()
 
     for line in lines:
-        if line.startswith(('ATOM', 'HETATM')):
+        if line.startswith(line_startswith):
             residue = line[slc_resname]
             if residue not in allowed:
                 not_allowed_found.add(residue)
 
     for i in not_allowed_found:
         log.warning(
-            f'* WARNING: {i!r} found and not supported. This '
+            f'* WARNING: residue {i!r} found and not supported. This '
             'molecule will be removed.'
             )
 
     return
 
 
-check_supported_carbohydrates = partial(check_supported_molecules, haddock3_defined=supported_carbohydrates)  # noqa: E221,E501
-check_supported_ions          = partial(check_supported_molecules, haddock3_defined=supported_ions + supported_multiatom_ions)  # noqa: E221,E501
-check_supported_nucleic_acids = partial(check_supported_molecules, haddock3_defined=supported_nucleic_acids_bases)  # noqa: E221,E501
-check_supported_modified_aa   = partial(check_supported_molecules, haddock3_defined=supported_modified_amino_acids)  # noqa: E221,E501
+supported_hetatm = [
+    supported_carbohydrates,
+    supported_multiatom_ions,
+    supported_cofactors,
+    supported_ions,
+    ]
+check_supported_hetatm = partial(
+    check_supported_molecules,
+    haddock3_defined=supported_hetatm,
+    line_startswith='HETATM',
+    )
+
+supported_atom = [
+    supported_modified_amino_acids,
+    supported_nucleic_acid_bases,
+    ]
+check_supported_atom = partial(
+    check_supported_molecules,
+    haddock3_defined=supported_atom,
+    line_startswith='ATOM',
+    )
 
 
 def solve_no_chainID_no_segID(lines):

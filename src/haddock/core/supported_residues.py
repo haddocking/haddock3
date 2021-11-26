@@ -69,6 +69,11 @@ supported_multiatom_ions = (
     'WO4',  # Tungstate
     )
 
+supported_cofactors = (
+    'HEB',  # Heme-B
+    'HEC',  # Heme-C
+    )
+
 supported_nucleic_acid_bases = (
     # DNA
     'DA',  # Adenine

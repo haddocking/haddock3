@@ -1,0 +1,115 @@
+! HADDOCK AIR restraints for 1st partner
+!
+assign ( resid 27  and segid A)
+       (
+        ( resid 32  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+     or
+        ( resid 33  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+     or
+        ( resid 34  and segid B and (name N3 or name N7 or name O6 or name H1 or name H22 or name H21 or name C2 or name C4 or name C5 or name C6 or name C8))
+       )  2.0 2.0 0.0
+!
+assign ( resid 29  and segid A)
+       (
+        ( resid 4  and segid B and (name N1 or name N3 or name N7 or name H61 or name H62 or name C2 or name C6 or name C5 or name C4 or name C8))
+     or
+        ( resid 5  and segid B and (name O2 or name N3 or name H41 or name H42 or name C2 or name C4 or name C5 or name C6))
+     or
+        ( resid 6  and segid B and (name N1 or name N3 or name N7 or name H61 or name H62 or name C2 or name C6 or name C5 or name C4 or name C8))
+     or
+        ( resid 33  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+     or
+        ( resid 34  and segid B and (name N3 or name N7 or name O6 or name H1 or name H22 or name H21 or name C2 or name C4 or name C5 or name C6 or name C8))
+     or
+        ( resid 35  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+       )  2.0 2.0 0.0
+!
+assign ( resid 30  and segid A)
+       (
+        ( resid 31  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+       )  2.0 2.0 0.0
+!
+assign ( resid 33  and segid A)
+       (
+        ( resid 31  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+     or
+        ( resid 32  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+       )  2.0 2.0 0.0
+!
+! HADDOCK AIR restraints for 2nd partner
+!
+assign ( resid 3  and segid B and (name O1P or name O2P or name OP1 or name OP2))
+       (
+        ( resid 10  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 4  and segid B and (name O1P or name O2P or name OP1 or name OP2))
+       (
+        ( resid 10  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 4  and segid B and (name N1 or name N3 or name N7 or name H61 or name H62 or name C2 or name C6 or name C5 or name C4 or name C8))
+       (
+        ( resid 27  and segid A)        
+       )  2.0 2.0 0.0
+!
+assign ( resid 5  and segid B and (name O2 or name N3 or name H41 or name H42 or name C2 or name C4 or name C5 or name C6))
+       (
+        ( resid 29  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 6  and segid B and (name N1 or name N3 or name N7 or name H61 or name H62 or name C2 or name C6 or name C5 or name C4 or name C8))
+       (
+        ( resid 29  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 30  and segid B and (name O1P or name O2P or name OP1 or name OP2))
+       (
+        ( resid 40  and segid A)
+     or
+        ( resid 41  and segid A)
+     or
+        ( resid 42  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 31  and segid B and (name O1P or name O2P or name OP1 or name OP2))
+       (
+        ( resid 40  and segid A)
+     or
+        ( resid 41  and segid A)
+     or
+        ( resid 42  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 31  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+       (
+        ( resid 33  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 32  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+       (
+        ( resid 33  and segid A)
+     or
+        ( resid 27  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 33  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+       (
+        ( resid 27  and segid A)
+     or
+        ( resid 29  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 34  and segid B and (name N3 or name N7 or name O6 or name H1 or name H22 or name H21 or name C2 or name C4 or name C5 or name C6 or name C8))
+       (
+        ( resid 27  and segid A)
+     or
+        ( resid 29  and segid A)
+       )  2.0 2.0 0.0
+!
+assign ( resid 35  and segid B and (name O2 or name O4 or name H3 or name C2 or name C4 or name C5 or name C6 or name C7))
+       (
+        ( resid 27  and segid A)
+     or
+        ( resid 29  and segid A)
+       )  2.0 2.0 0.0

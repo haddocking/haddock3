@@ -115,7 +115,7 @@ def identify_chainseg(pdb_file_path):
     chains = []
     with open(pdb_file_path) as input_handler:
         for line in input_handler:
-            if line.startswith("ATOM  "):
+            if line.startswith(("ATOM  ","HETATM")):
                 try:
                     segid = line[72:76].strip()[:1]
                 except IndexError:

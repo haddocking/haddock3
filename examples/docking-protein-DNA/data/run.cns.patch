@@ -1,0 +1,74 @@
+--- run.cns	2019-03-11 12:07:52.402707184 +0100
++++ ../run_ref_for_patch.cns	2019-03-11 12:07:32.225405789 +0100
+@@ -116,7 +116,7 @@
+ {===>} fix_origin_mol2=false;
+ {* Is molecule 2 a nucleic acid? *}
+ {+ choice: true false +}
+-{===>} dna_mol2=false;
++{===>} dna_mol2=true;
+ {* Is molecule 2 a cyclic peptide? *}
+ {+ choice: true false +}
+ {===>} cyclicpept_mol2=false;
+@@ -3047,7 +3047,7 @@
+ 
+ {* Do you want to randomly exclude a fraction of the ambiguous restraints (AIRs)? *}
+ {+ choice: true false +}
+-{===>} noecv=true;
++{===>} noecv=false;
+ 
+ {* Number of partitions for random exclusion (%excluded=100/number of partitions)? *}
+ {===>} ncvpart=2;
+@@ -3132,7 +3132,7 @@
+ {======================DNA-RNA restraints ============================}
+ {* Use DNA/RNA restraints (dna-rna_restraints.def in data/sequence)? *}
+ {+ choice: true false +}
+-{===>} dnarest_on=false;
++{===>} dnarest_on=true;
+ 
+ 
+ {=========================== dihedrals restraints ====================}
+@@ -3671,7 +3671,7 @@
+ {* topology file for molecule 1 *}
+ {===>} prot_top_mol1="protein-allhdg5-4.top";
+ {* topology file for molecule 2 *}
+-{===>} prot_top_mol2="protein-allhdg5-4.top";
++{===>} prot_top_mol2="dna-rna-allatom-hj-opls-1.3.top";
+ {* topology file for molecule 3 *}
+ {===>} prot_top_mol3="protein-allhdg5-4.top";
+ {* topology file for molecule 4 *}
+@@ -3712,7 +3712,7 @@
+ {* linkage file for molecule 1 *}
+ {===>} prot_link_mol1="protein-allhdg5-4-noter.link";
+ {* linkage file for molecule 2 *}
+-{===>} prot_link_mol2="protein-allhdg5-4-noter.link";
++{===>} prot_link_mol2="dna-rna-1.3.link";
+ {* linkage file for molecule 3 *}
+ {===>} prot_link_mol3="protein-allhdg5-4-noter.link";
+ {* linkage file for molecule 4 *}
+@@ -3753,7 +3753,7 @@
+ {* energy parameter file for molecule 1 *}
+ {===>} prot_par_mol1="protein-allhdg5-4.param";
+ {* energy parameter file for molecule 2 *}
+-{===>} prot_par_mol2="protein-allhdg5-4.param";
++{===>} prot_par_mol2="dna-rna-allatom-hj-opls-1.3.param";
+ {* energy parameter file for molecule 3 *}
+ {===>} prot_par_mol3="protein-allhdg5-4.param";
+ {* energy parameter file for molecule 4 *}
+@@ -3936,7 +3936,7 @@
+ {===>} elecflag_0=true;
+ 
+ {* Give the epsilon constant for the electrostatic energy term in it0 *}
+-{===>} epsilon_0=10.0;
++{===>} epsilon_0=78.0;
+ 
+ {* Use constant (cdie) or distance-dependent (rdie) dielectric in it0? *}
+ {+ choice: cdie rdie +}
+@@ -3947,7 +3947,7 @@
+ {===>} elecflag_1=true;
+ 
+ {* Give the epsilon constant for the electrostatic energy term in it1 *}
+-{===>} epsilon_1=1.0;
++{===>} epsilon_1=78.0;
+ 
+ {* Use constant (cdie) or distance-dependent (rdie) dielectric in it0? *}
+ {+ choice: cdie rdie +}

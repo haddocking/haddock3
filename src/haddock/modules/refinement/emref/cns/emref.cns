@@ -9,7 +9,7 @@
 ! ***********************************************************************
 !
 
-if ( $log_level = verbose ) then
+if ( $log_level = "verbose" ) then
     set message=normal echo=on end
 else
     set message=off echo=off end
@@ -352,7 +352,7 @@ else
     evaluate ($npart = 0)
 end if
 
-if ( $log_level = verbose ) then
+if ( $log_level = "verbose" ) then
     set message=normal echo=on end
 else
     set message=off echo=off end
@@ -441,10 +441,7 @@ if ($Data.surfrest eq true ) then
 end if
 
 if ($Data.dnarest eq true ) then
-    fileexist $dna_rest_fname end
-    if ($result eq true) then
-        @@$dna_rest_fname
-    end if
+    @MODULE:dna-rna_restraints.cns
 end if
 
 if ($Data.ssdihed eq all ) then
@@ -639,8 +636,8 @@ else
     evaluate ($violations_test_noe=0)
 end if
 
-if ($Data.dnarest eq true) then
-    @@$dna_rest_file
+if ($Data.dnarest eq true ) then
+    @MODULE:dna-rna_restraints.cns
 end if
 
 energy end

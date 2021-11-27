@@ -402,9 +402,9 @@ if ( $select = 0 ) then
     display  %INFO: There are no coordinates missing for non-hydrogen atoms
 end if
 
-if ( $log_level = verbose ) then
+if ( $log_level = "verbose" ) then
     set message=normal echo=on end
-elseif ( $log_level = normal) then
+elseif ( $log_level = "normal") then
     set message=normal echo=off end
 else
     set message=off echo=off end

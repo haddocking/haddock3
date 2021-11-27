@@ -178,10 +178,10 @@ define(
 {================= solvent topology and parameter files ====================}
 
 {* solvent topology file *}
-{===>} solv_topology_infile="TOPPAR:water-allhdg5-4.top";
+{===>} solv_topology_infile="TOPPAR:solvent-allhdg5-4.top";
 
 {* solvent parameter file *}
-{===>} solv_parameter_infile="TOPPAR:water-allhdg5-4.param";
+{===>} solv_parameter_infile="TOPPAR:solvent-allhdg5-4.param";
 
 {================= cofactor topology and parameter files ===================}
 

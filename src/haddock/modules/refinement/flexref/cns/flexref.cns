@@ -317,7 +317,6 @@ evaluate ($npart = $ncvpart)
 
 
 ! Unsupported restraints
-evaluate ($Data.flags.cdih = false)
 evaluate ($Data.flags.em   = false)
 evaluate ($Data.flags.rg   = false)
 evaluate ($Data.flags.zres = false)
@@ -801,7 +800,7 @@ if ($reorient = true) then
     coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
 end if
 
-write coordinates output=$output_pdb_filename end
+write coordinates format=pdbo output=$output_pdb_filename end
 
 display OUTPUT: $output_pdb_filename
 

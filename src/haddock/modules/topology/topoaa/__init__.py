@@ -90,7 +90,7 @@ class HaddockModule(BaseHaddockModule):
             # Sanitize the different PDB files
             for model in splited_models:
                 log.info(f"Sanitizing molecule {model.name}")
-                models.append(model)
+                models_dic[i].append(model)
 
                 if self.params['ligand_top_fname']:
                     custom_top = self.params['ligand_top_fname']

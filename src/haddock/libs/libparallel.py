@@ -17,7 +17,8 @@ class Worker(Process):
         """Execute tasks."""
         for task in self.tasks:
             task.run()
-            log.info(f'< Starting {task.input_file.name}')
+            task_ident = f'{task.modpath.name}/{task.input_file.name}'
+            log.info(f'< Starting {task_ident}')
         log.debug(f"{self.name} executed")
 
 
@@ -76,7 +77,8 @@ class Scheduler:
                 worker.join()
                 for t in worker.tasks:
                     per = (c / float(self.num_tasks)) * 100
-                    log.info(f'>> Finished {t.input_file.name} ({per:.0f}%)')
+                    task_ident = f'{t.modpath.name}/{t.input_file.name}'
+                    log.info(f'>> {task_ident} completed {per:.0f}% ')
                     c += 1
 
             log.info(f"{self.num_tasks} workers finished")

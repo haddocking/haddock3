@@ -77,8 +77,12 @@ def swap_segid_chain(pdb_file_path, new_pdb_file_path):
                     output_handler.write(line)
 
 
-def sanitize(pdb_file_path, overwrite=True):
+def sanitize(pdb_file_path, overwrite=True, custom_topology=False):
     """Sanitize a PDB file."""
+    if custom_topology:
+        custom_res_to_keep = get_supported_residues(custom_topology)
+        _to_keep.extend(custom_res_to_keep)
+
     good_lines = []
     with open(pdb_file_path) as input_handler:
         for line in input_handler:
@@ -115,7 +119,7 @@ def identify_chainseg(pdb_file_path):
     chains = []
     with open(pdb_file_path) as input_handler:
         for line in input_handler:
-            if line.startswith("ATOM  "):
+            if line.startswith(("ATOM  ", "HETATM")):
                 try:
                     segid = line[72:76].strip()[:1]
                 except IndexError:

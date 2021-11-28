@@ -1,0 +1,9 @@
+AMBIG_TBL=./cro_air.tbl
+HADDOCK_DIR=../../
+N_COMP=2
+PDB_FILE1=./cro.pdb
+PDB_FILE2=./dna.pdb
+PROJECT_DIR=./
+PROT_SEGID_1=A
+PROT_SEGID_2=B
+RUN_NUMBER=1

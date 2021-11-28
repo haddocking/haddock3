@@ -63,7 +63,7 @@ end
 !dihedral restraints:
 restraints dihedral 
     reset
-    nassign 10000 
+    nassign 20000 
 end
 if ($Data.cdih.on eq true) then
     fileexist $dihe_fname end

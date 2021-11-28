@@ -203,7 +203,7 @@ class CAPRI:
 
     def irmsd(self, cutoff=5.):
         """Calculate the I-RMSD."""
-        log.info(f'  Using cutoff={cutoff}A')
+        log.info(f'[caprieval]  cutoff: {cutoff}A')
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
 
@@ -227,7 +227,7 @@ class CAPRI:
                                ignore_missing=self.ignore_missing)
 
             if P.shape != Q.shape:
-                log.warning('Cannot align these models,'
+                log.warning('[caprieval] Cannot align these models,'
                             ' the number of atoms is in the interface'
                             ' is different.')
                 i_rmsd = float('nan')
@@ -246,8 +246,8 @@ class CAPRI:
 
     def lrmsd(self, receptor_chain, ligand_chain):
         """Calculate the L-RMSD."""
-        log.info(f'  Receptor chain = {receptor_chain}')
-        log.info(f'  Ligand chain = {ligand_chain}')
+        log.info(f'[caprieval]  Receptor chain: {receptor_chain}')
+        log.info(f'[caprieval]  Ligand chain: {ligand_chain}')
         ref_resdic = read_res(self.reference)
 
         # Get reference coordinates
@@ -316,8 +316,8 @@ class CAPRI:
 
     def ilrmsd(self, ligand_chain, cutoff):
         """Calculate the Interface Ligand RMSD."""
-        log.info(f'  Using cutoff={cutoff}A')
-        log.info(f'  Ligand chain = {ligand_chain}')
+        log.info(f'[caprieval]  cutoff: {cutoff}A')
+        log.info(f'[caprieval]  Ligand chain: {ligand_chain}')
         ref_resdic = read_res(self.reference)
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
@@ -380,7 +380,7 @@ class CAPRI:
 
     def fnat(self, cutoff=5.0):
         """Calculate the frequency of native contacts."""
-        log.info(f'  Using cutoff = {cutoff}A')
+        log.info(f'[caprieval]  cutoff: {cutoff}A')
         ref_contacts = load_contacts(self.reference, cutoff)
         for model in self.model_list:
             model_contacts = load_contacts(model, cutoff)
@@ -440,7 +440,7 @@ class HaddockModule(BaseHaddockModule):
     def run(self, **params):
         """Execute module."""
         log.info("Running [caprieval] module")
-        log.info('Calculating CAPRI metrics...')
+        log.info('[caprieval] Calculating CAPRI metrics...')
 
         super().run(params)
 
@@ -457,8 +457,8 @@ class HaddockModule(BaseHaddockModule):
 
         if not self.params['reference']:
             # No reference was given, use the lowest
-            log.info('No reference was given, using best ranking structure'
-                     ' from previous step')
+            log.info('[caprieval] No reference was given, using best ranking'
+                     ' structure from previous step')
             #  by default modes_to_calc should have been sorted by the module
             #  that produced it
             target_model = models_to_calc[0]
@@ -466,7 +466,7 @@ class HaddockModule(BaseHaddockModule):
         else:
             reference = Path(self.params['reference'])
 
-        log.info(f'Using {reference} as reference structure')
+        log.info(f'[caprieval] Using {reference} as reference structure')
 
         capri = CAPRI(reference,
                       models_to_calc,
@@ -474,28 +474,30 @@ class HaddockModule(BaseHaddockModule):
                       ignore_missing=self.params['ignore_missing'])
 
         if self.params['fnat']:
-            log.info(' Calculating FNAT')
+            log.info('[caprieval] Calculating FNAT')
             capri.fnat(cutoff=self.params['fnat_cutoff'])
 
         if self.params['irmsd']:
-            log.info(' Calculating I-RMSD')
+            log.info('[caprieval] Calculating I-RMSD')
             capri.irmsd(cutoff=self.params['irmsd_cutoff'])
 
         if self.params['lrmsd']:
-            log.info(' Calculating L-RMSD')
+            log.info('[caprieval] Calculating L-RMSD')
             capri.lrmsd(receptor_chain=self.params['receptor_chain'],
                         ligand_chain=self.params['ligand_chain'])
 
         if self.params['ilrmsd']:
-            log.info(' Calculating I-L-RMSD')
+            log.info('[caprieval] Calculating I-L-RMSD')
             capri.ilrmsd(ligand_chain=self.params['ligand_chain'],
                          cutoff=self.params['irmsd_cutoff'])
 
         output_fname = Path(self.path, 'capri.tsv')
-        log.info(f'Saving output to {output_fname}')
+        log.info(f'[caprieval] Saving output to {output_fname}')
         capri.output(output_fname)
 
         selected_models = models_to_calc
         io = ModuleIO()
         io.add(selected_models, "o")
         io.save(self.path)
+
+        log.info('Module [caprieval] finished')

@@ -125,10 +125,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        log.info(f"[flexref] Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("CNS engine has finished")
+        log.info("[flexref] CNS engine has finished")
 
         # Get the weights from the defaults
         _weight_keys = \
@@ -160,3 +160,5 @@ class HaddockModule(BaseHaddockModule):
         io = ModuleIO()
         io.add(expected, "o")
         io.save(self.path)
+
+        log.info('Module [flexref] finished')

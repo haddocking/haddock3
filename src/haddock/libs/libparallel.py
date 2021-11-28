@@ -11,13 +11,14 @@ class Worker(Process):
     def __init__(self, tasks):
         super(Worker, self).__init__()
         self.tasks = tasks
-        log.info(f"Worker ready with {len(self.tasks)} tasks")
+        log.debug(f"Worker ready with {len(self.tasks)} tasks")
 
     def run(self):
         """Execute tasks."""
         for task in self.tasks:
             task.run()
-        log.info(f"{self.name} executed")
+            log.info(f'< Starting {task.input_file.name}')
+        log.debug(f"{self.name} executed")
 
 
 class Scheduler:
@@ -48,9 +49,9 @@ class Scheduler:
         _n = self.num_processes
         job_list = [tasks[i::_n] for i in range(_n)]
 
-        self.task_list = [Worker(jobs) for jobs in job_list]
+        self.worker_list = [Worker(jobs) for jobs in job_list]
 
-        log.info(f"{self.num_tasks} tasks ready.")
+        log.debug(f"{self.num_tasks} tasks ready.")
 
     @property
     def num_processes(self):
@@ -60,18 +61,25 @@ class Scheduler:
     @num_processes.setter
     def num_processes(self, n):
         self._ncores = parse_ncores(n)
-        log.info(f"Scheduler configurated for {self._ncores} cpu cores.")
+        log.debug(f"Scheduler configured for {self._ncores} cpu cores.")
 
     def run(self):
         """Run tasks in parallel."""
         try:
-            for task in self.task_list:
-                task.start()
+            for worker in self.worker_list:
+                # Start the worker
+                worker.start()
 
-            for task in self.task_list:
-                task.join()
+            c = 1
+            for worker in self.worker_list:
+                # Wait for the worker to finish
+                worker.join()
+                for t in worker.tasks:
+                    per = (c / float(self.num_tasks)) * 100
+                    log.info(f'>> Finished {t.input_file.name} ({per:.0f}%)')
+                    c += 1
 
-            log.info(f"{self.num_tasks} tasks finished")
+            log.info(f"{self.num_tasks} workers finished")
 
         except KeyboardInterrupt as err:
             # Q: why have a keyboard interrupt here?
@@ -84,7 +92,7 @@ class Scheduler:
 
     def terminate(self):
         """Terminate tasks in a controlled way."""
-        for task in self.task_list:
-            task.terminate()
+        for worker in self.worker_list:
+            worker.terminate()
 
         log.info("The workers terminated in a controlled way")

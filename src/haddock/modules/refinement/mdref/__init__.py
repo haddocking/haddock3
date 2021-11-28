@@ -122,10 +122,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        log.info(f"[mdref] Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("CNS engine has finished")
+        log.info("[mdref] CNS engine has finished")
 
         # Get the weights from the defaults
         _weight_keys = \
@@ -157,3 +157,5 @@ class HaddockModule(BaseHaddockModule):
         io.add(refined_structure_list)
         io.add(expected, "o")
         io.save(self.path)
+
+        log.info('Module [mdref] finished')

@@ -64,8 +64,8 @@ class HaddockModule(BaseHaddockModule):
 
     def run(self, molecules, **params):
         """Execute module."""
-        log.info("Running [allatom] module")
-        log.info("Generating topologies")
+        log.info("Running [topoaa] module")
+        log.info("[topoaa] Generating topologies")
 
         super().run(params)
 
@@ -76,20 +76,21 @@ class HaddockModule(BaseHaddockModule):
 
         models_dic = {}
         for i, molecule in enumerate(molecules, start=1):
-            log.info(f"{i} - {molecule.file_name}")
+            log.info(f"[topoaa] Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_name.name)
             shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models
-            log.info(f"Split models if needed for {step_molecule_path}")
+            log.debug("[topoaa] Split models if needed for"
+                      f" {step_molecule_path}")
             ens = libpdb.split_ensemble(step_molecule_path)
             splited_models = sorted(ens)
 
             # Sanitize the different PDB files
             for model in splited_models:
-                log.info(f"Sanitizing molecule {model.name}")
+                log.info(f"[topoaa] Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
                 libpdb.sanitize(model, overwrite=True)
 
@@ -98,7 +99,9 @@ class HaddockModule(BaseHaddockModule):
                                                       self.path,
                                                       self.recipe_str,
                                                       self.params)
-                log.info(f"Topology CNS input created in {topology_filename}")
+                top_fname_loc = f'{self.path.name}/{topology_filename.name}'
+                log.info("[topoaa] CNS input created"
+                         f" at {top_fname_loc}")
 
                 # Add new job to the pool
                 output_filename = Path(
@@ -118,10 +121,10 @@ class HaddockModule(BaseHaddockModule):
                 jobs.append(job)
 
         # Run CNS engine
-        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        log.info(f"[topoaa] Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("CNS engine has finished")
+        log.info("[topoaa] CNS engine has finished")
 
         # Check for generated output, fail it not all expected files
         #  are found
@@ -152,7 +155,7 @@ class HaddockModule(BaseHaddockModule):
                 expected[i][j] = pdb
 
         if not_found:
-            self.finish_with_error("Several files were not generated:"
+            self.finish_with_error("[topoaa] Several files were not generated:"
                                    f" {not_found}")
 
         # Save module information
@@ -160,3 +163,5 @@ class HaddockModule(BaseHaddockModule):
         for i in expected:
             io.add(expected[i], "o")
         io.save(self.path)
+
+        log.info('Module [topoaa] finished')

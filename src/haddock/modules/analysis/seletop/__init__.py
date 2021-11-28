@@ -35,7 +35,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
-            self.finish_with_error('This module cannot come after one'
+            self.finish_with_error('[seletop] This module cannot come after one'
                                    ' that produced an iterable')
 
         models_to_select = [
@@ -49,7 +49,7 @@ class HaddockModule(BaseHaddockModule):
 
         if len(models_to_select) < self.params['select']:
             log.warning(
-                'Number of models to be selected is larger'
+                '[seletop] Number of models to be selected is larger'
                 ' than generated models, selecting ALL'
                 )
 

@@ -127,10 +127,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        log.info(f"[emref] Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("CNS engine has finished")
+        log.info("[emref] CNS engine has finished")
 
         # Get the weights needed for the CNS module
         _weight_keys = \

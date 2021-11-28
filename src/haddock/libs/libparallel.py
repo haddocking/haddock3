@@ -81,7 +81,7 @@ class Scheduler:
                     log.info(f'>> {task_ident} completed {per:.0f}% ')
                     c += 1
 
-            log.info(f"{self.num_tasks} workers finished")
+            log.info(f"{self.num_tasks} tasks finished")
 
         except KeyboardInterrupt as err:
             # Q: why have a keyboard interrupt here?

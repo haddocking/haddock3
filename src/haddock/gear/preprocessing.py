@@ -109,7 +109,7 @@ def process_pdbs(structures):
     line_by_line_processing_steps = [
         pdb_keepcoord.run,
         pdb_selaltloc.run,
-        partial(pdb_rplresname.run, name_from='MSE', name_to='MET'),
+        replace_MSE_to_MET,
         partial(pdb_rplresname.run, name_from='HSD', name_to='HIS'),
         partial(pdb_rplresname.run, name_from='HSE', name_to='HIS'),
         partial(pdb_rplresname.run, name_from='HID', name_to='HIS'),
@@ -281,3 +281,17 @@ def solve_no_chainID_no_segID(lines):
         return lines
 
     return list(new_lines)
+
+
+def replace_HETATM_to_ATOM(fhandler, res):
+    """."""
+    for line in fhandler:
+        if line.startswith('HETATM') and line[slc_resname].strip() == res:
+            yield 'HETATM' + line[6:]
+        else:
+            yield line
+
+def replace_MSE_to_MET(fhandler):
+    """."""
+    _ = replace_HETATM_to_ATOM(fhandler, res='MSE')
+    yield from pdb_rplresname.run(_, name_from='MSE', name_to='MET')

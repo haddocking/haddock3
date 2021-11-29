@@ -110,12 +110,14 @@ def process_pdbs(structures):
         pdb_keepcoord.run,
         pdb_selaltloc.run,
         partial(pdb_rplresname.run, name_from='MSE', name_to='MET'),
+        partial(pdb_rplresname.run, name_from='HSD', name_to='HIS'),
+        partial(pdb_rplresname.run, name_from='HSE', name_to='HIS'),
+        partial(pdb_rplresname.run, name_from='HID', name_to='HIS'),
+        partial(pdb_rplresname.run, name_from='HIE', name_to='HIS'),
         partial(pdb_fixinsert.run, option_list=[]),
         #
-        partial(remove_unsupported_carbohydrates, user_defined=param),
-        partial(remove_unsupported_ions, user_defined=param),
-        partial(remove_unsupported_nucleic_acids, user_defined=param),
-        partial(remove_unsupported_modified_aa, user_defined=param),
+        partial(remove_unsupported_hetatm, user_defined=param),
+        partial(remove_unsupported_atom, user_defined=param),
         #
         partial(pdb_tidy.run, strict=True),
         #
@@ -123,19 +125,24 @@ def process_pdbs(structures):
         partial(map, lambda x: x.rstrip(os.linesep)),
         ]
 
+    # perform the individual processing steps
+    processed_individually = [
+        list(chainf(structure, *line_by_line_processing_steps))
+        for structure in structures
+        ]
+
+
     whole_pdb_processing_steps = [
         solve_no_chainID_no_segID,
+        ]
+
+    processed_combined = [
+        
         ]
 
     # these are the checks that are performed considering all the PDBs
     # combined
     combined_checking_steps = [
-        ]
-
-    # perform the individual processing steps
-    processed_individually = [
-        list(chainf(structure, *line_by_line_processing_steps))
-        for structure in structures
         ]
 
     # perform the combined checking steps
@@ -160,15 +167,39 @@ def check_supported_molecules(
 
     for line in lines:
         if line.startswith(line_startswith):
-            residue = line[slc_resname]
+            residue = line[slc_resname].strip()
             if residue not in allowed:
                 not_allowed_found.add(residue)
 
     for i in not_allowed_found:
         log.warning(
-            f'* WARNING: residue {i!r} found and not supported. This '
-            'molecule will be removed.'
+            f'* WARNING: residue {i!r} found and not supported as '
+            f'{line_startswith!r}. This molecule will be removed.'
             )
+
+    return
+
+
+def remove_unsupported_molecules(
+        lines,
+        haddock3_defined=None,
+        user_defined=None,
+        line_startswith=('ATOM', 'HETATM'),
+        ):
+    """."""
+    user_defined = user_defined or tuple()
+    haddock3_defined = haddock3_defined or tuple()
+    allowed = set(haddock3_defined) + set(user_defined)
+
+    not_allowed_found = set()
+
+    for line in lines:
+        if line.startswith(line_startswith):
+            residue = line[slc_resname].strip()
+            if residue not in allowed:
+                continue
+            yield line
+        yield line
 
     return
 
@@ -179,17 +210,30 @@ supported_hetatm = [
     supported_cofactors,
     supported_ions,
     ]
+supported_atom = [
+    supported_modified_amino_acids,
+    supported_nucleic_acid_bases,
+    ]
+
 check_supported_hetatm = partial(
     check_supported_molecules,
     haddock3_defined=supported_hetatm,
     line_startswith='HETATM',
     )
 
-supported_atom = [
-    supported_modified_amino_acids,
-    supported_nucleic_acid_bases,
-    ]
 check_supported_atom = partial(
+    check_supported_molecules,
+    haddock3_defined=supported_atom,
+    line_startswith='ATOM',
+    )
+
+remove_supported_hetatm = partial(
+    check_supported_molecules,
+    haddock3_defined=supported_hetatm,
+    line_startswith='HETATM',
+    )
+
+remove_supported_atom = partial(
     check_supported_molecules,
     haddock3_defined=supported_atom,
     line_startswith='ATOM',

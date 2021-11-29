@@ -29,7 +29,13 @@ def load_workflow_params(default_params):
     """Write the values at the header section."""
     param_header = f'{linesep}! Parameters{linesep}'
 
-    for param, v in default_params.items():
+    non_empty_parameters = (
+        (k, v)
+        for k, v in default_params.items()
+        if v is not None
+        )
+
+    for param, v in non_empty_parameters:
 
         if isinstance(v, bool):
             v = str(v).lower()

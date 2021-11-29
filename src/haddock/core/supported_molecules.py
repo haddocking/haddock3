@@ -115,3 +115,29 @@ supported_modified_amino_acids = (
     'PTR',  # phosphorylated TYR (also)
     'TYS',  # sulfonated TYR.
     )
+
+supported_natural_amino_acids = (
+    'ALA',
+    'ARG',
+    'ASN',
+    'ASP',
+    'CYS',
+    'GLU',
+    'GLN',
+    'GLY',
+    'HIS',
+    'HIP',
+    'HIE',
+    'HID',
+    'ILE',
+    'LEU',
+    'LYS',
+    'MET',
+    'PHE',
+    'PRO',
+    'SER',
+    'THR',
+    'TRP',
+    'TYR',
+    'VAL',
+    )

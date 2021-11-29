@@ -18,6 +18,8 @@ from pdbtools import (
     pdb_segxchain,
     pdb_chainxseg,
     pdb_chain,
+    pdb_reres,
+    pdb_reatom,
     )
 
 from haddock import log
@@ -27,6 +29,7 @@ from haddock.core.supported_molecules import (
     supported_ions,
     supported_modified_amino_acids,
     supported_multiatom_ions,
+    supported_natural_amino_acids,
     supported_nucleic_acid_bases,
     )
 from haddock.libs.libio import open_files_to_lines
@@ -67,7 +70,7 @@ def process_pdb_files(*files, osuffix='_processed'):
 
     # saves processed structures to files
     for out_p, lines in zip(o_paths, procfiles):
-        out_p.write_text(os.linesep.join(lines))
+        out_p.write_text(os.linesep.join(lines) + os.linesep)
 
     return
 
@@ -108,7 +111,7 @@ def process_pdbs(structures, **param):
     # modify the input PDB and return the corrected lines
     # (in the like of pdbtools)
     line_by_line_processing_steps = [
-        #pdb_keepcoord.run,
+        pdb_keepcoord.run,
         #pdb_selaltloc.run,
         replace_MSE_to_MET,
         #partial(pdb_rplresname.run, name_from='HSD', name_to='HIS'),
@@ -118,11 +121,12 @@ def process_pdbs(structures, **param):
         #partial(pdb_fixinsert.run, option_list=[]),
         ##
         #partial(remove_unsupported_hetatm, user_defined=param),
-        #partial(remove_unsupported_atom, user_defined=param),
+        partial(remove_unsupported_atom, user_defined=param),
         ##
+        partial(pdb_reatom.run, starting_value=1),
+        partial(pdb_reres.run, starting_resid=1),
         #partial(pdb_tidy.run, strict=True),
         ##
-        ##partial(map, vartial(str.rstrip, os.linesep)),
         partial(map, lambda x: x.rstrip(os.linesep)),
         ]
 
@@ -134,7 +138,7 @@ def process_pdbs(structures, **param):
 
 
     whole_pdb_processing_steps = [
-        solve_no_chainID_no_segID,
+        #solve_no_chainID_no_segID,
         ]
 
     processed_combined = [
@@ -196,10 +200,12 @@ def remove_unsupported_molecules(
     for line in lines:
         if line.startswith(line_startswith):
             residue = line[slc_resname].strip()
-            if residue not in allowed:
+            if residue in allowed:
+                yield line
+            else:
                 continue
+        else:
             yield line
-        yield line
 
     return
 
@@ -212,6 +218,7 @@ supported_hetatm = set(it.chain(
     ))
 supported_atom = set(it.chain(
     supported_modified_amino_acids,
+    supported_natural_amino_acids,
     supported_nucleic_acid_bases,
     ))
 

@@ -72,6 +72,8 @@ def generate_docking(
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module for rigid body sampling."""
 
+    name = RECIPE_PATH.name
+
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "rigidbody.cns"
         super().__init__(order, path, initial_params, cns_script)
@@ -81,12 +83,8 @@ class HaddockModule(BaseHaddockModule):
         """Confirm module is installed."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [rigidbody] module")
-
-        super().run(params)
-
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
@@ -121,12 +119,12 @@ class HaddockModule(BaseHaddockModule):
 
         # How many times each combination should be sampled,
         #  cannot be smaller than 1
-        sampling_factor = int(params['sampling'] / len(models_to_dock))
+        sampling_factor = int(self.params['sampling'] / len(models_to_dock))
         if sampling_factor < 1:
             self.finish_with_error('Sampling is smaller than the number'
                                    ' of model combinations '
                                    f'#model_combinations={len(models_to_dock)},'
-                                   f' sampling={params["sampling"]}.')
+                                   f' sampling={self.params["sampling"]}.')
 
         # Prepare the jobs
         idx = 1
@@ -164,10 +162,10 @@ class HaddockModule(BaseHaddockModule):
                 idx += 1
 
         # Run CNS engine
-        log.info(f"[rigidbody] Running CNS engine with {len(jobs)} jobs")
+        self.log(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("[rigidbody] CNS engine has finished")
+        self.log("CNS engine has finished")
 
         # Get the weights according to CNS parameters
         _weight_keys = \
@@ -201,5 +199,3 @@ class HaddockModule(BaseHaddockModule):
         io = ModuleIO()
         io.add(structure_list, "o")
         io.save(self.path)
-
-        log.info('Module [rigidbody] finished')

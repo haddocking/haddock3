@@ -72,6 +72,8 @@ def generate_flexref(
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module for flexible refinement."""
 
+    name = RECIPE_PATH.name
+
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "flexref.cns"
         super().__init__(order, path, initial_params, cns_script)
@@ -81,12 +83,8 @@ class HaddockModule(BaseHaddockModule):
         """Confirm module is installed."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [flexref] module")
-
-        super().run(params)
-
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
@@ -125,10 +123,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        log.info(f"[flexref] Running CNS engine with {len(jobs)} jobs")
+        self.log(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("[flexref] CNS engine has finished")
+        self.log("CNS engine has finished")
 
         # Get the weights from the defaults
         _weight_keys = \
@@ -160,5 +158,3 @@ class HaddockModule(BaseHaddockModule):
         io = ModuleIO()
         io.add(expected, "o")
         io.save(self.path)
-
-        log.info('Module [flexref] finished')

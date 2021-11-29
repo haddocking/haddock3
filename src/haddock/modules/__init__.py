@@ -4,7 +4,7 @@ import os
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from haddock import log
+from haddock import log as log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
@@ -89,12 +89,14 @@ class BaseHaddockModule(ABC):
                     )
                 raise TypeError(_msg) from err
 
-    @abstractmethod
-    def run(self, params):
+    def run(self, **params):
         """Execute the module."""
+        log.info(f'Running [{self.name}] module')
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
+        self._run()
+        log.info(f'Module [{self.name}] finished.')
 
     @classmethod
     @abstractmethod
@@ -134,6 +136,9 @@ class BaseHaddockModule(ABC):
     def update_params(self, **parameters):
         """Update defaults parameters with run-specific parameters."""
         self._params.update(parameters)
+
+    def log(self, msg, level='info'):
+        getattr(log, level)(f'[{self.name}] {msg}')
 
 
 @contextlib.contextmanager

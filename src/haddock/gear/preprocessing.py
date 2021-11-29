@@ -3,6 +3,7 @@ Processes input PDB files to ensure compatibility with HADDOCK3.
 
 
 """
+import itertools as it
 import os
 import string
 from pathlib import Path
@@ -66,13 +67,13 @@ def process_pdb_files(*files, osuffix='_processed'):
 
     # saves processed structures to files
     for out_p, lines in zip(o_paths, procfiles):
-        out_p.write_text(''.join(lines))
+        out_p.write_text(os.linesep.join(lines))
 
     return
 
 
 
-def process_pdbs(structures):
+def process_pdbs(structures, **param):
     """
     Processes and checks PDB file contents for HADDOCK3 compatibility.
 
@@ -107,21 +108,21 @@ def process_pdbs(structures):
     # modify the input PDB and return the corrected lines
     # (in the like of pdbtools)
     line_by_line_processing_steps = [
-        pdb_keepcoord.run,
-        pdb_selaltloc.run,
+        #pdb_keepcoord.run,
+        #pdb_selaltloc.run,
         replace_MSE_to_MET,
-        partial(pdb_rplresname.run, name_from='HSD', name_to='HIS'),
-        partial(pdb_rplresname.run, name_from='HSE', name_to='HIS'),
-        partial(pdb_rplresname.run, name_from='HID', name_to='HIS'),
-        partial(pdb_rplresname.run, name_from='HIE', name_to='HIS'),
-        partial(pdb_fixinsert.run, option_list=[]),
-        #
-        partial(remove_unsupported_hetatm, user_defined=param),
-        partial(remove_unsupported_atom, user_defined=param),
-        #
-        partial(pdb_tidy.run, strict=True),
-        #
-        #partial(map, vartial(str.rstrip, os.linesep)),
+        #partial(pdb_rplresname.run, name_from='HSD', name_to='HIS'),
+        #partial(pdb_rplresname.run, name_from='HSE', name_to='HIS'),
+        #partial(pdb_rplresname.run, name_from='HID', name_to='HIS'),
+        #partial(pdb_rplresname.run, name_from='HIE', name_to='HIS'),
+        #partial(pdb_fixinsert.run, option_list=[]),
+        ##
+        #partial(remove_unsupported_hetatm, user_defined=param),
+        #partial(remove_unsupported_atom, user_defined=param),
+        ##
+        #partial(pdb_tidy.run, strict=True),
+        ##
+        ##partial(map, vartial(str.rstrip, os.linesep)),
         partial(map, lambda x: x.rstrip(os.linesep)),
         ]
 
@@ -137,7 +138,6 @@ def process_pdbs(structures):
         ]
 
     processed_combined = [
-        
         ]
 
     # these are the checks that are performed considering all the PDBs
@@ -159,9 +159,9 @@ def check_supported_molecules(
         line_startswith=('ATOM', 'HETATM'),
         ):
     """."""
-    user_defined = user_defined or tuple()
-    haddock3_defined = haddock3_defined or tuple()
-    allowed = set(haddock3_defined) + set(user_defined)
+    user_defined = user_defined or set()
+    haddock3_defined = haddock3_defined or set()
+    allowed = set.union(haddock3_defined, user_defined)
 
     not_allowed_found = set()
 
@@ -187,9 +187,9 @@ def remove_unsupported_molecules(
         line_startswith=('ATOM', 'HETATM'),
         ):
     """."""
-    user_defined = user_defined or tuple()
-    haddock3_defined = haddock3_defined or tuple()
-    allowed = set(haddock3_defined) + set(user_defined)
+    user_defined = user_defined or set()
+    haddock3_defined = haddock3_defined or set()
+    allowed = set.union(haddock3_defined, user_defined)
 
     not_allowed_found = set()
 
@@ -204,16 +204,16 @@ def remove_unsupported_molecules(
     return
 
 
-supported_hetatm = [
+supported_hetatm = set(it.chain(
     supported_carbohydrates,
     supported_multiatom_ions,
     supported_cofactors,
     supported_ions,
-    ]
-supported_atom = [
+    ))
+supported_atom = set(it.chain(
     supported_modified_amino_acids,
     supported_nucleic_acid_bases,
-    ]
+    ))
 
 check_supported_hetatm = partial(
     check_supported_molecules,
@@ -227,14 +227,14 @@ check_supported_atom = partial(
     line_startswith='ATOM',
     )
 
-remove_supported_hetatm = partial(
-    check_supported_molecules,
+remove_unsupported_hetatm = partial(
+    remove_unsupported_molecules,
     haddock3_defined=supported_hetatm,
     line_startswith='HETATM',
     )
 
-remove_supported_atom = partial(
-    check_supported_molecules,
+remove_unsupported_atom = partial(
+    remove_unsupported_molecules,
     haddock3_defined=supported_atom,
     line_startswith='ATOM',
     )
@@ -287,7 +287,7 @@ def replace_HETATM_to_ATOM(fhandler, res):
     """."""
     for line in fhandler:
         if line.startswith('HETATM') and line[slc_resname].strip() == res:
-            yield 'HETATM' + line[6:]
+            yield 'ATOM  ' + line[6:]
         else:
             yield line
 

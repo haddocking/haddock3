@@ -14,6 +14,7 @@ from pdbtools import (
     pdb_rplresname,
     pdb_fixinsert,
     pdb_keepcoord,
+    pdb_occ,
     pdb_tidy,
     pdb_segxchain,
     pdb_chainxseg,
@@ -112,7 +113,8 @@ def process_pdbs(structures, **param):
     # (in the like of pdbtools)
     line_by_line_processing_steps = [
         pdb_keepcoord.run,
-        #pdb_selaltloc.run,
+        pdb_selaltloc.run,
+        partial(pdb_occ.run, occupancy=1.00),
         replace_MSE_to_MET,
         #partial(pdb_rplresname.run, name_from='HSD', name_to='HIS'),
         #partial(pdb_rplresname.run, name_from='HSE', name_to='HIS'),

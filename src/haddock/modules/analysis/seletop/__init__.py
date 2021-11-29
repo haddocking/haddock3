@@ -1,7 +1,6 @@
 """HADDOCK3 module to select a top cluster/model."""
 from pathlib import Path
 
-from haddock import log
 from haddock.libs.libontology import Format, ModuleIO
 from haddock.modules import BaseHaddockModule
 

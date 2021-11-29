@@ -2,7 +2,6 @@
 import shutil
 from pathlib import Path
 
-from haddock import log
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,

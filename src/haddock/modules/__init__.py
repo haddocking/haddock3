@@ -138,6 +138,20 @@ class BaseHaddockModule(ABC):
         self._params.update(parameters)
 
     def log(self, msg, level='info'):
+        """
+        Log a message with a common header.
+
+        Currently the header is the [MODULE NAME] in square brackets.
+
+        Parameters
+        ----------
+        msg : str
+            The log message.
+
+        level : str
+            The level log: 'debug', 'info', ...
+            Defaults to 'info'.
+        """
         getattr(log, level)(f'[{self.name}] {msg}')
 
 

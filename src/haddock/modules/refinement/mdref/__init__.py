@@ -2,7 +2,6 @@
 from os import linesep
 from pathlib import Path
 
-from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import (
     generate_default_header,

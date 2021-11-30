@@ -1,6 +1,7 @@
 """CNS scripts util functions."""
 from os import linesep
 
+from haddock import log
 from haddock.core import cns_paths
 from haddock.libs import libpdb
 from haddock.libs.libmath import RandomNumberGenerator
@@ -25,16 +26,43 @@ def generate_default_header(protonation=None):
             axis, water_box)
 
 
+def insert_in_CNS(v):
+    """
+    Detect if a variable should be inserted in CNS.
+
+    "Empty vars should NOT be added; that is, this function should
+    return False.
+
+    See: https://github.com/haddocking/haddock3/issues/162
+    """
+    cases = (
+        (lambda x: isinstance(x, str), bool),
+        (lambda x: isinstance(x, (int, float)), lambda *a: True),
+        (lambda x: x is None, lambda *a: False),
+        )
+
+    for detect, give in cases:
+        if detect(v):
+            return give(v)
+    else:
+        emsg = f'Value {v!r} has a unknown type for CNS.'
+        log.error(emsg)
+        raise TypeError(emsg)
+
+
 def load_workflow_params(default_params):
     """Write the values at the header section."""
     param_header = f'{linesep}! Parameters{linesep}'
 
+    chains = default_params.pop('chain', None)
+
     non_empty_parameters = (
         (k, v)
         for k, v in default_params.items()
-        if v is not None
+        if insert_in_CNS(v)
         )
 
+    # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:
 
         if isinstance(v, bool):
@@ -44,28 +72,20 @@ def load_workflow_params(default_params):
         elif isinstance(v, str):
             param_header += f'eval (${param}="{v}"){linesep}'
 
-        elif isinstance(v, int):
+        elif isinstance(v, (int, float)):
             param_header += f'eval (${param}={v}){linesep}'
 
-        elif isinstance(v, float):
-            param_header += f'eval (${param}={v}){linesep}'
+        else:
+            emsg = f'Unexpected type when writing CNS header: {type(v)}'
+            log.error(emsg)
+            raise TypeError(emsg)
 
-        elif not v:
-            # either 0 or empty string
-            if isinstance(v, str):
-                v = '\"\"'
-                param_header += f'eval (${param}={v}){linesep}'
-            if isinstance(v, int):
-                v = 0.0
-                param_header += f'eval (${param}={v}){linesep}'
-
-    if 'chain' in default_params:
+    if chains:
         # load molecule specific things
-        for mol in default_params['chain']:
-            for param in default_params['chain'][mol]:
-                v = default_params['chain'][mol][param]
-                # this are LOGICAL, which means no quotes
-                param_header += f'eval (${param}_{mol}={v}){linesep}'
+        for mol, params in chains.items():
+            for param, value in params.values():
+                value = str(value).lower()
+                param_header += f'eval (${param}_{mol}={value}){linesep}'
 
     return param_header
 

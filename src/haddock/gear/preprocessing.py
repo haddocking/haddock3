@@ -116,10 +116,10 @@ def process_pdbs(structures, **param):
         pdb_selaltloc.run,
         partial(pdb_occ.run, occupancy=1.00),
         replace_MSE_to_MET,
-        #partial(pdb_rplresname.run, name_from='HSD', name_to='HIS'),
-        #partial(pdb_rplresname.run, name_from='HSE', name_to='HIS'),
-        #partial(pdb_rplresname.run, name_from='HID', name_to='HIS'),
-        #partial(pdb_rplresname.run, name_from='HIE', name_to='HIS'),
+        replace_HSD_to_HIS,
+        replace_HSE_to_HIS,
+        replace_HID_to_HIS,
+        replace_HIE_to_HIS,
         #partial(pdb_fixinsert.run, option_list=[]),
         ##
         #partial(remove_unsupported_hetatm, user_defined=param),
@@ -300,7 +300,15 @@ def replace_HETATM_to_ATOM(fhandler, res):
         else:
             yield line
 
-def replace_MSE_to_MET(fhandler):
-    """."""
-    _ = replace_HETATM_to_ATOM(fhandler, res='MSE')
-    yield from pdb_rplresname.run(_, name_from='MSE', name_to='MET')
+
+def replace_residue(fhandler, resin, resout):
+    """Replace residue by another and changes HETATM to ATOM if needed."""
+    _ = replace_HETATM_to_ATOM(fhandler, res=resin)
+    yield from pdb_rplresname.run(_, name_from=resin, name_to=resout)
+
+
+replace_MSE_to_MET = partial(replace_residue, resin='MSE', resout='MET')
+replace_HSD_to_HIS = partial(replace_residue, resin='HSD', resout='HIS')
+replace_HSE_to_HIS = partial(replace_residue, resin='HSE', resout='HIS')
+replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
+replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')

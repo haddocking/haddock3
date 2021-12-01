@@ -5,6 +5,7 @@ from pathlib import Path
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
+    load_input_mols,
     load_workflow_params,
     prepare_output,
     prepare_single_input,
@@ -23,7 +24,13 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 def generate_topology(input_pdb, step_path, recipe_str, defaults,
                       protonation=None):
     """Generate a HADDOCK topology file from input_pdb."""
+    # this is a special cases that only applies to topolyaa.
+    input_mols = defaults.pop('input', {})
+
     general_param = load_workflow_params(defaults)
+    input_mols_params = load_input_mols(input_mols)
+
+    general_param = general_param + input_mols_params
 
     param, top, link, topology_protonation, \
         trans_vec, tensor, scatter, \
@@ -90,7 +97,16 @@ class HaddockModule(BaseHaddockModule):
             for model in splited_models:
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
-                libpdb.sanitize(model, overwrite=True)
+
+                if self.params['ligand_top_fname']:
+                    custom_top = self.params['ligand_top_fname']
+                    log.info(f'Using custom topology {custom_top}')
+                    libpdb.sanitize(model,
+                                    overwrite=True,
+                                    custom_topology=custom_top)
+
+                else:
+                    libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
                 topology_filename = generate_topology(model,

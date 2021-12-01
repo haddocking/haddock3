@@ -1,8 +1,11 @@
 """CNS scripts util functions."""
 from os import linesep
+from pathlib import Path
 
+from haddock import log
 from haddock.core import cns_paths
 from haddock.libs import libpdb
+from haddock.libs.libfunc import false, true
 from haddock.libs.libmath import RandomNumberGenerator
 
 
@@ -25,43 +28,115 @@ def generate_default_header(protonation=None):
             axis, water_box)
 
 
+def filter_empty_vars(v):
+    """
+    Filter empty variables.
+
+    See: https://github.com/haddocking/haddock3/issues/162
+
+    Returns
+    -------
+    bool
+        Returns `True` if the variable is not empty, and `False` if
+        the variable is empty. That is, `False` reflects those variables
+        that should not be written in CNS.
+
+    Raises
+    ------
+    TypeError
+        If the type of `value` is not supported by CNS.
+    """
+    cases = (
+        (lambda x: isinstance(x, str), bool),
+        (lambda x: isinstance(x, bool), true),  # it should return True
+        (lambda x: isinstance(x, Path), true),
+        (lambda x: type(x) in (int, float), true),
+        (lambda x: x is None, false),
+        )
+
+    for detect, give in cases:
+        if detect(v):
+            return give(v)
+    else:
+        emsg = f'Value {v!r} has a unknown type for CNS: {type(v)}.'
+        log.error(emsg)
+        raise TypeError(emsg)
+
+
 def load_workflow_params(default_params):
-    """Write the values at the header section."""
+    """
+    Write the values at the header section.
+
+    "Empty variables" are ignored. These are defined accoring to
+    :func:`filter_empty_vars`.
+
+    Parameters
+    ----------
+    default_params : dict
+        Dictionary containing the key:value pars for the parameters to
+        be written to CNS. Values cannot be of dictionary type.
+
+    Returns
+    -------
+    str
+        The string with the CNS parameters defined.
+    """
     param_header = f'{linesep}! Parameters{linesep}'
 
-    for param, v in default_params.items():
+    non_empty_parameters = (
+        (k, v)
+        for k, v in default_params.items()
+        if filter_empty_vars(v)
+        )
 
-        if isinstance(v, bool):
-            v = str(v).lower()
-            param_header += f'eval (${param}={v}){linesep}'
-
-        elif isinstance(v, str):
-            param_header += f'eval (${param}="{v}"){linesep}'
-
-        elif isinstance(v, int):
-            param_header += f'eval (${param}={v}){linesep}'
-
-        elif isinstance(v, float):
-            param_header += f'eval (${param}={v}){linesep}'
-
-        elif not v:
-            # either 0 or empty string
-            if isinstance(v, str):
-                v = '\"\"'
-                param_header += f'eval (${param}={v}){linesep}'
-            if isinstance(v, int):
-                v = 0.0
-                param_header += f'eval (${param}={v}){linesep}'
-
-    if 'chain' in default_params:
-        # load molecule specific things
-        for mol in default_params['chain']:
-            for param in default_params['chain'][mol]:
-                v = default_params['chain'][mol][param]
-                # this are LOGICAL, which means no quotes
-                param_header += f'eval (${param}_{mol}={v}){linesep}'
+    # types besides the ones in the if-statements should not enter this loop
+    for param, v in non_empty_parameters:
+        param_header += write_eval_line(param, v)
 
     return param_header
+
+
+def load_input_mols(mols):
+    """Load input molecules as defined by the topoaa/defaults.cfg."""
+    param_header = ''
+
+    for mol, params in mols.items():
+
+        non_empty_parameters = (
+            (k, v)
+            for k, v in params.items()
+            if filter_empty_vars(v)
+            )
+
+        for param, value in non_empty_parameters:
+            param_header += write_eval_line(f'{param}_{mol}', value)
+
+    return param_header
+
+
+def write_eval_line(param, value, eval_line='eval (${}={})'):
+    """Write the CNS eval line depending on the type of `value`."""
+    eval_line += linesep
+
+    if isinstance(value, bool):
+        value = str(value).lower()
+        return eval_line.format(param, value)
+
+    elif isinstance(value, str):
+        value = '"' + value + '"'
+        return eval_line.format(param, value)
+
+    elif isinstance(value, Path):
+        value = '"' + str(value) + '"'
+        return eval_line.format(param, value)
+
+    elif isinstance(value, (int, float)):
+        return eval_line.format(param, value)
+
+    else:
+        emsg = f'Unexpected type when writing CNS header: {type(value)}'
+        log.error(emsg)
+        raise TypeError(emsg)
 
 
 def load_ff_parameters(forcefield_parameters):

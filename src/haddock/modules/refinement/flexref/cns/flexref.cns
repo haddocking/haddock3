@@ -10,7 +10,7 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 
-if ( $log_level = verbose ) then
+if ( $log_level = "verbose" ) then
     set message=normal echo=on end
 else
     set message=off echo=off end
@@ -317,7 +317,6 @@ evaluate ($npart = $ncvpart)
 
 
 ! Unsupported restraints
-evaluate ($Data.flags.cdih = false)
 evaluate ($Data.flags.em   = false)
 evaluate ($Data.flags.rg   = false)
 evaluate ($Data.flags.zres = false)
@@ -414,13 +413,12 @@ inline @MODULE:read_data.cns
 
 ! random removal of restaints
 if ($Data.noecv eq true) then
-    set message=on echo=on end
     noe cv $npart ? end
 else
     evaluate ($npart = 0)
 end if
 
-if ( $log_level = verbose ) then
+if ( $log_level = "verbose" ) then
     set message=normal echo=on end
 else
     set message=off echo=off end
@@ -527,19 +525,16 @@ if ($Data.surfrest eq true ) then
 end if
 
 if ($Data.dnarest eq true ) then
-    fileexist $dna_rest_fname end
-    if ($result eq true) then
-        @@$dna_rest_fname
-    end if
+    @MODULE:dna-rna_restraints.cns
 end if
 
-if ($Data.ssdihed eq all ) then
+if ($Data.ssdihed eq "all" ) then
     inline @MODULE:protein-ss-restraints-all.cns
 end if
-if ($Data.ssdihed eq alpha ) then
+if ($Data.ssdihed eq "alpha" ) then
     inline @MODULE:protein-ss-restraints-alpha.cns
 end if
-if ($Data.ssdihed eq alphabeta ) then
+if ($Data.ssdihed eq "alphabeta" ) then
     inline @MODULE:protein-ss-restraints-alpha-beta.cns
 end if
 
@@ -762,7 +757,6 @@ if ($Data.flags.sym  eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
-    set message=normal echo=on end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
 end if
@@ -779,7 +773,7 @@ else
 end if
 
 if ($Data.dnarest eq true) then
-    @@$dna_rest_file
+    @MODULE:dna-rna_restraints.cns
 end if
 
 energy end
@@ -806,9 +800,7 @@ if ($reorient = true) then
     coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
 end if
 
-write coordinates output=$output_pdb_filename end
-
-set message=normal echo=on end
+write coordinates format=pdbo output=$output_pdb_filename end
 
 display OUTPUT: $output_pdb_filename
 

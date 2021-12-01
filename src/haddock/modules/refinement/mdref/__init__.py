@@ -53,6 +53,8 @@ def generate_waterref(
     output = f"{linesep}! Output structure{linesep}"
     output += (f"eval ($output_pdb_filename="
                f" \"{output_pdb_filename}\"){linesep}")
+    output += (f"eval ($count="
+               f" {identifier}){linesep}")
     inp = default_params + param + top + input_str + output \
         + topology_protonation + ambig_str + recipe_str
 
@@ -126,7 +128,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the weights from the defaults
         _weight_keys = \
-            ('w_vdw_2', 'w_elec_2', 'w_desolv_2', 'w_air_2', 'w_bsa_2')
+            ('w_vdw', 'w_elec', 'w_desolv', 'w_air', 'w_bsa')
         weights = {e: self.params[e] for e in _weight_keys}
 
         expected = []

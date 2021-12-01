@@ -207,12 +207,14 @@ def file_exists(
 
 
 def recursive_dict_update(d, u):
-    """Updates dictionary recursively."""
+    """
+    Update dictionary recursively.
+
+    https://stackoverflow.com/questions/3232943
+    """
     for k, v in u.items():
         if isinstance(v, collections.abc.Mapping):
             d[k] = recursive_dict_update(d.get(k, {}), v)
         else:
             d[k] = v
     return d
-
-

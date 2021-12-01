@@ -47,7 +47,7 @@ def filter_empty_vars(v):
         If the type of `value` is not supported by CNS.
     """
     cases = (
-        (lambda x: isinstance(x, str), bool),
+        (lambda x: isinstance(x, str), true),
         (lambda x: isinstance(x, bool), true),  # it should return True
         (lambda x: isinstance(x, Path), true),
         (lambda x: type(x) in (int, float), true),

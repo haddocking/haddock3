@@ -32,6 +32,7 @@ def test_empty_vars_error(value):
         3453.543,
         'str',
         Path('path'),
+        '',
         ]
     )
 def test_empty_vars_True(value):
@@ -43,7 +44,7 @@ def test_empty_vars_True(value):
 
 @pytest.mark.parametrize(
     'value',
-    ["", None]
+    [None],
     )
 def test_empty_vars_False(value):
     """Test empty vars of types that are not supported."""
@@ -74,6 +75,7 @@ def test_load_workflow_params():
         f'eval ($var3=true){os.linesep}'
         f'eval ($var4="some/path"){os.linesep}'
         f'eval ($var5=5.5){os.linesep}'
+        f'eval ($var6=""){os.linesep}'
         )
 
     assert result == expected

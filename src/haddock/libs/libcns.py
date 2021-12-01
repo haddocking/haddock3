@@ -1,5 +1,6 @@
 """CNS scripts util functions."""
 from os import linesep
+from pathlib import Path
 
 from haddock import log
 from haddock.core import cns_paths
@@ -37,7 +38,7 @@ def insert_in_CNS(v):
     """
     cases = (
         (lambda x: isinstance(x, str), bool),
-        (lambda x: isinstance(x, (int, float)), lambda *a: True),
+        (lambda x: isinstance(x, (int, float, Path)), lambda *a: True),
         (lambda x: x is None, lambda *a: False),
         )
 
@@ -53,8 +54,10 @@ def insert_in_CNS(v):
 def load_workflow_params(default_params):
     """Write the values at the header section."""
     param_header = f'{linesep}! Parameters{linesep}'
+    from pprint import pprint
+    pprint(default_params)
 
-    chains = default_params.pop('chain', None)
+    chains = default_params.pop('chains', None)
 
     non_empty_parameters = (
         (k, v)
@@ -72,6 +75,9 @@ def load_workflow_params(default_params):
         elif isinstance(v, str):
             param_header += f'eval (${param}="{v}"){linesep}'
 
+        elif isinstance(v, Path):
+            param_header += f'eval (${param}="{str(v)}"){linesep}'
+
         elif isinstance(v, (int, float)):
             param_header += f'eval (${param}={v}){linesep}'
 
@@ -83,10 +89,11 @@ def load_workflow_params(default_params):
     if chains:
         # load molecule specific things
         for mol, params in chains.items():
-            for param, value in params.values():
+            for param, value in params.items():
                 value = str(value).lower()
                 param_header += f'eval (${param}_{mol}={value}){linesep}'
 
+    print(param_header)
     return param_header
 
 

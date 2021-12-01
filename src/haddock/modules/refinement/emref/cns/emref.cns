@@ -443,13 +443,13 @@ if ($Data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns
 end if
 
-if ($Data.ssdihed eq all ) then
+if ($Data.ssdihed eq "all" ) then
     inline @MODULE:/protein-ss-restraints-all.cns
 end if
-if ($Data.ssdihed eq alpha ) then
+if ($Data.ssdihed eq "alpha" ) then
     inline @MODULE:protein-ss-restraints-alpha.cns
 end if
-if ($Data.ssdihed eq alphabeta ) then
+if ($Data.ssdihed eq "alphabeta" ) then
     inline @MODULE:protein-ss-restraints-alpha-beta.cns
 end if
 

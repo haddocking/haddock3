@@ -46,18 +46,30 @@ def insert_in_CNS(v):
         if detect(v):
             return give(v)
     else:
-        emsg = f'Value {v!r} has a unknown type for CNS.'
+        emsg = f'Value {v!r} has a unknown type for CNS: {type(v)}.'
         log.error(emsg)
         raise TypeError(emsg)
 
 
 def load_workflow_params(default_params):
-    """Write the values at the header section."""
-    param_header = f'{linesep}! Parameters{linesep}'
-    from pprint import pprint
-    pprint(default_params)
+    """
+    Write the values at the header section.
 
-    chains = default_params.pop('chains', None)
+    "Empty variables" are ignored. These are defined accoring to
+    :func:`inser t_in_CNS`.
+
+    Parameters
+    ----------
+    default_params : dict
+        Dictionary containing the key:value pars for the parameters to
+        be written to CNS. Values cannot be of dictionary type.
+
+    Returns
+    -------
+    str
+        The string with the CNS parameters defined.
+    """
+    param_header = f'{linesep}! Parameters{linesep}'
 
     non_empty_parameters = (
         (k, v)
@@ -67,34 +79,40 @@ def load_workflow_params(default_params):
 
     # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:
+        param_header += write_eval_line(param, v)
 
-        if isinstance(v, bool):
-            v = str(v).lower()
-            param_header += f'eval (${param}={v}){linesep}'
-
-        elif isinstance(v, str):
-            param_header += f'eval (${param}="{v}"){linesep}'
-
-        elif isinstance(v, Path):
-            param_header += f'eval (${param}="{str(v)}"){linesep}'
-
-        elif isinstance(v, (int, float)):
-            param_header += f'eval (${param}={v}){linesep}'
-
-        else:
-            emsg = f'Unexpected type when writing CNS header: {type(v)}'
-            log.error(emsg)
-            raise TypeError(emsg)
-
-    if chains:
-        # load molecule specific things
-        for mol, params in chains.items():
-            for param, value in params.items():
-                value = str(value).lower()
-                param_header += f'eval (${param}_{mol}={value}){linesep}'
-
-    print(param_header)
     return param_header
+
+
+def load_input_mols(mols):
+    """Load input molecules as defined by the topoaa/defaults.cfg."""
+    param_header = ''
+    for mol, params in mols.items():
+        for param, value in params.items():
+            param_header += write_eval_line(f'{param}_{mol}', value)
+
+    return param_header
+
+
+def write_eval_line(param, value):
+    """Write the CNS eval line depending on the type of `value`."""
+    if isinstance(value, bool):
+        value = str(value).lower()
+        return f'eval (${param}={value}){linesep}'
+
+    elif isinstance(value, str):
+        return f'eval (${param}="{value}"){linesep}'
+
+    elif isinstance(value, Path):
+        return f'eval (${param}="{str(value)}"){linesep}'
+
+    elif isinstance(value, (int, float)):
+        return f'eval (${param}={value}){linesep}'
+
+    else:
+        emsg = f'Unexpected type when writing CNS header: {type(value)}'
+        log.error(emsg)
+        raise TypeError(emsg)
 
 
 def load_ff_parameters(forcefield_parameters):

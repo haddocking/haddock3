@@ -5,6 +5,7 @@ from pathlib import Path
 from haddock import log
 from haddock.core import cns_paths
 from haddock.libs import libpdb
+from haddock.libs.libfunc import false, true
 from haddock.libs.libmath import RandomNumberGenerator
 
 
@@ -27,19 +28,30 @@ def generate_default_header(protonation=None):
             axis, water_box)
 
 
-def insert_in_CNS(v):
+def filter_empty_vars(v):
     """
-    Detect if a variable should be inserted in CNS.
-
-    "Empty vars should NOT be added; that is, this function should
-    return False.
+    Filter empty variables.
 
     See: https://github.com/haddocking/haddock3/issues/162
+
+    Returns
+    -------
+    bool
+        Returns `True` if the variable is not empty, and `False` if
+        the variable is empty. That is, `False` reflects those variables
+        that should not be written in CNS.
+
+    Raises
+    ------
+    TypeError
+        If the type of `value` is not supported by CNS.
     """
     cases = (
         (lambda x: isinstance(x, str), bool),
-        (lambda x: isinstance(x, (int, float, Path)), lambda *a: True),
-        (lambda x: x is None, lambda *a: False),
+        (lambda x: isinstance(x, bool), true),  # it should return True
+        (lambda x: isinstance(x, Path), true),
+        (lambda x: type(x) in (int, float), true),
+        (lambda x: x is None, false),
         )
 
     for detect, give in cases:
@@ -56,7 +68,7 @@ def load_workflow_params(default_params):
     Write the values at the header section.
 
     "Empty variables" are ignored. These are defined accoring to
-    :func:`inser t_in_CNS`.
+    :func:`filter_empty_vars`.
 
     Parameters
     ----------
@@ -74,7 +86,7 @@ def load_workflow_params(default_params):
     non_empty_parameters = (
         (k, v)
         for k, v in default_params.items()
-        if insert_in_CNS(v)
+        if filter_empty_vars(v)
         )
 
     # types besides the ones in the if-statements should not enter this loop
@@ -87,27 +99,39 @@ def load_workflow_params(default_params):
 def load_input_mols(mols):
     """Load input molecules as defined by the topoaa/defaults.cfg."""
     param_header = ''
+
     for mol, params in mols.items():
-        for param, value in params.items():
+
+        non_empty_parameters = (
+            (k, v)
+            for k, v in params.items()
+            if filter_empty_vars(v)
+            )
+
+        for param, value in non_empty_parameters:
             param_header += write_eval_line(f'{param}_{mol}', value)
 
     return param_header
 
 
-def write_eval_line(param, value):
+def write_eval_line(param, value, eval_line='eval (${}={})'):
     """Write the CNS eval line depending on the type of `value`."""
+    eval_line += linesep
+
     if isinstance(value, bool):
         value = str(value).lower()
-        return f'eval (${param}={value}){linesep}'
+        return eval_line.format(param, value)
 
     elif isinstance(value, str):
-        return f'eval (${param}="{value}"){linesep}'
+        value = '"' + value + '"'
+        return eval_line.format(param, value)
 
     elif isinstance(value, Path):
-        return f'eval (${param}="{str(value)}"){linesep}'
+        value = '"' + str(value) + '"'
+        return eval_line.format(param, value)
 
     elif isinstance(value, (int, float)):
-        return f'eval (${param}={value}){linesep}'
+        return eval_line.format(param, value)
 
     else:
         emsg = f'Unexpected type when writing CNS header: {type(value)}'

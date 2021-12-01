@@ -100,7 +100,7 @@ class HaddockModule(BaseHaddockModule):
 
                 if self.params['ligand_top_fname']:
                     custom_top = self.params['ligand_top_fname']
-                    log.info(f'Using custom topology {custom_top}')
+                    self.log(f'Using custom topology {custom_top}')
                     libpdb.sanitize(model,
                                     overwrite=True,
                                     custom_topology=custom_top)

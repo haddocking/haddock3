@@ -9,6 +9,7 @@ from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libutil import recursive_dict_update
 
 
 modules_folder = Path(__file__).resolve().parent
@@ -133,7 +134,7 @@ class BaseHaddockModule(ABC):
 
     def update_params(self, **parameters):
         """Update defaults parameters with run-specific parameters."""
-        self._params.update(parameters)
+        self.params = recursive_dict_update(self._params, parameters)
 
 
 @contextlib.contextmanager

@@ -1,4 +1,5 @@
 """General utilities."""
+import collections.abc
 import shutil
 import subprocess
 from copy import deepcopy
@@ -203,3 +204,17 @@ def file_exists(
 
     # don't change to f-strings, .format has a purpose
     raise exception(emsg.format(str(path)))
+
+
+def recursive_dict_update(d, u):
+    """
+    Update dictionary recursively.
+
+    https://stackoverflow.com/questions/3232943
+    """
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = recursive_dict_update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d

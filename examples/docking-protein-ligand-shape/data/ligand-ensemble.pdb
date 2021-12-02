@@ -1,17 +1,14 @@
-REMARK     MODEL 1 FROM ligand-ensemble.pdb                                   
-REMARK     MODEL 2 FROM ligand1_210.pdb                                       
-REMARK     MODEL 3 FROM ligand1_292.pdb                                       
-REMARK     MODEL 4 FROM ligand1_305.pdb                                       
-REMARK     MODEL 5 FROM ligand1_350.pdb                                       
-REMARK     MODEL 6 FROM ligand1_360.pdb                                       
-REMARK     MODEL 7 FROM ligand1_456.pdb                                       
-REMARK     MODEL 8 FROM ligand1_462.pdb                                       
-REMARK     MODEL 9 FROM ligand1_477.pdb                                       
-REMARK     MODEL 10 FROM ligand1_486.pdb                                      
-REMARK     MODEL 11 FROM ligand1_98.pdb                                       
+REMARK     MODEL 1 FROM ligand1_210.pdb                                       
+REMARK     MODEL 2 FROM ligand1_292.pdb                                       
+REMARK     MODEL 3 FROM ligand1_305.pdb                                       
+REMARK     MODEL 4 FROM ligand1_350.pdb                                       
+REMARK     MODEL 5 FROM ligand1_360.pdb                                       
+REMARK     MODEL 6 FROM ligand1_456.pdb                                       
+REMARK     MODEL 7 FROM ligand1_462.pdb                                       
+REMARK     MODEL 8 FROM ligand1_477.pdb                                       
+REMARK     MODEL 9 FROM ligand1_486.pdb                                      
+REMARK     MODEL 10 FROM ligand1_98.pdb                                       
 MODEL        1
-ENDMDL
-MODEL        2
 ATOM      1  C1  UNK B   1      -0.543   0.036   1.244  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -1.135   2.221   2.099  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -0.076   0.612   3.561  1.00 20.00      B    C  
@@ -51,7 +48,7 @@ ATOM     36  O36 UNK B   1      -5.345   4.227  -3.585  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -4.230  -0.061  -2.620  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -0.690   2.765   4.380  1.00 20.00      B    O  
 ENDMDL
-MODEL        3
+MODEL        2
 ATOM      1  C1  UNK B   1      -0.543   0.036   1.244  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -1.135   2.221   2.099  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -0.076   0.612   3.561  1.00 20.00      B    C  
@@ -91,7 +88,7 @@ ATOM     36  O36 UNK B   1      -5.345   4.227  -3.585  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -4.230  -0.061  -2.620  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -0.690   2.765   4.380  1.00 20.00      B    O  
 ENDMDL
-MODEL        4
+MODEL        3
 ATOM      1  C1  UNK B   1      -0.543   0.036   1.244  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -1.135   2.221   2.099  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -0.076   0.612   3.561  1.00 20.00      B    C  
@@ -131,7 +128,7 @@ ATOM     36  O36 UNK B   1      -5.345   4.227  -3.585  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -4.230  -0.061  -2.620  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -0.690   2.765   4.380  1.00 20.00      B    O  
 ENDMDL
-MODEL        5
+MODEL        4
 ATOM      1  C1  UNK B   1      -0.395  -0.608   1.262  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -2.729  -0.685   1.940  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -1.334  -2.657   2.146  1.00 20.00      B    C  
@@ -171,7 +168,7 @@ ATOM     36  O36 UNK B   1      -5.095   6.024  -2.902  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -3.158   2.247  -2.317  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -3.615  -2.707   2.846  1.00 20.00      B    O  
 ENDMDL
-MODEL        6
+MODEL        5
 ATOM      1  C1  UNK B   1      -0.550   0.173   1.217  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -0.857   2.499   1.802  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1       0.414   1.047   3.270  1.00 20.00      B    C  
@@ -211,7 +208,7 @@ ATOM     36  O36 UNK B   1      -6.422   2.571  -4.028  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -4.341  -1.008  -2.179  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1       0.055   3.334   3.845  1.00 20.00      B    O  
 ENDMDL
-MODEL        7
+MODEL        6
 ATOM      1  C1  UNK B   1      -0.395  -0.608   1.262  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -2.729  -0.685   1.940  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -1.334  -2.657   2.146  1.00 20.00      B    C  
@@ -251,7 +248,7 @@ ATOM     36  O36 UNK B   1      -5.625   6.049  -0.384  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -2.920   2.457  -2.665  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -3.615  -2.707   2.846  1.00 20.00      B    O  
 ENDMDL
-MODEL        8
+MODEL        7
 ATOM      1  C1  UNK B   1      -0.395  -0.608   1.262  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -2.729  -0.685   1.940  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -1.334  -2.657   2.146  1.00 20.00      B    C  
@@ -291,7 +288,7 @@ ATOM     36  O36 UNK B   1      -4.604   6.084  -0.530  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -2.920   2.457  -2.665  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -3.615  -2.707   2.846  1.00 20.00      B    O  
 ENDMDL
-MODEL        9
+MODEL        8
 ATOM      1  C1  UNK B   1      -0.521   0.049   1.160  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -1.081   2.234   2.033  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1       0.083   0.649   3.440  1.00 20.00      B    C  
@@ -331,7 +328,7 @@ ATOM     36  O36 UNK B   1      -7.288   0.659  -4.273  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -4.232  -0.512  -2.164  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -0.504   2.802   4.279  1.00 20.00      B    O  
 ENDMDL
-MODEL       10
+MODEL        9
 ATOM      1  C1  UNK B   1      -0.395  -0.608   1.262  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -2.729  -0.685   1.940  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -1.334  -2.657   2.146  1.00 20.00      B    C  
@@ -371,7 +368,7 @@ ATOM     36  O36 UNK B   1      -5.095   6.024  -2.902  1.00 20.00      B    O
 ATOM     37  O37 UNK B   1      -3.158   2.247  -2.317  1.00 20.00      B    O  
 ATOM     38  O38 UNK B   1      -3.615  -2.707   2.846  1.00 20.00      B    O  
 ENDMDL
-MODEL       11
+MODEL       10
 ATOM      1  C1  UNK B   1      -0.410   0.246  -1.322  1.00 20.00      B    C  
 ATOM      2  C2  UNK B   1      -1.615   2.320  -1.651  1.00 20.00      B    C  
 ATOM      3  C3  UNK B   1      -2.479   0.261  -2.591  1.00 20.00      B    C  

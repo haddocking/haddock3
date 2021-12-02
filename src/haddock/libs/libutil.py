@@ -286,5 +286,5 @@ def sort_numbered_paths(*paths):
             "not a list."
             )
         raise TypeError(emsg)
-    except IndexError as err:
+    except IndexError:
         return sorted(paths, key=lambda x: Path(x).stem)

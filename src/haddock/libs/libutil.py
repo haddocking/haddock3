@@ -281,9 +281,10 @@ def sort_numbered_paths(*paths):
         return sorted(paths, key=get_number_from_path_stem)
     except TypeError as err:
         log.exception(err)
-        emsg = "Mind the packing *argument, input should be strings or Paths"
+        emsg = (
+            "Mind the packing *argument, input should be strings or Paths, "
+            "not a list."
+            )
         raise TypeError(emsg)
     except IndexError as err:
-        log.exception(err)
-        log.info('sorting done by string type')
         return sorted(paths, key=lambda x: Path(x).stem)

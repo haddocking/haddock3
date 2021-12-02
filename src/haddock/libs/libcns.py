@@ -63,7 +63,10 @@ def filter_empty_vars(v):
         raise TypeError(emsg)
 
 
-def load_workflow_params(default_params):
+def load_workflow_params(
+        params,
+        param_header=f'{linesep}! Parameters{linesep}',
+        ):
     """
     Write the values at the header section.
 
@@ -72,7 +75,7 @@ def load_workflow_params(default_params):
 
     Parameters
     ----------
-    default_params : dict
+    params : dict
         Dictionary containing the key:value pars for the parameters to
         be written to CNS. Values cannot be of dictionary type.
 
@@ -81,35 +84,15 @@ def load_workflow_params(default_params):
     str
         The string with the CNS parameters defined.
     """
-    param_header = f'{linesep}! Parameters{linesep}'
-
     non_empty_parameters = (
         (k, v)
-        for k, v in default_params.items()
+        for k, v in params.items()
         if filter_empty_vars(v)
         )
 
     # types besides the ones in the if-statements should not enter this loop
     for param, v in non_empty_parameters:
         param_header += write_eval_line(param, v)
-
-    return param_header
-
-
-def load_input_mols(mols):
-    """Load input molecules as defined by the topoaa/defaults.cfg."""
-    param_header = ''
-
-    for mol, params in mols.items():
-
-        non_empty_parameters = (
-            (k, v)
-            for k, v in params.items()
-            if filter_empty_vars(v)
-            )
-
-        for param, value in non_empty_parameters:
-            param_header += write_eval_line(f'{param}_{mol}', value)
 
     return param_header
 

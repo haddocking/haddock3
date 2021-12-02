@@ -97,6 +97,10 @@ class HaddockModule(BaseHaddockModule):
             log.info(f"Split models if needed for {step_molecule_path}")
             splited_models = libpdb.split_ensemble(step_molecule_path)
 
+            # nice variable name, isn't it? :-)
+            # molecule parameters are shared among models of the same molecule
+            parameters_for_this_molecule = mol_params[mol_params_keys.pop()]
+
             # Sanitize the different PDB files
             for model in splited_models:
                 log.info(f"Sanitizing molecule {model.name}")
@@ -118,7 +122,7 @@ class HaddockModule(BaseHaddockModule):
                     self.path,
                     self.recipe_str,
                     self.params,
-                    mol_params[mol_params_keys.pop()],
+                    parameters_for_this_molecule,
                     )
                 log.info(f"Topology CNS input created in {topology_filename}")
 

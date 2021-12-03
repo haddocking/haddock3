@@ -20,7 +20,7 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-def generate_waterref(
+def generate_mdref(
         identifier,
         input_file,
         step_path,
@@ -50,7 +50,7 @@ def generate_waterref(
     else:
         ambig_str = ""
 
-    output_pdb_filename = step_path / f'waterref_{identifier}.pdb'
+    output_pdb_filename = step_path / f'mdref_{identifier}.pdb'
     output = f"{linesep}! Output structure{linesep}"
     output += (f"eval ($output_pdb_filename="
                f" \"{output_pdb_filename}\"){linesep}")
@@ -59,7 +59,7 @@ def generate_waterref(
     inp = default_params + param + top + input_str + output \
         + topology_protonation + ambig_str + recipe_str
 
-    inp_file = step_path / f'waterref_{identifier}.inp'
+    inp_file = step_path / f'mdref_{identifier}.inp'
     with open(inp_file, 'w') as fh:
         fh.write(inp)
 
@@ -99,7 +99,7 @@ class HaddockModule(BaseHaddockModule):
 
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine, start=1):
-            inp_file = generate_waterref(
+            inp_file = generate_mdref(
                 idx,
                 model,
                 self.path,
@@ -108,8 +108,8 @@ class HaddockModule(BaseHaddockModule):
                 ambig_fname=self.params['ambig_fname'],
                 )
 
-            out_file = self.path / f"waterref_{idx}.out"
-            structure_file = self.path / f"waterref_{idx}.pdb"
+            out_file = self.path / f"mdref_{idx}.out"
+            structure_file = self.path / f"mdref_{idx}.pdb"
             refined_structure_list.append(structure_file)
 
             job = CNSJob(

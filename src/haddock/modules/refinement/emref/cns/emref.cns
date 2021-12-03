@@ -305,7 +305,7 @@ end if
 
 if ($Data.flags.elec eq true) then
     flag include elec end
-    if ($Data.dielec eq rdie) then
+    if ($Data.dielec eq "rdie") then
         parameter nbonds eps=$Data.epsilon rdie shift switch end end
         ! shift statement needed first to activate switch (CNS bug?)
     else
@@ -546,7 +546,7 @@ if ($Data.flags.elec eq true) then
     flag include elec end
 end if
 
-if ($Data.dielec eq rdie) then
+if ($Data.dielec eq "rdie") then
     parameter nbonds eps=$Data.epsilon rdie shift switch end end
     ! shift statement needed first to activate switch (CNS bug?)
 else

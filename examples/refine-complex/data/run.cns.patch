@@ -1,0 +1,109 @@
+--- ./run.cns	2019-03-12 11:36:34.160294027 +0100
++++ ../run_ref_for_patch.cns	2019-03-12 11:36:28.204796439 +0100
+@@ -3047,7 +3047,7 @@
+ 
+ {* Do you want to randomly exclude a fraction of the ambiguous restraints (AIRs)? *}
+ {+ choice: true false +}
+-{===>} noecv=true;
++{===>} noecv=false;
+ 
+ {* Number of partitions for random exclusion (%excluded=100/number of partitions)? *}
+ {===>} ncvpart=2;
+@@ -3065,7 +3065,7 @@
+ {* Do you want to define center of mass (CM) restraints to enforce contact between the molecules? *}
+ {* Note that these are only active during it0 and it1 *}
+ {+ choice: true false +}
+-{===>} cmrest=false;
++{===>} cmrest=true;
+ 
+ {* Define tight CM restraints? *}
+ {+ choice: true false +}
+@@ -4373,14 +4373,14 @@
+ {* Setting for the rigid-body (it0) and semi-flexible refiment (it1) *}
+ 
+ {* number of structures for rigid body docking *}
+-{===>} structures_0=1000;
++{===>} structures_0=250;
+        keepstruct_0=&structures_0;
+ {* number of structures for refinement *}
+-{===>} structures_1=200;
++{===>} structures_1=50;
+        keepstruct_1=&structures_1;
+        keepstruct_2=&structures_1;
+ {* number of structures to be analysed*}
+-{===>} anastruc_1=200;
++{===>} anastruc_1=50;
+        anastruc_0=&anastruc_1;
+        anastruc_2=&anastruc_1;
+ 
+@@ -4388,7 +4388,7 @@
+ 
+ {* Sample 180 degrees rotated solutions during rigid body EM?   *}
+ {+ choice: true false +}
+-{===>} rotate180_it0=true;
++{===>} rotate180_it0=false;
+ 
+ {* Sample 180 degrees rotated solutions during semi-flexible SA?*}
+ {+ choice: true false +}
+@@ -4400,11 +4400,11 @@
+ {* Turn off this option if you only want to dock structure 1 of ensemble A *}
+ {*   to structure 1 of ensemble B, structure 2 to structure 2, etc. *}
+ {+ choice: true false +}
+-{===>} crossdock=true;
++{===>} crossdock=false;
+ 
+ {* Randomize starting orientations? *}
+ {+ choice: true false +}
+-{===>} randorien=true;
++{===>} randorien=false;
+ 
+ {* Expand starting orientations? *}
+ {+ choice: true false +}
+@@ -4422,7 +4422,7 @@
+ 
+ {* Perform initial rigid body minimisation? *}
+ {+ choice: true false +}
+-{===>} rigidmini=true;
++{===>} rigidmini=false;
+ 
+ {* Allow translation in rigid body minimisation? *}
+ {+ choice: true false +}
+@@ -4465,16 +4465,16 @@
+ {===>} emstepstrans=1000;
+ 
+ {* number of MD steps for rigid body high temperature TAD *}
+-{===>} initiosteps=500;
++{===>} initiosteps=0;
+ 
+ {* number of MD steps during first rigid body cooling stage *}
+-{===>} cool1_steps=500;
++{===>} cool1_steps=0;
+ 
+ {* number of MD steps during second cooling stage with flexible side-chains at interface *}
+-{===>} cool2_steps=1000;
++{===>} cool2_steps=0;
+ 
+ {* number of MD steps during third cooling stage with fully flexible interface *}
+-{===>} cool3_steps=1000;
++{===>} cool3_steps=0;
+ 
+ 
+ {======================= Solvated rigid body docking=======================}
+@@ -4543,7 +4543,7 @@
+ {* Build explicit solvent shell? (Can be turned off the large molecules or when morphing CG to AA models) *}
+ {* Only EM will then be performed                                                                         *}
+ {+ choice: true false +}
+-{===>} solvshell=false;
++{===>} solvshell=true;
+ 
+ {* Which solvent do you want to use? *}
+ {+ choice: "water" "dmso" +}
+@@ -4642,7 +4642,7 @@
+ {======================= analysis and clustering ==========================}
+ {* Full or limited analysis of results? *}
+ {+ choice: "full" "cluster" "none" +}
+-{===>} runana="cluster";
++{===>} runana="full";
+ 
+ {* Cutoff distance (proton-acceptor) to define an hydrogen bond? *}
+ {===>} dist_hb=2.5;

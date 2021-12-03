@@ -1,4 +1,6 @@
 """General utilities."""
+import collections.abc
+import re
 import shutil
 import subprocess
 from copy import deepcopy
@@ -203,3 +205,86 @@ def file_exists(
 
     # don't change to f-strings, .format has a purpose
     raise exception(emsg.format(str(path)))
+
+
+def recursive_dict_update(d, u):
+    """
+    Update dictionary recursively.
+
+    https://stackoverflow.com/questions/3232943
+    """
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = recursive_dict_update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+
+def get_number_from_path_stem(path):
+    """
+    Extract tail number from path.
+
+    Examples
+    --------
+
+        >>> get_number_from_path_stem('src/file_1.pdb')
+        >>> 1
+
+        >>> get_number_from_path_stem('src/file_3.pdb')
+        >>> 3
+
+        >>> get_number_from_path_stem('file_1231.pdb')
+        >>> 1231
+
+        >>> get_number_from_path_stem('src/file11')
+        >>> 11
+
+        >>> get_number_from_path_stem('src/file_1234_1.pdb')
+        >>> 1
+
+    Parameters
+    ----------
+    path : str or Path obj
+        The path to evaluate.
+
+    Returns
+    -------
+    int
+        The tail integer of the path.
+    """
+    stem = Path(path).stem
+    number = re.findall(r'\d+', stem)[-1]
+    return int(number)
+
+
+def sort_numbered_paths(*paths):
+    """
+    Sort input paths to tail number.
+
+    If possible, sort criteria is provided by :py:func:`get_number`.
+    If paths do not have a numbered tag, sort paths alphabetically.
+
+    Parameters
+    ----------
+    *inputs : str or pathlib.Path
+        Paths to files.
+
+    Returns
+    -------
+    list
+        The sorted pathlist. The original types are not modified. If
+        strings are given, strings are returns, if Paths are given
+        paths are returned.
+    """
+    try:
+        return sorted(paths, key=get_number_from_path_stem)
+    except TypeError as err:
+        log.exception(err)
+        emsg = (
+            "Mind the packing *argument, input should be strings or Paths, "
+            "not a list."
+            )
+        raise TypeError(emsg)
+    except IndexError:
+        return sorted(paths, key=lambda x: Path(x).stem)

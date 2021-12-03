@@ -19,7 +19,7 @@ eval ($nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param")
 eval ($carbo_parameter_infile="TOPPAR:carbohydrate.param")
 
 {* solvent parameter file *}
-eval ($solv_parameter_infile="TOPPAR:water-allhdg5-4.param")
+eval ($solv_parameter_infile="TOPPAR:solvent-allhdg5-4.param")
 
 {* ligand parameter file *}
 eval ($cofac_parameter_infile="TOPPAR:ligand.param")
@@ -45,13 +45,18 @@ parameter
     @@$ligands_parameter_infile
     @@$cofac_parameter_infile
     @@$heme_parameter_infile
+    @@$shape_parameter_infile
+    fileexist $ligand_param_fname end
+    if ($result eq true) then
+        @@$ligand_param_fname
+    end if
 end
 
 parameter
-  nbonds
-    nbxmod=5 atom cdie shift
-    cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
-    wmin=0.5 tolerance  0.5
-  end
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance  0.5
+    end
 end
 

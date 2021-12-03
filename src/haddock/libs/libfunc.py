@@ -39,6 +39,7 @@ def chainf(init, *funcs):
 def chainfs(*funcs):
     """
     Store functions be executed on a value.
+
     Example
     -------
     >>> do = chainfs(str, int, float)
@@ -50,4 +51,11 @@ def chainfs(*funcs):
     return
 
 
+def true(*ignore, **everything):
+    """Give True regardless of the input."""
+    return True
 
+
+def false(*ignore, **everything):
+    """Give False regardless of the input."""
+    return False

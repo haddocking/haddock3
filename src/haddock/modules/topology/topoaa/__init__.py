@@ -21,10 +21,15 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-def generate_topology(input_pdb, step_path, recipe_str, defaults,
+def generate_topology(input_pdb, step_path, recipe_str, defaults, mol_params,
                       protonation=None):
     """Generate a HADDOCK topology file from input_pdb."""
+    # this is a special cases that only applies to topolyaa.
     general_param = load_workflow_params(defaults)
+
+    input_mols_params = load_workflow_params(mol_params, param_header='')
+
+    general_param = general_param + input_mols_params
 
     param, top, link, topology_protonation, \
         trans_vec, tensor, scatter, \
@@ -70,35 +75,56 @@ class HaddockModule(BaseHaddockModule):
         super().run(params)
 
         molecules = make_molecules(molecules)
+        # extracts `input` key from params. The `input` keyword needs to
+        # be treated separately
+        mol_params = self.params.pop('input')
+        # to facilite the for loop down the line, we create a list with the keys
+        # of `mol_params` with inverted order (we will use .pop)
+        mol_params_keys = list(mol_params.keys())[::-1]
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
-        models = []
+        models_dic = {}
         for i, molecule in enumerate(molecules, start=1):
             log.info(f"{i} - {molecule.file_name}")
-
+            models_dic[i] = []
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_name.name)
             shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models
             log.info(f"Split models if needed for {step_molecule_path}")
-            ens = libpdb.split_ensemble(step_molecule_path)
-            splited_models = sorted(ens)
+            splited_models = libpdb.split_ensemble(step_molecule_path)
+
+            # nice variable name, isn't it? :-)
+            # molecule parameters are shared among models of the same molecule
+            parameters_for_this_molecule = mol_params[mol_params_keys.pop()]
 
             # Sanitize the different PDB files
             for model in splited_models:
                 log.info(f"Sanitizing molecule {model.name}")
-                models.append(model)
-                libpdb.sanitize(model, overwrite=True)
+                models_dic[i].append(model)
+
+                if self.params['ligand_top_fname']:
+                    custom_top = self.params['ligand_top_fname']
+                    log.info(f'Using custom topology {custom_top}')
+                    libpdb.sanitize(model,
+                                    overwrite=True,
+                                    custom_topology=custom_top)
+
+                else:
+                    libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topology_filename = generate_topology(model,
-                                                      self.path,
-                                                      self.recipe_str,
-                                                      self.params)
-                log.info("Topology CNS input created in {topology_filename}")
+                topology_filename = generate_topology(
+                    model,
+                    self.path,
+                    self.recipe_str,
+                    self.params,
+                    parameters_for_this_molecule,
+                    )
+                log.info(f"Topology CNS input created in {topology_filename}")
 
                 # Add new job to the pool
                 output_filename = Path(
@@ -125,35 +151,38 @@ class HaddockModule(BaseHaddockModule):
 
         # Check for generated output, fail it not all expected files
         #  are found
-        expected = []
+        expected = {}
         not_found = []
-        for model in models:
-            model_name = model.stem
-            processed_pdb = Path(
-                self.path,
-                f"{model_name}_haddock.{Format.PDB}"
-                )
-            if not processed_pdb.is_file():
-                not_found.append(processed_pdb.name)
-            processed_topology = Path(
-                self.path,
-                f"{model_name}_haddock.{Format.TOPOLOGY}"
-                )
-            if not processed_topology.is_file():
-                not_found.append(processed_topology.name)
-            topology = TopologyFile(processed_topology,
-                                    path=self.path)
-            expected.append(topology)
-            expected.append(PDBFile(processed_pdb,
-                                    topology,
-                                    path=self.path))
+        for i in models_dic:
+            expected[i] = {}
+            for j, model in enumerate(models_dic[i]):
+                model_name = model.stem
+                processed_pdb = Path(
+                    self.path,
+                    f"{model_name}_haddock.{Format.PDB}"
+                    )
+                if not processed_pdb.is_file():
+                    not_found.append(processed_pdb.name)
+                processed_topology = Path(
+                    self.path,
+                    f"{model_name}_haddock.{Format.TOPOLOGY}"
+                    )
+                if not processed_topology.is_file():
+                    not_found.append(processed_topology.name)
+
+                topology = TopologyFile(processed_topology,
+                                        path=self.path)
+                pdb = PDBFile(processed_pdb,
+                              topology,
+                              path=self.path)
+                expected[i][j] = pdb
+
         if not_found:
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 
         # Save module information
         io = ModuleIO()
-        for model in models:
-            io.add(PDBFile(model))
-        io.add(expected, "o")
+        for i in expected:
+            io.add(expected[i], "o")
         io.save(self.path)

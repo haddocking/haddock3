@@ -178,10 +178,10 @@ define(
 {================= solvent topology and parameter files ====================}
 
 {* solvent topology file *}
-{===>} solv_topology_infile="TOPPAR:water-allhdg5-4.top";
+{===>} solv_topology_infile="TOPPAR:solvent-allhdg5-4.top";
 
 {* solvent parameter file *}
-{===>} solv_parameter_infile="TOPPAR:water-allhdg5-4.param";
+{===>} solv_parameter_infile="TOPPAR:solvent-allhdg5-4.param";
 
 {================= cofactor topology and parameter files ===================}
 
@@ -210,13 +210,21 @@ define(
 {* ion parameter file *}
 {===>} ion_parameter_infile="TOPPAR:ion.param";
 
-{===================== heme topology and parameter files ====================}
+{===================== heme topology and parameter files ==================}
 
 {* heme topology file *}
 {===>} heme_topology_infile="TOPPAR:hemes-allhdg.top";
 
 {* heme parameter file *}
 {===>} heme_parameter_infile="TOPPAR:hemes-allhdg.param";
+
+{================= shape topology and parameter files =====================}
+
+{* shape topology file *}
+{===>} shape_topology_infile="TOPPAR:shape.top";
+
+{* shape parameter file *}
+{===>} shape_parameter_infile="TOPPAR:shape.param";
 
 {===================== default number of histidines for patching ===========}
 
@@ -250,11 +258,18 @@ topology
     if ( &BLANK%heme_topology_infile = false ) then
         @@&heme_topology_infile
     end if
+    if ( &BLANK%shape_topology_infile = false ) then
+        @@&shape_topology_infile
+    end if
     if ( &BLANK%prot_break_infile = false ) then
         @@&prot_break_infile
     end if
     if ( &BLANK%dna_break_infile = false ) then
         @@&dna_break_infile
+    end if
+    fileexist $ligand_top_fname end
+    if ($result eq true) then
+        @@$ligand_top_fname
     end if
 end
 
@@ -282,6 +297,13 @@ parameter
     end if
     if ( &BLANK%heme_parameter_infile = false ) then
         @@&heme_parameter_infile
+    end if
+    if ( &BLANK%shape_parameter_infile = false ) then
+        @@&shape_parameter_infile
+    end if
+    fileexist $ligand_param_fname end
+    if ($result eq true) then
+        @@$ligand_param_fname
     end if
 end
 
@@ -340,23 +362,19 @@ end if
 !for the histidine patches:
 if ($autohis = false) then
     evaluate($hisd_counter=1)
-    while ($hisd_counter le $nhisd_$chain) loop hisd
-        if ($hisd_resid_$chain_$hisd_counter > 0) then
-            show (resn) (tag and resid $hisd_resid_$chain_$hisd_counter)
-            if ($result eq "HIS") then
-                patch hisd reference=nil=(resid $hisd_resid_$chain_$hisd_counter) end
-            end if
+    while ($hisd_counter le $nhisd) loop hisd
+        show (resn) (tag and resid $hisd_$hisd_counter)
+        if ($result eq "HIS") then
+            patch hisd reference=nil=(resid $hisd_$hisd_counter) end
         end if
         evaluate($hisd_counter=$hisd_counter + 1)
     end loop hisd
 
     evaluate($hise_counter=1)
-    while ($hise_counter le $nhise_$chain) loop hise
-        if ($hise_resid_$chain_$hise_counter > 0) then
-            show (resn) (tag and resid $hise_resid_$chain_$hise_counter)
-            if ($result eq "HIS") then
-                patch hise reference=nil=(resid $hise_resid_$chain_$hise_counter) end
-            end if
+    while ($hise_counter le $nhise) loop hise
+        show (resn) (tag and resid $hise_$hise_counter)
+        if ($result eq "HIS") then
+            patch hise reference=nil=(resid $hise_$hise_counter) end
         end if
         evaluate($hise_counter=$hise_counter + 1)
     end loop hise
@@ -394,9 +412,9 @@ if ( $select = 0 ) then
     display  %INFO: There are no coordinates missing for non-hydrogen atoms
 end if
 
-if ( $log_level = verbose ) then
+if ( $log_level = "verbose" ) then
     set message=normal echo=on end
-elseif ( $log_level = normal) then
+elseif ( $log_level = "normal") then
     set message=normal echo=off end
 else
     set message=off echo=off end

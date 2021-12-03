@@ -30,11 +30,16 @@ class Persistent:
         self.file_name = Path(file_name).name
         self.file_type = file_type
         self.path = str(Path(path).resolve())
+        self.full_name = str(Path(path, self.file_name))
 
     def __repr__(self):
         rep = (f"[{self.file_type}|{self.created}] "
                f"{Path(self.path) / self.file_name}")
         return rep
+
+    def is_present(self):
+        """Check if the persisent file exists on disk."""
+        return Path(self.path, self.file_name).exists()
 
 
 class PDBFile(Persistent):

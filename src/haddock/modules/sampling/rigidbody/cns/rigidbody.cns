@@ -11,7 +11,7 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 
-if ( $log_level = verbose ) then
+if ( $log_level = "verbose" ) then
     set message=normal echo=on end
 else
     set message=off echo=off end
@@ -385,7 +385,7 @@ flag excl bond angl dihe impr end
 
 if ($Data.flags.elec eq true) then
     flag include elec end
-    if ($Data.dielec eq rdie) then
+    if ($Data.dielec eq "rdie") then
         parameter nbonds eps=$Data.epsilon rdie shift switch end end
         ! shift statement needed first to activate switch (CNS bug?)
     else
@@ -463,7 +463,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     evaluate ($nrig = $nrig + 1)
 
-    if ( $log_level = verbose ) then
+    if ( $log_level = "verbose" ) then
         set message=normal echo=on end
     else
         set message=off echo=off end
@@ -682,7 +682,7 @@ if ($Data.flags.sym eq true) then
     set message=normal echo=on end
     !read again the NOE data, needed to remove the symmetry restraints
     @@MODULE:read_noes.cns
-    if ( $log_level = verbose ) then
+    if ( $log_level = "verbose" ) then
         set message=normal echo=on end
     else
         set message=off echo=off end
@@ -692,7 +692,7 @@ else
         set message=on echo=on end
         noe cv $ncvbest ? end
     end if
-    if ( $log_level = verbose ) then
+    if ( $log_level = "verbose" ) then
         set message=normal echo=on end
     else
         set message=off echo=off end

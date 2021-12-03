@@ -1,0 +1,121 @@
+! generate_dmso.cns
+!    Generate a DMSO solvent layer around the molecule
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+eval ($boxlength = 29.1)     ! length of the dmso box
+eval ($thickness = 12.5)     ! maxi. initial dmso-protein distance (heavy atoms)
+eval ($pw_dist = 2.4)        ! mini. initial dmso-protein distance (heavy atoms)
+eval ($dmso_diam = 4.1)      ! diameter of dmso molecule
+eval ($dyncount = 1)         ! iteration number (usually 1)
+
+eval ($dmso = "DMS" + encode($dyncount))
+
+!--------------------------------------------------
+! read in the same box of dmso several times, and move it around
+! so as to cover all the space around the site of interest.
+! take into account box offset
+
+show max (x) ((not resn dms) and not resn ANI and not resn DAN and not resn XAN or resn DUM or resn SHA)
+evaluate ($xmax = $result)
+show min (x) ((not resn DMS) and not resn ANI and not resn DAN and not resn XAN or resn DUM or resn SHA)
+evaluate ($xmin = $result)
+
+show max (y) ((not resn DMS) and not resn ANI and not resn DAN and not resn XAN or resn DUM or resn SHA)
+evaluate ($ymax = $result)
+show min (y) ((not resn DMS) and not resn ANI and not resn DAN and not resn XAN or resn DUM or resn SHA)
+evaluate ($ymin = $result)
+
+show max (z) ((not resn DMS) and not resn ANI and not resn DAN and not resn XAN or resn DUM or resn SHA)
+evaluate ($zmax = $result)
+show min (z) ((not resn DMS) and not resn ANI and not resn DAN and not resn XAN or resn DUM or resn SHA)
+evaluate ($zmin = $result)
+
+
+! loop over several iterations of dmso filling and dynamics
+
+
+!--------------------------------------------------
+! read in the same box of dmso several times, and move it around
+! so as to cover all the space around the site of interest.
+! take into account box offset
+
+
+! determine how many boxes are necessary in each dimension
+eval ($xbox = int( ($xmax - $xmin + 2 * ($thickness + $dmso_diam)) / $boxlength  + 0.5))
+eval ($ybox = int( ($ymax - $ymin + 2 * ($thickness + $dmso_diam)) / $boxlength  + 0.5))
+eval ($zbox = int( ($zmax - $zmin + 2 * ($thickness + $dmso_diam)) / $boxlength  + 0.5))
+
+eval ($xmtran =  $xmax + $thickness - $boxlength/2 + $dmso_diam)
+eval ($ymtran =  $ymax + $thickness - $boxlength/2 + $dmso_diam)
+eval ($zmtran =  $zmax + $thickness - $boxlength/2 + $dmso_diam)
+
+eval ($xcount=0)
+eval ($xtrans = $xmin - $thickness - $dmso_diam - $boxlength )
+while ($xtrans < $xmtran) loop dms1
+    eval ($xcount=$xcount+1)
+    eval ($xtrans = $xtrans + $boxlength)
+
+    eval ($ycount=0)
+    eval ($ytrans = $ymin - $thickness - $dmso_diam - $boxlength )
+    while ($ytrans < $ymtran) loop dms2
+        eval ($ycount=$ycount+1)
+        eval ($ytrans = $ytrans + $boxlength)
+
+        eval ($zcount=0)                  
+        eval ($ztrans = $zmin - $thickness - $dmso_diam - $boxlength )
+        while ($ztrans < $zmtran) loop dms3
+            eval ($zcount=$zcount+1)
+            eval ($ztrans = $ztrans + $boxlength)
+
+            segment
+                name="    "
+                chain
+                    coordinates @@TOPPAR:dmso.pdb
+                end
+            end
+            coor @@TOPPAR/dmso.pdb 
+            do (segid=DMSO) (segid "    ")
+            coor sele=(segid DMSO) translate vector = ($xtrans $ytrans $ztrans) end
+
+            ! all new dmso oxygens
+            ident (store1) (segid DMSO and name sd) 
+            ! all new dmso oxygens close to a protein heavy atom
+            ident (store2) (store1 and (not (resn DMS or resn ANI or resn DAN or resn XAN or resn DUM or resn SHA or hydro)) around $pw_dist)
+            ! all new dmso oxygens close to old dmso oxygens
+            ident (store3) (store1 and (segid DMS# and not hydro) around $dmso_diam)
+            ! all new dmso oxygens further than thickness away from a protein heavy atom
+            ident (store4) (store1 and not (not (resn DMS or resn ANI or resn DAN or resn XAN or resn DUM or resn SHA or hydro)) around $thickness)
+            delete sele= (byres (store2 or store3 or store4)) end
+  
+
+            ! give dmso unique segid name
+            eval ($segid= "W" + encode($xcount) + encode($ycount) + encode($zcount))
+            do (segid = $segid) (segid DMSO)
+
+        end loop dms3
+    end loop dms2
+end loop dms1
+
+! now, give dmso a unique resid so that we get the segid to play around with
+ident (store1) (all)
+show min (store1) (segid w*)
+do (store1 = store1 - $result + 1) (segid w*)
+do (resid = encode(int(store1/3 -0.1) +1)) (segid w* and not segid DMS#)
+do (segid = $dmso) (segid w* and not segid DMS#)
+
+! shave off any dmso that left
+delete sele= (byres (name sd and not (not (resn DMS or resn ANI or resn DAN or resn XAN or resn DUM or resn SHA or hydro)) around $thickness)) end
+
+{* write out initial coordinates just for testing *}
+!evaluate ($filename=$output_pdb_filename - ".pdb" + "wini.pdb")
+!write coordinates sele= (all) output =$filename end
+

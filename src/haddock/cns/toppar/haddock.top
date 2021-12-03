@@ -218,10 +218,6 @@ RESIdue U4
 RESIdue SO4
 RESIdue PO4
 RESIdue WO4
-g! CNS
-g! CNS
-g! CNS
-g! proline
 Residue CYM
 Residue ALA
 Residue ARG
@@ -267,6 +263,7 @@ Residue CHX
 Residue ACE
 Residue CTN
 Residue DUM
+Residue SHA
 Residue DDZ
 RESIdue WAT
 RESIdue HOH
@@ -278,4 +275,33 @@ RESIdue COM
 RESIdue ETH
 RESIdue COH
 RESIdue DMS
+RESIdue G 
+RESIdue DG
+RESIdue A
+RESIdue DA
+RESIdue C
+RESIdue DC
+RESIdue DT
+RESIdue DJ
+RESIdue U
+RESIdue GLC  !alpha-D-glucopyranose ! alpha-anomer of BGC, ATB 12/06/09
+RESIdue BGC  !beta-D-glucopyranose ! (formerly called GLC)
+RESIdue GLA  !alpha-D-galactopyranose ! alpha anomer form of GAL, ATB 12/06/09
+RESIdue GAL  !beta-D-galactopyranose 
+RESIdue MAN  !alpha-D-mannopyranose  ! was formerly beta form, ATB 06/12/09
+RESIdue BMA  !beta-D-mannopyranose  ! formerly called MAN
+RESIdue NDG  !2-N-Acetyl-alpha-D-glucopyranose, ATB 12/06/09
+RESIdue NAG  !2-N-Acetyl-beta-D-glucopyranose 
+RESIdue NGA  !2-N-Acetyl-beta-D-galactopyranose 
+RESIdue MAG  !2-N-Acetyl-beta-D-glucopyranose + Methyl at O1
+RESIdue A2G  !2-N-Acetyl-alpha-D-galactopyranose, different stereochemistry at C4 ! new residue ATB 12/07/09
+RESIdue FUC  !alpha-L-fucopyranose, ! alpha anomer of FUL
+RESIdue FUL  !beta-L-fucopyranose (formerly called FUC), ATB 12/06/09
+RESIdue FCA  !alpha-D-fucopyranose, ! alpha anomer of FCB, ! new residue, ATB 12/07/09
+RESIdue FCB  !beta-D-fucopyranose ! new residue ATB 12/07/09
+RESIdue SIA {alpha-N-acetyl neuraminic acid}
+RESIdue SIB {beta-N-acetyl neuraminic acid}
+RESIdue XYP  !beta-D-xylopyranose 
+RESIdue RAM  !alpha-L-rhampyranose
+RESIdue GXL  !alpha-L-galactopyranose 
 }

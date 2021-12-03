@@ -3,6 +3,12 @@ Processes input PDB files to ensure compatibility with HADDOCK3.
 
 
 """
+# search for ABSTRACT to reach the section where abstractions are defined
+# search for CHECKING to reach the section where checking functions are defined
+# search for CORRECT to reach the section where checking functions are defined
+#
+# functions can be defined with `def` or as variables with functools.partial
+#
 import itertools as it
 import os
 import string
@@ -38,48 +44,95 @@ from haddock.libs.libfunc import chainf
 from haddock.libs.libpdb import read_chainids, read_segids, slc_resname
 
 
-upper_case = list(string.ascii_uppercase)[::-1]
+_OSUFFIX = '_processed'
+_upper_case = list(string.ascii_uppercase)[::-1]
+_CHAINS = it.cycle(_upper_case)
 
 
-def process_pdb_files(*files, osuffix='_processed'):
+supported_hetatm = set(it.chain(
+    supported_carbohydrates,
+    supported_multiatom_ions,
+    supported_cofactors,
+    supported_ions,
+    ))
+supported_atom = set(it.chain(
+    supported_modified_amino_acids,
+    supported_natural_amino_acids,
+    supported_nucleic_acid_bases,
+    ))
+
+
+def _open_or_give(lines_or_paths):
     """
-    Processes and checks structures for HADDOCK3 compatibility.
+    Adapt input to the functions.
 
     Parameters
     ----------
-    files : str or pathlib.Path (many)
-        Paths to structure files.
+    lines_or_paths : list
+        If is a list of strings (expected PDB lines), return it as is.
+        If is a list of pathlib.Paths, opens them and returns a list
+        of strings (lines).
 
-    osuffix : str
-        A suffix to add to the new processed files when saved to disk.
-        New files are saved in the same folder path as the input.
-
-    Returns
-    -------
-    list of lists of strings
-        The results from :func:`process_pdb`.
+    Raises
+    ------
+    TypeError
+        In any other circumstances.
     """
-    files_content = open_files_to_lines(*files)
+    if all(isinstance(i, Path) for i in lines_or_paths):
+        return open_files_to_lines(*lines_or_paths)
+    elif all(isinstance(i, (list, tuple)) for i in lines_or_paths):
+        return lines_or_paths
+    else:
+        raise TypeError('Unexpected types in `structures`')
 
-    procfiles = process_pdbs(files_content)
 
-    # prepares output paths
-    o_paths = [
-        Path(f.parent, f.stem + osuffix).with_suffix(f.suffix)
-        for f in map(Path, files)
+def check_and_process_pdbs(paths_or_lines, **params):
+    """Check and process PDBs according to HADDOCK3's specifications."""
+    structures = _open_or_give(paths_or_lines)
+    check_pdbs(structures, **params)
+    result = process_pdbs(
+        structures,
+        save_output=params.pop('save_output', False),
+        osuffix=params.pop('osuffix', _OSUFFIX),
+        **params)
+    return result
+
+
+def check_pdbs(paths_or_lines, **param):
+    """
+    Check PDBs according to HADDOCK3 specifications.
+    """
+    structures = _open_or_give(paths_or_lines)
+
+    # checks and log messages (do not alter the lines)
+    # input should be list and not a generator
+    individual_checks = [
+        partial(check_supported_hetatm, user_defined=param),
+        partial(check_supported_atom, user_defined=param),
         ]
 
-    # saves processed structures to files
-    for out_p, lines in zip(o_paths, procfiles):
-        out_p.write_text(os.linesep.join(lines) + os.linesep)
+    for structure, func in it.product(structures, individual_checks):
+        func(structure)
+
+    # these are the checks that are performed considering all the PDBs
+    # combined
+    combined_checks = [
+        ]
+
+    # perform the combined checking steps
+    for check_func in combined_checks:
+        check_func(structures)
 
     return
 
 
-
-def process_pdbs(structures, **param):
+def process_pdbs(
+        paths_or_lines,
+        save_output=False,
+        osuffix=_OSUFFIX,
+        **param):
     """
-    Processes and checks PDB file contents for HADDOCK3 compatibility.
+    Processes PDB file contents for HADDOCK3 compatibility.
 
     Parameters
     ----------
@@ -96,17 +149,7 @@ def process_pdbs(structures, **param):
         The same data structure as `structures` but with the corrected
         (processed) content.
     """
-    # checks and log messages (do not alter the lines)
-    # input should be list and not a generator
-    checks = [
-        partial(check_supported_hetatm, user_defined=param),
-        partial(check_supported_atom, user_defined=param),
-        ]
-
-    for structure in structures:
-        for func in checks:
-            func(structure)
-
+    structures = _open_or_give(paths_or_lines)
 
     # these are the processing or checking functions that should (if needed)
     # modify the input PDB and return the corrected lines
@@ -122,7 +165,7 @@ def process_pdbs(structures, **param):
         replace_HIE_to_HIS,
         #partial(pdb_fixinsert.run, option_list=[]),
         ##
-        #partial(remove_unsupported_hetatm, user_defined=param),
+        partial(remove_unsupported_hetatm, user_defined=param),
         partial(remove_unsupported_atom, user_defined=param),
         ##
         partial(pdb_reatom.run, starting_value=1),
@@ -138,24 +181,38 @@ def process_pdbs(structures, **param):
         for structure in structures
         ]
 
-
     whole_pdb_processing_steps = [
         #solve_no_chainID_no_segID,
         ]
 
-    processed_combined = [
+    processed_combined_steps = [
+        correct_equal_chain_segids,
         ]
 
-    # these are the checks that are performed considering all the PDBs
-    # combined
-    combined_checking_steps = [
-        ]
+    processed_combined = chainf(structures, *processed_combined_steps)
 
-    # perform the combined checking steps
-    for check_func in combined_checking_steps:
-        check_func(processed_individually)
+    if save_output:
+        try:  # in case paths_or_lines is paths
+            o_paths = (
+                Path(f.parent, f.stem + osuffix).with_suffix(f.suffix)
+                for f in map(Path, paths_or_lines)
+                )
+        except TypeError:
+            o_paths = map(
+                'processed_{}.pdb'.format,
+                range(1, len(structures) + 1),
+                )
 
-    return processed_individually
+        for out_p, lines in zip(o_paths, processed_combined):
+            out_p.write_text(os.linesep.join(lines) + os.linesep)
+
+        return
+
+    else:
+        return processed_individually
+
+
+# CHECKING block
 
 
 def check_supported_molecules(
@@ -186,6 +243,22 @@ def check_supported_molecules(
     return
 
 
+check_supported_hetatm = partial(
+    check_supported_molecules,
+    haddock3_defined=supported_hetatm,
+    line_startswith='HETATM',
+    )
+
+check_supported_atom = partial(
+    check_supported_molecules,
+    haddock3_defined=supported_atom,
+    line_startswith='ATOM',
+    )
+
+
+# CORRECT
+
+
 def remove_unsupported_molecules(
         lines,
         haddock3_defined=None,
@@ -211,30 +284,6 @@ def remove_unsupported_molecules(
 
     return
 
-
-supported_hetatm = set(it.chain(
-    supported_carbohydrates,
-    supported_multiatom_ions,
-    supported_cofactors,
-    supported_ions,
-    ))
-supported_atom = set(it.chain(
-    supported_modified_amino_acids,
-    supported_natural_amino_acids,
-    supported_nucleic_acid_bases,
-    ))
-
-check_supported_hetatm = partial(
-    check_supported_molecules,
-    haddock3_defined=supported_hetatm,
-    line_startswith='HETATM',
-    )
-
-check_supported_atom = partial(
-    check_supported_molecules,
-    haddock3_defined=supported_atom,
-    line_startswith='ATOM',
-    )
 
 remove_unsupported_hetatm = partial(
     remove_unsupported_molecules,
@@ -278,7 +327,7 @@ def solve_no_chainID_no_segID(lines):
         new_lines = pdb_chainxseg.run(lines)
 
     elif not chainids and not segids:
-        _chains = pdb_chain.run(lines, upper_case.pop())
+        _chains = pdb_chain.run(lines, next(_CHAINS))
         new_lines = pdb_chainxseg.run(_chains)
 
     # gives priority to chains
@@ -312,3 +361,14 @@ replace_HSD_to_HIS = partial(replace_residue, resin='HSD', resout='HIS')
 replace_HSE_to_HIS = partial(replace_residue, resin='HSE', resout='HIS')
 replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
 replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')
+
+
+def correct_equal_chain_segids(structures):
+    """
+    Parameters
+    ----------
+    structures : list
+    """
+
+
+    return processed_structures

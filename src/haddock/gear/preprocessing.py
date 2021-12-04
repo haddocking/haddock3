@@ -62,6 +62,31 @@ supported_atom = set(it.chain(
     ))
 
 
+
+
+def allow_dry(log_msg):
+    def decorator(function):
+        @wraps(function)
+        def wrapper(lines, *args, dry=False, **kwargs):
+            log = log.info if dry else log.debug
+            in_lines = list(args)
+            result = list(function(lines, *args, **kwargs))
+
+            if dry:
+                d = Differ()
+                d.compare(in_lines, result)
+
+
+            if result != in_lines:
+                
+
+            for d in diff:
+                log(f'[{log_msg}] {d}')
+
+            return in_lines if dry else return result
+    return wrapper
+
+
 def _open_or_give(lines_or_paths):
     """
     Adapt input to the functions.
@@ -341,11 +366,14 @@ def solve_no_chainID_no_segID(lines):
     return list(new_lines)
 
 
-def replace_HETATM_to_ATOM(fhandler, res):
+def replace_HETATM_to_ATOM(fhandler, res, dry=False):
     """."""
+    log = log.info if dry else log.debug
     for line in fhandler:
         if line.startswith('HETATM') and line[slc_resname].strip() == res:
-            yield 'ATOM  ' + line[6:]
+            new_line = 'ATOM  ' + line[6:]
+            log("[Replacing 'HETATM' to 'ATOM'] {new_line}")
+            yield line if dry else yield new_line
         else:
             yield line
 

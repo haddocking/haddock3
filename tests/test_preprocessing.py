@@ -14,7 +14,6 @@ def test_all(caplog):
     """."""
     caplog.set_level(logging.WARNING)
 
-
     pp.process_pdb_files(broken_pdb)
 
     output = Path(

@@ -12,8 +12,9 @@ Processes input PDB files to ensure compatibility with HADDOCK3.
 import itertools as it
 import os
 import string
+from difflib import Differ
 from pathlib import Path
-from functools import partial
+from functools import partial, wraps
 
 from pdbtools import (
     pdb_selaltloc,
@@ -62,29 +63,43 @@ supported_atom = set(it.chain(
     ))
 
 
-
-
 def allow_dry(log_msg):
     def decorator(function):
         @wraps(function)
         def wrapper(lines, *args, dry=False, **kwargs):
-            log = log.info if dry else log.debug
-            in_lines = list(args)
-            result = list(function(lines, *args, **kwargs))
 
             if dry:
+                in_lines = list(lines)
+                result = list(function(in_lines, *args, **kwargs))
+
                 d = Differ()
-                d.compare(in_lines, result)
+                diff_lines = list(d.compare(in_lines, result))
 
+                additions = [i for i in diff_lines if i.startswith('+')]
+                deletions = [i for i in diff_lines if i.startswith('-')]
 
-            if result != in_lines:
-                
+                la = len(additions)
+                ld = len(deletions)
 
-            for d in diff:
-                log(f'[{log_msg}] {d}')
+                add_lines = os.linesep.join(additions)
+                del_lines = os.linesep.join(deletions)
 
-            return in_lines if dry else return result
-    return wrapper
+                log_msg_ = log_msg.format(*args, *kwargs.values())
+                extended_log = (
+                    f'[{log_msg_}] + {la} - {ld} lines',
+                    add_lines,
+                    del_lines,
+                    )
+
+                log.info(os.linesep.join(extended_log))
+                return in_lines
+
+            # on dry, maintain the generator functionality
+            else:
+                return function(lines, *args, **kwargs)
+
+        return wrapper
+    return decorator
 
 
 def _open_or_give(lines_or_paths):
@@ -366,18 +381,18 @@ def solve_no_chainID_no_segID(lines):
     return list(new_lines)
 
 
-def replace_HETATM_to_ATOM(fhandler, res, dry=False):
+@allow_dry("Replacing HETATM to ATOM for residue {!r}")
+def replace_HETATM_to_ATOM(fhandler, res):
     """."""
-    log = log.info if dry else log.debug
     for line in fhandler:
         if line.startswith('HETATM') and line[slc_resname].strip() == res:
-            new_line = 'ATOM  ' + line[6:]
-            log("[Replacing 'HETATM' to 'ATOM'] {new_line}")
-            yield line if dry else yield new_line
+            yield 'ATOM  ' + line[6:]
         else:
             yield line
 
 
+
+@allow_dry("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
 def replace_residue(fhandler, resin, resout):
     """Replace residue by another and changes HETATM to ATOM if needed."""
     _ = replace_HETATM_to_ATOM(fhandler, res=resin)
@@ -397,6 +412,4 @@ def correct_equal_chain_segids(structures):
     ----------
     structures : list
     """
-
-
-    return processed_structures
+    return #  processed_structures

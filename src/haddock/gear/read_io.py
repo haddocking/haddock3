@@ -2,23 +2,16 @@
 from haddock.libs.libontology import Format, PDBFile
 
 
-def load_from_previous(io_output, check_balance=False):
+def load_from_previous(io_output):
     """Load previous IO."""
-    # Get the models generated in previous step
     models_to_refine = []
     if not all([isinstance(e, PDBFile) for e in io_output]):
-        len_list = []
+        models_to_refine = []
         for mol_dic in io_output:
-            len_list.append(len(mol_dic.values()))
-
-        # check if it has the same dize
-        if not all(x == len_list[0] for x in len_list):
-            return False
-        else:
-            models_to_refine = []
-            for element_key in io_output[0]:
-                p = io_output[0][element_key]
+            for k in mol_dic:
+                p = mol_dic[k]
                 models_to_refine.append(p)
+
     else:
         models_to_refine = [
             p

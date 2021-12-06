@@ -88,11 +88,10 @@ class HaddockModule(BaseHaddockModule):
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
-        models_to_refine = load_from_previous(self.previous_io.output,
-                                              check_balance=True)
+        models_to_refine = load_from_previous(self.previous_io.output)
 
         if not models_to_refine:
-            _msg = ("Input is unblanced use [merge] to address this.")
+            _msg = ("Could not retrieve previous models.")
             self.finish_with_error(_msg)
 
         first_model = models_to_refine[0]

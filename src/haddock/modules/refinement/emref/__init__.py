@@ -98,7 +98,7 @@ class HaddockModule(BaseHaddockModule):
                                               check_balance=True)
 
         if not models_to_refine:
-            _msg = ("Input is unblanced use [merge] to address this.")
+            _msg = ("Could not retrieve previous models.")
             self.finish_with_error(_msg)
 
         refined_structure_list = []

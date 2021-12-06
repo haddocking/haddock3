@@ -6,6 +6,7 @@ from pdbtools.pdb_segxchain import place_seg_on_chain
 from pdbtools.pdb_splitchain import split_chain
 from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_tidy import tidy_pdbfile
+from pdbtools.pdb_merge import concatenate_files
 
 from haddock.core.cns_paths import topology_file
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
@@ -55,6 +56,18 @@ def split_by_chain(pdb_file_path):
             split_chain(input_handler)
 
     return get_new_models(pdb_file_path)
+
+
+def merge(pdb_file_list, new_pdb_file_path):
+    """Merge a list of PDBs into a single one."""
+    input_fhs = [open(p) for p in pdb_file_list]
+    with open(new_pdb_file_path, "w") as output_handler:
+        for line in concatenate_files(input_fhs):
+            # we cannot have END in the merged PDBs
+            #  between the chains
+            if 'END' not in line:
+                output_handler.write(line)
+        output_handler.write("END")
 
 
 def tidy(pdb_file_path, new_pdb_file_path):

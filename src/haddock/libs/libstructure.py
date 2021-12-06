@@ -13,6 +13,6 @@ class Molecule:
         self.segid = segid
 
 
-def make_molecules(paths):
+def make_molecules_from_pathlist(paths):
     """Get input molecules from the data stream."""
     return list(map(Molecule, paths))

@@ -1,8 +1,8 @@
 """HADDOCK3 rigid-body docking module."""
-from itertools import product
+from itertools import chain, product
 from os import linesep
 from pathlib import Path
-from itertools import chain
+
 from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import (

@@ -1,17 +1,15 @@
-"""Logic pertraining to the reading of the IO."""
-from haddock.libs.libontology import Format
-from haddock.libs.libontology import PDBFile
+"""Gear to handle the reading of the IO."""
+from haddock.libs.libontology import Format, PDBFile
 
 
 def load_from_previous(io_output, check_balance=False):
-    """Wrapper function to get data from previous IO."""
+    """Load previous IO."""
     # Get the models generated in previous step
     models_to_refine = []
     if not all([isinstance(e, PDBFile) for e in io_output]):
         len_list = []
-        for i, mol_dic in enumerate(io_output):
+        for mol_dic in io_output:
             len_list.append(len(mol_dic.values()))
-            # sub_lists.append(list(mol_dic.values()))
 
         # check if it has the same dize
         if not all(x == len_list[0] for x in len_list):

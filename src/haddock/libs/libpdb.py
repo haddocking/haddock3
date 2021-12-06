@@ -2,11 +2,11 @@
 import os
 from pathlib import Path
 
+from pdbtools.pdb_merge import concatenate_files
 from pdbtools.pdb_segxchain import place_seg_on_chain
 from pdbtools.pdb_splitchain import split_chain
 from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_tidy import tidy_pdbfile
-from pdbtools.pdb_merge import concatenate_files
 
 from haddock.core.cns_paths import topology_file
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths

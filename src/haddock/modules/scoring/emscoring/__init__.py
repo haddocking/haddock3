@@ -9,7 +9,6 @@ from haddock.libs.libcns import (
     load_workflow_params,
     prepare_single_input,
     )
-
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob

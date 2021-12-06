@@ -1,5 +1,4 @@
 """Create and manage CNS all-atom topology."""
-import re
 import shutil
 from pathlib import Path
 
@@ -104,12 +103,7 @@ class HaddockModule(BaseHaddockModule):
             # Sanitize the different PDB files
             for j, model in enumerate(splited_models):
                 models_dic[i][j] = []
-                # We cannot have multiple models with multiple chains
                 chains = libpdb.split_by_chain(model)
-                # if chains and len(molecules) > 1:
-                #     _msg = ("You cannot mix multi-chain ensembles with"
-                #             " multiple molecules.")
-                #     self.finish_with_error(_msg)
 
                 # Each chain must become a model
                 for chained_model in chains:
@@ -165,6 +159,7 @@ class HaddockModule(BaseHaddockModule):
         #  are found
         expected = {}
         not_found = []
+        to_be_cleaned = []
         for i, mol_id in enumerate(models_dic):
             expected[i] = {}
             for j, chained_model_id in enumerate(models_dic[mol_id]):
@@ -193,6 +188,8 @@ class HaddockModule(BaseHaddockModule):
                     topology_list.append(processed_topology)
                     processed_chained_model_list.append(processed_pdb)
 
+                    to_be_cleaned.append(sub_model)
+
                 m_stem = '_'.join(chain_model_list[0].stem.split('_')[:-1])
                 model_fname = Path(self.path, f"{m_stem}_haddock.{Format.PDB}")
 
@@ -210,12 +207,8 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 
-        # Clean intermediary files
-        # https://regex101.com/r/Btn0Dt/1
-        clean_regex = r".*_[A-z]_(haddock).pdb"
-        for pdb in self.path.glob('*pdb'):
-            if re.match(clean_regex, pdb.name):
-                pdb.unlink()
+        for temp_pdb in to_be_cleaned:
+            temp_pdb.unlink()
 
         # Save module information
         io = ModuleIO()

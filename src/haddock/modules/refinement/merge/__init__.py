@@ -43,7 +43,7 @@ class HaddockModule(BaseHaddockModule):
             values for values in product(*input_dic.values())
             ]
         merged_models = []
-        for i, model_list in enumerate(models_to_be_merged):
+        for i, model_list in enumerate(models_to_be_merged, start=1):
             pdb_fname = Path(self.path, f"merged_{i}.{Format.PDB}")
             pdb_list = [e.full_name for e in model_list]
 

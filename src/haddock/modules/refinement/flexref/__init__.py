@@ -89,8 +89,7 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_refine = load_from_previous(self.previous_io.output,
-                                              check_balance=True)
+        models_to_refine = load_from_previous(self.previous_io.output)
 
         if not models_to_refine:
             _msg = ("Could not retrieve previous models.")

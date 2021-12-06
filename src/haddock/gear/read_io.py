@@ -5,7 +5,7 @@ from haddock.libs.libontology import Format, PDBFile
 def load_from_previous(io_output):
     """Load previous IO."""
     models_to_refine = []
-    if not all([isinstance(e, PDBFile) for e in io_output]):
+    if not all(isinstance(e, PDBFile) for e in io_output):
         models_to_refine = []
         for mol_dic in io_output:
             for k in mol_dic:

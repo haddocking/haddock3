@@ -12,7 +12,6 @@ Processes input PDB files to ensure compatibility with HADDOCK3.
 import itertools as it
 import os
 import string
-from difflib import Differ
 from pathlib import Path
 from functools import partial, wraps
 
@@ -72,17 +71,23 @@ def allow_dry(log_msg):
                 in_lines = list(lines)
                 result = list(function(in_lines, *args, **kwargs))
 
-                d = Differ()
-                diff_lines = list(d.compare(in_lines, result))
+                # Here we could use sets to increase speed, but for the size
+                # of the systems, we can actually use lists and get a sorted
+                # result by default. I tried using difflib from STD. But it is
+                # just too slow.
 
-                additions = [i for i in diff_lines if i.startswith('+')]
-                deletions = [i for i in diff_lines if i.startswith('-')]
+                #additions = set_out.difference(set_in)
+                #deletions = set_in.difference(set_out)
+
+                # _ is line
+                additions = [_ for _ in result if _ not in in_lines]
+                deletions = [_ for _ in in_lines if _ not in result]
 
                 la = len(additions)
                 ld = len(deletions)
 
-                add_lines = os.linesep.join(additions)
-                del_lines = os.linesep.join(deletions)
+                add_lines = os.linesep.join(f'+ {_}' for _ in additions)
+                del_lines = os.linesep.join(f'- {_}' for _ in deletions)
 
                 log_msg_ = log_msg.format(*args, *kwargs.values())
                 extended_log = (
@@ -102,13 +107,27 @@ def allow_dry(log_msg):
     return decorator
 
 
-def _open_or_give(lines_or_paths):
+# make pdb-tools dryrunable
+wdry_pdb_selaltloc = allow_dry('pdb_selaltloc')(pdb_selaltloc.run)
+wdry_pdb_rplresname = allow_dry('pdb_rplresname')(pdb_rplresname.run)
+wdry_pdb_fixinsert = allow_dry('pdb_fixinsert')(pdb_fixinsert.run)
+wdry_pdb_keepcoord = allow_dry('pdb_keepcoord')(pdb_keepcoord.run)
+wdry_pdb_occ = allow_dry('pdb_occ')(pdb_occ.run)
+wdry_pdb_tidy = allow_dry('pdb_tidy')(pdb_tidy.run)
+wdry_pdb_segxchain = allow_dry('pdb_segxchain')(pdb_segxchain.run)
+wdry_pdb_chainxseg = allow_dry('pbd_segxchain')(pdb_chainxseg.run)
+wdry_pdb_chain = allow_dry('pdb_chain')(pdb_chain.run)
+wdry_pdb_reres = allow_dry('pdb_reres')(pdb_reres.run)
+wdry_pdb_reatom = allow_dry('pdb_reatom')(pdb_reatom.run)
+
+
+def _open_or_give(paths_or_lines):
     """
     Adapt input to the functions.
 
     Parameters
     ----------
-    lines_or_paths : list
+    paths_or_lines : list
         If is a list of strings (expected PDB lines), return it as is.
         If is a list of pathlib.Paths, opens them and returns a list
         of strings (lines).
@@ -118,58 +137,19 @@ def _open_or_give(lines_or_paths):
     TypeError
         In any other circumstances.
     """
-    if all(isinstance(i, Path) for i in lines_or_paths):
-        return open_files_to_lines(*lines_or_paths)
-    elif all(isinstance(i, (list, tuple)) for i in lines_or_paths):
-        return lines_or_paths
+    if all(isinstance(i, Path) for i in paths_or_lines):
+        return open_files_to_lines(*paths_or_lines)
+    elif all(isinstance(i, (list, tuple)) for i in paths_or_lines):
+        return paths_or_lines
     else:
-        raise TypeError('Unexpected types in `structures`')
-
-
-def check_and_process_pdbs(paths_or_lines, **params):
-    """Check and process PDBs according to HADDOCK3's specifications."""
-    structures = _open_or_give(paths_or_lines)
-    check_pdbs(structures, **params)
-    result = process_pdbs(
-        structures,
-        save_output=params.pop('save_output', False),
-        osuffix=params.pop('osuffix', _OSUFFIX),
-        **params)
-    return result
-
-
-def check_pdbs(paths_or_lines, **param):
-    """
-    Check PDBs according to HADDOCK3 specifications.
-    """
-    structures = _open_or_give(paths_or_lines)
-
-    # checks and log messages (do not alter the lines)
-    # input should be list and not a generator
-    individual_checks = [
-        partial(check_supported_hetatm, user_defined=param),
-        partial(check_supported_atom, user_defined=param),
-        ]
-
-    for structure, func in it.product(structures, individual_checks):
-        func(structure)
-
-    # these are the checks that are performed considering all the PDBs
-    # combined
-    combined_checks = [
-        ]
-
-    # perform the combined checking steps
-    for check_func in combined_checks:
-        check_func(structures)
-
-    return
+        raise TypeError('Unexpected types in `paths_or_lines`.')
 
 
 def process_pdbs(
         paths_or_lines,
         save_output=False,
         osuffix=_OSUFFIX,
+        dry=False,
         **param):
     """
     Processes PDB file contents for HADDOCK3 compatibility.
@@ -195,16 +175,16 @@ def process_pdbs(
     # modify the input PDB and return the corrected lines
     # (in the like of pdbtools)
     line_by_line_processing_steps = [
-        pdb_keepcoord.run,
-        pdb_selaltloc.run,
-        partial(pdb_occ.run, occupancy=1.00),
+        wdry_pdb_keepcoord,
+        #wdry_pdb_selaltloc,
+        #partial(wdry_pdb_occ, occupancy=1.00),
         replace_MSE_to_MET,
         replace_HSD_to_HIS,
         replace_HSE_to_HIS,
         replace_HID_to_HIS,
         replace_HIE_to_HIS,
-        #partial(pdb_fixinsert.run, option_list=[]),
-        ##
+        ##partial(pdb_fixinsert.run, option_list=[]),
+        ###
         partial(remove_unsupported_hetatm, user_defined=param),
         partial(remove_unsupported_atom, user_defined=param),
         ##
@@ -212,12 +192,12 @@ def process_pdbs(
         partial(pdb_reres.run, starting_resid=1),
         #partial(pdb_tidy.run, strict=True),
         ##
-        partial(map, lambda x: x.rstrip(os.linesep)),
+        #partial(map, lambda x: x.rstrip(os.linesep)),
         ]
 
     # perform the individual processing steps
     processed_individually = [
-        list(chainf(structure, *line_by_line_processing_steps))
+        list(chainf(structure, *line_by_line_processing_steps, dry=dry))
         for structure in structures
         ]
 
@@ -226,7 +206,7 @@ def process_pdbs(
         ]
 
     processed_combined_steps = [
-        correct_equal_chain_segids,
+        #correct_equal_chain_segids,
         ]
 
     processed_combined = chainf(structures, *processed_combined_steps)
@@ -252,53 +232,7 @@ def process_pdbs(
         return processed_individually
 
 
-# CHECKING block
-
-
-def check_supported_molecules(
-        lines,
-        haddock3_defined=None,
-        user_defined=None,
-        line_startswith=('ATOM', 'HETATM'),
-        ):
-    """."""
-    user_defined = user_defined or set()
-    haddock3_defined = haddock3_defined or set()
-    allowed = set.union(haddock3_defined, user_defined)
-
-    not_allowed_found = set()
-
-    for line in lines:
-        if line.startswith(line_startswith):
-            residue = line[slc_resname].strip()
-            if residue not in allowed:
-                not_allowed_found.add(residue)
-
-    for i in not_allowed_found:
-        log.warning(
-            f'* WARNING: residue {i!r} found and not supported as '
-            f'{line_startswith!r}. This molecule will be removed.'
-            )
-
-    return
-
-
-check_supported_hetatm = partial(
-    check_supported_molecules,
-    haddock3_defined=supported_hetatm,
-    line_startswith='HETATM',
-    )
-
-check_supported_atom = partial(
-    check_supported_molecules,
-    haddock3_defined=supported_atom,
-    line_startswith='ATOM',
-    )
-
-
-# CORRECT
-
-
+@allow_dry("Remove unsupported molecules")
 def remove_unsupported_molecules(
         lines,
         haddock3_defined=None,

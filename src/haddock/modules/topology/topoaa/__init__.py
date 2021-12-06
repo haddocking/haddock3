@@ -1,4 +1,5 @@
 """Create and manage CNS all-atom topology."""
+import re
 import shutil
 from pathlib import Path
 
@@ -12,7 +13,7 @@ from haddock.libs.libcns import (
     )
 from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.libs.libparallel import Scheduler
-from haddock.libs.libstructure import make_molecules
+from haddock.libs.libstructure import make_molecules_from_pathlist
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
 
@@ -74,7 +75,7 @@ class HaddockModule(BaseHaddockModule):
 
         super().run(params)
 
-        molecules = make_molecules(molecules)
+        molecules = make_molecules_from_pathlist(molecules)
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
         mol_params = self.params.pop('input')
@@ -88,7 +89,7 @@ class HaddockModule(BaseHaddockModule):
         models_dic = {}
         for i, molecule in enumerate(molecules, start=1):
             log.info(f"{i} - {molecule.file_name}")
-            models_dic[i] = []
+            models_dic[i] = {}
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_name.name)
             shutil.copyfile(molecule.file_name, step_molecule_path)
@@ -97,51 +98,62 @@ class HaddockModule(BaseHaddockModule):
             log.info(f"Split models if needed for {step_molecule_path}")
             splited_models = libpdb.split_ensemble(step_molecule_path)
 
-            # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_keys.pop()]
 
             # Sanitize the different PDB files
-            for model in splited_models:
-                log.info(f"Sanitizing molecule {model.name}")
-                models_dic[i].append(model)
+            for j, model in enumerate(splited_models):
+                models_dic[i][j] = []
+                # We cannot have multiple models with multiple chains
+                chains = libpdb.split_by_chain(model)
+                # if chains and len(molecules) > 1:
+                #     _msg = ("You cannot mix multi-chain ensembles with"
+                #             " multiple molecules.")
+                #     self.finish_with_error(_msg)
 
-                if self.params['ligand_top_fname']:
-                    custom_top = self.params['ligand_top_fname']
-                    log.info(f'Using custom topology {custom_top}')
-                    libpdb.sanitize(model,
-                                    overwrite=True,
-                                    custom_topology=custom_top)
+                # Each chain must become a model
+                for chained_model in chains:
 
-                else:
-                    libpdb.sanitize(model, overwrite=True)
+                    log.info(f"Sanitizing molecule {chained_model.name}")
+                    models_dic[i][j].append(chained_model)
 
-                # Prepare generation of topologies jobs
-                topology_filename = generate_topology(
-                    model,
-                    self.path,
-                    self.recipe_str,
-                    self.params,
-                    parameters_for_this_molecule,
-                    )
-                log.info(f"Topology CNS input created in {topology_filename}")
+                    if self.params['ligand_top_fname']:
+                        custom_top = self.params['ligand_top_fname']
+                        log.info(f'Using custom topology {custom_top}')
+                        libpdb.sanitize(chained_model,
+                                        overwrite=True,
+                                        custom_topology=custom_top)
 
-                # Add new job to the pool
-                output_filename = Path(
-                    model.resolve().parent,
-                    f"{model.stem}.{Format.CNS_OUTPUT}",
-                    )
+                    else:
+                        libpdb.sanitize(chained_model, overwrite=True)
 
-                job = CNSJob(
-                    topology_filename,
-                    output_filename,
-                    cns_folder=self.cns_folder_path,
-                    modpath=self.path,
-                    config_path=self.params['config_path'],
-                    cns_exec=self.params['cns_exec'],
-                    )
+                    # Prepare generation of topologies jobs
+                    topology_filename = generate_topology(
+                        chained_model,
+                        self.path,
+                        self.recipe_str,
+                        self.params,
+                        parameters_for_this_molecule,
+                        )
+                    log.info("Topology CNS input created"
+                             f" in {topology_filename}")
 
-                jobs.append(job)
+                    # Add new job to the pool
+                    output_filename = Path(
+                        chained_model.resolve().parent,
+                        f"{chained_model.stem}.{Format.CNS_OUTPUT}",
+                        )
+
+                    job = CNSJob(
+                        topology_filename,
+                        output_filename,
+                        cns_folder=self.cns_folder_path,
+                        modpath=self.path,
+                        config_path=self.params['config_path'],
+                        cns_exec=self.params['cns_exec'],
+                        )
+
+                    jobs.append(job)
 
         # Run CNS engine
         log.info(f"Running CNS engine with {len(jobs)} jobs")
@@ -153,33 +165,57 @@ class HaddockModule(BaseHaddockModule):
         #  are found
         expected = {}
         not_found = []
-        for i in models_dic:
+        for i, mol_id in enumerate(models_dic):
             expected[i] = {}
-            for j, model in enumerate(models_dic[i]):
-                model_name = model.stem
-                processed_pdb = Path(
-                    self.path,
-                    f"{model_name}_haddock.{Format.PDB}"
-                    )
-                if not processed_pdb.is_file():
-                    not_found.append(processed_pdb.name)
-                processed_topology = Path(
-                    self.path,
-                    f"{model_name}_haddock.{Format.TOPOLOGY}"
-                    )
-                if not processed_topology.is_file():
-                    not_found.append(processed_topology.name)
+            for j, chained_model_id in enumerate(models_dic[mol_id]):
 
-                topology = TopologyFile(processed_topology,
-                                        path=self.path)
-                pdb = PDBFile(processed_pdb,
-                              topology,
-                              path=self.path)
+                chain_model_list = models_dic[mol_id][chained_model_id]
+                topology_list = []
+                processed_chained_model_list = []
+                for sub_model in chain_model_list:
+
+                    processed_pdb = Path(
+                        self.path,
+                        f"{sub_model.stem}_haddock.{Format.PDB}"
+                        )
+
+                    processed_topology = Path(
+                        self.path,
+                        f"{sub_model.stem}_haddock.{Format.TOPOLOGY}"
+                        )
+
+                    if not processed_pdb.exists():
+                        not_found.append(processed_pdb.name)
+
+                    if not processed_topology.exists():
+                        not_found.append(processed_topology.name)
+
+                    topology_list.append(processed_topology)
+                    processed_chained_model_list.append(processed_pdb)
+
+                m_stem = '_'.join(chain_model_list[0].stem.split('_')[:-1])
+                model_fname = Path(self.path, f"{m_stem}_haddock.{Format.PDB}")
+
+                libpdb.merge(processed_chained_model_list, model_fname)
+
+                topology = []
+                for top in topology_list:
+                    topology.append(TopologyFile(top, path=self.path))
+
+                pdb = PDBFile(model_fname, topology, path=self.path)
+
                 expected[i][j] = pdb
 
         if not_found:
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
+
+        # Clean intermediary files
+        # https://regex101.com/r/Btn0Dt/1
+        clean_regex = r".*_[A-z]_(haddock).pdb"
+        for pdb in self.path.glob('*pdb'):
+            if re.match(clean_regex, pdb.name):
+                pdb.unlink()
 
         # Save module information
         io = ModuleIO()

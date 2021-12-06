@@ -190,4 +190,6 @@ def get_pdb_file_suffix_variations(pdb_file_path, sep="_"):
     """
     basename = Path(pdb_file_path)
     abs_path = basename.resolve().parent
-    return list(abs_path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
+    ls = list(abs_path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
+    ls.sort()
+    return ls

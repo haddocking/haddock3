@@ -17,8 +17,6 @@ class Worker(Process):
         """Execute tasks."""
         for task in self.tasks:
             task.run()
-            task_ident = f'{task.modpath.name}/{task.input_file.name}'
-            log.info(f'< Starting {task_ident}')
         log.debug(f"{self.name} executed")
 
 

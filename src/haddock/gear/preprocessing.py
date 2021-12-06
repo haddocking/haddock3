@@ -175,21 +175,21 @@ def process_pdbs(
     # modify the input PDB and return the corrected lines
     # (in the like of pdbtools)
     line_by_line_processing_steps = [
-        wdry_pdb_keepcoord,
-        #wdry_pdb_selaltloc,
+        #wdry_pdb_keepcoord,
+        wdry_pdb_selaltloc,
         #partial(wdry_pdb_occ, occupancy=1.00),
-        replace_MSE_to_MET,
-        replace_HSD_to_HIS,
-        replace_HSE_to_HIS,
-        replace_HID_to_HIS,
-        replace_HIE_to_HIS,
+        #replace_MSE_to_MET,
+        #replace_HSD_to_HIS,
+        #replace_HSE_to_HIS,
+        #replace_HID_to_HIS,
+        #replace_HIE_to_HIS,
         ##partial(pdb_fixinsert.run, option_list=[]),
         ###
-        partial(remove_unsupported_hetatm, user_defined=param),
-        partial(remove_unsupported_atom, user_defined=param),
+        #partial(remove_unsupported_hetatm, user_defined=param),
+        #partial(remove_unsupported_atom, user_defined=param),
         ##
-        partial(pdb_reatom.run, starting_value=1),
-        partial(pdb_reres.run, starting_resid=1),
+        #partial(pdb_reatom.run, starting_value=1),
+        #partial(pdb_reres.run, starting_resid=1),
         #partial(pdb_tidy.run, strict=True),
         ##
         #partial(map, lambda x: x.rstrip(os.linesep)),

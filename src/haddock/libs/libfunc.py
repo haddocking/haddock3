@@ -3,7 +3,7 @@ Tools for Functional-Programming in Python.
 
 From: https://github.com/joaomcteixeira/libfuncpy
 """
-from functools import reduce
+from functools import partial, reduce
 
 
 def reduce_helper(value, f, *a, **k):
@@ -24,7 +24,7 @@ def reduce_helper(value, f, *a, **k):
     return f(value, *a, **k)
 
 
-def chainf(init, *funcs):
+def chainf(init, *funcs, **common):
     """
     Apply a sequence of functions to an initial value.
 
@@ -33,7 +33,8 @@ def chainf(init, *funcs):
     >>> chainf(2, [str, int, float])
     2.0
     """
-    return reduce(reduce_helper, funcs, init)
+    rh = partial(reduce_helper, **common)
+    return reduce(rh, funcs, init)
 
 
 def chainfs(*funcs):

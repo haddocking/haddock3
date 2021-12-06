@@ -4,13 +4,14 @@ from pathlib import Path
 
 from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
+from haddock.gear.read_io import load_from_previous
 from haddock.libs.libcns import (
     generate_default_header,
     load_ambig,
     load_workflow_params,
     prepare_multiple_input,
     )
-from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import BaseHaddockModule
@@ -41,10 +42,7 @@ def generate_flexref(
     pdb = Path(input_file.path, input_file.file_name)
     psf_list = []
     for psf in input_file.topology:
-        psf_list.append(Path(psf.path, psf.file_name))
-
-    # pdb_list.append(str(pdb))
-    # psf_list.append(str(psf))
+        psf_list.append(psf.full_name)
 
     input_str = prepare_multiple_input([pdb], psf_list)
 
@@ -91,11 +89,12 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_refine = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.PDB
-            ]
+        models_to_refine = load_from_previous(self.previous_io.output,
+                                              check_balance=True)
+
+        if not models_to_refine:
+            _msg = ("Input is unblanced use [merge] to address this.")
+            self.finish_with_error(_msg)
 
         refined_structure_list = []
         for idx, model in enumerate(models_to_refine, start=1):

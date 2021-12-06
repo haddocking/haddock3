@@ -3,11 +3,13 @@ from os import linesep
 from pathlib import Path
 
 from haddock import log
+from haddock.gear.read_io import load_from_previous
 from haddock.libs.libcns import (
     generate_default_header,
     load_workflow_params,
     prepare_single_input,
     )
+
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob
@@ -73,11 +75,7 @@ class HaddockModule(BaseHaddockModule):
         jobs = []
 
         # Get the models generated in previous step
-        models_to_score = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.PDB
-            ]
+        models_to_score = load_from_previous(self.previous_io.output)
 
         for model in models_to_score:
             scoring_filename = generate_scoring(model,

@@ -2,7 +2,7 @@
 from itertools import product
 from os import linesep
 from pathlib import Path
-
+from itertools import chain
 from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import (
@@ -42,9 +42,9 @@ def generate_docking(
     psf_list = []
     for element in input_list:
         pdb_fname = element.full_name
-        psf_fname = element.topology.full_name
         pdb_list.append(pdb_fname)
-        psf_list.append(psf_fname)
+        for psf in element.topology:
+            psf_list.append(psf.full_name)
 
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
@@ -98,6 +98,11 @@ class HaddockModule(BaseHaddockModule):
             for key in model_dic:
                 input_dic[i].append(model_dic[key])
 
+        if len(input_dic) == 1:
+            _msg = ("Only one molecule found. To perform docking you must"
+                    " input each chain as a separate molecule.")
+            self.finish_with_error(_msg)
+
         if not self.params['crossdock']:
             # docking should be paired
             # A1-B1, A2-B2, A3-B3, etc
@@ -148,7 +153,9 @@ class HaddockModule(BaseHaddockModule):
 
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=self.path)
-                model.topology = [e.topology for e in combination]
+                # FIXME: Investigate this topology structure and simplify
+                topology_list = [e.topology for e in combination]
+                model.topology = list(chain(*topology_list))
                 structure_list.append(model)
 
                 job = CNSJob(
@@ -177,7 +184,7 @@ class HaddockModule(BaseHaddockModule):
         not_present = []
         for model in structure_list:
             if not model.is_present():
-                not_present.append(model.name)
+                not_present.append(model.full_name)
 
             # Score the model
             haddock_score = \

@@ -390,7 +390,12 @@ end if
 
 if ($Data.noecv eq true) then
     evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
-    @@$fileseed (seed=$seed;npart=$npart )
+    fileexist $fileseed end
+    if ($result eq true) then
+        @@$fileseed (seed=$seed;npart=$npart )
+    else
+        evaluate ($seed = $count*$Saprotocol.iniseed)
+    end if
     evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
     set display=$fileseed end
     display module(seed;npart)

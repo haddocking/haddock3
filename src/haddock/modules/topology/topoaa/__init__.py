@@ -5,7 +5,6 @@ from pathlib import Path
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
-    load_input_mols,
     load_workflow_params,
     prepare_output,
     prepare_single_input,
@@ -21,14 +20,13 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-def generate_topology(input_pdb, step_path, recipe_str, defaults,
+def generate_topology(input_pdb, step_path, recipe_str, defaults, mol_params,
                       protonation=None):
     """Generate a HADDOCK topology file from input_pdb."""
     # this is a special cases that only applies to topolyaa.
-    input_mols = defaults.pop('input', {})
-
     general_param = load_workflow_params(defaults)
-    input_mols_params = load_input_mols(input_mols)
+
+    input_mols_params = load_workflow_params(mol_params, param_header='')
 
     general_param = general_param + input_mols_params
 
@@ -74,6 +72,14 @@ class HaddockModule(BaseHaddockModule):
         """Execute module."""
         molecules = make_molecules(self.params.pop('molecules'))
 
+        molecules = make_molecules(molecules)
+        # extracts `input` key from params. The `input` keyword needs to
+        # be treated separately
+        mol_params = self.params.pop('input')
+        # to facilite the for loop down the line, we create a list with the keys
+        # of `mol_params` with inverted order (we will use .pop)
+        mol_params_keys = list(mol_params.keys())[::-1]
+
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
@@ -90,8 +96,12 @@ class HaddockModule(BaseHaddockModule):
                 f"Split models if needed for {step_molecule_path}",
                 level='debug',
                 )
-            ens = libpdb.split_ensemble(step_molecule_path)
-            splited_models = sorted(ens)
+            # these come already sorted
+            splited_models = libpdb.split_ensemble(step_molecule_path)
+
+            # nice variable name, isn't it? :-)
+            # molecule parameters are shared among models of the same molecule
+            parameters_for_this_molecule = mol_params[mol_params_keys.pop()]
 
             # Sanitize the different PDB files
             for model in splited_models:
@@ -109,12 +119,14 @@ class HaddockModule(BaseHaddockModule):
                     libpdb.sanitize(model, overwrite=True)
 
                 # Prepare generation of topologies jobs
-                topology_filename = generate_topology(model,
-                                                      self.path,
-                                                      self.recipe_str,
-                                                      self.params)
-                top_fname_loc = f'{self.path.name}/{topology_filename.name}'
-                self.log(f"CNS input created at {top_fname_loc}")
+                topology_filename = generate_topology(
+                    model,
+                    self.path,
+                    self.recipe_str,
+                    self.params,
+                    parameters_for_this_molecule,
+                    )
+                self.log(f"Topology CNS input created in {topology_filename}")
 
                 # Add new job to the pool
                 output_filename = Path(

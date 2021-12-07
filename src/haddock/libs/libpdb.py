@@ -8,7 +8,7 @@ from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_tidy import tidy_pdbfile
 
 from haddock.core.cns_paths import topology_file
-from haddock.libs.libutil import get_result_or_same_in_list
+from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
 from haddock.modules import working_directory
 
 
@@ -44,7 +44,7 @@ def split_ensemble(pdb_file_path):
         with working_directory(abs_path):
             split_model(input_handler)
 
-    return get_new_models(pdb_file_path)
+    return sort_numbered_paths(*get_new_models(pdb_file_path))
 
 
 def split_by_chain(pdb_file_path):

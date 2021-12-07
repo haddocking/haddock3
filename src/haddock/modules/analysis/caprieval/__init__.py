@@ -195,11 +195,13 @@ class CAPRI:
         self.fnat_dic = {}
         self.atoms = atoms
         self.ignore_missing = ignore_missing
+        self.score_dic = {}
 
         for struct in model_list:
             pdb_f = Path(struct.path, struct.file_name)
             pdb_w_chain = add_chain_from_segid(pdb_f)
             self.model_list.append(pdb_w_chain)
+            self.score_dic[pdb_f] = struct.score
 
     def irmsd(self, cutoff=5.):
         """Calculate the I-RMSD."""
@@ -394,6 +396,7 @@ class CAPRI:
         sep = '\t'
         with open(output_f, 'w') as fh:
             header = 'model' + sep
+            header += 'score' + sep
             if self.fnat_dic:
                 header += 'fnat' + sep
             if self.irmsd_dic:
@@ -408,6 +411,7 @@ class CAPRI:
 
             for model in self.model_list:
                 row = f'{model.name}' + sep
+                row += f'{self.score_dic[model]:.3f}' + sep
                 if model in self.fnat_dic:
                     row += f'{self.fnat_dic[model]:.3f}' + sep
                 if model in self.irmsd_dic:

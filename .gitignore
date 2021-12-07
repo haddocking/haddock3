@@ -134,6 +134,8 @@ dmypy.json
 tags
 .vim
 
+# VSCode
+.vscode
 
 ## Specific to this project
 bin/cns

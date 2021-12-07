@@ -175,18 +175,18 @@ def process_pdbs(
     # modify the input PDB and return the corrected lines
     # (in the like of pdbtools)
     line_by_line_processing_steps = [
-        #wdry_pdb_keepcoord,
-        wdry_pdb_selaltloc,
+        wdry_pdb_keepcoord,
+        #wdry_pdb_selaltloc,
         #partial(wdry_pdb_occ, occupancy=1.00),
-        #replace_MSE_to_MET,
-        #replace_HSD_to_HIS,
-        #replace_HSE_to_HIS,
-        #replace_HID_to_HIS,
-        #replace_HIE_to_HIS,
+        replace_MSE_to_MET,
+        replace_HSD_to_HIS,
+        replace_HSE_to_HIS,
+        replace_HID_to_HIS,
+        replace_HIE_to_HIS,
         ##partial(pdb_fixinsert.run, option_list=[]),
         ###
-        #partial(remove_unsupported_hetatm, user_defined=param),
-        #partial(remove_unsupported_atom, user_defined=param),
+        partial(remove_unsupported_hetatm, user_defined=param),
+        partial(remove_unsupported_atom, user_defined=param),
         ##
         #partial(pdb_reatom.run, starting_value=1),
         #partial(pdb_reres.run, starting_resid=1),
@@ -217,7 +217,7 @@ def process_pdbs(
                 Path(f.parent, f.stem + osuffix).with_suffix(f.suffix)
                 for f in map(Path, paths_or_lines)
                 )
-        except TypeError:
+        except TypeError:  # happens when paths_or_lines was lines
             o_paths = map(
                 'processed_{}.pdb'.format,
                 range(1, len(structures) + 1),
@@ -272,11 +272,12 @@ remove_unsupported_atom = partial(
     )
 
 
+@allow_dry("Solving chain/seg ID issues.")
 def solve_no_chainID_no_segID(lines):
     """
     Solve inconsistencies with chainID and segID.
 
-    If segID is non-existant, copy chainID over segID, and vice-verse.
+    If segID is non-existant, copy chainID over segID, and vice-versa.
     If none are present, adds an upper case char starting from A. This
     char is not repeated until the alphabet exhausts.
     If chainIDs and segIDs differ, copy chainIDs over segIDs.

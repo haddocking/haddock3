@@ -206,7 +206,7 @@ class CAPRI:
 
     def irmsd(self, cutoff=5.0):
         """Calculate the I-RMSD."""
-        log.info(f"  Using cutoff={cutoff}A")
+        log.info(f'[{RECIPE_PATH}]  cutoff: {cutoff}A')
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
 
@@ -235,11 +235,11 @@ class CAPRI:
 
             if P.shape != Q.shape:
                 log.warning(
-                    "Cannot align these models,"
-                    " the number of atoms is in the interface"
-                    " is different."
+                    '[{RECIPE_PATH}] Cannot align these models,'
+                    ' the number of atoms is in the interface'
+                    ' is different.'
                     )
-                i_rmsd = float("nan")
+                i_rmsd = float('nan')
 
             else:
                 P = P - centroid(P)
@@ -255,8 +255,8 @@ class CAPRI:
 
     def lrmsd(self, receptor_chain, ligand_chain):
         """Calculate the L-RMSD."""
-        log.info(f"  Receptor chain = {receptor_chain}")
-        log.info(f"  Ligand chain = {ligand_chain}")
+        log.info(f'[{RECIPE_PATH}]  Receptor chain: {receptor_chain}')
+        log.info(f'[{RECIPE_PATH}]  Ligand chain: {ligand_chain}')
         ref_resdic = read_res(self.reference)
 
         # Get reference coordinates
@@ -329,8 +329,9 @@ class CAPRI:
 
     def ilrmsd(self, ligand_chain, cutoff):
         """Calculate the Interface Ligand RMSD."""
-        log.info(f"  Using cutoff={cutoff}A")
-        log.info(f"  Ligand chain = {ligand_chain}")
+        log.info(f'[{RECIPE_PATH}]  cutoff: {cutoff}A')
+        log.info(f'[{RECIPE_PATH}]  Ligand chain: {ligand_chain}')
+
         ref_resdic = read_res(self.reference)
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
@@ -401,7 +402,7 @@ class CAPRI:
 
     def fnat(self, cutoff=5.0):
         """Calculate the frequency of native contacts."""
-        log.info(f"  Using cutoff = {cutoff}A")
+        log.info(f'[{RECIPE_PATH}]  cutoff: {cutoff}A')
         ref_contacts = load_contacts(self.reference, cutoff)
         for model in self.model_list:
             model_contacts = load_contacts(model, cutoff)
@@ -457,6 +458,8 @@ class CAPRI:
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module to calculate the CAPRI metrics."""
 
+    name = RECIPE_PATH.name
+
     def __init__(
             self, order, path, *ignore, init_params=DEFAULT_CONFIG, **everything
             ):
@@ -467,18 +470,12 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if contact executable is compiled."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [caprieval] module")
-        log.info("Calculating CAPRI metrics...")
-
-        super().run(params)
-
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
-            self.finish_with_error(
-                "This module cannot come after one that produced an iterable"
-                )
+            _e = "This module cannot come after one that produced an iterable."
+            self.finish_with_error(_e)
 
         models_to_calc = [
             p for p in self.previous_io.output if p.file_type == Format.PDB
@@ -486,10 +483,11 @@ class HaddockModule(BaseHaddockModule):
 
         if not self.params["reference"]:
             # No reference was given, use the lowest
-            log.info(
-                "No reference was given, using best ranking structure"
-                " from previous step"
+            self.log(
+                "No reference was given. "
+                "Using best ranking structure from previous step"
                 )
+
             #  by default modes_to_calc should have been sorted by the module
             #  that produced it
             target_model = models_to_calc[0]
@@ -497,7 +495,7 @@ class HaddockModule(BaseHaddockModule):
         else:
             reference = Path(self.params["reference"])
 
-        log.info(f"Using {reference} as reference structure")
+        self.log(f"Using {reference} as reference structure")
 
         capri = CAPRI(
             reference,
@@ -507,29 +505,29 @@ class HaddockModule(BaseHaddockModule):
             )
 
         if self.params["fnat"]:
-            log.info(" Calculating FNAT")
+            self.log("Calculating FNAT")
             capri.fnat(cutoff=self.params["fnat_cutoff"])
 
         if self.params["irmsd"]:
-            log.info(" Calculating I-RMSD")
+            self.log("Calculating I-RMSD")
             capri.irmsd(cutoff=self.params["irmsd_cutoff"])
 
         if self.params["lrmsd"]:
-            log.info(" Calculating L-RMSD")
+            self.log("Calculating L-RMSD")
             capri.lrmsd(
                 receptor_chain=self.params["receptor_chain"],
                 ligand_chain=self.params["ligand_chain"],
                 )
 
         if self.params["ilrmsd"]:
-            log.info(" Calculating I-L-RMSD")
+            self.log("Calculating I-L-RMSD")
             capri.ilrmsd(
                 ligand_chain=self.params["ligand_chain"],
                 cutoff=self.params["irmsd_cutoff"],
                 )
 
         output_fname = Path(self.path, "capri.tsv")
-        log.info(f"Saving output to {output_fname.name}")
+        self.log(f" Saving output to {output_fname}")
         capri.output(
             output_fname,
             sortby_key=self.params["sortby"],

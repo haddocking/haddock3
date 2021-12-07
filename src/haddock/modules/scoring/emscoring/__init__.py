@@ -54,6 +54,8 @@ def generate_scoring(model, course_path, recipe_str, defaults):
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module to perform energy minimization scoring."""
 
+    name = RECIPE_PATH.name
+
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "scoring.cns"
         super().__init__(order, path, initial_params, cns_script)
@@ -63,12 +65,8 @@ class HaddockModule(BaseHaddockModule):
         """Confirm module is installed."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [scoring] module")
-
-        super().run(params)
-
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 

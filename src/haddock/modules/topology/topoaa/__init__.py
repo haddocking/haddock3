@@ -2,7 +2,6 @@
 import shutil
 from pathlib import Path
 
-from haddock import log
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
@@ -58,6 +57,8 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults, mol_params,
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module to create CNS all-atom topologies."""
 
+    name = RECIPE_PATH.name
+
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
         super().__init__(order, path, initial_params, cns_script)
@@ -67,14 +68,10 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if module is installed."""
         return
 
-    def run(self, molecules, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [allatom] module")
-        log.info("Generating topologies")
+        molecules = make_molecules(self.params.pop('molecules'))
 
-        super().run(params)
-
-        molecules = make_molecules(molecules)
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
         mol_params = self.params.pop('input')
@@ -87,14 +84,18 @@ class HaddockModule(BaseHaddockModule):
 
         models_dic = {}
         for i, molecule in enumerate(molecules, start=1):
-            log.info(f"{i} - {molecule.file_name}")
+            self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
             # Copy the molecule to the step folder
             step_molecule_path = Path(self.path, molecule.file_name.name)
             shutil.copyfile(molecule.file_name, step_molecule_path)
 
             # Split models
-            log.info(f"Split models if needed for {step_molecule_path}")
+            self.log(
+                f"Split models if needed for {step_molecule_path}",
+                level='debug',
+                )
+            # these come already sorted
             splited_models = libpdb.split_ensemble(step_molecule_path)
 
             # nice variable name, isn't it? :-)
@@ -103,12 +104,12 @@ class HaddockModule(BaseHaddockModule):
 
             # Sanitize the different PDB files
             for model in splited_models:
-                log.info(f"Sanitizing molecule {model.name}")
+                self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 
                 if self.params['ligand_top_fname']:
                     custom_top = self.params['ligand_top_fname']
-                    log.info(f'Using custom topology {custom_top}')
+                    self.log(f'Using custom topology {custom_top}')
                     libpdb.sanitize(model,
                                     overwrite=True,
                                     custom_topology=custom_top)
@@ -124,7 +125,7 @@ class HaddockModule(BaseHaddockModule):
                     self.params,
                     parameters_for_this_molecule,
                     )
-                log.info(f"Topology CNS input created in {topology_filename}")
+                self.log(f"Topology CNS input created in {topology_filename}")
 
                 # Add new job to the pool
                 output_filename = Path(
@@ -144,10 +145,10 @@ class HaddockModule(BaseHaddockModule):
                 jobs.append(job)
 
         # Run CNS engine
-        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        self.log(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("CNS engine has finished")
+        self.log("CNS engine has finished")
 
         # Check for generated output, fail it not all expected files
         #  are found
@@ -178,8 +179,10 @@ class HaddockModule(BaseHaddockModule):
                 expected[i][j] = pdb
 
         if not_found:
-            self.finish_with_error("Several files were not generated:"
-                                   f" {not_found}")
+            self.finish_with_error(
+                "Several files were not generated:"
+                f" {', '.join(not_found)}"
+                )
 
         # Save module information
         io = ModuleIO()

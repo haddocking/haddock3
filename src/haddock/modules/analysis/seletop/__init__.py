@@ -1,7 +1,6 @@
 """HADDOCK3 module to select a top cluster/model."""
 from pathlib import Path
 
-from haddock import log
 from haddock.libs.libontology import Format, ModuleIO
 from haddock.modules import BaseHaddockModule
 
@@ -12,6 +11,8 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module to select top cluster/model."""
+
+    name = RECIPE_PATH.name
 
     def __init__(
             self,
@@ -27,15 +28,11 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if module is installed."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [seletop] module")
-
-        super().run(params)
-
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
-            self.finish_with_error('This module cannot come after one'
+            self.finish_with_error('[seletop] This module cannot come after one'
                                    ' that produced an iterable')
 
         models_to_select = [
@@ -48,9 +45,10 @@ class HaddockModule(BaseHaddockModule):
         models_to_select.sort(key=lambda x: x.score)
 
         if len(models_to_select) < self.params['select']:
-            log.warning(
+            self.log((
                 'Number of models to be selected is larger'
-                ' than generated models, selecting ALL'
+                ' than generated models, selecting ALL'),
+                level='warning',
                 )
 
         # select the models based on the parameter

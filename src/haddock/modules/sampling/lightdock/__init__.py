@@ -17,6 +17,8 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 Lightdock module."""
 
+    name = RECIPE_PATH.name
+
     def __init__(
             self,
             order,
@@ -32,12 +34,8 @@ class HaddockModule(BaseHaddockModule):
         """Confirm this module is installed."""
         check_subprocess('lightdock3.py -h')
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [sampling-lightdock] module")
-
-        super().run(params)
-
         # Get the models generated in previous step
         models_to_score = [
             p

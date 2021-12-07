@@ -412,7 +412,6 @@ class CAPRI:
 
     def output(self, output_f, sortby_key, ascending):
         """Output the CAPRI results to a .tsv file."""
-        sep = "\t"
         output_l = []
         for model in self.model_list:
             data = {}
@@ -432,12 +431,6 @@ class CAPRI:
 
         key_values = [(i, k[sortby_key]) for i, k in enumerate(output_l)]
         key_values.sort(key=lambda x: x[1], reverse=not ascending)
-        #if ascending:
-        #    # lower first
-        #    key_values.sort(key=lambda x: x[1])
-        #else:
-        #    # larger first
-        #    key_values.sort(key=lambda x: -x[1])
 
         max_model_space = max(len(str(_d['model'])) for _d in output_l) + 2
         hmodel = 'model'.center(max_model_space, ' ')
@@ -453,9 +446,10 @@ class CAPRI:
                 for value in output_l[idx].values():
                     if isinstance(value, Path):
                         row_l.append(str(value).ljust(max_model_space, " "))
-                    #elif isinstance(value, (int, float)):
-                    else:  # better to have the else: statment so errors are
-                           # spotted
+                    # elif isinstance(value, (int, float)):
+                    else:
+                        # better to have the else: statment so errors are
+                        # spotted. Only int and floats should go here
                         row_l.append(f"{value:.3f}".rjust(10, " "))
                 out_fh.write(''.join(row_l) + os.linesep)
 

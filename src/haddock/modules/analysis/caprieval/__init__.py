@@ -416,7 +416,8 @@ class CAPRI:
         output_l = []
         for model in self.model_list:
             data = {}
-            data["model"] = str(Path(model.parent.name, model.name))
+            # keep always 'model' the first key
+            data["model"] = Path(model.parent.name, model.name)
             data["score"] = self.score_dic[model]
             if model in self.irmsd_dic:
                 data["irmsd"] = self.irmsd_dic[model]
@@ -426,27 +427,37 @@ class CAPRI:
                 data["lrmsd"] = self.lrmsd_dic[model]
             if model in self.ilrmsd_dic:
                 data["ilrmsd"] = self.ilrmsd_dic[model]
+            # list of dictionaries
             output_l.append(data)
 
         key_values = [(i, k[sortby_key]) for i, k in enumerate(output_l)]
-        if ascending:
-            # lower first
-            key_values.sort(key=lambda x: x[1])
-        else:
-            # larger first
-            key_values.sort(key=lambda x: -x[1])
+        key_values.sort(key=lambda x: x[1], reverse=not ascending)
+        #if ascending:
+        #    # lower first
+        #    key_values.sort(key=lambda x: x[1])
+        #else:
+        #    # larger first
+        #    key_values.sort(key=lambda x: -x[1])
+
+        max_model_space = max(len(str(_d['model'])) for _d in output_l) + 2
+        hmodel = 'model'.center(max_model_space, ' ')
+        header = hmodel + ''.join(
+            _.rjust(10, " ")
+            for _ in list(output_l[0].keys())[1:]
+            )
 
         with open(output_f, "w") as out_fh:
-            header = sep.join(output_l[0].keys())
-            out_fh.write(f"{header}" + os.linesep)
+            out_fh.write(header + os.linesep)
             for idx, _ in key_values:
                 row_l = []
                 for value in output_l[idx].values():
-                    if type(value) == str:
-                        row_l.append(value)
-                    elif isinstance(value, (int, float)):
-                        row_l.append(f"{value:.3f}")
-                out_fh.write(sep.join(row_l) + os.linesep)
+                    if isinstance(value, Path):
+                        row_l.append(str(value).ljust(max_model_space, " "))
+                    #elif isinstance(value, (int, float)):
+                    else:  # better to have the else: statment so errors are
+                           # spotted
+                        row_l.append(f"{value:.3f}".rjust(10, " "))
+                out_fh.write(''.join(row_l) + os.linesep)
 
 
 class HaddockModule(BaseHaddockModule):

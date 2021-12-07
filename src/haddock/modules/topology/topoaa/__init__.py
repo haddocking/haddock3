@@ -195,6 +195,8 @@ class HaddockModule(BaseHaddockModule):
 
                 libpdb.merge(processed_chained_model_list, model_fname)
 
+                to_be_cleaned.extend(processed_chained_model_list)
+
                 topology = []
                 for top in topology_list:
                     topology.append(TopologyFile(top, path=self.path))

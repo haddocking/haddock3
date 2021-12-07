@@ -9,7 +9,7 @@ from logging import FileHandler, StreamHandler
 log_file_name = 'log'
 
 
-info_formatter = '[%(asctime)s] %(message)s'
+info_formatter = '[%(asctime)s %(module)s %(levelname)s] %(message)s'
 debug_formatter = (
     "[%(asctime)s] "
     "%(filename)s:%(name)s:%(funcName)s:%(lineno)d: "

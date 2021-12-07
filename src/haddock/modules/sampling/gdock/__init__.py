@@ -36,6 +36,8 @@ def ambig2dic(ambig_f):
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 gdock module."""
 
+    name = RECIPE_PATH.name
+
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         super().__init__(order, path, initial_params)
 
@@ -46,12 +48,8 @@ class HaddockModule(BaseHaddockModule):
         gdock_exec = Path(gdock_path, 'gdock.py')
         check_subprocess(f'{sys.executable} {gdock_exec}')
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [gdock] module")
-
-        super().run(params)
-
         try:
             gdock_path = os.environ['GDOCK_PATH']
         except KeyError:

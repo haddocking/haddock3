@@ -131,9 +131,9 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
             )
         return ncores
 
-    log.info(f"`njobs` not specified, evaluating initial value {n}...")
+    log.debug(f"`njobs` not specified, evaluating initial value {n}...")
     ncores = min(n, max_cpus)
-    log.info(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
+    log.debug(f"Selected {ncores} for a maximum of {max_cpus} CPUs")
     return ncores
 
 

@@ -2,7 +2,6 @@
 from os import linesep
 from pathlib import Path
 
-from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import (
     generate_default_header,
@@ -69,6 +68,8 @@ def generate_mdref(
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module for water refinement."""
 
+    name = RECIPE_PATH.name
+
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "mdref.cns"
         super().__init__(order, path, initial_params, cns_script)
@@ -78,12 +79,8 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if module is installed."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [mdref] module")
-
-        super().run(params)
-
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
@@ -124,10 +121,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        self.log(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("CNS engine has finished")
+        self.log("CNS engine has finished")
 
         # Get the weights from the defaults
         _weight_keys = \

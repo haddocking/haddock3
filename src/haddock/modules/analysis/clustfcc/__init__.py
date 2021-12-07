@@ -19,6 +19,8 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module for clustering with FCC."""
 
+    name = RECIPE_PATH.name
+
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = False
         super().__init__(order, path, initial_params, cns_script)
@@ -37,12 +39,8 @@ class HaddockModule(BaseHaddockModule):
 
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [clustfcc] module")
-
-        super().run(params)
-
         contact_executable = Path(FCC_path, self.params['executable'])
 
         # Get the models generated in previous step

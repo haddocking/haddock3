@@ -2,7 +2,6 @@
 from os import linesep
 from pathlib import Path
 
-from haddock import log
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import (
     generate_default_header,
@@ -69,6 +68,8 @@ def generate_emref(
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module energy minimization refinement."""
 
+    name = RECIPE_PATH.name
+
     def __init__(
             self,
             order,
@@ -83,12 +84,8 @@ class HaddockModule(BaseHaddockModule):
         """Confirm module is installed."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute module."""
-        log.info("Running [emref] module")
-
-        super().run(params)
-
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
@@ -127,10 +124,10 @@ class HaddockModule(BaseHaddockModule):
             jobs.append(job)
 
         # Run CNS engine
-        log.info(f"Running CNS engine with {len(jobs)} jobs")
+        self.log(f"Running CNS engine with {len(jobs)} jobs")
         engine = Scheduler(jobs, ncores=self.params['ncores'])
         engine.run()
-        log.info("CNS engine has finished")
+        self.log("CNS engine has finished")
 
         # Get the weights needed for the CNS module
         _weight_keys = \

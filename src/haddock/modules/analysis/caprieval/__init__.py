@@ -472,7 +472,7 @@ class HaddockModule(BaseHaddockModule):
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
             self.finish_with_error(
-                "This module cannot come after one" " that produced an iterable"
+                "This module cannot come after one that produced an iterable"
                 )
 
         models_to_calc = [

@@ -438,7 +438,7 @@ class CAPRI:
 
         with open(output_f, "w") as out_fh:
             header = sep.join(output_l[0].keys())
-            out_fh.write(f"{header}" + os.linesep)
+            out_fh.write(header + os.linesep)
             for idx, _ in key_values:
                 row_l = []
                 for value in output_l[idx].values():

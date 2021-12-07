@@ -72,7 +72,6 @@ class HaddockModule(BaseHaddockModule):
         """Execute module."""
         molecules = make_molecules(self.params.pop('molecules'))
 
-        molecules = make_molecules(molecules)
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
         mol_params = self.params.pop('input')

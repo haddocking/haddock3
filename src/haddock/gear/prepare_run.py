@@ -261,7 +261,7 @@ def create_begin_files(params):
     data_dir = run_dir / 'data'
     begin_dir = run_dir / 'begin'
 
-    run_dir.mkdir()
+    run_dir.mkdir(exist_ok=True)
     begin_dir.mkdir()
     data_dir.mkdir()
 

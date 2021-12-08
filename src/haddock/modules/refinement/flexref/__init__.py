@@ -39,35 +39,49 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(e)
 
         refined_structure_list = []
-        for idx, model in enumerate(models_to_refine, start=1):
-            inp_file = prepare_cns_input(
-                idx,
-                model,
-                self.path,
-                self.recipe_str,
-                self.params,
-                "flexref",
-                ambig_fname=self.params["ambig_fname"],
-                )
+        idx = 1
+        sampling_factor = self.params["sampling_factor"]
+        if sampling_factor > 1:
+            self.log(f"sampling_factor={sampling_factor}")
+        if sampling_factor == 0:
+            self.log("[Warning] sampling_factor cannot be 0, setting it to 1")
+            sampling_factor = 1
+        if sampling_factor > 100:
+            self.log("[Warning] sampling_factor is larger than 100")
 
-            out_file = Path(self.path, f"flexref_{idx}.out")
+        idx = 1
+        for model in models_to_refine:
+            for _ in range(self.params['sampling_factor']):
+                inp_file = prepare_cns_input(
+                    idx,
+                    model,
+                    self.path,
+                    self.recipe_str,
+                    self.params,
+                    "flexref",
+                    ambig_fname=self.params["ambig_fname"],
+                    )
 
-            # create the expected PDBobject
-            expected_pdb = prepare_expected_pdb(
-                model, idx, self.path, "flexref"
-                )
-            refined_structure_list.append(expected_pdb)
+                out_file = Path(self.path, f"flexref_{idx}.out")
 
-            job = CNSJob(
-                inp_file,
-                out_file,
-                cns_folder=self.cns_folder_path,
-                modpath=self.path,
-                config_path=self.params["config_path"],
-                cns_exec=self.params["cns_exec"],
-                )
+                # create the expected PDBobject
+                expected_pdb = prepare_expected_pdb(
+                    model, idx, self.path, "flexref"
+                    )
+                refined_structure_list.append(expected_pdb)
 
-            jobs.append(job)
+                job = CNSJob(
+                    inp_file,
+                    out_file,
+                    cns_folder=self.cns_folder_path,
+                    modpath=self.path,
+                    config_path=self.params["config_path"],
+                    cns_exec=self.params["cns_exec"],
+                    )
+
+                jobs.append(job)
+
+                idx += 1
 
         # Run CNS engine
         self.log(f"Running CNS engine with {len(jobs)} jobs")

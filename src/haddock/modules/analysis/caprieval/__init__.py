@@ -206,7 +206,6 @@ class CAPRI:
 
     def irmsd(self, cutoff=5.0):
         """Calculate the I-RMSD."""
-        log.info(f'[{RECIPE_PATH}]  cutoff: {cutoff}A')
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
 
@@ -255,8 +254,6 @@ class CAPRI:
 
     def lrmsd(self, receptor_chain, ligand_chain):
         """Calculate the L-RMSD."""
-        log.info(f'[{RECIPE_PATH}]  Receptor chain: {receptor_chain}')
-        log.info(f'[{RECIPE_PATH}]  Ligand chain: {ligand_chain}')
         ref_resdic = read_res(self.reference)
 
         # Get reference coordinates
@@ -329,9 +326,6 @@ class CAPRI:
 
     def ilrmsd(self, ligand_chain, cutoff):
         """Calculate the Interface Ligand RMSD."""
-        log.info(f'[{RECIPE_PATH}]  cutoff: {cutoff}A')
-        log.info(f'[{RECIPE_PATH}]  Ligand chain: {ligand_chain}')
-
         ref_resdic = read_res(self.reference)
         # Identify interface
         ref_interface_resdic = identify_interface(self.reference, cutoff)
@@ -402,7 +396,6 @@ class CAPRI:
 
     def fnat(self, cutoff=5.0):
         """Calculate the frequency of native contacts."""
-        log.info(f'[{RECIPE_PATH}]  cutoff: {cutoff}A')
         ref_contacts = load_contacts(self.reference, cutoff)
         for model in self.model_list:
             model_contacts = load_contacts(model, cutoff)
@@ -506,28 +499,43 @@ class HaddockModule(BaseHaddockModule):
 
         if self.params["fnat"]:
             self.log("Calculating FNAT")
-            capri.fnat(cutoff=self.params["fnat_cutoff"])
+            fnat_cutoff = self.params["fnat_cutoff"]
+            self.log(f' cutoff: {fnat_cutoff}A')
+            capri.fnat(cutoff=fnat_cutoff)
 
         if self.params["irmsd"]:
             self.log("Calculating I-RMSD")
-            capri.irmsd(cutoff=self.params["irmsd_cutoff"])
+            irmsd_cutoff = self.params["irmsd_cutoff"]
+            self.log(f' cutoff: {irmsd_cutoff}A')
+            capri.irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:
             self.log("Calculating L-RMSD")
+            lrmsd_receptor_chain = self.params["receptor_chain"]
+            lrmsd_ligand_chain = self.params["ligand_chain"]
+
+            self.log(f' Receptor chain: {lrmsd_receptor_chain}')
+            self.log(f' Ligand chain: {lrmsd_ligand_chain}')
             capri.lrmsd(
-                receptor_chain=self.params["receptor_chain"],
-                ligand_chain=self.params["ligand_chain"],
+                receptor_chain=lrmsd_receptor_chain,
+                ligand_chain=lrmsd_ligand_chain,
                 )
 
         if self.params["ilrmsd"]:
             self.log("Calculating I-L-RMSD")
+            ilrmsd_ligand_chain = self.params["ligand_chain"]
+            ilrmsd_cutoff = self.params["irmsd_cutoff"]
+
+            self.log(f' Ligand chain: {ilrmsd_ligand_chain}')
+            self.log(f' cutoff: {ilrmsd_cutoff}A')
+
             capri.ilrmsd(
-                ligand_chain=self.params["ligand_chain"],
-                cutoff=self.params["irmsd_cutoff"],
+                ligand_chain=ilrmsd_ligand_chain,
+                cutoff=ilrmsd_cutoff,
                 )
 
         output_fname = Path(self.path, "capri.tsv")
-        self.log(f" Saving output to {output_fname}")
+        self.log(f" Saving output to {output_fname.name}")
         capri.output(
             output_fname,
             sortby_key=self.params["sortby"],

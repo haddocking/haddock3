@@ -125,7 +125,9 @@ class HaddockModule(BaseHaddockModule):
                     self.params,
                     parameters_for_this_molecule,
                     )
-                self.log(f"Topology CNS input created in {topology_filename}")
+                self.log(
+                    f"Topology CNS input created in {topology_filename.name}"
+                    )
 
                 # Add new job to the pool
                 output_filename = Path(

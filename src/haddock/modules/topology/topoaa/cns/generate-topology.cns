@@ -27,7 +27,7 @@ define(
 
 {* convert chainid to segid if chainid is non-blank *}
 {+ choice: true false +}
-{===>} convert=false;
+{===>} convert=true;
 
 {* separate chains by segid - a new segid starts a new chain *}
 {+ choice: true false +}
@@ -810,8 +810,8 @@ buffer message
 end
 buffer message reset end
 
-do (segid = "    ") (all)
-do (segid = $prot_segid_1) (all)
+!do (segid = "    ") (all)
+!do (segid = $prot_segid_1) (all)
 
 write structure output=$output_psf_filename end
 write coordinates format=pdbo output=$output_pdb_filename end

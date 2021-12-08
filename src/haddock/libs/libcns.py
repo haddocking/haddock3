@@ -16,8 +16,6 @@ RND = RandomNumberGenerator()
 
 def generate_default_header(protonation=None):
     """Generate CNS default header."""
-    param = load_ff_parameters(cns_paths.parameters_file)
-    top = load_ff_topology(cns_paths.topology_file)
     link = load_link(cns_paths.link_file)
     topology_protonation = load_protonation_state(protonation)
     trans_vec = load_trans_vectors(cns_paths.translation_vectors)
@@ -27,8 +25,6 @@ def generate_default_header(protonation=None):
     water_box = load_waterbox(cns_paths.water_box["boxtyp20"])
 
     return (
-        param,
-        top,
         link,
         topology_protonation,
         trans_vec,
@@ -129,26 +125,6 @@ def write_eval_line(param, value, eval_line="eval (${}={})"):
         emsg = f"Unexpected type when writing CNS header: {type(value)}"
         log.error(emsg)
         raise TypeError(emsg)
-
-
-def load_ff_parameters(forcefield_parameters):
-    """Add force-field specific parameters to its appropriate places."""
-    ff_param_header = f"{linesep}! FF parameters{linesep}"
-    ff_param_header += f"parameter{linesep}"
-    ff_param_header += f"  @@{forcefield_parameters}{linesep}"
-    ff_param_header += f"end{linesep}"
-
-    return ff_param_header
-
-
-def load_ff_topology(forcefield_topology):
-    """Add force-field specific topology to its appropriate places."""
-    ff_top_header = f"{linesep}! Toplogy{linesep}"
-    ff_top_header += f"topology{linesep}"
-    ff_top_header += f"  @@{forcefield_topology}{linesep}"
-    ff_top_header += f"end{linesep}"
-
-    return ff_top_header
 
 
 def load_link(mol_link):
@@ -370,8 +346,6 @@ def prepare_cns_input(
     # read the default parameters
     default_params = load_workflow_params(defaults)
     (
-        param,
-        top,
         link,  # unused
         topology_protonation,
         trans_vec,  # unused
@@ -425,8 +399,6 @@ def prepare_cns_input(
     output += f"eval ($count=" f" {model_number}){linesep}"
     inp = (
         default_params
-        + param
-        + top
         + input_str
         + output
         + topology_protonation

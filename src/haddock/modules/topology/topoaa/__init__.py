@@ -30,7 +30,7 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults, mol_params,
 
     general_param = general_param + input_mols_params
 
-    param, top, link, topology_protonation, \
+    link, topology_protonation, \
         trans_vec, tensor, scatter, \
         axis, water_box = generate_default_header(protonation)
 
@@ -43,7 +43,7 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults, mol_params,
 
     input_str = prepare_single_input(str(input_pdb.resolve().absolute()))
 
-    inp = general_param + param + top + input_str + output + link \
+    inp = general_param + input_str + output + link \
         + topology_protonation + trans_vec + tensor + scatter + axis \
         + water_box + recipe_str
 

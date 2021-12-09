@@ -65,8 +65,8 @@ class HPCWorker:
         toppar = job_list[0].toppar
         module_name = job_list[0].modpath.name.split("_")[-1]
         self.job_fname = Path(moddir, f"{module_name}_{self.job_num}.job")
-        out_fname = Path(moddir, f"{module_name}_{self.job_num}.out")
-        err_fname = Path(moddir, f"{module_name}_{self.job_num}.err")
+        out_fname = Path(moddir, f"{module_name}_{self.job_num}_job.out")
+        err_fname = Path(moddir, f"{module_name}_{self.job_num}_job.err")
 
         header = f"#!/bin/sh{os.linesep}"
         header += f"#SBATCH -J {job_name}{os.linesep}"
@@ -141,21 +141,23 @@ class HPCScheduler:
         """Run tasks in the Queue."""
         # split by maximum number of submission so we do it in batches
         adaptive_l = []
+        completed_count = 0
+        failed_count = 0
         batch = [
             self.worker_list[i:i + self.queue_limit]
             for i in range(0, len(self.worker_list), self.queue_limit)
             ]
         try:
-            for batch_num, worker_list in enumerate(batch, start=1):
+            for batch_num, job_list in enumerate(batch, start=1):
                 log.info(f"> Running batch {batch_num}/{len(batch)}")
                 start = time.time()
-                for worker in worker_list:
+                for worker in job_list:
                     worker.run()
 
                 # check if those finished
                 completed = False
                 while not completed:
-                    for worker in worker_list:
+                    for worker in job_list:
                         worker.update_status()
                         if worker.job_status != "finished":
                             log.info(
@@ -163,29 +165,29 @@ class HPCScheduler:
                                 f" {worker.job_status}"
                                 )
 
-                    completed_count = sum(
-                        w.job_status == "finished" for w in worker_list
+                    completed_count += sum(
+                        w.job_status == "finished" for w in job_list
                         )
-                    failed_count = sum(
-                        w.job_status == "failed" for w in worker_list
+                    failed_count += sum(
+                        w.job_status == "failed" for w in job_list
                         )
 
                     per = (
-                        (completed_count + failed_count) / self.num_tasks
+                        (completed_count + failed_count) / len(self.worker_list)
                         ) * 100
                     log.info(f">> {per:.0f}% done")
-                    if completed_count + failed_count == len(worker_list):
+                    if completed_count + failed_count == len(job_list):
                         completed = True
                         end = time.time()
                         elapsed = end - start
-                        log.info(f">> Took {elapsed:.2f}s")
+                        log.info(f'>> Took {elapsed:.2f}s')
                         adaptive_l.append(elapsed)
                     else:
                         if not adaptive_l:
                             # This is the first run, use pre-defined waits
-                            if len(worker_list) < 10:
+                            if len(job_list) < 10:
                                 sleep_timer = 10
-                            elif len(worker_list) < 50:
+                            elif len(job_list) < 50:
                                 sleep_timer = 30
                             else:
                                 sleep_timer = 60

@@ -13,16 +13,17 @@ STATE_REGEX = r"JobState=(\w*)"
 class HPCWorker:
     """Defines the HPC Job."""
 
-    def __init__(self, tasks):
+    def __init__(self, tasks, num):
         self.tasks = tasks
         log.debug(f"HPCWorker ready with {len(self.tasks)}")
         self.job_id = None
+        self.job_num = num
         self.job_status = "unknown"
         self.job_fname = ""
 
-    def run(self, identifier):
+    def run(self):
         """Execute the tasks."""
-        job_file = self.prepare_job_file(self.tasks, identifier)
+        job_file = self.prepare_job_file(self.tasks)
         cmd = f"sbatch {job_file}"
         p = subprocess.run(shlex.split(cmd), capture_output=True)
         self.job_id = int(p.stdout.decode("utf-8").split()[-1])
@@ -55,7 +56,7 @@ class HPCWorker:
 
         return self.job_status
 
-    def prepare_job_file(self, job_list, id):
+    def prepare_job_file(self, job_list):
         job_name = "haddock3"
         queue = "haddock"
         moddir = job_list[0].modpath
@@ -63,9 +64,9 @@ class HPCWorker:
         run = job_list[0].config_path
         toppar = job_list[0].toppar
         module_name = job_list[0].modpath.name.split("_")[-1]
-        self.job_fname = Path(moddir, f"{module_name}_{id}.job")
-        out_fname = Path(moddir, f"{module_name}_{id}.out")
-        err_fname = Path(moddir, f"{module_name}_{id}.err")
+        self.job_fname = Path(moddir, f"{module_name}_{self.job_num}.job")
+        out_fname = Path(moddir, f"{module_name}_{self.job_num}.out")
+        err_fname = Path(moddir, f"{module_name}_{self.job_num}.err")
 
         header = f"#!/bin/sh{os.linesep}"
         header += f"#SBATCH -J {job_name}{os.linesep}"
@@ -122,18 +123,24 @@ class HPCScheduler:
 
         # split tasks according to concat level
         if concat > 1:
-            log.info(f"Concatenating, each .job will produce {concat} models")
+            log.info(
+                f"Concatenating, each .job will produce {concat} "
+                "(or less) models"
+                )
         job_list = [
             task_list[i:i + concat] for i in range(0, len(task_list), concat)
             ]
 
-        self.worker_list = [HPCWorker(t) for t in job_list]
+        self.worker_list = [
+            HPCWorker(t, j) for j, t in enumerate(job_list, start=1)
+            ]
 
         log.debug(f"{self.num_tasks} HPC tasks ready.")
 
     def run(self):
         """Run tasks in the Queue."""
         # split by maximum number of submission so we do it in batches
+        adaptive_l = []
         batch = [
             self.worker_list[i:i + self.queue_limit]
             for i in range(0, len(self.worker_list), self.queue_limit)
@@ -141,8 +148,9 @@ class HPCScheduler:
         try:
             for batch_num, worker_list in enumerate(batch, start=1):
                 log.info(f"> Running batch {batch_num}/{len(batch)}")
-                for i, worker in enumerate(worker_list, start=1):
-                    worker.run(i)
+                start = time.time()
+                for worker in worker_list:
+                    worker.run()
 
                 # check if those finished
                 completed = False
@@ -163,23 +171,30 @@ class HPCScheduler:
                         )
 
                     per = (
-                        (completed_count + failed_count) / len(self.worker_list)
+                        (completed_count + failed_count) / self.num_tasks
                         ) * 100
                     log.info(f">> {per:.0f}% done")
                     if completed_count + failed_count == len(worker_list):
                         completed = True
+                        end = time.time()
+                        elapsed = end - start
+                        log.info(f">> Took {elapsed:.2f}s")
+                        adaptive_l.append(elapsed)
                     else:
-                        sleep_timer = 0
-                        if len(worker_list) < 10:
-                            # this is a small batch, wait just a little
-                            sleep_timer = 10
-                        elif len(worker_list) < 50:
-                            # this is a bit larger, wait longer
-                            sleep_timer = 30
+                        if not adaptive_l:
+                            # This is the first run, use pre-defined waits
+                            if len(worker_list) < 10:
+                                sleep_timer = 10
+                            elif len(worker_list) < 50:
+                                sleep_timer = 30
+                            else:
+                                sleep_timer = 60
                         else:
-                            # this can be large, wait more!
-                            sleep_timer = 60
-                        log.info(f">> Waiting... ({sleep_timer}s)")
+                            # We already know how long it took, use the average
+                            sleep_timer = round(
+                                sum(adaptive_l) / len(adaptive_l)
+                                )
+                        log.info(f">> Waiting... ({sleep_timer:.2f}s)")
                         time.sleep(sleep_timer)
                 log.info(f"> Batch {batch_num}/{len(batch)} done")
 

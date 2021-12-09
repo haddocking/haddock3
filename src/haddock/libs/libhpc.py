@@ -11,6 +11,15 @@ from haddock import log
 
 STATE_REGEX = r"JobState=(\w*)"
 
+JOB_STATUS_DIC = {
+    "PENDING": "submitted",
+    "RUNNING": "running",
+    "SUSPENDED": "hold",
+    "COMPLETING": "running",
+    "COMPLETED": "finished",
+    "FAILED": "failed",
+    }
+
 
 class HPCWorker:
     """Defines the HPC Job."""
@@ -41,18 +50,7 @@ class HPCWorker:
             # TODO: Maybe a regex here is overkill
             # https://regex101.com/r/M2vbAc/1
             status = re.findall(STATE_REGEX, out)[0]
-            if status == "PENDING":
-                self.job_status = "submitted"
-            elif status == "RUNNING":
-                self.job_status = "running"
-            elif status == "SUSPENDED":
-                self.job_status = "hold"
-            elif status == "COMPLETING":
-                self.job_status = "running"
-            elif status == "COMPLETED":
-                self.job_status = "finished"
-            elif status == "FAILED":
-                self.job_status = "failed"
+            self.job_status = JOB_STATUS_DIC[status]
         else:
             self.job_status = "finished"
 

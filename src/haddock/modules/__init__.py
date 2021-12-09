@@ -24,7 +24,9 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-general_parameters_affecting_modules = {'ncores', 'cns_exec'}
+general_parameters_affecting_modules = {
+    'ncores', 'cns_exec', 'mode', 'concat', 'queue_limit'
+    }
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"
 module's parameters. Usually, this set is used to filter parameters during
@@ -96,6 +98,9 @@ class BaseHaddockModule(ABC):
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
+        self.params.setdefault('mode', None)
+        self.params.setdefault('concat', None)
+        self.params.setdefault('queue_limit', None)
         self._run()
         log.info(f'Module [{self.name}] finished.')
 

@@ -35,6 +35,9 @@ class Workflow:
             run_dir=None,
             cns_exec=None,
             config_path=None,
+            mode=None,
+            concat=None,
+            queue_limit=None,
             **ig):
         # Create the list of steps contained in this workflow
         self.steps = []
@@ -46,6 +49,9 @@ class Workflow:
             params.setdefault('ncores', ncores)
             params.setdefault('cns_exec', cns_exec)
             params.setdefault('config_path', config_path)
+            params.setdefault('mode', mode)
+            params.setdefault('concat', concat)
+            params.setdefault('queue_limit', queue_limit)
 
             try:
                 _ = Step(

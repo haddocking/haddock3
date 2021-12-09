@@ -144,8 +144,6 @@ class HPCScheduler:
         """Run tasks in the Queue."""
         # split by maximum number of submission so we do it in batches
         adaptive_l = []
-        completed_count = 0
-        failed_count = 0
         batch = [
             self.worker_list[i:i + self.queue_limit]
             for i in range(0, len(self.worker_list), self.queue_limit)
@@ -168,10 +166,10 @@ class HPCScheduler:
                                 f" {worker.job_status}"
                                 )
 
-                    completed_count += sum(
+                    completed_count = sum(
                         w.job_status == "finished" for w in job_list
                         )
-                    failed_count += sum(
+                    failed_count = sum(
                         w.job_status == "failed" for w in job_list
                         )
 

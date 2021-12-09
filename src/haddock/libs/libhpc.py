@@ -1,11 +1,13 @@
 """Module in charge of running tasks in HPC."""
-from haddock import log
-from pathlib import Path
-import subprocess
 import os
-import shlex
 import re
+import shlex
+import subprocess
 import time
+from pathlib import Path
+
+from haddock import log
+
 
 STATE_REGEX = r"JobState=(\w*)"
 
@@ -57,6 +59,7 @@ class HPCWorker:
         return self.job_status
 
     def prepare_job_file(self, job_list):
+        """Prepare a .job file for SLURM."""
         job_name = "haddock3"
         queue = "haddock"
         moddir = job_list[0].modpath

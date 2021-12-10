@@ -48,6 +48,7 @@ from functools import partial
 from pathlib import Path
 
 from haddock import log
+from haddock.libs.libhpc import create_job_header_funcs
 
 
 # first character allowed for benchmark test cases, we use digits and
@@ -312,88 +313,6 @@ def create_job(
     return job_header + job_body + job_tail
 
 
-def create_torque_header(
-        job_name,
-        work_dir,
-        stdout_path,
-        stderr_path,
-        queue='medium',
-        ncores=48,
-        ):
-    """
-    Create HADDOCK3 Alcazar job file.
-
-    Parameters
-    ----------
-    job_name : str
-        The name of the job.
-
-    work_dir : pathlib.Path
-        The working dir of the example. That is, the directory where
-        `input`, `jobs`, and `logs` reside. Injected in `create_job_header`.
-
-    **job_params
-        According to `job_setup`.
-
-    Return
-    ------
-    str
-        Torque-based job file for HADDOCK3 benchmarking.
-    """
-    header = \
-f"""#!/usr/bin/env tcsh
-#PBS -N {job_name}
-#PBS -q {queue}
-#PBS -l nodes=1:ppn={str(ncores)}
-#PBS -S /bin/tcsh
-#PBS -o {stdout_path}
-#PBS -e {stderr_path}
-#PBS -wd {work_dir}
-"""
-    return header
-
-
-def create_slurm_header(
-        job_name,
-        work_dir,
-        stdout_path,
-        stderr_path,
-        queue='medium',
-        ncores=48,
-        ):
-    """
-    Create HADDOCK3 Slurm Batch job file.
-
-    Parameters
-    ----------
-    job_name : str
-        The name of the job.
-
-    work_dir : pathlib.Path
-        The working dir of the example. That is, the directory where
-        `input`, `jobs`, and `logs` reside. Injected in `create_job_header`.
-
-    **job_params
-        According to `job_setup`.
-
-    Return
-    ------
-    str
-        Slurm-based job file for HADDOCK3 benchmarking.
-    """
-    header = \
-f"""#!/usr/bin/env bash
-#SBATCH -J {job_name}
-#SBATCH -p {queue}
-#SBATCH --nodes=1
-#SBATCH --tasks-per-node={str(ncores)}
-#SBATCH --output={stdout_path}
-#SBATCH --error={stderr_path}
-#SBATCH --workdir={work_dir}
-"""
-    return header
-
-
 def setup_haddock3_job(available_flag, running_flag, conf_f):
     """
     Write body for the job script.
@@ -567,8 +486,8 @@ def make_daemon_job(
         ):
     """Make a daemon-ready job."""
     job_header = create_job_func(
-        job_name,
-        workdir,
+        job_name=job_name,
+        work_dir=workdir,
         stdout_path=stdout_path,
         stderr_path=stderr_path,
         queue=queue,
@@ -588,13 +507,6 @@ haddock3-dmn {str(target_dir)}
 
 
 # helper dictionaries
-
-# the different job submission queues
-create_job_header_funcs = {
-    'torque': create_torque_header,
-    'slurm': create_slurm_header,
-    }
-
 
 # the different scenarios covered
 benchmark_scenarios = {

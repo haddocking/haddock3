@@ -4,9 +4,8 @@ from pathlib import Path
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libontology import ModuleIO
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, get_engine
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -83,11 +82,12 @@ class HaddockModule(BaseHaddockModule):
 
                 idx += 1
 
-        # Run CNS engine
-        self.log(f"Running CNS engine with {len(jobs)} jobs")
-        engine = Scheduler(jobs, ncores=self.params["ncores"])
+        # Run CNS Jobs
+        self.log(f"Running CNS Jobs n={len(jobs)}")
+        Engine = get_engine(self.params['mode'], self.params)
+        engine = Engine(jobs)
         engine.run()
-        self.log("CNS engine has finished")
+        self.log("CNS jobs have finished")
 
         # Get the weights from the defaults
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")

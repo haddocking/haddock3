@@ -86,11 +86,8 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        if self.params['mode'] == 'hpc':
-            engine = HPCScheduler(jobs, queue_limit=self.params['queue_limit'],
-                                  concat=self.params["concat"])
-        else:
-            engine = Scheduler(jobs, ncores=self.params['ncores'])
+        Engine = get_engine(self.params['mode'], self.params)
+        engine = Engine(jobs)
         engine.run()
         self.log("CNS jobs have finished")
 

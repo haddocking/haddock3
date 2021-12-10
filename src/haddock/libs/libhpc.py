@@ -238,7 +238,7 @@ def create_slurm_header(
     Return
     ------
     str
-        Slurm-based job file for HADDOCK3 benchmarking.
+        Slurm-based job file for HADDOCK3.
     """
     header = \
 f"""#!/usr/bin/env bash

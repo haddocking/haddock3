@@ -36,9 +36,9 @@ class Workflow:
             cns_exec=None,
             config_path=None,
             mode=None,
-            concat=None,
-            queue_limit=None,
-            **ig):
+            concat=HPCScheduler_CONCAT_DEFAULT,
+            queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
+            **ignore):
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, (stage_name, params) in enumerate(content.items()):

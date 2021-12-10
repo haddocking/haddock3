@@ -20,22 +20,66 @@ JOB_STATUS_DIC = {
     "FAILED": "failed",
     }
 
+HPCScheduler_CONCAT_DEFAULT = 1
+HPCWorker_QUEUE_LIMIT_DEFAULT = 100
+
 
 class HPCWorker:
     """Defines the HPC Job."""
 
-    def __init__(self, tasks, num):
+    def __init__(
+            self,
+            tasks,
+            num,
+            job_id=None,
+            queue_type='slurm',
+            ):
         self.tasks = tasks
         log.debug(f"HPCWorker ready with {len(self.tasks)}")
-        self.job_id = None
         self.job_num = num
+        self.job_id = job_id
         self.job_status = "unknown"
-        self.job_fname = ""
+
+        self.moddir = tasks[0].modpath
+        self.module_name = self.moddir.name.split('_')[-1]
+        self.config_path = tasks[0].config_path
+        self.toppar = tasks[0].toppar
+        self.cns_folder = tasks[0].cns_folder
+        self.job_fname = Path(self.moddir, f'{self.module_name}_{num}.job')
+        self.queue_type = queue_type
+
+    def prepare_job_file(self, queue_type='slurm'):
+        job_file_contents = create_job_header_funcs[queue_type](
+            job_name='haddock3',
+            queue='haddock',
+            ncores=1,
+            work_dir=self.moddir,
+            stdout_path=self.job_fname.with_suffix('.out'),
+            stderr_path=self.job_fname.with_suffix('.err'),
+            )
+
+        job_file_contents += create_CNS_export_envvars(
+            MODDIR=self.moddir,
+            MODULE=self.cns_folder,
+            RUN=self.config_path,
+            TOPPAR=self.toppar,
+            )
+
+        job_file_contents += f"cd {self.moddir}{os.linesep}"
+        for job in self.tasks:
+            cmd = (
+                f"{job.cns_exec} < {job.input_file} > {job.output_file}"
+                f"{os.linesep}"
+                )
+            job_file_contents += cmd
+
+        self.job_fname.write_text(job_file_contents)
+
 
     def run(self):
         """Execute the tasks."""
-        job_file = self.prepare_job_file(self.tasks)
-        cmd = f"sbatch {job_file}"
+        self.prepare_job_file(self.queue_type)
+        cmd = f"sbatch {self.job_fname}"
         p = subprocess.run(shlex.split(cmd), capture_output=True)
         self.job_id = int(p.stdout.decode("utf-8").split()[-1])
         self.job_status = "submitted"
@@ -56,52 +100,9 @@ class HPCWorker:
 
         return self.job_status
 
-    def prepare_job_file(self, job_list):
-        """Prepare a .job file for SLURM."""
-        job_name = "haddock3"
-        queue = "haddock"
-        moddir = job_list[0].modpath
-        module = job_list[0].cns_folder
-        run = job_list[0].config_path
-        toppar = job_list[0].toppar
-        module_name = job_list[0].modpath.name.split("_")[-1]
-        self.job_fname = Path(moddir, f"{module_name}_{self.job_num}.job")
-        out_fname = Path(moddir, f"{module_name}_{self.job_num}_job.out")
-        err_fname = Path(moddir, f"{module_name}_{self.job_num}_job.err")
 
-        header = f"#!/bin/sh{os.linesep}"
-        header += f"#SBATCH -J {job_name}{os.linesep}"
-        header += f"#SBATCH -p {queue}{os.linesep}"
-        header += f"#SBATCH --nodes=1{os.linesep}"
-        header += f"#SBATCH --tasks-per-node=1{os.linesep}"
-        header += f"#SBATCH --output={out_fname}{os.linesep}"
-        header += f"#SBATCH --error={err_fname}{os.linesep}"
-        header += f"#SBATCH --workdir={moddir}{os.linesep}"
-
-        envs = f"export MODDIR={moddir}{os.linesep}"
-        envs += f"export MODULE={module}{os.linesep}"
-        envs += f"export RUN={run}{os.linesep}"
-        envs += f"export TOPPAR={toppar}{os.linesep}"
-
-        body = envs
-
-        body += f"cd {moddir}" + os.linesep
-        for job in job_list:
-            cmd = (
-                f"{job.cns_exec} < {job.input_file} > {job.output_file}"
-                f"{os.linesep}"
-                )
-            body += cmd
-
-        with open(self.job_fname, "w") as job_fh:
-            job_fh.write(header)
-            job_fh.write(body)
-
-        return self.job_fname
-
-    def cancel(self):
+    def cancel(self, bypass_statuses=("finished", "failed")):
         """Cancel the execution."""
-        bypass_statuses = ["finished", "failed"]
         if self.update_status() not in bypass_statuses:
             log.info(f"Canceling {self.job_fname.name} - {self.job_id}")
             cmd = f"scancel {self.job_id}"
@@ -111,14 +112,13 @@ class HPCWorker:
 class HPCScheduler:
     """Schedules tasks to run in HPC."""
 
-    def __init__(self, task_list, queue_limit, concat):
+    def __init__(
+            self,
+            task_list,
+            queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
+            concat=HPCScheduler_CONCAT_DEFAULT,
+            ):
         self.num_tasks = len(task_list)
-        # FIXME: The defaults are hardcoded here
-        if not concat:
-            concat = 1
-        if not queue_limit:
-            queue_limit = 100
-        # =======
         self.queue_limit = queue_limit
         self.concat = concat
 
@@ -210,3 +210,120 @@ class HPCScheduler:
             worker.cancel()
 
         log.info("The jobs in the queue were terminated in a controlled way")
+
+
+def create_slurm_header(
+        job_name='haddock3_slurm_job',
+        work_dir='.',
+        stdout_path='haddock3_job.out',
+        stderr_path='haddock3_job.err',
+        queue='medium',
+        ncores=48,
+        ):
+    """
+    Create HADDOCK3 Slurm Batch job file.
+
+    Parameters
+    ----------
+    job_name : str
+        The name of the job.
+
+    work_dir : pathlib.Path
+        The working dir of the example. That is, the directory where
+        `input`, `jobs`, and `logs` reside. Injected in `create_job_header`.
+
+    **job_params
+        According to `job_setup`.
+
+    Return
+    ------
+    str
+        Slurm-based job file for HADDOCK3 benchmarking.
+    """
+    header = \
+f"""#!/usr/bin/env bash
+#SBATCH -J {job_name}
+#SBATCH -p {queue}
+#SBATCH --nodes=1
+#SBATCH --tasks-per-node={str(ncores)}
+#SBATCH --output={stdout_path}
+#SBATCH --error={stderr_path}
+#SBATCH --workdir={work_dir}
+
+"""  # noqa: E128
+    return header
+
+
+def create_torque_header(
+        job_name='haddock3_torque_job',
+        work_dir='.',
+        stdout_path='haddock3_job.out',
+        stderr_path='haddock3_job.err',
+        queue='medium',
+        ncores=48,
+        ):
+    """
+    Create HADDOCK3 Alcazar job file.
+
+    Parameters
+    ----------
+    job_name : str
+        The name of the job.
+
+    work_dir : pathlib.Path
+        The working dir of the example. That is, the directory where
+        `input`, `jobs`, and `logs` reside. Injected in `create_job_header`.
+
+    **job_params
+        According to `job_setup`.
+
+    Return
+    ------
+    str
+        Torque-based job file for HADDOCK3 benchmarking.
+    """
+    header = \
+f"""#!/usr/bin/env tcsh
+#PBS -N {job_name}
+#PBS -q {queue}
+#PBS -l nodes=1:ppn={str(ncores)}
+#PBS -S /bin/tcsh
+#PBS -o {stdout_path}
+#PBS -e {stderr_path}
+#PBS -wd {work_dir}
+
+"""  # noqa: E128
+    return header
+
+
+def create_CNS_export_envvars(**envvars):
+    """Create a string exporting envvars needed for CNS.
+
+    Parameters
+    ----------
+    envvars : dict
+        A dictionary containing envvariables where keys are var names
+        and values are the values.
+
+    Returns
+    -------
+    str
+        In the form of:
+        export VAR1=VALUE1
+        export VAR2=VALUE2
+        export VAR3=VALUE3
+
+    """
+    exports = os.linesep.join(
+        f'export {key.upper()}={value}'
+        for key, value in envvars.items()
+        )
+
+    return exports + os.linesep + os.linesep
+
+
+# the different job submission queues
+create_job_header_funcs = {
+    'torque': create_torque_header,
+    'slurm': create_slurm_header,
+    }

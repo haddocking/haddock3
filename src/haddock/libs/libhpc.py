@@ -34,6 +34,16 @@ class HPCWorker:
             job_id=None,
             queue_type='slurm',
             ):
+        """
+        Define the HPC job.
+
+        Parameters
+        ----------
+        tasks : list of libs.libcns.CNSJob objects
+
+        num : int
+            The number of the worker.
+        """
         self.tasks = tasks
         log.debug(f"HPCWorker ready with {len(self.tasks)}")
         self.job_num = num
@@ -49,6 +59,7 @@ class HPCWorker:
         self.queue_type = queue_type
 
     def prepare_job_file(self, queue_type='slurm'):
+        """Prepare the job file for all the jobs in the task list."""
         job_file_contents = create_job_header_funcs[queue_type](
             job_name='haddock3',
             queue='haddock',
@@ -75,7 +86,6 @@ class HPCWorker:
 
         self.job_fname.write_text(job_file_contents)
 
-
     def run(self):
         """Execute the tasks."""
         self.prepare_job_file(self.queue_type)
@@ -99,7 +109,6 @@ class HPCWorker:
             self.job_status = "finished"
 
         return self.job_status
-
 
     def cancel(self, bypass_statuses=("finished", "failed")):
         """Cancel the execution."""

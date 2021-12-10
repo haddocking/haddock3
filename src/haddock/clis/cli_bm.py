@@ -486,8 +486,8 @@ def make_daemon_job(
         ):
     """Make a daemon-ready job."""
     job_header = create_job_func(
-        job_name,
-        workdir,
+        job_name=job_name,
+        work_dir=workdir,
         stdout_path=stdout_path,
         stderr_path=stderr_path,
         queue=queue,

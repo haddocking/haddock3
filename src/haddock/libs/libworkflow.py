@@ -7,11 +7,11 @@ from pathlib import Path
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
-from haddock.libs.libutil import zero_fill
 from haddock.libs.libhpc import (
     HPCScheduler_CONCAT_DEFAULT,
     HPCWorker_QUEUE_LIMIT_DEFAULT,
     )
+from haddock.libs.libutil import zero_fill
 from haddock.modules import modules_category
 
 

@@ -39,7 +39,7 @@ class Workflow:
             run_dir=None,
             cns_exec=None,
             config_path=None,
-            mode=None,
+            mode='local',
             concat=HPCScheduler_CONCAT_DEFAULT,
             queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
             **ignore):

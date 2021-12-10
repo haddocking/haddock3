@@ -3,11 +3,9 @@ from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
-from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libontology import ModuleIO, PDBFile
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, get_engine
 
 
 RECIPE_PATH = Path(__file__).resolve().parent

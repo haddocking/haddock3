@@ -9,12 +9,10 @@ from haddock.libs.libcns import (
     prepare_output,
     prepare_single_input,
     )
-from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, get_engine
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -149,11 +147,8 @@ class HaddockModule(BaseHaddockModule):
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
-        if self.params['mode'] == 'hpc':
-            engine = HPCScheduler(jobs, queue_limit=self.params['queue_limit'],
-                                  concat=self.params["concat"])
-        else:
-            engine = Scheduler(jobs, ncores=self.params['ncores'])
+        Engine = get_engine(self.params['mode'], self.params)
+        engine = Engine(jobs)
         engine.run()
         self.log("CNS jobs have finished")
 

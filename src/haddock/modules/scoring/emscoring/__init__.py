@@ -101,7 +101,7 @@ class HaddockModule(BaseHaddockModule):
         output_fname = Path(self.path, "emscoring.tsv")
         self.log(f"Saving output to {output_fname.name}")
         with open(output_fname, "w") as fh:
-            fh.write(f"structure\tscore{linesep}")
+            fh.write(f"structure\toriginal_name\tscore{linesep}")
             for pdb in expected:
                 # temporary solution to get the original name
                 #  here one .pdb = one .psf and the .psf is not changed by the module

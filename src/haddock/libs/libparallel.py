@@ -66,6 +66,7 @@ class Scheduler:
 
         self.worker_list = [Worker(jobs) for jobs in job_list]
 
+        log.info(f"Using {self.num_processes} cores")
         log.debug(f"{self.num_tasks} tasks ready.")
 
     @property

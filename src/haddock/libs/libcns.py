@@ -397,7 +397,7 @@ def prepare_cns_input(
     output += (
         f"eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
         )
-    
+
     segid_str = ""
     if native_segid:
         pdb_list = []
@@ -409,7 +409,7 @@ def prepare_cns_input(
                     )
                 chainsegs = sorted(list(set(segids) | set(chains)))
                 for i, id in enumerate(chainsegs, start=1):
-                    segid_str += (f"eval ($prot_segid{i}=\"{id_counter}\")"
+                    segid_str += (f"eval ($prot_segid_{i}=\"{id_counter}\")"
                                   f"{linesep}")
                     id_counter += 1
         else:
@@ -418,7 +418,7 @@ def prepare_cns_input(
                 )
             chainsegs = sorted(list(set(segids) | set(chains)))
             for i, id in enumerate(chainsegs, start=1):
-                segid_str += f"eval ($prot_segid{i}=\"{id}\"){linesep}"
+                segid_str += f"eval ($prot_segid_{i}=\"{id}\"){linesep}"
 
     output += f"eval ($count=" f" {model_number}){linesep}"
     inp = (

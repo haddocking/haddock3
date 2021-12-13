@@ -341,6 +341,7 @@ def prepare_cns_input(
         defaults,
         identifier,
         ambig_fname=None,
+        native_segid=False,
         ):
     """Generate the .inp file needed by the CNS engine."""
     # read the default parameters
@@ -396,6 +397,29 @@ def prepare_cns_input(
     output += (
         f"eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
         )
+    
+    segid_str = ""
+    if native_segid:
+        pdb_list = []
+        if isinstance(input_element, (list, tuple)):
+            id_counter = 0
+            for pdb in input_element:
+                segids, chains = libpdb.identify_chainseg(
+                    pdb.full_name, sort=False
+                    )
+                chainsegs = sorted(list(set(segids) | set(chains)))
+                for i, id in enumerate(chainsegs, start=1):
+                    segid_str += (f"eval ($prot_segid{i}=\"{id_counter}\")"
+                                  f"{linesep}")
+                    id_counter += 1
+        else:
+            segids, chains = libpdb.identify_chainseg(
+                input_element.full_name, sort=False
+                )
+            chainsegs = sorted(list(set(segids) | set(chains)))
+            for i, id in enumerate(chainsegs, start=1):
+                segid_str += f"eval ($prot_segid{i}=\"{id}\"){linesep}"
+
     output += f"eval ($count=" f" {model_number}){linesep}"
     inp = (
         default_params
@@ -403,6 +427,7 @@ def prepare_cns_input(
         + output
         + topology_protonation
         + ambig_str
+        + segid_str
         + recipe_str
         )
 

@@ -44,9 +44,25 @@ class Scheduler:
         # Do not waste resources
         self.num_processes = min(self.num_processes, self.num_tasks)
 
-        # step trick by @brianjimenez
+        # Sort the tasks by input_file name and its length,
+        #  so we know that 2 comes before 10
+        task_name_dic = {}
+        for i, t in enumerate(tasks):
+            task_name_dic[i] = t.input_file, len(str(t.input_file))
+        
+        sorted_task_list = []
+        for e in sorted(task_name_dic.items(), key=lambda x: (x[0], x[1])):
+            idx = e[0]
+            sorted_task_list.append(tasks[idx])
+
+        tasks = sorted_task_list
+
         _n = self.num_processes
-        job_list = [tasks[i::_n] for i in range(_n)]
+        job_list = [
+            sorted_task_list[i:i + _n] for i in range(
+                0, len(sorted_task_list), _n
+                )
+            ]
 
         self.worker_list = [Worker(jobs) for jobs in job_list]
 

@@ -147,7 +147,7 @@ molecules = [
 [topoaa]
 
 [rigidbody]
-ambig = {str(ambig_f)!r}
+ambig_fname = {str(ambig_f)!r}
 sampling = 1000
 noecv = false
 
@@ -158,14 +158,14 @@ reference = {str(target_f)!r}
 select = 200
 
 [flexref]
-ambig = {str(ambig_f)!r}
+ambig_fname = {str(ambig_f)!r}
 noecv = true
 
 [caprieval]
 reference = {str(target_f)!r}
 
 [mdref]
-ambig = {str(ambig_f)!r}
+ambig_fname = {str(ambig_f)!r}
 noecv = true
 
 [caprieval]

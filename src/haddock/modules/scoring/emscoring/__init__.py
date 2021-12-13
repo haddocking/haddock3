@@ -103,7 +103,11 @@ class HaddockModule(BaseHaddockModule):
         with open(output_fname, "w") as fh:
             fh.write(f"structure\tscore{linesep}")
             for pdb in expected:
-                fh.write(f"{pdb.file_name}\t{pdb.score}{linesep}")
+                # temporary solution to get the original name
+                #  here one .pdb = one .psf and the .psf is not changed by the module
+                #  so use its name as the original one
+                original_name = pdb.topology.file_name.replace('.psf', '.pdb')
+                fh.write(f"{pdb.file_name}\t{original_name}\t{pdb.score}{linesep}")
         fh.close()
 
         # Save module information

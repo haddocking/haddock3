@@ -23,7 +23,7 @@ from pathlib import Path
 
 
 # options for the different job queue systems supported
-job_system_launch = {
+workload_manager_launch = {
     'slurm': 'sbatch',
     'torque': 'qsub',
     }
@@ -52,9 +52,9 @@ ap.add_argument(
 
 ap.add_argument(
     '--job-sys',
-    dest='job_sys',
+    dest='manager',
     help='The system where the jobs will be run. Default `slurm`.',
-    choices=tuple(job_system_launch.keys()),
+    choices=tuple(workload_manager_launch.keys()),
     default='slurm',
     )
 
@@ -235,7 +235,7 @@ def maincli():
 def main(
         benchmark_path,
         job_limit=10,
-        job_sys='slurm',
+        manager='slurm',
         restart=False,
         short_first=False,
         ):
@@ -261,8 +261,8 @@ def main(
     job_limit : int
         The max number of jobs to send to the queue.
 
-    job_sys : str
-        A key to the `job_system_launch` dictionary. Selects the queue
+    manager : str
+        A key to the `workload_manager_launch` dictionary. Selects the queue
         management system.
 
     restart : bool
@@ -284,7 +284,7 @@ def main(
     job_list.sort(key=calc_size, reverse=not(short_first))
 
     # create the job objects according to the queue managing systme
-    _jobsys = job_system_launch[job_sys]
+    _jobsys = workload_manager_launch[manager]
     jobs = [Job(j, _jobsys) for j in job_list]
 
     # restart previously (halted) `RUNNING` jobs - if selected.

@@ -2,7 +2,7 @@
 from multiprocessing import Process
 
 from haddock import log
-from haddock.libs.libutil import parse_ncores
+from haddock.libs.libutil import get_number_from_path_stem, parse_ncores
 
 
 class Worker(Process):
@@ -44,12 +44,22 @@ class Scheduler:
         # Do not waste resources
         self.num_processes = min(self.num_processes, self.num_tasks)
 
-        # step trick by @brianjimenez
+        # Sort the tasks by input_file name and its length,
+        #  so we know that 2 comes before 10
+        sorted_task_list = sorted(
+            tasks,
+            key=lambda x: get_number_from_path_stem(x.input_file)
+            )
+
         _n = self.num_processes
-        job_list = [tasks[i::_n] for i in range(_n)]
+        job_list = [
+            sorted_task_list[i:i + _n]
+            for i in range(0, len(sorted_task_list), _n)
+            ]
 
         self.worker_list = [Worker(jobs) for jobs in job_list]
 
+        log.info(f"Using {self.num_processes} cores")
         log.debug(f"{self.num_tasks} tasks ready.")
 
     @property

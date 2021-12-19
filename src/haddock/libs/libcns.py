@@ -408,7 +408,7 @@ def prepare_cns_input(
                     pdb.full_name, sort=False
                     )
                 chainsegs = sorted(list(set(segids) | set(chains)))
-                for i, id in enumerate(chainsegs, start=1):
+                for i, _ in enumerate(chainsegs, start=1):
                     segid_str += (f"eval ($prot_segid_{i}=\"{id_counter}\")"
                                   f"{linesep}")
                     id_counter += 1

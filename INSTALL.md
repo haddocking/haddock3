@@ -7,7 +7,7 @@ git clone --recursive https://github.com/haddocking/haddock3.git
 cd haddock3
 cd src/fcc/src
 chmod u+x Makefile
-./Makefile
+make
 cd -
 ```
 
@@ -25,6 +25,9 @@ python setup.py develop --no-deps
 ```bash
 conda env create -f requirements.yml
 conda activate haddock3
+
+# install the HADDOCK3's Python shell and command-line clients (CLIs) on
+# the newly created environment.
 python setup.py develop --no-deps
 ```
 
@@ -46,6 +49,10 @@ In the `github` folder of `haddock3` run:
 
 ```bash
 git pull --recurse-submodules
+
+# this is only needed when new CLIs are introduced, but it doesn't hurt
+# at all doing it. So, it always better to do it.
+python setup.py develop --no-deps
 ```
 
 This will pull the latest changes to your local folder and because you

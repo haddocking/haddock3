@@ -30,9 +30,10 @@ daemon without directly using the `haddock3-dmn` client.
 USAGE:
     haddock3-bm -h
     haddock3-bm <BM dir> <output dir> [OPTIONS]
-    haddock3-bm <BM dir> <output dir> --job-sys <option>
-    haddock3-bm <BM dir> <output dir> --job-sys <option> -n <num cores>
-    haddock3-bm <BM dir> <output dir> --job-sys <option> -n <num cores> -td
+    haddock3-bm <BM dir> <output dir> --workload-manager <option>
+    haddock3-bm <BM dir> <output dir> --workload-manager <option> -n <num cores>
+    haddock3-bm <BM dir> <output dir> --workload-manager <option> -n <num cores>
+     -td
 
 A `BM folder` is a folder with the characteristics of:
     https://github.com/haddocking/BM5-clean
@@ -109,7 +110,8 @@ molecules = [
     return cfg_str
 
 
-def create_cfg_scn_1(run_dir, receptor_f, ligand_f, ambig_f):
+# FIXME: This should not be hardcoded here
+def create_cfg_ti(run_dir, receptor_f, ligand_f, ambig_f, target_f):
     """
     Create HADDOCK3 configuration file for the first scenario.
 
@@ -145,74 +147,29 @@ molecules = [
 [topoaa]
 
 [rigidbody]
-ambig = {str(ambig_f)!r}
+ambig_fname = {str(ambig_f)!r}
 sampling = 1000
 noecv = false
+
+[caprieval]
+reference = {str(target_f)!r}
 
 [seletop]
 select = 200
 
 [flexref]
-ambig = {str(ambig_f)!r}
+ambig_fname = {str(ambig_f)!r}
+noecv = true
+
+[caprieval]
+reference = {str(target_f)!r}
 
 [mdref]
-ambig = {str(ambig_f)!r}
-"""
-    return cfg_str
+ambig_fname = {str(ambig_f)!r}
+noecv = true
 
-
-def create_cfg_scn_2(run_dir, receptor_f, ligand_f, ambig_f):
-    """
-    Create HADDOCK3 configuration file, scenario #2.
-
-    Parameters
-    ----------
-    run_dir : path or str
-        Path to the run directory; where run results will be saved.
-
-    receptor_f : Path or str
-        Absolute path pointing to the receptor PDB file.
-
-    ligand_f : Path or str
-        Absolute path pointing to the ligand PDB file.
-
-    ambig_f : Path or str
-        Absolute path pointing to the `ambig.tbl` file.
-
-    Return
-    ------
-    str
-        The HADDOCK3 configuration file for benchmarking.
-    """
-    cfg_str = \
-f"""
-run_dir = {str(run_dir)!r}
-ncores = 48
-
-molecules = [
-    {str(receptor_f)!r},
-    {str(ligand_f)!r}
-    ]
-
-[topoaa]
-autohis = true
-
-[rigidbody]
-ambig = {str(ambig_f)!r}
-sampling = 10000
-noecv = false
-cmrest = true
-
-[flexref]
-ambig = {str(ambig_f)!r}
-cool1_steps = 500
-#sampling = 400
-
-[mdref]
-ambig = {str(ambig_f)!r}
-#sampling = 400
-cool1_steps = 10
-noecv = false
+[caprieval]
+reference = {str(target_f)!r}
 """
     return cfg_str
 
@@ -457,6 +414,7 @@ def process_target(source_path, result_path, create_job_func, scenarios):
             receptor,
             ligand,
             ambig_tbl,
+            target,
             )
 
         # creates the job for the scenario
@@ -510,8 +468,8 @@ haddock3-dmn {str(target_dir)}
 
 # the different scenarios covered
 benchmark_scenarios = {
-    'true-interface': create_cfg_scn_1,
-    'center-of-mass': create_cfg_scn_2,
+    'true-interface': create_cfg_ti,
+    # 'center-of-mass': create_cfg_scn_2,
     }
 
 test_scenarios = {
@@ -550,9 +508,9 @@ ap.add_argument(
     )
 
 ap.add_argument(
-    '-js',
-    '--job-sys',
-    dest='job_sys',
+    '-wm',
+    '--workload-manager',
+    dest='workload_manager',
     help='The system where the jobs will be run. Default `slurm`.',
     choices=list(create_job_header_funcs.keys()),
     default='slurm',
@@ -619,7 +577,7 @@ def maincli():
 def main(
         benchmark_path,
         output_path,
-        job_sys='slurm',
+        workload_manager='slurm',
         ncores=48,
         queue_name='medium',
         test_daemon=False,
@@ -650,7 +608,7 @@ def main(
         Where the results will be saved. A subfolder for each model in
         `benchmark_path` will be created.
 
-    job_sys : str
+    workload_manager : str
         A key for `create_job_header_funcs` dictionary. These relate to
         the queue managing software installed in your system. Examples
         are 'slurm' and 'torque'.
@@ -682,7 +640,7 @@ def main(
     # prepares a `create_job_func` with predefined parameters.
     _create_job_func = partial(
         create_job,
-        create_job_header=create_job_header_funcs[job_sys],
+        create_job_header=create_job_header_funcs[workload_manager],
         create_job_body=setup_haddock3_job,
         create_job_tail=process_job_execution_status,
         queue_name=queue_name,
@@ -705,7 +663,7 @@ def main(
 
     # makes a job to run the daemon as a job.
     dmn_job = make_daemon_job(
-        create_job_header_funcs[job_sys],
+        create_job_header_funcs[workload_manager],
         Path.cwd(),
         output_path,
         queue=queue_name,

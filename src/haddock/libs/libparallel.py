@@ -2,7 +2,7 @@
 from multiprocessing import Process
 
 from haddock import log
-from haddock.libs.libutil import parse_ncores
+from haddock.libs.libutil import get_number_from_path_stem, parse_ncores
 
 
 class Worker(Process):
@@ -11,13 +11,13 @@ class Worker(Process):
     def __init__(self, tasks):
         super(Worker, self).__init__()
         self.tasks = tasks
-        log.info(f"Worker ready with {len(self.tasks)} tasks")
+        log.debug(f"Worker ready with {len(self.tasks)} tasks")
 
     def run(self):
         """Execute tasks."""
         for task in self.tasks:
             task.run()
-        log.info(f"{self.name} executed")
+        log.debug(f"{self.name} executed")
 
 
 class Scheduler:
@@ -44,13 +44,23 @@ class Scheduler:
         # Do not waste resources
         self.num_processes = min(self.num_processes, self.num_tasks)
 
-        # step trick by @brianjimenez
+        # Sort the tasks by input_file name and its length,
+        #  so we know that 2 comes before 10
+        sorted_task_list = sorted(
+            tasks,
+            key=lambda x: get_number_from_path_stem(x.input_file)
+            )
+
         _n = self.num_processes
-        job_list = [tasks[i::_n] for i in range(_n)]
+        job_list = [
+            sorted_task_list[i:i + _n]
+            for i in range(0, len(sorted_task_list), _n)
+            ]
 
-        self.task_list = [Worker(jobs) for jobs in job_list]
+        self.worker_list = [Worker(jobs) for jobs in job_list]
 
-        log.info(f"{self.num_tasks} tasks ready.")
+        log.info(f"Using {self.num_processes} cores")
+        log.debug(f"{self.num_tasks} tasks ready.")
 
     @property
     def num_processes(self):
@@ -60,16 +70,24 @@ class Scheduler:
     @num_processes.setter
     def num_processes(self, n):
         self._ncores = parse_ncores(n)
-        log.info(f"Scheduler configurated for {self._ncores} cpu cores.")
+        log.debug(f"Scheduler configured for {self._ncores} cpu cores.")
 
     def run(self):
         """Run tasks in parallel."""
         try:
-            for task in self.task_list:
-                task.start()
+            for worker in self.worker_list:
+                # Start the worker
+                worker.start()
 
-            for task in self.task_list:
-                task.join()
+            c = 1
+            for worker in self.worker_list:
+                # Wait for the worker to finish
+                worker.join()
+                for t in worker.tasks:
+                    per = (c / float(self.num_tasks)) * 100
+                    task_ident = f'{t.modpath.name}/{t.input_file.name}'
+                    log.info(f'>> {task_ident} completed {per:.0f}% ')
+                    c += 1
 
             log.info(f"{self.num_tasks} tasks finished")
 
@@ -84,7 +102,7 @@ class Scheduler:
 
     def terminate(self):
         """Terminate tasks in a controlled way."""
-        for task in self.task_list:
-            task.terminate()
+        for worker in self.worker_list:
+            worker.terminate()
 
         log.info("The workers terminated in a controlled way")

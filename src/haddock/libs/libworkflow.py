@@ -7,6 +7,10 @@ from pathlib import Path
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
+from haddock.libs.libhpc import (
+    HPCScheduler_CONCAT_DEFAULT,
+    HPCWorker_QUEUE_LIMIT_DEFAULT,
+    )
 from haddock.libs.libutil import zero_fill
 from haddock.modules import modules_category
 
@@ -35,7 +39,10 @@ class Workflow:
             run_dir=None,
             cns_exec=None,
             config_path=None,
-            **ig):
+            mode='local',
+            concat=HPCScheduler_CONCAT_DEFAULT,
+            queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
+            **ignore):
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, (stage_name, params) in enumerate(content.items()):
@@ -46,6 +53,9 @@ class Workflow:
             params.setdefault('ncores', ncores)
             params.setdefault('cns_exec', cns_exec)
             params.setdefault('config_path', config_path)
+            params.setdefault('mode', mode)
+            params.setdefault('concat', concat)
+            params.setdefault('queue_limit', queue_limit)
 
             try:
                 _ = Step(

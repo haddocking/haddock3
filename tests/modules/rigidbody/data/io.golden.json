@@ -1,0 +1,70 @@
+
+{
+    "input": [],
+    "output": [
+        {
+            "0": {
+                "created": "2021-12-20 14:08:58",
+                "file_name": "e2aP_1F3G_haddock.pdb",
+                "file_type": {
+                    "py/reduce": [
+                        {
+                            "py/type": "haddock.libs.libontology.Format"
+                        },
+                        {
+                            "py/tuple": [
+                                "pdb"
+                            ]
+                        }
+                    ]
+                },
+                "full_name": "e2aP_1F3G_haddock.pdb",
+                "path": "",
+                "py/object": "haddock.libs.libontology.PDBFile",
+                "score": 42.0,
+                "topology": {
+                    "created": "2021-12-20 14:08:58",
+                    "file_name": "e2aP_1F3G_haddock.psf",
+                    "file_type": {
+                        "py/reduce": [
+                            {
+                                "py/type": "haddock.libs.libontology.Format"
+                            },
+                            {
+                                "py/tuple": [
+                                    "psf"
+                                ]
+                            }
+                        ]
+                    },
+                    "full_name": "e2aP_1F3G_haddock.psf",
+                    "path": "",
+                    "py/object": "haddock.libs.libontology.TopologyFile"
+                }
+            }
+        },
+        {
+            "0": {
+                "created": "2021-12-20 14:08:58",
+                "file_name": "hpr_ensemble_1_haddock.pdb",
+                "file_type": {
+                    "py/id": 5
+                },
+                "full_name": "hpr_ensemble_1_haddock.pdb",
+                "path": "",
+                "py/object": "haddock.libs.libontology.PDBFile",
+                "score": 42.0,
+                "topology": {
+                    "created": "2021-12-20 14:08:58",
+                    "file_name": "hpr_ensemble_1_haddock.psf",
+                    "file_type": {
+                        "py/id": 7
+                    },
+                    "full_name": "hpr_ensemble_1_haddock.psf",
+                    "path": "",
+                    "py/object": "haddock.libs.libontology.TopologyFile"
+                }
+            }
+        }
+    ]
+}

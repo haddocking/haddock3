@@ -6,6 +6,14 @@ from haddock import log
 from haddock.libs.libutil import parse_ncores
 
 
+def split_tasks(lst, n):
+    """Split tasks into N-sized chunks."""
+    n = math.ceil(len(lst) / n)
+    for j in range(0, len(lst), n):
+        chunk = lst[j:n + j]
+        yield chunk
+
+
 class Worker(Process):
     """Work on tasks."""
 
@@ -56,7 +64,7 @@ class Scheduler:
             idx = e[0]
             sorted_task_list.append(tasks[idx])
 
-        job_list = self.split_tasks(sorted_task_list, self.num_processes)
+        job_list = split_tasks(sorted_task_list, self.num_processes)
         self.worker_list = [Worker(jobs) for jobs in job_list]
 
         log.info(f"Using {self.num_processes} cores")
@@ -71,16 +79,6 @@ class Scheduler:
     def num_processes(self, n):
         self._ncores = parse_ncores(n)
         log.debug(f"Scheduler configured for {self._ncores} cpu cores.")
-
-    @staticmethod
-    def split_tasks(lst, n):
-        """Split tasks into N-sized chunks."""
-        n = math.ceil(len(lst) / n)
-        for j in range(0, len(lst), n):
-            chunk = lst[j:n + j]
-            if len(chunk) < n:
-                chunk = chunk + [None for y in range(n - len(chunk))]
-            yield chunk
 
     def run(self):
         """Run tasks in parallel."""

@@ -3,163 +3,198 @@
 !     Minimizes complex and score
 !
 ! ***********************************************************************
-! * Copyright 2003-2020 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
 ! * This code is part of the HADDOCK software and governed by its       *
 ! * license. Please see the LICENSE file that should have been included *
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
 
-define(
-noe=false;
-noecv=false;
-npart=1;
-sym=false;
-ncs=false;
-log_level="verbose";
-dielec="cdie";
-epsilon1=1
-)
-
-evaluate ($Data.dielec        = $dielec)
-evaluate ($Data.epsilon1      = $epsilon1)
-evaluate ($Data.flags.dihed   = $dihed)
-evaluate ($Data.flags.noe     = $noe)
-evaluate ($Data.flags.cdih    = $cdih)
-evaluate ($Data.flags.sani    = $sani)
-evaluate ($Data.flags.vean    = $vean)
-evaluate ($Data.flags.xrdc    = $xrdc)
-evaluate ($Data.flags.DANI    = $dani)
-evaluate ($Data.flags.XPCS    = $xpcs)
-evaluate ($Data.flags.harm    = $harm)
-evaluate ($Data.flags.zres    = $zres)
-evaluate ($Data.flags.rg      = $rg)
-evaluate ($Data.flags.em      = $em)
-evaluate ($Data.flags.sym     = $sym)
-evaluate ($Data.flags.ncs     = $ncs)
-evaluate ($Data.waterdock     = $waterdock)
-evaluate ($Refine.keepwater   = $keepwater)
-
-
-if ( $log_level = verbose ) then
-  set message=normal echo=on end
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
 else
-  set message=off echo=off end
+    set message=off echo=off end
 end if
 
-evaluate ($filename= $file)
-evaluate ($psfname= $input_psf_filename)
+!==================================================================!
+! Initialisation of variables
+!==================================================================!
 
-fileexist $psfname end
-evaluate ($psffileexist=$result)
+evaluate ($ini_count    =1)
+evaluate ($w_vdw        =$w_vdw )
+evaluate ($w_elec       =$w_elec )
+evaluate ($w_dist       =$w_dist )
+evaluate ($w_rg         =$w_rg )
+evaluate ($w_sani       =$w_sani )
+evaluate ($w_xrdc       =$w_xrdc )
+evaluate ($w_xpcs       =$w_xpcs )
+evaluate ($w_dani       =$w_dani )
+evaluate ($w_vean       =$w_vean )
+evaluate ($w_cdih       =$w_cdih )
+evaluate ($w_sym        =$w_sym )
+evaluate ($w_zres       =$w_zres )
+evaluate ($w_bsa        =$w_bsa )
+evaluate ($w_deint      =$w_deint )
+evaluate ($w_desolv     =$w_desolv )
 
-fileexist $filename end
-evaluate ($pdbfileexist=$result)
+evaluate ($Data.flags.ncs  = false)
+evaluate ($Data.flags.sym  = false)
+evaluate ($Data.flags.cdih = false)
+evaluate ($Data.flags.plan = false)
+evaluate ($Data.flags.noe  = false)
+evaluate ($Data.flags.dihed = $dihedflag)
+evaluate ($Data.flags.elec = $elecflag)
+evaluate ($Data.flags.em   = false)
+evaluate ($Data.flags.rg   = false)
+evaluate ($Data.flags.zres = false)
+evaluate ($Data.flags.sani = false)
+evaluate ($Data.flags.xrdc = false)
+evaluate ($Data.flags.xpcs = false)
+evaluate ($Data.flags.dani = false)
+evaluate ($Data.flags.vean = false)
 
-if ($psffileexist eq true) then
-  struc @$psfname end
+evaluate ($data.ncomponents=$ncomponents)
 
-  if ($pdbfileexist eq true) then
-    coor @@$filename
+! non-bonded parameter set to use
+evaluate ($toppar.par_nonbonded = $par_nonbonded)
 
-    ! next line to remove the MAP atom defined in the DUM residue
-    ! in case of use of dummy particles
-    delete sele=(name MAP) end
+!Electrostatics:
+evaluate ($Data.flags.dihed =$dihedflag)
+evaluate ($Data.flags.elec =$elecflag)
+evaluate ($Data.epsilon =$epsilon)
+evaluate ($Data.dielec  =$dielec)
 
-{* ===================== turn on electrostatics *}
+!==================================================================!
 
-    parameter
-      nbonds
-        nbxmod=5 atom cdie shift
-        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=$Data.epsilon1 e14fac=0.4 inhibit 0.5
-        wmin=0.5
-        tolerance  0.5
-        repel=0.0
-      end
-    end
+{* Read paramters and set various force field related variables *}
 
-    if ($Data.dielec eq rdie) then
-      parameter nbonds eps=$Data.epsilon1 rdie shift switch end end
+@MODULE:read_param.cns
+
+parameter
+    bond  (resn WAT ) (resn WAT ) 1000 TOKEN
+    angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
+    bond  (resn HOH ) (resn HOH ) 1000 TOKEN
+    angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
+    bond  (resn TIP*) (resn TIP*) 1000 TOKEN
+    angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
+end
+
+igroup
+    interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+                 (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
+    interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
+                 (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
+    interaction  (resn SHA) (not resn SHA) weight * 0 end
+end
+
+flag include bond angle impr vdw end
+
+if ($Data.flags.dihed eq true) then
+  flag include dihed end
+end if
+
+if ($Data.flags.elec eq true) then
+    flag include elec end
+    if ($Data.dielec eq "rdie") then
+        parameter nbonds eps=$Data.epsilon rdie shift switch end end
+        ! shift statement needed first to activate switch (CNS bug?)
+    else
+        parameter nbonds eps=$Data.epsilon cdie end end
     end if
+    parameter nbonds ? end end
+else
+    evaluate ($elec=0.0)
+    flag exclude elec end
+end if
 
-    flags excl * incl bond angl impr dihe vdw elec end
 
-    energy end
+{* Check for the presence of ions and add distance restraints / covalent bond == *}
 
-{* ===================== calculate free molecules internal energy *}
+@MODULE:restrain-ions.cns
 
-    do (refx=x) (all)
-    do (refy=y) (all)
-    do (refz=z) (all)
-    evaluate ($elec = 0.0)
-    evaluate ($eintfree = 0.0)
-    inline @RUN:calc_free-ene.cns
-    do (x=refx) (all)
-    do (y=refy) (all)
-    do (z=refz) (all)
+{* Energy minimisation ========================================================= *}
 
-{* ===================== minimize complex *}
+fix sele = (not all) end
 
-    fix selection=(not all) end
+! Short minimization
 
-    minimize powell
-      nstep=50
-      drop=40.0
-      nprint=10
-    end
+mini powell nstep 40 drop=10 end
 
-    parameter nbonds eps=1.0 end end
+{* ======================= calculate free molecules internal energy ============ *}
+
+igroup
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) 
+                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
+end
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
+
+inline @MODULE:calc_free-ene.cns
+
+fix sele=(not all) end
+
+do (x = refx) (all)
+do (y = refy) (all)
+do (z = refz) (all)
 
 
 {* ===================== calculate complex internal energy *}
-    evaluate ($kinter = 1.0)
-    @RUN:scale_intra_only.cns
-    energy end
-    evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
-    if ($ncomponents = 1) then
-      evaluate ($eintfree = $eintcplx)
-    end if
+
+evaluate ($kinter = 1.0)
+energy end
+
+@MODULE:scale_intra_only.cns
+
+evaluate ($elec = 0.0)
+evaluate ($eintcplx = 0.0)
+
+energy end
+
+evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+
 
 {* ===================== calculate final energies and write structure *}
-    if ($ncomponents > 1) then
-      evaluate ($kinter = 1.0)
-      @RUN:scale_inter_final.cns
-    else
-      @RUN:scale_intra_only.cns
-    end if
-
-    energy end
-
-    evaluate ($esym = 0.0)
-    evaluate ($enoe = 0.0)
-    evaluate ($cdih=0.0)
-    evaluate ($eair= 0.0)
-    evaluate ($rms_noe=0.0)
-    evaluate ($violations_noe=0)
-    evaluate ($rms_test_noe=0.0)
-    evaluate ($violations_test_noe=0)
-    evaluate ($esym = 0.0)
-    evaluate ($ncs = 0.0)
-    evaluate ($zhar = 0.0)
-    evaluate ($esolcplx = 0.0)
-    evaluate ($edesolv = 0.0)
-    evaluate ($lcc = 0.0)
-    evaluate ($etot = $ener)
-    evaluate ($noe = $eair)
-
-    do (q=1.0) (all)
-    @RUN:print_coorheader.cns
-    coor orient end
-
-    ! Output section, do not modify
-    !==================================================================!
-
-    write coordinates format=pdbo output=$output_pdb_filename end
-    display OUTPUT: $output_pdb_filename
-
-  end if
-
+evaluate ($cdih=0.0)
+evaluate ($noe=0.0)
+if ($Data.ncomponents > 1) then
+    evaluate ($kinter = 1.0)
+    @MODULE:scale_inter_final.cns
+else
+    @MODULE:scale_intra_only.cns
 end if
-!==================================================================!
-stop
 
+evaluate ($coll = 0.0)
+evaluate ($eair = 0.0)
+evaluate ($esym = 0.0)
+evaluate ($ncs = 0.0)
+evaluate ($zhar = 0.0)
+evaluate ($dani = 0.0)
+evaluate ($sani = 0.0)
+evaluate ($vean = 0.0)
+evaluate ($xrdc = 0.0)
+evaluate ($xpcs = 0.0)
+evaluate ($rms_noe=0.0)
+evaluate ($violations_noe=0)
+evaluate ($rms_test_noe=0.0)
+evaluate ($violations_test_noe=0)
+
+energy end
+evaluate ($etot = $ener - $noe)
+evaluate ($noe = $eair)
+evaluate ($etot = $etot + $noe)
+
+inline @MODULE:print_coorheader.cns
+
+coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
+
+write coordinates format=pdbo output=$output_pdb_filename end
+
+set message=normal echo=on end
+
+display OUTPUT: $output_pdb_filename
+
+stop

@@ -113,7 +113,7 @@ def sanitize(pdb_file_path, overwrite=True, custom_topology=False):
     return new_pdb_file
 
 
-def identify_chainseg(pdb_file_path):
+def identify_chainseg(pdb_file_path, sort=True):
     """Return segID OR chainID."""
     segids = []
     chains = []
@@ -134,8 +134,12 @@ def identify_chainseg(pdb_file_path):
                 if chainid:
                     chains.append(chainid)
 
-    segids = sorted(list(set(segids)))
-    chains = sorted(list(set(chains)))
+    if sort:
+        segids = sorted(list(set(segids)))
+        chains = sorted(list(set(chains)))
+    else:
+        segids = list(set(segids))
+        chains = list(set(chains))
     return segids, chains
 
 

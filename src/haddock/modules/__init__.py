@@ -28,7 +28,7 @@ values are their categories. Categories are the modules parent folders."""
 
 
 general_parameters_affecting_modules = {
-    'ncores', 'cns_exec', 'mode', 'concat', 'queue_limit'
+    'ncores', 'cns_exec', 'mode', 'queue', 'concat', 'queue_limit'
     }
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"
@@ -194,6 +194,7 @@ def get_engine(mode, params):
     if mode == 'hpc':
         return partial(
             HPCScheduler,
+            target_queue=params['queue'],
             queue_limit=params['queue_limit'],
             concat=params['concat'],
             )

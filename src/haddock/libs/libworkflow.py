@@ -9,6 +9,7 @@ from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
 from haddock.libs.libhpc import (
     HPCScheduler_CONCAT_DEFAULT,
+    HPCWorker_QUEUE_DEFAULT,
     HPCWorker_QUEUE_LIMIT_DEFAULT,
     )
 from haddock.libs.libutil import zero_fill
@@ -40,6 +41,7 @@ class Workflow:
             cns_exec=None,
             config_path=None,
             mode='local',
+            queue=HPCWorker_QUEUE_DEFAULT,
             concat=HPCScheduler_CONCAT_DEFAULT,
             queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
             **ignore):
@@ -54,6 +56,7 @@ class Workflow:
             params.setdefault('cns_exec', cns_exec)
             params.setdefault('config_path', config_path)
             params.setdefault('mode', mode)
+            params.setdefault('queue', queue)
             params.setdefault('concat', concat)
             params.setdefault('queue_limit', queue_limit)
 

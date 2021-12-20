@@ -22,6 +22,7 @@ JOB_STATUS_DIC = {
 
 HPCScheduler_CONCAT_DEFAULT = 1
 HPCWorker_QUEUE_LIMIT_DEFAULT = 100
+HPCWorker_QUEUE_DEFAULT = None
 
 
 class HPCWorker:
@@ -32,7 +33,8 @@ class HPCWorker:
             tasks,
             num,
             job_id=None,
-            queue_type='slurm',
+            workfload_manager='slurm',
+            queue=None
             ):
         """
         Define the HPC job.
@@ -56,13 +58,14 @@ class HPCWorker:
         self.toppar = tasks[0].toppar
         self.cns_folder = tasks[0].cns_folder
         self.job_fname = Path(self.moddir, f'{self.module_name}_{num}.job')
-        self.queue_type = queue_type
+        self.workload_manager = workfload_manager
+        self.queue = queue
 
     def prepare_job_file(self, queue_type='slurm'):
         """Prepare the job file for all the jobs in the task list."""
         job_file_contents = create_job_header_funcs[queue_type](
             job_name='haddock3',
-            queue='haddock',
+            queue=self.queue,
             ncores=1,
             work_dir=self.moddir,
             stdout_path=self.job_fname.with_suffix('.out'),
@@ -88,7 +91,7 @@ class HPCWorker:
 
     def run(self):
         """Execute the tasks."""
-        self.prepare_job_file(self.queue_type)
+        self.prepare_job_file(self.workload_manager)
         cmd = f"sbatch {self.job_fname}"
         p = subprocess.run(shlex.split(cmd), capture_output=True)
         self.job_id = int(p.stdout.decode("utf-8").split()[-1])
@@ -101,7 +104,6 @@ class HPCWorker:
         out = p.stdout.decode("utf-8")
         # err = p.stderr.decode('utf-8')
         if out:
-            # TODO: Maybe a regex here is overkill
             # https://regex101.com/r/M2vbAc/1
             status = re.findall(STATE_REGEX, out)[0]
             self.job_status = JOB_STATUS_DIC[status]
@@ -124,6 +126,7 @@ class HPCScheduler:
     def __init__(
             self,
             task_list,
+            target_queue=HPCWorker_QUEUE_DEFAULT,
             queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
             concat=HPCScheduler_CONCAT_DEFAULT,
             ):
@@ -144,6 +147,12 @@ class HPCScheduler:
         self.worker_list = [
             HPCWorker(t, j) for j, t in enumerate(job_list, start=1)
             ]
+
+        # set the queue
+        #  (this is outside the comprehension for clarity)
+        if target_queue:
+            for worker in self.worker_list:
+                worker.queue = target_queue
 
         log.debug(f"{self.num_tasks} HPC tasks ready.")
 
@@ -184,7 +193,7 @@ class HPCScheduler:
                     total_completed += completed_count + failed_count
 
                     per = float(total_completed) / len(self.worker_list) * 100
-                    
+
                     log.info(f">> {per:.0f}% done")
                     if completed_count + failed_count == len(job_list):
                         completed = True
@@ -228,7 +237,7 @@ def create_slurm_header(
         work_dir='.',
         stdout_path='haddock3_job.out',
         stderr_path='haddock3_job.err',
-        queue='medium',
+        queue=None,
         ncores=48,
         ):
     """
@@ -251,17 +260,15 @@ def create_slurm_header(
     str
         Slurm-based job file for HADDOCK3.
     """
-    header = \
-f"""#!/usr/bin/env bash
-#SBATCH -J {job_name}
-#SBATCH -p {queue}
-#SBATCH --nodes=1
-#SBATCH --tasks-per-node={str(ncores)}
-#SBATCH --output={stdout_path}
-#SBATCH --error={stderr_path}
-#SBATCH --workdir={work_dir}
-
-"""  # noqa: E128
+    header = f"#!/usr/bin/env bash{os.linesep}"
+    header += f"#SBATCH -J {job_name}{os.linesep}"
+    if queue:
+        header += f"#SBATCH -p {queue}{os.linesep}"
+    header += f"#SBATCH --nodes=1{os.linesep}"
+    header += f"#SBATCH --tasks-per-node={str(ncores)}{os.linesep}"
+    header += f"#SBATCH --output={stdout_path}{os.linesep}"
+    header += f"#SBATCH --error={stderr_path}{os.linesep}"
+    header += f"#SBATCH --workdir={work_dir}{os.linesep}"
     return header
 
 
@@ -270,7 +277,7 @@ def create_torque_header(
         work_dir='.',
         stdout_path='haddock3_job.out',
         stderr_path='haddock3_job.err',
-        queue='medium',
+        queue=None,
         ncores=48,
         ):
     """
@@ -293,17 +300,15 @@ def create_torque_header(
     str
         Torque-based job file for HADDOCK3 benchmarking.
     """
-    header = \
-f"""#!/usr/bin/env tcsh
-#PBS -N {job_name}
-#PBS -q {queue}
-#PBS -l nodes=1:ppn={str(ncores)}
-#PBS -S /bin/tcsh
-#PBS -o {stdout_path}
-#PBS -e {stderr_path}
-#PBS -wd {work_dir}
-
-"""  # noqa: E128
+    header = f"#!/usr/bin/env tcsh{os.linesep}"
+    header += f"#PBS -N {job_name}{os.linesep}"
+    if queue:
+        header += f"#PBS -q {queue}{os.linesep}"
+    header += f"#PBS -l nodes=1:ppn={str(ncores)}{os.linesep}"
+    header += f"#PBS -S /bin/tcsh{os.linesep}"
+    header += f"#PBS -o {stdout_path}{os.linesep}"
+    header += f"#PBS -e {stderr_path}{os.linesep}"
+    header += f"#PBS -wd {work_dir}{os.linesep}"
     return header
 
 

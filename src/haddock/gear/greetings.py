@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 from functools import partial
 
-from haddock import version
+from haddock import contact_us, version
 
 
 international_good_byes = [
@@ -49,7 +49,17 @@ def get_adieu():
     """Create end-run greeting message."""
     end = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     bye = get_goodbye_greetings()
-    message = (f"""Finished at {end}. {bye}""")
+    message = (f"Finished at {end}. {bye}")
+    return message
+
+
+def get_goodbye_help():
+    """Create good-bye message with help."""
+    end = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    bye = get_goodbye_greetings()
+    message = (
+        f"Finished at {end}. For any help contact us at {contact_us}. "
+        f"{bye}.")
     return message
 
 

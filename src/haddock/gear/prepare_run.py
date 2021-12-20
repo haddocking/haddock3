@@ -1,6 +1,7 @@
 """Logic pertraining to preparing the run files and folders."""
 import importlib
 import shutil
+import sys
 from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
@@ -8,13 +9,13 @@ from pathlib import Path
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
+from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
     remove_dict_keys,
-    remove_folder,
     )
 from haddock.modules import (
     general_parameters_affecting_modules,
@@ -95,7 +96,16 @@ def setup_run(workflow_path, restart_from=None):
 
     if restart_from is None:
         # prepares the run folders
-        remove_folder(general_params['run_dir'])
+        _p = Path(general_params['run_dir'])
+        if _p.exists() and len(list(_p.iterdir())) > 0:
+            log.info(
+                f"The `run_dir` {str(_p)!r} exists and is not empty. "
+                "We can't work on it unless you provide the `--restart` "
+                "option. If you want to start a run from scratch, "
+                "indicate a new folder, or manually delete this one first."
+                )
+            sys.exit(get_goodbye_help())
+
         begin_dir, _ = create_begin_files(general_params)
 
         # prepare other files
@@ -251,7 +261,7 @@ def create_begin_files(params):
     data_dir = run_dir / 'data'
     begin_dir = run_dir / 'begin'
 
-    run_dir.mkdir()
+    run_dir.mkdir(exist_ok=True)
     begin_dir.mkdir()
     data_dir.mkdir()
 

@@ -79,3 +79,69 @@ def test_load_workflow_params():
         )
 
     assert result == expected
+
+
+def test_load_link():
+    """Test the loading of the .link file."""
+    mol_link = "/some/path"
+    result = libcns.load_link(mol_link)
+
+    expected = (
+        f'{os.linesep}'
+        f'! Link file{os.linesep}'
+        f'eval ($link_file = "/some/path" ){os.linesep}'
+        )
+
+    assert result == expected
+
+
+def test_load_trans_vectors():
+    pass
+
+
+def test_load_axis():
+    pass
+
+
+def test_load_waterbox():
+    pass
+
+
+def test_load_ambig():
+    pass
+
+
+def test_load_unambig():
+    pass
+
+
+def test_load_hbond():
+    pass
+
+
+def test_load_tensor_tbl():
+    pass
+
+
+def test_prepare_output():
+    pass
+
+
+def test_load_protonation_state():
+    pass
+
+
+def test_prepare_multiple_input():
+    pass
+
+
+def test_prepare_single_input():
+    pass
+
+
+def test_prepare_cns_input():
+    pass
+
+
+def test_prepare_expected_pdb():
+    pass

@@ -387,6 +387,7 @@ def prepare_cns_input(
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
     if ambig_fname:
+        ambig_fname = Path(ambig_fname).resolve()
         ambig_str = load_ambig(ambig_fname)
     else:
         ambig_str = ""

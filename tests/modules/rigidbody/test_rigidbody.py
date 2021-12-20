@@ -2,14 +2,10 @@
 import json
 from pathlib import Path
 
+from haddock.modules.sampling.rigidbody import DEFAULT_CONFIG
 from haddock.modules.sampling.rigidbody import HaddockModule as RigidBody
 
 
-RECIPE_PATH = Path(
-    Path(__file__).resolve().parents[3],
-    'src/haddock/modules/sampling/rigidbody'
-    )
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 DATA_PATH = Path(Path(__file__).resolve().parent, 'data')
 
 CONF_PARAMS = {
@@ -53,8 +49,7 @@ def cleanup():
         'WARNING', 'io.json']
     for element in files_to_be_removed:
         f = Path(DATA_PATH, element).resolve()
-        if f.exists:
-            f.unlink()
+        f.unlink(missing_ok=True)
 
 
 def test_rigidbody():
@@ -65,10 +60,7 @@ def test_rigidbody():
         order=1, path=DATA_PATH, initial_params=DEFAULT_CONFIG
         )
 
-    rigidbody.params.update(CONF_PARAMS)
-    rigidbody.params['sampling'] = 1
-
-    rigidbody.run()
+    rigidbody.run(sampling=1, **CONF_PARAMS)
 
     # Test things ================================ #
     # Test if files were generated
@@ -76,9 +68,9 @@ def test_rigidbody():
     out_file = Path(DATA_PATH, 'rigidbody_1.out')
     pdb_file = Path(DATA_PATH, 'rigidbody_1.pdb')
 
-    assert inp_file.exists() is True
-    assert out_file.exists() is True
-    assert pdb_file.exists() is True
+    assert inp_file.exists()
+    assert out_file.exists()
+    assert pdb_file.exists()
 
     # Some things were saved to the io.json
     #  look into it for things to test

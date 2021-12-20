@@ -1,4 +1,5 @@
 """Module in charge of parallelizing the execution of tasks."""
+import math
 from multiprocessing import Process
 
 from haddock import log
@@ -55,12 +56,7 @@ class Scheduler:
             idx = e[0]
             sorted_task_list.append(tasks[idx])
 
-        _n = self.num_processes
-        job_list = [
-            sorted_task_list[i:i + _n]
-            for i in range(0, len(sorted_task_list), _n)
-            ]
-
+        job_list = self.split_tasks(sorted_task_list, self.num_processes)
         self.worker_list = [Worker(jobs) for jobs in job_list]
 
         log.info(f"Using {self.num_processes} cores")
@@ -75,6 +71,16 @@ class Scheduler:
     def num_processes(self, n):
         self._ncores = parse_ncores(n)
         log.debug(f"Scheduler configured for {self._ncores} cpu cores.")
+
+    @staticmethod
+    def split_tasks(lst, n):
+        """Split tasks into N-sized chunks."""
+        n = math.ceil(len(lst) / n)
+        for j in range(0, len(lst), n):
+            chunk = lst[j:n + j]
+            if len(chunk) < n:
+                chunk = chunk + [None for y in range(n - len(chunk))]
+            yield chunk
 
     def run(self):
         """Run tasks in parallel."""

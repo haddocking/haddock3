@@ -1,5 +1,6 @@
 """Describe the Haddock3 ontology used for communicating between modules."""
 import datetime
+import itertools
 from enum import Enum
 from os import linesep
 from pathlib import Path
@@ -93,6 +94,39 @@ class ModuleIO:
             content = jsonpickle.decode(json_file.read())
             self.input = content["input"]
             self.output = content["output"]
+
+    def retrieve_models(self, crossdock=False, individualize=False):
+        """Retrieve the PDBobjects to be used in the module."""
+        # Get the models generated in previous step
+        model_list = []
+        input_dic = {}
+        for i, element in enumerate(self.output):
+            if type(element) == dict:
+                input_dic[i] = []
+                for key in element:
+                    input_dic[i].append(element[key])
+            elif element.file_type == Format.PDB:
+                model_list.append(element)
+
+        if input_dic and not crossdock and not individualize:
+            # check if all ensembles contain the same number of models
+            sub_lists = iter(input_dic.values())
+            _len = len(next(sub_lists))
+            if not all(len(sub) == _len for sub in sub_lists):
+                _msg = ("Different number of models in molecules,"
+                        " cannot prepare pairwise complexes.")
+                raise Exception(_msg)
+
+            # prepare pairwise combinations
+            model_list = [values for values in zip(*input_dic.values())]
+        elif input_dic and crossdock and not individualize:
+            model_list = [
+                values for values in itertools.product(*input_dic.values())
+                ]
+        elif input_dic and individualize:
+            model_list = list(itertools.chain(*input_dic.values()))
+
+        return model_list
 
     def __repr__(self):
         return f"Input: {self.input}{linesep}Output: {self.output}"

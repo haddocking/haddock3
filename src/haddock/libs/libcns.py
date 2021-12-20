@@ -1,4 +1,5 @@
 """CNS scripts util functions."""
+import itertools
 from os import linesep
 from pathlib import Path
 
@@ -7,6 +8,7 @@ from haddock.core import cns_paths
 from haddock.libs import libpdb
 from haddock.libs.libfunc import false, true
 from haddock.libs.libmath import RandomNumberGenerator
+from haddock.libs.libontology import PDBFile
 
 
 RND = RandomNumberGenerator()
@@ -14,18 +16,23 @@ RND = RandomNumberGenerator()
 
 def generate_default_header(protonation=None):
     """Generate CNS default header."""
-    param = load_ff_parameters(cns_paths.parameters_file)
-    top = load_ff_topology(cns_paths.topology_file)
     link = load_link(cns_paths.link_file)
     topology_protonation = load_protonation_state(protonation)
     trans_vec = load_trans_vectors(cns_paths.translation_vectors)
     tensor = load_tensor(cns_paths.tensors)
     scatter = load_scatter(cns_paths.scatter_lib)
     axis = load_axis(cns_paths.axis)
-    water_box = load_waterbox(cns_paths.water_box['boxtyp20'])
+    water_box = load_waterbox(cns_paths.water_box["boxtyp20"])
 
-    return (param, top, link, topology_protonation, trans_vec, tensor, scatter,
-            axis, water_box)
+    return (
+        link,
+        topology_protonation,
+        trans_vec,
+        tensor,
+        scatter,
+        axis,
+        water_box,
+        )
 
 
 def filter_empty_vars(v):
@@ -58,14 +65,14 @@ def filter_empty_vars(v):
         if detect(v):
             return give(v)
     else:
-        emsg = f'Value {v!r} has a unknown type for CNS: {type(v)}.'
+        emsg = f"Value {v!r} has a unknown type for CNS: {type(v)}."
         log.error(emsg)
         raise TypeError(emsg)
 
 
 def load_workflow_params(
         params,
-        param_header=f'{linesep}! Parameters{linesep}',
+        param_header=f"{linesep}! Parameters{linesep}",
         ):
     """
     Write the values at the header section.
@@ -85,9 +92,7 @@ def load_workflow_params(
         The string with the CNS parameters defined.
     """
     non_empty_parameters = (
-        (k, v)
-        for k, v in params.items()
-        if filter_empty_vars(v)
+        (k, v) for k, v in params.items() if filter_empty_vars(v)
         )
 
     # types besides the ones in the if-statements should not enter this loop
@@ -97,7 +102,7 @@ def load_workflow_params(
     return param_header
 
 
-def write_eval_line(param, value, eval_line='eval (${}={})'):
+def write_eval_line(param, value, eval_line="eval (${}={})"):
     """Write the CNS eval line depending on the type of `value`."""
     eval_line += linesep
 
@@ -117,34 +122,14 @@ def write_eval_line(param, value, eval_line='eval (${}={})'):
         return eval_line.format(param, value)
 
     else:
-        emsg = f'Unexpected type when writing CNS header: {type(value)}'
+        emsg = f"Unexpected type when writing CNS header: {type(value)}"
         log.error(emsg)
         raise TypeError(emsg)
 
 
-def load_ff_parameters(forcefield_parameters):
-    """Add force-field specific parameters to its appropriate places."""
-    ff_param_header = f'{linesep}! FF parameters{linesep}'
-    ff_param_header += f'parameter{linesep}'
-    ff_param_header += f'  @@{forcefield_parameters}{linesep}'
-    ff_param_header += f'end{linesep}'
-
-    return ff_param_header
-
-
-def load_ff_topology(forcefield_topology):
-    """Add force-field specific topology to its appropriate places."""
-    ff_top_header = f'{linesep}! Toplogy{linesep}'
-    ff_top_header += f'topology{linesep}'
-    ff_top_header += f'  @@{forcefield_topology}{linesep}'
-    ff_top_header += f'end{linesep}'
-
-    return ff_top_header
-
-
 def load_link(mol_link):
     """Add the link header."""
-    link_header = f'{linesep}! Link file{linesep}'
+    link_header = f"{linesep}! Link file{linesep}"
     link_header += f'eval ($link_file = "{mol_link}" ){linesep}'
 
     return link_header
@@ -152,7 +137,7 @@ def load_link(mol_link):
 
 def load_trans_vectors(trans_vectors):
     """Add translation vectors."""
-    trans_header = f'{linesep}! Translation vectors{linesep}'
+    trans_header = f"{linesep}! Translation vectors{linesep}"
     i = 0
     for vector_id in trans_vectors:
         vector_file = trans_vectors[vector_id]
@@ -164,7 +149,7 @@ def load_trans_vectors(trans_vectors):
 
 def load_tensor(tensor):
     """Add tensor information."""
-    tensor_header = f'{linesep}! Tensors{linesep}'
+    tensor_header = f"{linesep}! Tensors{linesep}"
     for tensor_id in tensor:
         tensor_file = tensor[tensor_id]
         tensor_header += f'eval (${tensor_id} = "{tensor_file}" ){linesep}'
@@ -174,7 +159,7 @@ def load_tensor(tensor):
 
 def load_axis(axis):
     """Add axis."""
-    axis_header = f'{linesep}! Axis{linesep}'
+    axis_header = f"{linesep}! Axis{linesep}"
     for axis_id in axis:
         axis_file = axis[axis_id]
         axis_header += f'eval (${axis_id} = "{axis_file}" ){linesep}'
@@ -184,7 +169,7 @@ def load_axis(axis):
 
 def load_scatter(scatter_lib):
     """Add scatter library."""
-    scatter_header = f'{linesep}! Scatter lib{linesep}'
+    scatter_header = f"{linesep}! Scatter lib{linesep}"
     scatter_header += f'eval ($scatter_lib = "{scatter_lib}" ){linesep}'
 
     return scatter_header
@@ -192,7 +177,7 @@ def load_scatter(scatter_lib):
 
 def load_waterbox(waterbox_param):
     """Add waterbox information."""
-    water_header = f'{linesep}! Water box{linesep}'
+    water_header = f"{linesep}! Water box{linesep}"
     water_header += f'eval ($boxtyp20 = "{waterbox_param}" ){linesep}'
 
     return water_header
@@ -230,19 +215,21 @@ def load_tensor_tbl(tensor_f):
 
 def prepare_output(output_psf_filename, output_pdb_filename):
     """Output of the CNS file."""
-    output = f'{linesep}! Output structure{linesep}'
-    output += ("eval ($output_psf_filename="
-               f" \"{output_psf_filename}\"){linesep}")
-    output += ("eval ($output_pdb_filename="
-               f" \"{output_pdb_filename}\"){linesep}")
+    output = f"{linesep}! Output structure{linesep}"
+    output += (
+        "eval ($output_psf_filename=" f' "{output_psf_filename}"){linesep}'
+        )
+    output += (
+        "eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
+        )
     return output
 
 
 def load_protonation_state(protononation):
     """Prepare the CNS protononation."""
-    protonation_header = ''
+    protonation_header = ""
     if protononation and isinstance(protononation, dict):
-        protonation_header += f'{linesep}! Protonation states{linesep}'
+        protonation_header += f"{linesep}! Protonation states{linesep}"
 
         for i, chain in enumerate(protononation):
             hise_l = [0] * 10
@@ -251,21 +238,25 @@ def load_protonation_state(protononation):
             hise_counter = 0
             for res in protononation[chain]:
                 state = protononation[chain][res].lower()
-                if state == 'hise':
+                if state == "hise":
                     hise_l[hise_counter] = res
                     hise_counter += 1
-                if state == 'hisd':
+                if state == "hisd":
                     hisd_l[hisd_counter] = res
                     hisd_counter += 1
 
-            hise_str = ''
+            hise_str = ""
             for e in [(i + 1, c + 1, r) for c, r in enumerate(hise_l)]:
-                hise_str += (f'eval ($toppar.hise_resid_{e[0]}_{e[1]}'
-                             f' = {e[2]}){linesep}')
-            hisd_str = ''
+                hise_str += (
+                    f"eval ($toppar.hise_resid_{e[0]}_{e[1]}"
+                    f" = {e[2]}){linesep}"
+                    )
+            hisd_str = ""
             for e in [(i + 1, c + 1, r) for c, r in enumerate(hisd_l)]:
-                hisd_str += (f'eval ($toppar.hisd_resid_{e[0]}_{e[1]}'
-                             f' = {e[2]}){linesep}')
+                hisd_str += (
+                    f"eval ($toppar.hisd_resid_{e[0]}_{e[1]}"
+                    f" = {e[2]}){linesep}"
+                    )
 
             protonation_header += hise_str
             protonation_header += hisd_str
@@ -276,24 +267,30 @@ def load_protonation_state(protononation):
 # This is used by docking
 def prepare_multiple_input(pdb_input_list, psf_input_list):
     """Prepare multiple input files."""
-    input_str = f'{linesep}! Input structure{linesep}'
+    input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
-        input_str += f'structure{linesep}'
-        input_str += f'  @@{psf}{linesep}'
-        input_str += f'end{linesep}'
+        input_str += f"structure{linesep}"
+        input_str += f"  @@{psf}{linesep}"
+        input_str += f"end{linesep}"
 
     ncount = 1
     for pdb in pdb_input_list:
-        input_str += f'coor @@{pdb}{linesep}'
-        input_str += (f"eval ($input_pdb_filename_{ncount}="
-                      f" \"{pdb}\"){linesep}")
+        input_str += f"coor @@{pdb}{linesep}"
+        input_str += (
+            f"eval ($input_pdb_filename_{ncount}=" f' "{pdb}"){linesep}'
+            )
         ncount += 1
 
-    ncomponents = len(psf_input_list)
-    input_str += f'eval ($ncomponents={ncomponents}){linesep}'
+    # check how many chains there are across all the PDBs
+    chain_l = []
+    for pdb in pdb_input_list:
+        for element in libpdb.identify_chainseg(pdb):
+            chain_l.append(element)
+    ncomponents = len(set(itertools.chain(*chain_l)))
+    input_str += f"eval ($ncomponents={ncomponents}){linesep}"
 
     seed = RND.randint(100, 999)
-    input_str += f'eval ($seed={seed}){linesep}'
+    input_str += f"eval ($seed={seed}){linesep}"
 
     return input_str
 
@@ -305,32 +302,148 @@ def prepare_single_input(pdb_input, psf_input=None):
     This section will be written for any recipe even if some CNS variables
     are not used, it should not be an issue.
     """
-    input_str = f'{linesep}! Input structure{linesep}'
+    input_str = f"{linesep}! Input structure{linesep}"
 
     if psf_input:
         # if isinstance(psf_input, str):
-        input_str += f'structure{linesep}'
-        input_str += f'  @@{psf_input}{linesep}'
-        input_str += f'end{linesep}'
-        input_str += f'coor @@{pdb_input}{linesep}'
+        input_str += f"structure{linesep}"
+        input_str += f"  @@{psf_input}{linesep}"
+        input_str += f"end{linesep}"
+        input_str += f"coor @@{pdb_input}{linesep}"
         if isinstance(psf_input, list):
-            input_str += f'structure{linesep}'
+            input_str += f"structure{linesep}"
             for psf in psf_input:
-                input_str += f'  @@{psf}{linesep}'
-            input_str += f'end{linesep}'
+                input_str += f"  @@{psf}{linesep}"
+            input_str += f"end{linesep}"
     # $file variable is still used by some CNS recipes, need refactoring!
-    input_str += f'eval ($file=\"{pdb_input}\"){linesep}'
+    input_str += f'eval ($file="{pdb_input}"){linesep}'
     segids, chains = libpdb.identify_chainseg(pdb_input)
     chainsegs = sorted(list(set(segids) | set(chains)))
 
     ncomponents = len(chainsegs)
 
-    input_str += f'eval ($ncomponents={ncomponents}){linesep}'
+    input_str += f"eval ($ncomponents={ncomponents}){linesep}"
 
     for i, segid in enumerate(chainsegs):
         input_str += f'eval ($prot_segid_{i+1}="{segid}"){linesep}'
 
     seed = RND.randint(100, 99999)
-    input_str += f'eval ($seed={seed}){linesep}'
+    input_str += f"eval ($seed={seed}){linesep}"
 
     return input_str
+
+
+def prepare_cns_input(
+        model_number,
+        input_element,
+        step_path,
+        recipe_str,
+        defaults,
+        identifier,
+        ambig_fname=None,
+        native_segid=False,
+        ):
+    """Generate the .inp file needed by the CNS engine."""
+    # read the default parameters
+    default_params = load_workflow_params(defaults)
+    (
+        link,  # unused
+        topology_protonation,
+        trans_vec,  # unused
+        tensor,  # unused
+        scatter,  # unused
+        axis,  # unused
+        water_box,  # unused
+        ) = generate_default_header()
+
+    # write the PDBs
+    pdb_list = []
+    if isinstance(input_element, (list, tuple)):
+        for pdb in input_element:
+            pdb_list.append(pdb.full_name)
+    else:
+        pdb_list.append(input_element.full_name)
+
+    # write the PSFs
+    psf_list = []
+    if isinstance(input_element, (list, tuple)):
+        for pdb in input_element:
+            if isinstance(pdb.topology, (list, tuple)):
+                for psf in pdb.topology:
+                    psf_fname = psf.full_name
+                    psf_list.append(psf_fname)
+            else:
+                psf_fname = pdb.topology.full_name
+                psf_list.append(psf_fname)
+    elif isinstance(input_element.topology, (list, tuple)):
+        pdb = input_element  # for clarity
+        for psf in pdb.topology:
+            psf_fname = psf.full_name
+            psf_list.append(psf_fname)
+    else:
+        pdb = input_element  # for clarity
+        psf_fname = pdb.topology.full_name
+        psf_list.append(psf_fname)
+
+    input_str = prepare_multiple_input(pdb_list, psf_list)
+
+    if ambig_fname:
+        ambig_str = load_ambig(ambig_fname)
+    else:
+        ambig_str = ""
+
+    output_pdb_filename = step_path / f"{identifier}_{model_number}.pdb"
+    output = f"{linesep}! Output structure{linesep}"
+    output += (
+        f"eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
+        )
+
+    segid_str = ""
+    if native_segid:
+        pdb_list = []
+        if isinstance(input_element, (list, tuple)):
+            id_counter = 0
+            for pdb in input_element:
+                segids, chains = libpdb.identify_chainseg(
+                    pdb.full_name, sort=False
+                    )
+                chainsegs = sorted(list(set(segids) | set(chains)))
+                for i, _ in enumerate(chainsegs, start=1):
+                    segid_str += (f"eval ($prot_segid_{i}=\"{id_counter}\")"
+                                  f"{linesep}")
+                    id_counter += 1
+        else:
+            segids, chains = libpdb.identify_chainseg(
+                input_element.full_name, sort=False
+                )
+            chainsegs = sorted(list(set(segids) | set(chains)))
+            for i, id in enumerate(chainsegs, start=1):
+                segid_str += f"eval ($prot_segid_{i}=\"{id}\"){linesep}"
+
+    output += f"eval ($count=" f" {model_number}){linesep}"
+    inp = (
+        default_params
+        + input_str
+        + output
+        + topology_protonation
+        + ambig_str
+        + segid_str
+        + recipe_str
+        )
+
+    inp_file = Path(step_path, f"{identifier}_{model_number}.inp")
+    with open(inp_file, "w") as fh:
+        fh.write(inp)
+
+    return inp_file
+
+
+def prepare_expected_pdb(model_obj, model_nb, path, identifier):
+    """Prepare a PDBobject."""
+    expected_pdb_fname = Path(path, f"{identifier}_{model_nb}.pdb")
+    pdb = PDBFile(expected_pdb_fname, path=path)
+    if type(model_obj) == tuple:
+        pdb.topology = [p.topology for p in model_obj]
+    else:
+        pdb.topology = model_obj.topology
+    return pdb

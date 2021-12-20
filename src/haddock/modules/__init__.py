@@ -2,13 +2,16 @@
 import contextlib
 import os
 from abc import ABC, abstractmethod
+from functools import partial
 from pathlib import Path
 
-from haddock import log
+from haddock import log as log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
+from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
 
 
@@ -24,7 +27,9 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-general_parameters_affecting_modules = {'ncores', 'cns_exec'}
+general_parameters_affecting_modules = {
+    'ncores', 'cns_exec', 'mode', 'concat', 'queue_limit'
+    }
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"
 module's parameters. Usually, this set is used to filter parameters during
@@ -90,12 +95,17 @@ class BaseHaddockModule(ABC):
                     )
                 raise TypeError(_msg) from err
 
-    @abstractmethod
-    def run(self, params):
+    def run(self, **params):
         """Execute the module."""
+        log.info(f'Running [{self.name}] module')
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
+        self.params.setdefault('mode', None)
+        self.params.setdefault('concat', None)
+        self.params.setdefault('queue_limit', None)
+        self._run()
+        log.info(f'Module [{self.name}] finished.')
 
     @classmethod
     @abstractmethod
@@ -136,6 +146,23 @@ class BaseHaddockModule(ABC):
         """Update defaults parameters with run-specific parameters."""
         self.params = recursive_dict_update(self._params, parameters)
 
+    def log(self, msg, level='info'):
+        """
+        Log a message with a common header.
+
+        Currently the header is the [MODULE NAME] in square brackets.
+
+        Parameters
+        ----------
+        msg : str
+            The log message.
+
+        level : str
+            The level log: 'debug', 'info', ...
+            Defaults to 'info'.
+        """
+        getattr(log, level)(f'[{self.name}] {msg}')
+
 
 @contextlib.contextmanager
 def working_directory(path):
@@ -146,3 +173,40 @@ def working_directory(path):
         yield
     finally:
         os.chdir(prev_cwd)
+
+
+def get_engine(mode, params):
+    """
+    Create an engine to run the jobs.
+
+    Parameters
+    ----------
+    mode : str
+        The type of engine to create
+
+    params : dict
+        A dictionary containing parameters for the engine.
+        `get_engine` will retrieve from `params` only those parameters
+        needed and ignore the others.
+    """
+    # a bit of a factory pattern here
+    # this might end up in another module but for now its fine here
+    if mode == 'hpc':
+        return partial(
+            HPCScheduler,
+            queue_limit=params['queue_limit'],
+            concat=params['concat'],
+            )
+
+    elif mode == 'local':
+        return partial(
+            Scheduler,
+            ncores=params['ncores'],
+            )
+
+    else:
+        available_engines = ('hpc', 'local')
+        raise ValueError(
+            f"Scheduler `mode` {mode!r} not recognized. "
+            f"Available options are {', '.join(available_engines)}"
+            )

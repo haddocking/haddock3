@@ -2,7 +2,7 @@
 !    Generate the coordinate header (REMARKS)
 !
 ! ***********************************************************************
-! * Copyright 2003-2020 Alexandre Bonvin, Utrecht University.           *
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
 ! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
 ! * All rights reserved.                                                *
 ! * This code is part of the HADDOCK software and governed by its       *
@@ -41,17 +41,17 @@ evaluate($xpcsall=$xpcs)
 evaluate($daniall=$dani)
 
 if ($Data.flags.sym eq true) then
-  evaluate ($result=0)
-  evaluate ($violations=0)
-  print threshold=0.3 noe
-  evaluate ($rms_noe=$result)
-  evaluate ($violations_noe=$violations)
+    evaluate ($result=0)
+    evaluate ($violations=0)
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
 end if
 
 if ($Data.noecv eq false) then
-  evaluate ($violations_test_noe= 0)
-  evaluate ($rms_test_noe = 0)
-  evaluate ($npart = 0)
+    evaluate ($violations_test_noe= 0)
+    evaluate ($rms_test_noe = 0)
+    evaluate ($npart = 0)
 end if
 
 evaluate ($result=0)
@@ -79,17 +79,17 @@ evaluate ($violations_coup = 0)
 evaluate( $rms_sani = 0)
 evaluate( $violations_sani = 0)
 if ($Data.flags.sani  eq TRUE) then
-  sani print threshold = 0.20 class rd* end
-  evaluate( $rms_sani = $result)
-  evaluate( $violations_sani = $violations)
+    sani print threshold = 0.20 class rd* end
+    evaluate( $rms_sani = $result)
+    evaluate( $violations_sani = $violations)
 end if
 
 evaluate( $rms_xrdc = 0)
 evaluate( $violations_xrdc = 0)
 if ($Data.flags.xrdc  eq TRUE) then
-  xrdc print threshold = 0.2 class xr* end
-  evaluate( $rms_xrdc = $result)
-  evaluate( $violations_xrdc = $violations)
+    xrdc print threshold = 0.2 class xr* end
+    evaluate( $rms_xrdc = $result)
+    evaluate( $violations_xrdc = $violations)
 end if
 
 evaluate( $violations_sani = $violations_sani + $violations_xrdc)
@@ -98,44 +98,44 @@ evaluate( $rms_sani = $rms_sani + $rms_xrdc)
 evaluate( $rms_xpcs = 0)
 evaluate( $violations_xpcs = 0)
 if ($Data.flags.xpcs  eq TRUE) then
-  xpcs print threshold = 0.2 class pc* end
-  evaluate( $rms_xpcs = $result)
-  evaluate( $violations_xpcs = $violations)
+    xpcs print threshold = 0.2 class pc* end
+    evaluate( $rms_xpcs = $result)
+    evaluate( $violations_xpcs = $violations)
 end if
 
 evaluate( $rms_vean = 0)
 evaluate( $violations_vean = 0)
 if ($Data.flags.vean  eq TRUE) then
-  vean print threshold = 5.00 class ve* end
-  evaluate( $rms_vean = $result)
-  evaluate( $violations_vean = $violations)
+    vean print threshold = 5.00 class ve* end
+    evaluate( $rms_vean = $result)
+    evaluate( $violations_vean = $violations)
 end if
 
 evaluate( $rms_dani = 0)
 evaluate( $violations_dani = 0)
 if ($Data.flags.dani  eq TRUE) then
-  dani print threshold = 0.20 class da* end
-  evaluate( $rms_dani = $result)
-  evaluate( $violations_dani = $violations)
+    dani print threshold = 0.20 class da* end
+    evaluate( $rms_dani = $result)
+    evaluate( $violations_dani = $violations)
 end if
 
 {====>} {* define ASA-based solvation parameters *}
-inline @RUN:def_solv_param.cns
+inline @MODULE:def_solv_param.cns
 
 {====>} {* buried surface area and desolvation*}
 evaluate ($nchain1 = 0)
 evaluate ($saafree = 0)
 evaluate ($esolfree = 0)
-while ($nchain1 < $ncomponents) loop nloop1
-  evaluate ($nchain1 = $nchain1 + 1)
-  {====>} {* buried surface area and desolvation*}
-  do (rmsd = 0) (all)
-  surface mode=access accu=0.075 rh2o=1.4 sele=(segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA)) end
-  show sum (rmsd) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
-  evaluate ($saafree = $saafree + $result)
-  do (store2 = rmsd * store1) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
-  show sum (store2) (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
-  evaluate ($esolfree = $esolfree + $result)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    evaluate ($nchain1 = $nchain1 + 1)
+    {====>} {* buried surface area and desolvation*}
+    do (rmsd = 0) (all)
+    surface mode=access accu=0.075 rh2o=1.4 sele=(segid $Toppar.prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA)) end
+    show sum (rmsd) (segid $Toppar.prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+    evaluate ($saafree = $saafree + $result)
+    do (store2 = rmsd * store1) (segid $Toppar.prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+    show sum (store2) (segid $Toppar.prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SHA))
+    evaluate ($esolfree = $esolfree + $result)
 end loop nloop1
 
 do (rmsd = 0) (all)
@@ -148,119 +148,114 @@ show sum (store2) (not (resn WAT or resn HOH or resn TIP* or resn DMS or resn SH
 evaluate ($esolcplx = $result)
 evaluate ($saburied = $saafree - $satot)
 if ($saburied < 0) then
-  evaluate ($saburied = -999999)
+    evaluate ($saburied = -999999)
 end if
 
 evaluate ($edesolv = $esolcplx - $esolfree)
 
 evaluate ($dhbinding = $edesolv + $eintcplx - $eintfree + $elecall + $vdwall)
 
-if ($ncomponents = 1) then
-  evaluate ($saburied = 0)
-  evaluate ($edesolv = 0)
-  evaluate ($dhbinding = 0)
+evaluate ($nshape = 0)
+evaluate ($ncount = 0)
+while ($ncount < $data.ncomponents) loop shape
+    evaluate ($ncount = $ncount + 1)
+    if ($Toppar.shape_$ncount eq true) then
+        evaluate ($nshape = $nshape + 1)
+    end if
+end loop shape
+
+evaluate ($nonshape = $Data.ncomponents - $nshape)
+  
+if ($nonshape = 1) then
+    evaluate ($saburied = 0)
+    evaluate ($edesolv = 0)
+    evaluate ($dhbinding = 0)
+    evaluate ($eintfree = $eintcplx)
 end if
 
 if ($Data.flags.sym eq true) then
-  evaluate ($enerall = $enerall + $esym)
+    evaluate ($enerall = $enerall + $esym)
 end if
 if ($Data.flags.ncs eq true) then
-  evaluate ($enerall = $enerall + $ncs)
+    evaluate ($enerall = $enerall + $ncs)
 end if
 
 evaluate ($procwat = false)
 if ($refine.keepwater eq true) then
-  evaluate ($procwat = true)
-end if  
-if ($data.waterdock eq true) then
-  evaluate ($procwat = true)
+    evaluate ($procwat = true)
 end if  
 
 if ($procwat eq true) then
-  if ($iteration eq 2) then
-    do (store3 = 0) (all)
-    eval($nchain1 = 0)
-    while ($nchain1 < $ncomponents) loop nloop1
-      eval($nchain1 = $nchain1 + 1)
-      eval($nchain2 = $nchain1)
-      while ($nchain2 < $ncomponents) loop nloop2
-        eval($nchain2 = $nchain2 + 1)
-        do (store3 = 1) (byres ((resn WAT or resn HOH or resn TIP* or resn DMS) and (segid $prot_segid_$nchain1) around 3.5
-                                          and (segid $prot_segid_$nchain2) around 3.5))
-      end loop nloop2
-    end loop nloop1
-    dele sele=(attr store3=0 and (resn DMS or resn WAT or resn HOH or resn TIP*)) end
-  end if
-  if ($iteration ne 0) then
     ident (store3) (not all)
-  end if
-  flag exclude * include vdw elec  end
+    flag exclude * include vdw elec  end
 
-  eval($nchain1 = 0)
+    eval($nchain1 = 0)
 
-  while ($nchain1 < $ncomponents) loop nloop1
-    eval($nchain1 = $nchain1 + 1)
+    while ($nchain1 < $data.ncomponents) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+
+        igroup
+            interaction (segid $Toppar.prot_segid_$nchain1) ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3) weight * 1.0 end
+            interaction (not segid $Toppar.prot_segid_$nchain1) (resn WAT or resn HOH or resn TIP* or resn DMS) weight * 0.0 end
+            interaction (segid $Toppar.prot_segid_$nchain1) (not ((resn WAT or resn HOH or resn TIP* or resn DMS) and store3)) weight * 0.0 end
+        end
+        energy end
+        evaluate ($ener_water_$nchain1 = $ener)
+        evaluate ($enerall = $enerall + $ener)
+        evaluate ($vdw_water_$nchain1 = $vdw)
+        evaluate ($elec_water_$nchain1 = $elec)
+
+    end loop nloop1
+    if ($data.ncomponents > 1) then
+        eval($nchain1 = $data.ncomponents)
+        while ($nchain1 < $data.ncomponents) loop nloop1
+            eval($nchain1 = $nchain1 + 1)
+            evaluate ($ener_water_$nchain1 = 0.0)
+            evaluate ($vdw_water_$nchain1 = 0.0)
+            evaluate ($elec_water_$nchain1 = 0.0)
+        end loop nloop1
+    end if
+
+    eval($nchain1 = 0)
 
     igroup
-      interaction (segid $prot_segid_$nchain1) ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3) weight * 1.0 end
-      interaction (not segid $prot_segid_$nchain1) (resn WAT or resn HOH or resn TIP* or resn DMS) weight * 0.0 end
-      interaction (segid $prot_segid_$nchain1) (not ((resn WAT or resn HOH or resn TIP* or resn DMS) and store3)) weight * 0.0 end
+        while ($nchain1 < $data.ncomponents) loop nloop2
+            eval($nchain1 = $nchain1 + 1)
+            interaction (segid $Toppar.prot_segid_$nchain1) (all) weight * 0.0 end
+        end loop nloop2
+        interaction ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3)
+                    ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3)  weight * 1.0 end
+        interaction (store3) (store3)  weight * 0.0 end
+        interaction (resn SHA) (not resn SHA)  weight * 0.0 end
+        interaction (resn SHA) (resn SHA)  weight * 0.0 end
     end
     energy end
-    evaluate ($ener_water_$nchain1 = $ener)
+    evaluate ($ener_water_water = $ener)
     evaluate ($enerall = $enerall + $ener)
-    evaluate ($vdw_water_$nchain1 = $vdw)
-    evaluate ($elec_water_$nchain1 = $elec)
-
-  end loop nloop1
-  if ($ncomponents > 1) then
-    eval($nchain1 = $ncomponents)
-    while ($nchain1 < $ncomponents) loop nloop1
-      eval($nchain1 = $nchain1 + 1)
-      evaluate ($ener_water_$nchain1 = 0.0)
-      evaluate ($vdw_water_$nchain1 = 0.0)
-      evaluate ($elec_water_$nchain1 = 0.0)
-    end loop nloop1
-  end if
-
-  eval($nchain1 = 0)
-
-  igroup
-    while ($nchain1 < $ncomponents) loop nloop2
-      eval($nchain1 = $nchain1 + 1)
-      interaction (segid $nchain1) (all) weight * 0.0 end
-    end loop nloop2
-    interaction ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3)
-                ((resn WAT or resn HOH or resn TIP* or resn DMS) and not store3)  weight * 1.0 end
-    interaction (store3) (store3)  weight * 0.0 end
-    interaction (resn SHA) (not resn SHA)  weight * 0.0 end
-    interaction (resn SHA) (resn SHA)  weight * 0.0 end
-  end
-  energy end
-  evaluate ($ener_water_water = $ener)
-  evaluate ($enerall = $enerall + $ener)
-  evaluate ($vdw_water_water = $vdw)
-  evaluate ($elec_water_water = $elec)
+    evaluate ($vdw_water_water = $vdw)
+    evaluate ($elec_water_water = $elec)
 else
-  eval($nchain1 = 0)
+    eval($nchain1 = 0)
 
-  while ($nchain1 < $ncomponents ) loop nloop1
-    eval($nchain1 = $nchain1 + 1)
-    evaluate ($ener_water_$nchain1 = 0.0)
-    evaluate ($vdw_water_$nchain1 = 0.0)
-    evaluate ($elec_water_$nchain1 = 0.0)
-  end loop nloop1
-  evaluate ($ener_water_water = 0.0)
-  evaluate ($vdw_water_water = 0.0)
-  evaluate ($elec_water_water = 0.0)
+    while ($nchain1 < $data.ncomponents ) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+        evaluate ($ener_water_$nchain1 = 0.0)
+        evaluate ($vdw_water_$nchain1 = 0.0)
+        evaluate ($elec_water_$nchain1 = 0.0)
+    end loop nloop1
+    evaluate ($ener_water_water = 0.0)
+    evaluate ($vdw_water_water = 0.0)
+    evaluate ($elec_water_water = 0.0)
 end if
 
 ! File name
-evaluate ($initialstruct = $file - "PREVIT:")
-evaluate($ncount = 0)
+evaluate ($initialstruct = $input_pdb_filename_1)
 
 set remarks=reset end
 set remarks=accumulate end
+remarks ===============================================================
+remarks HADDOCK run for $output_pdb_filename
+remarks initial structure: $initialstruct
 remarks ===============================================================
 remarks            total,bonds,angles,improper,dihe,vdw,elec,air,cdih,coup,rdcs,vean,dani,xpcs,rg
 remarks energies: $enerall, $bondall, $anglall, $imprall, $diheall, $vdwall, $elecall, $noeall, $cdihall, $coupall, $saniall, $veanall, $daniall, $xpcsall, $rgall
@@ -289,11 +284,12 @@ remarks Internal energy complex: $eintcplx
 remarks Binding energy: $dhbinding
 remarks ===============================================================
 remarks buried surface area: $saburied
-remarks =============================================================== 
+remarks ===============================================================
 set remark accumulate end
-while ($ncount < $ncomponents) loop waterremark
-  evaluate ($ncount = $ncount +1)
-  remarks water - chain_$ncount: $ener_water_$ncount $vdw_water_$ncount $elec_water_$ncount
+evaluate($ncount = 0)
+while ($ncount < $data.ncomponents) loop waterremark
+    evaluate ($ncount = $ncount +1)
+    remarks water - chain_$ncount: $ener_water_$ncount $vdw_water_$ncount $elec_water_$ncount
 end loop waterremark
 remarks ===============================================================
 remarks water - water: $ener_water_water $vdw_water_water $elec_water_water

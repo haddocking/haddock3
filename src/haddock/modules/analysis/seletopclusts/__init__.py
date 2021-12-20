@@ -13,6 +13,8 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 class HaddockModule(BaseHaddockModule):
     """Haddock Module for 'seletopclusts'."""
 
+    name = RECIPE_PATH.name
+
     def __init__(
             self,
             order,
@@ -27,12 +29,8 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if module is installed."""
         return
 
-    def run(self, **params):
+    def _run(self):
         """Execute the module's protocol."""
-        log.info("Running [seletopclusts] module")
-
-        super().run(params)
-
         # Get the models generated in previous step
         if not type(self.previous_io) == iter:
             # this module needs to come after one that produced an iterable

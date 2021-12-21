@@ -2,9 +2,7 @@
 import os
 import shlex
 import subprocess
-from pathlib import Path
 
-from haddock import toppar_path as global_toppar
 from haddock.core.defaults import cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
 
@@ -63,26 +61,10 @@ class CNSJob:
             The path to the .out CNS file, where the standard output
             will be saved.
 
-        cns_folder : str of pathlib.Path
-            The path where the CNS scripts needed for the module reside.
-            For example, `modules/rigidibody/cns`.
-
-        mod_path : str of pathlib.Path
-            Path where the results of the haddock3 module executing this
-            CNS job will be saved.
-
-        config_path : str of pathlib.Path
-            Path of the haddock3 configuration file. Will be used to
-            manage paths in relative manner.
-
-        cns_exec : str of pathlib.Path, optional
-            The path to the CNS exec. If not provided defaults to the
-            global configuration in HADDOCK3.
-
-        toppar : str of pathlib.Path, optional
-            Path to the folder containing CNS topology parameters.
-            If `None` is given defaults to `cns/toppar` inside HADDOCK3
-            source code.
+        envvars : dict
+            A dictionary containing the environment variables needed for
+            the CNSJob. These will be passed to subprocess.Popen.env
+            argument.
         """
         self.input_file = input_file
         self.output_file = output_file
@@ -123,13 +105,6 @@ class CNSJob:
         """Run this CNS job script."""
         with open(self.input_file) as inp, \
                 open(self.output_file, 'w+') as outf:
-
-            #env = {
-            #    'MODDIR': str(self.modpath),
-            #    'MODULE': str(self.cns_folder),
-            #    'RUN': str(self.config_path),
-            #    'TOPPAR': str(self.toppar),
-            #    }
 
             p = subprocess.Popen(
                 self.cns_exec,

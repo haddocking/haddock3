@@ -168,19 +168,20 @@ class BaseHaddockModule(ABC):
         getattr(log, level)(f'[{self.name}] {msg}')
 
     def default_envvars(self, **envvars):
-        """Save envvars to disk."""
+        """Return default env vars updated to `envvars` (if given)."""
         default_envvars = {
             'MODULE': self.cns_folder_path,
             'MODIR': self.path,
             'RUN': self.params["config_path"],
             'TOPPAR': global_toppar,
             }
+
         default_envvars.update(envvars)
 
         return default_envvars
 
     def save_envvars(self, filename='envvars', **envvars):
-        """Save envvars to file."""
+        """Save envvars needed for CNS to a file in the module's folder."""
         common_path = os.path.commonpath(list(envvars.values()))
 
         envvars = {
@@ -196,7 +197,7 @@ class BaseHaddockModule(ABC):
 
         banshee = '#!/bin/bash' + os.linesep
         root = 'export COMMON_PATH_FOR_HD3={}'.format(common_path) + os.linesep
-        fstr =  banshee + root + os.linesep.join(lines)
+        fstr = banshee + root + os.linesep.join(lines)
         Path(self.path, filename).write_text(fstr)
         return
 
@@ -248,6 +249,3 @@ def get_engine(mode, params):
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"
             )
-
-
-

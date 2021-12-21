@@ -259,30 +259,30 @@ def create_begin_files(params):
     """Create initial files for HADDOCK3 run."""
     run_dir = params['run_dir']
     data_dir = run_dir / 'data'
-    begin_dir = run_dir / 'begin'
+    #begin_dir = run_dir / 'begin'
 
     run_dir.mkdir(exist_ok=True)
-    begin_dir.mkdir()
+    #begin_dir.mkdir()
     data_dir.mkdir()
 
     copy_files_to_dir(params['molecules'], data_dir)
-    copy_molecules_to_begin_folder(params['molecules'], begin_dir)
+    #copy_molecules_to_begin_folder(params['molecules'], begin_dir)
 
     return begin_dir, data_dir
 
 
-def copy_molecules_to_begin_folder(
-        molecules,
-        begin_dir,
-        mol='mol',
-        sep='_',
-        start=1,
-        ):
-    """Copy molecules to run directory begin folder."""
-    for i, mol_path in enumerate(molecules, start=start):
-        mol_id = f"{mol}{sep}{i}.pdb"
-        begin_mol = Path(begin_dir, mol_id).resolve()
-        shutil.copy(mol_path, begin_mol)
+#def copy_molecules_to_begin_folder(
+#        molecules,
+#        begin_dir,
+#        mol='mol',
+#        sep='_',
+#        start=1,
+#        ):
+#    """Copy molecules to run directory begin folder."""
+#    for i, mol_path in enumerate(molecules, start=start):
+#        mol_id = f"{mol}{sep}{i}.pdb"
+#        begin_mol = Path(begin_dir, mol_id).resolve()
+#        shutil.copy(mol_path, begin_mol)
 
 
 @with_config_error

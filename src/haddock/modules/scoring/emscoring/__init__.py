@@ -57,14 +57,7 @@ class HaddockModule(BaseHaddockModule):
                 )
             scored_structure_list.append(expected_pdb)
 
-            job = CNSJob(
-                scoring_inp,
-                scoring_out,
-                cns_folder=self.cns_folder_path,
-                modpath=self.path,
-                config_path=self.params['config_path'],
-                cns_exec=self.params['cns_exec'],
-                )
+            job = CNSJob(scoring_inp, scoring_out, envvars=self.envvars)
 
             jobs.append(job)
 

@@ -65,16 +65,10 @@ class HaddockModule(BaseHaddockModule):
                 expected_pdb = prepare_expected_pdb(
                     model, idx, self.path, "mdref"
                     )
+
                 refined_structure_list.append(expected_pdb)
 
-                job = CNSJob(
-                    inp_file,
-                    out_file,
-                    cns_folder=self.cns_folder_path,
-                    modpath=self.path,
-                    config_path=self.params["config_path"],
-                    cns_exec=self.params["cns_exec"],
-                    )
+                job = CNSJob(inp_file, out_file, envvars=self.envvars)
 
                 jobs.append(job)
 

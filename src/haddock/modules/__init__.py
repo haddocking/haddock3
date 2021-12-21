@@ -105,7 +105,7 @@ class BaseHaddockModule(ABC):
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
-        if getattr(self, 'cns_protocol_path', False):
+        if getattr(self, "cns_protocol_path", False):
             self.envvars = self.default_envvars()
             self.save_envvars(**self.envvars)
         self._run()
@@ -170,17 +170,17 @@ class BaseHaddockModule(ABC):
     def default_envvars(self, **envvars):
         """Return default env vars updated to `envvars` (if given)."""
         default_envvars = {
-            'MODULE': self.cns_folder_path,
-            'MODIR': self.path,
-            'RUN': self.params["config_path"],
-            'TOPPAR': global_toppar,
+            "MODULE": self.cns_folder_path,
+            "MODIR": self.path,
+            "RUN": self.params["config_path"],
+            "TOPPAR": global_toppar,
             }
 
         default_envvars.update(envvars)
 
         return default_envvars
 
-    def save_envvars(self, filename='envvars', **envvars):
+    def save_envvars(self, filename="envvars", **envvars):
         """Save envvars needed for CNS to a file in the module's folder."""
         common_path = os.path.commonpath(list(envvars.values()))
 
@@ -191,12 +191,12 @@ class BaseHaddockModule(ABC):
 
         # SyntaxError: f-string expression part cannot include a backslash
         lines = (
-            'export ' + k + '=${COMMON_PATH_FOR_HD3}/' + str(v)
+            "export " + k + "=${COMMON_PATH_FOR_HD3}/" + str(v)
             for k, v in envvars.items()
             )
 
-        banshee = '#!/bin/bash' + os.linesep
-        root = 'export COMMON_PATH_FOR_HD3={}'.format(common_path) + os.linesep
+        banshee = "#!/bin/bash" + os.linesep
+        root = "export COMMON_PATH_FOR_HD3={}".format(common_path) + os.linesep
         fstr = banshee + root + os.linesep.join(lines)
         Path(self.path, filename).write_text(fstr)
         return

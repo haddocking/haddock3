@@ -5,6 +5,7 @@ import sys
 from contextlib import contextmanager
 from functools import wraps
 from pathlib import Path
+from copy import deepcopy
 
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.exceptions import ConfigurationError, ModuleError
@@ -16,6 +17,7 @@ from haddock.libs.libutil import (
     copy_files_to_dir,
     make_list_if_string,
     remove_dict_keys,
+    zero_fill,
     )
 from haddock.modules import (
     general_parameters_affecting_modules,
@@ -75,10 +77,10 @@ def setup_run(workflow_path, restart_from=None):
     params = read_config(workflow_path)
     # validates the configuration file
     validate_params(params)
+    copy_molecules_to_topology(params)
 
     # pre-treats the configuration file
-    convert_params_to_path(params)
-    copy_molecules_to_topology(params)
+    #convert_params_to_path(params)
 
     modules_keys = [
         k
@@ -86,9 +88,8 @@ def setup_run(workflow_path, restart_from=None):
         if get_module_name(k) in modules_category
         ]
 
-    # get a dictionary without the general config keys
+    # separate general from modules parameters
     general_params = remove_dict_keys(params, modules_keys)
-
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
     validate_modules_params(modules_params)
@@ -106,21 +107,21 @@ def setup_run(workflow_path, restart_from=None):
                 )
             sys.exit(get_goodbye_help())
 
-        begin_dir, _ = create_begin_files(general_params)
-
-        # prepare other files
-        copy_ambig_files(modules_params, begin_dir)
-
     else:
         remove_folders_after_number(general_params['run_dir'], restart_from)
+
+    data_dir = create_data_dir(general_params["run_dir"])
+    new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
+
+
+
 
     # return the modules' parameters and other parameters that may serve
     # the workflow, the "other parameters" can be expanded in the future
     # by a function if needed
-
     general_params['config_path'] = Path(workflow_path).resolve()
 
-    return modules_params, general_params
+    return new_mp, general_params
 
 
 def validate_params(params):
@@ -255,20 +256,11 @@ def convert_run_dir_to_path(params):
 
 
 @with_config_error
-def create_begin_files(params):
+def create_data_dir(run_dir):
     """Create initial files for HADDOCK3 run."""
-    run_dir = params['run_dir']
-    data_dir = run_dir / 'data'
-    #begin_dir = run_dir / 'begin'
-
-    run_dir.mkdir(exist_ok=True)
-    #begin_dir.mkdir()
-    data_dir.mkdir()
-
-    copy_files_to_dir(params['molecules'], data_dir)
-    #copy_molecules_to_begin_folder(params['molecules'], begin_dir)
-
-    return begin_dir, data_dir
+    data_dir = Path(run_dir, 'data')
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
 
 
 #def copy_molecules_to_begin_folder(
@@ -288,7 +280,7 @@ def create_begin_files(params):
 @with_config_error
 def copy_molecules_to_topology(params):
     """Copy molecules to mandatory topology module."""
-    params['topoaa']['molecules'] = params['molecules']
+    params['topoaa']['molecules'] = list(map(Path, params['molecules']))
 
 
 @with_config_error
@@ -308,3 +300,29 @@ def copy_ambig_files(module_params, directory):
                     raise ConfigurationError(_msg)
 
                 step_dict[key] = new_loc
+
+def copy_input_files_to_data_dir(data_dir, modules_params):
+    """Copy files to data directory."""
+    new_mp = deepcopy(modules_params)
+
+    for i, molecule in enumerate(modules_params['topoaa']['molecules']):
+        p = Path(data_dir, '00_topoaa')
+        pf = Path(p, Path(molecule).name)
+        pf.mkdir(parents=True, exist_ok=True)
+        shutil.copy(molecule, pf)
+        new_mp['topoaa']['molecules'][i] = pf
+
+
+    other_modules = list(modules_params.items())[1:]  # don't use topology
+    for i, (module, params) in enumerate(other_modules, start=1):
+        p = Path(data_dir, f'{zero_fill(i)}_{get_module_name(module)}')
+        p.mkdir()
+        for parameter, value in params.items():
+            if parameter.endswith('_fname'):
+                pf = Path(p, Path(value).name)
+                pf.mkdir(parents=True, exist_ok=True)
+                print(pf)
+                shutil.copy(value, pf)
+                new_mp[module][value] = Path(data_dir, module, pf)
+    print(new_mp)
+    return new_mp

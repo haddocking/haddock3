@@ -105,7 +105,6 @@ class BaseHaddockModule(ABC):
     def run(self, **params):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
-        print(params)
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
@@ -193,7 +192,6 @@ class BaseHaddockModule(ABC):
 
     def save_envvars(self, filename="envvars", relative=True, **envvars):
         """Save envvars needed for CNS to a file in the module's folder."""
-        assert relative is False
         common_path = os.path.commonpath(list(envvars.values()))
 
         envvars = {

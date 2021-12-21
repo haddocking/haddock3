@@ -6,6 +6,7 @@ from functools import partial
 from pathlib import Path
 
 from haddock import log as log
+from haddock import toppar_path as global_toppar
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
@@ -104,6 +105,9 @@ class BaseHaddockModule(ABC):
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
+        if getattr(self, 'cns_protocol_path', False):
+            self.envvars = self.default_envvars()
+            self.save_envvars(**self.envvars)
         self._run()
         log.info(f'Module [{self.name}] finished.')
 
@@ -163,6 +167,39 @@ class BaseHaddockModule(ABC):
         """
         getattr(log, level)(f'[{self.name}] {msg}')
 
+    def default_envvars(self, **envvars):
+        """Save envvars to disk."""
+        default_envvars = {
+            'MODULE': self.cns_folder_path,
+            'MODIR': self.path,
+            'RUN': self.params["config_path"],
+            'TOPPAR': global_toppar,
+            }
+        default_envvars.update(envvars)
+
+        return default_envvars
+
+    def save_envvars(self, filename='envvars', **envvars):
+        """Save envvars to file."""
+        common_path = os.path.commonpath(list(envvars.values()))
+
+        envvars = {
+            k: v.relative_to(common_path)
+            for k, v in envvars.items()
+            }
+
+        # SyntaxError: f-string expression part cannot include a backslash
+        lines = (
+            'export ' + k + '=${COMMON_PATH_FOR_HD3}/' + str(v)
+            for k, v in envvars.items()
+            )
+
+        banshee = '#!/bin/bash' + os.linesep
+        root = 'export COMMON_PATH_FOR_HD3={}'.format(common_path) + os.linesep
+        fstr =  banshee + root + os.linesep.join(lines)
+        Path(self.path, filename).write_text(fstr)
+        return
+
 
 @contextlib.contextmanager
 def working_directory(path):
@@ -211,3 +248,6 @@ def get_engine(mode, params):
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"
             )
+
+
+

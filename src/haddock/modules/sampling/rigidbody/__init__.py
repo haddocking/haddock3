@@ -77,14 +77,7 @@ class HaddockModule(BaseHaddockModule):
                 model.topology = [e.topology for e in combination]
                 structure_list.append(model)
 
-                job = CNSJob(
-                    inp_file,
-                    log_fname,
-                    cns_folder=self.cns_folder_path,
-                    modpath=self.path,
-                    config_path=self.params["config_path"],
-                    cns_exec=self.params["cns_exec"],
-                    )
+                job = CNSJob(inp_file, log_fname, envvars=self.envvars)
                 jobs.append(job)
 
                 idx += 1

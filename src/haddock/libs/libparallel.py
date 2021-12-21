@@ -93,7 +93,7 @@ class Scheduler:
                 worker.join()
                 for t in worker.tasks:
                     per = (c / float(self.num_tasks)) * 100
-                    task_ident = f'{t.modpath.name}/{t.input_file.name}'
+                    task_ident = f'{t.input_file.parents[0].name}/{t.input_file.name}'
                     log.info(f'>> {task_ident} completed {per:.0f}% ')
                     c += 1
 

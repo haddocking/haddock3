@@ -47,11 +47,7 @@ class CNSJob:
             self,
             input_file,
             output_file,
-            cns_folder,
-            modpath,
-            config_path,
-            cns_exec=None,
-            toppar=None,
+            envvars=None,
             ):
         """
         CNS subprocess.
@@ -90,12 +86,20 @@ class CNSJob:
         """
         self.input_file = input_file
         self.output_file = output_file
-        self.cns_folder = cns_folder
-        self.modpath = modpath
-        self.config_path = Path(config_path).parent
-
-        self.toppar = toppar or global_toppar
+        self.envvars = envvars
         self.cns_exec = cns_exec
+
+    @property
+    def envvars(self):
+        """CNS environment vars."""
+        return self._envvars
+
+    @envvars.setter
+    def envvars(self, envvars):
+        """CNS environment vars."""
+        self._envvars = envvars or {}
+        if not isinstance(self._envvars, dict):
+            raise ValueError('`envvars` must be a dictionary.')
 
     @property
     def cns_exec(self):
@@ -120,12 +124,12 @@ class CNSJob:
         with open(self.input_file) as inp, \
                 open(self.output_file, 'w+') as outf:
 
-            env = {
-                'MODDIR': str(self.modpath),
-                'MODULE': str(self.cns_folder),
-                'RUN': str(self.config_path),
-                'TOPPAR': str(self.toppar),
-                }
+            #env = {
+            #    'MODDIR': str(self.modpath),
+            #    'MODULE': str(self.cns_folder),
+            #    'RUN': str(self.config_path),
+            #    'TOPPAR': str(self.toppar),
+            #    }
 
             p = subprocess.Popen(
                 self.cns_exec,
@@ -133,7 +137,7 @@ class CNSJob:
                 stdout=outf,
                 stderr=subprocess.PIPE,
                 close_fds=True,
-                env=env,
+                env=self.envvars,
                 )
 
             out, error = p.communicate()

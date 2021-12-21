@@ -2,6 +2,7 @@
 import os
 import shlex
 import subprocess
+from pathlib import Path
 
 from haddock.core.defaults import cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
@@ -82,6 +83,10 @@ class CNSJob:
         self._envvars = envvars or {}
         if not isinstance(self._envvars, dict):
             raise ValueError('`envvars` must be a dictionary.')
+
+        for k, v in self._envvars.items():
+            if isinstance(v, Path):
+                self._envvars[k] = str(v)
 
     @property
     def cns_exec(self):

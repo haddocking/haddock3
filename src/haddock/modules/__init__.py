@@ -171,7 +171,7 @@ class BaseHaddockModule(ABC):
         """Return default env vars updated to `envvars` (if given)."""
         default_envvars = {
             "MODULE": self.cns_folder_path,
-            "MODIR": self.path,
+            "MODDIR": self.path,
             "RUN": self.params["config_path"],
             "TOPPAR": global_toppar,
             }

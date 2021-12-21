@@ -555,7 +555,6 @@ evaluate ($failure = false)
 evaluate ($filefail=$output_pdb_filename - ".pdb" + ".fail")
 fileexist $filefail end
 evaluate ($failure = $result)
-evaluate ($failure = true)
 
 
 {* Define initial weights for distance restraints ============================== *}

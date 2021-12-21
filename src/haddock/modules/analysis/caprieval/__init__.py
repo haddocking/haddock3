@@ -234,11 +234,11 @@ class CAPRI:
 
             if P.shape != Q.shape:
                 log.warning(
-                    '[{RECIPE_PATH}] Cannot align these models,'
-                    ' the number of atoms is in the interface'
-                    ' is different.'
+                    f"[{RECIPE_PATH}] Cannot align these models,"
+                    " the number of atoms is in the interface"
+                    " is different."
                     )
-                i_rmsd = float('nan')
+                i_rmsd = float("nan")
 
             else:
                 P = P - centroid(P)
@@ -404,13 +404,17 @@ class CAPRI:
             self.fnat_dic[model] = fnat
         return self.fnat_dic
 
-    def output(self, output_f, sortby_key, ascending):
+    def output(self, output_f, sortby_key, sort_ascending, rankby_key,
+               rank_ascending):
         """Output the CAPRI results to a .tsv file."""
         output_l = []
         for model in self.model_list:
             data = {}
             # keep always 'model' the first key
             data["model"] = Path(model.parent.name, model.name)
+            # create the empty rank here so that it will appear
+            #  as the second column
+            data["rank"] = None
             data["score"] = self.score_dic[model]
             if model in self.irmsd_dic:
                 data["irmsd"] = self.irmsd_dic[model]
@@ -423,14 +427,21 @@ class CAPRI:
             # list of dictionaries
             output_l.append(data)
 
-        key_values = [(i, k[sortby_key]) for i, k in enumerate(output_l)]
-        key_values.sort(key=lambda x: x[1], reverse=not ascending)
+        # Get the ranking of each model
+        rankkey_values = [(i, k[rankby_key]) for i, k in enumerate(output_l)]
+        rankkey_values.sort(key=lambda x: x[1], reverse=not rank_ascending)
+        for i, k in enumerate(rankkey_values, start=1):
+            idx, _ = k
+            output_l[idx]["rank"] = i
 
-        max_model_space = max(len(str(_d['model'])) for _d in output_l) + 2
-        hmodel = 'model'.center(max_model_space, ' ')
-        header = hmodel + ''.join(
-            _.rjust(10, " ")
-            for _ in list(output_l[0].keys())[1:]
+        # Sort the column
+        key_values = [(i, k[sortby_key]) for i, k in enumerate(output_l)]
+        key_values.sort(key=lambda x: x[1], reverse=not sort_ascending)
+
+        max_model_space = max(len(str(_d["model"])) for _d in output_l) + 2
+        hmodel = "model".center(max_model_space, " ")
+        header = hmodel + "".join(
+            _.rjust(10, " ") for _ in list(output_l[0].keys())[1:]
             )
 
         with open(output_f, "w") as out_fh:
@@ -440,12 +451,11 @@ class CAPRI:
                 for value in output_l[idx].values():
                     if isinstance(value, Path):
                         row_l.append(str(value).ljust(max_model_space, " "))
-                    # elif isinstance(value, (int, float)):
+                    elif isinstance(value, int):
+                        row_l.append(f"{value}".rjust(10, " "))
                     else:
-                        # better to have the else: statment so errors are
-                        # spotted. Only int and floats should go here
                         row_l.append(f"{value:.3f}".rjust(10, " "))
-                out_fh.write(''.join(row_l) + os.linesep)
+                out_fh.write("".join(row_l) + os.linesep)
 
 
 class HaddockModule(BaseHaddockModule):
@@ -453,9 +463,8 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(
-            self, order, path, *ignore, init_params=DEFAULT_CONFIG, **everything
-            ):
+    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG,
+                 **everything):
         super().__init__(order, path, init_params)
 
     @classmethod
@@ -500,13 +509,13 @@ class HaddockModule(BaseHaddockModule):
         if self.params["fnat"]:
             self.log("Calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
-            self.log(f' cutoff: {fnat_cutoff}A')
+            self.log(f" cutoff: {fnat_cutoff}A")
             capri.fnat(cutoff=fnat_cutoff)
 
         if self.params["irmsd"]:
             self.log("Calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
-            self.log(f' cutoff: {irmsd_cutoff}A')
+            self.log(f" cutoff: {irmsd_cutoff}A")
             capri.irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:
@@ -514,8 +523,8 @@ class HaddockModule(BaseHaddockModule):
             lrmsd_receptor_chain = self.params["receptor_chain"]
             lrmsd_ligand_chain = self.params["ligand_chain"]
 
-            self.log(f' Receptor chain: {lrmsd_receptor_chain}')
-            self.log(f' Ligand chain: {lrmsd_ligand_chain}')
+            self.log(f" Receptor chain: {lrmsd_receptor_chain}")
+            self.log(f" Ligand chain: {lrmsd_ligand_chain}")
             capri.lrmsd(
                 receptor_chain=lrmsd_receptor_chain,
                 ligand_chain=lrmsd_ligand_chain,
@@ -526,8 +535,8 @@ class HaddockModule(BaseHaddockModule):
             ilrmsd_ligand_chain = self.params["ligand_chain"]
             ilrmsd_cutoff = self.params["irmsd_cutoff"]
 
-            self.log(f' Ligand chain: {ilrmsd_ligand_chain}')
-            self.log(f' cutoff: {ilrmsd_cutoff}A')
+            self.log(f" Ligand chain: {ilrmsd_ligand_chain}")
+            self.log(f" cutoff: {ilrmsd_cutoff}A")
 
             capri.ilrmsd(
                 ligand_chain=ilrmsd_ligand_chain,
@@ -539,7 +548,9 @@ class HaddockModule(BaseHaddockModule):
         capri.output(
             output_fname,
             sortby_key=self.params["sortby"],
-            ascending=self.params["ascending"],
+            sort_ascending=self.params["sort_ascending"],
+            rankby_key=self.params["rankby"],
+            rank_ascending=self.params["sort_ascending"],
             )
 
         selected_models = models_to_calc

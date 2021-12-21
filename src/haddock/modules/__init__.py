@@ -29,7 +29,13 @@ values are their categories. Categories are the modules parent folders."""
 
 
 general_parameters_affecting_modules = {
-    'ncores', 'cns_exec', 'mode', 'queue', 'concat', 'queue_limit'
+    'cns_exec',
+    'concat',
+    'mode',
+    'ncores',
+    'queue',
+    'queue_limit',
+    'relative_envvars',
     }
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"
@@ -99,15 +105,20 @@ class BaseHaddockModule(ABC):
     def run(self, **params):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
+        print(params)
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
+        self.params.setdefault('relative_envvars', True)
         if getattr(self, "cns_protocol_path", False):
             self.envvars = self.default_envvars()
-            self.save_envvars(**self.envvars)
+            self.save_envvars(
+                relative=self.params['relative_envvars'],
+                **self.envvars,
+                )
         self._run()
         log.info(f'Module [{self.name}] finished.')
 
@@ -180,8 +191,9 @@ class BaseHaddockModule(ABC):
 
         return default_envvars
 
-    def save_envvars(self, filename="envvars", **envvars):
+    def save_envvars(self, filename="envvars", relative=True, **envvars):
         """Save envvars needed for CNS to a file in the module's folder."""
+        assert relative is False
         common_path = os.path.commonpath(list(envvars.values()))
 
         envvars = {
@@ -189,11 +201,25 @@ class BaseHaddockModule(ABC):
             for k, v in envvars.items()
             }
 
-        # SyntaxError: f-string expression part cannot include a backslash
-        lines = (
-            "export " + k + "=${COMMON_PATH_FOR_HD3}/" + str(v)
-            for k, v in envvars.items()
-            )
+        if relative:
+            rel_path = '../' * len(envvars['MODDIR'].parents)
+
+            envvars = {
+                k: Path(rel_path, v) if k != 'MODDIR' else "$PWD"
+                for k, v in envvars.items()
+                }
+
+            # SyntaxError: f-string expression part cannot include a backslash
+            lines = (
+                "export " + k + "=" + str(v)
+                for k, v in envvars.items()
+                )
+
+        else:
+            lines = (
+                "export " + k + "=${COMMON_PATH_FOR_HD3}/" + str(v)
+                for k, v in envvars.items()
+                )
 
         banshee = "#!/bin/bash" + os.linesep
         root = "export COMMON_PATH_FOR_HD3={}".format(common_path) + os.linesep

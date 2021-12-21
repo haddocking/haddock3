@@ -197,13 +197,13 @@ def load_unambig(unambig_f):
 
 def load_hbond(hbond_f):
     """Add hbond file."""
-    hbond_str = f'eval ($hbond_fname="{hbond_f}"){linesep}'
+    hbond_str = f'eval ($hbond_fname="{str(hbond_f)}"){linesep}'
     return hbond_str
 
 
 def load_dihe(dihe_f):
     """Add dihedral file."""
-    dihe_str = f'eval ($dihe_fname="{dihe_f}"){linesep}'
+    dihe_str = f'eval ($dihe_fname="{str(dihe_f)}"){linesep}'
     return dihe_str
 
 
@@ -211,6 +211,24 @@ def load_tensor_tbl(tensor_f):
     """Add tensor tbl file."""
     tensor_str = f'eval ($tensor_tbl="{tensor_f}"){linesep}'
     return tensor_str
+
+
+def load_rdc(rdc_f):
+    """Add rdc tbl file."""
+    rdc_str = f'eval ($rdc_fname="{str(rdc_f)}"){linesep}'
+    return rdc_str
+
+
+def load_pcs(pcs_f):
+    """Add pcs tbl file."""
+    pcs_str = f'eval ($pcs_fname="{str(pcs_f)}"){linesep}'
+    return pcs_str
+
+
+def load_dan(dan_f):
+    """Add dan tbl file."""
+    dan_str = f'eval ($dan_fname="{str(dan_f)}"){linesep}'
+    return dan_str
 
 
 def prepare_output(output_psf_filename, output_pdb_filename):
@@ -341,6 +359,12 @@ def prepare_cns_input(
         defaults,
         identifier,
         ambig_fname=None,
+        unambig_fname=None,
+        rdc_fname=None,
+        pcs_fname=None,
+        dan_fname=None,
+        dihe_fname=None,
+        hbond_fname=None,
         native_segid=False,
         ):
     """Generate the .inp file needed by the CNS engine."""
@@ -388,9 +412,46 @@ def prepare_cns_input(
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
     if ambig_fname:
+        ambig_fname = Path(ambig_fname).resolve()
         ambig_str = load_ambig(ambig_fname)
     else:
         ambig_str = ""
+
+    if unambig_fname:
+        unambig_fname = Path(unambig_fname).resolve()
+        unambig_str = load_ambig(unambig_fname)
+    else:
+        unambig_str = ""
+
+    if hbond_fname:
+        hbond_fname = Path(hbond_fname).resolve()
+        hbond_str = load_hbond(hbond_fname)
+    else:
+        hbond_str = ""
+
+    if dihe_fname:
+        dihe_fname = Path(dihe_fname).resolve()
+        dihe_str = load_dihe(dihe_fname)
+    else:
+        dihe_str = ""
+
+    if rdc_fname:
+        rdc_fname = Path(rdc_fname).resolve()
+        rdc_str = load_rdc(rdc_fname)
+    else:
+        rdc_str = ""
+
+    if pcs_fname:
+        pcs_fname = Path(pcs_fname).resolve()
+        pcs_str = load_pcs(pcs_fname)
+    else:
+        pcs_str = ""
+
+    if dan_fname:
+        dan_fname = Path(dan_fname).resolve()
+        dan_str = load_dan(dan_fname)
+    else:
+        dan_str = ""
 
     output_pdb_filename = step_path / f"{identifier}_{model_number}.pdb"
     output = f"{linesep}! Output structure{linesep}"
@@ -427,6 +488,12 @@ def prepare_cns_input(
         + output
         + topology_protonation
         + ambig_str
+        + unambig_str
+        + dihe_str
+        + hbond_str
+        + dan_str
+        + pcs_str
+        + rdc_str
         + segid_str
         + recipe_str
         )

@@ -9,6 +9,7 @@ from copy import deepcopy
 from pprint import pprint
 
 from haddock import contact_us, haddock3_source_path, log
+from haddock import toppar_path
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
@@ -88,6 +89,11 @@ def setup_run(workflow_path, restart_from=None):
     data_dir = create_data_dir(general_params["run_dir"])
     new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
 
+    #general_params["cwd"] = general_params["run_dir"]
+
+
+    #shutil.copytree(toppar_path, Path(general_params["run_dir"], 'toppar'))
+
     #with working_directory(general_params["run_dir"]):
 
     #new_config = {**general_params, **new_mp}
@@ -115,7 +121,8 @@ def setup_run(workflow_path, restart_from=None):
     # return the modules' parameters and other parameters that may serve
     # the workflow, the "other parameters" can be expanded in the future
     # by a function if needed
-
+    print(general_params)
+    #sys.exit()
     return new_mp, general_params
 
 
@@ -315,11 +322,11 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         end_path.mkdir(parents=True, exist_ok=True)
         name = Path(molecule).name
         shutil.copy(molecule, Path(end_path, name))
-        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, end_path, name)
+        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
 
 
-    other_modules = list(modules_params.items())[1:]  # don't use topology
-    for i, (module, params) in enumerate(other_modules, start=1):
+    #other_modules = list(modules_params.items())[1:]  # don't use topology
+    for i, (module, params) in enumerate(modules_params.items(), start=1):
         end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
         pf = Path(data_dir, end_path)
         pf.mkdir(exist_ok=True)

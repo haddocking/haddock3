@@ -37,7 +37,7 @@ class Workflow:
             self,
             content,
             ncores=None,
-            run_dir=None,
+            #run_dir=None,
             cns_exec=None,
             config_path=None,
             mode='local',
@@ -66,7 +66,7 @@ class Workflow:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
-                    run_dir=run_dir,
+                    #run_dir=run_dir or Path.cwd(),
                     **params,
                     )
                 self.steps.append(_)
@@ -83,24 +83,24 @@ class Step:
             self,
             module_name,
             order=None,
-            run_dir=None,
+            #run_dir=None,
             **config_params,
             ):
         self.config = config_params
         self.module_name = module_name
         self.order = order
 
-        self.working_path = Path(
-            run_dir,
-            zero_fill(self.order, digits=2) + "_" + self.module_name,
-            )
+        self.working_path = \
+            Path(zero_fill(self.order, digits=2) + "_" + self.module_name)
 
     def execute(self):
         """Execute simulation step."""
-        if self.working_path.exists():
-            log.warning(f"Found previous run ({self.working_path}), removed")
-            shutil.rmtree(self.working_path)
-        self.working_path.resolve().mkdir(parents=True, exist_ok=False)
+        #if self.working_path.exists():
+        #    log.warning(f"Found previous run ({self.working_path}), removed")
+        #    shutil.rmtree(self.working_path)
+        # this should run in the CWD
+        # and the folder should have been removed
+        self.working_path.resolve().mkdir(parents=False, exist_ok=False)
 
         # Import the module given by the mode or default
         module_name = ".".join([

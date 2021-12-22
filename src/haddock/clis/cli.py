@@ -16,6 +16,7 @@ from haddock.libs.liblog import (
     log_formatters,
     )
 from haddock.libs.libutil import file_exists
+from haddock.libs.libio import working_directory
 
 
 # Command line interface parser
@@ -131,20 +132,22 @@ def main(
     with open(log_file, 'a') as fout:
         fout.write(log_temporary)
 
-    if not setup_only:
-        try:
-            workflow = WorkflowManager(
-                workflow_params=params,
-                start=restart,
-                **other_params,
-                )
+    with working_directory(other_params['run_dir']):
+        if not setup_only:
+            try:
+                workflow = WorkflowManager(
+                    workflow_params=params,
+                    start=restart,
+                    **other_params,
+                    )
 
-            # Main loop of execution
-            workflow.run()
+                # Main loop of execution
+                workflow.run()
 
-        except HaddockError as err:
-            raise err
-            log.error(err)
+            except HaddockError as err:
+                raise err
+                log.error(err)
+                sys.exit(1)
 
     # Finish
     log.info(get_adieu())

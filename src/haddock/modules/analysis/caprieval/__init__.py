@@ -483,7 +483,7 @@ class HaddockModule(BaseHaddockModule):
             p for p in self.previous_io.output if p.file_type == Format.PDB
             ]
 
-        if not self.params["reference"]:
+        if not self.params["reference_fname"]:
             # No reference was given, use the lowest
             self.log(
                 "No reference was given. "
@@ -495,7 +495,7 @@ class HaddockModule(BaseHaddockModule):
             target_model = models_to_calc[0]
             reference = Path(target_model.path, target_model.file_name)
         else:
-            reference = Path(self.params["reference"])
+            reference = Path(self.params["reference_fname"])
 
         self.log(f"Using {reference} as reference structure")
 

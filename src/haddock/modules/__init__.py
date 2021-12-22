@@ -1,6 +1,7 @@
 """HADDOCK3 modules."""
 import contextlib
 import os
+import shutil
 from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
@@ -62,8 +63,15 @@ class BaseHaddockModule(ABC):
         self.previous_io = self._load_previous_io()
 
         if cns_script:
-            self.cns_folder_path = cns_script.resolve().parent
+            cns_folder_path = cns_script.resolve().parent
             self.cns_protocol_path = cns_script
+            self.cns_folder_path = shutil.copytree(
+                cns_folder_path,
+                Path(path, cns_folder_path.name),
+                )
+            self.toppar_path = Path(Path.cwd(), 'toppar')
+            if not self.toppar_path.exists():
+                shutil.copytree(global_toppar, self.toppar_path)
 
         self.params = params
 
@@ -182,46 +190,61 @@ class BaseHaddockModule(ABC):
         default_envvars = {
             "MODULE": self.cns_folder_path,
             "MODDIR": self.path,
-            "RUN": self.params["config_path"],
-            "TOPPAR": global_toppar,
+            "RUN": Path.cwd(),
+            "TOPPAR": self.toppar_path,
             }
 
         default_envvars.update(envvars)
+        print(default_envvars)
 
         return default_envvars
 
     def save_envvars(self, filename="envvars", relative=True, **envvars):
         """Save envvars needed for CNS to a file in the module's folder."""
-        common_path = os.path.commonpath(list(envvars.values()))
+        #print(envvars.values())
 
-        envvars = {
-            k: v.relative_to(common_path)
-            for k, v in envvars.items()
-            }
+        lines = (
+            "#!/bin/bash",
+            "# for debugging purposes source this file from within the ",
+            "# module folder for example, from within '00_topoaa'",
+            f"export MODULE={self.cns_folder_path.name}",
+            "export MODDIR=$PWD",
+            "export RUN=$PWD",
+            f"export TOPPAR=../toppar",
+            )
 
-        if relative:
-            rel_path = '../' * len(envvars['MODDIR'].parents)
 
-            envvars = {
-                k: Path(rel_path, v) if k != 'MODDIR' else "$PWD"
-                for k, v in envvars.items()
-                }
 
-            # SyntaxError: f-string expression part cannot include a backslash
-            lines = (
-                "export " + k + "=" + str(v)
-                for k, v in envvars.items()
-                )
+        #common_path = os.path.commonpath(list(envvars.values()))
 
-        else:
-            lines = (
-                "export " + k + "=${COMMON_PATH_FOR_HD3}/" + str(v)
-                for k, v in envvars.items()
-                )
+        #envvars = {
+        #    k: v.relative_to(common_path)
+        #    for k, v in envvars.items()
+        #    }
 
-        banshee = "#!/bin/bash" + os.linesep
-        root = "export COMMON_PATH_FOR_HD3={}".format(common_path) + os.linesep
-        fstr = banshee + root + os.linesep.join(lines)
+        #if relative:
+        #    rel_path = '../' * len(envvars['MODDIR'].parents)
+
+        #    envvars = {
+        #        k: Path(rel_path, v) if k != 'MODDIR' else "$PWD"
+        #        for k, v in envvars.items()
+        #        }
+
+        #    # SyntaxError: f-string expression part cannot include a backslash
+        #    lines = (
+        #        "export " + k + "=" + str(v)
+        #        for k, v in envvars.items()
+        #        )
+
+        #else:
+        #    lines = (
+        #        "export " + k + "=${COMMON_PATH_FOR_HD3}/" + str(v)
+        #        for k, v in envvars.items()
+        #        )
+
+        #banshee = "#!/bin/bash" + os.linesep
+        #root = "export COMMON_PATH_FOR_HD3={}".format(common_path) + os.linesep
+        fstr = os.linesep.join(lines)
         Path(self.path, filename).write_text(fstr)
         return
 

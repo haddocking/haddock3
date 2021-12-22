@@ -316,7 +316,6 @@ do (refz=z) (all)
 {* Read the distance restraints ================================ *}
 set seed $seed end
 set message=normal echo=on end
-!inline @MODULE:read_data.cns
 inline @MODULE:read_noes.cns  ! rigidbody version with only distance restraints support
 
 {* set distance restraint energy flag =========================== *}
@@ -681,7 +680,7 @@ if ($Data.flags.sym eq true) then
     noe reset end
     set message=normal echo=on end
     !read again the NOE data, needed to remove the symmetry restraints
-    @@MODULE:read_noes.cns
+    inline @@MODULE:read_noes.cns
     if ( $log_level = "verbose" ) then
         set message=normal echo=on end
     else

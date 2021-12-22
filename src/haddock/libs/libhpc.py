@@ -52,11 +52,11 @@ class HPCWorker:
         self.job_id = job_id
         self.job_status = "unknown"
 
-        self.moddir = tasks[0].modpath
+        self.moddir = Path(tasks[0].envvars['MODDIR'])
         self.module_name = self.moddir.name.split('_')[-1]
-        self.config_path = tasks[0].config_path
-        self.toppar = tasks[0].toppar
-        self.cns_folder = tasks[0].cns_folder
+        self.config_path = tasks[0].envvars['RUN']
+        self.toppar = tasks[0].envvars['TOPPAR']
+        self.cns_folder = tasks[0].envvars['MODULE']
         self.job_fname = Path(self.moddir, f'{self.module_name}_{num}.job')
         self.workload_manager = workfload_manager
         self.queue = queue

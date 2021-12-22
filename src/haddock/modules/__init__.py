@@ -226,17 +226,6 @@ class BaseHaddockModule(ABC):
         return
 
 
-@contextlib.contextmanager
-def working_directory(path):
-    """Change working directory and returns to previous on exit."""
-    prev_cwd = Path.cwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(prev_cwd)
-
-
 def get_engine(mode, params):
     """
     Create an engine to run the jobs.

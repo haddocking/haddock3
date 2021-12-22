@@ -8,8 +8,8 @@ from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_tidy import tidy_pdbfile
 
 from haddock.core.cns_paths import topology_file
+from haddock.libs.libio import working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
-from haddock.modules import working_directory
 
 
 def get_supported_residues(haddock_topology):

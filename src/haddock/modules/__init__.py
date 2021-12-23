@@ -1,15 +1,10 @@
 """HADDOCK3 modules."""
-import contextlib
-import os
-import shutil
 from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
 
 from haddock import log as log
-from haddock import toppar_path as global_toppar
 from haddock.core.defaults import MODULE_IO_FILE
-from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libontology import ModuleIO
@@ -47,7 +42,7 @@ the run prepraration phase. See, `gear.prepare_run`."""
 class BaseHaddockModule(ABC):
     """HADDOCK3 module's base class."""
 
-    def __init__(self, order, path, params, cns_script=""):
+    def __init__(self, order, path, params):
         """
         HADDOCK3 modules base class.
 
@@ -62,22 +57,6 @@ class BaseHaddockModule(ABC):
         self.path = path
         self.previous_io = self._load_previous_io()
         self.params = params
-
-        if cns_script:
-            self.cns_folder_path = cns_script.resolve().parent
-            self.cns_protocol_path = cns_script
-            self.toppar_path = global_toppar
-
-
-        try:
-            with open(self.cns_protocol_path) as input_handler:
-                self.recipe_str = input_handler.read()
-        except FileNotFoundError:
-            _msg = f"Error while opening workflow {self.cns_protocol_path}"
-            raise StepError(_msg)
-        except AttributeError:
-            # No CNS-like module
-            pass
 
     @property
     def params(self):
@@ -113,23 +92,7 @@ class BaseHaddockModule(ABC):
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
-        self.params.setdefault('relative_envvars', True)
-        self.params.setdefault('self_contained', False)
 
-        if getattr(self, 'toppar_path', False) and self.params['self_contained']:
-            self.cns_folder_path = shutil.copytree(
-                self.cns_folder_path,
-                Path(self.path, self.cns_folder_path.name),
-                )
-
-            self.toppar_path = Path(global_toppar.name)
-            if not self.toppar_path.exists():
-                shutil.copytree(global_toppar, self.toppar_path)
-
-        if getattr(self, "cns_protocol_path", False):
-            self.envvars = self.default_envvars()
-            if self.params['self_contained']:
-                self.save_envvars(**self.envvars)
         self._run()
         log.info(f'Module [{self.name}] finished.')
 
@@ -188,69 +151,6 @@ class BaseHaddockModule(ABC):
             Defaults to 'info'.
         """
         getattr(log, level)(f'[{self.name}] {msg}')
-
-    def default_envvars(self, **envvars):
-        """Return default env vars updated to `envvars` (if given)."""
-        default_envvars = {
-            "MODULE": self.cns_folder_path,
-            "MODDIR": self.path,
-            "TOPPAR": self.toppar_path,
-            }
-
-        default_envvars.update(envvars)
-        print(default_envvars)
-
-        return default_envvars
-
-    def save_envvars(self, filename="envvars", **envvars):
-        """Save envvars needed for CNS to a file in the module's folder."""
-        #print(envvars.values())
-
-        # there are so few variables, best to handle them by hand
-        lines = (
-            "#!/bin/bash",
-            "# for debugging purposes source this file from within the ",
-            "# module folder for example, from within '00_topoaa'",
-            'SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )',
-            "export MODULE=${SCRIPT_DIR}/cns",
-            "export MODDIR=${SCRIPT_DIR}",
-            "export TOPPAR=${SCRIPT_DIR}/../toppar",
-            )
-
-
-
-        #common_path = os.path.commonpath(list(envvars.values()))
-
-        #envvars = {
-        #    k: v.relative_to(common_path)
-        #    for k, v in envvars.items()
-        #    }
-
-        #if relative:
-        #    rel_path = '../' * len(envvars['MODDIR'].parents)
-
-        #    envvars = {
-        #        k: Path(rel_path, v) if k != 'MODDIR' else "$PWD"
-        #        for k, v in envvars.items()
-        #        }
-
-        #    # SyntaxError: f-string expression part cannot include a backslash
-        #    lines = (
-        #        "export " + k + "=" + str(v)
-        #        for k, v in envvars.items()
-        #        )
-
-        #else:
-        #    lines = (
-        #        "export " + k + "=${COMMON_PATH_FOR_HD3}/" + str(v)
-        #        for k, v in envvars.items()
-        #        )
-
-        #banshee = "#!/bin/bash" + os.linesep
-        #root = "export COMMON_PATH_FOR_HD3={}".format(common_path) + os.linesep
-        fstr = os.linesep.join(lines)
-        Path(self.path, filename).write_text(fstr)
-        return
 
 
 def get_engine(mode, params):

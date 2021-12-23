@@ -5,21 +5,22 @@ from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules import BaseHaddockModule, get_engine
+from haddock.modules import get_engine
+from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-class HaddockModule(BaseHaddockModule):
+class HaddockModule(BaseCNSModule):
     """HADDOCK3 module for rigid body sampling."""
 
     name = RECIPE_PATH.name
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = Path(RECIPE_PATH, "cns", "rigidbody.cns")
-        super().__init__(order, path, initial_params, cns_script)
+        super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
     def confirm_installation(cls):

@@ -3,13 +3,11 @@ import importlib
 import shutil
 import sys
 from contextlib import contextmanager
+from copy import deepcopy
 from functools import wraps
 from pathlib import Path
-from copy import deepcopy
-from pprint import pprint
 
 from haddock import contact_us, haddock3_source_path, log
-from haddock import toppar_path
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
@@ -93,43 +91,15 @@ def setup_run(workflow_path, restart_from=None):
     data_dir = create_data_dir(general_params["run_dir"])
     new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
 
-    inject_in_modules(new_mp, 'self_contained', general_params['self_contained'])
-
-    #general_params["cwd"] = general_params["run_dir"]
-
-
-    #shutil.copytree(toppar_path, Path(general_params["run_dir"], 'toppar'))
-
-    #with working_directory(general_params["run_dir"]):
-
-    #new_config = {**general_params, **new_mp}
-    #new_config_path = Path(data_dir, 'config.cfg')
-    #save_config(new_config, new_config_path)
-
-    # validates the configuration file
-
-    #validate_params(params)
-
-    # these are copied because molecules is a general parameter just to
-    # facilitate users experience, but in fact 'molecules' is a
-    # parameter from topology
-
-    # separates modules headers from general parameters
-    # this is done by comparing headers to the modules categories
-
-
-
-
-
-
-
+    inject_in_modules(
+        new_mp,
+        'self_contained',
+        general_params['self_contained'],
+        )
 
     # return the modules' parameters and other parameters that may serve
     # the workflow, the "other parameters" can be expanded in the future
     # by a function if needed
-    print(new_mp)
-    print(general_params)
-    #sys.exit()
     return new_mp, general_params
 
 
@@ -280,20 +250,6 @@ def create_data_dir(run_dir):
     return data_dir
 
 
-#def copy_molecules_to_begin_folder(
-#        molecules,
-#        begin_dir,
-#        mol='mol',
-#        sep='_',
-#        start=1,
-#        ):
-#    """Copy molecules to run directory begin folder."""
-#    for i, mol_path in enumerate(molecules, start=start):
-#        mol_id = f"{mol}{sep}{i}.pdb"
-#        begin_mol = Path(begin_dir, mol_id).resolve()
-#        shutil.copy(mol_path, begin_mol)
-
-
 @with_config_error
 def copy_molecules_to_topology(params):
     """Copy molecules to mandatory topology module."""
@@ -318,6 +274,7 @@ def copy_ambig_files(module_params, directory):
 
                 step_dict[key] = new_loc
 
+
 def copy_input_files_to_data_dir(data_dir, modules_params):
     """Copy files to data directory."""
     new_mp = deepcopy(modules_params)
@@ -341,11 +298,19 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
                 name = Path(value).name
                 shutil.copy(value, Path(pf, name))
                 new_mp[module][parameter] = Path(rel_data_dir, end_path, name)
-    pprint(new_mp)
     return new_mp
 
 
 def clean_rundir_according_to_restart(run_dir, restart_from=None):
+    """
+    Clean run directory according to restart parameter.
+
+    Parameters
+    ----------
+    restart_from : None or int
+        The module on which to restart the run. Discards all modules
+        after this one (inclusive).
+    """
     if restart_from is None:
         # prepares the run folders
         _p = Path(run_dir)
@@ -375,7 +340,7 @@ def identify_modules(params):
 
 def inject_in_modules(modules_params, key, value):
     """Inject a parameter in each module."""
-    for module, params in modules_params.items():
+    for params in modules_params.values():
         if key in params:
             raise ValueError(
                 "key {key!r} already in {module!r} parameters. "

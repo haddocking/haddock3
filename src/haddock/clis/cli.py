@@ -8,6 +8,7 @@ from pathlib import Path
 
 from haddock import log, version
 from haddock.gear.restart_run import add_restart_arg
+from haddock.libs.libio import working_directory
 from haddock.libs.liblog import (
     add_log_for_CLI,
     add_loglevel_arg,
@@ -16,7 +17,6 @@ from haddock.libs.liblog import (
     log_formatters,
     )
 from haddock.libs.libutil import file_exists
-from haddock.libs.libio import working_directory
 
 
 # Command line interface parser

@@ -14,5 +14,3 @@ def working_directory(path):
         yield
     finally:
         os.chdir(prev_cwd)
-
-

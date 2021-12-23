@@ -12,7 +12,8 @@ from haddock.libs.libcns import (
 from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules import BaseHaddockModule, get_engine
+from haddock.modules import get_engine
+from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -53,14 +54,14 @@ def generate_topology(input_pdb, step_path, recipe_str, defaults, mol_params,
     return output_inp_filename
 
 
-class HaddockModule(BaseHaddockModule):
+class HaddockModule(BaseCNSModule):
     """HADDOCK3 module to create CNS all-atom topologies."""
 
     name = RECIPE_PATH.name
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
-        super().__init__(order, path, initial_params, cns_script)
+        super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
     def confirm_installation(cls):

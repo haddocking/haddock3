@@ -22,8 +22,7 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
-        cns_script = False
-        super().__init__(order, path, initial_params, cns_script)
+        super().__init__(order, path, initial_params)
 
     @classmethod
     def confirm_installation(cls):

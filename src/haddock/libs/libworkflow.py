@@ -1,6 +1,5 @@
 """HADDOCK3 workflow logic."""
 import importlib
-import shutil
 import sys
 from pathlib import Path
 
@@ -37,7 +36,6 @@ class Workflow:
             self,
             content,
             ncores=None,
-            #run_dir=None,
             cns_exec=None,
             config_path=None,
             mode='local',
@@ -45,7 +43,6 @@ class Workflow:
             concat=HPCScheduler_CONCAT_DEFAULT,
             queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
             relative_envvars=True,
-            #self_contained=False,
             **others):
         # Create the list of steps contained in this workflow
         self.steps = []
@@ -62,13 +59,11 @@ class Workflow:
             params.setdefault('concat', concat)
             params.setdefault('queue_limit', queue_limit)
             params.setdefault('relative_envvars', relative_envvars)
-            #params.setdefault('self_contained', self_contained)
 
             try:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
-                    #run_dir=run_dir or Path.cwd(),
                     **params,
                     )
                 self.steps.append(_)
@@ -85,7 +80,6 @@ class Step:
             self,
             module_name,
             order=None,
-            #run_dir=None,
             **config_params,
             ):
         self.config = config_params
@@ -97,11 +91,6 @@ class Step:
 
     def execute(self):
         """Execute simulation step."""
-        #if self.working_path.exists():
-        #    log.warning(f"Found previous run ({self.working_path}), removed")
-        #    shutil.rmtree(self.working_path)
-        # this should run in the CWD
-        # and the folder should have been removed
         self.working_path.resolve().mkdir(parents=False, exist_ok=False)
 
         # Import the module given by the mode or default

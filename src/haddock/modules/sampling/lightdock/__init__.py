@@ -5,9 +5,9 @@ from pathlib import Path
 
 from haddock import log
 from haddock.libs import libpdb
+from haddock.libs.libio import working_directory
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libutil import check_subprocess
-from haddock.libs.libio import working_directory
 from haddock.modules import BaseHaddockModule
 
 

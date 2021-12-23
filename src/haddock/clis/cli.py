@@ -92,9 +92,9 @@ def main(
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # anti-pattern to speed up CLI initiation
-    from haddock.core.exceptions import HaddockError
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
+    from haddock.libs.libutil import log_error_and_exit
     from haddock.libs.libworkflow import WorkflowManager
 
     # the io.StringIO handler is a trick to save the log while run_dir
@@ -113,12 +113,8 @@ def main(
     # Special case only using print instead of logging
     log.info(get_initial_greeting())
 
-    try:
+    with log_error_and_exit():
         params, other_params = setup_run(recipe, restart_from=restart)
-
-    except HaddockError as err:
-        log.error(err)
-        raise err
 
     # here we the io.StringIO handler log information, and reset the log
     # handlers to fit the CLI and HADDOCK3 specifications.
@@ -137,21 +133,19 @@ def main(
         log.info(get_adieu())
         return
 
-    with working_directory(other_params['run_dir']):
-        try:
-            workflow = WorkflowManager(
-                workflow_params=params,
-                start=restart,
-                **other_params,
-                )
+    with (
+            working_directory(other_params['run_dir']),
+            log_error_and_exit(),
+            ):
 
-            # Main loop of execution
-            workflow.run()
+        workflow = WorkflowManager(
+            workflow_params=params,
+            start=restart,
+            **other_params,
+            )
 
-        except HaddockError as err:
-            raise err
-            log.error(err)
-            sys.exit(1)
+        # Main loop of execution
+        workflow.run()
 
     # Finish
     log.info(get_adieu())

@@ -83,6 +83,11 @@ class BaseHaddockModule(ABC):
                     )
                 raise TypeError(_msg) from err
 
+        for param, value in self._params.items():
+            if param.endswith('_fname'):
+                if not Path(value).exists():
+                    raise FileNotFoundError(f'File not found: {str(value)!r}')
+
     def run(self, **params):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')

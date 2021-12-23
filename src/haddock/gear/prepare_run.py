@@ -34,7 +34,6 @@ def config_key_error():
         yield
     except KeyError as err:
         msg = f"Expected {err.args[0]!r} parameter in configuration file."
-        log.debug(err)
         raise ConfigurationError(msg) from err
 
 

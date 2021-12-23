@@ -44,10 +44,6 @@ restraints dihedral scale $Data.dihedrals_hot end
 
 evaluate ($reassign = TRUE)
 
-if ($Data.scaling eq TRUE) then
-    inline @MODULE:set_noe_scale.cns
-end if
-
 noe
     scale dist  $Data.unamb_hot
     scale ambi  $Data.amb_hot

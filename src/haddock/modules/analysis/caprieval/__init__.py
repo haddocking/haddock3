@@ -10,13 +10,79 @@ from fccpy import read_pdb
 from fccpy.contacts import get_intermolecular_contacts
 from pdbtools import pdb_segxchain
 
-from haddock import log
-from haddock.libs.libontology import Format, ModuleIO
+from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
+
+PROT_RES = [
+    "ALA",
+    "ARG",
+    "ASN",
+    "ASP",
+    "CYS",
+    "GLN",
+    "GLU",
+    "GLY",
+    "HIS",
+    "ILE",
+    "LEU",
+    "LYS",
+    "MET",
+    "PHE",
+    "PRO",
+    "SER",
+    "THR",
+    "TRP",
+    "TYR",
+    "VAL"]
+
+DNA_RES = ["DA", "DC", "DT", "DG"]
+# Backbone
+PROT_ATOMS = ["C", "N", "CA", "O"]
+# Bases
+DNA_ATOMS = [
+    "C5",
+    "N9",
+    "N2",
+    "C8",
+    "O2",
+    "N4",
+    "N7",
+    "C7",
+    "N1",
+    "N6",
+    "C2",
+    "O4",
+    "C6",
+    "N3",
+    "C4",
+    "O6"]
+
+
+def get_atoms(pdb_list):
+    """Identify what is the molecule type of each PDB."""
+    atom_l = []
+    for pdb in pdb_list:
+        if isinstance(pdb, PDBFile):
+            pdb = pdb.full_name
+        with open(pdb) as fh:
+            for line in fh.readlines():
+                if line.startswith("ATOM"):
+                    resname = line[17:20].strip()
+                    atom_name = line[12:16].strip()
+                    element = line[76:78].strip()
+                    if resname in PROT_RES and atom_name in PROT_ATOMS:
+                        atom_l.append(atom_name)
+                    elif resname in DNA_RES and atom_name in DNA_ATOMS:
+                        atom_l.append(atom_name)
+                    elif (resname not in PROT_RES and resname not in DNA_RES):
+                        # its neither DNA nor protein, use the heavy atoms
+                        if element != "H":
+                            atom_l.append(atom_name)
+    return list(set(atom_l))
 
 
 def add_chain_from_segid(pdb_path):
@@ -89,8 +155,7 @@ def write_coords(output_name, coor_list):
             dummy_line = (
                 f"ATOM   {atom_num}  H   DUM X {resnum}   "
                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep
-                )
+                "        H  " + os.linesep)
             fh.write(dummy_line)
 
 
@@ -104,7 +169,24 @@ def load_contacts(pdb_f, cutoff):
     return set(con_list)
 
 
-def load_coords(pdb_f, filter_resdic=None, atoms=None, ignore_missing=True):
+def load_seqnum(pdb_f):
+    """Retrieve a dictionary containing the sequence and the numbering."""
+    seqnum_dic = {}
+    with open(pdb_f) as fh:
+        for line in fh.readlines():
+            if line.startswith("ATOM"):
+                res_name = line[17:20].strip()
+                res_num = int(line[22:26])
+                res = f"{res_name}_{res_num}"
+                chain = line[21]
+                if chain not in seqnum_dic:
+                    seqnum_dic[chain] = []
+                if res not in seqnum_dic[chain]:
+                    seqnum_dic[chain].append(res)
+    return seqnum_dic
+
+
+def load_coords(pdb_f, atoms, filter_resdic=None, ignore_missing=True):
     """Load coordinates from PDB."""
     # ignore_missing = will use only atoms that are present in filter_resdic
     C = []
@@ -124,9 +206,9 @@ def load_coords(pdb_f, filter_resdic=None, atoms=None, ignore_missing=True):
                     chain_dic[chain] = []
 
                 atom_name = line[12:16].strip()
-                if atoms:
-                    if atom_name not in atoms:
-                        continue
+
+                if atom_name not in atoms:
+                    continue
 
                 if filter_resdic and ignore_missing:
                     if chain in filter_resdic:
@@ -187,7 +269,7 @@ def identify_interface(pdb_f, cutoff):
 class CAPRI:
     """CAPRI class."""
 
-    def __init__(self, reference, model_list, atoms, ignore_missing):
+    def __init__(self, reference, model_list, atoms, ignore_missing, logger):
         self.reference = reference
         self.model_list = []
         self.irmsd_dic = {}
@@ -197,6 +279,7 @@ class CAPRI:
         self.atoms = atoms
         self.ignore_missing = ignore_missing
         self.score_dic = {}
+        self.log = logger
 
         for struct in model_list:
             pdb_f = Path(struct.path, struct.file_name)
@@ -212,8 +295,8 @@ class CAPRI:
         # Load interface coordinates
         _Q, _ = load_coords(
             self.reference,
+            self.atoms,
             filter_resdic=ref_interface_resdic,
-            atoms=self.atoms,
             ignore_missing=self.ignore_missing,
             )
         # Move to centroids
@@ -227,17 +310,16 @@ class CAPRI:
 
             P, _ = load_coords(
                 model,
+                self.atoms,
                 filter_resdic=ref_interface_resdic,
-                atoms=self.atoms,
                 ignore_missing=self.ignore_missing,
                 )
 
             if P.shape != Q.shape:
-                log.warning(
-                    f"[{RECIPE_PATH}] Cannot align these models,"
+                self.log(
+                    "WARNING: Cannot align these models,"
                     " the number of atoms is in the interface"
-                    " is different."
-                    )
+                    " is different.")
                 i_rmsd = float("nan")
 
             else:
@@ -245,8 +327,8 @@ class CAPRI:
                 U = kabsch(P, Q)
                 P = np.dot(P, U)
                 i_rmsd = calc_rmsd(P, Q)
-                # write_coords('ref.pdb', P)
-                # write_coords('model.pdb', Q)
+                # write_coords('model.pdb', P)
+                # write_coords('ref.pdb', Q)
 
             self.irmsd_dic[model] = i_rmsd
 
@@ -259,8 +341,8 @@ class CAPRI:
         # Get reference coordinates
         _Q, chain_ranges = load_coords(
             self.reference,
+            self.atoms,
             filter_resdic=ref_resdic,
-            atoms=self.atoms,
             ignore_missing=self.ignore_missing,
             )
 
@@ -277,8 +359,8 @@ class CAPRI:
 
             P_all, _ = load_coords(
                 model,
+                self.atoms,
                 filter_resdic=ref_resdic,
-                atoms=self.atoms,
                 ignore_missing=self.ignore_missing,
                 )
 
@@ -333,15 +415,15 @@ class CAPRI:
         # Load interface coordinates
         _Q, chain_ranges = load_coords(
             self.reference,
+            self.atoms,
             filter_resdic=ref_resdic,
-            atoms=self.atoms,
             ignore_missing=self.ignore_missing,
             )
 
         Q_int, _ = load_coords(
             self.reference,
+            self.atoms,
             filter_resdic=ref_interface_resdic,
-            atoms=self.atoms,
             ignore_missing=self.ignore_missing,
             )
         # Move to centroids
@@ -354,15 +436,15 @@ class CAPRI:
 
             P_all, _ = load_coords(
                 model,
+                self.atoms,
                 filter_resdic=ref_resdic,
-                atoms=self.atoms,
                 ignore_missing=self.ignore_missing,
                 )
 
             P_int, _ = load_coords(
                 model,
+                self.atoms,
                 filter_resdic=ref_interface_resdic,
-                atoms=self.atoms,
                 ignore_missing=self.ignore_missing,
                 )
 
@@ -441,8 +523,7 @@ class CAPRI:
         max_model_space = max(len(str(_d["model"])) for _d in output_l) + 2
         hmodel = "model".center(max_model_space, " ")
         header = hmodel + "".join(
-            _.rjust(10, " ") for _ in list(output_l[0].keys())[1:]
-            )
+            _.rjust(10, " ") for _ in list(output_l[0].keys())[1:])
 
         with open(output_f, "w") as out_fh:
             out_fh.write(header + os.linesep)
@@ -483,27 +564,43 @@ class HaddockModule(BaseHaddockModule):
             p for p in self.previous_io.output if p.file_type == Format.PDB
             ]
 
-        if not self.params["reference_fname"]:
-            # No reference was given, use the lowest
+        #  by default modes_to_calc should have been sorted by the module
+        #  that produced it
+        best_model = Path(models_to_calc[0].path, models_to_calc[0].file_name)
+
+        if self.params["reference_fname"]:
+            reference = Path(self.params["reference_fname"])
+            ref_seqnum = load_seqnum(reference)
+            target_seqnum = load_seqnum(best_model)
+
+            if ref_seqnum != target_seqnum:
+                self.log(
+                    f"WARNING: {reference.name} has different"
+                    f" residues/numbering/chains then {best_model.name}"
+                    " we cannot proceed with evaluation.")
+                self.log(
+                    "WARNING: using fallback strategy and"
+                    " calculating the metrics considering"
+                    " the lowest scored model as reference")
+                reference = best_model
+            else:
+                self.log(f"Using {reference.name} as reference structure")
+
+        else:
             self.log(
                 "No reference was given. "
-                "Using best ranking structure from previous step"
-                )
+                "Using best ranking structure from previous step")
+            reference = best_model
 
-            #  by default modes_to_calc should have been sorted by the module
-            #  that produced it
-            target_model = models_to_calc[0]
-            reference = Path(target_model.path, target_model.file_name)
-        else:
-            reference = Path(self.params["reference_fname"])
-
-        self.log(f"Using {reference} as reference structure")
+        # detect the molecule types and use the appropriate atoms
+        target_atoms = get_atoms(models_to_calc)
 
         capri = CAPRI(
             reference,
             models_to_calc,
-            atoms=self.params["atoms"],
+            atoms=target_atoms,
             ignore_missing=self.params["ignore_missing"],
+            logger=self.log,
             )
 
         if self.params["fnat"]:

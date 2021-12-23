@@ -13,7 +13,10 @@ from haddock import toppar_path
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
-from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.gear.parameters import (
+    config_mandatory_general_parameters,
+    non_mandatory_general_parameters_defaults,
+    )
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.libs.libutil import (
     make_list_if_string,
@@ -76,6 +79,7 @@ def setup_run(workflow_path, restart_from=None):
         A dictionary with the general run parameters.
     """
     params = read_config(workflow_path)
+    params = {**non_mandatory_general_parameters_defaults, **params}
     check_mandatory_argments_are_present(params)
     clean_rundir_according_to_restart(params['run_dir'], restart_from)
     copy_molecules_to_topology(params)
@@ -88,6 +92,8 @@ def setup_run(workflow_path, restart_from=None):
 
     data_dir = create_data_dir(general_params["run_dir"])
     new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
+
+    inject_in_modules(new_mp, 'self_contained', general_params['self_contained'])
 
     #general_params["cwd"] = general_params["run_dir"]
 
@@ -121,6 +127,7 @@ def setup_run(workflow_path, restart_from=None):
     # return the modules' parameters and other parameters that may serve
     # the workflow, the "other parameters" can be expanded in the future
     # by a function if needed
+    print(new_mp)
     print(general_params)
     #sys.exit()
     return new_mp, general_params
@@ -324,9 +331,8 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         shutil.copy(molecule, Path(end_path, name))
         new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
 
-
-    #other_modules = list(modules_params.items())[1:]  # don't use topology
-    for i, (module, params) in enumerate(modules_params.items(), start=1):
+    # topology always starts with 0
+    for i, (module, params) in enumerate(modules_params.items(), start=0):
         end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
         pf = Path(data_dir, end_path)
         pf.mkdir(exist_ok=True)
@@ -365,3 +371,14 @@ def identify_modules(params):
         if get_module_name(k) in modules_category
         ]
     return modules_keys
+
+
+def inject_in_modules(modules_params, key, value):
+    """Inject a parameter in each module."""
+    for module, params in modules_params.items():
+        if key in params:
+            raise ValueError(
+                "key {key!r} already in {module!r} parameters. "
+                "Can't inject."
+                )
+        params[key] = value

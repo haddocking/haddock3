@@ -61,19 +61,13 @@ class BaseHaddockModule(ABC):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
+        self.params = params
 
         if cns_script:
-            cns_folder_path = cns_script.resolve().parent
+            self.cns_folder_path = cns_script.resolve().parent
             self.cns_protocol_path = cns_script
-            self.cns_folder_path = shutil.copytree(
-                cns_folder_path,
-                Path(path, cns_folder_path.name),
-                )
-            self.toppar_path = Path(Path.cwd(), 'toppar')
-            if not self.toppar_path.exists():
-                shutil.copytree(global_toppar, self.toppar_path)
+            self.toppar_path = global_toppar
 
-        self.params = params
 
         try:
             with open(self.cns_protocol_path) as input_handler:
@@ -120,12 +114,22 @@ class BaseHaddockModule(ABC):
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
         self.params.setdefault('relative_envvars', True)
+        self.params.setdefault('self_contained', False)
+
+        if getattr(self, 'toppar_path', False) and self.params['self_contained']:
+            self.cns_folder_path = shutil.copytree(
+                self.cns_folder_path,
+                Path(self.path, self.cns_folder_path.name),
+                )
+
+            self.toppar_path = Path(global_toppar.name)
+            if not self.toppar_path.exists():
+                shutil.copytree(global_toppar, self.toppar_path)
+
         if getattr(self, "cns_protocol_path", False):
             self.envvars = self.default_envvars()
-            self.save_envvars(
-                relative=self.params['relative_envvars'],
-                **self.envvars,
-                )
+            if self.params['self_contained']:
+                self.save_envvars(**self.envvars)
         self._run()
         log.info(f'Module [{self.name}] finished.')
 
@@ -190,7 +194,6 @@ class BaseHaddockModule(ABC):
         default_envvars = {
             "MODULE": self.cns_folder_path,
             "MODDIR": self.path,
-            "RUN": Path.cwd(),
             "TOPPAR": self.toppar_path,
             }
 
@@ -199,18 +202,19 @@ class BaseHaddockModule(ABC):
 
         return default_envvars
 
-    def save_envvars(self, filename="envvars", relative=True, **envvars):
+    def save_envvars(self, filename="envvars", **envvars):
         """Save envvars needed for CNS to a file in the module's folder."""
         #print(envvars.values())
 
+        # there are so few variables, best to handle them by hand
         lines = (
             "#!/bin/bash",
             "# for debugging purposes source this file from within the ",
             "# module folder for example, from within '00_topoaa'",
-            f"export MODULE={self.cns_folder_path.name}",
-            "export MODDIR=$PWD",
-            "export RUN=$PWD",
-            f"export TOPPAR=../toppar",
+            'SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )',
+            "export MODULE=${SCRIPT_DIR}/cns",
+            "export MODDIR=${SCRIPT_DIR}",
+            "export TOPPAR=${SCRIPT_DIR}/../toppar",
             )
 
 

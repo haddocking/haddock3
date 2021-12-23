@@ -45,6 +45,7 @@ class Workflow:
             concat=HPCScheduler_CONCAT_DEFAULT,
             queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
             relative_envvars=True,
+            #self_contained=False,
             **others):
         # Create the list of steps contained in this workflow
         self.steps = []
@@ -61,6 +62,7 @@ class Workflow:
             params.setdefault('concat', concat)
             params.setdefault('queue_limit', queue_limit)
             params.setdefault('relative_envvars', relative_envvars)
+            #params.setdefault('self_contained', self_contained)
 
             try:
                 _ = Step(

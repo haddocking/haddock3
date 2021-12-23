@@ -303,6 +303,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
                 name = Path(value).name
                 shutil.copy(value, Path(pf, name))
                 new_mp[module][parameter] = Path(rel_data_dir, end_path, name)
+
     return new_mp
 
 

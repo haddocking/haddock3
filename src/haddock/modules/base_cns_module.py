@@ -37,8 +37,6 @@ class BaseCNSModule(BaseHaddockModule):
         if params['self_contained']:
             self.make_self_contained()
 
-        print(self.cns_folder_path)
-        print(self.cns_protocol_path)
         super().run(**params)
 
     def default_envvars(self):

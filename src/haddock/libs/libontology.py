@@ -10,6 +10,9 @@ import jsonpickle
 from haddock.core.defaults import MODULE_IO_FILE
 
 
+NAN = float('nan')
+
+
 class Format(Enum):
     """Input and Output possible formats."""
 
@@ -46,7 +49,7 @@ class Persistent:
 class PDBFile(Persistent):
     """Represent a PDB file."""
 
-    def __init__(self, file_name, topology=None, path='.', score=float('nan')):
+    def __init__(self, file_name, topology=None, path='.', score=NAN):
         super().__init__(file_name, Format.PDB, path)
         self.topology = topology
         self.score = score
@@ -79,14 +82,15 @@ class ModuleIO:
             else:
                 self.output.append(persistent)
 
-    def save(self, path, filename=MODULE_IO_FILE):
+    def save(self, path=".", filename=MODULE_IO_FILE):
         """Save Input/Output needed files by this module to disk."""
-        with open(path / filename, "w") as output_handler:
+        fpath = Path(path, filename)
+        with open(fpath, "w") as output_handler:
             to_save = {"input": self.input,
                        "output": self.output}
             jsonpickle.set_encoder_options('json', sort_keys=True, indent=4)
             output_handler.write(jsonpickle.encode(to_save))
-        return path / filename
+        return fpath
 
     def load(self, filename):
         """Load the content of a given IO filename."""

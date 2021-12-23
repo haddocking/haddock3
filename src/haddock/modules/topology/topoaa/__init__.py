@@ -20,36 +20,39 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-def generate_topology(input_pdb, step_path, recipe_str, defaults, mol_params,
-                      protonation=None):
+def generate_topology(
+        input_pdb,
+        recipe_str,
+        defaults,
+        mol_params,
+        protonation=None):
     """Generate a HADDOCK topology file from input_pdb."""
-    # this is a special cases that only applies to topolyaa.
-    general_param = load_workflow_params(defaults)
-
-    input_mols_params = load_workflow_params(mol_params, param_header='')
-
+    # generate params headers
+    general_param = load_workflow_params(**defaults)
+    input_mols_params = load_workflow_params(param_header='', **mol_params)
     general_param = general_param + input_mols_params
 
+    # generate default headers
     link, topology_protonation, \
         trans_vec, tensor, scatter, \
         axis, water_box = generate_default_header(protonation)
 
-    abs_path = input_pdb.resolve().parent.absolute()
-    output_pdb_filename = abs_path / (f'{input_pdb.stem}_'
-                                      f'haddock{input_pdb.suffix}')
-    output_psf_filename = abs_path / (f'{input_pdb.stem}_'
-                                      f'haddock.{Format.TOPOLOGY}')
-    output = prepare_output(output_psf_filename, output_pdb_filename)
+    output = prepare_output(
+        output_pdb_filename=f'{input_pdb.stem}_haddock{input_pdb.suffix}',
+        output_psf_filename=f'{input_pdb.stem}_haddock.{Format.TOPOLOGY}',
+        )
 
-    input_str = prepare_single_input(str(input_pdb.resolve().absolute()))
+    print('1', input_pdb)
+    input_str = prepare_single_input(str(input_pdb))
+    print(input_str)
 
     inp = general_param + input_str + output + link \
         + topology_protonation + trans_vec + tensor + scatter + axis \
         + water_box + recipe_str
 
-    output_inp_filename = abs_path / f'{input_pdb.stem}.{Format.CNS_INPUT}'
-    with open(output_inp_filename, 'w') as output_handler:
-        output_handler.write(inp)
+    output_inp_filename = Path(f'{input_pdb.stem}.{Format.CNS_INPUT}')
+    output_inp_filename.write_text(inp)
+    print('saved: ', output_inp_filename)
 
     return output_inp_filename
 
@@ -71,6 +74,7 @@ class HaddockModule(BaseCNSModule):
     def _run(self):
         """Execute module."""
         molecules = make_molecules(self.params.pop('molecules'))
+        print('cwd, ', Path.cwd())
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
@@ -87,23 +91,34 @@ class HaddockModule(BaseCNSModule):
             self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
             # Copy the molecule to the step folder
-            step_molecule_path = Path(self.path, molecule.file_name.name)
-            shutil.copyfile(molecule.file_name, step_molecule_path)
+            #step_molecule_path = Path(molecule.file_name.name)
+            #shutil.copyfile(Path('..', molecule.file_name), step_molecule_path)
 
             # Split models
             self.log(
-                f"Split models if needed for {step_molecule_path}",
+                f"Split models if needed for {molecule.with_parent}",
                 level='debug',
                 )
             # these come already sorted
-            splited_models = libpdb.split_ensemble(step_molecule_path)
+            splited_models = libpdb.split_ensemble(
+                molecule.with_parent,
+                dest=Path.cwd(),
+                )
+            print('SPLITTED models************+')
+            print(splited_models)
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_keys.pop()]
 
             # Sanitize the different PDB files
-            for model in splited_models:
+            relative_paths_models = (
+                Path(_p.name) if _p.is_absolute() else _p
+                for _p in splited_models
+                )
+
+            for model in relative_paths_models:
+                print('MODEL ', model)
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 
@@ -120,7 +135,6 @@ class HaddockModule(BaseCNSModule):
                 # Prepare generation of topologies jobs
                 topology_filename = generate_topology(
                     model,
-                    self.path,
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
@@ -130,10 +144,7 @@ class HaddockModule(BaseCNSModule):
                     )
 
                 # Add new job to the pool
-                output_filename = Path(
-                    model.resolve().parent,
-                    f"{model.stem}.{Format.CNS_OUTPUT}",
-                    )
+                output_filename = Path(f"{model.stem}.{Format.CNS_OUTPUT}")
 
                 job = CNSJob(
                     topology_filename,
@@ -142,6 +153,7 @@ class HaddockModule(BaseCNSModule):
                     )
 
                 jobs.append(job)
+                print(jobs)
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")
@@ -158,24 +170,15 @@ class HaddockModule(BaseCNSModule):
             expected[i] = {}
             for j, model in enumerate(models_dic[i]):
                 model_name = model.stem
-                processed_pdb = Path(
-                    self.path,
-                    f"{model_name}_haddock.{Format.PDB}"
-                    )
+                processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
                 if not processed_pdb.is_file():
                     not_found.append(processed_pdb.name)
-                processed_topology = Path(
-                    self.path,
-                    f"{model_name}_haddock.{Format.TOPOLOGY}"
-                    )
+                processed_topology = Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
                 if not processed_topology.is_file():
                     not_found.append(processed_topology.name)
 
-                topology = TopologyFile(processed_topology,
-                                        path=self.path)
-                pdb = PDBFile(processed_pdb,
-                              topology,
-                              path=self.path)
+                topology = TopologyFile(processed_topology, path=".")
+                pdb = PDBFile(processed_pdb, topology, path=".")
                 expected[i][j] = pdb
 
         if not_found:
@@ -188,4 +191,4 @@ class HaddockModule(BaseCNSModule):
         io = ModuleIO()
         for i in expected:
             io.add(expected[i], "o")
-        io.save(self.path)
+        io.save()

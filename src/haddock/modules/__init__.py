@@ -6,6 +6,7 @@ from pathlib import Path
 from haddock import log as log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.config_reader import read_config
+from haddock.libs.libio import working_directory
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
@@ -98,7 +99,9 @@ class BaseHaddockModule(ABC):
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
 
-        self._run()
+        with working_directory(self.path):
+            self._run()
+
         log.info(f'Module [{self.name}] finished.')
 
     @classmethod

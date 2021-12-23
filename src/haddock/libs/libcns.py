@@ -1,5 +1,6 @@
 """CNS scripts util functions."""
 import itertools
+from functools import partial
 from os import linesep
 from pathlib import Path
 
@@ -71,8 +72,8 @@ def filter_empty_vars(v):
 
 
 def load_workflow_params(
-        params,
         param_header=f"{linesep}! Parameters{linesep}",
+        **params,
         ):
     """
     Write the values at the header section.
@@ -213,16 +214,14 @@ def load_tensor_tbl(tensor_f):
     return tensor_str
 
 
-def prepare_output(output_psf_filename, output_pdb_filename):
-    """Output of the CNS file."""
-    output = f"{linesep}! Output structure{linesep}"
-    output += (
-        "eval ($output_psf_filename=" f' "{output_psf_filename}"){linesep}'
-        )
-    output += (
-        "eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
-        )
-    return output
+#def prepare_output(output_psf_filename, output_pdb_filename):
+#    """Output of the CNS file."""
+#    output = (
+#        f"{linesep}! Output structure{linesep}"
+#        f'eval ($output_psf_filename="{output_psf_filename}"){linesep}'
+#        f'eval ($output_pdb_filename="{output_pdb_filename}"){linesep}'
+#        )
+#    return output
 
 
 def load_protonation_state(protononation):
@@ -269,15 +268,18 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
+        psf = str(Path('..', psf))
         input_str += f"structure{linesep}"
         input_str += f"  @@{psf}{linesep}"
         input_str += f"end{linesep}"
 
     ncount = 1
     for pdb in pdb_input_list:
+        pdb = str(Path('..', pdb))
         input_str += f"coor @@{pdb}{linesep}"
         input_str += (
-            f"eval ($input_pdb_filename_{ncount}=" f' "{pdb}"){linesep}'
+            f"eval ($input_pdb_filename_{ncount}="
+            f' "{pdb}"){linesep}'
             )
         ncount += 1
 
@@ -315,8 +317,12 @@ def prepare_single_input(pdb_input, psf_input=None):
             for psf in psf_input:
                 input_str += f"  @@{psf}{linesep}"
             input_str += f"end{linesep}"
+
     # $file variable is still used by some CNS recipes, need refactoring!
-    input_str += f'eval ($file="{pdb_input}"){linesep}'
+    print(pdb_input)
+    line__ = write_eval_line('file', pdb_input)
+    print(line__, '*********************')
+    input_str += line__
     segids, chains = libpdb.identify_chainseg(pdb_input)
     chainsegs = sorted(list(set(segids) | set(chains)))
 
@@ -328,7 +334,7 @@ def prepare_single_input(pdb_input, psf_input=None):
         input_str += f'eval ($prot_segid_{i+1}="{segid}"){linesep}'
 
     seed = RND.randint(100, 99999)
-    input_str += f"eval ($seed={seed}){linesep}"
+    input_str += write_eval_line('seed', seed)
 
     return input_str
 
@@ -392,7 +398,7 @@ def prepare_cns_input(
     else:
         ambig_str = ""
 
-    output_pdb_filename = step_path / f"{identifier}_{model_number}.pdb"
+    output_pdb_filename = f"{identifier}_{model_number}.pdb"
     output = f"{linesep}! Output structure{linesep}"
     output += (
         f"eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
@@ -447,3 +453,9 @@ def prepare_expected_pdb(model_obj, model_nb, path, identifier):
     else:
         pdb.topology = model_obj.topology
     return pdb
+
+
+prepare_output = partial(
+    load_workflow_params,
+    param_header=f"{linesep}! Output structure{linesep}",
+    )

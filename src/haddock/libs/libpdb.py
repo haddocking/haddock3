@@ -37,11 +37,20 @@ _to_rename = {
 _to_keep = get_supported_residues(topology_file)
 
 
-def split_ensemble(pdb_file_path):
-    """Split a multimodel PDB file into different structures."""
-    abs_path = Path(pdb_file_path).resolve().parent.absolute()
+def split_ensemble(pdb_file_path, dest=None):
+    """
+    Split a multimodel PDB file into different structures.
+
+    Parameters
+    ----------
+    dest : str or pathlib.Path
+        Destination folder.
+    """
+    dest = Path.cwd()
+    print('SPLIT ENSEMBLE', pdb_file_path)
+    assert pdb_file_path.is_file()
     with open(pdb_file_path) as input_handler:
-        with working_directory(abs_path):
+        with working_directory(dest):
             split_model(input_handler)
 
     return sort_numbered_paths(*get_new_models(pdb_file_path))
@@ -156,7 +165,7 @@ def get_new_models(pdb_file_path):
     return new_models
 
 
-def get_pdb_file_suffix_variations(pdb_file_path, sep="_"):
+def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
     """
     List suffix variations of a PDB file.
 
@@ -165,9 +174,11 @@ def get_pdb_file_suffix_variations(pdb_file_path, sep="_"):
 
     Parameters
     ----------
-    pdb_file_path : str or Path
-        The path to the source PDB file. The source PDB file does not
-        need to exist and it can be just a reference name.
+    file_name : str or Path
+        The name of the file with extension.
+
+    path : str or pathlib.Path
+        Path pointing to a directory where to perform the search.
 
     sep : str
         The separation between the file base name and the suffix.
@@ -179,6 +190,10 @@ def get_pdb_file_suffix_variations(pdb_file_path, sep="_"):
         List of Paths with the identified PBD files.
         If no files are found return an empty list.
     """
-    basename = Path(pdb_file_path)
-    abs_path = basename.resolve().parent
-    return list(abs_path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
+    folder = path or Path.cwd()
+
+    if not folder.is_dir():
+        raise ValueError(f'{str(folder)!r} should be a directory.')
+
+    basename = Path(file_name)
+    return list(folder.glob(f"{basename.stem}{sep}*{basename.suffix}"))

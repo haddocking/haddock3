@@ -259,25 +259,6 @@ def copy_molecules_to_topology(params):
     params['topoaa']['molecules'] = list(map(Path, params['molecules']))
 
 
-@with_config_error
-def copy_ambig_files(module_params, directory):
-    """Copy ambiguity table files to run directory and updates new path."""
-    for step, step_dict in module_params.items():
-        for key, value in step_dict.items():
-            if key == 'ambig':
-                ambig_f = Path(value).resolve()
-                new_loc = Path(directory, step, 'ambig.tbl')
-                new_loc.parent.mkdir(exist_ok=True)
-
-                try:
-                    shutil.copy(ambig_f, new_loc)
-                except FileNotFoundError:
-                    _msg = f'Stage: {step} ambig file {ambig_f.name} not found'
-                    raise ConfigurationError(_msg)
-
-                step_dict[key] = new_loc
-
-
 def copy_input_files_to_data_dir(data_dir, modules_params):
     """Copy files to data directory."""
     new_mp = deepcopy(modules_params)

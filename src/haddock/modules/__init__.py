@@ -31,7 +31,7 @@ general_parameters_affecting_modules = {
     'ncores',
     'queue',
     'queue_limit',
-    'relative_envvars',
+    'self_contained',
     }
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"

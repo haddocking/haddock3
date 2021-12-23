@@ -132,22 +132,26 @@ def main(
     with open(log_file, 'a') as fout:
         fout.write(log_temporary)
 
+    if setup_only:
+        log.info('We have setup the run only.')
+        log.info(get_adieu())
+        return
+
     with working_directory(other_params['run_dir']):
-        if not setup_only:
-            try:
-                workflow = WorkflowManager(
-                    workflow_params=params,
-                    start=restart,
-                    **other_params,
-                    )
+        try:
+            workflow = WorkflowManager(
+                workflow_params=params,
+                start=restart,
+                **other_params,
+                )
 
-                # Main loop of execution
-                workflow.run()
+            # Main loop of execution
+            workflow.run()
 
-            except HaddockError as err:
-                raise err
-                log.error(err)
-                sys.exit(1)
+        except HaddockError as err:
+            raise err
+            log.error(err)
+            sys.exit(1)
 
     # Finish
     log.info(get_adieu())

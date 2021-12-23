@@ -76,30 +76,33 @@ def setup_run(workflow_path, restart_from=None):
         A dictionary with the parameters for the haddock3 modules.
         A dictionary with the general run parameters.
     """
+    # read config
     params = read_config(workflow_path)
+
+    # update default non-mandatory parameters with user params
     params = {**non_mandatory_general_parameters_defaults, **params}
+
     check_mandatory_argments_are_present(params)
+
     clean_rundir_according_to_restart(params['run_dir'], restart_from)
+
+    # copy molecules parameter to topology module
     copy_molecules_to_topology(params)
-    _modules_keys = identify_modules(params)
+
     # separate general from modules parameters
+    _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+
+    # validations
     validate_modules_params(modules_params)
     check_if_modules_are_installed(modules_params)
 
+    # create datadir
     data_dir = create_data_dir(general_params["run_dir"])
     new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
 
-    inject_in_modules(
-        new_mp,
-        'self_contained',
-        general_params['self_contained'],
-        )
-
-    # return the modules' parameters and other parameters that may serve
-    # the workflow, the "other parameters" can be expanded in the future
-    # by a function if needed
+    # return the modules' parameters and general parameters separately
     return new_mp, general_params
 
 
@@ -291,10 +294,12 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
     # topology always starts with 0
     for i, (module, params) in enumerate(modules_params.items(), start=0):
         end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
-        pf = Path(data_dir, end_path)
-        pf.mkdir(exist_ok=True)
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
+                # path is created here to avoid creating empty folders
+                # for those modules without '_fname' parameters
+                pf = Path(data_dir, end_path)
+                pf.mkdir(exist_ok=True)
                 name = Path(value).name
                 shutil.copy(value, Path(pf, name))
                 new_mp[module][parameter] = Path(rel_data_dir, end_path, name)

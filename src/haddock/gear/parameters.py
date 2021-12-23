@@ -11,5 +11,4 @@ non_mandatory_general_parameters_defaults = {
     'ncores': 8,
     'cns_exec': "",
     'mode': 'local',
-    'relative_envvars': False,
     }

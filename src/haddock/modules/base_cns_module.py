@@ -37,6 +37,8 @@ class BaseCNSModule(BaseHaddockModule):
         if params['self_contained']:
             self.make_self_contained()
 
+        print(self.cns_folder_path)
+        print(self.cns_protocol_path)
         super().run(**params)
 
     def default_envvars(self):
@@ -67,13 +69,24 @@ class BaseCNSModule(BaseHaddockModule):
 
     def make_self_contained(self):
         """Create folders to make run self-contained."""
-        self.cns_folder_path = shutil.copytree(
+        _cns_folder_path = self.cns_folder_path
+        _toppar = self.toppar_path
+
+        self.cns_folder_path = Path(self.path, 'cns')
+        self.cns_protocol_path = Path(
             self.cns_folder_path,
-            Path(self.path, self.cns_folder_path.name),
+            self.cns_protocol_path.name,
+            )
+        self.toppar_path = Path(self.toppar_path.name)
+        self.envvars = self.default_envvars()
+
+        self.cns_folder_path = shutil.copytree(
+            _cns_folder_path,
+            self.cns_folder_path,
             )
 
-        self.toppar_path = Path(global_toppar.name)
+        self.toppar_path = Path(_toppar.name)
         if not self.toppar_path.exists():
-            shutil.copytree(global_toppar, self.toppar_path)
+            shutil.copytree(_toppar, self.toppar_path)
 
         self.save_envvars()

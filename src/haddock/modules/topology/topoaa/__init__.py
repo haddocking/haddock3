@@ -25,6 +25,7 @@ def generate_topology(
         recipe_str,
         defaults,
         mol_params,
+        default_params_path=None,
         protonation=None):
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
@@ -33,26 +34,34 @@ def generate_topology(
     general_param = general_param + input_mols_params
 
     # generate default headers
-    link, topology_protonation, \
-        trans_vec, tensor, scatter, \
-        axis, water_box = generate_default_header(protonation)
+    link, topology_protonation, trans_vec, tensor, scatter,  axis, water_box = \
+        generate_default_header(protonation, path=default_params_path)
 
     output = prepare_output(
         output_pdb_filename=f'{input_pdb.stem}_haddock{input_pdb.suffix}',
         output_psf_filename=f'{input_pdb.stem}_haddock.{Format.TOPOLOGY}',
         )
 
-    print('1', input_pdb)
     input_str = prepare_single_input(str(input_pdb))
-    print(input_str)
 
-    inp = general_param + input_str + output + link \
-        + topology_protonation + trans_vec + tensor + scatter + axis \
-        + water_box + recipe_str
+    inp_parts = (
+        general_param,
+        input_str,
+        output,
+        link,
+        topology_protonation,
+        trans_vec,
+        tensor,
+        scatter,
+        axis,
+        water_box,
+        recipe_str,
+        )
+
+    inp = "".join(inp_parts)
 
     output_inp_filename = Path(f'{input_pdb.stem}.{Format.CNS_INPUT}')
     output_inp_filename.write_text(inp)
-    print('saved: ', output_inp_filename)
 
     return output_inp_filename
 
@@ -138,7 +147,9 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     parameters_for_this_molecule,
+                    default_params_path=self.toppar_path,
                     )
+
                 self.log(
                     f"Topology CNS input created in {topology_filename.name}"
                     )

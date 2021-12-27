@@ -1,4 +1,5 @@
 """HADDOCK3 modules."""
+import os
 from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
@@ -98,6 +99,16 @@ class BaseHaddockModule(ABC):
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
+
+
+        # convert paths to relative by appending parent
+        for key, value in self.params.items():
+            if value and key.endswith('_fname'):
+                p = Path(value)
+                if p.is_absolute():
+                    pass
+                else:
+                    self.params[key] = Path('..', value)
 
         with working_directory(self.path):
             self._run()

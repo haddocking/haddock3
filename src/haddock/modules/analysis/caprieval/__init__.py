@@ -570,7 +570,7 @@ class HaddockModule(BaseHaddockModule):
         best_model = models_to_calc[0].rel_path
 
         if self.params["reference_fname"]:
-            reference = Path('..', self.params["reference_fname"])
+            reference = self.params["reference_fname"]
             ref_seqnum = load_seqnum(reference)
             target_seqnum = load_seqnum(best_model)
 

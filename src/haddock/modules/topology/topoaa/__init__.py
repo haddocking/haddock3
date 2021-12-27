@@ -112,6 +112,7 @@ class HaddockModule(BaseCNSModule):
                 molecule.with_parent,
                 dest=Path.cwd(),
                 )
+            print(splited_models)
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
@@ -126,9 +127,10 @@ class HaddockModule(BaseCNSModule):
             for model in relative_paths_models:
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
+                print('MODEL: ', model)
 
                 if self.params['ligand_top_fname']:
-                    custom_top = Path('..', self.params['ligand_top_fname'])
+                    custom_top = self.params['ligand_top_fname']
                     self.log(f'Using custom topology {custom_top}')
                     libpdb.sanitize(model,
                                     overwrite=True,

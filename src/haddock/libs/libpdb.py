@@ -114,11 +114,12 @@ def sanitize(pdb_file_path, overwrite=True, custom_topology=False):
         return pdb_file_path
 
     basename = Path(pdb_file_path)
-    abs_path = Path(pdb_file_path).resolve().parent.absolute()
-    new_pdb_file = abs_path / f"{basename.stem}_cleaned{basename.suffix}"
-    with open(new_pdb_file, "w") as output_handler:
-        for line in good_lines:
-            output_handler.write(line + os.linesep)
+    #abs_path = Path(pdb_file_path).resolve().parent.absolute()
+    new_pdb_file = Path(f"{basename.stem}_cleaned{basename.suffix}")
+    new_pdb_file.write_text(os.linesep.join(good_lines) + os.linesep)
+    #with open(new_pdb_file, "w") as output_handler:
+    #    for line in good_lines:
+    #        output_handler.write(line + os.linesep)
     return new_pdb_file
 
 

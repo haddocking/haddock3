@@ -58,7 +58,7 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "mdref",
-                    ambig_fname=self.params["ambig_fname"],
+                    #ambig_fname=self.params["ambig_fname"],
                     )
                 out_file = Path(self.path, f"mdref_{idx}.out")
 

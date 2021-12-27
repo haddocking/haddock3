@@ -370,7 +370,7 @@ def prepare_cns_input(
         recipe_str,
         defaults,
         identifier,
-        ambig_fname=None,
+        #ambig_fname=None,
         native_segid=False,
         default_params_path=None,
         ):
@@ -415,10 +415,10 @@ def prepare_cns_input(
 
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
-    if ambig_fname:
-        ambig_str = load_ambig(ambig_fname)
-    else:
-        ambig_str = ""
+    #if ambig_fname:
+    #    ambig_str = load_ambig(ambig_fname)
+    #else:
+    #    ambig_str = ""
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
     output = f"{linesep}! Output structure{linesep}"
@@ -452,7 +452,7 @@ def prepare_cns_input(
         default_params
         + input_str
         + output
-        + ambig_str
+        #+ ambig_str
         + segid_str
         + recipe_str
         )

@@ -56,4 +56,4 @@ class HaddockModule(BaseHaddockModule):
 
         io = ModuleIO()
         io.add(selected_models, "o")
-        io.save(self.path)
+        io.save()

@@ -83,7 +83,6 @@ class HaddockModule(BaseCNSModule):
     def _run(self):
         """Execute module."""
         molecules = make_molecules(self.params.pop('molecules'))
-        print('cwd, ', Path.cwd())
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
@@ -113,8 +112,6 @@ class HaddockModule(BaseCNSModule):
                 molecule.with_parent,
                 dest=Path.cwd(),
                 )
-            print('SPLITTED models************+')
-            print(splited_models)
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
@@ -127,12 +124,11 @@ class HaddockModule(BaseCNSModule):
                 )
 
             for model in relative_paths_models:
-                print('MODEL ', model)
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 
                 if self.params['ligand_top_fname']:
-                    custom_top = self.params['ligand_top_fname']
+                    custom_top = Path('..', self.params['ligand_top_fname'])
                     self.log(f'Using custom topology {custom_top}')
                     libpdb.sanitize(model,
                                     overwrite=True,
@@ -164,7 +160,6 @@ class HaddockModule(BaseCNSModule):
                     )
 
                 jobs.append(job)
-                print(jobs)
 
         # Run CNS Jobs
         self.log(f"Running CNS Jobs n={len(jobs)}")

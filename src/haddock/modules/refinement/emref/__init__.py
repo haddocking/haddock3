@@ -51,6 +51,7 @@ class HaddockModule(BaseCNSModule):
             self.log("[Warning] sampling_factor is larger than 100")
 
         idx = 1
+        ambig_fname = Path('..', self.params.pop("ambig_fname"))
         for model in models_to_refine:
             for _ in range(self.params['sampling_factor']):
                 inp_file = prepare_cns_input(
@@ -60,13 +61,13 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "emref",
-                    ambig_fname=self.params["ambig_fname"],
+                    ambig_fname=ambig_fname,
                     )
-                out_file = Path(self.path, f"emref_{idx}.out")
+                out_file = f"emref_{idx}.out"
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(
-                    model, idx, self.path, "emref"
+                    model, idx, ".", "emref"
                     )
 
                 refined_structure_list.append(expected_pdb)
@@ -91,7 +92,7 @@ class HaddockModule(BaseCNSModule):
         expected = []
         not_found = []
         for pdb in refined_structure_list:
-            if not pdb.is_present():
+            if not Path(pdb.file_name).exists():
                 not_found.append(pdb.file_name)
             else:
                 haddock_score = HaddockModel(pdb.full_name).calc_haddock_score(
@@ -110,4 +111,4 @@ class HaddockModule(BaseCNSModule):
         # Save module information
         io = ModuleIO()
         io.add(expected, "o")
-        io.save(self.path)
+        io.save()

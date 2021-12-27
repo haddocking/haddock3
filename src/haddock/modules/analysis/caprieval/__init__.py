@@ -67,7 +67,7 @@ def get_atoms(pdb_list):
     atom_l = []
     for pdb in pdb_list:
         if isinstance(pdb, PDBFile):
-            pdb = pdb.full_name
+            pdb = pdb.rel_path
         with open(pdb) as fh:
             for line in fh.readlines():
                 if line.startswith("ATOM"):
@@ -282,7 +282,7 @@ class CAPRI:
         self.log = logger
 
         for struct in model_list:
-            pdb_f = Path(struct.path, struct.file_name)
+            pdb_f = struct.rel_path
             pdb_w_chain = add_chain_from_segid(pdb_f)
             self.model_list.append(pdb_w_chain)
             self.score_dic[pdb_f] = struct.score
@@ -566,10 +566,11 @@ class HaddockModule(BaseHaddockModule):
 
         #  by default modes_to_calc should have been sorted by the module
         #  that produced it
-        best_model = Path(models_to_calc[0].path, models_to_calc[0].file_name)
+        #best_model = Path(models_to_calc[0].path, models_to_calc[0].file_name)
+        best_model = models_to_calc[0].rel_path
 
         if self.params["reference_fname"]:
-            reference = Path(self.params["reference_fname"])
+            reference = Path('..', self.params["reference_fname"])
             ref_seqnum = load_seqnum(reference)
             target_seqnum = load_seqnum(best_model)
 
@@ -640,8 +641,8 @@ class HaddockModule(BaseHaddockModule):
                 cutoff=ilrmsd_cutoff,
                 )
 
-        output_fname = Path(self.path, "capri.tsv")
-        self.log(f" Saving output to {output_fname.name}")
+        output_fname = "capri.tsv"
+        self.log(f" Saving output to {output_fname}")
         capri.output(
             output_fname,
             sortby_key=self.params["sortby"],
@@ -653,4 +654,4 @@ class HaddockModule(BaseHaddockModule):
         selected_models = models_to_calc
         io = ModuleIO()
         io.add(selected_models, "o")
-        io.save(self.path)
+        io.save()

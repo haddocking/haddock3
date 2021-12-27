@@ -297,14 +297,12 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
-        #psf = str(Path('..', psf))
         input_str += f"structure{linesep}"
         input_str += f"  @@{psf}{linesep}"
         input_str += f"end{linesep}"
 
     ncount = 1
     for pdb in pdb_input_list:
-        #pdb = str(Path('..', pdb))  # será que no debo hacer esto en la prepare_run?
         input_str += f"coor @@{pdb}{linesep}"
         input_str += (
             f"eval ($input_pdb_filename_{ncount}="
@@ -379,15 +377,8 @@ def prepare_cns_input(
     """Generate the .inp file needed by the CNS engine."""
     # read the default parameters
     default_params = load_workflow_params(**defaults)
-    (
-        link,  # unused
-        topology_protonation,
-        trans_vec,  # unused
-        tensor,  # unused
-        scatter,  # unused
-        axis,  # unused
-        water_box,  # unused
-        ) = generate_default_header(path=default_params_path)
+
+    # before there was the protonation state here, but no parameter was used
 
     # write the PDBs
     pdb_list = [
@@ -432,9 +423,6 @@ def prepare_cns_input(
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
     output = f"{linesep}! Output structure{linesep}"
     output += write_eval_line('output_pdb_filename', output_pdb_filename)
-    #output += (
-    #    f"eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
-    #    )
 
     segid_str = ""
     if native_segid:
@@ -464,7 +452,6 @@ def prepare_cns_input(
         default_params
         + input_str
         + output
-        + topology_protonation
         + ambig_str
         + segid_str
         + recipe_str

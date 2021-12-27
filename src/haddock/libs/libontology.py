@@ -35,7 +35,7 @@ class Persistent:
         self.file_type = file_type
         self.path = str(Path(path).resolve())
         self.full_name = str(Path(path, self.file_name))
-        self.rel_path = str(Path('..', Path(self.path).name, file_name))
+        self.rel_path = Path('..', Path(self.path).name, file_name)
 
     def __repr__(self):
         rep = (f"[{self.file_type}|{self.created}] "

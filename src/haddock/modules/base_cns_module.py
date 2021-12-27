@@ -46,7 +46,6 @@ class BaseCNSModule(BaseHaddockModule):
             "MODDIR": ".",
             "TOPPAR": str(self.toppar_path),
             }
-        print(default_envvars)
 
         return default_envvars
 

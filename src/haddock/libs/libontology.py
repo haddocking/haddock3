@@ -35,6 +35,7 @@ class Persistent:
         self.file_type = file_type
         self.path = str(Path(path).resolve())
         self.full_name = str(Path(path, self.file_name))
+        self.rel_path = str(Path('..', Path(self.path).name, file_name))
 
     def __repr__(self):
         rep = (f"[{self.file_type}|{self.created}] "
@@ -104,11 +105,13 @@ class ModuleIO:
         # Get the models generated in previous step
         model_list = []
         input_dic = {}
+
         for i, element in enumerate(self.output):
-            if type(element) == dict:
-                input_dic[i] = []
+            if isinstance(element, dict):
+                position_list = input_dic.setdefault(i, [])
                 for key in element:
-                    input_dic[i].append(element[key])
+                    position_list.append(element[key])
+
             elif element.file_type == Format.PDB:
                 model_list.append(element)
 

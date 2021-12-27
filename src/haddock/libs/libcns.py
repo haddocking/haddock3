@@ -10,6 +10,7 @@ from haddock.libs import libpdb
 from haddock.libs.libfunc import false, true, vartial
 from haddock.libs.libmath import RandomNumberGenerator
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libutil import transform_to_list
 
 
 RND = RandomNumberGenerator()
@@ -110,6 +111,7 @@ def load_workflow_params(
     for param, v in non_empty_parameters:
         param_header += write_eval_line(param, v)
 
+    assert isinstance(param_header, str)
     return param_header
 
 
@@ -182,11 +184,11 @@ load_tensor = partial(load_workflow_params, param_header=f"{linesep}! Tensors{li
 prepare_output = partial(load_workflow_params, param_header=f"{linesep}! Output structure{linesep}")
 load_trans_vectors = partial(load_workflow_params, param_header=f"{linesep}! Translation vectors{linesep}")
 
-load_ambig = vartial(write_eval_line, "ambig_fname")
-load_unambig = vartial(write_eval_line, "unambig_fname")
-load_hbond = vartial(write_eval_line, "hbond_fname")
-load_dihe = vartial(write_eval_line, "dihe_f")
-load_tensor_tbl = vartial(write_eval_line, "tensor_tbl")
+load_ambig = partial(write_eval_line, "ambig_fname")
+load_unambig = partial(write_eval_line, "unambig_fname")
+load_hbond = partial(write_eval_line, "hbond_fname")
+load_dihe = partial(write_eval_line, "dihe_f")
+load_tensor_tbl = partial(write_eval_line, "tensor_tbl")
 
 
 def load_scatter(scatter_lib):
@@ -295,14 +297,14 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
-        psf = str(Path('..', psf))
+        #psf = str(Path('..', psf))
         input_str += f"structure{linesep}"
         input_str += f"  @@{psf}{linesep}"
         input_str += f"end{linesep}"
 
     ncount = 1
     for pdb in pdb_input_list:
-        pdb = str(Path('..', pdb))  # será que no debo hacer esto en la prepare_run?
+        #pdb = str(Path('..', pdb))  # será que no debo hacer esto en la prepare_run?
         input_str += f"coor @@{pdb}{linesep}"
         input_str += (
             f"eval ($input_pdb_filename_{ncount}="
@@ -372,10 +374,11 @@ def prepare_cns_input(
         identifier,
         ambig_fname=None,
         native_segid=False,
+        default_params_path=None,
         ):
     """Generate the .inp file needed by the CNS engine."""
     # read the default parameters
-    default_params = load_workflow_params(defaults)
+    default_params = load_workflow_params(**defaults)
     (
         link,  # unused
         topology_protonation,
@@ -384,15 +387,19 @@ def prepare_cns_input(
         scatter,  # unused
         axis,  # unused
         water_box,  # unused
-        ) = generate_default_header()
+        ) = generate_default_header(path=default_params_path)
 
     # write the PDBs
-    pdb_list = []
-    if isinstance(input_element, (list, tuple)):
-        for pdb in input_element:
-            pdb_list.append(pdb.full_name)
-    else:
-        pdb_list.append(input_element.full_name)
+    pdb_list = [
+        pdb.rel_path
+        for pdb in transform_to_list(input_element)
+        ]
+
+    #if isinstance(input_element, (list, tuple)):
+    #    for pdb in input_element:
+    #        pdb_list.append(pdb.rel_path)
+    #else:
+    #    pdb_list.append(input_element.rel_path)
 
     # write the PSFs
     psf_list = []
@@ -400,19 +407,19 @@ def prepare_cns_input(
         for pdb in input_element:
             if isinstance(pdb.topology, (list, tuple)):
                 for psf in pdb.topology:
-                    psf_fname = psf.full_name
+                    psf_fname = psf.rel_path
                     psf_list.append(psf_fname)
             else:
-                psf_fname = pdb.topology.full_name
+                psf_fname = pdb.topology.rel_path
                 psf_list.append(psf_fname)
     elif isinstance(input_element.topology, (list, tuple)):
         pdb = input_element  # for clarity
         for psf in pdb.topology:
-            psf_fname = psf.full_name
+            psf_fname = psf.rel_path
             psf_list.append(psf_fname)
     else:
         pdb = input_element  # for clarity
-        psf_fname = pdb.topology.full_name
+        psf_fname = pdb.topology.rel_path
         psf_list.append(psf_fname)
 
     input_str = prepare_multiple_input(pdb_list, psf_list)
@@ -424,9 +431,10 @@ def prepare_cns_input(
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
     output = f"{linesep}! Output structure{linesep}"
-    output += (
-        f"eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
-        )
+    output += write_eval_line('output_pdb_filename', output_pdb_filename)
+    #output += (
+    #    f"eval ($output_pdb_filename=" f' "{output_pdb_filename}"){linesep}'
+    #    )
 
     segid_str = ""
     if native_segid:
@@ -435,7 +443,7 @@ def prepare_cns_input(
             id_counter = 0
             for pdb in input_element:
                 segids, chains = libpdb.identify_chainseg(
-                    pdb.full_name, sort=False
+                    pdb.rel_path, sort=False
                     )
                 chainsegs = sorted(list(set(segids) | set(chains)))
                 for i, _ in enumerate(chainsegs, start=1):
@@ -444,13 +452,14 @@ def prepare_cns_input(
                     id_counter += 1
         else:
             segids, chains = libpdb.identify_chainseg(
-                input_element.full_name, sort=False
+                input_element.rel_path, sort=False
                 )
             chainsegs = sorted(list(set(segids) | set(chains)))
             for i, id in enumerate(chainsegs, start=1):
                 segid_str += f"eval ($prot_segid_{i}=\"{id}\"){linesep}"
 
     output += f"eval ($count=" f" {model_number}){linesep}"
+
     inp = (
         default_params
         + input_str
@@ -461,10 +470,8 @@ def prepare_cns_input(
         + recipe_str
         )
 
-    inp_file = Path(step_path, f"{identifier}_{model_number}.inp")
-    with open(inp_file, "w") as fh:
-        fh.write(inp)
-
+    inp_file = Path(f"{identifier}_{model_number}.inp")
+    inp_file.write_text(inp)
     return inp_file
 
 

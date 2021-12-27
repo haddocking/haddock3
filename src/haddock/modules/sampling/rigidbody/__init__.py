@@ -57,6 +57,7 @@ class HaddockModule(BaseCNSModule):
         idx = 1
         structure_list = []
         self.log("Preparing jobs...")
+        ambig_fname = self.params.pop("ambig_fname")
         for combination in models_to_dock:
 
             for _i in range(sampling_factor):
@@ -67,11 +68,12 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "rigidbody",
-                    ambig_fname=self.params["ambig_fname"],
+                    ambig_fname=Path('..', ambig_fname),
+                    default_params_path=self.toppar_path,
                     )
 
-                log_fname = Path(self.path, f"rigidbody_{idx}.out")
-                output_pdb_fname = Path(self.path, f"rigidbody_{idx}.pdb")
+                log_fname = f"rigidbody_{idx}.out"
+                output_pdb_fname = f"rigidbody_{idx}.pdb"
 
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=self.path)
@@ -96,17 +98,18 @@ class HaddockModule(BaseCNSModule):
 
         not_present = []
         for model in structure_list:
-            if not model.is_present():
-                not_present.append(model.name)
+            if not Path(model.file_name).exists():
+                not_present.append(model.file_name)
             else:
                 # Score the model
                 haddock_score = HaddockModel(
-                    model.full_name).calc_haddock_score(
+                    model.file_name).calc_haddock_score(
                     **weights
                     )
 
                 model.score = haddock_score
 
+        print(not_present)
         # Check for generated output
         if len(not_present) == len(structure_list):
             # fail if not all expected files are found
@@ -121,4 +124,4 @@ class HaddockModule(BaseCNSModule):
         # Save module information
         io = ModuleIO()
         io.add(structure_list, "o")
-        io.save(self.path)
+        io.save()

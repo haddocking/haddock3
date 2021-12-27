@@ -43,6 +43,13 @@ def make_list_if_string(item):
     return item
 
 
+def transform_to_list(item):
+    """Put `item` into a list if not a list already."""
+    if not isinstance(item, (list, tuple)):
+        return [item]
+    return item
+
+
 def copy_files_to_dir(paths, directory):
     """
     Copy files to directory.

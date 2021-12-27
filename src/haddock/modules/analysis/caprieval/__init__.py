@@ -1,5 +1,6 @@
 """Calculate CAPRI metrics."""
 from pathlib import Path
+
 from haddock.libs.libontology import Format, ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import CAPRI

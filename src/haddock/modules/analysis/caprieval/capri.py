@@ -1,3 +1,4 @@
+"""CAPRI module."""
 import os
 import shlex
 import shutil
@@ -39,7 +40,8 @@ PROT_RES = [
     "THR",
     "TRP",
     "TYR",
-    "VAL"]
+    "VAL",
+    ]
 
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
@@ -61,7 +63,8 @@ DNA_ATOMS = [
     "C6",
     "N3",
     "C4",
-    "O6"]
+    "O6",
+    ]
 
 
 class CAPRI:
@@ -108,18 +111,12 @@ class CAPRI:
 
         # Load interface coordinates
         ref_coord_dic, _ = self.load_coords(
-            self.reference,
-            ref_interface_resdic,
-            match=False
-            )
+            self.reference, ref_interface_resdic, match=False)
 
         for model in self.model_list:
 
             mod_coord_dic, _ = self.load_coords(
-                model,
-                ref_interface_resdic,
-                match=True
-                )
+                model, ref_interface_resdic, match=True)
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -156,10 +153,7 @@ class CAPRI:
 
         for model in self.model_list:
 
-            mod_coord_dic, _ = self.load_coords(
-                model,
-                match=True
-                )
+            mod_coord_dic, _ = self.load_coords(model, match=True)
 
             Q = []
             P = []
@@ -242,28 +236,18 @@ class CAPRI:
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
-        ref_coord_dic, _ = self.load_coords(
-            self.reference,
-            match=False
-            )
+        ref_coord_dic, _ = self.load_coords(self.reference, match=False)
 
         ref_int_coord_dic, _ = self.load_coords(
-            self.reference,
-            ref_interface_resdic,
-            match=False
+            self.reference, ref_interface_resdic, match=False
             )
 
         for model in self.model_list:
 
-            mod_coord_dic, _ = self.load_coords(
-                model,
-                match=True
-                )
+            mod_coord_dic, _ = self.load_coords(model, match=True)
 
             mod_int_coord_dic, _ = self.load_coords(
-                model,
-                ref_interface_resdic,
-                match=True
+                model, ref_interface_resdic, match=True
                 )
 
             # write_coord_dic('ref.pdb', ref_int_coord_dic)
@@ -408,7 +392,8 @@ class CAPRI:
         max_model_space = max(len(str(_d["model"])) for _d in output_l) + 2
         hmodel = "model".center(max_model_space, " ")
         header = hmodel + "".join(
-            _.rjust(10, " ") for _ in list(output_l[0].keys())[1:])
+            _.rjust(10, " ") for _ in list(output_l[0].keys())[1:]
+            )
 
         with open(output_f, "w") as out_fh:
             out_fh.write(header + os.linesep)
@@ -489,10 +474,7 @@ class CAPRI:
         new_pdb_path = shutil.move(temp_f.name, pdb_path)
         return new_pdb_path
 
-    def load_coords(self,
-                    pdb_f,
-                    filter_resdic=None,
-                    match=False):
+    def load_coords(self, pdb_f, filter_resdic=None, match=False):
         """Load coordinates from PDB."""
         coord_dic = {}
         chain_dic = {}
@@ -575,6 +557,7 @@ class CAPRI:
 
 class CAPRIError(Exception):
     """Raised when something goes wrong with the CAPRI class."""
+
     def __init__(self, msg=""):
         self.msg = msg
         super().__init__(self.msg)
@@ -583,12 +566,8 @@ class CAPRIError(Exception):
 def get_atoms(pdb_list):
     """Identify what is the molecule type of each PDB."""
     atom_dic = {}
-    atom_dic.update(
-        dict((r, PROT_ATOMS) for r in PROT_RES)
-        )
-    atom_dic.update(
-        dict((r, DNA_ATOMS) for r in DNA_RES)
-        )
+    atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
+    atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
     for pdb in pdb_list:
         if isinstance(pdb, PDBFile):
             pdb = pdb.full_name
@@ -598,7 +577,7 @@ def get_atoms(pdb_list):
                     resname = line[17:20].strip()
                     atom_name = line[12:16].strip()
                     element = line[76:78].strip()
-                    if (resname not in PROT_RES and resname not in DNA_RES):
+                    if resname not in PROT_RES and resname not in DNA_RES:
                         # its neither DNA nor protein, use the heavy atoms
                         # WARNING: Atoms that belong to unknown residues mutt
                         #  be bound to a residue name;
@@ -617,26 +596,45 @@ def get_atoms(pdb_list):
 
 def pdb2fastadic(pdb_f):
     """Write the sequence as a fasta."""
-    res_codes = dict([
-        ('CYS', 'C'), ('ASP', 'D'), ('SER', 'S'), ('GLN', 'Q'),
-        ('LYS', 'K'), ('ILE', 'I'), ('PRO', 'P'), ('THR', 'T'),
-        ('PHE', 'F'), ('ASN', 'N'), ('GLY', 'G'), ('HIS', 'H'),
-        ('LEU', 'L'), ('ARG', 'R'), ('TRP', 'W'), ('ALA', 'A'),
-        ('VAL', 'V'), ('GLU', 'E'), ('TYR', 'Y'), ('MET', 'M'),
-        ('DA', 'A'), ('DG', 'G'), ('DC', 'C'),
-        ('DT', 'T'),
-        ])
+    res_codes = dict(
+        [
+            ("CYS", "C"),
+            ("ASP", "D"),
+            ("SER", "S"),
+            ("GLN", "Q"),
+            ("LYS", "K"),
+            ("ILE", "I"),
+            ("PRO", "P"),
+            ("THR", "T"),
+            ("PHE", "F"),
+            ("ASN", "N"),
+            ("GLY", "G"),
+            ("HIS", "H"),
+            ("LEU", "L"),
+            ("ARG", "R"),
+            ("TRP", "W"),
+            ("ALA", "A"),
+            ("VAL", "V"),
+            ("GLU", "E"),
+            ("TYR", "Y"),
+            ("MET", "M"),
+            ("DA", "A"),
+            ("DG", "G"),
+            ("DC", "C"),
+            ("DT", "T"),
+            ]
+        )
     seq_dic = {}
     with open(pdb_f) as fh:
         for line in fh.readlines():
-            if line.startswith('ATOM'):
+            if line.startswith("ATOM"):
                 res_num = int(line[22:26])
                 res_name = line[17:20].strip()
                 chain = line[21]
                 try:
                     one_letter = res_codes[res_name]
                 except KeyError:
-                    one_letter = 'X'
+                    one_letter = "X"
                 if chain not in seq_dic:
                     seq_dic[chain] = {}
                 seq_dic[chain][res_num] = one_letter
@@ -662,17 +660,13 @@ def load_seqnum(pdb_f):
 
 def get_align(method, **args):
     """Get the alignment function."""
-    log.info(f'Using {method} alignment')
+    log.info(f"Using {method} alignment")
     if method == "structure":
-        return partial(
-            align_strct,
-            **args)
+        return partial(align_strct, **args)
     elif method == "sequence":
-        return partial(
-            align_seq,
-            **args)
+        return partial(align_seq, **args)
     else:
-        available_alns = ('sequence', 'structure')
+        available_alns = ("sequence", "structure")
         raise ValueError(
             f"Alignment method {method!r} not recognized. "
             f"Available options are {', '.join(available_alns)}"
@@ -680,15 +674,14 @@ def get_align(method, **args):
 
 
 def align_strct(reference, model, output_path):
-    """
-    Align two structures via structural alignment and get their
-        numbering relationship.
-    """
+    """Structuraly align and get numbering relationship."""
     try:
-        lovoalign_exec = os.environ['LOVOALIGN_EXEC']
+        lovoalign_exec = os.environ["LOVOALIGN_EXEC"]
     except KeyError:
-        log.error("Structural alignment needs LovoAlign "
-                  "get it at github.com/m3g/lovoalign")
+        log.error(
+            "Structural alignment needs LovoAlign "
+            "get it at github.com/m3g/lovoalign"
+            )
         raise CAPRIError("System variable LOVOALIGN_EXEC not defined")
 
     if not os.access(lovoalign_exec, os.X_OK):
@@ -696,9 +689,11 @@ def align_strct(reference, model, output_path):
 
     numbering_dic = {}
     protein_a_dic = dict(
-        (str(e.stem).split('_')[-1], e) for e in split_by_chain(reference))
+        (str(e.stem).split("_")[-1], e) for e in split_by_chain(reference)
+        )
     protein_b_dic = dict(
-        (str(e.stem).split('_')[-1], e) for e in split_by_chain(model))
+        (str(e.stem).split("_")[-1], e) for e in split_by_chain(model)
+        )
 
     # check if chain ids match
     if protein_a_dic.keys() != protein_b_dic.keys():
@@ -710,14 +705,14 @@ def align_strct(reference, model, output_path):
         pb_seqdic = pdb2fastadic(protein_b_dic[chain])
         # logging.debug(f'Structurally aligning chain {chain}')
         numbering_dic[chain] = {}
-        cmd = (f'{lovoalign_exec} -p1 {protein_a_dic[chain]} '
-               f'-p2 {protein_b_dic[chain]} '
-               f'-c1 {chain} -c2 {chain}')
+        cmd = (
+            f"{lovoalign_exec} -p1 {protein_a_dic[chain]} "
+            f"-p2 {protein_b_dic[chain]} "
+            f"-c1 {chain} -c2 {chain}"
+            )
 
         # logging.debug(f'Command is: {cmd}')
-        p = subprocess.run(shlex.split(cmd),
-                           capture_output=True,
-                           text=True)
+        p = subprocess.run(shlex.split(cmd), capture_output=True, text=True)
         lovoalign_out = p.stdout.split(os.linesep)
 
         # we don't need the splitted proteins anymore
@@ -727,16 +722,17 @@ def align_strct(reference, model, output_path):
         # find out where the alignment starts and ends
         alignment_pass = True
         for i, line in enumerate(lovoalign_out):
-            if 'SEQUENCE ALIGNMENT' in line:
+            if "SEQUENCE ALIGNMENT" in line:
                 # there are 2 extra white lines after this header
                 alignment_start_index = i + 2
-            elif 'FINAL' in line:
+            elif "FINAL" in line:
                 # there are 2 extra white lines after this header
                 alignment_end_index = i - 2
-            elif 'ERROR' in line:
+            elif "ERROR" in line:
                 failed_pdb = line.split()[-1]
-                _msg = (f'LovoAlign could not read {failed_pdb} '
-                        'is it a ligand?')
+                _msg = (
+                    f"LovoAlign could not read {failed_pdb} " "is it a ligand?"
+                    )
                 log.warning(_msg)
                 alignment_pass = False
 
@@ -745,16 +741,18 @@ def align_strct(reference, model, output_path):
 
         if not alignment_pass:
             # This alignment failed, move on to the next
-            log.warning(f'Skipping alignment of chain {chain}, '
-                        'used sequential matching')
+            log.warning(
+                f"Skipping alignment of chain {chain}, "
+                "used sequential matching"
+                )
             continue
 
         aln_l = lovoalign_out[alignment_start_index:alignment_end_index]
 
         # dump this alignment to a file
-        aln_fname = Path(output_path, f'lovoalign_{chain}.aln')
+        aln_fname = Path(output_path, f"lovoalign_{chain}.aln")
         log.debug(f"Writing alignment to {aln_fname.name}")
-        with open(aln_fname, 'w') as fh:
+        with open(aln_fname, "w") as fh:
             fh.write(os.linesep.join(aln_l))
 
         # remove the line between the alignment segments
@@ -763,16 +761,19 @@ def align_strct(reference, model, output_path):
         len_seq_a = len(pa_seqdic[chain])
         len_seq_b = len(pb_seqdic[chain])
         identity = (
-            len_seq_a - sum([e[0].count('-') for e in alignment])
-            ) / min(len_seq_a, len_seq_b) * 100
+            (len_seq_a - sum([e[0].count("-") for e in alignment]))
+            / min(len_seq_a, len_seq_b)
+            * 100
+            )
 
         if identity <= 40.0:
             log.warning(
-                f"\"Structural\" identity of chain {chain} is {identity:.2f}%,"
-                " please check the results carefully")
+                f'"Structural" identity of chain {chain} is {identity:.2f}%,'
+                " please check the results carefully"
+                )
         else:
             log.info(
-                f"\"Structural\" identity of chain {chain} is {identity:.2f}%"
+                f'"Structural" identity of chain {chain} is {identity:.2f}%'
                 )
 
         # logging.debug('Reading alignment and matching numbering')
@@ -786,27 +787,24 @@ def align_strct(reference, model, output_path):
             resnum_b = int(resnum_b) - 1
 
             for resname_a, resname_b in zip(seq_a, seq_b):
-                if resname_a != '-':
+                if resname_a != "-":
                     resnum_a += 1
 
-                if resname_b != '-':
+                if resname_b != "-":
                     resnum_b += 1
 
-                if resname_a != '-' and resname_b != '-':
+                if resname_a != "-" and resname_b != "-":
                     numbering_dic[chain][resnum_b] = resnum_a
 
-    izone_fname = Path(output_path, 'lovoalign.izone')
-    log.debug(f'Saving .izone to {izone_fname.name}')
+    izone_fname = Path(output_path, "lovoalign.izone")
+    log.debug(f"Saving .izone to {izone_fname.name}")
     dump_as_izone(izone_fname, numbering_dic)
 
     return numbering_dic
 
 
 def align_seq(reference, model, output_path):
-    """
-    Get the numbering relationship between two structures
-        using sequence alignment.
-    """
+    """Sequence align and get the numbering relationship."""
     seqdic_a = pdb2fastadic(reference)
     seqdic_b = pdb2fastadic(model)
 
@@ -819,8 +817,8 @@ def align_seq(reference, model, output_path):
 
         align_dic[a] = {}
 
-        seq_a = Seq(''.join(seqdic_a[a].values()))
-        seq_b = Seq(''.join(seqdic_b[b].values()))
+        seq_a = Seq("".join(seqdic_a[a].values()))
+        seq_b = Seq("".join(seqdic_b[b].values()))
 
         aligner = Align.PairwiseAligner()
         aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
@@ -829,7 +827,7 @@ def align_seq(reference, model, output_path):
 
         aln_fname = Path(output_path, f"blosum62_{a}.aln")
         log.debug(f"Writing alignment to {aln_fname.name}")
-        with open(aln_fname, 'w') as fh:
+        with open(aln_fname, "w") as fh:
             fh.write(str(top_aln))
         aligned_seg_a, aligned_seg_b = top_aln.aligned
 
@@ -837,30 +835,30 @@ def align_seq(reference, model, output_path):
         assert len(aligned_seg_a) == len(aligned_seg_b)
 
         identity = (
-            str(top_aln).count('|') / float(min(len(seq_a), len(seq_b)))
+            str(top_aln).count("|") / float(min(len(seq_a), len(seq_b)))
             ) * 100
 
         if not any(e for e in top_aln.aligned):
             # No alignment!
-            log.warning(f"No alignment for chain {a} is it protein/dna? "
-                        "Matching sequentially")
-            if all('X' in s for s in seq_a) and all('X' in s for s in seq_b):
+            log.warning(
+                f"No alignment for chain {a} is it protein/dna? "
+                "Matching sequentially"
+                )
+            if all("X" in s for s in seq_a) and all("X" in s for s in seq_b):
                 # this sequence contains only ligands, do it manually
                 if len(seq_a) != len(seq_b):
                     # we cannot handle this
                     raise f"Cannot align chain {b}"
                 for res_a, res_b in zip(seqdic_a[a], seqdic_b[b]):
-                    align_dic[a].update(
-                        {res_a: res_b}
-                        )
+                    align_dic[a].update({res_a: res_b})
         else:
             if identity <= 40.0:
                 # Identity is very low
                 log.warning(
                     f"Sequence identity of chain {a} is {identity:.2f}%,"
-                    " please check the results carefully")
-                log.warning(
-                    'Please use alignment_method = \"structure\" instead')
+                    " please check the results carefully"
+                    )
+                log.warning('Please use alignment_method = "structure" instead')
             else:
                 log.info(f"Sequence identity of chain {a} is {identity:.2f}%")
             for seg_a, seg_b in zip(aligned_seg_a, aligned_seg_b):
@@ -873,14 +871,15 @@ def align_seq(reference, model, output_path):
                 align_dic[a].update(
                     dict((i, j) for i, j in zip(reslist_a, reslist_b))
                     )
-    izone_fname = Path(output_path, 'blosum62.izone')
-    log.debug(f'Saving .izone to {izone_fname.name}')
+    izone_fname = Path(output_path, "blosum62.izone")
+    log.debug(f"Saving .izone to {izone_fname.name}")
     dump_as_izone(izone_fname, align_dic)
 
     return align_dic
 
 
 def make_range(chain_range_dic):
+    """Expand a chain dictionary into ranges."""
     chain_ranges = {}
     for chain in chain_range_dic:
         min_idx = min(chain_range_dic[chain])
@@ -890,17 +889,17 @@ def make_range(chain_range_dic):
 
 
 def dump_as_izone(fname, numbering_dic):
-    """Dump the numbering dictionary as .izone"""
+    """Dump the numbering dictionary as .izone."""
     # FIXME: Collapse the izones so its faster to load in profit
-    with open(fname, 'w') as fh:
+    with open(fname, "w") as fh:
         for chain in numbering_dic:
             for bound_res in numbering_dic[chain]:
                 unbound_res = numbering_dic[chain][bound_res]
                 #
                 izone_str = (
-                    'ZONE '
-                    f'{chain}{bound_res}:{chain}{unbound_res}'
-                    f'{os.linesep}'
+                    "ZONE "
+                    f"{chain}{bound_res}:{chain}{unbound_res}"
+                    f"{os.linesep}"
                     )
                 fh.write(izone_str)
 
@@ -922,7 +921,8 @@ def write_coord_dic(output_name, coord_dic):
             dummy_line = (
                 f"ATOM   {atom_num} {atom_name}  DUM {chain} {resnum}   "
                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep)
+                "        H  " + os.linesep
+                )
             fh.write(dummy_line)
 
 
@@ -939,13 +939,15 @@ def write_coords(output_name, coor_list):
             dummy_line = (
                 f"ATOM   {atom_num}  H   DUM X {resnum}   "
                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep)
+                "        H  " + os.linesep
+                )
             fh.write(dummy_line)
 
 
-# debug only
-def write_pymol_viz(resdic):
-    for k in resdic:
-        reslist = '+'.join(map(str, resdic[k]))
-        cmd = f'sele {k}, chain {k} and resid {reslist}'
-        print(cmd)
+# # debug only
+# def write_pymol_viz(resdic):
+#     """Write PyMol vizualitation."""
+#     for k in resdic:
+#         reslist = "+".join(map(str, resdic[k]))
+#         cmd = f"sele {k}, chain {k} and resid {reslist}"
+#         print(cmd)

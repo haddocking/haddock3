@@ -26,41 +26,44 @@ supported_carbohydrates = (
     )
 
 # must be defined as HETATM
-supported_ions = (
-    'AG',  # Silver
-    'AL',  # Aluminium
-    'AU',  # Gold
-    'BR',  # Bromine
-    'CA',  # Calcium
-    'CD',  # Cadmium
-    'CL',  # Chlore
-    'CO',  # Cobalt
-    'CR',  # Chromium
-    'CS',  # Cesium
-    'CU',  # Copper
-    'F',   # Fluor
-    'FE',  # Iron
-    'HG',  # Mercury
-    'HO',  # Holmium
-    'I',   # Iodine
-    'IR',  # Iridium
-    'K',   # Potassium
-    'KR',  # Krypton
-    'LI',  # Adenine
-    'MG',  # Magnesium
-    'MN',  # Manganese
-    'MO',  # Molybdenum
-    'NA',  # Sodium
-    'NI',  # Nickel
-    'OS',  # Osmium
-    'PB',  # Lead
-    'PT',  # Platinum
-    'SR',  # Strontium
-    'U',  # Uranium
-    'V',  # Vanadium
-    'YB',  # Ytterbium
-    'ZN',  # Zinc
-    )
+ion_charges = {
+    'AG': "+1",  # Silver
+    'AL': "+3",  # Aluminium
+    'AU': "+1",  # Gold
+    'BR': "-1",  # Bromine
+    'CA': "+2",  # Calcium
+    'CD': "+2",  # Cadmium
+    'CL': "-1",  # Chlore
+    'CO': "+2",  # Cobalt
+    'CR': "+3",  # Chromium
+    'CS': "+1",  # Cesium
+    'CU': "+1",  # Copper
+    'F': "-1",   # Fluor
+    'FE': "+2",  # Iron
+    'HG': "+2",  # Mercury
+    'HO': "+3",  # Holmium
+    'I': "-1",   # Iodine
+    'IR': "+3",  # Iridium
+    'K': "+1",   # Potassium
+    'KR': "+2",  # Krypton
+    'LI': "+1",  # Lithium
+    'MG': "+2",  # Magnesium
+    'MN': "+2",  # Manganese
+    'MO': "+2",  # Molybdenum
+    'NA': "+1",  # Sodium
+    'NI': "+2",  # Nickel
+    'OS': "+6",  # Osmium
+    'PB': "+2",  # Lead
+    'PT': "+2",  # Platinum
+    'SR': "+2",  # Strontium
+    'U': "+2",  # Uranium
+    'V': "+2",  # Vanadium
+    'YB': "+3",  # Ytterbium
+    'ZN': "+2",  # Zinc
+    }
+
+
+supported_ions = list(ion_charges.keys())
 
 # must be defined as HETATM
 supported_multiatom_ions = (

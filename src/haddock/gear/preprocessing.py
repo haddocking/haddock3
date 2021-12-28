@@ -31,6 +31,7 @@ from pdbtools import (
 
 from haddock import log
 from haddock.core.supported_molecules import (
+    ion_charges,
     supported_cofactors,
     supported_carbohydrates,
     supported_ions,
@@ -183,6 +184,7 @@ def process_pdbs(
         replace_HSE_to_HIS,
         replace_HID_to_HIS,
         replace_HIE_to_HIS,
+        add_charges_to_ions,
         ##partial(pdb_fixinsert.run, option_list=[]),
         ###
         partial(remove_unsupported_hetatm, user_defined=param),
@@ -339,6 +341,39 @@ replace_HSD_to_HIS = partial(replace_residue, resin='HSD', resout='HIS')
 replace_HSE_to_HIS = partial(replace_residue, resin='HSE', resout='HIS')
 replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
 replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')
+
+
+
+@allow_dry("Add charges to ions.")
+def add_charges_to_ions(fhandler):
+    """Add charges to ions."""
+    for line in fhandler:
+        if line.startswith(("ATOM", "ANISOU", "HETATM")):
+
+            # first case
+            atom = line[12:16].strip()
+            if atom in ion_charges:
+                charge = ion_charges[atom]
+                new_atom = atom + charge
+                yield line[:12] + new_atom + line[16:78] + charge
+
+            # second case
+            atom = line[12:14]  # putative
+            charge = line[14:16]  # putative
+            if atom in ion_charges:
+                try:
+                    int(charge)
+                    # atom and charge are correctly placed
+                    yield line[:78] + charge
+                    continue
+                except ValueError:
+                    charge = ion_charges[atom]
+                    new_atom = atom + charge
+                    yield line[:12] + new_atom + line[16:78] + charge
+
+            yield line
+
+        yield line
 
 
 def correct_equal_chain_segids(structures):

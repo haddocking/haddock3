@@ -25,7 +25,7 @@ def generate_topology(
         defaults,
         mol_params,
         default_params_path=None,
-        protonation=None):
+        ):
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
     general_param = load_workflow_params(**defaults)
@@ -33,8 +33,8 @@ def generate_topology(
     general_param = general_param + input_mols_params
 
     # generate default headers
-    link, topology_protonation, trans_vec, tensor, scatter, axis, water_box = \
-        generate_default_header(protonation, path=default_params_path)
+    link, trans_vec, tensor, scatter, axis, water_box = \
+        generate_default_header(path=default_params_path)
 
     output = prepare_output(
         output_pdb_filename=f'{input_pdb.stem}_haddock{input_pdb.suffix}',
@@ -48,7 +48,6 @@ def generate_topology(
         input_str,
         output,
         link,
-        topology_protonation,
         trans_vec,
         tensor,
         scatter,

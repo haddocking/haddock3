@@ -16,7 +16,7 @@ from haddock.libs.libutil import transform_to_list
 RND = RandomNumberGenerator()
 
 
-def generate_default_header(protonation=None, path=None):
+def generate_default_header(path=None):
     """Generate CNS default header."""
     if path is not None:
         axis = load_axis(**cns_paths.get_axis(path))
@@ -34,11 +34,8 @@ def generate_default_header(protonation=None, path=None):
         trans_vec = load_trans_vectors(**cns_paths.translation_vectors)
         water_box = load_boxtyp20(cns_paths.water_box["boxtyp20"])
 
-    topology_protonation = load_protonation_state(protonation)
-
     return (
         link,
-        topology_protonation,
         trans_vec,
         tensor,
         scatter,
@@ -173,45 +170,6 @@ def load_boxtyp20(waterbox_param):
         boxtyp20=waterbox_param)
 
 
-def load_protonation_state(protononation):
-    """Prepare the CNS protononation."""
-    protonation_header = ""
-    if protononation and isinstance(protononation, dict):
-        protonation_header += f"{linesep}! Protonation states{linesep}"
-
-        for i, chain in enumerate(protononation):
-            hise_l = [0] * 10
-            hisd_l = [0] * 10
-            hisd_counter = 0
-            hise_counter = 0
-            for res in protononation[chain]:
-                state = protononation[chain][res].lower()
-                if state == "hise":
-                    hise_l[hise_counter] = res
-                    hise_counter += 1
-                if state == "hisd":
-                    hisd_l[hisd_counter] = res
-                    hisd_counter += 1
-
-            hise_str = ""
-            for e in [(i + 1, c + 1, r) for c, r in enumerate(hise_l)]:
-                hise_str += (
-                    f"eval ($toppar.hise_resid_{e[0]}_{e[1]}"
-                    f" = {e[2]}){linesep}"
-                    )
-            hisd_str = ""
-            for e in [(i + 1, c + 1, r) for c, r in enumerate(hisd_l)]:
-                hisd_str += (
-                    f"eval ($toppar.hisd_resid_{e[0]}_{e[1]}"
-                    f" = {e[2]}){linesep}"
-                    )
-
-            protonation_header += hise_str
-            protonation_header += hisd_str
-
-    return protonation_header
-
-
 # This is used by docking
 def prepare_multiple_input(pdb_input_list, psf_input_list):
     """Prepare multiple input files."""
@@ -295,8 +253,6 @@ def prepare_cns_input(
     """Generate the .inp file needed by the CNS engine."""
     # read the default parameters
     default_params = load_workflow_params(**defaults)
-
-    # before there was the protonation state here, but no parameter was used
 
     # write the PDBs
     pdb_list = [

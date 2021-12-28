@@ -7,7 +7,7 @@ from pathlib import Path
 from haddock import log
 from haddock.core import cns_paths
 from haddock.libs import libpdb
-from haddock.libs.libfunc import false, true, vartial
+from haddock.libs.libfunc import false, true
 from haddock.libs.libmath import RandomNumberGenerator
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import transform_to_list
@@ -23,7 +23,7 @@ def generate_default_header(protonation=None, path=None):
         link = load_link(Path(path, cns_paths.LINK_FILE))
         scatter = load_scatter(Path(path, cns_paths.SCATTER_LIB))
         tensor = load_tensor(**cns_paths.get_tensors(path))
-        trans_vec = load_trans_vectors(**cns_paths.get_translation_vectors(path))
+        trans_vec = load_trans_vectors(**cns_paths.get_translation_vectors(path))  # noqa: E501
         water_box = load_boxtyp20(cns_paths.get_water_box(path)["boxtyp20"])
 
     else:
@@ -147,42 +147,10 @@ def load_link(mol_link):
         link_file=mol_link)
 
 
-# def load_trans_vectors(trans_vectors):
-#     """Add translation vectors."""
-#     trans_header = f"{linesep}! Translation vectors{linesep}"
-#     i = 0
-#     for vector_id in trans_vectors:
-#         vector_file = trans_vectors[vector_id]
-#         trans_header += f'eval ($trans_vector_{i} = "{vector_file}" ){linesep}'
-#         i += 1
-# 
-#     return trans_header
-
-
- #def load_tensor(tensor):
- #    """Add tensor information."""
- #    tensor_header = f"{linesep}! Tensors{linesep}"
- #    for tensor_id in tensor:
- #        tensor_file = tensor[tensor_id]
- #        tensor_header += f'eval (${tensor_id} = "{tensor_file}" ){linesep}'
- #
- #    return tensor_header
-
-
-#def load_axis(axis):
-#    """Add axis."""
-#    axis_header = f"{linesep}! Axis{linesep}"
-#    for axis_id in axis:
-#        axis_file = axis[axis_id]
-#        axis_header += f'eval (${axis_id} = "{axis_file}" ){linesep}'
-#
-#    return axis_header
-
-
-load_axis = partial(load_workflow_params, param_header=f"{linesep}! Axis{linesep}")
-load_tensor = partial(load_workflow_params, param_header=f"{linesep}! Tensors{linesep}")
-prepare_output = partial(load_workflow_params, param_header=f"{linesep}! Output structure{linesep}")
-load_trans_vectors = partial(load_workflow_params, param_header=f"{linesep}! Translation vectors{linesep}")
+load_axis = partial(load_workflow_params, param_header=f"{linesep}! Axis{linesep}")  # noqa: E501
+load_tensor = partial(load_workflow_params, param_header=f"{linesep}! Tensors{linesep}")  # noqa: E501
+prepare_output = partial(load_workflow_params, param_header=f"{linesep}! Output structure{linesep}")  # noqa: E501
+load_trans_vectors = partial(load_workflow_params, param_header=f"{linesep}! Translation vectors{linesep}")  # noqa: E501
 
 load_ambig = partial(write_eval_line, "ambig_fname")
 load_unambig = partial(write_eval_line, "unambig_fname")
@@ -199,58 +167,10 @@ def load_scatter(scatter_lib):
 
 
 def load_boxtyp20(waterbox_param):
+    """Add boxtyp20 eval line."""
     return load_workflow_params(
         param_header=f"{linesep}! Water box{linesep}",
         boxtyp20=waterbox_param)
-
-
-
-#def load_waterbox(waterbox_param):
-#    """Add waterbox information."""
-#    water_header = f"{linesep}! Water box{linesep}"
-#    water_header += f'eval ($boxtyp20 = "{waterbox_param}" ){linesep}'
-#
-#    return water_header
-
-
-#def load_ambig(ambig_f):
-#    """Add ambig file."""
-#    ambig_str = f'eval ($ambig_fname="{str(ambig_f)}"){linesep}'
-#    return ambig_str
-
-
-#def load_unambig(unambig_f):
-#    """Add unambig file."""
-#    unambig_str = f'eval ($unambig_fname="{str(unambig_f)}"){linesep}'
-#    return unambig_str
-
-
-#def load_hbond(hbond_f):
-#    """Add hbond file."""
-#    hbond_str = f'eval ($hbond_fname="{hbond_f}"){linesep}'
-#    return hbond_str
-
-
-#def load_dihe(dihe_f):
-#    """Add dihedral file."""
-#    dihe_str = f'eval ($dihe_fname="{dihe_f}"){linesep}'
-#    return dihe_str
-
-
-#def load_tensor_tbl(tensor_f):
-#    """Add tensor tbl file."""
-#    tensor_str = f'eval ($tensor_tbl="{tensor_f}"){linesep}'
-#    return tensor_str
-
-
-#def prepare_output(output_psf_filename, output_pdb_filename):
-#    """Output of the CNS file."""
-#    output = (
-#        f"{linesep}! Output structure{linesep}"
-#        f'eval ($output_psf_filename="{output_psf_filename}"){linesep}'
-#        f'eval ($output_pdb_filename="{output_pdb_filename}"){linesep}'
-#        )
-#    return output
 
 
 def load_protonation_state(protononation):
@@ -354,7 +274,6 @@ def prepare_single_input(pdb_input, psf_input=None):
     input_str += write_eval_line("ncomponents", ncomponents)
 
     for i, segid in enumerate(chainsegs):
-        #input_str += f'eval ($prot_segid_{i+1}="{segid}"){linesep}'
         input_str += write_eval_line(f"prot_segid_{i + 1}", segid)
 
     seed = RND.randint(100, 99999)
@@ -385,12 +304,6 @@ def prepare_cns_input(
         for pdb in transform_to_list(input_element)
         ]
 
-    #if isinstance(input_element, (list, tuple)):
-    #    for pdb in input_element:
-    #        pdb_list.append(pdb.rel_path)
-    #else:
-    #    pdb_list.append(input_element.rel_path)
-
     # write the PSFs
     psf_list = []
     if isinstance(input_element, (list, tuple)):
@@ -413,11 +326,6 @@ def prepare_cns_input(
         psf_list.append(psf_fname)
 
     input_str = prepare_multiple_input(pdb_list, psf_list)
-
-    #if ambig_fname:
-    #    ambig_str = load_ambig(ambig_fname)
-    #else:
-    #    ambig_str = ""
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
     output = f"{linesep}! Output structure{linesep}"
@@ -451,7 +359,6 @@ def prepare_cns_input(
         default_params
         + input_str
         + output
-        #+ ambig_str
         + segid_str
         + recipe_str
         )
@@ -470,5 +377,3 @@ def prepare_expected_pdb(model_obj, model_nb, path, identifier):
     else:
         pdb.topology = model_obj.topology
     return pdb
-
-

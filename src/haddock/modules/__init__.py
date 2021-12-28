@@ -1,5 +1,4 @@
 """HADDOCK3 modules."""
-import os
 from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
@@ -7,8 +6,8 @@ from pathlib import Path
 from haddock import log as log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.config_reader import read_config
-from haddock.libs.libio import working_directory
 from haddock.libs.libhpc import HPCScheduler
+from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
@@ -99,7 +98,6 @@ class BaseHaddockModule(ABC):
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
-
 
         # convert paths to relative by appending parent
         for key, value in self.params.items():

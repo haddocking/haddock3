@@ -65,7 +65,7 @@ def test_load_workflow_params():
         'var7': None,
         }
 
-    result = libcns.load_workflow_params(params)
+    result = libcns.load_workflow_params(**params)
 
     expected = (
         f'{os.linesep}'

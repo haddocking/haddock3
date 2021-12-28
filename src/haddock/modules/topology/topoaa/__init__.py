@@ -1,5 +1,4 @@
 """Create and manage CNS all-atom topology."""
-import shutil
 from pathlib import Path
 
 from haddock.libs import libpdb
@@ -34,7 +33,7 @@ def generate_topology(
     general_param = general_param + input_mols_params
 
     # generate default headers
-    link, topology_protonation, trans_vec, tensor, scatter,  axis, water_box = \
+    link, topology_protonation, trans_vec, tensor, scatter, axis, water_box = \
         generate_default_header(protonation, path=default_params_path)
 
     output = prepare_output(
@@ -99,8 +98,6 @@ class HaddockModule(BaseCNSModule):
             self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
             # Copy the molecule to the step folder
-            #step_molecule_path = Path(molecule.file_name.name)
-            #shutil.copyfile(Path('..', molecule.file_name), step_molecule_path)
 
             # Split models
             self.log(
@@ -112,7 +109,6 @@ class HaddockModule(BaseCNSModule):
                 molecule.with_parent,
                 dest=Path.cwd(),
                 )
-            print(splited_models)
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
@@ -127,7 +123,6 @@ class HaddockModule(BaseCNSModule):
             for model in relative_paths_models:
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
-                print('MODEL: ', model)
 
                 if self.params['ligand_top_fname']:
                     custom_top = self.params['ligand_top_fname']
@@ -181,7 +176,8 @@ class HaddockModule(BaseCNSModule):
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
                 if not processed_pdb.is_file():
                     not_found.append(processed_pdb.name)
-                processed_topology = Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
+                processed_topology = \
+                    Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
                 if not processed_topology.is_file():
                     not_found.append(processed_topology.name)
 

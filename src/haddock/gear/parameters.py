@@ -1,6 +1,7 @@
 """Relates to logic or definition of parameters."""
 from haddock.core.defaults import cns_exec
 
+
 config_mandatory_general_parameters = {
     'molecules',
     'run_dir',

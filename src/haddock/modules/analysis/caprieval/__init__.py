@@ -566,7 +566,6 @@ class HaddockModule(BaseHaddockModule):
 
         #  by default modes_to_calc should have been sorted by the module
         #  that produced it
-        #best_model = Path(models_to_calc[0].path, models_to_calc[0].file_name)
         best_model = models_to_calc[0].rel_path
 
         if self.params["reference_fname"]:

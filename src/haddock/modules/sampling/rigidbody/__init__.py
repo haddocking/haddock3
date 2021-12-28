@@ -57,7 +57,6 @@ class HaddockModule(BaseCNSModule):
         idx = 1
         structure_list = []
         self.log("Preparing jobs...")
-        #ambig_fname = self.params.pop("ambig_fname")
         for combination in models_to_dock:
 
             for _i in range(sampling_factor):
@@ -68,7 +67,6 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "rigidbody",
-                    #ambig_fname=Path('..', ambig_fname),
                     default_params_path=self.toppar_path,
                     )
 

@@ -44,14 +44,14 @@ def test_ap_version():
     assert exit.value.code == 0
 
 
-@pytest.mark.parametrize(
-    'level',
-    ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
-    )
-def test_ap_log_level(level):
-    """Test --log-level correct."""
-    cmd = ap.parse_args(f'{recipe} --log-level {level}'.split())
-    assert cmd.log_level == level
+#@pytest.mark.parametrize(
+#    'level',
+#    ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"),
+#    )
+#def test_ap_log_level(level):
+#    """Test --log-level correct."""
+#    cmd = ap.parse_args(f'{recipe} --log-level {level}'.split())
+#    assert cmd.log_level == level
 
 
 def test_ap_log_level_error():

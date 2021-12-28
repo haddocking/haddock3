@@ -54,7 +54,8 @@ class HaddockModule(BaseHaddockModule):
                 receptor_chain=self.params["receptor_chain"],
                 ligand_chain=self.params["ligand_chain"],
                 aln_method=self.params["alignment_method"],
-                path=self.path
+                path=self.path,
+                lovoalign_exec=self.params["lovoalign_exec"],
                 )
         except Exception as e:
             self.finish_with_error(e)

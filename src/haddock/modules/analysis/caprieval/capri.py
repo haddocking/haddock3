@@ -76,7 +76,8 @@ class CAPRI:
                  receptor_chain,
                  ligand_chain,
                  aln_method,
-                 path):
+                 path,
+                 **params):
         self.reference = reference
         self.model_list = []
         self.irmsd_dic = {}
@@ -92,7 +93,7 @@ class CAPRI:
         # TODO: For scoring we might need to get one alignment per model
         reference = str(reference.resolve())
         model = model_list[0].full_name
-        align_func = get_align(aln_method)
+        align_func = get_align(aln_method, **params)
         self.numbering_dic = align_func(reference, model, path)
         if not self.numbering_dic:
             raise CAPRIError("Could not align reference and model")
@@ -658,13 +659,13 @@ def load_seqnum(pdb_f):
     return seqnum_dic
 
 
-def get_align(method, **args):
+def get_align(method, **kwargs):
     """Get the alignment function."""
     log.info(f"Using {method} alignment")
     if method == "structure":
-        return partial(align_strct, **args)
+        return partial(align_strct, lovoalign_exec=kwargs['lovoalign_exec'])
     elif method == "sequence":
-        return partial(align_seq, **args)
+        return partial(align_seq)
     else:
         available_alns = ("sequence", "structure")
         raise ValueError(
@@ -673,19 +674,17 @@ def get_align(method, **args):
             )
 
 
-def align_strct(reference, model, output_path):
+def align_strct(reference, model, output_path, lovoalign_exec=None):
     """Structuraly align and get numbering relationship."""
-    try:
-        lovoalign_exec = os.environ["LOVOALIGN_EXEC"]
-    except KeyError:
+    if lovoalign_exec is None:
         log.error(
             "Structural alignment needs LovoAlign "
             "get it at github.com/m3g/lovoalign"
             )
-        raise CAPRIError("System variable LOVOALIGN_EXEC not defined")
+        raise CAPRIError("Path to LovoAlign executable required.")
 
     if not os.access(lovoalign_exec, os.X_OK):
-        raise CAPRIError(f"{lovoalign_exec} not executable")
+        raise CAPRIError(f"{lovoalign_exec!r} for LovoAlign is not executable")
 
     numbering_dic = {}
     protein_a_dic = dict(

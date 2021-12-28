@@ -31,13 +31,13 @@ def test_dics_keys():
     assert len(a) == 5
 
 
-#@pytest.mark.parametrize('key', liblog.log_levels.keys())
-#def test_add_loglevel_arg(key):
-#    """Test adds log level argument to CLI."""
-#    ap = argparse.ArgumentParser()
-#    liblog.add_loglevel_arg(ap)
-#    cmd = ap.parse_args(f'--log-level {key}'.split())
-#    assert cmd.log_level
+@pytest.mark.parametrize('key', liblog.log_levels.keys())
+def test_add_loglevel_arg(key):
+    """Test adds log level argument to CLI."""
+    ap = argparse.ArgumentParser()
+    liblog.add_loglevel_arg(ap)
+    cmd = ap.parse_args(f'--log-level {key}'.split())
+    assert cmd.log_level
 
 
 def test_add_loglevel_arg_error():

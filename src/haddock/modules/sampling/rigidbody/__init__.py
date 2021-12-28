@@ -109,7 +109,6 @@ class HaddockModule(BaseCNSModule):
 
                 model.score = haddock_score
 
-        print(not_present)
         # Check for generated output
         if len(not_present) == len(structure_list):
             # fail if not all expected files are found

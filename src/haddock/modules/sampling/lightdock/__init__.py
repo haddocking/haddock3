@@ -158,4 +158,4 @@ class HaddockModule(BaseHaddockModule):
         io = ModuleIO()
         io.add(models_to_score)
         io.add(expected, "o")
-        io.save(self.path)
+        io.save()

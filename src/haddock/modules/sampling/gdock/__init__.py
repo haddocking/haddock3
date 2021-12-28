@@ -133,4 +133,4 @@ class HaddockModule(BaseHaddockModule):
 
         io = ModuleIO()
         io.add(output_structures, "o")
-        io.save(self.path)
+        io.save()

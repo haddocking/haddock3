@@ -95,7 +95,7 @@ class HaddockModule(BaseCNSModule):
             if not Path(pdb.file_name).exists():
                 not_found.append(pdb.file_name)
             else:
-                haddock_score = HaddockModel(pdb.full_name).calc_haddock_score(
+                haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
                     **weights
                     )
 

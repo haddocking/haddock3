@@ -50,7 +50,6 @@ class HaddockModule(BaseCNSModule):
             self.log("[Warning] sampling_factor is larger than 100")
 
         idx = 1
-        #ambig_fname = Path('..', self.params.pop("ambig_fname"))
         for model in models_to_refine:
             for _ in range(self.params['sampling_factor']):
                 inp_file = prepare_cns_input(
@@ -60,7 +59,6 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "flexref",
-                    #ambig_fname=ambig_fname,
                     )
 
                 out_file = f"flexref_{idx}.out"

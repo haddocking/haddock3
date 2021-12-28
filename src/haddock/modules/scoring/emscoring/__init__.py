@@ -44,17 +44,18 @@ class HaddockModule(BaseCNSModule):
         for model_num, model in enumerate(models_to_score, start=1):
             scoring_inp = prepare_cns_input(
                 model_num,
-                model, self.path,
+                model,
+                self.path,
                 self.recipe_str,
                 self.params,
                 "emscoring",
                 native_segid=True)
 
-            scoring_out = Path(self.path, f"emscoring_{model_num}.out")
+            scoring_out = f"emscoring_{model_num}.out"
 
             # create the expected PDBobject
             expected_pdb = prepare_expected_pdb(
-                model, model_num, self.path, "emscoring"
+                model, model_num, ".", "emscoring"
                 )
             scored_structure_list.append(expected_pdb)
 
@@ -77,10 +78,10 @@ class HaddockModule(BaseCNSModule):
         expected = []
         not_found = []
         for pdb in scored_structure_list:
-            if not pdb.is_present():
+            if not Path(pdb.file_name).exists():
                 not_found.append(pdb.file_name)
             else:
-                haddock_score = HaddockModel(pdb.full_name).calc_haddock_score(
+                haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
                     **weights
                     )
 
@@ -92,8 +93,8 @@ class HaddockModule(BaseCNSModule):
             self.finish_with_error("Several files were not generated:"
                                    f" {not_found}")
 
-        output_fname = Path(self.path, "emscoring.tsv")
-        self.log(f"Saving output to {output_fname.name}")
+        output_fname = "emscoring.tsv"
+        self.log(f"Saving output to {output_fname}")
         with open(output_fname, "w") as fh:
             fh.write(f"structure\toriginal_name\tscore{linesep}")
             for pdb in expected:
@@ -104,9 +105,8 @@ class HaddockModule(BaseCNSModule):
                 fh.write(
                     f"{pdb.file_name}\t{original_name}\t{pdb.score}{linesep}"
                     )
-        fh.close()
 
         # Save module information
         io = ModuleIO()
         io.add(expected, "o")
-        io.save(self.path)
+        io.save()

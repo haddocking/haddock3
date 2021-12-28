@@ -58,13 +58,12 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "mdref",
-                    #ambig_fname=self.params["ambig_fname"],
                     )
-                out_file = Path(self.path, f"mdref_{idx}.out")
+                out_file = f"mdref_{idx}.out"
 
                 # create the expected PDBobject
                 expected_pdb = prepare_expected_pdb(
-                    model, idx, self.path, "mdref"
+                    model, idx, ".", "mdref"
                     )
 
                 refined_structure_list.append(expected_pdb)
@@ -89,10 +88,10 @@ class HaddockModule(BaseCNSModule):
         expected = []
         not_found = []
         for pdb in refined_structure_list:
-            if not pdb.is_present():
+            if not Path(pdb.file_name).exists():
                 not_found.append(pdb.file_name)
             else:
-                haddock_score = HaddockModel(pdb.full_name).calc_haddock_score(
+                haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
                     **weights
                     )
 
@@ -108,4 +107,4 @@ class HaddockModule(BaseCNSModule):
         # Save module information
         io = ModuleIO()
         io.add(expected, "o")
-        io.save(self.path)
+        io.save()

@@ -370,7 +370,6 @@ def prepare_cns_input(
         recipe_str,
         defaults,
         identifier,
-        #ambig_fname=None,
         native_segid=False,
         default_params_path=None,
         ):

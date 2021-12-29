@@ -564,9 +564,10 @@ class HaddockModule(BaseHaddockModule):
             p for p in self.previous_io.output if p.file_type == Format.PDB
             ]
 
-        #  by default modes_to_calc should have been sorted by the module
-        #  that produced it
-        best_model = Path(models_to_calc[0].path, models_to_calc[0].file_name)
+        #  Sort by score
+        model_l = [(m.score, m) for m in models_to_calc]
+        model_l.sort()
+        best_model = Path(model_l[0][1].full_name)
 
         if self.params["reference"]:
             reference = Path(self.params["reference"])
@@ -589,7 +590,7 @@ class HaddockModule(BaseHaddockModule):
         else:
             self.log(
                 "No reference was given. "
-                "Using best ranking structure from previous step")
+                "Using the structure with the lowest score from previous step")
             reference = best_model
 
         # detect the molecule types and use the appropriate atoms

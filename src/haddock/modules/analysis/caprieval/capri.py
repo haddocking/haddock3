@@ -874,7 +874,7 @@ def align_seq(reference, model, output_path):
                 start_b, end_b = seg_b
 
                 reslist_a = list(seqdic_a[a].keys())[start_a:end_a]
-                reslist_b = list(seqdic_a[a].keys())[start_b:end_b]
+                reslist_b = list(seqdic_b[b].keys())[start_b:end_b]
 
                 align_dic[a].update(
                     dict((i, j) for i, j in zip(reslist_a, reslist_b))

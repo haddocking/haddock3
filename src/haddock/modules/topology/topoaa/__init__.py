@@ -153,6 +153,7 @@ class HaddockModule(BaseCNSModule):
                     topology_filename,
                     output_filename,
                     envvars=self.envvars,
+                    cns_exec=self.params["cns_exec"],
                     )
 
                 jobs.append(job)

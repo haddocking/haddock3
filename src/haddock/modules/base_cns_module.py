@@ -1,9 +1,12 @@
 """Functionalities related to CNS modules."""
 import os
 import shutil
+import stat
 from pathlib import Path
 
+from haddock import log
 from haddock import toppar_path as global_toppar
+from haddock.libs.libio import working_directory
 from haddock.modules import BaseHaddockModule
 
 
@@ -14,7 +17,7 @@ class BaseCNSModule(BaseHaddockModule):
     Contains additional functionalities excusive for CNS modules.
     """
 
-    def __init__(self, *args, cns_script="", **kwargs):
+    def __init__(self, order, path, initial_params, cns_script):
         """
         Instantitate CNSModule.
 
@@ -23,7 +26,7 @@ class BaseCNSModule(BaseHaddockModule):
         cns_script : str or pathlib.Path
             Path to the main module's cns script.
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(order, path, initial_params)
 
         self.cns_folder_path = Path(cns_script.resolve().parent)
         self.cns_protocol_path = cns_script
@@ -32,12 +35,17 @@ class BaseCNSModule(BaseHaddockModule):
 
     def run(self, **params):
         """Execute the module."""
+        self.update_params_with_defaults(**params)
+        self.add_parent_to_paths()
         self.envvars = self.default_envvars()
 
         if params['self_contained']:
             self.make_self_contained()
 
-        super().run(**params)
+        with working_directory(self.path):
+            self._run()
+
+        log.info(f'Module [{self.name}] finished.')
 
     def default_envvars(self):
         """Return default env vars updated to `envvars` (if given)."""
@@ -82,3 +90,10 @@ class BaseCNSModule(BaseHaddockModule):
 
         self.envvars = self.default_envvars()
         self.save_envvars()
+
+        _cns_exec = self.params["cns_exec"]
+        new_cns = Path(".", Path(_cns_exec).name)
+        if not new_cns.exists():
+            self.params["cns_exec"] = shutil.copyfile(_cns_exec, new_cns)
+            shutil.copystat(_cns_exec, new_cns)
+            self.params["cns_exec"] = Path("..", Path(_cns_exec).name)

@@ -89,24 +89,34 @@ class BaseHaddockModule(ABC):
                 if not Path(value).exists():
                     raise FileNotFoundError(f'File not found: {str(value)!r}')
 
-    def run(self, **params):
-        """Execute the module."""
-        log.info(f'Running [{self.name}] module')
+    def update_params_with_defaults(self, **params):
+        """Update config parameters."""
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
+        return
 
+    def add_parent_to_paths(self):
+        """Add parent path to paths."""
         # convert paths to relative by appending parent
         for key, value in self.params.items():
             if value and key.endswith('_fname'):
-                p = Path(value)
-                if p.is_absolute():
+                if Path(value).is_absolute():
                     pass
+
                 else:
                     self.params[key] = Path('..', value)
+        return
+
+    def run(self, **params):
+        """Execute the module."""
+        log.info(f'Running [{self.name}] module')
+
+        self.update_params_with_defaults(**params)
+        self.add_parent_to_paths()
 
         with working_directory(self.path):
             self._run()

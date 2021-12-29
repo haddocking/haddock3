@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
 from haddock.libs.libhpc import (
@@ -36,7 +37,7 @@ class Workflow:
             self,
             content,
             ncores=None,
-            cns_exec=None,
+            cns_exec=global_cns_exec,
             config_path=None,
             mode='local',
             queue=HPCWorker_QUEUE_DEFAULT,

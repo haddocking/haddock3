@@ -20,6 +20,8 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libpdb import split_by_chain
 
 
+IGNORE_RES = ["SHA"]
+
 PROT_RES = [
     "ALA",
     "ARG",
@@ -578,7 +580,9 @@ def get_atoms(pdb_list):
                     resname = line[17:20].strip()
                     atom_name = line[12:16].strip()
                     element = line[76:78].strip()
-                    if resname not in PROT_RES and resname not in DNA_RES:
+                    if (resname not in PROT_RES
+                            and resname not in DNA_RES
+                            and resname not in IGNORE_RES):
                         # its neither DNA nor protein, use the heavy atoms
                         # WARNING: Atoms that belong to unknown residues mutt
                         #  be bound to a residue name;
@@ -632,6 +636,8 @@ def pdb2fastadic(pdb_f):
                 res_num = int(line[22:26])
                 res_name = line[17:20].strip()
                 chain = line[21]
+                if res_name in IGNORE_RES:
+                    continue
                 try:
                     one_letter = res_codes[res_name]
                 except KeyError:

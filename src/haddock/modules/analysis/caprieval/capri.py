@@ -683,6 +683,9 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
             )
         raise CAPRIError("Path to LovoAlign executable required.")
 
+    if not lovoalign_exec:
+        raise CAPRIError("lovoalign_exec parameter not defined ")
+
     if not os.access(lovoalign_exec, os.X_OK):
         raise CAPRIError(f"{lovoalign_exec!r} for LovoAlign is not executable")
 

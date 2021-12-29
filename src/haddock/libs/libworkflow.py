@@ -112,4 +112,4 @@ class Step:
         except KeyboardInterrupt:
             log.info("You have halted subprocess execution by hitting Ctrl+c")
             log.info("Exiting...")
-            sys.exit()
+            sys.exit(1)

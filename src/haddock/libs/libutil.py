@@ -308,8 +308,9 @@ def log_error_and_exit():
     except Exception as err:
         log.exception(err)
         log.error(err)
-        log.info(get_goodbye_help())
-        sys.exit(
+        log.error(
             'An error has occurred, see log file. '
             'And contact the developers if needed.'
             )
+        log.info(get_goodbye_help())
+        sys.exit(1)

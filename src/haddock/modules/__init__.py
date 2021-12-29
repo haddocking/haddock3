@@ -130,12 +130,13 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def finish_with_error(self, message=""):
+    def finish_with_error(self, reason="Module has failed."):
         """Finish with error message."""
-        if not message:
-            message = "Module has failed"
-        log.error(message)
-        raise SystemExit
+        if isinstance(reason, Exception):
+            raise RuntimeError("Module has failed.") from reason
+
+        else:
+            raise RuntimeError(message)
 
     def _load_previous_io(self):
         if self.order == 0:

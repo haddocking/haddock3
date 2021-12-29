@@ -1,13 +1,14 @@
 name: haddock3
 channels:
-    - conda-forge
-    - defaults
+  - conda-forge
+  - defaults
 dependencies:
-    - python==3.9
-    - pip
-    - numpy
-    - jsonpickle
-    - tox
-    - pip:
-        - pdb-tools
-        - git+https://github.com/joaorodrigues/fcc@fcc2
+  - python==3.9
+  - pip
+  - numpy
+  - jsonpickle
+  - tox
+  - biopython
+  - pip:
+      - pdb-tools
+      - git+https://github.com/joaorodrigues/fcc@fcc2

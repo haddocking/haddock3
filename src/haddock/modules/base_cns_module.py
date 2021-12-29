@@ -1,7 +1,6 @@
 """Functionalities related to CNS modules."""
 import os
 import shutil
-import stat
 from pathlib import Path
 
 from haddock import log
@@ -35,6 +34,8 @@ class BaseCNSModule(BaseHaddockModule):
 
     def run(self, **params):
         """Execute the module."""
+        log.info(f'Running [{self.name}] module')
+
         self.update_params_with_defaults(**params)
         self.add_parent_to_paths()
         self.envvars = self.default_envvars()

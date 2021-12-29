@@ -10,7 +10,7 @@ import jsonpickle
 from haddock.core.defaults import MODULE_IO_FILE
 
 
-NAN = float('nan')
+NaN = float('nan')
 
 
 class Format(Enum):
@@ -50,7 +50,7 @@ class Persistent:
 class PDBFile(Persistent):
     """Represent a PDB file."""
 
-    def __init__(self, file_name, topology=None, path='.', score=NAN):
+    def __init__(self, file_name, topology=None, path='.', score=NaN):
         super().__init__(file_name, Format.PDB, path)
         self.topology = topology
         self.score = score

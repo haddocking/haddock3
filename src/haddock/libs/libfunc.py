@@ -1,8 +1,4 @@
-"""
-Tools for functional programming.
-
-See more at https://github.com/joaomcteixeira/libfuncpy
-"""
+"""Tools for functional programming."""
 
 
 def true(*ignore, **everything):

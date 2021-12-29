@@ -104,10 +104,7 @@ class BaseHaddockModule(ABC):
         # convert paths to relative by appending parent
         for key, value in self.params.items():
             if value and key.endswith('_fname'):
-                if Path(value).is_absolute():
-                    pass
-
-                else:
+                if not Path(value).is_absolute():
                     self.params[key] = Path('..', value)
         return
 

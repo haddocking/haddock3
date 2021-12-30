@@ -4,6 +4,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from haddock.libs.libontology import PDBFile
@@ -302,23 +303,16 @@ def test_output(protprot_caprimodule):
         )
 
     assert Path(output_f.name).stat().st_size != 0
-    observed_outf = open(output_f.name).readlines()
-    expected_outf = [
-        (
-            "               model                      rank     score     irmsd"
-            f"      fnat     lrmsd    ilrmsd{os.linesep}"
-            ),
-        (
-            "golden_data/protprot_complex_2.pdb           2  -105.000     0.278"
-            f"     0.833     1.110     1.388{os.linesep}"
-            ),
-        (
-            "golden_data/protprot_complex_1.pdb           1   -42.000     0.111"
-            f"     0.333     0.444     0.555{os.linesep}"
-            ),
+    # remove the model column since its name will depend on where we are running
+    #  the test
+    observed_outf_l = [e.split()[1:] for e in open(output_f.name).readlines()]
+    expected_outf_l = [
+        ['rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd'],
+        ['2', '-105.000', '0.278', '0.833', '1.110', '1.388'],
+        ['1', '-42.000', '0.111', '0.333', '0.444', '0.555']
         ]
 
-    assert observed_outf == expected_outf
+    assert observed_outf_l == expected_outf_l
 
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
@@ -477,8 +471,6 @@ def test_kabsch(protprot_caprimodule):
         ]
 
     observed_U = protprot_caprimodule.kabsch(P, Q)
-    # transform in a list so we can compare
-    observed_U = array_to_list(observed_U)
 
     expected_U = [
         [0.38845040189428726, 0.38160307568742435, -0.8387403518932808],
@@ -486,7 +478,7 @@ def test_kabsch(protprot_caprimodule):
         [0.8979165634978604, 0.047725414019726436, 0.43757071411697324],
         ]
 
-    assert observed_U == expected_U
+    np.testing.assert_array_equal(np.asarray(expected_U), observed_U)
 
 
 def test_get_atoms():

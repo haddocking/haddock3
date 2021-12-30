@@ -478,7 +478,7 @@ def test_kabsch(protprot_caprimodule):
         [0.8979165634978604, 0.047725414019726436, 0.43757071411697324],
         ]
 
-    np.testing.assert_array_equal(np.asarray(expected_U), observed_U)
+    np.testing.assert_allclose(np.asarray(expected_U), observed_U)
 
 
 def test_get_atoms():

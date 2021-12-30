@@ -32,9 +32,12 @@ from pdbtools import (
 from haddock import log
 from haddock.core.supported_molecules import (
     ion_charges,
+    must_be_atom,
+    must_be_hetatm,
     supported_cofactors,
     supported_carbohydrates,
     supported_ions,
+    supported_ion_resnames,
     supported_modified_amino_acids,
     supported_multiatom_ions,
     supported_natural_amino_acids,
@@ -42,7 +45,14 @@ from haddock.core.supported_molecules import (
     )
 from haddock.libs.libio import open_files_to_lines
 from haddock.libs.libfunc import chainf
-from haddock.libs.libpdb import read_chainids, read_segids, slc_resname
+from haddock.libs.libpdb import (
+    read_chainids,
+    read_segids,
+    slc_resname,
+    slc_model,
+    slc_element,
+    slc_name,
+    )
 
 
 _OSUFFIX = '_processed'
@@ -61,6 +71,7 @@ supported_atom = set(it.chain(
     supported_natural_amino_acids,
     supported_nucleic_acid_bases,
     ))
+
 
 
 def allow_dry(log_msg):
@@ -185,6 +196,8 @@ def process_pdbs(
         replace_HID_to_HIS,
         replace_HIE_to_HIS,
         add_charges_to_ions,
+        convert_ATOM_to_HETATM,
+        convert_HETATM_to_ATOM,
         ##partial(pdb_fixinsert.run, option_list=[]),
         ###
         partial(remove_unsupported_hetatm, user_defined=param),
@@ -198,6 +211,7 @@ def process_pdbs(
         ]
 
     # perform the individual processing steps
+    # this list contains a list of lines for each structure
     processed_individually = [
         list(chainf(structure, *line_by_line_processing_steps, dry=dry))
         for structure in structures
@@ -351,8 +365,9 @@ def add_charges_to_ions(fhandler):
         if line.startswith(("ATOM", "ANISOU", "HETATM")):
 
             # first case
-            atom = line[12:16].strip()
-            if atom in ion_charges:
+            atom = line[slc_name].strip()
+            resname = line[slc_resname].strip()
+            if atom in supported_ions and resname in supported_ions or resname in supported_ion_resnames:
                 charge = ion_charges[atom]
                 new_atom = atom + charge
                 yield line[:12] + new_atom + line[16:78] + charge
@@ -383,3 +398,30 @@ def correct_equal_chain_segids(structures):
     structures : list
     """
     return #  processed_structures
+
+
+@allow_dry("Convert record: {!r} to {!r}.")
+def convert_ATOM_record(fhandler, record, other_record, must_be):
+    """Convert ATOM lines to HETATM if needed."""
+    for line in fhandler:
+        if line.startswith(record):
+            resname = line[slc_resname].strip()
+            if resname in must_be:
+                yield other_record + line[6:]
+                continue
+        yield line
+
+
+convert_ATOM_to_HETATM = partial(
+    convert_ATOM_record,
+    record="ATOM",
+    other_record="HETATM",
+    must_be=must_be_hetatm,
+    )
+
+convert_HETATM_to_ATOM = partial(
+    convert_ATOM_record,
+    record="HETATM",
+    other_record="ATOM  ",
+    must_be=must_be_atom,
+    )

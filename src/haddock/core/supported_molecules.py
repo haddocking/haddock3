@@ -63,7 +63,12 @@ ion_charges = {
     }
 
 
-supported_ions = list(ion_charges.keys())
+supported_ions = tuple(ion_charges.keys())
+
+# creates the ZN2 YB3 kind of nomenclature
+supported_ion_resnames = \
+    tuple([ion + charge[-1] for ion, charge in ion_charges.items()])
+
 
 # must be defined as HETATM
 supported_multiatom_ions = (
@@ -72,11 +77,13 @@ supported_multiatom_ions = (
     'WO4',  # Tungstate
     )
 
+# must be defined as HETATM
 supported_cofactors = (
     'HEB',  # Heme-B
     'HEC',  # Heme-C
     )
 
+# must be defined as ATOM
 supported_nucleic_acid_bases = (
     # DNA
     'DA',  # Adenine
@@ -91,6 +98,7 @@ supported_nucleic_acid_bases = (
     'U',  # Uridine
     )
 
+# must be defined as ATOM
 supported_modified_amino_acids = (
     'ACE',  # N-terminal acetyl group
     'ALY',  # Acetylated LYS
@@ -144,3 +152,15 @@ supported_natural_amino_acids = (
     'TYR',
     'VAL',
     )
+
+must_be_atom = \
+    supported_natural_amino_acids \
+    + supported_modified_amino_acids \
+    + supported_nucleic_acid_bases
+
+must_be_hetatm = \
+    supported_cofactors \
+    + supported_multiatom_ions \
+    + supported_ions \
+    + supported_ion_resnames \
+    + supported_carbohydrates

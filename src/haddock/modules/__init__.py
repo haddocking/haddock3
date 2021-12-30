@@ -136,7 +136,7 @@ class BaseHaddockModule(ABC):
             raise RuntimeError("Module has failed.") from reason
 
         else:
-            raise RuntimeError(message)
+            raise RuntimeError(reason)
 
     def _load_previous_io(self):
         if self.order == 0:

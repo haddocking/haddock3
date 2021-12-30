@@ -649,8 +649,6 @@ def test_add_chain_from_segid(protprot_caprimodule):
             if line.startswith("ATOM"):
                 assert line[21] == "A"
 
-    os.unlink(tmp.name)
-
 
 def test_load_coords(protprot_caprimodule):
     """Test the loading of coordinates."""

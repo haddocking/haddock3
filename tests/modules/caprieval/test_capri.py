@@ -1,5 +1,4 @@
 """Test the CAPRI module."""
-
 import os
 import shutil
 import tempfile
@@ -34,35 +33,39 @@ def round_two_dec(dic):
 
 @pytest.fixture
 def protprot_input_list():
+    """Prot-prot input."""
     return [
         Path(DATA_PATH, "protprot_complex_1.pdb"),
         Path(DATA_PATH, "protprot_complex_2.pdb"),
-    ]
+        ]
 
 
 @pytest.fixture
 def protdna_input_list():
+    """Prot-DNA input."""
     return [
         Path(DATA_PATH, "protdna_complex_1.pdb"),
         Path(DATA_PATH, "protdna_complex_2.pdb"),
-    ]
+        ]
 
 
 @pytest.fixture
 def protlig_input_list():
+    """Protein-Ligand input."""
     return [
         Path(DATA_PATH, "protlig_complex_1.pdb"),
         Path(DATA_PATH, "protlig_complex_2.pdb"),
-    ]
+        ]
 
 
 @pytest.fixture
 def protdna_caprimodule(protdna_input_list):
+    """Protein-DNA CAPRI module."""
     ref = protdna_input_list[0]
     mod_l = [
         PDBFile(protdna_input_list[0], path=DATA_PATH),
         PDBFile(protdna_input_list[1], path=DATA_PATH),
-    ]
+        ]
     capri = CAPRI(
         reference=ref,
         model_list=mod_l,
@@ -70,17 +73,18 @@ def protdna_caprimodule(protdna_input_list):
         ligand_chain="B",
         aln_method="sequence",
         path=DATA_PATH,
-    )
+        )
     return capri
 
 
 @pytest.fixture
 def protlig_caprimodule(protlig_input_list):
+    """Protein-Ligand CAPRI module."""
     ref = protlig_input_list[0]
     mod_l = [
         PDBFile(protlig_input_list[0], path=DATA_PATH),
         PDBFile(protlig_input_list[1], path=DATA_PATH),
-    ]
+        ]
     capri = CAPRI(
         reference=ref,
         model_list=mod_l,
@@ -88,17 +92,18 @@ def protlig_caprimodule(protlig_input_list):
         ligand_chain="B",
         aln_method="sequence",
         path=DATA_PATH,
-    )
+        )
     return capri
 
 
 @pytest.fixture
 def protprot_caprimodule(protprot_input_list):
+    """Protein-Protein CAPRI module."""
     ref = protprot_input_list[0]
     mod_l = [
         PDBFile(protprot_input_list[0], path=DATA_PATH),
         PDBFile(protprot_input_list[1], path=DATA_PATH),
-    ]
+        ]
     capri = CAPRI(
         reference=ref,
         model_list=mod_l,
@@ -106,7 +111,7 @@ def protprot_caprimodule(protprot_input_list):
         ligand_chain="B",
         aln_method="sequence",
         path=DATA_PATH,
-    )
+        )
     return capri
 
 
@@ -119,7 +124,7 @@ def test_protprot_irmsd(protprot_caprimodule, protprot_input_list):
     expected_irmsd_dic = {
         protprot_input_list[0]: 0.0,
         protprot_input_list[1]: 7.92,
-    }
+        }
 
     assert observed_irmsd_dic == expected_irmsd_dic
 
@@ -132,7 +137,7 @@ def test_protprot_lrmsd(protprot_caprimodule, protprot_input_list):
     expected_lrmsd_dic = {
         protprot_input_list[0]: 0.0,
         protprot_input_list[1]: 15.85,
-    }
+        }
 
     assert observed_lrmsd_dic == expected_lrmsd_dic
 
@@ -145,7 +150,7 @@ def test_protprot_ilrmsd(protprot_caprimodule, protprot_input_list):
     expected_ilrmsd_dic = {
         protprot_input_list[0]: 0.0,
         protprot_input_list[1]: 9.66,
-    }
+        }
 
     assert observed_ilrmsd_dic == expected_ilrmsd_dic
 
@@ -158,7 +163,7 @@ def test_protprot_fnat(protprot_caprimodule, protprot_input_list):
     expected_fnat_dic = {
         protprot_input_list[0]: 1.0,
         protprot_input_list[1]: 0.05,
-    }
+        }
 
     assert observed_fnat_dic == expected_fnat_dic
 
@@ -172,7 +177,7 @@ def test_protlig_irmsd(protlig_caprimodule, protlig_input_list):
     expected_irmsd_dic = {
         protlig_input_list[0]: 0.0,
         protlig_input_list[1]: 0.22,
-    }
+        }
 
     assert observed_irmsd_dic == expected_irmsd_dic
 
@@ -186,7 +191,7 @@ def test_protlig_lrmsd(protlig_caprimodule, protlig_input_list):
     expected_lrmsd_dic = {
         protlig_input_list[0]: 0.0,
         protlig_input_list[1]: 0.51,
-    }
+        }
 
     assert observed_lrmsd_dic == expected_lrmsd_dic
 
@@ -200,7 +205,7 @@ def test_protlig_ilrmsd(protlig_caprimodule, protlig_input_list):
     expected_ilrmsd_dic = {
         protlig_input_list[0]: 0.0,
         protlig_input_list[1]: 0.5,
-    }
+        }
 
     assert observed_ilrmsd_dic == expected_ilrmsd_dic
 
@@ -225,7 +230,7 @@ def test_protdna_irmsd(protdna_caprimodule, protdna_input_list):
     expected_irmsd_dic = {
         protdna_input_list[0]: 0.0,
         protdna_input_list[1]: 2.05,
-    }
+        }
 
     assert observed_irmsd_dic == expected_irmsd_dic
 
@@ -239,7 +244,7 @@ def test_protdna_lrmsd(protdna_caprimodule, protdna_input_list):
     expected_lrmsd_dic = {
         protdna_input_list[0]: 0.0,
         protdna_input_list[1]: 4.19,
-    }
+        }
 
     assert observed_lrmsd_dic == expected_lrmsd_dic
 
@@ -253,7 +258,7 @@ def test_protdna_ilrmsd(protdna_caprimodule, protdna_input_list):
     expected_ilrmsd_dic = {
         protdna_input_list[0]: 0.0,
         protdna_input_list[1]: 1.89,
-    }
+        }
 
     assert observed_ilrmsd_dic == expected_ilrmsd_dic
 
@@ -267,7 +272,7 @@ def test_protdna_fnat(protdna_caprimodule, protdna_input_list):
     expected_fnat_dic = {
         protdna_input_list[0]: 1.0,
         protdna_input_list[1]: 0.49,
-    }
+        }
 
     assert observed_fnat_dic == expected_fnat_dic
 
@@ -294,7 +299,7 @@ def test_output(protprot_caprimodule):
         sort_ascending=sort_ascending,
         rankby_key=rankby_key,
         rank_ascending=rank_ascending,
-    )
+        )
 
     assert Path(output_f.name).stat().st_size != 0
     observed_outf = open(output_f.name).readlines()
@@ -302,16 +307,16 @@ def test_output(protprot_caprimodule):
         (
             "               model                      rank     score     irmsd"
             f"      fnat     lrmsd    ilrmsd{os.linesep}"
-        ),
+            ),
         (
             "golden_data/protprot_complex_2.pdb           2  -105.000     0.278"
             f"     0.833     1.110     1.388{os.linesep}"
-        ),
+            ),
         (
             "golden_data/protprot_complex_1.pdb           1   -42.000     0.111"
             f"     0.333     0.444     0.555{os.linesep}"
-        ),
-    ]
+            ),
+        ]
 
     assert observed_outf == expected_outf
 
@@ -322,11 +327,11 @@ def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
 
     observed_interface = protprot_caprimodule.identify_interface(
         protprot_complex, cutoff=5.0
-    )
+        )
     expected_interface = {
         "A": [37, 38, 39, 43, 45, 71, 75, 90, 94, 96, 132],
         "B": [52, 51, 16, 54, 53, 56, 11, 12, 17, 48],
-    }
+        }
 
     assert observed_interface == expected_interface
 
@@ -337,11 +342,11 @@ def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
 
     observed_interface = protdna_caprimodule.identify_interface(
         protdna_complex, cutoff=5.0
-    )
+        )
     expected_interface = {
         "A": [10, 16, 17, 18, 27, 28, 29, 30, 32, 33, 38, 39, 41, 42, 43, 44],
         "B": [4, 3, 2, 33, 32, 5, 6, 34, 35, 31, 7, 30],
-    }
+        }
 
     assert observed_interface == expected_interface
 
@@ -352,7 +357,7 @@ def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
 
     observed_interface = protlig_caprimodule.identify_interface(
         protlig_complex, cutoff=5.0
-    )
+        )
     expected_interface = {
         "A": [
             118,
@@ -372,9 +377,9 @@ def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
             348,
             371,
             406,
-        ],
+            ],
         "B": [500],
-    }
+        }
 
     assert observed_interface == expected_interface
 
@@ -384,7 +389,7 @@ def test_load_contacts(protprot_caprimodule, protprot_input_list):
     protprot_complex = protprot_input_list[0]
     observed_con_set = protprot_caprimodule.load_contacts(
         protprot_complex, cutoff=5.0
-    )
+        )
     expected_con_set = {
         ("A", 39, "B", 52),
         ("A", 43, "B", 54),
@@ -406,7 +411,7 @@ def test_load_contacts(protprot_caprimodule, protprot_input_list):
         ("A", 94, "B", 51),
         ("A", 37, "B", 52),
         ("A", 45, "B", 11),
-    }
+        }
 
     assert observed_con_set == expected_con_set
 
@@ -424,7 +429,7 @@ def test_calc_rmsd(protprot_caprimodule):
         [5.88420286284558, 9.382362089324166, -5.708004059876668],
         [4.238076687025332, 3.8305358597829944, -5.857279410346993],
         [5.145346893131023, -2.7233805318567046, 7.910771966100926],
-    ]
+        ]
     W = [
         [-2.2927341772151664, 1.3226734177215107, 12.252610126582304],
         [8.353265822784834, 10.995673417721513, -7.888389873417699],
@@ -436,7 +441,7 @@ def test_calc_rmsd(protprot_caprimodule):
         [5.965265822784836, 2.219673417721509, -7.501389873417699],
         [5.648265822784836, -3.0373265822784887, -4.8293898734177],
         [5.240265822784835, -3.3833265822784924, 9.9936101265823],
-    ]
+        ]
 
     rmsd = protprot_caprimodule.calc_rmsd(V, W)
 
@@ -456,7 +461,7 @@ def test_kabsch(protprot_caprimodule):
         [-0.08023797468354221, -7.218693670886075, 2.9678683544303794],
         [9.232762025316458, 18.419306329113926, 8.949868354430379],
         [-1.7482379746835424, -8.395693670886075, 7.604868354430379],
-    ]
+        ]
 
     Q = [
         [6.0952658227848495, -5.630326582278489, 8.033610126582303],
@@ -469,7 +474,7 @@ def test_kabsch(protprot_caprimodule):
         [6.895265822784854, -12.33832658227849, 1.2686101265823062],
         [5.7642658227848536, 16.110673417721507, 1.3446101265823032],
         [10.306265822784848, -12.226326582278489, 5.028610126582304],
-    ]
+        ]
 
     observed_U = protprot_caprimodule.kabsch(P, Q)
     # transform in a list so we can compare
@@ -479,7 +484,7 @@ def test_kabsch(protprot_caprimodule):
         [0.38845040189428726, 0.38160307568742435, -0.8387403518932808],
         [-0.20700756088693778, 0.9230933741949091, 0.32410876608493205],
         [0.8979165634978604, 0.047725414019726436, 0.43757071411697324],
-    ]
+        ]
 
     assert observed_U == expected_U
 
@@ -490,7 +495,7 @@ def test_get_atoms():
         Path(DATA_PATH, "protein.pdb"),
         Path(DATA_PATH, "dna.pdb"),
         Path(DATA_PATH, "ligand.pdb"),
-    ]
+        ]
     observed_atom_dic = get_atoms(pdb_list)
     expected_atom_dic = {
         "ALA": ["C", "N", "CA", "O"],
@@ -530,7 +535,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-        ],
+            ],
         "DC": [
             "C5",
             "N9",
@@ -548,7 +553,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-        ],
+            ],
         "DT": [
             "C5",
             "N9",
@@ -566,7 +571,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-        ],
+            ],
         "DG": [
             "C5",
             "N9",
@@ -584,7 +589,7 @@ def test_get_atoms():
             "N3",
             "C4",
             "O6",
-        ],
+            ],
         "G39": [
             "C1",
             "O1A",
@@ -606,8 +611,8 @@ def test_get_atoms():
             "C81",
             "C82",
             "C91",
-        ],
-    }
+            ],
+        }
 
     assert observed_atom_dic == expected_atom_dic
 
@@ -618,7 +623,7 @@ def test_centroid(protprot_caprimodule):
         [6.0952658227848495, -5.630326582278489, 8.033610126582303],
         [0.5082658227848498, 1.733673417721512, 10.833610126582304],
         [7.42726582278485, 7.67067341772151, -5.757389873417694],
-    ]
+        ]
 
     observed_centroid = protprot_caprimodule.centroid(X)
     observed_centroid = list(observed_centroid)
@@ -626,7 +631,7 @@ def test_centroid(protprot_caprimodule):
         4.6769324894515165,
         1.2580067510548443,
         4.369943459915638,
-    ]
+        ]
 
     assert observed_centroid == expected_centroid
 
@@ -654,7 +659,7 @@ def test_load_coords(protprot_caprimodule):
     (
         observed_coord_dic,
         observed_chain_ranges,
-    ) = protprot_caprimodule.load_coords(pdb_f)
+        ) = protprot_caprimodule.load_coords(pdb_f)
     observed_keys = list(observed_coord_dic.keys())
     expected_keys = [
         ("B", 1, "C"),
@@ -677,7 +682,7 @@ def test_load_coords(protprot_caprimodule):
         ("B", 5, "CA"),
         ("B", 5, "C"),
         ("B", 5, "O"),
-    ]
+        ]
 
     assert observed_keys == expected_keys
 
@@ -703,7 +708,7 @@ def test_load_coords(protprot_caprimodule):
         [2.761, 10.16, 1.151],
         [1.832, 10.156, 2.373],
         [1.352, 11.174, 2.853],
-    ]
+        ]
 
     assert observed_coords == expected_coords
 
@@ -736,8 +741,8 @@ def test_pdb2fastadic():
             30: "G",
             31: "T",
             32: "T",
+            }
         }
-    }
 
     assert observed_dna_fastadic == expected_dna_fastadic
 
@@ -750,10 +755,10 @@ def test_pdb2fastadic():
 def test_get_align():
     """Test the selection of the align function."""
     align_func = get_align(method="sequence")
-    assert hasattr(align_func, "__call__")
+    assert callable(align_func)
 
     align_func = get_align(method="structure", **{"lovoalign_exec": ""})
-    assert hasattr(align_func, "__call__")
+    assert callable(align_func)
 
 
 # Need dependency to test this
@@ -782,7 +787,7 @@ def test_align_seq():
             f"MFQQE{os.linesep}",
             f"|||-|{os.linesep}",
             f"MFQ-E{os.linesep}",
-        ]
+            ]
 
         assert observed_aln == expected_aln
 
@@ -810,7 +815,7 @@ def test_dump_as_izone():
             f"ZONE B2:B102{os.linesep}",
             f"ZONE B3:B110{os.linesep}",
             f"ZONE B5:B112{os.linesep}",
-        ]
+            ]
 
         assert observed_izone == expected_izone
 

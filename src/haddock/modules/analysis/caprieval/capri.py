@@ -882,50 +882,50 @@ def dump_as_izone(fname, numbering_dic):
                 fh.write(izone_str)
 
 
-# debug only
-def write_coord_dic(output_name, coord_dic):
-    """Add a dummy atom to a PDB file according to a list of coordinates."""
-    with open(output_name, "w") as fh:
-        for i, k in enumerate(coord_dic):
-            atom_num = f"{i+1}".rjust(4, " ")
-            chain, resnum, atom = k
-            resnum = int(resnum)
-            resnum = f"{resnum}".rjust(3, " ")
-            atom_name = f"{atom}".rjust(3, " ")
-            x, y, z = coord_dic[k]
-            dum_x = f"{x:.3f}".rjust(7, " ")
-            dum_y = f"{y:.3f}".rjust(7, " ")
-            dum_z = f"{z:.3f}".rjust(7, " ")
-            dummy_line = (
-                f"ATOM   {atom_num} {atom_name}  DUM {chain} {resnum}   "
-                f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep
-                )
-            fh.write(dummy_line)
+# # debug only
+# def write_coord_dic(output_name, coord_dic):
+#     """Add a dummy atom to a PDB file according to a list of coordinates."""
+#     with open(output_name, "w") as fh:
+#         for i, k in enumerate(coord_dic):
+#             atom_num = f"{i+1}".rjust(4, " ")
+#             chain, resnum, atom = k
+#             resnum = int(resnum)
+#             resnum = f"{resnum}".rjust(3, " ")
+#             atom_name = f"{atom}".rjust(3, " ")
+#             x, y, z = coord_dic[k]
+#             dum_x = f"{x:.3f}".rjust(7, " ")
+#             dum_y = f"{y:.3f}".rjust(7, " ")
+#             dum_z = f"{z:.3f}".rjust(7, " ")
+#             dummy_line = (
+#                 f"ATOM   {atom_num} {atom_name}  DUM {chain} {resnum}   "
+#                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
+#                 "        H  " + os.linesep
+#                 )
+#             fh.write(dummy_line)
 
 
-# debug only
-def write_coords(output_name, coor_list):
-    """Add a dummy atom to a PDB file according to a list of coordinates."""
-    with open(output_name, "w") as fh:
-        for i, dummy_coord in enumerate(coor_list):
-            atom_num = f"{i}".rjust(4, " ")
-            resnum = f"{i}".rjust(3, " ")
-            dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
-            dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
-            dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
-            dummy_line = (
-                f"ATOM   {atom_num}  H   DUM X {resnum}   "
-                f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep
-                )
-            fh.write(dummy_line)
+# # debug only
+# def write_coords(output_name, coor_list):
+#     """Add a dummy atom to a PDB file according to a list of coordinates."""
+#     with open(output_name, "w") as fh:
+#         for i, dummy_coord in enumerate(coor_list):
+#             atom_num = f"{i}".rjust(4, " ")
+#             resnum = f"{i}".rjust(3, " ")
+#             dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
+#             dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
+#             dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
+#             dummy_line = (
+#                 f"ATOM   {atom_num}  H   DUM X {resnum}   "
+#                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
+#                 "        H  " + os.linesep
+#                 )
+#             fh.write(dummy_line)
 
 
-# debug only
-def write_pymol_viz(resdic):
-    """Write PyMol vizualitation."""
-    for k in resdic:
-        reslist = "+".join(map(str, resdic[k]))
-        cmd = f"sele {k}, chain {k} and resid {reslist}"
-        print(cmd)
+# # debug only
+# def write_pymol_viz(resdic):
+#     """Write PyMol vizualitation."""
+#     for k in resdic:
+#         reslist = "+".join(map(str, resdic[k]))
+#         cmd = f"sele {k}, chain {k} and resid {reslist}"
+#         print(cmd)

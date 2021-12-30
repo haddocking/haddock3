@@ -233,7 +233,7 @@ class CAPRI:
 
         return self.lrmsd_dic
 
-    def ilrmsd(self, cutoff):
+    def ilrmsd(self, cutoff=10.0):
         """Calculate the Interface Ligand RMSD."""
         # Identify interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
@@ -411,7 +411,8 @@ class CAPRI:
                         row_l.append(f"{value:.3f}".rjust(10, " "))
                 out_fh.write("".join(row_l) + os.linesep)
 
-    def identify_interface(self, pdb_f, cutoff):
+    @staticmethod
+    def identify_interface(pdb_f, cutoff=5.0):
         """Identify the interface."""
         pdb = read_pdb(pdb_f)
         interface_resdic = {}
@@ -429,7 +430,8 @@ class CAPRI:
 
         return interface_resdic
 
-    def load_contacts(self, pdb_f, cutoff):
+    @staticmethod
+    def load_contacts(pdb_f, cutoff=5.0):
         """Load residue-based contacts."""
         con_list = []
         structure = read_pdb(pdb_f)
@@ -449,6 +451,8 @@ class CAPRI:
     def kabsch(P, Q):
         """Find the rotation matrix using Kabsch algorithm."""
         # Covariance matrix
+        P = np.array(P)
+        Q = np.array(Q)
         C = np.dot(np.transpose(P), Q)
         # use SVD
         V, S, W = np.linalg.svd(C)
@@ -463,6 +467,7 @@ class CAPRI:
     @staticmethod
     def centroid(X):
         """Get the centroid."""
+        X = np.array(X)
         return X.mean(axis=0)
 
     @staticmethod
@@ -538,24 +543,6 @@ class CAPRI:
             chain_ranges[chain] = (min_idx, max_idx)
 
         return coord_dic, chain_ranges
-
-    @staticmethod
-    def read_res(pdb_f):
-        """Read residue numbers in a PDB file."""
-        res_dic = {}
-        with open(pdb_f, "r") as fh:
-            for line in fh.readlines():
-                if line.startswith("ATOM"):
-                    chain = line[21]
-                    resnum = int(line[22:26])
-                    atom = line[12:16].strip()
-                    if chain not in res_dic:
-                        res_dic[chain] = {}
-                    if resnum not in res_dic[chain]:
-                        res_dic[chain][resnum] = []
-                    if atom not in res_dic[chain][resnum]:
-                        res_dic[chain][resnum].append(atom)
-        return res_dic
 
 
 class CAPRIError(Exception):
@@ -646,23 +633,6 @@ def pdb2fastadic(pdb_f):
                     seq_dic[chain] = {}
                 seq_dic[chain][res_num] = one_letter
     return seq_dic
-
-
-def load_seqnum(pdb_f):
-    """Retrieve a dictionary containing the sequence and the numbering."""
-    seqnum_dic = {}
-    with open(pdb_f) as fh:
-        for line in fh.readlines():
-            if line.startswith("ATOM"):
-                res_name = line[17:20].strip()
-                res_num = int(line[22:26])
-                res = f"{res_name}_{res_num}"
-                chain = line[21]
-                if chain not in seqnum_dic:
-                    seqnum_dic[chain] = []
-                if res not in seqnum_dic[chain]:
-                    seqnum_dic[chain].append(res)
-    return seqnum_dic
 
 
 def get_align(method, **kwargs):
@@ -952,10 +922,10 @@ def write_coords(output_name, coor_list):
             fh.write(dummy_line)
 
 
-# # debug only
-# def write_pymol_viz(resdic):
-#     """Write PyMol vizualitation."""
-#     for k in resdic:
-#         reslist = "+".join(map(str, resdic[k]))
-#         cmd = f"sele {k}, chain {k} and resid {reslist}"
-#         print(cmd)
+# debug only
+def write_pymol_viz(resdic):
+    """Write PyMol vizualitation."""
+    for k in resdic:
+        reslist = "+".join(map(str, resdic[k]))
+        cmd = f"sele {k}, chain {k} and resid {reslist}"
+        print(cmd)

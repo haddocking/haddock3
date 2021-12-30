@@ -3,6 +3,8 @@ HADDOCK 3 supported residues.
 
 https://bianca.science.uu.nl/haddock2.4/library
 """
+import itertools as it
+
 
 # must be defined as HETATM
 supported_carbohydrates = (
@@ -153,14 +155,16 @@ supported_natural_amino_acids = (
     'VAL',
     )
 
-must_be_atom = \
-    supported_natural_amino_acids \
-    + supported_modified_amino_acids \
-    + supported_nucleic_acid_bases
+supported_atom = set(it.chain(
+    supported_natural_amino_acids,
+    supported_modified_amino_acids,
+    supported_nucleic_acid_bases,
+    ))
 
-must_be_hetatm = \
-    supported_cofactors \
-    + supported_multiatom_ions \
-    + supported_ions \
-    + supported_ion_resnames \
-    + supported_carbohydrates
+supported_hetatm = set(it.chain(
+    supported_cofactors,
+    supported_multiatom_ions,
+    supported_ions,
+    supported_ion_resnames,
+    supported_carbohydrates,
+    ))

@@ -32,8 +32,6 @@ from pdbtools import (
 from haddock import log
 from haddock.core.supported_molecules import (
     ion_charges,
-    must_be_atom,
-    must_be_hetatm,
     supported_cofactors,
     supported_carbohydrates,
     supported_ions,
@@ -42,6 +40,8 @@ from haddock.core.supported_molecules import (
     supported_multiatom_ions,
     supported_natural_amino_acids,
     supported_nucleic_acid_bases,
+    supported_atom,
+    supported_hetatm,
     )
 from haddock.libs.libio import open_files_to_lines
 from haddock.libs.libfunc import chainf
@@ -58,20 +58,6 @@ from haddock.libs.libpdb import (
 _OSUFFIX = '_processed'
 _upper_case = list(string.ascii_uppercase)[::-1]
 _CHAINS = it.cycle(_upper_case)
-
-
-supported_hetatm = set(it.chain(
-    supported_carbohydrates,
-    supported_multiatom_ions,
-    supported_cofactors,
-    supported_ions,
-    ))
-supported_atom = set(it.chain(
-    supported_modified_amino_acids,
-    supported_natural_amino_acids,
-    supported_nucleic_acid_bases,
-    ))
-
 
 
 def allow_dry(log_msg):
@@ -131,6 +117,7 @@ wdry_pdb_chainxseg = allow_dry('pbd_segxchain')(pdb_chainxseg.run)
 wdry_pdb_chain = allow_dry('pdb_chain')(pdb_chain.run)
 wdry_pdb_reres = allow_dry('pdb_reres')(pdb_reres.run)
 wdry_pdb_reatom = allow_dry('pdb_reatom')(pdb_reatom.run)
+wdry_rstrip =allow_dry("str.rstrip")(partial(map, lambda x: x.rstrip(os.linesep)))
 
 
 def _open_or_give(paths_or_lines):
@@ -203,11 +190,11 @@ def process_pdbs(
         partial(remove_unsupported_hetatm, user_defined=param),
         partial(remove_unsupported_atom, user_defined=param),
         ##
-        #partial(pdb_reatom.run, starting_value=1),
-        #partial(pdb_reres.run, starting_resid=1),
-        #partial(pdb_tidy.run, strict=True),
+        partial(wdry_pdb_reatom, starting_value=1),
+        partial(wdry_pdb_reres, starting_resid=1),
+        partial(wdry_pdb_tidy, strict=True),
         ##
-        #partial(map, lambda x: x.rstrip(os.linesep)),
+        wdry_rstrip,
         ]
 
     # perform the individual processing steps
@@ -367,10 +354,12 @@ def add_charges_to_ions(fhandler):
             # first case
             atom = line[slc_name].strip()
             resname = line[slc_resname].strip()
+
             if atom in supported_ions and resname in supported_ions or resname in supported_ion_resnames:
                 charge = ion_charges[atom]
                 new_atom = atom + charge
                 yield line[:12] + new_atom + line[16:78] + charge
+                continue
 
             # second case
             atom = line[12:14]  # putative
@@ -385,8 +374,7 @@ def add_charges_to_ions(fhandler):
                     charge = ion_charges[atom]
                     new_atom = atom + charge
                     yield line[:12] + new_atom + line[16:78] + charge
-
-            yield line
+                    continue
 
         yield line
 
@@ -416,12 +404,12 @@ convert_ATOM_to_HETATM = partial(
     convert_ATOM_record,
     record="ATOM",
     other_record="HETATM",
-    must_be=must_be_hetatm,
+    must_be=supported_hetatm,
     )
 
 convert_HETATM_to_ATOM = partial(
     convert_ATOM_record,
     record="HETATM",
     other_record="ATOM  ",
-    must_be=must_be_atom,
+    must_be=supported_atom,
     )

@@ -9,8 +9,8 @@ from pdbtools.pdb_splitmodel import split_model
 from pdbtools.pdb_tidy import tidy_pdbfile
 
 from haddock.core.cns_paths import topology_file
+from haddock.libs.libio import working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
-from haddock.modules import working_directory
 
 
 slc_record = slice(0, 6)
@@ -57,11 +57,19 @@ _to_rename = {
 _to_keep = get_supported_residues(topology_file)
 
 
-def split_ensemble(pdb_file_path):
-    """Split a multimodel PDB file into different structures."""
-    abs_path = Path(pdb_file_path).resolve().parent.absolute()
+def split_ensemble(pdb_file_path, dest=None):
+    """
+    Split a multimodel PDB file into different structures.
+
+    Parameters
+    ----------
+    dest : str or pathlib.Path
+        Destination folder.
+    """
+    dest = Path.cwd()
+    assert pdb_file_path.is_file()
     with open(pdb_file_path) as input_handler:
-        with working_directory(abs_path):
+        with working_directory(dest):
             split_model(input_handler)
 
     return sort_numbered_paths(*get_new_models(pdb_file_path))
@@ -125,15 +133,12 @@ def sanitize(pdb_file_path, overwrite=True, custom_topology=False):
         return pdb_file_path
 
     basename = Path(pdb_file_path)
-    abs_path = Path(pdb_file_path).resolve().parent.absolute()
-    new_pdb_file = abs_path / f"{basename.stem}_cleaned{basename.suffix}"
-    with open(new_pdb_file, "w") as output_handler:
-        for line in good_lines:
-            output_handler.write(line + os.linesep)
+    new_pdb_file = Path(f"{basename.stem}_cleaned{basename.suffix}")
+    new_pdb_file.write_text(os.linesep.join(good_lines) + os.linesep)
     return new_pdb_file
 
 
-def identify_chainseg(pdb_file_path):
+def identify_chainseg(pdb_file_path, sort=True):
     """Return segID OR chainID."""
     segids = []
     chains = []
@@ -154,8 +159,12 @@ def identify_chainseg(pdb_file_path):
                 if chainid:
                     chains.append(chainid)
 
-    segids = sorted(list(set(segids)))
-    chains = sorted(list(set(chains)))
+    if sort:
+        segids = sorted(list(set(segids)))
+        chains = sorted(list(set(chains)))
+    else:
+        segids = list(set(segids))
+        chains = list(set(chains))
     return segids, chains
 
 
@@ -172,7 +181,7 @@ def get_new_models(pdb_file_path):
     return new_models
 
 
-def get_pdb_file_suffix_variations(pdb_file_path, sep="_"):
+def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
     """
     List suffix variations of a PDB file.
 
@@ -181,9 +190,11 @@ def get_pdb_file_suffix_variations(pdb_file_path, sep="_"):
 
     Parameters
     ----------
-    pdb_file_path : str or Path
-        The path to the source PDB file. The source PDB file does not
-        need to exist and it can be just a reference name.
+    file_name : str or Path
+        The name of the file with extension.
+
+    path : str or pathlib.Path
+        Path pointing to a directory where to perform the search.
 
     sep : str
         The separation between the file base name and the suffix.

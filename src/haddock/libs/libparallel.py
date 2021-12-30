@@ -1,8 +1,17 @@
 """Module in charge of parallelizing the execution of tasks."""
+import math
 from multiprocessing import Process
 
 from haddock import log
-from haddock.libs.libutil import get_number_from_path_stem, parse_ncores
+from haddock.libs.libutil import parse_ncores
+
+
+def split_tasks(lst, n):
+    """Split tasks into N-sized chunks."""
+    n = math.ceil(len(lst) / n)
+    for j in range(0, len(lst), n):
+        chunk = lst[j:n + j]
+        yield chunk
 
 
 class Worker(Process):
@@ -46,17 +55,16 @@ class Scheduler:
 
         # Sort the tasks by input_file name and its length,
         #  so we know that 2 comes before 10
-        sorted_task_list = sorted(
-            tasks,
-            key=lambda x: get_number_from_path_stem(x.input_file)
-            )
+        task_name_dic = {}
+        for i, t in enumerate(tasks):
+            task_name_dic[i] = t.input_file, len(str(t.input_file))
 
-        _n = self.num_processes
-        job_list = [
-            sorted_task_list[i:i + _n]
-            for i in range(0, len(sorted_task_list), _n)
-            ]
+        sorted_task_list = []
+        for e in sorted(task_name_dic.items(), key=lambda x: (x[0], x[1])):
+            idx = e[0]
+            sorted_task_list.append(tasks[idx])
 
+        job_list = split_tasks(sorted_task_list, self.num_processes)
         self.worker_list = [Worker(jobs) for jobs in job_list]
 
         log.info(f"Using {self.num_processes} cores")
@@ -85,7 +93,10 @@ class Scheduler:
                 worker.join()
                 for t in worker.tasks:
                     per = (c / float(self.num_tasks)) * 100
-                    task_ident = f'{t.modpath.name}/{t.input_file.name}'
+                    task_ident = (
+                        f'{t.input_file.parents[0].name}/'
+                        f'{t.input_file.name}'
+                        )
                     log.info(f'>> {task_ident} completed {per:.0f}% ')
                     c += 1
 

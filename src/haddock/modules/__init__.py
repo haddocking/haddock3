@@ -1,15 +1,13 @@
 """HADDOCK3 modules."""
-import contextlib
-import os
 from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
 
 from haddock import log as log
 from haddock.core.defaults import MODULE_IO_FILE
-from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
 from haddock.libs.libhpc import HPCScheduler
+from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
@@ -28,7 +26,13 @@ values are their categories. Categories are the modules parent folders."""
 
 
 general_parameters_affecting_modules = {
-    'ncores', 'cns_exec', 'mode', 'concat', 'queue_limit'
+    'cns_exec',
+    'concat',
+    'mode',
+    'ncores',
+    'queue',
+    'queue_limit',
+    'self_contained',
     }
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"
@@ -39,7 +43,7 @@ the run prepraration phase. See, `gear.prepare_run`."""
 class BaseHaddockModule(ABC):
     """HADDOCK3 module's base class."""
 
-    def __init__(self, order, path, params, cns_script=""):
+    def __init__(self, order, path, params):
         """
         HADDOCK3 modules base class.
 
@@ -53,22 +57,7 @@ class BaseHaddockModule(ABC):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
-
-        if cns_script:
-            self.cns_folder_path = cns_script.resolve().parent
-            self.cns_protocol_path = cns_script
-
         self.params = params
-
-        try:
-            with open(self.cns_protocol_path) as input_handler:
-                self.recipe_str = input_handler.read()
-        except FileNotFoundError:
-            _msg = f"Error while opening workflow {self.cns_protocol_path}"
-            raise StepError(_msg)
-        except AttributeError:
-            # No CNS-like module
-            pass
 
     @property
     def params(self):
@@ -95,16 +84,40 @@ class BaseHaddockModule(ABC):
                     )
                 raise TypeError(_msg) from err
 
-    def run(self, **params):
-        """Execute the module."""
-        log.info(f'Running [{self.name}] module')
+        for param, value in self._params.items():
+            if param.endswith('_fname'):
+                if not Path(value).exists():
+                    raise FileNotFoundError(f'File not found: {str(value)!r}')
+
+    def update_params_with_defaults(self, **params):
+        """Update config parameters."""
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
-        self._run()
+        return
+
+    def add_parent_to_paths(self):
+        """Add parent path to paths."""
+        # convert paths to relative by appending parent
+        for key, value in self.params.items():
+            if value and key.endswith('_fname'):
+                if not Path(value).is_absolute():
+                    self.params[key] = Path('..', value)
+        return
+
+    def run(self, **params):
+        """Execute the module."""
+        log.info(f'Running [{self.name}] module')
+
+        self.update_params_with_defaults(**params)
+        self.add_parent_to_paths()
+
+        with working_directory(self.path):
+            self._run()
+
         log.info(f'Module [{self.name}] finished.')
 
     @classmethod
@@ -117,12 +130,13 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def finish_with_error(self, message=""):
+    def finish_with_error(self, reason="Module has failed."):
         """Finish with error message."""
-        if not message:
-            message = "Module has failed"
-        log.error(message)
-        raise SystemExit
+        if isinstance(reason, Exception):
+            raise RuntimeError("Module has failed.") from reason
+
+        else:
+            raise RuntimeError(reason)
 
     def _load_previous_io(self):
         if self.order == 0:
@@ -164,17 +178,6 @@ class BaseHaddockModule(ABC):
         getattr(log, level)(f'[{self.name}] {msg}')
 
 
-@contextlib.contextmanager
-def working_directory(path):
-    """Change working directory and returns to previous on exit."""
-    prev_cwd = Path.cwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(prev_cwd)
-
-
 def get_engine(mode, params):
     """
     Create an engine to run the jobs.
@@ -194,6 +197,7 @@ def get_engine(mode, params):
     if mode == 'hpc':
         return partial(
             HPCScheduler,
+            target_queue=params['queue'],
             queue_limit=params['queue_limit'],
             concat=params['concat'],
             )

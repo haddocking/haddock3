@@ -5,21 +5,22 @@ from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libsubprocess import CNSJob
-from haddock.modules import BaseHaddockModule, get_engine
+from haddock.modules import get_engine
+from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
 
 
-class HaddockModule(BaseHaddockModule):
+class HaddockModule(BaseCNSModule):
     """HADDOCK3 module for rigid body sampling."""
 
     name = RECIPE_PATH.name
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         cns_script = Path(RECIPE_PATH, "cns", "rigidbody.cns")
-        super().__init__(order, path, initial_params, cns_script)
+        super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
     def confirm_installation(cls):
@@ -66,25 +67,18 @@ class HaddockModule(BaseHaddockModule):
                     self.recipe_str,
                     self.params,
                     "rigidbody",
-                    ambig_fname=self.params["ambig_fname"],
+                    default_params_path=self.toppar_path,
                     )
 
-                log_fname = Path(self.path, f"rigidbody_{idx}.out")
-                output_pdb_fname = Path(self.path, f"rigidbody_{idx}.pdb")
+                log_fname = f"rigidbody_{idx}.out"
+                output_pdb_fname = f"rigidbody_{idx}.pdb"
 
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=self.path)
                 model.topology = [e.topology for e in combination]
                 structure_list.append(model)
 
-                job = CNSJob(
-                    inp_file,
-                    log_fname,
-                    cns_folder=self.cns_folder_path,
-                    modpath=self.path,
-                    config_path=self.params["config_path"],
-                    cns_exec=self.params["cns_exec"],
-                    )
+                job = CNSJob(inp_file, log_fname, envvars=self.envvars)
                 jobs.append(job)
 
                 idx += 1
@@ -102,12 +96,12 @@ class HaddockModule(BaseHaddockModule):
 
         not_present = []
         for model in structure_list:
-            if not model.is_present():
-                not_present.append(model.name)
+            if not Path(model.file_name).exists():
+                not_present.append(model.file_name)
             else:
                 # Score the model
                 haddock_score = HaddockModel(
-                    model.full_name).calc_haddock_score(
+                    model.file_name).calc_haddock_score(
                     **weights
                     )
 
@@ -127,4 +121,4 @@ class HaddockModule(BaseHaddockModule):
         # Save module information
         io = ModuleIO()
         io.add(structure_list, "o")
-        io.save(self.path)
+        io.save()

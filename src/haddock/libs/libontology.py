@@ -10,6 +10,9 @@ import jsonpickle
 from haddock.core.defaults import MODULE_IO_FILE
 
 
+NaN = float('nan')
+
+
 class Format(Enum):
     """Input and Output possible formats."""
 
@@ -32,6 +35,7 @@ class Persistent:
         self.file_type = file_type
         self.path = str(Path(path).resolve())
         self.full_name = str(Path(path, self.file_name))
+        self.rel_path = Path('..', Path(self.path).name, file_name)
 
     def __repr__(self):
         rep = (f"[{self.file_type}|{self.created}] "
@@ -46,7 +50,7 @@ class Persistent:
 class PDBFile(Persistent):
     """Represent a PDB file."""
 
-    def __init__(self, file_name, topology=None, path='.', score=float('nan')):
+    def __init__(self, file_name, topology=None, path='.', score=NaN):
         super().__init__(file_name, Format.PDB, path)
         self.topology = topology
         self.score = score
@@ -79,14 +83,15 @@ class ModuleIO:
             else:
                 self.output.append(persistent)
 
-    def save(self, path, filename=MODULE_IO_FILE):
+    def save(self, path=".", filename=MODULE_IO_FILE):
         """Save Input/Output needed files by this module to disk."""
-        with open(path / filename, "w") as output_handler:
+        fpath = Path(path, filename)
+        with open(fpath, "w") as output_handler:
             to_save = {"input": self.input,
                        "output": self.output}
             jsonpickle.set_encoder_options('json', sort_keys=True, indent=4)
             output_handler.write(jsonpickle.encode(to_save))
-        return path / filename
+        return fpath
 
     def load(self, filename):
         """Load the content of a given IO filename."""
@@ -95,20 +100,22 @@ class ModuleIO:
             self.input = content["input"]
             self.output = content["output"]
 
-    def retrieve_models(self, crossdock=False):
+    def retrieve_models(self, crossdock=False, individualize=False):
         """Retrieve the PDBobjects to be used in the module."""
         # Get the models generated in previous step
         model_list = []
         input_dic = {}
+
         for i, element in enumerate(self.output):
-            if type(element) == dict:
-                input_dic[i] = []
+            if isinstance(element, dict):
+                position_list = input_dic.setdefault(i, [])
                 for key in element:
-                    input_dic[i].append(element[key])
+                    position_list.append(element[key])
+
             elif element.file_type == Format.PDB:
                 model_list.append(element)
 
-        if input_dic and not crossdock:
+        if input_dic and not crossdock and not individualize:
             # check if all ensembles contain the same number of models
             sub_lists = iter(input_dic.values())
             _len = len(next(sub_lists))
@@ -119,10 +126,13 @@ class ModuleIO:
 
             # prepare pairwise combinations
             model_list = [values for values in zip(*input_dic.values())]
-        if input_dic and crossdock:
+        elif input_dic and crossdock and not individualize:
             model_list = [
                 values for values in itertools.product(*input_dic.values())
                 ]
+        elif input_dic and individualize:
+            model_list = list(itertools.chain(*input_dic.values()))
+
         return model_list
 
     def __repr__(self):

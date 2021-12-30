@@ -316,7 +316,6 @@ do (refz=z) (all)
 {* Read the distance restraints ================================ *}
 set seed $seed end
 set message=normal echo=on end
-!inline @MODULE:read_data.cns
 inline @MODULE:read_noes.cns  ! rigidbody version with only distance restraints support
 
 {* set distance restraint energy flag =========================== *}
@@ -358,7 +357,7 @@ if ($NUMNOE = 0) then
         if ($Data.surfrest eq FALSE) then
             if ($Data.cmrest eq FALSE) then
                 if ($Data.ranair eq FALSE) then
-                    evaluate ($errfile = "MODRUN:WARNING")
+                    evaluate ($errfile = "MODDIR:WARNING")
                     fileexist $errfile end
                     if ($result eq false) then
                         set display=$errfile end
@@ -401,7 +400,7 @@ flag excl cdih end
 
 if ($Data.ranair eq true) then
     if ($Data.ncomponents > 2) then
-        evaluate ($errfile = "MODRUN:FAILED")
+        evaluate ($errfile = "MODDIR:FAILED")
         fileexist $errfile end
         if ($result eq false) then
             set display=$errfile end
@@ -681,7 +680,7 @@ if ($Data.flags.sym eq true) then
     noe reset end
     set message=normal echo=on end
     !read again the NOE data, needed to remove the symmetry restraints
-    @@MODULE:read_noes.cns
+    inline @@MODULE:read_noes.cns
     if ( $log_level = "verbose" ) then
         set message=normal echo=on end
     else

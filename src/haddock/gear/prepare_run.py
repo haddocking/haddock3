@@ -3,6 +3,7 @@ import importlib
 import shutil
 import sys
 from contextlib import contextmanager
+from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
@@ -10,12 +11,15 @@ from haddock import contact_us, haddock3_source_path, log
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
-from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.gear.parameters import (
+    config_mandatory_general_parameters,
+    non_mandatory_general_parameters_defaults,
+    )
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.libs.libutil import (
-    copy_files_to_dir,
     make_list_if_string,
     remove_dict_keys,
+    zero_fill,
     )
 from haddock.modules import (
     general_parameters_affecting_modules,
@@ -30,7 +34,6 @@ def config_key_error():
         yield
     except KeyError as err:
         msg = f"Expected {err.args[0]!r} parameter in configuration file."
-        log.debug(err)
         raise ConfigurationError(msg) from err
 
 
@@ -72,55 +75,34 @@ def setup_run(workflow_path, restart_from=None):
         A dictionary with the parameters for the haddock3 modules.
         A dictionary with the general run parameters.
     """
+    # read config
     params = read_config(workflow_path)
-    # validates the configuration file
-    validate_params(params)
 
-    # pre-treats the configuration file
-    convert_params_to_path(params)
+    # update default non-mandatory parameters with user params
+    params = {**non_mandatory_general_parameters_defaults, **params}
+
+    check_mandatory_argments_are_present(params)
+
+    clean_rundir_according_to_restart(params['run_dir'], restart_from)
+
+    # copy molecules parameter to topology module
     copy_molecules_to_topology(params)
 
-    modules_keys = [
-        k
-        for k in params.keys()
-        if get_module_name(k) in modules_category
-        ]
-
-    # get a dictionary without the general config keys
-    general_params = remove_dict_keys(params, modules_keys)
-
+    # separate general from modules parameters
+    _modules_keys = identify_modules(params)
+    general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
+    # validations
     validate_modules_params(modules_params)
-    validate_installed_modules(modules_params)
+    check_if_modules_are_installed(modules_params)
 
-    if restart_from is None:
-        # prepares the run folders
-        _p = Path(general_params['run_dir'])
-        if _p.exists() and len(list(_p.iterdir())) > 0:
-            log.info(
-                f"The `run_dir` {str(_p)!r} exists and is not empty. "
-                "We can't work on it unless you provide the `--restart` "
-                "option. If you want to start a run from scratch, "
-                "indicate a new folder, or manually delete this one first."
-                )
-            sys.exit(get_goodbye_help())
+    # create datadir
+    data_dir = create_data_dir(general_params["run_dir"])
+    new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
 
-        begin_dir, _ = create_begin_files(general_params)
-
-        # prepare other files
-        copy_ambig_files(modules_params, begin_dir)
-
-    else:
-        remove_folders_after_number(general_params['run_dir'], restart_from)
-
-    # return the modules' parameters and other parameters that may serve
-    # the workflow, the "other parameters" can be expanded in the future
-    # by a function if needed
-
-    general_params['config_path'] = Path(workflow_path).resolve()
-
-    return modules_params, general_params
+    # return the modules' parameters and general parameters separately
+    return new_mp, general_params
 
 
 def validate_params(params):
@@ -131,7 +113,7 @@ def validate_params(params):
     #2 : checks for correct modules
     """
     check_mandatory_argments_are_present(params)
-    validate_modules(params)
+    validate_modules_names(params)
 
 
 def check_mandatory_argments_are_present(params):
@@ -147,15 +129,8 @@ def check_mandatory_argments_are_present(params):
 
 
 @with_config_error
-def validate_modules(params):
-    """
-    Validate modules.
-
-    Confirm the modules specified in the `order` parameter actually
-    exist in HADDOCK3.
-
-    Raises ConfigurationError if module does not exist.
-    """
+def validate_modules_names(params):
+    """Validate all modules names are spelled correctly."""
     keys = \
         set(params) \
         - set(config_mandatory_general_parameters) \
@@ -173,7 +148,15 @@ def validate_modules(params):
 
 @with_config_error
 def validate_modules_params(modules_params):
-    """Validate individual parameters for each module."""
+    """
+    Validate individual parameters for each module.
+
+    Raises
+    ------
+    ConfigError
+        If there is any parameter given by the user that is not defined
+        in the defaults.cfg of the module.
+    """
     for module_name, args in modules_params.items():
         _module_name = get_module_name(module_name)
         pdef = Path(
@@ -201,7 +184,7 @@ def validate_modules_params(modules_params):
             raise ConfigurationError(_msg)
 
 
-def validate_installed_modules(params):
+def check_if_modules_are_installed(params):
     """Validate if third party-libraries are installed."""
     for module_name in params.keys():
         module_import_name = '.'.join([
@@ -255,56 +238,98 @@ def convert_run_dir_to_path(params):
 
 
 @with_config_error
-def create_begin_files(params):
-    """Create initial files for HADDOCK3 run."""
-    run_dir = params['run_dir']
-    data_dir = run_dir / 'data'
-    begin_dir = run_dir / 'begin'
+def create_data_dir(run_dir):
+    """
+    Create initial files for HADDOCK3 run.
 
-    run_dir.mkdir(exist_ok=True)
-    begin_dir.mkdir()
-    data_dir.mkdir()
-
-    copy_files_to_dir(params['molecules'], data_dir)
-    copy_molecules_to_begin_folder(params['molecules'], begin_dir)
-
-    return begin_dir, data_dir
-
-
-def copy_molecules_to_begin_folder(
-        molecules,
-        begin_dir,
-        mol='mol',
-        sep='_',
-        start=1,
-        ):
-    """Copy molecules to run directory begin folder."""
-    for i, mol_path in enumerate(molecules, start=start):
-        mol_id = f"{mol}{sep}{i}.pdb"
-        begin_mol = Path(begin_dir, mol_id).resolve()
-        shutil.copy(mol_path, begin_mol)
+    Returns
+    -------
+    pathlib.Path
+        A path referring only to 'data'.
+    """
+    data_dir = Path(run_dir, 'data')
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir
 
 
 @with_config_error
 def copy_molecules_to_topology(params):
     """Copy molecules to mandatory topology module."""
-    params['topoaa']['molecules'] = params['molecules']
+    params['topoaa']['molecules'] = list(map(Path, params['molecules']))
 
 
-@with_config_error
-def copy_ambig_files(module_params, directory):
-    """Copy ambiguity table files to run directory and updates new path."""
-    for step, step_dict in module_params.items():
-        for key, value in step_dict.items():
-            if key == 'ambig':
-                ambig_f = Path(value).resolve()
-                new_loc = Path(directory, step, 'ambig.tbl')
-                new_loc.parent.mkdir(exist_ok=True)
+def copy_input_files_to_data_dir(data_dir, modules_params):
+    """Copy files to data directory."""
+    new_mp = deepcopy(modules_params)
+    # this line must be synchronized with create_data_dir()
+    rel_data_dir = data_dir.name
 
-                try:
-                    shutil.copy(ambig_f, new_loc)
-                except FileNotFoundError:
-                    _msg = f'Stage: {step} ambig file {ambig_f.name} not found'
-                    raise ConfigurationError(_msg)
+    for i, molecule in enumerate(modules_params['topoaa']['molecules']):
+        end_path = Path(data_dir, '00_topoaa')
+        end_path.mkdir(parents=True, exist_ok=True)
+        name = Path(molecule).name
+        shutil.copy(molecule, Path(end_path, name))
+        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
 
-                step_dict[key] = new_loc
+    # topology always starts with 0
+    for i, (module, params) in enumerate(modules_params.items(), start=0):
+        end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
+        for parameter, value in params.items():
+            if parameter.endswith('_fname'):
+                # path is created here to avoid creating empty folders
+                # for those modules without '_fname' parameters
+                pf = Path(data_dir, end_path)
+                pf.mkdir(exist_ok=True)
+                name = Path(value).name
+                shutil.copy(value, Path(pf, name))
+                new_mp[module][parameter] = Path(rel_data_dir, end_path, name)
+
+    return new_mp
+
+
+def clean_rundir_according_to_restart(run_dir, restart_from=None):
+    """
+    Clean run directory according to restart parameter.
+
+    Parameters
+    ----------
+    restart_from : None or int
+        The module on which to restart the run. Discards all modules
+        after this one (inclusive).
+    """
+    if restart_from is None:
+        # prepares the run folders
+        _p = Path(run_dir)
+        if _p.exists() and len(list(_p.iterdir())) > 0:
+            log.info(
+                f"The `run_dir` {str(_p)!r} exists and is not empty. "
+                "We can't work on it unless you provide the `--restart` "
+                "option. If you want to start a run from scratch, "
+                "indicate a new folder, or manually delete this one first, "
+                "or use `--restart 0`."
+                )
+            sys.exit(get_goodbye_help())
+
+    else:
+        remove_folders_after_number(run_dir, restart_from)
+
+
+def identify_modules(params):
+    """Identify keys (headings) belogging to HADDOCK3 modules."""
+    modules_keys = [
+        k
+        for k in params.keys()
+        if get_module_name(k) in modules_category
+        ]
+    return modules_keys
+
+
+def inject_in_modules(modules_params, key, value):
+    """Inject a parameter in each module."""
+    for params in modules_params.values():
+        if key in params:
+            raise ValueError(
+                "key {key!r} already in {module!r} parameters. "
+                "Can't inject."
+                )
+        params[key] = value

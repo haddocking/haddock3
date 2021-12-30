@@ -1,10 +1,10 @@
 """HADDOCK3 workflow logic."""
 import importlib
-import shutil
 import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
 from haddock.libs.libhpc import (
@@ -37,14 +37,13 @@ class Workflow:
             self,
             content,
             ncores=None,
-            run_dir=None,
-            cns_exec=None,
+            cns_exec=global_cns_exec,
             config_path=None,
             mode='local',
             queue=HPCWorker_QUEUE_DEFAULT,
             concat=HPCScheduler_CONCAT_DEFAULT,
             queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
-            relative_envvars=True,
+            self_contained=False,
             **others):
         # Create the list of steps contained in this workflow
         self.steps = []
@@ -60,13 +59,12 @@ class Workflow:
             params.setdefault('queue', queue)
             params.setdefault('concat', concat)
             params.setdefault('queue_limit', queue_limit)
-            params.setdefault('relative_envvars', relative_envvars)
+            params.setdefault('self_contained', self_contained)
 
             try:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
-                    run_dir=run_dir,
                     **params,
                     )
                 self.steps.append(_)
@@ -83,24 +81,18 @@ class Step:
             self,
             module_name,
             order=None,
-            run_dir=None,
             **config_params,
             ):
         self.config = config_params
         self.module_name = module_name
         self.order = order
 
-        self.working_path = Path(
-            run_dir,
-            zero_fill(self.order, digits=2) + "_" + self.module_name,
-            )
+        self.working_path = \
+            Path(zero_fill(self.order, digits=2) + "_" + self.module_name)
 
     def execute(self):
         """Execute simulation step."""
-        if self.working_path.exists():
-            log.warning(f"Found previous run ({self.working_path}), removed")
-            shutil.rmtree(self.working_path)
-        self.working_path.resolve().mkdir(parents=True, exist_ok=False)
+        self.working_path.resolve().mkdir(parents=False, exist_ok=False)
 
         # Import the module given by the mode or default
         module_name = ".".join([
@@ -120,4 +112,4 @@ class Step:
         except KeyboardInterrupt:
             log.info("You have halted subprocess execution by hitting Ctrl+c")
             log.info("Exiting...")
-            sys.exit()
+            sys.exit(1)

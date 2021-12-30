@@ -93,8 +93,8 @@ class CAPRI:
         self.path = path
 
         # TODO: For scoring we might need to get one alignment per model
-        reference = str(reference.resolve())
-        model = model_list[0].full_name
+        reference = str(reference)
+        model = model_list[0].rel_path
         align_func = get_align(aln_method, **params)
         self.numbering_dic = align_func(reference, model, path)
         if not self.numbering_dic:
@@ -102,7 +102,7 @@ class CAPRI:
 
         # Load the models in the class
         for struct in model_list:
-            pdb_f = Path(struct.path, struct.file_name)
+            pdb_f = struct.rel_path
             pdb_w_chain = self.add_chain_from_segid(pdb_f)
             self.model_list.append(pdb_w_chain)
             self.score_dic[pdb_f] = struct.score
@@ -365,7 +365,7 @@ class CAPRI:
         for model in self.model_list:
             data = {}
             # keep always 'model' the first key
-            data["model"] = Path(model.parent.name, model.name)
+            data["model"] = model
             # create the empty rank here so that it will appear
             #  as the second column
             data["rank"] = None
@@ -573,7 +573,7 @@ def get_atoms(pdb_list):
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
     for pdb in pdb_list:
         if isinstance(pdb, PDBFile):
-            pdb = pdb.full_name
+            pdb = pdb.rel_path
         with open(pdb) as fh:
             for line in fh.readlines():
                 if line.startswith("ATOM"):

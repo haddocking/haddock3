@@ -1,16 +1,13 @@
 """HADDOCK3 modules."""
-import contextlib
-import os
 from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
 
 from haddock import log as log
-from haddock import toppar_path as global_toppar
 from haddock.core.defaults import MODULE_IO_FILE
-from haddock.core.exceptions import StepError
 from haddock.gear.config_reader import read_config
 from haddock.libs.libhpc import HPCScheduler
+from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
@@ -35,7 +32,7 @@ general_parameters_affecting_modules = {
     'ncores',
     'queue',
     'queue_limit',
-    'relative_envvars',
+    'self_contained',
     }
 """These parameters are general parameters that may be applicable to modules
 specifically. Therefore, they should be considered as part of the "default"
@@ -46,7 +43,7 @@ the run prepraration phase. See, `gear.prepare_run`."""
 class BaseHaddockModule(ABC):
     """HADDOCK3 module's base class."""
 
-    def __init__(self, order, path, params, cns_script=""):
+    def __init__(self, order, path, params):
         """
         HADDOCK3 modules base class.
 
@@ -60,22 +57,7 @@ class BaseHaddockModule(ABC):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
-
-        if cns_script:
-            self.cns_folder_path = cns_script.resolve().parent
-            self.cns_protocol_path = cns_script
-
         self.params = params
-
-        try:
-            with open(self.cns_protocol_path) as input_handler:
-                self.recipe_str = input_handler.read()
-        except FileNotFoundError:
-            _msg = f"Error while opening workflow {self.cns_protocol_path}"
-            raise StepError(_msg)
-        except AttributeError:
-            # No CNS-like module
-            pass
 
     @property
     def params(self):
@@ -102,23 +84,40 @@ class BaseHaddockModule(ABC):
                     )
                 raise TypeError(_msg) from err
 
-    def run(self, **params):
-        """Execute the module."""
-        log.info(f'Running [{self.name}] module')
+        for param, value in self._params.items():
+            if param.endswith('_fname'):
+                if not Path(value).exists():
+                    raise FileNotFoundError(f'File not found: {str(value)!r}')
+
+    def update_params_with_defaults(self, **params):
+        """Update config parameters."""
         self.update_params(**params)
         self.params.setdefault('ncores', None)
         self.params.setdefault('cns_exec', None)
         self.params.setdefault('mode', None)
         self.params.setdefault('concat', None)
         self.params.setdefault('queue_limit', None)
-        self.params.setdefault('relative_envvars', True)
-        if getattr(self, "cns_protocol_path", False):
-            self.envvars = self.default_envvars()
-            self.save_envvars(
-                relative=self.params['relative_envvars'],
-                **self.envvars,
-                )
-        self._run()
+        return
+
+    def add_parent_to_paths(self):
+        """Add parent path to paths."""
+        # convert paths to relative by appending parent
+        for key, value in self.params.items():
+            if value and key.endswith('_fname'):
+                if not Path(value).is_absolute():
+                    self.params[key] = Path('..', value)
+        return
+
+    def run(self, **params):
+        """Execute the module."""
+        log.info(f'Running [{self.name}] module')
+
+        self.update_params_with_defaults(**params)
+        self.add_parent_to_paths()
+
+        with working_directory(self.path):
+            self._run()
+
         log.info(f'Module [{self.name}] finished.')
 
     @classmethod
@@ -131,12 +130,13 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def finish_with_error(self, message=""):
+    def finish_with_error(self, reason="Module has failed."):
         """Finish with error message."""
-        if not message:
-            message = "Module has failed"
-        log.error(message)
-        raise SystemExit
+        if isinstance(reason, Exception):
+            raise RuntimeError("Module has failed.") from reason
+
+        else:
+            raise RuntimeError(reason)
 
     def _load_previous_io(self):
         if self.order == 0:
@@ -176,65 +176,6 @@ class BaseHaddockModule(ABC):
             Defaults to 'info'.
         """
         getattr(log, level)(f'[{self.name}] {msg}')
-
-    def default_envvars(self, **envvars):
-        """Return default env vars updated to `envvars` (if given)."""
-        default_envvars = {
-            "MODULE": self.cns_folder_path,
-            "MODDIR": self.path,
-            "RUN": self.params["config_path"],
-            "TOPPAR": global_toppar,
-            }
-
-        default_envvars.update(envvars)
-
-        return default_envvars
-
-    def save_envvars(self, filename="envvars", relative=True, **envvars):
-        """Save envvars needed for CNS to a file in the module's folder."""
-        common_path = os.path.commonpath(list(envvars.values()))
-
-        envvars = {
-            k: v.relative_to(common_path)
-            for k, v in envvars.items()
-            }
-
-        if relative:
-            rel_path = '../' * len(envvars['MODDIR'].parents)
-
-            envvars = {
-                k: Path(rel_path, v) if k != 'MODDIR' else "$PWD"
-                for k, v in envvars.items()
-                }
-
-            # SyntaxError: f-string expression part cannot include a backslash
-            lines = (
-                "export " + k + "=" + str(v)
-                for k, v in envvars.items()
-                )
-
-        else:
-            lines = (
-                "export " + k + "=${COMMON_PATH_FOR_HD3}/" + str(v)
-                for k, v in envvars.items()
-                )
-
-        banshee = "#!/bin/bash" + os.linesep
-        root = "export COMMON_PATH_FOR_HD3={}".format(common_path) + os.linesep
-        fstr = banshee + root + os.linesep.join(lines)
-        Path(self.path, filename).write_text(fstr)
-        return
-
-
-@contextlib.contextmanager
-def working_directory(path):
-    """Change working directory and returns to previous on exit."""
-    prev_cwd = Path.cwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(prev_cwd)
 
 
 def get_engine(mode, params):

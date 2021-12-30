@@ -1,6 +1,7 @@
 """Test config reader."""
 import os
 from datetime import datetime
+from pathlib import Path
 
 import pytest
 
@@ -93,6 +94,36 @@ def test_string_re(line, name, value):
 def test_string_re_wrong(line):
     """Test string wrong examples."""
     assert config_reader._string_re.match(line) is None
+
+
+@pytest.mark.parametrize(
+    'line,name,value',
+    [
+        ('value = ".gitignore"', 'value', Path('.gitignore').resolve()),
+        ("value = '.'", 'value', Path.cwd().resolve()),
+        ],
+    )
+def test_Path_re(line, name, value):
+    """Test string regex."""
+    path_re = config_reader._Path_re()
+    result = path_re.match(line)
+    assert result[1] == name
+    assert result[2] == value
+
+
+@pytest.mark.parametrize(
+    'line',
+    [
+        'value = "file_that_does_not_exist"',
+        "value = 4",
+        "value=''",
+        ],
+    )
+def test_Path_re_wrong(line):
+    """Test string regex."""
+    path_re = config_reader._Path_re()
+    result = path_re.match(line)
+    assert result is None
 
 
 @pytest.mark.parametrize(

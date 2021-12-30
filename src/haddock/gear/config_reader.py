@@ -29,6 +29,7 @@ dictionaries see `test/test_config_reader.py`.
 import ast
 import re
 from datetime import datetime
+from pathlib import Path
 
 
 # line regexes
@@ -57,6 +58,33 @@ _list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
 # https://regex101.com/r/kY49lw/1
 _true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
 _false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
+
+
+class _Path_re:
+    def __init__(self):
+        """Map to Path regex."""
+        self.re = _string_re
+
+    def match(self, string):
+        """
+        Polymorphs re.match.
+
+        Return the match group if the file exists.
+
+        Else, return false.
+
+        Made specifically to :func:`_get_one_line_group`.
+        """
+        group = self.re.match(string)
+        if group:
+            value = ast.literal_eval(group[2])
+            if value:  # not empty string
+                p = Path(value).resolve()
+                if p.exists():
+                    return group[0], group[1], p.resolve()
+
+        # everything else returns None by definition
+        return None  # we want to return None to match the re.match()
 
 
 class NoGroupFoundError(Exception):
@@ -272,6 +300,7 @@ def get_module_name(name):
 # methods to parse single line values
 # (regex, func)
 regex_single_line_methods = [
+    (_Path_re(), lambda x: x),
     (_string_re, ast.literal_eval),
     (_number_re, ast.literal_eval),
     (_none_re, lambda x: None),

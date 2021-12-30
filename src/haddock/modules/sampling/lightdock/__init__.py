@@ -5,9 +5,10 @@ from pathlib import Path
 
 from haddock import log
 from haddock.libs import libpdb
+from haddock.libs.libio import working_directory
 from haddock.libs.libontology import Format, ModuleIO, PDBFile
 from haddock.libs.libutil import check_subprocess
-from haddock.modules import BaseHaddockModule, working_directory
+from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -157,4 +158,4 @@ class HaddockModule(BaseHaddockModule):
         io = ModuleIO()
         io.add(models_to_score)
         io.add(expected, "o")
-        io.save(self.path)
+        io.save()

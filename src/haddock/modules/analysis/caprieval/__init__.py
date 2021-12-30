@@ -1,7 +1,7 @@
 """Calculate CAPRI metrics."""
 from pathlib import Path
 
-from haddock.libs.libontology import Format, ModuleIO
+from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import CAPRI
 
@@ -31,35 +31,30 @@ class HaddockModule(BaseHaddockModule):
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
 
-        models_to_calc = [
-            p for p in self.previous_io.output if p.file_type == Format.PDB
-            ]
+        models_to_calc = self.previous_io.retrieve_models()
 
         #  Sort by score
         model_l = [(m.score, m) for m in models_to_calc]
         model_l.sort()
-        best_model = Path(model_l[0][1].full_name)
+        best_model = Path(model_l[0][1].rel_path)
 
-        if self.params["reference"]:
-            reference = Path(self.params["reference"])
+        if self.params["reference_fname"]:
+            reference = Path(self.params["reference_fname"])
         else:
             self.log(
                 "No reference was given. "
                 "Using the structure with the lowest score from previous step")
             reference = best_model
 
-        try:
-            capri = CAPRI(
-                reference,
-                models_to_calc,
-                receptor_chain=self.params["receptor_chain"],
-                ligand_chain=self.params["ligand_chain"],
-                aln_method=self.params["alignment_method"],
-                path=self.path,
-                lovoalign_exec=self.params["lovoalign_exec"],
-                )
-        except Exception as e:
-            self.finish_with_error(e)
+        capri = CAPRI(
+            reference,
+            models_to_calc,
+            receptor_chain=self.params["receptor_chain"],
+            ligand_chain=self.params["ligand_chain"],
+            aln_method=self.params["alignment_method"],
+            path=Path("."),
+            lovoalign_exec=self.params["lovoalign_exec"],
+            )
 
         if self.params["fnat"]:
             self.log("Calculating FNAT")
@@ -86,8 +81,8 @@ class HaddockModule(BaseHaddockModule):
                 cutoff=ilrmsd_cutoff,
                 )
 
-        output_fname = Path(self.path, "capri.tsv")
-        self.log(f" Saving output to {output_fname.name}")
+        output_fname = "capri.tsv"
+        self.log(f" Saving output to {output_fname}")
         capri.output(
             output_fname,
             sortby_key=self.params["sortby"],
@@ -99,4 +94,4 @@ class HaddockModule(BaseHaddockModule):
         selected_models = models_to_calc
         io = ModuleIO()
         io.add(selected_models, "o")
-        io.save(self.path)
+        io.save()

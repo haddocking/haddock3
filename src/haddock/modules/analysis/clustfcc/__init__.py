@@ -6,7 +6,7 @@ from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
 from haddock.gear.config_reader import read_config
-from haddock.libs.libontology import Format, ModuleIO
+from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import Job
 from haddock.modules import BaseHaddockModule
@@ -43,23 +43,20 @@ class HaddockModule(BaseHaddockModule):
         contact_executable = Path(FCC_path, self.params['executable'])
 
         # Get the models generated in previous step
-        models_to_cluster = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.PDB
-            ]
+        models_to_cluster = self.previous_io.retrieve_models()
 
         # Calculate the contacts for each model
         log.info('Calculating contacts')
         contact_jobs = []
         for model in models_to_cluster:
-            pdb_f = Path(model.path, model.file_name)
-            contact_f = Path(self.path, model.file_name.replace('.pdb', '.con'))
+            pdb_f = Path(model.rel_path)
+            contact_f = Path(model.file_name.replace('.pdb', '.con'))
             job = Job(
                 pdb_f,
                 contact_f,
                 contact_executable,
                 self.params['contact_distance_cutoff'],
+                arg_first=True,
                 )
             contact_jobs.append(job)
 
@@ -91,7 +88,7 @@ class HaddockModule(BaseHaddockModule):
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
-        fcc_matrix_f = Path(self.path, 'fcc.matrix')
+        fcc_matrix_f = Path('fcc.matrix')
         with open(fcc_matrix_f, 'w') as fh:
             for data in list(matrix):
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
@@ -116,7 +113,7 @@ class HaddockModule(BaseHaddockModule):
         cluster_dic = {}
         if clusters:
             # use fcc's output
-            cluster_out = Path(self.path, 'cluster.out')
+            cluster_out = Path('cluster.out')
             with open(cluster_out, 'w') as fh:
                 cluster_fcc.output_clusters(fh, clusters)
             fh.close()
@@ -137,6 +134,5 @@ class HaddockModule(BaseHaddockModule):
 
         # Save module information
         io = ModuleIO()
-        io.add(models_to_cluster)
         io.add(cluster_dic, "o")
         io.save()

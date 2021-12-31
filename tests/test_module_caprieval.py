@@ -21,7 +21,6 @@ from haddock.modules.analysis.caprieval.capri import (
 from . import golden_data
 
 
-
 def array_to_list(np_array):
     """Transform a numpy array in a nested list."""
     return [list(e) for e in np_array]

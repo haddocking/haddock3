@@ -3,7 +3,12 @@ HADDOCK 3 supported residues.
 
 https://bianca.science.uu.nl/haddock2.4/library
 """
+import re
 import itertools as it
+from pathlib import Path
+from collections import namedtuple
+
+from haddock import toppar_path
 
 
 # must be defined as HETATM
@@ -28,48 +33,74 @@ supported_carbohydrates = (
     )
 
 # must be defined as HETATM
-ion_charges = {
-    'AG': "+1",  # Silver
-    'AL': "+3",  # Aluminium
-    'AU': "+1",  # Gold
-    'BR': "-1",  # Bromine
-    'CA': "+2",  # Calcium
-    'CD': "+2",  # Cadmium
-    'CL': "-1",  # Chlore
-    'CO': "+2",  # Cobalt
-    'CR': "+3",  # Chromium
-    'CS': "+1",  # Cesium
-    'CU': "+1",  # Copper
-    'F': "-1",   # Fluor
-    'FE': "+2",  # Iron
-    'HG': "+2",  # Mercury
-    'HO': "+3",  # Holmium
-    'I': "-1",   # Iodine
-    'IR': "+3",  # Iridium
-    'K': "+1",   # Potassium
-    'KR': "+2",  # Krypton
-    'LI': "+1",  # Lithium
-    'MG': "+2",  # Magnesium
-    'MN': "+2",  # Manganese
-    'MO': "+2",  # Molybdenum
-    'NA': "+1",  # Sodium
-    'NI': "+2",  # Nickel
-    'OS': "+6",  # Osmium
-    'PB': "+2",  # Lead
-    'PT': "+2",  # Platinum
-    'SR': "+2",  # Strontium
-    'U': "+2",  # Uranium
-    'V': "+2",  # Vanadium
-    'YB': "+3",  # Ytterbium
-    'ZN': "+2",  # Zinc
-    }
+#ion_charges = {
+#    'AG': "+1",  # Silver
+#    'AL': "+3",  # Aluminium
+#    'AU': "+1",  # Gold
+#    'BR': "-1",  # Bromine
+#    'CA': "+2",  # Calcium
+#    'CD': "+2",  # Cadmium
+#    'CL': "-1",  # Chlore
+#    'CO': "+2",  # Cobalt
+#    'CR': "+3",  # Chromium
+#    'CS': "+1",  # Cesium
+#    'CU': "+1",  # Copper
+#    'F': "-1",   # Fluor
+#    'FE': "+2",  # Iron
+#    'HG': "+2",  # Mercury
+#    'HO': "+3",  # Holmium
+#    'I': "-1",   # Iodine
+#    'IR': "+3",  # Iridium
+#    'K': "+1",   # Potassium
+#    'KR': "+2",  # Krypton
+#    'LI': "+1",  # Lithium
+#    'MG': "+2",  # Magnesium
+#    'MN': "+2",  # Manganese
+#    'MO': "+2",  # Molybdenum
+#    'NA': "+1",  # Sodium
+#    'NI': "+2",  # Nickel
+#    'OS': "+6",  # Osmium
+#    'PB': "+2",  # Lead
+#    'PT': "+2",  # Platinum
+#    'SR': "+2",  # Strontium
+#    'U': "+2",  # Uranium
+#    'V': "+2",  # Vanadium
+#    'YB': "+3",  # Ytterbium
+#    'ZN': "+2",  # Zinc
+#    }
 
 
-supported_ions = tuple(ion_charges.keys())
+def read_ion_topology(topfile):
+    """
+    Read ion topology from topfile.
 
-# creates the ZN2 YB3 kind of nomenclature
-supported_ion_resnames = \
-    tuple([ion + charge[-1] for ion, charge in ion_charges.items()])
+    Expects a file with the format of `toppar/ion.top`.
+
+    See regex:
+        https://regex101.com/r/T9ak8y/1
+    """
+    Ion = namedtuple('Ion', ['resname', 'name', 'full', 'atom', 'charge'])
+    regex = r'\nRESIdue (\w{1,4}) {(\w+ \d[\+\-])}\n.*\n *ATOM (\w{1,2}[\+|\-]?\d{1,2}) .*\nEND {\w*}\n'
+    text = Path(topfile).read_text()
+    groups = re.findall(regex, text)
+
+    ions = [
+        Ion(
+            resname=group[0],
+            name=group[2][:-2],
+            full=group[1],
+            atom=group[2],
+            charge=group[2][-2:],
+            )
+        for group in groups
+        ]
+
+    return ions
+
+
+supported_ions = read_ion_topology(Path(toppar_path, 'ion.top'))
+supported_ion_names = tuple(i.name for i in supported_ions)
+supported_ion_resnames = tuple(i.resname for i in supported_ions)
 
 
 # must be defined as HETATM

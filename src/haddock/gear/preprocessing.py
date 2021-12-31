@@ -149,6 +149,7 @@ def process_pdbs(
         save_output=False,
         osuffix=_OSUFFIX,
         dry=False,
+        user_supported_residues=None,
         **param):
     """
     Processes PDB file contents for HADDOCK3 compatibility.
@@ -187,8 +188,8 @@ def process_pdbs(
         convert_HETATM_to_ATOM,
         ##partial(pdb_fixinsert.run, option_list=[]),
         ###
-        partial(remove_unsupported_hetatm, user_defined=param),
-        partial(remove_unsupported_atom, user_defined=param),
+        partial(remove_unsupported_hetatm, user_defined=user_supported_residues),
+        partial(remove_unsupported_atom, user_defined=user_supported_residues),
         ##
         partial(wdry_pdb_reatom, starting_value=1),
         partial(wdry_pdb_reres, starting_resid=1),
@@ -273,6 +274,11 @@ remove_unsupported_atom = partial(
     haddock3_defined=supported_atom,
     line_startswith='ATOM',
     )
+
+
+def read_top_to_residue():
+    """Read `.top` file to list of residues."""
+    return residues
 
 
 @allow_dry("Solving chain/seg ID issues.")

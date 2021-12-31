@@ -18,8 +18,8 @@ from haddock.modules.analysis.caprieval.capri import (
     pdb2fastadic,
     )
 
+from . import golden_data
 
-DATA_PATH = Path(Path(__file__).resolve().parents[2], "golden_data")
 
 
 def array_to_list(np_array):
@@ -36,8 +36,8 @@ def round_two_dec(dic):
 def protprot_input_list():
     """Prot-prot input."""
     return [
-        Path(DATA_PATH, "protprot_complex_1.pdb"),
-        Path(DATA_PATH, "protprot_complex_2.pdb"),
+        Path(golden_data, "protprot_complex_1.pdb"),
+        Path(golden_data, "protprot_complex_2.pdb"),
         ]
 
 
@@ -45,8 +45,8 @@ def protprot_input_list():
 def protdna_input_list():
     """Prot-DNA input."""
     return [
-        Path(DATA_PATH, "protdna_complex_1.pdb"),
-        Path(DATA_PATH, "protdna_complex_2.pdb"),
+        Path(golden_data, "protdna_complex_1.pdb"),
+        Path(golden_data, "protdna_complex_2.pdb"),
         ]
 
 
@@ -54,8 +54,8 @@ def protdna_input_list():
 def protlig_input_list():
     """Protein-Ligand input."""
     return [
-        Path(DATA_PATH, "protlig_complex_1.pdb"),
-        Path(DATA_PATH, "protlig_complex_2.pdb"),
+        Path(golden_data, "protlig_complex_1.pdb"),
+        Path(golden_data, "protlig_complex_2.pdb"),
         ]
 
 
@@ -64,8 +64,8 @@ def protdna_caprimodule(protdna_input_list):
     """Protein-DNA CAPRI module."""
     ref = protdna_input_list[0]
     mod_l = [
-        PDBFile(protdna_input_list[0], path=DATA_PATH),
-        PDBFile(protdna_input_list[1], path=DATA_PATH),
+        PDBFile(protdna_input_list[0], path=golden_data),
+        PDBFile(protdna_input_list[1], path=golden_data),
         ]
     capri = CAPRI(
         reference=ref,
@@ -73,7 +73,7 @@ def protdna_caprimodule(protdna_input_list):
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
-        path=DATA_PATH,
+        path=golden_data,
         )
     return capri
 
@@ -83,8 +83,8 @@ def protlig_caprimodule(protlig_input_list):
     """Protein-Ligand CAPRI module."""
     ref = protlig_input_list[0]
     mod_l = [
-        PDBFile(protlig_input_list[0], path=DATA_PATH),
-        PDBFile(protlig_input_list[1], path=DATA_PATH),
+        PDBFile(protlig_input_list[0], path=golden_data),
+        PDBFile(protlig_input_list[1], path=golden_data),
         ]
     capri = CAPRI(
         reference=ref,
@@ -92,7 +92,7 @@ def protlig_caprimodule(protlig_input_list):
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
-        path=DATA_PATH,
+        path=golden_data,
         )
     return capri
 
@@ -102,8 +102,8 @@ def protprot_caprimodule(protprot_input_list):
     """Protein-Protein CAPRI module."""
     ref = protprot_input_list[0]
     mod_l = [
-        PDBFile(protprot_input_list[0], path=DATA_PATH),
-        PDBFile(protprot_input_list[1], path=DATA_PATH),
+        PDBFile(protprot_input_list[0], path=golden_data),
+        PDBFile(protprot_input_list[1], path=golden_data),
         ]
     capri = CAPRI(
         reference=ref,
@@ -111,7 +111,7 @@ def protprot_caprimodule(protprot_input_list):
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
-        path=DATA_PATH,
+        path=golden_data,
         )
     return capri
 
@@ -484,9 +484,9 @@ def test_kabsch(protprot_caprimodule):
 def test_get_atoms():
     """Test the identification of atoms."""
     pdb_list = [
-        Path(DATA_PATH, "protein.pdb"),
-        Path(DATA_PATH, "dna.pdb"),
-        Path(DATA_PATH, "ligand.pdb"),
+        Path(golden_data, "protein.pdb"),
+        Path(golden_data, "dna.pdb"),
+        Path(golden_data, "ligand.pdb"),
         ]
     observed_atom_dic = get_atoms(pdb_list)
     expected_atom_dic = {
@@ -631,7 +631,7 @@ def test_centroid(protprot_caprimodule):
 def test_add_chain_from_segid(protprot_caprimodule):
     """Test replacing the chainID with segID."""
     tmp = tempfile.NamedTemporaryFile(delete=True)
-    pdb_f = Path(DATA_PATH, "protein_segid.pdb")
+    pdb_f = Path(golden_data, "protein_segid.pdb")
     shutil.copy(pdb_f, tmp.name)
     # this will replace-in-place
     protprot_caprimodule.add_chain_from_segid(tmp.name)
@@ -645,7 +645,7 @@ def test_add_chain_from_segid(protprot_caprimodule):
 def test_load_coords(protprot_caprimodule):
     """Test the loading of coordinates."""
     # pdb_f = protprot_input_list[0]
-    pdb_f = Path(DATA_PATH, "protein.pdb")
+    pdb_f = Path(golden_data, "protein.pdb")
     (
         observed_coord_dic,
         observed_chain_ranges,
@@ -709,9 +709,9 @@ def test_load_coords(protprot_caprimodule):
 
 def test_pdb2fastadic():
     """Test the generation of the fastadic."""
-    protein_f = Path(DATA_PATH, "protein.pdb")
-    dna_f = Path(DATA_PATH, "dna.pdb")
-    ligand_f = Path(DATA_PATH, "ligand.pdb")
+    protein_f = Path(golden_data, "protein.pdb")
+    dna_f = Path(golden_data, "dna.pdb")
+    ligand_f = Path(golden_data, "ligand.pdb")
 
     observed_prot_fastadic = pdb2fastadic(protein_f)
     expected_prot_fastadic = {"B": {1: "M", 2: "F", 3: "Q", 4: "Q", 5: "E"}}
@@ -758,8 +758,8 @@ def test_get_align():
 
 def test_align_seq():
     """Test the sequence alignment."""
-    ref = Path(DATA_PATH, "protein.pdb")
-    mod = Path(DATA_PATH, "protein_renumb.pdb")
+    ref = Path(golden_data, "protein.pdb")
+    mod = Path(golden_data, "protein_renumb.pdb")
 
     with tempfile.TemporaryDirectory() as tmpdirname:
 

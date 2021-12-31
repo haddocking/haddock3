@@ -80,11 +80,11 @@ def read_ion_topology(topfile):
         https://regex101.com/r/T9ak8y/1
     """
     Ion = namedtuple('Ion', ['resname', 'name', 'full', 'atom', 'charge'])
-    regex = r'\nRESIdue (\w{1,4}) {(\w+ \d[\+\-])}\n.*\n *ATOM (\w{1,2}[\+|\-]?\d{1,2}) .*\nEND {\w*}\n'
+    regex = r'\nRESIdue (\w{1,4}) {(\w+ \d[\+\-])}\n.*\n *ATOM (\w{1,2}[\+|\-]?\d{1,2}) .*\nEND {\w*}\n'  # noqa: E501
     text = Path(topfile).read_text()
     groups = re.findall(regex, text)
 
-    ions = [
+    ions = tuple(
         Ion(
             resname=group[0],
             name=group[2][:-2],
@@ -93,7 +93,7 @@ def read_ion_topology(topfile):
             charge=group[2][-2:],
             )
         for group in groups
-        ]
+        )
 
     return ions
 
@@ -103,12 +103,27 @@ supported_ion_names = tuple(i.name for i in supported_ions)
 supported_ion_resnames = tuple(i.resname for i in supported_ions)
 
 
+def read_multiatom_topology(topfile):
+    """
+    Read multi-atom ions topology from topfile.
+
+    Expects a file with the format of `toppar/ion.top`.
+
+    See regex:
+        https://regex101.com/r/nkPMUp/1
+    """
+    Ion = namedtuple('Ion', ['resname', 'name'])
+    regex = r'RESIdue (\w{1,4}) {(\w+)}\n  GROUP\n(?:    ATOM.*\n)+\n(?:  BOND.*\n)+'  # noqa: E501
+    text = Path(topfile).read_text()
+    groups = re.findall(regex, text)
+    ions = tuple(Ion(resname=group[0], name=group[1]) for group in groups)
+    return ions
+
+
+
 # must be defined as HETATM
-supported_multiatom_ions = (
-    'PO4',  # Phosphate
-    'SO4',  # Sulphate
-    'WO4',  # Tungstate
-    )
+supported_multiatom_ions = read_multiatom_topology(Path(toppar_path, 'ion.top'))
+supported_multiatom_ions_resnames = tuple(i.resname for i in supported_multiatom_ions)
 
 # must be defined as HETATM
 supported_cofactors = (

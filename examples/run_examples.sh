@@ -7,27 +7,35 @@
 #
 # USAGE:
 #
+# ./run_examples.sh  (will use 0, by default)
 # ./run_examples.sh 0
 # ./run_examples.sh 1
+#
+# If you want to run just some specific examples, edit the `examples`
+# array before the for loop at the end of the file.
+#
 
-
-argmsg=$(cat <<-END
-Please give 0 to run all examples regardless of errors.
-Or, give 1, to run all examples but stop if an error happens.
-END
-)
+argmsg0="Please give 0 to run all examples regardless of errors."
+argmsg1="Or, give 1, to run all examples but stop if an error happens."
 
 
 if [ $# -eq 0 ]; then
     echo "No arguments provided."
-    echo ${argmsg}
-    exit 1
+    echo ${argmsg0}
+    echo ${argmsg1}
+    echo "By default, we will use 0."
+    echo "Run will start in 3 seconds..."
+    sleep 3s
+    user_option=$1
 fi
 
 if [[ ! "0 1" =~ $1 ]]; then
     echo  "Input argument not recognized."
-    echo ${argmsg}
+    echo ${argmsg0}
+    echo ${argmsg1}
     exit 1
+else
+    user_option=$1
 fi
 
 
@@ -108,9 +116,9 @@ for example in ${examples[@]}; do
     ${example}
     exitcodefrompreviouscommand=$?  # ;-)
     if [ ${exitcodefrompreviouscommand} -ne 0 ]; then
-        if [ ${1} -eq 1 ]; then
+        if [ ${user_option} -eq 1 ]; then
             break
-        elif [ ${1} -eq 0 ]; then
+        elif [ ${user_option} -eq 0 ]; then
             cd ..
             continue
         fi

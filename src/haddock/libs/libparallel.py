@@ -58,11 +58,11 @@ class Scheduler:
         task_name_dic = {}
         for i, t in enumerate(tasks):
             try:
-                task_name_dic[i] = t.input_file, len(str(t.input_file))
+                task_name_dic[i] = (t.input_file, len(str(t.input_file)))
             except AttributeError:
                 # If this is not a CNS job it will not have
                 #  input_file, use the output instead
-                task_name_dic[i] = t.output, len(str(t.output))
+                task_name_dic[i] = (t.output, len(str(t.output)))
 
         sorted_task_list = []
         for e in sorted(task_name_dic.items(), key=lambda x: (x[0], x[1])):

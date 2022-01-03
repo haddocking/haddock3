@@ -206,9 +206,9 @@ def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
         List of Paths with the identified PBD files.
         If no files are found return an empty list.
     """
-    basename = Path(pdb_file_path)
-    abs_path = basename.resolve().parent
-    return list(abs_path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
+    basename = Path(file_name)
+    path = path or Path.cwd()
+    return list(path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
 
 
 def read_ATOM_section(lines, section_slice):

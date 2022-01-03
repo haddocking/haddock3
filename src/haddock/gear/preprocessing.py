@@ -11,6 +11,7 @@ Processes input PDB files to ensure compatibility with HADDOCK3.
 #
 import itertools as it
 import string
+from collections import namedtuple
 from functools import partial, wraps
 from pathlib import Path
 from os import linesep
@@ -31,9 +32,9 @@ from pdbtools import (
 
 from haddock import log
 from haddock.core.supported_molecules import (
+    read_supported_residues_from_top_file,
     supported_ATOM,
     supported_HETATM,
-    supported_aminoacids_resnames,
     supported_ions_atoms,
     supported_ions_elements,
     supported_ions_resnames,
@@ -136,6 +137,18 @@ def _open_or_give(paths_or_lines):
         raise TypeError('Unexpected types in `paths_or_lines`.')
 
 
+def read_additional_residues(top_fname):
+    """Read additional residues listed in a .top filename."""
+    residues = read_supported_residues_from_top_file(
+        top_fname,
+        regex=r'\nRESIdue ([A-Z0-9]{1,3}).*\n',
+        Residue=namedtuple('New', ['resname']),
+        )
+
+    return tuple(i.resname for i in residues)
+
+
+
 def process_pdbs(
         paths_or_lines,
         save_output=False,
@@ -148,12 +161,20 @@ def process_pdbs(
 
     Parameters
     ----------
-    structures : list of lists of strings
-        A list of lists, where each sublist corresponds to the lines of
-        the structures (file content). Why paths are not accepted? So
-        that `process_structure` can be used from loaded information.
-        Why don't accept generators? Because we will need to sort at
-        some point.
+    paths_or_lines : list
+        A list of paths pointing to files or a list of lists of strings
+        with the lines of the file contents.
+
+    save_output : bool
+        Whether to directly save the output to files. If False, returns
+        a list of lists with the altered contents.
+
+    dry : bool
+        Perform a dry run. That is, does not change anything, and just
+        report.
+
+    user_supported_residues : list, tuple, or set
+        The new residues that are allowed.
 
     Returns
     -------
@@ -169,19 +190,19 @@ def process_pdbs(
     line_by_line_processing_steps = [
         wdry_pdb_keepcoord,
         # wdry_pdb_selaltloc,
-        # partial(wdry_pdb_occ, occupancy=1.00),
+        partial(wdry_pdb_occ, occupancy=1.00),
         replace_MSE_to_MET,
         replace_HSD_to_HIS,
         replace_HSE_to_HIS,
         replace_HID_to_HIS,
         replace_HIE_to_HIS,
         add_charges_to_ions,
-        #convert_ATOM_to_HETATM,
-        #convert_HETATM_to_ATOM,
+        convert_ATOM_to_HETATM,
+        convert_HETATM_to_ATOM,
         # partial(pdb_fixinsert.run, option_list=[]),
         ###
-        #partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
-        #partial(remove_unsupported_atom, user_defined=user_supported_residues),
+        partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
+        partial(remove_unsupported_atom, user_defined=user_supported_residues),
         ##
         partial(wdry_pdb_reatom, starting_value=1),
         partial(wdry_pdb_reres, starting_resid=1),
@@ -398,7 +419,7 @@ def correct_equal_chain_segids(structures):
 
 
 @_allow_dry("Convert record: {!r} to {!r}.")
-def convert_ATOM_record(fhandler, record, other_record, must_be):
+def convert_record(fhandler, record, other_record, must_be):
     """Convert ATOM lines to HETATM if needed."""
     for line in fhandler:
         if line.startswith(record):
@@ -410,14 +431,14 @@ def convert_ATOM_record(fhandler, record, other_record, must_be):
 
 
 convert_ATOM_to_HETATM = partial(
-    convert_ATOM_record,
+    convert_record,
     record="ATOM",
     other_record="HETATM",
     must_be=supported_HETATM,
     )
 
 convert_HETATM_to_ATOM = partial(
-    convert_ATOM_record,
+    convert_record,
     record="HETATM",
     other_record="ATOM  ",
     must_be=supported_ATOM,

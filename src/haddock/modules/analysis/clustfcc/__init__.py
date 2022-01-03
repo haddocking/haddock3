@@ -174,7 +174,7 @@ class HaddockModule(BaseHaddockModule):
             output_str += os.linesep
             output_str += (
                 "Note: Models marked with * represent the center of the cluster"
-                )
+                f"{os.linesep}")
             output_str += (
                 f"-----------------------------------------------{os.linesep}")
             output_str += os.linesep

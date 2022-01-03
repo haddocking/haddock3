@@ -9,7 +9,7 @@ from functools import partial
 from pathlib import Path
 from collections import namedtuple
 
-from haddock import toppar_path
+from haddock import PrePath, toppar_path
 from haddock.libs.libutil import transform_to_list
 
 
@@ -48,247 +48,116 @@ def read_supported_residues_from_top_file(topfile, regex, Residue):
     return residues
 
 
+read_top = partial(partial, read_supported_residues_from_top_file)
+
+
 # what we will need to inspect if the residues are allowed or not are
 # the residue names. So it is nice to have a function that retrieve them
 # from the respective named tuples.
 def get_resnames(group):
-    """Make a tuple with the 'resnames'."""
+    """Make a tuple with the "resnames"."""
     return tuple(i.resname for i in group)
 
 
+TopparPath = PrePath(toppar_path)
+
+# The regular expressions that capture the resnames, names, and other relavante
+# information from the `.top` files
+header_1_regex = r"\nRESIdue +(\w{1,3}) +!([a-zA-Z0-9-,]+) *.*\n"
+header_2_regex = r"\nRESIdue (\w{1,3}) *.*\n"
+header_3_regex = r"\n! *(\w+) *.*\nRESIdue +(\w{1,3}).*\n"
+header_4_regex = r"\nRESIdue (\w{1,4}) {(\w+) [\+|\-]?\d.*}\n.*\n *ATOM (\w{1,2}[\+|\-]?\d) .* CHARge=([-\+]?\d).*\nEND {\w*}\n"  # noqa: E501
+header_5_regex = r"\nRESIdue (\w{1,4}) {(\w+)}\n  GROUP\n(?:    ATOM.*\n)+\n(?:  BOND.*\n)+\nEND.*\n"  # noqa: E501
+header_6_regex = r"\nresidue ([A-Z0-9]{1,3}).*\n"
+header_7_regex = r"\nRESIdue ([A-Z0-9]{1,4}).*{\*? (.*) \*?}\n"
+
+# The namedtuples for each type of residue.
+carbo_resi = namedtuple("Carbo", ["resname", "name"])
+dnarna_resi = namedtuple("DNARNABase", ["resname", "name"])
+dnarna2_resi = namedtuple("DNARNABase", ["resname"])
+fragment_resi = namedtuple("FramentProbe", ["name", "resname"])
+glycansuu_resi = namedtuple("GlycanUU", ["resname", "name"])
+heme_resi = namedtuple("Heme", ["resname", "name"])
+ion_resi = namedtuple("Ion", ["resname", "name", "charge", "atom"])
+multiatom_ion_resi = namedtuple("MultiatomIon", ["resname", "name"])
+protein_resi = namedtuple("AminoAcid", ["resname"])
+solvent_resi = namedtuple("Solvent", ["resname", "name"])
+
 # functions here are defined by order of `ls` in `cns/toppar/*.top`
-read_carbohydrate = partial(
-    read_supported_residues_from_top_file,
-    regex=r'\nRESIdue +(\w{1,3}) +!([a-zA-Z0-9-]+) .*\n',
-    Residue=namedtuple('Carbo', ['resname', 'name']),
-    )
+# functions ready to read a specific `.top` file.
+read_carbohydrate = read_top(regex=header_1_regex, Residue=carbo_resi)
+read_dna_rna_allatom = read_top(regex=header_1_regex, Residue=dnarna_resi)
+read_dna_rna_martini = read_top(regex=header_2_regex, Residue=dnarna2_resi)
+read_fragment = read_top(regex=header_3_regex, Residue=fragment_resi)
+read_glycansuu = read_top(regex=header_1_regex, Residue=glycansuu_resi)
+read_hemes = read_top(regex=header_1_regex, Residue=heme_resi)
+read_ions = read_top(regex=header_4_regex, Residue=ion_resi)
+read_multiatom_ions = read_top(regex=header_5_regex, Residue=multiatom_ion_resi)
+read_protein_1 = read_top(regex=header_6_regex, Residue=protein_resi)
+read_protein_2 = read_top(regex=header_2_regex, Residue=protein_resi)
+read_solvent = read_top(regex=header_7_regex, Residue=solvent_resi)
 
+# paths to the `.top` files
+carbo_top = TopparPath("carbohydrate.top")
+dna_rna_all_top = TopparPath("dna-rna-allatom-hj-opls-1.3.top")
+dna_rna_martini_top = TopparPath("dna-rna-CG-MARTINI-2-1p.top")
+fragment_top = TopparPath("fragment_probes.top")
+glycansuu_top = TopparPath("glycans-uu.top")
+hemes_top = TopparPath("hemes-allhdg.top")
+ions_top = TopparPath("ion.top")
+protein_5_4_caro_top = TopparPath("protein-allhdg5-4-caro.top")
+protein_5_4_top = TopparPath("protein-allhdg5-4.top")
+protein_martini_2_top = TopparPath("protein-CG-Martini-2-2.top")
+protein_martini_top = TopparPath("protein-CG-Martini.top")
+solvent_top = TopparPath("solvent-allhdg5-4.top")
 
-read_dna_rna_allatom_hj_opls = partial(
-    read_supported_residues_from_top_file,
-    regex=r'\nRESIdue (\w{1,3}) ! +(.*)\n',
-    Residue=namedtuple('DNABase', ['resname', 'name']),
-    )
+# supported Residues (tuple of namedtuples)
+supported_carbohydrates = read_carbohydrate(carbo_top)
+supported_nucleic = set(it.chain(
+    read_dna_rna_allatom(dna_dna_all_top),
+    read_dna_rna_martini(dna_rna_martini_top),
+    ))
+# supported_dna_rna_allatom = read_dna_rna_allatom(dna_rna_all_top)
+# supported_dna_rna_martini = read_dna_rna_martini(dna_rna_martini_top)
+supported_fragments = read_fragment(fragment_top)
+supported_glycansuu = read_glycansuu(glycansuu_top)
+supported_hemes = read_hemes(hemes_top)
+supported_ions = read_ions(ions_top)
+supported_multiatom_ions = read_multiatom_ions(ions_top)
+supported_aminoacids = set(it.chain(
+    read_protein_1(protein_5_4_caro_top),
+    read_protein_1(protein_5_4_top),
+    read_protein_2(protein_martini_2_top),
+    read_protein_2(protein_martini_top),
+    ))
+supported_solvents = read_solvent(solvent_top)
 
+# supported resnames
+supported_carbo_resnames = get_resnames(supported_carbohydrates)
+supported_nucleic_resnames = get_resnames(supported_nucleic)
+# supported_dna_rna_allatom_resnames = get_resnames(supported_dna_rna_allatom)
+# supported_dna_rna_martini_resnames = get_resnames(supported_dna_rna_martini)
+supported_fragments_resnames = get_resnames(supported_fragments)
+supported_glycansuu_resnames = get_resnames(supported_glycansuu)
+supported_hemes_resnames = get_resnames(supported_hemes)
+supported_ions_resnames = get_resnames(supported_ions)
+supported_miltiatom_ions_resnames = get_resnames(supported_multiatom_ions)
+supported_aminoacids_resnames = get_resnames(supported_aminoacids)
+supported_solvents_resnames = get_resnames(supported_solvents)
 
-read_dna_rna_martini = partial(
-    read_supported_residues_from_top_file,
-    regex=r'\nRESIdue (\w{1,3}) *.*\n',
-    Residue=namedtuple('DNARNABase', ['resname']),
-    )
-
-
-# https://regex101.com/r/QSVfT3/1
-read_fragment_probes_supported = partial(
-    read_supported_residues_from_top_file,
-    regex=r'\n! *(\w+) *.*\nRESIdue +(\w{1,3}).*\n',
-    Residue=namedtuple('FramentProbe', ['name', 'resname']),
-    )
-
-
-read_glycans_uu = partial(
-    read_supported_residues_from_top_file,
-    regex=r'\nRESIdue +(\w{1,3}).*! *([A-Za-z0-9-,]+).*\n',
-    Residue=namedtuple('GlycansUU', ['resname', 'name']),
-    )
-
-# https://regex101.com/r/00Ktzf/1
-read_ions = partial(
-    read_supported_residues_from_top_file,
-    regex=r'\nRESIdue (\w{1,4}) {(\w+) [\+|\-]?\d.*}\n.*\n *ATOM (\w{1,2}[\+|\-]?\d) .* CHARge=([-\+]?\d).*\nEND {\w*}\n',
-    Residue=namedtuple('Ion', ['resname', 'name', 'charge', 'atom']),
-    )
-
-# https://regex101.com/r/5Kc21W/1
-read_multiatom_ions = partial(
-    read_supported_residues_from_top_file,
-    regex=r'\nRESIdue (\w{1,4}) {(\w+)}\n  GROUP\n(?:    ATOM.*\n)+\n(?:  BOND.*\n)+\nEND.*\n',
-    Residue= namedtuple('MultiatomIon', ['resname', 'name']),
-    )
-
-
-
-
-
-# must be defined as HETATM
-carbotop = Path(toppar_path, 'carbohydrate.top')
-supported_carbohydrates = read_carbohydrate(carbotop)
-supported_carboy_resnames = get_resnames(supported_carbohydrates)
-
-# must be defined as HETATM
-supported_ions = read_ions(Path(toppar_path, 'ion.top'))
-supported_ion_names = tuple(i.name for i in supported_ions)
-supported_ion_resnames = get_resnames(supported_ions)
-
-# must be defined as HETATM
-supported_multiatom_ions = read_multiatom_ions(Path(toppar_path, 'ion.top'))
-supported_multiatom_ions_resnames = get_resnames(supported_multiatom_ions)
-
-fragprob = Path(toppar_path, 'fragment_probes.top')
-supported_fragment_probes = read_fragment_probes_supported(fragprob)
-supported_fragment_probes_resname = get_resnames(supported_fragment_probes)
-
-dna_rna_allatom = Path(toppar_path, 'dna-rna-allatom-hj-opls-1.3.top')
-supported_dna_rna_allatom = read_dna_rna_allatom_hj_opls(dna_rna_allatom)
-supported_dna_rna_allatom_resnames = get_resnames(supported_dna_rna_allatom)
-
-
-dna_rna_martini = Path(toppar_path, 'dna-rna-CG-MARTINI-2-1p.top')
-supported_dna_rna = read_dna_rna_martini(dna_rna_martini)
-supported_dna_rna_resnames = get_resnames(supported_dna_rna)
-
-glycansuu = Path(toppar_path, 'glycans-uu.top')
-supported_glycans_uu = read_glycans_uu(glycansuu)
-supported_glycans_uu_resnames = get_resnames(supported_glycans_uu)
-
-# must be defined as HETATM
-supported_cofactors = (
-    'HEB',  # Heme-B
-    'HEC',  # Heme-C
-    )
-
-# must be defined as ATOM
-supported_nucleic_acid_bases = (
-    # DNA
-    'DA',  # Adenine
-    'DC',  # Cytosine
-    'DG',  # Guanidine
-    'DT',  # Thymidine
-
-    # RNA
-    'A',  # Adenine
-    'C',  # Cytosine
-    'G',  # Guanidine
-    'U',  # Uridine
-    )
-
-# must be defined as ATOM
-supported_modified_amino_acids = (
-    'ACE',  # N-terminal acetyl group
-    'ALY',  # Acetylated LYS
-    'ASH',  # protonated ASP
-    'CFE',  # CYS with an iron sulfur cluster
-    'CSP',  # phosphorylated CYS
-    'CTN',  # C-terminal amide group
-    'CYC',  # special for covalent docking - vdw of Sulphur reduced
-    'CYF',  # CYS without the sulfur H (for coordinating metals)
-    'CYM',  # CYS with MTSL grouped
-    'DDZ',  # 3,3,-dihydrozy ALA
-    'GLH',  # protonated GLU
-    'HYP',  # 4R-hydroxyproline
-    'M3L',  # trimethyl LYS
-    'MLY',  # dimethyl LYS
-    'MLZ',  # monomethyl LYS
-    'MSE',  # Selenomethionine
-    'NEP',  # NE phosphorylated HIS
-    'NME',  # C-terminal N-Methyl
-    'PNS',  # Phosphopanthenite Serine
-    'PTR',  # O-Phosphotyrosine
-    'SEP',  # phosphorylated SER
-    'TOP',  # phosphorylated THR
-    'TYP',  # phosphorylated TYR
-    'PTR',  # phosphorylated TYR (also)
-    'TYS',  # sulfonated TYR.
-    )
-
-supported_natural_amino_acids = (
-    'ALA',
-    'ARG',
-    'ASN',
-    'ASP',
-    'CYS',
-    'GLU',
-    'GLN',
-    'GLY',
-    'HIS',
-    'HIP',
-    'HIE',
-    'HID',
-    'ILE',
-    'LEU',
-    'LYS',
-    'MET',
-    'PHE',
-    'PRO',
-    'SER',
-    'THR',
-    'TRP',
-    'TYR',
-    'VAL',
-    )
-
-supported_atom = set(it.chain(
-    supported_natural_amino_acids,
-    supported_modified_amino_acids,
-    supported_nucleic_acid_bases,
+# Residues that must be set as ATOM
+supported_ATOM = set(it.chain(
+    supported_nucleic_resnames,
+    supported_aminoacids_resnames,
     ))
 
-supported_hetatm = set(it.chain(
-    supported_cofactors,
-    supported_multiatom_ions,
-    supported_ions,
-    supported_ion_resnames,
-    supported_carbohydrates,
+# Residues that must be set as HETATM
+supported_HETATM = set(it.chain(
+    supported_carbo_resnames,
+    supported_fragments_resnames,
+    supported_glycansuu_resnames,
+    supported_hemes_resnames,
+    supported_ions_resnames,
+    supported_multiatom_ions_resnames,
+    supported_solvents_resnames,
     ))
-
-
-
-# must be defined as HETATM
-#ion_charges = {
-#    'AG': "+1",  # Silver
-#    'AL': "+3",  # Aluminium
-#    'AU': "+1",  # Gold
-#    'BR': "-1",  # Bromine
-#    'CA': "+2",  # Calcium
-#    'CD': "+2",  # Cadmium
-#    'CL': "-1",  # Chlore
-#    'CO': "+2",  # Cobalt
-#    'CR': "+3",  # Chromium
-#    'CS': "+1",  # Cesium
-#    'CU': "+1",  # Copper
-#    'F': "-1",   # Fluor
-#    'FE': "+2",  # Iron
-#    'HG': "+2",  # Mercury
-#    'HO': "+3",  # Holmium
-#    'I': "-1",   # Iodine
-#    'IR': "+3",  # Iridium
-#    'K': "+1",   # Potassium
-#    'KR': "+2",  # Krypton
-#    'LI': "+1",  # Lithium
-#    'MG': "+2",  # Magnesium
-#    'MN': "+2",  # Manganese
-#    'MO': "+2",  # Molybdenum
-#    'NA': "+1",  # Sodium
-#    'NI': "+2",  # Nickel
-#    'OS': "+6",  # Osmium
-#    'PB': "+2",  # Lead
-#    'PT': "+2",  # Platinum
-#    'SR': "+2",  # Strontium
-#    'U': "+2",  # Uranium
-#    'V': "+2",  # Vanadium
-#    'YB': "+3",  # Ytterbium
-#    'ZN': "+2",  # Zinc
-#    }
-
-## must be defined as HETATM
-#supported_carbohydrates = (
-#    'A2G',   # 2-N-acetyl-alpha-D-glucopyranose, different stereochemistry at C4
-#    'BGC',  # beta-D-glucopyranose
-#    'BMA',  # beta-D-mannopyronose
-#    'FCA',  # alpha-D-fucopyranose
-#    'FCB',  # beta-D-fucopyranose
-#    'FUC',  # alpha-L-fucopyranose
-#    'FUL',  # beta-L-fucopyranose
-#    'GAL',  # (GLB): beta-D-galactopyranose
-#    'GLA',  # alpha-D-galactopyranose
-#    'GLC',  # alpha-D-glucopyranose
-#    'MAN',  # alpha-D-mannopyranose
-#    'NAG',  # 2-N-acetyl-beta-D-glucopyranose
-#    'NDG',  # 2-N-acetyl-alpha-D-glucopyranose
-#    'NGA',  # 2-N-acetyl-beta-D-galactopyranose
-#    'SIA',  # alpha-N-acetyl neuraminic acid
-#    'SIB',  # beta-N-acetyl neuraminic acid
-#    'XYP',  # beta-D-xylopyranose
-#    )
-
-

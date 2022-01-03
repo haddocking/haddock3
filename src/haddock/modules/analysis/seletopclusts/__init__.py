@@ -30,7 +30,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self):
         """Execute the module's protocol."""
-
         models_to_select = self.previous_io.retrieve_models()
 
         # how many models should we output?

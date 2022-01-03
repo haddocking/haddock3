@@ -3,11 +3,11 @@ HADDOCK 3 supported residues.
 
 https://bianca.science.uu.nl/haddock2.4/library
 """
-import re
 import itertools as it
+import re
+from collections import namedtuple
 from functools import partial
 from pathlib import Path
-from collections import namedtuple
 
 from haddock import PrePath, toppar_path
 from haddock.libs.libutil import transform_to_list
@@ -56,7 +56,7 @@ read_top = partial(partial, read_supported_residues_from_top_file)
 # from the respective named tuples.
 def get_resnames(group):
     """Make a tuple with the "resnames"."""
-    return tuple(i.resname for i in group)
+    return {i.resname: i for i in group}
 
 
 TopparPath = PrePath(toppar_path)
@@ -66,7 +66,7 @@ TopparPath = PrePath(toppar_path)
 header_1_regex = r"\nRESIdue +(\w{1,3}) +!([a-zA-Z0-9-,]+) *.*\n"
 header_2_regex = r"\nRESIdue (\w{1,3}) *.*\n"
 header_3_regex = r"\n! *(\w+) *.*\nRESIdue +(\w{1,3}).*\n"
-header_4_regex = r"\nRESIdue (\w{1,4}) {(\w+) [\+|\-]?\d.*}\n.*\n *ATOM (\w{1,2}[\+|\-]?\d) .* CHARge=([-\+]?\d).*\nEND {\w*}\n"  # noqa: E501
+header_4_regex = r"\nRESIdue (\w{1,4}) {(\w+) [\+|\-]?\d.*}\n.*\n *ATOM (\w{1,2}[\+|\-]?\d) .* CHARge=([-\+]?\d).*\nEND {([A-Z]{1,2}).*}\n"  # noqa: E501
 header_5_regex = r"\nRESIdue (\w{1,4}) {(\w+)}\n  GROUP\n(?:    ATOM.*\n)+\n(?:  BOND.*\n)+\nEND.*\n"  # noqa: E501
 header_6_regex = r"\nresidue ([A-Z0-9]{1,3}).*\n"
 header_7_regex = r"\nRESIdue ([A-Z0-9]{1,4}).*{\*? (.*) \*?}\n"
@@ -78,7 +78,7 @@ dnarna2_resi = namedtuple("DNARNABase", ["resname"])
 fragment_resi = namedtuple("FramentProbe", ["name", "resname"])
 glycansuu_resi = namedtuple("GlycanUU", ["resname", "name"])
 heme_resi = namedtuple("Heme", ["resname", "name"])
-ion_resi = namedtuple("Ion", ["resname", "name", "charge", "atom"])
+ion_resi = namedtuple("Ion", ["resname", "name", "atom", "charge", "element"])
 multiatom_ion_resi = namedtuple("MultiatomIon", ["resname", "name"])
 protein_resi = namedtuple("AminoAcid", ["resname"])
 solvent_resi = namedtuple("Solvent", ["resname", "name"])
@@ -114,7 +114,7 @@ solvent_top = TopparPath("solvent-allhdg5-4.top")
 # supported Residues (tuple of namedtuples)
 supported_carbohydrates = read_carbohydrate(carbo_top)
 supported_nucleic = set(it.chain(
-    read_dna_rna_allatom(dna_dna_all_top),
+    read_dna_rna_allatom(dna_rna_all_top),
     read_dna_rna_martini(dna_rna_martini_top),
     ))
 # supported_dna_rna_allatom = read_dna_rna_allatom(dna_rna_all_top)
@@ -140,11 +140,16 @@ supported_nucleic_resnames = get_resnames(supported_nucleic)
 supported_fragments_resnames = get_resnames(supported_fragments)
 supported_glycansuu_resnames = get_resnames(supported_glycansuu)
 supported_hemes_resnames = get_resnames(supported_hemes)
-supported_ions_resnames = get_resnames(supported_ions)
-supported_miltiatom_ions_resnames = get_resnames(supported_multiatom_ions)
+supported_ions_resnames = {ion.resname: ion for ion in supported_ions}
+supported_multiatom_ions_resnames = get_resnames(supported_multiatom_ions)
 supported_aminoacids_resnames = get_resnames(supported_aminoacids)
 supported_solvents_resnames = get_resnames(supported_solvents)
 
+# other attributes
+supported_ions_elements = {ion.element: ion for ion in supported_ions}
+supported_ions_atoms = {ion.atom: ion for ion in supported_ions}
+
+#
 # Residues that must be set as ATOM
 supported_ATOM = set(it.chain(
     supported_nucleic_resnames,
@@ -161,3 +166,5 @@ supported_HETATM = set(it.chain(
     supported_multiatom_ions_resnames,
     supported_solvents_resnames,
     ))
+
+print(supported_ions_resnames.keys())

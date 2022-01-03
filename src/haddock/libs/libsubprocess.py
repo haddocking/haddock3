@@ -11,19 +11,28 @@ from haddock.core.exceptions import CNSRunningError, JobRunningError
 class Job:
     """A job to be executed by the engine."""
 
-    def __init__(self, input, output, executable, *args):
+    def __init__(self, input, output, executable, *args, arg_first=False):
         self.input = input
         self.output = output
         self.executable = executable
         self.args = args
+        self.arg_first = arg_first
 
     def run(self):
         """Execute subprocess job."""
-        cmd = " ".join([
-            os.fspath(self.executable),
-            ''.join(map(str, self.args)),  # empty string if no args
-            os.fspath(self.input),
-            ])
+        if self.arg_first:
+            # FCC has argument going after input
+            cmd = " ".join([
+                os.fspath(self.executable),
+                os.fspath(self.input),
+                ''.join(map(str, self.args)),  # empty string if no args
+                ])
+        else:
+            cmd = " ".join([
+                os.fspath(self.executable),
+                ''.join(map(str, self.args)),  # empty string if no args
+                os.fspath(self.input),
+                ])
 
         with open(self.output, 'w') as outf:
             p = subprocess.Popen(shlex.split(cmd),

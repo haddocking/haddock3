@@ -119,10 +119,11 @@ class HaddockModule(BaseHaddockModule):
                 cluster_fcc.output_clusters(fh, clusters)
             fh.close()
 
+            clt_centers = {}
             for clt in clusters:
                 cluster_id = clt.name
                 clt_dic[cluster_id] = []
-                # cluster_center = clt.center.name
+                clt_centers[cluster_id] = models_to_cluster[clt.center.name - 1]
                 for model in clt.members:
                     model_id = model.name
                     pdb = models_to_cluster[model_id - 1]
@@ -170,6 +171,10 @@ class HaddockModule(BaseHaddockModule):
             output_str += f"> threshold={self.params['threshold']}{os.linesep}"
             output_str += (
                 f"> strictness={self.params['strictness']}{os.linesep}")
+            output_str += os.linesep
+            output_str += (
+                "Note: Models marked with * represent the center of the cluster"
+                )
             output_str += (
                 f"-----------------------------------------------{os.linesep}")
             output_str += os.linesep
@@ -177,6 +182,8 @@ class HaddockModule(BaseHaddockModule):
 
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
+                center_pdb = clt_centers[cluster_id]
+                clt_dic[cluster_id].append(center_pdb)
                 model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
                 model_score_l.sort()
                 top_score = sum(
@@ -194,9 +201,14 @@ class HaddockModule(BaseHaddockModule):
                 output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
                 for model_ranking, element in enumerate(model_score_l, start=1):
                     score, pdb = element
-                    output_str += (
-                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                        f"{os.linesep}")
+                    if pdb.file_name == center_pdb.file_name:
+                        output_str += (
+                            f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
+                            f"{os.linesep}")
+                    else:
+                        output_str += (
+                            f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
+                            f"{os.linesep}")
             output_str += (
                 "-----------------------------------------------"
                 f"{os.linesep}")

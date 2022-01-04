@@ -211,6 +211,14 @@ def process_pdbs(
         wdry_rstrip,
         ]
 
+    whole_pdb_processing_steps = [
+        solve_no_chainID_no_segID,
+        ]
+
+    processed_combined_steps = [
+        correct_equal_chain_segids,
+        ]
+
     # perform the individual processing steps
     # this list contains a list of lines for each structure
     processed_individually = [
@@ -218,12 +226,9 @@ def process_pdbs(
         for structure in structures
         ]
 
-    whole_pdb_processing_steps = [
-        # solve_no_chainID_no_segID,
-        ]
-
-    processed_combined_steps = [
-        # correct_equal_chain_segids,
+    processed_individually_whole = [
+        list(chainf(structure, *whole_pdb_processing_steps))
+        for structure in processed_individually
         ]
 
     processed_combined = chainf(structures, *processed_combined_steps)
@@ -415,6 +420,19 @@ def correct_equal_chain_segids(structures):
     ----------
     structures : list
     """
+    all_chain_ids = set(read_chainids(s) for s in structures)
+    remaining_chars = it.cycle(set(_upper_case).difference(all_chain_ids))
+
+    chain_ids = []
+    for idx in range(len(structures)):
+        chain_id = read_chainids(structures[idx])
+        if chain_id in chain_ids:
+            _lines = pdb_chain.run(structure, next(remaining_chars))
+            structures[idx].clear()
+            structures[idx].extend(pdb_chainseg.run(_lines))
+        else:
+            chain_ids.append(chain_id)
+
     return  # processed_structures
 
 

@@ -734,7 +734,7 @@ if ($bonded > 10000) then
     evaluate ($bonded = $bond + $angl + $impr)
 end if
 if ($bonded > 10000) then
-    evaluate ($dispfile = $output_pdb_filename - ".pdb" + "_" + encode($nstruc) + ".warn")
+    evaluate ($dispfile = $output_pdb_filename - ".pdb" + ".warn")
     set display=$dispfile end
     display WARNING: the bonded energy is very high:
     display Ebonded-total=$bonded Ebond=$bond Eangl=$angl Eimpr=$impr

@@ -78,6 +78,8 @@ def setup_run(workflow_path, restart_from=None):
     # read config
     params = read_config(workflow_path)
 
+    validate_module_names_are_not_mispelled(params)
+
     # update default non-mandatory parameters with user params
     params = {**non_mandatory_general_parameters_defaults, **params}
 
@@ -333,3 +335,16 @@ def inject_in_modules(modules_params, key, value):
                 "Can't inject."
                 )
         params[key] = value
+
+
+def validate_module_names_are_not_mispelled(params):
+    """Validate headers are not mispelled."""
+    module_names = sorted(modules_category.keys())
+    for param_name, value in params.items():
+        if isinstance(value, dict):
+            if get_module_name(param_name) not in module_names:
+                emsg = (
+                    f"Module {param_name!r} is not a valid module name. "
+                    f"Valid modules are: {', '.join(module_names)}."
+                    )
+                raise ValueError(emsg)

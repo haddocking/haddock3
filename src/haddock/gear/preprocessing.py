@@ -1,5 +1,5 @@
 """
-Processes input PDB files to ensure compatibility with HADDOCK3.
+Process input PDB files to ensure compatibility with HADDOCK3.
 
 
 """
@@ -54,20 +54,26 @@ _upper_case = list(string.ascii_uppercase)[::-1]
 _CHAINS = it.cycle(_upper_case)
 
 
-def _allow_dry(log_msg):
+def _report(log_msg):
     """
-    Allow a dry run (decorator).
+    Add report functionality to the function (decorator).
 
-    Functions decorated with `_allow_dry` gain an extra parameter `dry`
-    that is a boolean. If `true`, the decorated function returns the
-    same as the input and reports which lines would be modified by the
-    function.
+    Functions decorated with `_report` log the difference between the
+    input and the output. Decorated functions gain an additional boolean
+    parameter `report` to activate or deactivate the report
+    functionality; it is `False` by default.
+
+    Note that a decorated generator no longer behaves as such if
+    `report=True`. Instead, it returns a list from the exhausted
+    generator.
+
+    DON'T USE `_report` WITH INFINITE GENERATORS, such as `itertools.cycle`.
     """
     def decorator(function):
         @wraps(function)
-        def wrapper(lines, *args, dry=False, **kwargs):
+        def wrapper(lines, *args, report=False, **kwargs):
 
-            if dry:
+            if report:
                 in_lines = list(lines)
                 result = list(function(in_lines, *args, **kwargs))
 
@@ -94,9 +100,9 @@ def _allow_dry(log_msg):
                     )
 
                 log.info(linesep.join(extended_log))
-                return in_lines
+                return result
 
-            # on dry, maintain the generator functionality
+            # on report, maintain the generator functionality
             else:
                 return function(lines, *args, **kwargs)
 
@@ -188,9 +194,9 @@ def process_pdbs(
     # modify the input PDB and return the corrected lines
     # in the likes of pdb-tools these functions yield line-by-line
     line_by_line_processing_steps = [
-        wdry_pdb_keepcoord,
-        # wdry_pdb_selaltloc,
-        partial(wdry_pdb_occ, occupancy=1.00),
+        wrep_pdb_keepcoord,
+        # wrep_pdb_selaltloc,
+        partial(wrep_pdb_occ, occupancy=1.00),
         replace_MSE_to_MET,
         replace_HSD_to_HIS,
         replace_HSE_to_HIS,
@@ -207,11 +213,11 @@ def process_pdbs(
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
         partial(remove_unsupported_atom),
         ##
-        partial(wdry_pdb_reatom, starting_value=1),
-        partial(wdry_pdb_reres, starting_resid=1),
-        partial(wdry_pdb_tidy, strict=True),
+        partial(wrep_pdb_reatom, starting_value=1),
+        partial(wrep_pdb_reres, starting_resid=1),
+        partial(wrep_pdb_tidy, strict=True),
         ##
-        wdry_rstrip,
+        wrep_rstrip,
         ]
 
     # these functions take the whole PDB content, evaluate it, and
@@ -231,22 +237,21 @@ def process_pdbs(
 
     # individual processing (line-by-line)
     result_1 = [
-        list(chainf(structure, *line_by_line_processing_steps, dry=dry))
+        list(chainf(structure, *line_by_line_processing_steps, report=dry))
         for structure in structures
         ]
 
     # whole structure processing
     result_2 = [
-        list(chainf(structure, *whole_pdb_processing_steps, dry=dry))
+        list(chainf(structure, *whole_pdb_processing_steps, report=dry))
         for structure in result_1
         ]
 
     # combined processing
-    final_result = chainf(
-        result_2,
-        *processed_combined_steps,
-        dry=dry,
-        )
+    final_result = chainf(result_2, *processed_combined_steps)
+
+    if dry:
+        return None
 
     if save_output:
         try:  # in case paths_or_lines is paths
@@ -271,22 +276,22 @@ def process_pdbs(
 
 # Functions operating line-by-line
 
-# make pdb-tools dryrunable
-wdry_pdb_selaltloc = _allow_dry('pdb_selaltloc')(pdb_selaltloc.run)
-wdry_pdb_rplresname = _allow_dry('pdb_rplresname')(pdb_rplresname.run)
-wdry_pdb_fixinsert = _allow_dry('pdb_fixinsert')(pdb_fixinsert.run)
-wdry_pdb_keepcoord = _allow_dry('pdb_keepcoord')(pdb_keepcoord.run)
-wdry_pdb_occ = _allow_dry('pdb_occ')(pdb_occ.run)
-wdry_pdb_tidy = _allow_dry('pdb_tidy')(pdb_tidy.run)
-wdry_pdb_segxchain = _allow_dry('pdb_segxchain')(pdb_segxchain.run)
-wdry_pdb_chainxseg = _allow_dry('pbd_segxchain')(pdb_chainxseg.run)
-wdry_pdb_chain = _allow_dry('pdb_chain')(pdb_chain.run)
-wdry_pdb_reres = _allow_dry('pdb_reres')(pdb_reres.run)
-wdry_pdb_reatom = _allow_dry('pdb_reatom')(pdb_reatom.run)
-wdry_rstrip = _allow_dry("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  # noqa: E501
+# make pdb-tools reportable
+wrep_pdb_selaltloc = _report('pdb_selaltloc')(pdb_selaltloc.run)
+wrep_pdb_rplresname = _report('pdb_rplresname')(pdb_rplresname.run)
+wrep_pdb_fixinsert = _report('pdb_fixinsert')(pdb_fixinsert.run)
+wrep_pdb_keepcoord = _report('pdb_keepcoord')(pdb_keepcoord.run)
+wrep_pdb_occ = _report('pdb_occ')(pdb_occ.run)
+wrep_pdb_tidy = _report('pdb_tidy')(pdb_tidy.run)
+wrep_pdb_segxchain = _report('pdb_segxchain')(pdb_segxchain.run)
+wrep_pdb_chainxseg = _report('pbd_segxchain')(pdb_chainxseg.run)
+wrep_pdb_chain = _report('pdb_chain')(pdb_chain.run)
+wrep_pdb_reres = _report('pdb_reres')(pdb_reres.run)
+wrep_pdb_reatom = _report('pdb_reatom')(pdb_reatom.run)
+wrep_rstrip = _report("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  # noqa: E501
 
 
-@_allow_dry("Replacing HETATM to ATOM for residue {!r}")
+@_report("Replacing HETATM to ATOM for residue {!r}")
 def replace_HETATM_to_ATOM(fhandler, res):
     """."""
     for line in fhandler:
@@ -296,7 +301,7 @@ def replace_HETATM_to_ATOM(fhandler, res):
             yield line
 
 
-@_allow_dry("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
+@_report("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
 def replace_residue(fhandler, resin, resout):
     """Replace residue by another and changes HETATM to ATOM if needed."""
     _ = replace_HETATM_to_ATOM(fhandler, res=resin)
@@ -310,7 +315,7 @@ replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
 replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')
 
 
-@_allow_dry("Remove unsupported molecules")
+@_report("Remove unsupported molecules")
 def remove_unsupported_molecules(
         lines,
         haddock3_defined=None,
@@ -352,7 +357,7 @@ remove_unsupported_atom = partial(
     )
 
 
-@_allow_dry("Add charges to ions.")
+@_report("Add charges to ions.")
 def add_charges_to_ions(fhandler):
     """Add charges to ions."""
     for line in fhandler:
@@ -400,7 +405,7 @@ def add_charges_to_ions(fhandler):
         yield line
 
 
-@_allow_dry("Convert record: {!r} to {!r}.")
+@_report("Convert record: {!r} to {!r}.")
 def convert_record(fhandler, record, other_record, must_be):
     """Convert ATOM lines to HETATM if needed."""
     for line in fhandler:
@@ -429,7 +434,7 @@ convert_HETATM_to_ATOM = partial(
 
 # Functions operating in the whole PDB
 
-@_allow_dry("Solving chain/seg ID issues.")
+@_report("Solving chain/seg ID issues.")
 def solve_no_chainID_no_segID(lines):
     """
     Solve inconsistencies with chainID and segID.
@@ -473,7 +478,7 @@ def solve_no_chainID_no_segID(lines):
     return list(new_lines)
 
 
-@_allow_dry("Homogenizes chains")
+@_report("Homogenizes chains")
 def homogenize_chains(lines):
     """
     Homogenize chainIDs.

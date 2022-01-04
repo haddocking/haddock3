@@ -128,7 +128,7 @@ def _open_or_give(paths_or_lines):
     TypeError
         In any other circumstances.
     """
-    if all(isinstance(i, Path) for i in paths_or_lines):
+    if all(isinstance(i, (Path, str)) for i in paths_or_lines):
         return open_files_to_lines(*paths_or_lines)
     elif all(isinstance(i, (list, tuple)) for i in paths_or_lines):
         return paths_or_lines
@@ -194,7 +194,7 @@ def process_pdbs(
     # modify the input PDB and return the corrected lines
     # in the likes of pdb-tools these functions yield line-by-line
     line_by_line_processing_steps = [
-        wrep_pdb_keepcoord,
+        wrep_pdb_keepcoord,  # also discards ANISOU
         # wrep_pdb_selaltloc,
         partial(wrep_pdb_occ, occupancy=1.00),
         replace_MSE_to_MET,
@@ -205,7 +205,7 @@ def process_pdbs(
         add_charges_to_ions,
         partial(
             convert_ATOM_to_HETATM,
-            must_be={**supported_HETATM, **user_supported_residues},
+            must_be=set.union(supported_HETATM, user_supported_residues),
             ),
         convert_HETATM_to_ATOM,
         # partial(pdb_fixinsert.run, option_list=[]),

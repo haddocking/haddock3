@@ -104,10 +104,27 @@ class HaddockModule(BaseHaddockModule):
             self.params['strictness'],
             )
 
-        _, clusters = cluster_fcc.cluster_elements(
-            pool,
-            threshold=self.params['threshold'],
-            )
+        cluster_check = False
+        while not cluster_check:
+            for threshold in range(self.params['threshold'], 0, -1):
+                log.info(f'Clustering with threshold={threshold}')
+                _, clusters = cluster_fcc.cluster_elements(
+                    pool,
+                    threshold=threshold,
+                    )
+                if not clusters:
+                    log.info(
+                        "[WARNING] No cluster was found, increasing threshold!"
+                        )
+                else:
+                    cluster_check = True
+                    # pass the actual threshold back to the param dict
+                    #  because it will be use in the detailed output
+                    self.params['threshold'] = threshold
+                    break
+            if not cluster_check:
+                # No cluster was obtained in any threshold
+                cluster_check = True
 
         # Prepare output and read the elements
         clt_dic = {}

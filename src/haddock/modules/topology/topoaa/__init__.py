@@ -183,6 +183,7 @@ class HaddockModule(BaseCNSModule):
 
                 topology = TopologyFile(processed_topology, path=".")
                 pdb = PDBFile(processed_pdb, topology, path=".")
+                pdb.ori_name = model.stem
                 expected[i][j] = pdb
 
         if not_found:

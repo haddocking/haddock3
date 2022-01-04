@@ -1,15 +1,16 @@
 """HADDOCK3 gdock integration module."""
 import os
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
 
+from pdbtools import pdb_tidy
+
 from haddock import log
 from haddock.libs import libpdb
-from haddock.libs.libio import working_directory
-from haddock.libs.libontology import Format, ModuleIO, PDBFile
-from haddock.libs.libutil import check_subprocess
+from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.modules import BaseHaddockModule
 
 
@@ -47,7 +48,15 @@ class HaddockModule(BaseHaddockModule):
         """Confirm this module is installed."""
         gdock_path = os.environ['GDOCK_PATH']
         gdock_exec = Path(gdock_path, 'gdock.py')
-        check_subprocess(f'{sys.executable} {gdock_exec}')
+        cmd = f'{sys.executable} {gdock_exec}'
+        p = subprocess.run(shlex.split(cmd), capture_output=True)
+        # out = p.stdout.decode('utf-8')
+        err = p.stderr.decode('utf-8')
+        if "error: the following arguments are required: input_file" in err:
+            # all good :)
+            pass
+        else:
+            raise Exception('gdock is not installed properly')
 
     def _run(self):
         """Execute module."""
@@ -61,24 +70,11 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(f'{gdock_exec} not found')
 
         # Get the models generated in previous step
-        models_to_dock = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.PDB
-            ]
+        models_to_dock = self.previous_io.retrieve_models()[0]
+        topologies = [e.topology for e in models_to_dock]
 
-        if '00_topoaa' not in Path(models_to_dock[0].path).stem:
-            _msg = 'This module must come after Topology generation'
-            self.finish_with_error(_msg)
-
-        topologies = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.TOPOLOGY
-            ]
-
-        input_a = Path(models_to_dock[0].path, models_to_dock[0].file_name)
-        input_b = Path(models_to_dock[1].path, models_to_dock[1].file_name)
+        input_a = models_to_dock[0].rel_path
+        input_b = models_to_dock[1].rel_path
 
         input = {'A': input_a, 'B': input_b}
         # Check if chain IDs are present
@@ -89,7 +85,8 @@ class HaddockModule(BaseHaddockModule):
             if set(segids) != set(chains):
                 log.info("No chain IDs found, using segid information")
                 libpdb.swap_segid_chain(pdb, chain_pdb)
-            input[chain] = chain_pdb
+            if chain_pdb.exists():
+                input[chain] = chain_pdb
 
         # convert ambig to list
         ambig_dic = ambig2dic(self.params['ambig_fname'])
@@ -114,19 +111,35 @@ class HaddockModule(BaseHaddockModule):
         input_toml += f'B = \"{input["B"]}\"' + os.linesep
         input_toml += os.linesep
 
-        with working_directory(self.path):
-            with open('input.toml', 'w') as inp_fh:
-                inp_fh.write(input_toml)
+        # ===============
+        # Placeholder, this is not yet implemented in gdock
+        # input_toml += '[parameters]' + os.linesep
+        # input_toml += 'population_size = 100' + os.linesep
+        # input_toml += 'max_number_of_generations = 50' + os.linesep
+        # ===============
 
-            cmd = f'{sys.executable} {gdock_exec} --dry input.toml'
+        with open('input.toml', 'w') as inp_fh:
+            inp_fh.write(input_toml)
 
-            subprocess.call(cmd, shell=True)
+        cmd = f'{sys.executable} {gdock_exec} --dry input.toml'
+
+        subprocess.call(cmd, shell=True)
 
         # retrieve the structures
         output_structures = []
-        structure_folder = Path(self.path, 'gdock-integration/structures')
+        structure_folder = Path('gdock-integration/structures')
         for model in structure_folder.glob('*pdb'):
-            pdb = PDBFile(model, path=model.parent)
+            # Make sure the output is tidy, this should be handled
+            #  by gdock, but check it here to be sure
+            with open(model, 'r') as fin:
+                lines = list(
+                    pdb_tidy.run(fin, strict=False)
+                    )  # be explicit in the `strict`
+
+            with open(model, 'w') as fout:
+                fout.write(''.join(lines))
+
+            pdb = PDBFile(model)
             pdb.score = .0
             pdb.topology = topologies
             output_structures.append(pdb)

@@ -40,18 +40,18 @@ except Exception:
 
 # edit this dictionary to add or remove examples.
 # keys are the examples folder, and values are the configuration files
-examples = {
-    'docking-protein-DNA'         : "docking-protein-DNA.cfg",
-    'docking-protein-DNA'         : "docking-protein-DNA-mdref.cfg",
-    "docking-protein-homotrimer"  : "docking-protein-homotrimer.cfg",
-    "docking-protein-ligand-shape": "docking-protein-ligand-shape.cfg",
-    "docking-protein-ligand"      : "docking-protein-ligand.cfg",
-    "docking-protein-peptide"     : "docking-protein-peptide.cfg",
-    "docking-protein-protein"     : "docking-protein-protein.cfg",
-    "docking-protein-protein"     : "docking-protein-protein-mdref.cfg",
-    "refine-complex"              : "refine-complex.cfg",
-    "scoring"                     : "scoring.cfg",
-    }
+examples = (
+    ("docking-protein-DNA"         , "docking-protein-DNA.cfg"),
+    ("docking-protein-DNA"         , "docking-protein-DNA-mdref.cfg"),
+    ("docking-protein-homotrimer"  , "docking-protein-homotrimer.cfg"),
+    ("docking-protein-ligand-shape", "docking-protein-ligand-shape.cfg"),
+    ("docking-protein-ligand"      , "docking-protein-ligand.cfg"),
+    ("docking-protein-peptide"     , "docking-protein-peptide.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein-mdref.cfg"),
+    ("refine-complex"              , "refine-complex.cfg"),
+    ("scoring"                     , "scoring.cfg"),
+    )
 
 
 ap = argparse.ArgumentParser(
@@ -77,7 +77,7 @@ def load_args():
 
 def main(examples, break_on_errors=True):
     """Run all the examples."""
-    for folder, file_ in examples.items():
+    for folder, file_ in examples:
 
         print()
         print(f" {file_.upper()} ".center(80, "*"))

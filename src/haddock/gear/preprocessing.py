@@ -45,8 +45,6 @@ from haddock.libs.libpdb import (
     read_chainids,
     read_segids,
     slc_resname,
-    slc_model,
-    slc_element,
     slc_name,
     )
 
@@ -57,6 +55,14 @@ _CHAINS = it.cycle(_upper_case)
 
 
 def _allow_dry(log_msg):
+    """
+    Allow a dry run (decorator).
+
+    Functions decorated with `_allow_dry` gain an extra parameter `dry`
+    that is a boolean. If `true`, the decorated function returns the
+    same as the input and reports which lines would be modified by the
+    function.
+    """
     def decorator(function):
         @wraps(function)
         def wrapper(lines, *args, dry=False, **kwargs):
@@ -98,24 +104,11 @@ def _allow_dry(log_msg):
     return decorator
 
 
-# make pdb-tools dryrunable
-wdry_pdb_selaltloc = _allow_dry('pdb_selaltloc')(pdb_selaltloc.run)
-wdry_pdb_rplresname = _allow_dry('pdb_rplresname')(pdb_rplresname.run)
-wdry_pdb_fixinsert = _allow_dry('pdb_fixinsert')(pdb_fixinsert.run)
-wdry_pdb_keepcoord = _allow_dry('pdb_keepcoord')(pdb_keepcoord.run)
-wdry_pdb_occ = _allow_dry('pdb_occ')(pdb_occ.run)
-wdry_pdb_tidy = _allow_dry('pdb_tidy')(pdb_tidy.run)
-wdry_pdb_segxchain = _allow_dry('pdb_segxchain')(pdb_segxchain.run)
-wdry_pdb_chainxseg = _allow_dry('pbd_segxchain')(pdb_chainxseg.run)
-wdry_pdb_chain = _allow_dry('pdb_chain')(pdb_chain.run)
-wdry_pdb_reres = _allow_dry('pdb_reres')(pdb_reres.run)
-wdry_pdb_reatom = _allow_dry('pdb_reatom')(pdb_reatom.run)
-wdry_rstrip = _allow_dry("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  # noqa: E501
-
-
 def _open_or_give(paths_or_lines):
     """
     Adapt input to the functions.
+
+    Use in `process_pdbs`.
 
     Parameters
     ----------
@@ -138,7 +131,15 @@ def _open_or_give(paths_or_lines):
 
 
 def read_additional_residues(top_fname):
-    """Read additional residues listed in a .top filename."""
+    """
+    Read additional residues listed in a .top filename.
+
+    Expects new residues to be defined as:
+
+        RESIude XXX
+
+    where, XXX is the new residue.
+    """
     residues = read_supported_residues_from_top_file(
         top_fname,
         regex=r'\nRESIdue ([A-Z0-9]{1,3}).*\n',
@@ -146,7 +147,6 @@ def read_additional_residues(top_fname):
         )
 
     return tuple(i.resname for i in residues)
-
 
 
 def process_pdbs(
@@ -186,7 +186,7 @@ def process_pdbs(
 
     # these are the processing or checking functions that should (if needed)
     # modify the input PDB and return the corrected lines
-    # (in the like of pdbtools)
+    # in the likes of pdb-tools these functions yield line-by-line
     line_by_line_processing_steps = [
         wdry_pdb_keepcoord,
         # wdry_pdb_selaltloc,
@@ -197,12 +197,15 @@ def process_pdbs(
         replace_HID_to_HIS,
         replace_HIE_to_HIS,
         add_charges_to_ions,
-        convert_ATOM_to_HETATM,
+        partial(
+            convert_ATOM_to_HETATM,
+            must_be={**supported_HETATM, **user_supported_residues},
+            ),
         convert_HETATM_to_ATOM,
         # partial(pdb_fixinsert.run, option_list=[]),
         ###
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
-        partial(remove_unsupported_atom, user_defined=user_supported_residues),
+        partial(remove_unsupported_atom),
         ##
         partial(wdry_pdb_reatom, starting_value=1),
         partial(wdry_pdb_reres, starting_resid=1),
@@ -211,27 +214,39 @@ def process_pdbs(
         wdry_rstrip,
         ]
 
+    # these functions take the whole PDB content, evaluate it, and
+    # modify it if needed.
     whole_pdb_processing_steps = [
         solve_no_chainID_no_segID,
+        homogenize_chains,
         ]
 
+    # these functions take all structures combined, evulate them
+    # togehter, and modify them if needed.
     processed_combined_steps = [
         correct_equal_chain_segids,
         ]
 
-    # perform the individual processing steps
-    # this list contains a list of lines for each structure
-    processed_individually = [
+    # START THE ACTUAL PROCESSING
+
+    # individual processing (line-by-line)
+    result_1 = [
         list(chainf(structure, *line_by_line_processing_steps, dry=dry))
         for structure in structures
         ]
 
-    processed_individually_whole = [
-        list(chainf(structure, *whole_pdb_processing_steps))
-        for structure in processed_individually
+    # whole structure processing
+    result_2 = [
+        list(chainf(structure, *whole_pdb_processing_steps, dry=dry))
+        for structure in result_1
         ]
 
-    processed_combined = chainf(structures, *processed_combined_steps)
+    # combined processing
+    final_result = chainf(
+        result_2,
+        *processed_combined_steps,
+        dry=dry,
+        )
 
     if save_output:
         try:  # in case paths_or_lines is paths
@@ -245,13 +260,54 @@ def process_pdbs(
                 range(1, len(structures) + 1),
                 )
 
-        for out_p, lines in zip(o_paths, processed_combined):
+        for out_p, lines in zip(o_paths, final_result):
             out_p.write_text(linesep.join(lines) + linesep)
 
         return
 
     else:
-        return processed_individually
+        return final_result
+
+
+# Functions operating line-by-line
+
+# make pdb-tools dryrunable
+wdry_pdb_selaltloc = _allow_dry('pdb_selaltloc')(pdb_selaltloc.run)
+wdry_pdb_rplresname = _allow_dry('pdb_rplresname')(pdb_rplresname.run)
+wdry_pdb_fixinsert = _allow_dry('pdb_fixinsert')(pdb_fixinsert.run)
+wdry_pdb_keepcoord = _allow_dry('pdb_keepcoord')(pdb_keepcoord.run)
+wdry_pdb_occ = _allow_dry('pdb_occ')(pdb_occ.run)
+wdry_pdb_tidy = _allow_dry('pdb_tidy')(pdb_tidy.run)
+wdry_pdb_segxchain = _allow_dry('pdb_segxchain')(pdb_segxchain.run)
+wdry_pdb_chainxseg = _allow_dry('pbd_segxchain')(pdb_chainxseg.run)
+wdry_pdb_chain = _allow_dry('pdb_chain')(pdb_chain.run)
+wdry_pdb_reres = _allow_dry('pdb_reres')(pdb_reres.run)
+wdry_pdb_reatom = _allow_dry('pdb_reatom')(pdb_reatom.run)
+wdry_rstrip = _allow_dry("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  # noqa: E501
+
+
+@_allow_dry("Replacing HETATM to ATOM for residue {!r}")
+def replace_HETATM_to_ATOM(fhandler, res):
+    """."""
+    for line in fhandler:
+        if line.startswith('HETATM') and line[slc_resname].strip() == res:
+            yield 'ATOM  ' + line[6:]
+        else:
+            yield line
+
+
+@_allow_dry("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
+def replace_residue(fhandler, resin, resout):
+    """Replace residue by another and changes HETATM to ATOM if needed."""
+    _ = replace_HETATM_to_ATOM(fhandler, res=resin)
+    yield from pdb_rplresname.run(_, name_from=resin, name_to=resout)
+
+
+replace_MSE_to_MET = partial(replace_residue, resin='MSE', resout='MET')
+replace_HSD_to_HIS = partial(replace_residue, resin='HSD', resout='HIS')
+replace_HSE_to_HIS = partial(replace_residue, resin='HSE', resout='HIS')
+replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
+replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')
 
 
 @_allow_dry("Remove unsupported molecules")
@@ -294,74 +350,6 @@ remove_unsupported_atom = partial(
     haddock3_defined=supported_ATOM,
     line_startswith='ATOM',
     )
-
-
-@_allow_dry("Solving chain/seg ID issues.")
-def solve_no_chainID_no_segID(lines):
-    """
-    Solve inconsistencies with chainID and segID.
-
-    If segID is non-existant, copy chainID over segID, and vice-versa.
-    If none are present, adds an upper case char starting from A. This
-    char is not repeated until the alphabet exhausts.
-    If chainIDs and segIDs differ, copy chainIDs over segIDs.
-
-    Parameters
-    ----------
-    lines : list of str
-        The lines of a PDB file.
-
-    Returns
-    -------
-    list
-        With new lines. Or the input ones if no modification was made.
-    """
-    chainids = read_chainids(lines)
-    segids = read_segids(lines)
-
-    if not chainids and segids:
-        new_lines = pdb_segxchain.run(lines)
-
-    elif chainids and not segids:
-        new_lines = pdb_chainxseg.run(lines)
-
-    elif not chainids and not segids:
-        _chains = pdb_chain.run(lines, next(_CHAINS))
-        new_lines = pdb_chainxseg.run(_chains)
-
-    # gives priority to chains
-    elif chainids != segids:
-        new_lines = pdb_chainxseg.run(lines)
-
-    else:
-        # nothing to do
-        return lines
-
-    return list(new_lines)
-
-
-@_allow_dry("Replacing HETATM to ATOM for residue {!r}")
-def replace_HETATM_to_ATOM(fhandler, res):
-    """."""
-    for line in fhandler:
-        if line.startswith('HETATM') and line[slc_resname].strip() == res:
-            yield 'ATOM  ' + line[6:]
-        else:
-            yield line
-
-
-@_allow_dry("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
-def replace_residue(fhandler, resin, resout):
-    """Replace residue by another and changes HETATM to ATOM if needed."""
-    _ = replace_HETATM_to_ATOM(fhandler, res=resin)
-    yield from pdb_rplresname.run(_, name_from=resin, name_to=resout)
-
-
-replace_MSE_to_MET = partial(replace_residue, resin='MSE', resout='MET')
-replace_HSD_to_HIS = partial(replace_residue, resin='HSD', resout='HIS')
-replace_HSE_to_HIS = partial(replace_residue, resin='HSE', resout='HIS')
-replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
-replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')
 
 
 @_allow_dry("Add charges to ions.")
@@ -412,30 +400,6 @@ def add_charges_to_ions(fhandler):
         yield line
 
 
-def correct_equal_chain_segids(structures):
-    """
-    Correct chain and segids.
-
-    Parameters
-    ----------
-    structures : list
-    """
-    all_chain_ids = set(read_chainids(s) for s in structures)
-    remaining_chars = it.cycle(set(_upper_case).difference(all_chain_ids))
-
-    chain_ids = []
-    for idx in range(len(structures)):
-        chain_id = read_chainids(structures[idx])
-        if chain_id in chain_ids:
-            _lines = pdb_chain.run(structure, next(remaining_chars))
-            structures[idx].clear()
-            structures[idx].extend(pdb_chainseg.run(_lines))
-        else:
-            chain_ids.append(chain_id)
-
-    return  # processed_structures
-
-
 @_allow_dry("Convert record: {!r} to {!r}.")
 def convert_record(fhandler, record, other_record, must_be):
     """Convert ATOM lines to HETATM if needed."""
@@ -461,3 +425,117 @@ convert_HETATM_to_ATOM = partial(
     other_record="ATOM  ",
     must_be=supported_ATOM,
     )
+
+
+# Functions operating in the whole PDB
+
+@_allow_dry("Solving chain/seg ID issues.")
+def solve_no_chainID_no_segID(lines):
+    """
+    Solve inconsistencies with chainID and segID.
+
+    If segID is non-existant, copy chainID over segID, and vice-versa.
+    If none are present, adds an upper case char starting from A. This
+    char is not repeated until the alphabet exhausts.
+    If chainIDs and segIDs differ, copy chainIDs over segIDs.
+
+    Parameters
+    ----------
+    lines : list of str
+        The lines of a PDB file.
+
+    Returns
+    -------
+    list
+        With new lines. Or the input ones if no modification was made.
+    """
+    chainids = read_chainids(lines)
+    segids = read_segids(lines)
+
+    if not chainids and segids:
+        new_lines = pdb_segxchain.run(lines)
+
+    elif chainids and not segids:
+        new_lines = pdb_chainxseg.run(lines)
+
+    elif not chainids and not segids:
+        _chains = pdb_chain.run(lines, next(_CHAINS))
+        new_lines = pdb_chainxseg.run(_chains)
+
+    # gives priority to chains
+    elif chainids != segids:
+        new_lines = pdb_chainxseg.run(lines)
+
+    else:
+        # nothing to do
+        return lines
+
+    return list(new_lines)
+
+
+@_allow_dry("Homogenizes chains")
+def homogenize_chains(lines):
+    """
+    Homogenize chainIDs.
+
+    If there are multiple chain identifiers in the structures, make all
+    them equal to the first one.
+
+    ChainIDs are copied to segIDs afterwards.
+
+    Returns
+    -------
+    list
+        The modified lines.
+    """
+    chainids = read_chainids(lines)
+    if len(chainids) > 1:
+        return list(chainf(
+            lines,
+            [
+                partial(pdb_chain.run, chain_id=chainids[0]),
+                pdb_chainxseg.run,
+                ]
+            ))
+
+
+# Functions operating in all PDBs at once
+
+def correct_equal_chain_segids(structures):
+    """
+    Correct for repeated chainID in the input PDB files.
+
+    Parameters
+    ----------
+    structures : list of lists of str
+        The input data.
+
+    Returns
+    -------
+    list of lists of str
+        The new structures.
+    """
+    all_chain_ids = set(read_chainids(s) for s in structures)
+    remaining_chars = it.cycle(set(_upper_case).difference(all_chain_ids))
+
+    chain_ids = []
+    new_structures = []
+    for lines in structures:
+        new_lines = None
+        chain_id = read_chainids(lines)
+
+        if chain_id in chain_ids:
+            new_lines = list(chainf(
+                lines,
+                [
+                    partial(pdb_chain.run, chain_id=next(remaining_chars)),
+                    pdb_chainxseg.run,
+                    ],
+                ))
+        else:
+            chain_ids.append(chain_id)
+
+        new_structures.append(new_lines or lines)
+
+    assert len(new_structures) == len(structures)
+    return new_structures

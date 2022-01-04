@@ -11,6 +11,7 @@ class Molecule:
 
         self.file_name = file_name
         self.segid = segid
+        self.with_parent = Path('..', file_name)
 
 
 def make_molecules(paths):

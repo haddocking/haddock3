@@ -57,7 +57,12 @@ class Scheduler:
         #  so we know that 2 comes before 10
         task_name_dic = {}
         for i, t in enumerate(tasks):
-            task_name_dic[i] = t.input_file, len(str(t.input_file))
+            try:
+                task_name_dic[i] = (t.input_file, len(str(t.input_file)))
+            except AttributeError:
+                # If this is not a CNS job it will not have
+                #  input_file, use the output instead
+                task_name_dic[i] = (t.output, len(str(t.output)))
 
         sorted_task_list = []
         for e in sorted(task_name_dic.items(), key=lambda x: (x[0], x[1])):
@@ -93,10 +98,16 @@ class Scheduler:
                 worker.join()
                 for t in worker.tasks:
                     per = (c / float(self.num_tasks)) * 100
-                    task_ident = (
-                        f'{t.input_file.parents[0].name}/'
-                        f'{t.input_file.name}'
-                        )
+                    try:
+                        task_ident = (
+                            f'{t.input_file.parents[0].name}/'
+                            f'{t.input_file.name}'
+                            )
+                    except AttributeError:
+                        task_ident = (
+                            f'{t.output.parents[0].name}/'
+                            f'{t.output.name}'
+                            )
                     log.info(f'>> {task_ident} completed {per:.0f}% ')
                     c += 1
 

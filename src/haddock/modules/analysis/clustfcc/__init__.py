@@ -6,7 +6,7 @@ from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
 from haddock.gear.config_reader import read_config
-from haddock.libs.libontology import Format, ModuleIO
+from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import Job
 from haddock.modules import BaseHaddockModule
@@ -22,8 +22,7 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
-        cns_script = False
-        super().__init__(order, path, initial_params, cns_script)
+        super().__init__(order, path, initial_params)
 
     @classmethod
     def confirm_installation(cls):
@@ -44,23 +43,20 @@ class HaddockModule(BaseHaddockModule):
         contact_executable = Path(FCC_path, self.params['executable'])
 
         # Get the models generated in previous step
-        models_to_cluster = [
-            p
-            for p in self.previous_io.output
-            if p.file_type == Format.PDB
-            ]
+        models_to_cluster = self.previous_io.retrieve_models()
 
         # Calculate the contacts for each model
         log.info('Calculating contacts')
         contact_jobs = []
         for model in models_to_cluster:
-            pdb_f = Path(model.path, model.file_name)
-            contact_f = Path(self.path, model.file_name.replace('.pdb', '.con'))
+            pdb_f = Path(model.rel_path)
+            contact_f = Path(model.file_name.replace('.pdb', '.con'))
             job = Job(
                 pdb_f,
                 contact_f,
                 contact_executable,
                 self.params['contact_distance_cutoff'],
+                arg_first=True,
                 )
             contact_jobs.append(job)
 
@@ -92,7 +88,7 @@ class HaddockModule(BaseHaddockModule):
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
-        fcc_matrix_f = Path(self.path, 'fcc.matrix')
+        fcc_matrix_f = Path('fcc.matrix')
         with open(fcc_matrix_f, 'w') as fh:
             for data in list(matrix):
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
@@ -114,30 +110,117 @@ class HaddockModule(BaseHaddockModule):
             )
 
         # Prepare output and read the elements
-        cluster_dic = {}
+        clt_dic = {}
         if clusters:
-            # use fcc's output
-            cluster_out = Path(self.path, 'cluster.out')
+            # write the classic output file for compatibility reasons
+            log.info('Saving output to cluster.out')
+            cluster_out = Path('cluster.out')
             with open(cluster_out, 'w') as fh:
                 cluster_fcc.output_clusters(fh, clusters)
             fh.close()
 
-            # Extract the cluster elements
-            # Q: Can we do this without having to re-open the file?
-            with open(cluster_out, 'r') as fh:
-                for line in fh.readlines():
-                    data = line.split()
-                    cluster_id = int(data[1])
-                    cluster_dic[cluster_id] = []
-                    cluster_elements = list(map(int, data[4:]))
-                    for element in cluster_elements:
-                        pdb = models_to_cluster[element - 1]
-                        cluster_dic[cluster_id].append(pdb)
+            clt_centers = {}
+            for clt in clusters:
+                cluster_id = clt.name
+                clt_dic[cluster_id] = []
+                clt_centers[cluster_id] = models_to_cluster[clt.center.name - 1]
+                for model in clt.members:
+                    model_id = model.name
+                    pdb = models_to_cluster[model_id - 1]
+                    clt_dic[cluster_id].append(pdb)
+
+            # Rank the clusters
+            #  they are sorted by the top4 models in each cluster
+            top_n = 4
+            score_dic = {}
+            for clt_id in clt_dic:
+                score_l = [p.score for p in clt_dic[clt_id]]
+                score_l.sort()
+                top4_score = sum(score_l[:top_n]) / float(top_n)
+                score_dic[clt_id] = top4_score
+
+            sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
+
+            # Add this info to the models
+            clustered_models = []
+            for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
+                cluster_id, _ = _e
+                # sort the models by score
+                model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
+                model_score_l.sort()
+                # rank the models
+                for model_ranking, element in enumerate(model_score_l, start=1):
+                    score, pdb = element
+                    pdb.clt_id = cluster_id
+                    pdb.clt_rank = cluster_rank
+                    pdb.clt_model_rank = model_ranking
+                    clustered_models.append(pdb)
+
+            # Prepare clustfcc.txt
+            output_fname = Path('clustfcc.txt')
+            output_str = f'### clustfcc output ###{os.linesep}'
+            output_str += os.linesep
+            output_str += f'Clustering parameters {os.linesep}'
+            output_str += (
+                "> contact_distance_cutoff="
+                f"{self.params['contact_distance_cutoff']}A"
+                f"{os.linesep}")
+            output_str += (
+                f"> fraction_cutoff={self.params['fraction_cutoff']}"
+                f"{os.linesep}")
+            output_str += f"> threshold={self.params['threshold']}{os.linesep}"
+            output_str += (
+                f"> strictness={self.params['strictness']}{os.linesep}")
+            output_str += os.linesep
+            output_str += (
+                "Note: Models marked with * represent the center of the cluster"
+                f"{os.linesep}")
+            output_str += (
+                f"-----------------------------------------------{os.linesep}")
+            output_str += os.linesep
+            output_str += f'Total # of clusters: {len(clusters)}{os.linesep}'
+
+            for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
+                cluster_id, _ = _e
+                center_pdb = clt_centers[cluster_id]
+                clt_dic[cluster_id].append(center_pdb)
+                model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
+                model_score_l.sort()
+                top_score = sum(
+                    [e[0] for e in model_score_l][:top_n]
+                    ) / top_n
+                output_str += (
+                    f"{os.linesep}"
+                    "-----------------------------------------------"
+                    f"{os.linesep}"
+                    f"Cluster {cluster_rank} (#{cluster_id}, "
+                    f"n={len(model_score_l)}, "
+                    f"top{top_n}_avg_score = {top_score:.2f})"
+                    f"{os.linesep}")
+                output_str += os.linesep
+                output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
+                for model_ranking, element in enumerate(model_score_l, start=1):
+                    score, pdb = element
+                    if pdb.file_name == center_pdb.file_name:
+                        output_str += (
+                            f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
+                            f"{os.linesep}")
+                    else:
+                        output_str += (
+                            f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
+                            f"{os.linesep}")
+            output_str += (
+                "-----------------------------------------------"
+                f"{os.linesep}")
+
+            log.info('Saving detailed output to clustfcc.txt')
+            with open(output_fname, 'w') as out_fh:
+                out_fh.write(output_str)
         else:
             log.warning('No clusters were found')
+            clustered_models = models_to_cluster
 
         # Save module information
         io = ModuleIO()
-        io.add(models_to_cluster)
-        io.add(cluster_dic, "o")
-        io.save(self.path)
+        io.add(clustered_models, "o")
+        io.save()

@@ -93,8 +93,8 @@ class CAPRI:
         self.path = path
 
         # TODO: For scoring we might need to get one alignment per model
-        reference = str(reference.resolve())
-        model = model_list[0].full_name
+        reference = str(reference)
+        model = model_list[0].rel_path
         align_func = get_align(aln_method, **params)
         self.numbering_dic = align_func(reference, model, path)
         if not self.numbering_dic:
@@ -102,7 +102,7 @@ class CAPRI:
 
         # Load the models in the class
         for struct in model_list:
-            pdb_f = Path(struct.path, struct.file_name)
+            pdb_f = struct.rel_path
             pdb_w_chain = self.add_chain_from_segid(pdb_f)
             self.model_list.append(pdb_w_chain)
             self.score_dic[pdb_f] = struct.score
@@ -233,7 +233,7 @@ class CAPRI:
 
         return self.lrmsd_dic
 
-    def ilrmsd(self, cutoff):
+    def ilrmsd(self, cutoff=10.0):
         """Calculate the Interface Ligand RMSD."""
         # Identify interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
@@ -365,7 +365,7 @@ class CAPRI:
         for model in self.model_list:
             data = {}
             # keep always 'model' the first key
-            data["model"] = Path(model.parent.name, model.name)
+            data["model"] = model
             # create the empty rank here so that it will appear
             #  as the second column
             data["rank"] = None
@@ -411,7 +411,8 @@ class CAPRI:
                         row_l.append(f"{value:.3f}".rjust(10, " "))
                 out_fh.write("".join(row_l) + os.linesep)
 
-    def identify_interface(self, pdb_f, cutoff):
+    @staticmethod
+    def identify_interface(pdb_f, cutoff=5.0):
         """Identify the interface."""
         pdb = read_pdb(pdb_f)
         interface_resdic = {}
@@ -429,7 +430,8 @@ class CAPRI:
 
         return interface_resdic
 
-    def load_contacts(self, pdb_f, cutoff):
+    @staticmethod
+    def load_contacts(pdb_f, cutoff=5.0):
         """Load residue-based contacts."""
         con_list = []
         structure = read_pdb(pdb_f)
@@ -449,6 +451,8 @@ class CAPRI:
     def kabsch(P, Q):
         """Find the rotation matrix using Kabsch algorithm."""
         # Covariance matrix
+        P = np.array(P)
+        Q = np.array(Q)
         C = np.dot(np.transpose(P), Q)
         # use SVD
         V, S, W = np.linalg.svd(C)
@@ -463,6 +467,7 @@ class CAPRI:
     @staticmethod
     def centroid(X):
         """Get the centroid."""
+        X = np.array(X)
         return X.mean(axis=0)
 
     @staticmethod
@@ -539,24 +544,6 @@ class CAPRI:
 
         return coord_dic, chain_ranges
 
-    @staticmethod
-    def read_res(pdb_f):
-        """Read residue numbers in a PDB file."""
-        res_dic = {}
-        with open(pdb_f, "r") as fh:
-            for line in fh.readlines():
-                if line.startswith("ATOM"):
-                    chain = line[21]
-                    resnum = int(line[22:26])
-                    atom = line[12:16].strip()
-                    if chain not in res_dic:
-                        res_dic[chain] = {}
-                    if resnum not in res_dic[chain]:
-                        res_dic[chain][resnum] = []
-                    if atom not in res_dic[chain][resnum]:
-                        res_dic[chain][resnum].append(atom)
-        return res_dic
-
 
 class CAPRIError(Exception):
     """Raised when something goes wrong with the CAPRI class."""
@@ -573,7 +560,7 @@ def get_atoms(pdb_list):
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
     for pdb in pdb_list:
         if isinstance(pdb, PDBFile):
-            pdb = pdb.full_name
+            pdb = pdb.rel_path
         with open(pdb) as fh:
             for line in fh.readlines():
                 if line.startswith("ATOM"):
@@ -646,23 +633,6 @@ def pdb2fastadic(pdb_f):
                     seq_dic[chain] = {}
                 seq_dic[chain][res_num] = one_letter
     return seq_dic
-
-
-def load_seqnum(pdb_f):
-    """Retrieve a dictionary containing the sequence and the numbering."""
-    seqnum_dic = {}
-    with open(pdb_f) as fh:
-        for line in fh.readlines():
-            if line.startswith("ATOM"):
-                res_name = line[17:20].strip()
-                res_num = int(line[22:26])
-                res = f"{res_name}_{res_num}"
-                chain = line[21]
-                if chain not in seqnum_dic:
-                    seqnum_dic[chain] = []
-                if res not in seqnum_dic[chain]:
-                    seqnum_dic[chain].append(res)
-    return seqnum_dic
 
 
 def get_align(method, **kwargs):
@@ -912,44 +882,44 @@ def dump_as_izone(fname, numbering_dic):
                 fh.write(izone_str)
 
 
-# debug only
-def write_coord_dic(output_name, coord_dic):
-    """Add a dummy atom to a PDB file according to a list of coordinates."""
-    with open(output_name, "w") as fh:
-        for i, k in enumerate(coord_dic):
-            atom_num = f"{i+1}".rjust(4, " ")
-            chain, resnum, atom = k
-            resnum = int(resnum)
-            resnum = f"{resnum}".rjust(3, " ")
-            atom_name = f"{atom}".rjust(3, " ")
-            x, y, z = coord_dic[k]
-            dum_x = f"{x:.3f}".rjust(7, " ")
-            dum_y = f"{y:.3f}".rjust(7, " ")
-            dum_z = f"{z:.3f}".rjust(7, " ")
-            dummy_line = (
-                f"ATOM   {atom_num} {atom_name}  DUM {chain} {resnum}   "
-                f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep
-                )
-            fh.write(dummy_line)
+# # debug only
+# def write_coord_dic(output_name, coord_dic):
+#     """Add a dummy atom to a PDB file according to a list of coordinates."""
+#     with open(output_name, "w") as fh:
+#         for i, k in enumerate(coord_dic):
+#             atom_num = f"{i+1}".rjust(4, " ")
+#             chain, resnum, atom = k
+#             resnum = int(resnum)
+#             resnum = f"{resnum}".rjust(3, " ")
+#             atom_name = f"{atom}".rjust(3, " ")
+#             x, y, z = coord_dic[k]
+#             dum_x = f"{x:.3f}".rjust(7, " ")
+#             dum_y = f"{y:.3f}".rjust(7, " ")
+#             dum_z = f"{z:.3f}".rjust(7, " ")
+#             dummy_line = (
+#                 f"ATOM   {atom_num} {atom_name}  DUM {chain} {resnum}   "
+#                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
+#                 "        H  " + os.linesep
+#                 )
+#             fh.write(dummy_line)
 
 
-# debug only
-def write_coords(output_name, coor_list):
-    """Add a dummy atom to a PDB file according to a list of coordinates."""
-    with open(output_name, "w") as fh:
-        for i, dummy_coord in enumerate(coor_list):
-            atom_num = f"{i}".rjust(4, " ")
-            resnum = f"{i}".rjust(3, " ")
-            dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
-            dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
-            dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
-            dummy_line = (
-                f"ATOM   {atom_num}  H   DUM X {resnum}   "
-                f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep
-                )
-            fh.write(dummy_line)
+# # debug only
+# def write_coords(output_name, coor_list):
+#     """Add a dummy atom to a PDB file according to a list of coordinates."""
+#     with open(output_name, "w") as fh:
+#         for i, dummy_coord in enumerate(coor_list):
+#             atom_num = f"{i}".rjust(4, " ")
+#             resnum = f"{i}".rjust(3, " ")
+#             dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
+#             dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
+#             dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
+#             dummy_line = (
+#                 f"ATOM   {atom_num}  H   DUM X {resnum}   "
+#                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
+#                 "        H  " + os.linesep
+#                 )
+#             fh.write(dummy_line)
 
 
 # # debug only

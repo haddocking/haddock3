@@ -4,26 +4,35 @@ import shlex
 import subprocess
 from pathlib import Path
 
-from haddock.core.defaults import cns_exec
+from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
 
 
 class Job:
     """A job to be executed by the engine."""
 
-    def __init__(self, input, output, executable, *args):
+    def __init__(self, input, output, executable, *args, arg_first=False):
         self.input = input
         self.output = output
         self.executable = executable
         self.args = args
+        self.arg_first = arg_first
 
     def run(self):
         """Execute subprocess job."""
-        cmd = " ".join([
-            os.fspath(self.executable),
-            ''.join(map(str, self.args)),  # empty string if no args
-            os.fspath(self.input),
-            ])
+        if self.arg_first:
+            # FCC has argument going after input
+            cmd = " ".join([
+                os.fspath(self.executable),
+                os.fspath(self.input),
+                ''.join(map(str, self.args)),  # empty string if no args
+                ])
+        else:
+            cmd = " ".join([
+                os.fspath(self.executable),
+                ''.join(map(str, self.args)),  # empty string if no args
+                os.fspath(self.input),
+                ])
 
         with open(self.output, 'w') as outf:
             p = subprocess.Popen(shlex.split(cmd),
@@ -47,6 +56,7 @@ class CNSJob:
             input_file,
             output_file,
             envvars=None,
+            cns_exec=None,
             ):
         """
         CNS subprocess.
@@ -72,6 +82,15 @@ class CNSJob:
         self.envvars = envvars
         self.cns_exec = cns_exec
 
+    def __repr__(self):
+        return (
+            f"CNSJob({self.input_file}, {self.output_file}, "
+            f"envvars={self.envvars}, cns_exec={self.cns_exec})"
+            )
+
+    def __str__(self):
+        return repr(self)
+
     @property
     def envvars(self):
         """CNS environment vars."""
@@ -96,7 +115,7 @@ class CNSJob:
     @cns_exec.setter
     def cns_exec(self, cns_exec_path):
         if cns_exec_path is None:
-            cns_exec_path = cns_exec  # global cns_exec
+            cns_exec_path = global_cns_exec  # global cns_exec
 
         if not os.access(cns_exec_path, mode=os.X_OK):
             raise ValueError(

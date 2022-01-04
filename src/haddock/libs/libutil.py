@@ -1,8 +1,10 @@
 """General utilities."""
 import collections.abc
+import contextlib
 import re
 import shutil
 import subprocess
+import sys
 from copy import deepcopy
 from functools import partial
 from os import cpu_count
@@ -10,6 +12,7 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.exceptions import SetupError
+from haddock.gear.greetings import get_goodbye_help
 
 
 check_subprocess = partial(
@@ -36,6 +39,13 @@ def get_result_or_same_in_list(function, value):
 def make_list_if_string(item):
     """Put `item` into a list."""
     if isinstance(item, str):
+        return [item]
+    return item
+
+
+def transform_to_list(item):
+    """Put `item` into a list if not a list already."""
+    if not isinstance(item, (list, tuple)):
         return [item]
     return item
 
@@ -288,3 +298,19 @@ def sort_numbered_paths(*paths):
         raise TypeError(emsg)
     except IndexError:
         return sorted(paths, key=lambda x: Path(x).stem)
+
+
+@contextlib.contextmanager
+def log_error_and_exit():
+    """Exit with exception."""
+    try:
+        yield
+    except Exception as err:
+        log.exception(err)
+        log.error(err)
+        log.error(
+            'An error has occurred, see log file. '
+            'And contact the developers if needed.'
+            )
+        log.info(get_goodbye_help())
+        sys.exit(1)

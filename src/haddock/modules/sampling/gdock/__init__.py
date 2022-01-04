@@ -2,11 +2,11 @@
 import os
 import re
 import shlex
-import shutil
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
+
+from pdbtools import pdb_tidy
 
 from haddock import log
 from haddock.libs import libpdb
@@ -131,10 +131,13 @@ class HaddockModule(BaseHaddockModule):
         for model in structure_folder.glob('*pdb'):
             # Make sure the output is tidy, this should be handled
             #  by gdock, but check it here to be sure
-            tmp_f = tempfile.NamedTemporaryFile(delete=False)
-            libpdb.tidy(model, tmp_f.name)
-            shutil.copy(tmp_f.name, model)
-            os.unlink(tmp_f.name)
+            with open(model, 'r') as fin:
+                lines = list(
+                    pdb_tidy.run(fin, strict=False)
+                    )  # be explicit in the `strict`
+
+            with open(model, 'w') as fout:
+                fout.write(''.join(lines))
 
             pdb = PDBFile(model)
             pdb.score = .0

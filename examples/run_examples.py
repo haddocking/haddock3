@@ -23,7 +23,6 @@ USAGE:
 import argparse
 import subprocess
 import sys
-from pathlib import Path
 from shutil import rmtree
 
 
@@ -37,7 +36,6 @@ except Exception:
         file=sys.stderr,
         )
     sys.exit(1)
-
 
 
 # edit this dictionary to add or remove examples.
@@ -73,6 +71,7 @@ ap.add_argument(
 
 
 def load_args():
+    """Load argparse arguments."""
     return ap.parse_args()
 
 

@@ -11,6 +11,9 @@ and new examples must be added (or deleted) manually from inside the script.
 Run folders that overlap with the `run_dir` parameter in the configuration files
 will be deleted.
 
+If you see errors related to python import statements, make sure you have
+the haddock3 environment activated.
+
 USAGE:
 
     $ python run_examples.py -h
@@ -23,8 +26,18 @@ import sys
 from pathlib import Path
 from shutil import rmtree
 
-from haddock.libs.libio import working_directory
-from haddock.gear.config_reader import read_config
+
+try:
+    from haddock.libs.libio import working_directory
+    from haddock.gear.config_reader import read_config
+except Exception:
+    print(
+        "Haddock3 could not be imported. "
+        "Please activate the haddock3 python environment.",
+        file=sys.stderr,
+        )
+    sys.exit(1)
+
 
 
 # edit this dictionary to add or remove examples.

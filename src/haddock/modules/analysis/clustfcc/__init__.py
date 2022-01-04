@@ -114,7 +114,7 @@ class HaddockModule(BaseHaddockModule):
                     )
                 if not clusters:
                     log.info(
-                        "[WARNING] No cluster was found, increasing threshold!"
+                        "[WARNING] No cluster was found, decreasing threshold!"
                         )
                 else:
                     cluster_check = True

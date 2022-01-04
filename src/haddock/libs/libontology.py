@@ -54,6 +54,7 @@ class PDBFile(Persistent):
         super().__init__(file_name, Format.PDB, path)
         self.topology = topology
         self.score = score
+        self.ori_name = None
         self.clt_id = None
         self.clt_rank = None
         self.clt_model_rank = None

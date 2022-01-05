@@ -89,6 +89,11 @@ class HaddockModule(BaseCNSModule):
         # of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 
+        if self.params['limit']:
+            mol_params_pop = mol_params_keys.pop
+        else:
+            mol_params_first = partial(operator.getitem, mol_params_keys, -1)
+
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 

@@ -143,7 +143,7 @@ class ModuleIO:
         """Check how many of the output exists."""
         total = 0.0
         present = 0.0
-        for i, element in enumerate(self.output):
+        for element in self.output:
             if isinstance(element, dict):
                 total += len(element.values())
                 present += sum([j.is_present() for j in element.values()])

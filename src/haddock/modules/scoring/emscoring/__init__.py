@@ -102,10 +102,10 @@ class HaddockModule(BaseCNSModule):
         io = ModuleIO()
         io.add(expected, "o")
         faulty = io.check_faulty()
-        tolerancy = self.params["tolerancy"]
-        if faulty > tolerancy:
+        tolerance = self.params["tolerance"]
+        if faulty > tolerance:
             _msg = (
                 f"{faulty:.2f}% of output was not generated for this module "
-                f"and tolerancy was set to {tolerancy:.2f}%.")
+                f"and tolerance was set to {tolerance:.2f}%.")
             self.finish_with_error(_msg)
         io.save()

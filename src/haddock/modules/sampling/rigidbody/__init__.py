@@ -95,7 +95,7 @@ class HaddockModule(BaseCNSModule):
         weights = {e: self.params[e] for e in _weight_keys}
 
         for model in structure_list:
-            if Path(model.file_name).exists():
+            if model.is_present():
                 # Score the model
                 haddock_score = HaddockModel(
                     model.file_name).calc_haddock_score(

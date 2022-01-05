@@ -94,11 +94,8 @@ class HaddockModule(BaseCNSModule):
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
 
-        not_present = []
         for model in structure_list:
-            if not Path(model.file_name).exists():
-                not_present.append(model.file_name)
-            else:
+            if model.is_present():
                 # Score the model
                 haddock_score = HaddockModel(
                     model.file_name).calc_haddock_score(
@@ -107,18 +104,14 @@ class HaddockModule(BaseCNSModule):
 
                 model.score = haddock_score
 
-        # Check for generated output
-        if len(not_present) == len(structure_list):
-            # fail if not all expected files are found
-            self.finish_with_error("No models were generated.")
-
-        if not_present:
-            # fail if any expected files are found
-            self.finish_with_error(
-                f"Several models were not generated" f" {not_present}"
-                )
-
         # Save module information
         io = ModuleIO()
         io.add(structure_list, "o")
+        faulty = io.check_faulty()
+        tolerancy = self.params["tolerancy"]
+        if faulty > tolerancy:
+            _msg = (
+                f"{faulty:.2f}% of output was not generated for this module "
+                f"and tolerancy was set to {tolerancy:.2f}%.")
+            self.finish_with_error(_msg)
         io.save()

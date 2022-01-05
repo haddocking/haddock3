@@ -87,11 +87,8 @@ class HaddockModule(BaseCNSModule):
         weights = {e: self.params[e] for e in _weight_keys}
 
         expected = []
-        not_found = []
         for pdb in refined_structure_list:
-            if not Path(pdb.file_name).exists():
-                not_found.append(pdb.file_name)
-            else:
+            if pdb.is_present():
                 haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
                     **weights
                     )
@@ -99,13 +96,14 @@ class HaddockModule(BaseCNSModule):
                 pdb.score = haddock_score
                 expected.append(pdb)
 
-        if not_found:
-            # fail if any expected files are found
-            self.finish_with_error(
-                "Several files were not generated:" f" {not_found}"
-                )
-
         # Save module information
         io = ModuleIO()
         io.add(expected, "o")
+        faulty = io.check_faulty()
+        tolerancy = self.params["tolerancy"]
+        if faulty > tolerancy:
+            _msg = (
+                f"{faulty:.2f}% of output was not generated for this module "
+                f"and tolerancy was set to {tolerancy:.2f}%.")
+            self.finish_with_error(_msg)
         io.save()

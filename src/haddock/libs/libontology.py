@@ -44,7 +44,7 @@ class Persistent:
 
     def is_present(self):
         """Check if the persisent file exists on disk."""
-        return Path(self.path, self.file_name).exists()
+        return self.rel_path.resolve().exists()
 
 
 class PDBFile(Persistent):
@@ -138,6 +138,23 @@ class ModuleIO:
             model_list = list(itertools.chain(*input_dic.values()))
 
         return model_list
+
+    def check_faulty(self):
+        """Check how many of the output exists."""
+        total = 0.0
+        present = 0.0
+        for element in self.output:
+            if isinstance(element, dict):
+                total += len(element.values())
+                present += sum([j.is_present() for j in element.values()])
+            else:
+                total += 1
+                if element.is_present():
+                    present += 1
+
+        faulty_per = (1 - (present / total)) * 100
+
+        return faulty_per
 
     def __repr__(self):
         return f"Input: {self.input}{linesep}Output: {self.output}"

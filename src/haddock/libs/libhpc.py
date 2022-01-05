@@ -193,7 +193,7 @@ class HPCScheduler:
 
                     per = float(total_completed) / len(self.worker_list) * 100
 
-                    log.info(f">> {per:.0f}% done")
+                    log.info(f">> {per:.2f}% done")
                     if completed_count + failed_count == len(job_list):
                         completed = True
                         end = time.time()

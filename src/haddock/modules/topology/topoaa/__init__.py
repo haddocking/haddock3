@@ -1,4 +1,6 @@
 """Create and manage CNS all-atom topology."""
+import operator
+from functools import partial
 from pathlib import Path
 
 from haddock.libs import libpdb
@@ -90,9 +92,9 @@ class HaddockModule(BaseCNSModule):
         mol_params_keys = list(mol_params.keys())[::-1]
 
         if self.params['limit']:
-            mol_params_pop = mol_params_keys.pop
+            mol_params_get = mol_params_keys.pop
         else:
-            mol_params_first = partial(operator.getitem, mol_params_keys, -1)
+            mol_params_get = partial(operator.getitem, mol_params_keys, -1)
 
         # Pool of jobs to be executed by the CNS engine
         jobs = []
@@ -116,7 +118,7 @@ class HaddockModule(BaseCNSModule):
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
-            parameters_for_this_molecule = mol_params[mol_params_keys.pop()]
+            parameters_for_this_molecule = mol_params[mol_params_get()]
 
             # Sanitize the different PDB files
             relative_paths_models = (

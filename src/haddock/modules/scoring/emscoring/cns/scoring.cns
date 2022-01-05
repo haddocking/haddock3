@@ -55,6 +55,12 @@ evaluate ($Data.flags.vean = false)
 
 evaluate ($data.ncomponents=$ncomponents)
 
+evaluate ($nmol=1)
+while ($nmol <= $data.ncomponents) loop mol
+    evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
+    evaluate ($nmol = $nmol + 1)
+end loop mol
+
 ! non-bonded parameter set to use
 evaluate ($toppar.par_nonbonded = $par_nonbonded)
 
@@ -123,7 +129,7 @@ mini powell nstep 40 drop=10 end
 {* ======================= calculate free molecules internal energy ============ *}
 
 igroup
-    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) 
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM))
                 (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
 end
 

@@ -168,32 +168,29 @@ class HaddockModule(BaseCNSModule):
         # Check for generated output, fail it not all expected files
         #  are found
         expected = {}
-        not_found = []
         for i in models_dic:
             expected[i] = {}
             for j, model in enumerate(models_dic[i]):
                 model_name = model.stem
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
-                if not processed_pdb.is_file():
-                    not_found.append(processed_pdb.name)
                 processed_topology = \
                     Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
-                if not processed_topology.is_file():
-                    not_found.append(processed_topology.name)
 
                 topology = TopologyFile(processed_topology, path=".")
                 pdb = PDBFile(processed_pdb, topology, path=".")
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
 
-        if not_found:
-            self.finish_with_error(
-                "Several files were not generated:"
-                f" {', '.join(not_found)}"
-                )
-
         # Save module information
         io = ModuleIO()
         for i in expected:
             io.add(expected[i], "o")
+
+        faulty = io.check_faulty()
+        tolerancy = self.params["tolerancy"]
+        if faulty > tolerancy:
+            _msg = (
+                f"{faulty:.2f}% of output was not generated for this module "
+                f"and tolerancy was set to {tolerancy:.2f}%.")
+            self.finish_with_error(_msg)
         io.save()

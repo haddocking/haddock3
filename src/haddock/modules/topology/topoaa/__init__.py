@@ -1,4 +1,6 @@
 """Create and manage CNS all-atom topology."""
+import operator
+from functools import partial
 from pathlib import Path
 
 from haddock.libs import libpdb
@@ -89,6 +91,11 @@ class HaddockModule(BaseCNSModule):
         # of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 
+        if self.params['limit']:
+            mol_params_get = mol_params_keys.pop
+        else:
+            mol_params_get = partial(operator.getitem, mol_params_keys, -1)
+
         # Pool of jobs to be executed by the CNS engine
         jobs = []
 
@@ -111,7 +118,7 @@ class HaddockModule(BaseCNSModule):
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
-            parameters_for_this_molecule = mol_params[mol_params_keys.pop()]
+            parameters_for_this_molecule = mol_params[mol_params_get()]
 
             # Sanitize the different PDB files
             relative_paths_models = (
@@ -168,32 +175,29 @@ class HaddockModule(BaseCNSModule):
         # Check for generated output, fail it not all expected files
         #  are found
         expected = {}
-        not_found = []
         for i in models_dic:
             expected[i] = {}
             for j, model in enumerate(models_dic[i]):
                 model_name = model.stem
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
-                if not processed_pdb.is_file():
-                    not_found.append(processed_pdb.name)
                 processed_topology = \
                     Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
-                if not processed_topology.is_file():
-                    not_found.append(processed_topology.name)
 
                 topology = TopologyFile(processed_topology, path=".")
                 pdb = PDBFile(processed_pdb, topology, path=".")
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
 
-        if not_found:
-            self.finish_with_error(
-                "Several files were not generated:"
-                f" {', '.join(not_found)}"
-                )
-
         # Save module information
         io = ModuleIO()
         for i in expected:
             io.add(expected[i], "o")
+
+        faulty = io.check_faulty()
+        tolerance = self.params["tolerance"]
+        if faulty > tolerance:
+            _msg = (
+                f"{faulty:.2f}% of output was not generated for this module "
+                f"and tolerance was set to {tolerance:.2f}%.")
+            self.finish_with_error(_msg)
         io.save()

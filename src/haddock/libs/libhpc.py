@@ -53,11 +53,11 @@ class HPCWorker:
         self.job_status = "unknown"
 
         self.moddir = Path(tasks[0].envvars['MODDIR'])
-        self.module_name = self.moddir.name.split('_')[-1]
-        self.config_path = tasks[0].envvars['RUN']
         self.toppar = tasks[0].envvars['TOPPAR']
         self.cns_folder = tasks[0].envvars['MODULE']
-        self.job_fname = Path(self.moddir, f'{self.module_name}_{num}.job')
+        module_name = \
+            Path(tasks[0].envvars['MODDIR']).resolve().stem.split('_')[-1]
+        self.job_fname = Path(self.moddir, f'{module_name}_{num}.job')
         self.workload_manager = workfload_manager
         self.queue = queue
 
@@ -75,7 +75,6 @@ class HPCWorker:
         job_file_contents += create_CNS_export_envvars(
             MODDIR=self.moddir,
             MODULE=self.cns_folder,
-            RUN=self.config_path,
             TOPPAR=self.toppar,
             )
 
@@ -194,7 +193,7 @@ class HPCScheduler:
 
                     per = float(total_completed) / len(self.worker_list) * 100
 
-                    log.info(f">> {per:.0f}% done")
+                    log.info(f">> {per:.2f}% done")
                     if completed_count + failed_count == len(job_list):
                         completed = True
                         end = time.time()

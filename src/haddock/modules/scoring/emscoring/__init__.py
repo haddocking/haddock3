@@ -76,22 +76,14 @@ class HaddockModule(BaseCNSModule):
 
         # Check for generated output, fail it not all expected files are found
         expected = []
-        not_found = []
         for pdb in scored_structure_list:
-            if not Path(pdb.file_name).exists():
-                not_found.append(pdb.file_name)
-            else:
+            if pdb.is_present():
                 haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
                     **weights
                     )
 
                 pdb.score = haddock_score
                 expected.append(pdb)
-
-        if not_found:
-            # fail if any expected files are found
-            self.finish_with_error("Several files were not generated:"
-                                   f" {not_found}")
 
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
@@ -109,4 +101,11 @@ class HaddockModule(BaseCNSModule):
         # Save module information
         io = ModuleIO()
         io.add(expected, "o")
+        faulty = io.check_faulty()
+        tolerance = self.params["tolerance"]
+        if faulty > tolerance:
+            _msg = (
+                f"{faulty:.2f}% of output was not generated for this module "
+                f"and tolerance was set to {tolerance:.2f}%.")
+            self.finish_with_error(_msg)
         io.save()

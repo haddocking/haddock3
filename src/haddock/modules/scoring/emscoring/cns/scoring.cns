@@ -57,9 +57,23 @@ evaluate ($data.ncomponents=$ncomponents)
 
 evaluate ($nmol=1)
 while ($nmol <= $data.ncomponents) loop mol
+    evaluate ($toppar.shape_$nmol = $shape_$nmol)
     evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
     evaluate ($nmol = $nmol + 1)
 end loop mol
+
+!Interaction matrix:
+evaluate ($nmol1=1)
+while ($nmol1 <=$data.ncomponents) loop mol1
+    evaluate ($nmol2=$nmol1 + 1)
+    evaluate ($toppar.int_$nmol1_$nmol1 =$int_$nmol1_$nmol1)
+    while ($nmol2 <=$data.ncomponents) loop mol2
+        evaluate ($toppar.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
+        evaluate ($toppar.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
+        evaluate ($nmol2=$nmol2 + 1)
+    end loop mol2
+    evaluate ($nmol1 = $nmol1 + 1)
+end loop mol1
 
 ! non-bonded parameter set to use
 evaluate ($toppar.par_nonbonded = $par_nonbonded)
@@ -69,6 +83,12 @@ evaluate ($Data.flags.dihed =$dihedflag)
 evaluate ($Data.flags.elec =$elecflag)
 evaluate ($Data.epsilon =$epsilon)
 evaluate ($Data.dielec  =$dielec)
+
+evaluate ($refine.keepwater = false)
+
+! Restraints
+evaluate ($data.noecv=$noecv)
+evaluate ($npart = $ncvpart)
 
 !==================================================================!
 

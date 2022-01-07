@@ -163,11 +163,10 @@ class HaddockModule(BaseHaddockModule):
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
                 # sort the models by score
-                model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
-                model_score_l.sort()
+                clt_dic[cluster_id].sort()
                 # rank the models
-                for model_ranking, element in enumerate(model_score_l, start=1):
-                    score, pdb = element
+                for model_ranking, pdb in enumerate(clt_dic[cluster_id],
+                                                    start=1):
                     pdb.clt_id = cluster_id
                     pdb.clt_rank = cluster_rank
                     pdb.clt_model_rank = model_ranking

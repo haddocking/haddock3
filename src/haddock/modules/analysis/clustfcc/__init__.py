@@ -8,7 +8,7 @@ from haddock import FCC_path, log
 from haddock.gear.config_reader import read_config
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
-from haddock.libs.libsubprocess import Job
+from haddock.libs.libsubprocess import JobArgFirst
 from haddock.modules import BaseHaddockModule
 
 
@@ -51,12 +51,11 @@ class HaddockModule(BaseHaddockModule):
         for model in models_to_cluster:
             pdb_f = Path(model.rel_path)
             contact_f = Path(model.file_name.replace('.pdb', '.con'))
-            job = Job(
+            job = JobArgFirst(
                 pdb_f,
                 contact_f,
                 contact_executable,
                 self.params['contact_distance_cutoff'],
-                arg_first=True,
                 )
             contact_jobs.append(job)
 

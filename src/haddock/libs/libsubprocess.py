@@ -8,36 +8,25 @@ from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
 
 
-class Job:
-    """A job to be executed by the engine."""
+class BaseJob:
+    """Base class for a subprocess job."""
 
-    def __init__(self, input, output, executable, *args, arg_first=False):
-        self.input = input
+    def __init__(self, input_, output, executable, *args):
+        self.input = input_
         self.output = output
         self.executable = executable
         self.args = args
-        self.arg_first = arg_first
 
     def run(self):
-        """Execute subprocess job."""
-        if self.arg_first:
-            # FCC has argument going after input
-            cmd = " ".join([
-                os.fspath(self.executable),
-                os.fspath(self.input),
-                ''.join(map(str, self.args)),  # empty string if no args
-                ])
-        else:
-            cmd = " ".join([
-                os.fspath(self.executable),
-                ''.join(map(str, self.args)),  # empty string if no args
-                os.fspath(self.input),
-                ])
+        """Execute job in subprocess."""
+        self.make_cmd()
 
         with open(self.output, 'w') as outf:
-            p = subprocess.Popen(shlex.split(cmd),
-                                 stdout=outf,
-                                 close_fds=True)
+            p = subprocess.Popen(
+                shlex.split(self.cmd),
+                stdout=outf,
+                close_fds=True,
+                )
             out, error = p.communicate()
 
         p.kill()
@@ -46,6 +35,43 @@ class Job:
             raise JobRunningError(error)
 
         return out
+
+
+def Job(BaseJob):
+    """
+    Instantiate a standard job.
+
+    Runs with the following scheme:
+
+        $ cmd INPUT ARGS
+    """
+    def make_cmd(self):
+        """Execute subprocess job."""
+        self.cmd = " ".join([
+            os.fspath(self.executable),
+            ''.join(map(str, self.args)),  # empty string if no args
+            os.fspath(self.input),
+            ])
+        return
+
+
+class JobArgFirst(BaseJob):
+    """
+    Instantiate a subprocess job with inverted args and input.
+
+    Runs with the following scheme:
+
+        $ cmd ARGS INPUT
+    """
+
+    def make_cmd(self):
+        """Execute job in subprocess."""
+        self.cmd = " ".join([
+            os.fspath(self.executable),
+            os.fspath(self.input),
+            ''.join(map(str, self.args)),  # empty string if no args
+            ])
+        return
 
 
 class CNSJob:

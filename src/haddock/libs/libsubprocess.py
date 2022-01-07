@@ -43,7 +43,7 @@ def Job(BaseJob):
 
     Runs with the following scheme:
 
-        $ cmd INPUT ARGS
+        $ cmd ARGS INPUT
     """
     def make_cmd(self):
         """Execute subprocess job."""
@@ -55,13 +55,13 @@ def Job(BaseJob):
         return
 
 
-class JobArgFirst(BaseJob):
+class JobInputFirst(BaseJob):
     """
     Instantiate a subprocess job with inverted args and input.
 
-    Runs with the following scheme:
+    Runs with the following scheme, INPUT comes first:
 
-        $ cmd ARGS INPUT
+        $ cmd INPUT ARGS
     """
 
     def make_cmd(self):

@@ -55,7 +55,7 @@ read_top = partial(partial, read_supported_residues_from_top_file)
 # the residue names. So it is nice to have a function that retrieve them
 # from the respective named tuples.
 def get_resnames(group):
-    """Make a tuple with the "resnames"."""
+    """Make a dictionary where keys are resnames and values the Residues."""
     return {i.resname: i for i in group}
 
 
@@ -166,5 +166,3 @@ supported_HETATM = set(it.chain(
     supported_multiatom_ions_resnames,
     supported_solvents_resnames,
     ))
-
-print(supported_ions_resnames.keys())

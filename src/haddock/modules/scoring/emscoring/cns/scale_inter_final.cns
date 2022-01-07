@@ -20,7 +20,7 @@ igroup
         eval($nchain2 = $nchain1 )
         while ($nchain2 < $data.ncomponents) loop nloop2
             eval($nchain2 = $nchain2 + 1)
-            eval($scalfac = $kinter * $Toppar.int_$nchain1_$nchain2)
+            eval($scalfac = $kinter)
             interaction (segid $prot_segid_$nchain1 and not 
                          (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA or resn DPP or resn PCW or resn PEE))
                         (segid $prot_segid_$nchain2 and not 

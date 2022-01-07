@@ -53,7 +53,20 @@ evaluate ($Data.flags.xpcs = false)
 evaluate ($Data.flags.dani = false)
 evaluate ($Data.flags.vean = false)
 
+evaluate ($Data.noecv = false)
+evaluate ($Data.npart = 1)
+evaluate ($refine.keepwater = false)
+
 evaluate ($data.ncomponents=$ncomponents)
+
+evaluate ($nmol=1)
+while ($nmol <= $data.ncomponents) loop mol
+    evaluate ($toppar.fix_origin_$nmol = false)
+    evaluate ($toppar.shape_$nmol = false)
+    evaluate ($toppar.cg_$nmol = false)
+    evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
+    evaluate ($nmol = $nmol + 1)
+end loop mol
 
 ! non-bonded parameter set to use
 evaluate ($toppar.par_nonbonded = $par_nonbonded)

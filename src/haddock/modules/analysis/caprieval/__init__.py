@@ -34,9 +34,8 @@ class HaddockModule(BaseHaddockModule):
         models_to_calc = self.previous_io.retrieve_models()
 
         #  Sort by score
-        model_l = [(m.score, m) for m in models_to_calc]
-        model_l.sort()
-        best_model = Path(model_l[0][1].rel_path)
+        models_to_calc.sort()
+        best_model_fname = Path(models_to_calc[0].rel_path)
 
         if self.params["reference_fname"]:
             reference = Path(self.params["reference_fname"])
@@ -44,7 +43,7 @@ class HaddockModule(BaseHaddockModule):
             self.log(
                 "No reference was given. "
                 "Using the structure with the lowest score from previous step")
-            reference = best_model
+            reference = best_model_fname
 
         capri = CAPRI(
             reference,

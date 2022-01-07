@@ -58,6 +58,16 @@ class PDBFile(Persistent):
         self.clt_id = None
         self.clt_rank = None
         self.clt_model_rank = None
+        self.len = score
+
+    def __lt__(self, other):
+        return self.score < other.score
+
+    def __gt__(self, other):
+        return self.score > other.score
+
+    def __eq__(self, other):
+        return self.score == other.score
 
 
 class TopologyFile(Persistent):

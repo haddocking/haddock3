@@ -1,12 +1,18 @@
 """HADDOCK3 modules."""
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from functools import partial
 from pathlib import Path
 
 from haddock import log as log
-from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.defaults import MODULE_IO_FILE, cns_exec
 from haddock.gear.config_reader import read_config
-from haddock.libs.libhpc import HPCScheduler
+from haddock.libs.libhpc import (
+    HPCScheduler,
+    HPCScheduler_CONCAT_DEFAULT,
+    HPCWorker_QUEUE_DEFAULT,
+    HPCWorker_QUEUE_LIMIT_DEFAULT,
+    )
 from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
@@ -25,19 +31,19 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-general_parameters_affecting_modules = {
-    'cns_exec',
-    'concat',
-    'mode',
-    'ncores',
-    'queue',
-    'queue_limit',
-    'self_contained',
+# non-mandatory general parameters that can be defined as global parameters
+# that affect all modules, or given per module where local overwrites global.
+# Not all modules will use these parameters. It is the responsibility of the
+# module to extract those parameters it needs.
+non_mandatory_general_parameters_defaults = {
+    "concat": HPCScheduler_CONCAT_DEFAULT,
+    "cns_exec": cns_exec,
+    "mode": "local",
+    "ncores": 8,
+    "queue": HPCWorker_QUEUE_DEFAULT,
+    "queue_limit": HPCWorker_QUEUE_LIMIT_DEFAULT,
+    "self_contained": False,
     }
-"""These parameters are general parameters that may be applicable to modules
-specifically. Therefore, they should be considered as part of the "default"
-module's parameters. Usually, this set is used to filter parameters during
-the run prepraration phase. See, `gear.prepare_run`."""
 
 
 class BaseHaddockModule(ABC):
@@ -66,38 +72,27 @@ class BaseHaddockModule(ABC):
 
     @params.setter
     def params(self, path_or_dict):
-        if isinstance(path_or_dict, dict):
-            self._params = path_or_dict
+        if isinstance(path_or_dict, Path):
+            conf_dict = read_config(path_or_dict)
+        elif isinstance(path_or_dict, dict):
+            conf_dict = path_or_dict
         else:
-            try:
-                self._params = read_config(path_or_dict)
-            except FileNotFoundError as err:
-                _msg = (
-                    "Default configuration file not found: "
-                    f"{str(path_or_dict)!r}"
-                    )
-                raise FileNotFoundError(_msg) from err
-            except TypeError as err:
-                _msg = (
-                    "Argument does not satisfy condition, must be path or "
-                    f"dict. {type(path_or_dict)} given."
-                    )
-                raise TypeError(_msg) from err
+            _msg = (
+                "Argument does not satisfy condition, must be path or "
+                f"dict. {type(path_or_dict)} given."
+                )
+            raise TypeError(_msg)
+
+        # the new parameters are created on top of the default general
+        # parameters for modules because the general parameters for modules are
+        # not module specific, instead they are used by several modules.
+        _d = deepcopy(non_mandatory_general_parameters_defaults)
+        self._params = recursive_dict_update(_d, conf_dict)
 
         for param, value in self._params.items():
             if param.endswith('_fname'):
                 if not Path(value).exists():
                     raise FileNotFoundError(f'File not found: {str(value)!r}')
-
-    def update_params_with_defaults(self, **params):
-        """Update config parameters."""
-        self.update_params(**params)
-        self.params.setdefault('ncores', None)
-        self.params.setdefault('cns_exec', None)
-        self.params.setdefault('mode', None)
-        self.params.setdefault('concat', None)
-        self.params.setdefault('queue_limit', None)
-        return
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""
@@ -112,7 +107,7 @@ class BaseHaddockModule(ABC):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
-        self.update_params_with_defaults(**params)
+        self.params = params
         self.add_parent_to_paths()
 
         with working_directory(self.path):
@@ -155,10 +150,6 @@ class BaseHaddockModule(ABC):
             return previous[self.order - 1]
         except IndexError:
             return self.path
-
-    def update_params(self, **parameters):
-        """Update defaults parameters with run-specific parameters."""
-        self.params = recursive_dict_update(self._params, parameters)
 
     def log(self, msg, level='info'):
         """

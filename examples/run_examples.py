@@ -48,6 +48,7 @@ examples = (
     ("docking-protein-ligand"      , "docking-protein-ligand.cfg"),
     ("docking-protein-peptide"     , "docking-protein-peptide.cfg"),
     ("docking-protein-protein"     , "docking-protein-protein.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein-cltsel.cfg"),
     ("docking-protein-protein"     , "docking-protein-protein-mdref.cfg"),
     ("refine-complex"              , "refine-complex.cfg"),
     ("scoring"                     , "scoring.cfg"),

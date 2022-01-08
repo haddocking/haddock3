@@ -69,6 +69,9 @@ class PDBFile(Persistent):
     def __eq__(self, other):
         return self.score == other.score
 
+    def __hash__(self):
+        return id(self)
+
 
 class TopologyFile(Persistent):
     """Represent a CNS-generated topology file."""

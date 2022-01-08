@@ -1,0 +1,62 @@
+! read_param.cns
+!     Reads parameter files.
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+!! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+
+{* protein parameter file *}
+eval ($prot_parameter_infile="TOPPAR:protein-allhdg5-4.param")
+
+{* nucleic acid parameter file *}
+eval ($nucl_parameter_infile="TOPPAR:dna-rna-allatom-hj-opls-1.3.param")
+
+{* carbohydrate parameter file *}
+eval ($carbo_parameter_infile="TOPPAR:carbohydrate.param")
+
+{* solvent parameter file *}
+eval ($solv_parameter_infile="TOPPAR:solvent-allhdg5-4.param")
+
+{* ligand parameter file *}
+eval ($cofac_parameter_infile="TOPPAR:ligand.param")
+
+{* fragment probes parameter file *}
+eval ($ligands_parameter_infile="TOPPAR:fragment_probes.param")
+
+{* ion parameter file *}
+eval ($ion_parameter_infile="TOPPAR:ion.param")
+
+{* heme parameter file *}
+eval ($heme_parameter_infile="TOPPAR:hemes-allhdg.param")
+
+{* shape parameter file *}
+eval ($shape_parameter_infile="TOPPAR:shape.param")
+
+parameter
+    @@$prot_parameter_infile
+    @@$ion_parameter_infile
+    @@$nucl_parameter_infile
+    @@$carbo_parameter_infile
+    @@$solv_parameter_infile
+    @@$ligands_parameter_infile
+    @@$cofac_parameter_infile
+    @@$heme_parameter_infile
+    @@$shape_parameter_infile
+    fileexist $ligand_param_fname end
+    if ($result eq true) then
+        @@$ligand_param_fname
+    end if
+end
+
+parameter
+    nbonds
+        nbxmod=5 atom cdie shift
+        cutnb=9.5 ctofnb=8.5 ctonnb=6.5 eps=1.0 e14fac=0.4 inhibit 0.25
+        wmin=0.5 tolerance  0.5
+    end
+end
+

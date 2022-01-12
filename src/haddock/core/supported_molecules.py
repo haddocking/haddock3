@@ -201,7 +201,7 @@ def read_supported_residues(source_path):
     _l0 = len(supported_ions)
     _l1 = len(supported_single_ions)
     _l2 = len(supported_multiatom_ions)
-    if _l0 == _l1 + _l2:
+    if _l0 != _l1 + _l2:
         emsg = (
             "Ions were not parsed correctly. Some atoms were left out "
             "when parsing single atom and multiatom ions."
@@ -239,7 +239,7 @@ def read_supported_residues(source_path):
         supported_nucleic_resnames,
         supported_fragments_resnames,
         supported_hemes_resnames,
-        supported_ions_resnames,
+        supported_single_ions_resnames,
         supported_multiatom_ions_resnames,
         supported_aminoacids_resnames,
         supported_solvents_resnames,

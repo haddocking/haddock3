@@ -478,6 +478,12 @@ def solve_no_chainID_no_segID(lines):
     return list(new_lines)
 
 
+
+# TODO: needs to become an option.
+# change chain ID and shift the residue of the other chains.
+# also needs to be sync with the restraints.
+# maybe not an automatic.. maybe used as a CLI
+# maybe is a place to have a CHECK instead of a autoprocess
 @_report("Homogenizes chains")
 def homogenize_chains(lines):
     """

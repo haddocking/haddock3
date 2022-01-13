@@ -140,7 +140,7 @@ class BaseHaddockModule(ABC):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
-        self.params = params
+        self.update_params(**params)
         self.add_parent_to_paths()
 
         with working_directory(self.path):

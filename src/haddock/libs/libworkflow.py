@@ -7,7 +7,10 @@ from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
 from haddock.libs.libutil import recursive_dict_update, zero_fill
-from haddock.modules import modules_category
+from haddock.modules import (
+    modules_category,
+    non_mandatory_general_parameters_defaults,
+    )
 
 
 class WorkflowManager:
@@ -28,6 +31,14 @@ class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
 
     def __init__(self, content, **other_params):
+
+        # filter out those parameters not belonging to the modules
+        _general_modules = {
+            k: v
+            for k, v in other_params.items()
+            if k in non_mandatory_general_parameters_defaults
+            }
+
         # Create the list of steps contained in this workflow
         self.steps = []
         for num_stage, (stage_name, params) in enumerate(content.items()):
@@ -36,7 +47,7 @@ class Workflow:
             # updates the module's specific parameter with global parameters
             # that are applicable to the modules. But keep priority to the local
             # level
-            params_up = recursive_dict_update(other_params, params)
+            params_up = recursive_dict_update(_general_modules, params)
 
             try:
                 _ = Step(

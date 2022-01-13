@@ -30,10 +30,10 @@ class WorkflowManager:
 class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
 
-    def __init__(self, content, **other_params):
+    def __init__(self, modules_parameters, **other_params):
 
         # filter out those parameters not belonging to the modules
-        _general_modules = {
+        general_modules = {
             k: v
             for k, v in other_params.items()
             if k in non_mandatory_general_parameters_defaults
@@ -41,13 +41,14 @@ class Workflow:
 
         # Create the list of steps contained in this workflow
         self.steps = []
-        for num_stage, (stage_name, params) in enumerate(content.items()):
+        _items = enumerate(modules_parameters.items())
+        for num_stage, (stage_name, params) in _items:
             log.info(f"Reading instructions of [{stage_name}] step")
 
             # updates the module's specific parameter with global parameters
             # that are applicable to the modules. But keep priority to the local
             # level
-            params_up = recursive_dict_update(_general_modules, params)
+            params_up = recursive_dict_update(general_modules, params)
 
             try:
                 _ = Step(

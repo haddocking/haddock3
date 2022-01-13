@@ -113,7 +113,7 @@ class BaseHaddockModule(ABC):
         if update_from_cfg_file and params:
             _msg = (
                 "You can not provide both `update_from_cfg_file` "
-                "and key arguments"
+                "and key arguments."
                 )
             raise TypeError(_msg)
 

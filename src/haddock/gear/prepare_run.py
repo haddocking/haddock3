@@ -15,6 +15,7 @@ from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.libs.libutil import (
     make_list_if_string,
+    recursive_dict_update,
     remove_dict_keys,
     zero_fill,
     )
@@ -79,7 +80,9 @@ def setup_run(workflow_path, restart_from=None):
     validate_module_names_are_not_mispelled(params)
 
     # update default non-mandatory parameters with user params
-    params = {**non_mandatory_general_parameters_defaults, **params}
+    params = recursive_dict_update(
+        non_mandatory_general_parameters_defaults,
+        params)
 
     clean_rundir_according_to_restart(params['run_dir'], restart_from)
 

@@ -36,7 +36,7 @@ class BaseCNSModule(BaseHaddockModule):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
-        self.params = params
+        self.update_params(**params)
         self.add_parent_to_paths()
         self.envvars = self.default_envvars()
 

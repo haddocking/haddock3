@@ -6,11 +6,8 @@ from pathlib import Path
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
-from haddock.libs.libutil import zero_fill
-from haddock.modules import (
-    modules_category,
-    non_mandatory_general_parameters_defaults,
-    )
+from haddock.libs.libutil import recursive_dict_update, zero_fill
+from haddock.modules import modules_category
 
 
 class WorkflowManager:
@@ -38,16 +35,14 @@ class Workflow:
 
             # updates the module's specific parameter with global parameters
             # that are applicable to the modules. But keep priority to the local
-            # level by using the setdefault.
-            for gparam, gvalue in other_params.items():
-                if gparam in non_mandatory_general_parameters_defaults:
-                    params.setdefault(gparam, gvalue)
+            # level
+            params_up = recursive_dict_update(other_params, params)
 
             try:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
-                    **params,
+                    **params_up,
                     )
                 self.steps.append(_)
 

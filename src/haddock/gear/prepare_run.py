@@ -172,7 +172,7 @@ def validate_modules_params(modules_params):
         diff = set(args.keys()) \
             - set(defaults.keys()) \
             - set(config_mandatory_general_parameters) \
-            - non_mandatory_general_parameters_defaults
+            - set(non_mandatory_general_parameters_defaults.keys())
 
         if diff:
             _msg = (

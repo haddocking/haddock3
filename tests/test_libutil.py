@@ -7,6 +7,7 @@ from haddock.libs.libutil import (
     file_exists,
     get_number_from_path_stem,
     non_negative_int,
+    recursive_dict_update,
     sort_numbered_paths,
     )
 
@@ -108,3 +109,14 @@ def test_sort_numbered_inputs_error(in1, error):
     """Test sort numbered inputs raised Errors."""
     with pytest.raises(error):
         sort_numbered_paths(in1)
+
+
+def test_recursive_dict_update():
+    """Test recursive dict update."""
+    a = {"a": 1, "b": {"c": 2, "d": {"e": 3}}}
+    b = {"a": 2, "b": {"d": {"e": 4}}, "z": {"z1": 6}}
+    c = recursive_dict_update(a, b)
+    assert a is not c
+    assert a["b"] is not c["b"]
+    assert a["b"]["d"] is not c["b"]["d"]
+    assert c == {"a": 2, "b": {"c": 2, "d": {"e": 4}}, "z": {"z1": 6}}

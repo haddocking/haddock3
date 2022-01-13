@@ -1,6 +1,5 @@
 """HADDOCK3 modules."""
 from abc import ABC, abstractmethod
-from copy import deepcopy
 from functools import partial
 from pathlib import Path
 
@@ -31,13 +30,14 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-# non-mandatory general parameters that can be defined as global parameters
-# that affect all modules, or given per module where local overwrites global.
-# Not all modules will use these parameters. It is the responsibility of the
-# module to extract those parameters it needs.
+# this dictionary defines non-mandatory general parameters that can be defined
+# as global parameters thus affect all modules, or, instead, can be defined per
+# module where the module definition overwrites global definition. Not all
+# modules will use these parameters. It is the responsibility of the module to
+# extract the parameters it needs.
 non_mandatory_general_parameters_defaults = {
     "concat": HPCScheduler_CONCAT_DEFAULT,
-    "cns_exec": cns_exec,
+    "cns_exec": str(cns_exec),
     "mode": "local",
     "ncores": 8,
     "queue": HPCWorker_QUEUE_DEFAULT,
@@ -49,7 +49,7 @@ non_mandatory_general_parameters_defaults = {
 class BaseHaddockModule(ABC):
     """HADDOCK3 module's base class."""
 
-    def __init__(self, order, path, params):
+    def __init__(self, order, path, params_fname):
         """
         HADDOCK3 modules base class.
 
@@ -63,36 +63,69 @@ class BaseHaddockModule(ABC):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
-        self.params = params
+
+        # instantiate module's parameters
+        self._origignal_config_file = params_fname
+        self._params = {}
+        self.update_params(update_from_cfg_file=params_fname)
 
     @property
     def params(self):
         """Configuration parameters."""  # noqa: D401
         return self._params
 
-    @params.setter
-    def params(self, path_or_dict):
-        if isinstance(path_or_dict, Path):
-            conf_dict = read_config(path_or_dict)
-        elif isinstance(path_or_dict, dict):
-            conf_dict = path_or_dict
-        else:
+    def reset_params(self):
+        """Reset parameters to the ones used to instantiate the class."""
+        self._params.clear()
+        self.update_params(update_from_cfg_file=self._original_config_file)
+
+    def update_params(self, update_from_cfg_file=None, **params):
+        """
+        Update the modules parameters.
+
+        Add/update to the current modules parameters the ones given in
+        the function call. If you want to enterily replace the modules
+        parameters to their default values use the `reset_params()`
+        method.
+
+        Update takes places recursively, that is, nested dictionaries
+        will be updated accordingly.
+
+        To update the current config with the parameters defined in an
+        HADDOCK3 configuration file use the `update_from_cfg_file`
+        parameter.
+
+        To update from a JSON file, first load the JSON into a
+        dictionary and unpack the dictionary to the function call.
+
+        Examples
+        --------
+        >>> m.update_params(param1=value1, param2=value2)
+
+        >>> m.update_params(**param_dict)
+
+        >>> m.update_params(update_from_cfg_file=path_to_file)
+
+        # if you wish to start from scratch
+        >>> m.reset_params()
+        >>> m.update_params(...)
+        """
+        if update_from_cfg_file and params:
             _msg = (
-                "Argument does not satisfy condition, must be path or "
-                f"dict. {type(path_or_dict)} given."
+                "You can not provide both `update_from_cfg_file` "
+                "and key arguments"
                 )
             raise TypeError(_msg)
 
-        # the new parameters are created on top of the default general
-        # parameters for modules because the general parameters for modules are
-        # not module specific, instead they are used by several modules.
-        _d = deepcopy(non_mandatory_general_parameters_defaults)
-        self._params = recursive_dict_update(_d, conf_dict)
+        if update_from_cfg_file:
+            params = read_config(update_from_cfg_file)
 
-        for param, value in self._params.items():
-            if param.endswith('_fname'):
-                if not Path(value).exists():
-                    raise FileNotFoundError(f'File not found: {str(value)!r}')
+        # the updating order is relevant
+        _n = recursive_dict_update(
+            non_mandatory_general_parameters_defaults,
+            self._params)
+        self._params = recursive_dict_update(_n, params)
+        self._confirm_fnames_exist()
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""
@@ -167,6 +200,12 @@ class BaseHaddockModule(ABC):
             Defaults to 'info'.
         """
         getattr(log, level)(f'[{self.name}] {msg}')
+
+    def _confirm_fnames_exist(self):
+        for param, value in self._params.items():
+            if param.endswith('_fname'):
+                if not Path(value).exists():
+                    raise FileNotFoundError(f'File not found: {str(value)!r}')
 
 
 def get_engine(mode, params):

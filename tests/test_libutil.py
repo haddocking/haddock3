@@ -114,9 +114,11 @@ def test_sort_numbered_inputs_error(in1, error):
 def test_recursive_dict_update():
     """Test recursive dict update."""
     a = {"a": 1, "b": {"c": 2, "d": {"e": 3}}}
-    b = {"a": 2, "b": {"d": {"e": 4}}, "z": {"z1": 6}}
+    _list = list(range(10))
+    b = {"a": 2, "b": {"d": {"e": 4}}, "z": {"z1": _list}}
     c = recursive_dict_update(a, b)
     assert a is not c
     assert a["b"] is not c["b"]
     assert a["b"]["d"] is not c["b"]["d"]
-    assert c == {"a": 2, "b": {"c": 2, "d": {"e": 4}}, "z": {"z1": 6}}
+    assert b["z"]["z1"] is not c["z"]["z1"]
+    assert c == {"a": 2, "b": {"c": 2, "d": {"e": 4}}, "z": {"z1": _list}}

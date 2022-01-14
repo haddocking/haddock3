@@ -5,6 +5,7 @@ from pathlib import Path
 
 from haddock import log
 from haddock import toppar_path as global_toppar
+from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.libs.libio import working_directory
 from haddock.modules import BaseHaddockModule
 
@@ -92,7 +93,7 @@ class BaseCNSModule(BaseHaddockModule):
         self.envvars = self.default_envvars()
         self.save_envvars()
 
-        _cns_exec = self.params["cns_exec"]
+        _cns_exec = self.params["cns_exec"] or global_cns_exec
         new_cns = Path(".", Path(_cns_exec).name)
         if not new_cns.exists():
             self.params["cns_exec"] = shutil.copyfile(_cns_exec, new_cns)

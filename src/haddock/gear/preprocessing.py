@@ -1,7 +1,10 @@
 """
 Process input PDB files to ensure compatibility with HADDOCK3.
 
+Availabe functions:
 
+- process_pdbs
+- read_additional_residues
 """
 # search for ABSTRACT to reach the section where abstractions are defined
 # search for CHECKING to reach the section where checking functions are defined
@@ -32,12 +35,12 @@ from pdbtools import (
 
 from haddock import log
 from haddock.core.supported_molecules import (
-    read_supported_residues_from_top_file,
+    read_residues_from_top_file,
     supported_ATOM,
     supported_HETATM,
-    supported_ions_atoms,
-    supported_ions_elements,
-    supported_ions_resnames,
+    supported_single_ions_atoms,
+    supported_single_ions_elements,
+    supported_single_ions_resnames,
     )
 from haddock.libs.libio import open_files_to_lines
 from haddock.libs.libfunc import chainf
@@ -146,7 +149,7 @@ def read_additional_residues(top_fname):
 
     where, XXX is the new residue.
     """
-    residues = read_supported_residues_from_top_file(
+    residues = read_residues_from_top_file(
         top_fname,
         regex=r'\nRESIdue ([A-Z0-9]{1,3}).*\n',
         Residue=namedtuple('New', ['resname']),
@@ -370,23 +373,23 @@ def add_charges_to_ions(fhandler):
             # charge is properly defined in resname
             # ignore other fields and write them properly, even if they are
             # already correct
-            if resname in supported_ions_resnames:
-                new_atom = supported_ions_resnames[resname].atom
+            if resname in supported_single_ions_resnames:
+                new_atom = supported_single_ions_resnames[resname].atom
                 yield line[:12] + new_atom + line[16:76] + new_atom
                 continue
 
             # charge is properly defined in atom name
             # ignore other fields and write them properly, even if they are
             # already correct
-            if atom in supported_ions_atoms:
-                new_resname = supported_ions_atoms[atom].resname
+            if atom in supported_single_ions_atoms:
+                new_resname = supported_single_ions_atoms[atom].resname
                 yield line[:17] + new_resname + line[20:76] + atom
                 continue
 
             # charge is not defined but atom element is defined
-            if atom in supported_ions_elements and atom == resname:
-                new_atom = supported_ions_elements[atom].atom
-                new_resname = supported_ions_elements[atom].resname
+            if atom in supported_single_ions_elements and atom == resname:
+                new_atom = supported_single_ions_elements[atom].atom
+                new_resname = supported_single_ions_elements[atom].resname
                 wmsg = (
                     "Ion {atom!r} automatically set to charge {charge!r}. "
                     "If this is not intended, please edit the PDB manually."
@@ -476,7 +479,6 @@ def solve_no_chainID_no_segID(lines):
         return lines
 
     return list(new_lines)
-
 
 
 # TODO: needs to become an option.

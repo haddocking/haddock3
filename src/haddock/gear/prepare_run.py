@@ -101,7 +101,7 @@ def setup_run(workflow_path, restart_from=None):
     validate_modules_params(modules_params)
     check_if_modules_are_installed(modules_params)
 
-    complete_modules_params(modules_params)
+    #complete_modules_params(modules_params)
 
     # create datadir
     data_dir = create_data_dir(general_params["run_dir"])
@@ -275,7 +275,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         end_path.mkdir(parents=True, exist_ok=True)
         name = Path(molecule).name
 
-        top_file = modules_params["topoaa"]["ligand_top_fname"]
+        top_file = modules_params["topoaa"].get("ligand_top_fname", False)
         new_residues = read_additional_residues(top_file) if top_file else None
 
         new_pdb = process_pdbs([molecule], user_supported_residues=new_residues)
@@ -360,17 +360,17 @@ def validate_module_names_are_not_mispelled(params):
                 raise ValueError(emsg)
 
 
-def complete_modules_params(modules_params):
-    ""","""
-    for module_name, kwargs in modules_params.items():
-        _module_name = get_module_name(module_name)
-        pdef = Path(
-            haddock3_source_path,
-            'modules',
-            modules_category[_module_name],
-            _module_name,
-            'defaults.cfg',
-            ).resolve()
-
-        defaults = read_config(pdef)
-        modules_params[module_name] = {**defaults, **kwargs}
+#def complete_modules_params(modules_params):
+#    ""","""
+#    for module_name, kwargs in modules_params.items():
+#        _module_name = get_module_name(module_name)
+#        pdef = Path(
+#            haddock3_source_path,
+#            'modules',
+#            modules_category[_module_name],
+#            _module_name,
+#            'defaults.cfg',
+#            ).resolve()
+#
+#        defaults = read_config(pdef)
+#        modules_params[module_name] = {**defaults, **kwargs}

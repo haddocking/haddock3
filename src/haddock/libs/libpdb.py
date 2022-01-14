@@ -31,7 +31,6 @@ slc_element = slice(76, 78)
 slc_model = slice(78, 80)
 
 
-
 def get_supported_residues(haddock_topology):
     """Read the topology file and identify which data is supported."""
     supported = []

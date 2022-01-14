@@ -34,12 +34,7 @@ def maincli():
 
 def main(pdb_files, dry=False, topfile=None):
     """Process PDB files."""
-    if topfile:
-        new_residues = read_additional_residues(topfile)
-    else:
-        new_residues = []
-
-    print(pdb_files)
+    new_residues = read_additional_residues(topfile) if topfile else None
 
     process_pdbs(
         pdb_files,
@@ -47,6 +42,7 @@ def main(pdb_files, dry=False, topfile=None):
         save_output=True,
         user_supported_residues=new_residues,
         )
+
     return
 
 

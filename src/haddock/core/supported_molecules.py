@@ -126,7 +126,7 @@ class CNSTopologyResidue:
         return
 
 
-def read_residues_from_top(topfile):
+def read_residues_from_top_file(topfile):
     """
     Read the residues defined in CNS topology file.
 
@@ -246,18 +246,18 @@ def read_supported_residues(source_path):
     solvent_top = Path(source_path, "solvent-allhdg5-4.top")
 
     # supported Residues (tuple of namedtuples)
-    supported_carbohydrates = read_residues_from_top(carbo_top)
+    supported_carbohydrates = read_residues_from_top_file(carbo_top)
 
-    _1 = read_residues_from_top(dna_rna_all_top)
-    _2 = read_residues_from_top(dna_rna_martini_top)
+    _1 = read_residues_from_top_file(dna_rna_all_top)
+    _2 = read_residues_from_top_file(dna_rna_martini_top)
     supported_nucleic = set(it.chain(_1, _2))
 
-    supported_fragments = read_residues_from_top(fragment_top)
+    supported_fragments = read_residues_from_top_file(fragment_top)
 
-    supported_hemes = read_residues_from_top(hemes_top)
+    supported_hemes = read_residues_from_top_file(hemes_top)
 
     # all ions are defined here
-    supported_ions = read_residues_from_top(ions_top)
+    supported_ions = read_residues_from_top_file(ions_top)
 
     # separates both kinds of ions
     supported_single_ions = \
@@ -275,12 +275,12 @@ def read_supported_residues(source_path):
             )
         raise ValueError(emsg)
 
-    _1 = read_residues_from_top(protein_5_4_top)
-    _2 = read_residues_from_top(protein_martini_2_top)
-    _3 = read_residues_from_top(protein_martini_top)
+    _1 = read_residues_from_top_file(protein_5_4_top)
+    _2 = read_residues_from_top_file(protein_martini_2_top)
+    _3 = read_residues_from_top_file(protein_martini_top)
     supported_aminoacids = set(it.chain(_1, _2, _3))
 
-    supported_solvents = read_residues_from_top(solvent_top)
+    supported_solvents = read_residues_from_top_file(solvent_top)
 
     # supported resnames
     supported_carbo_resnames = get_resnames(supported_carbohydrates)

@@ -3,15 +3,10 @@ from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
 
-from haddock import log as log
-from haddock.core.defaults import MODULE_IO_FILE, cns_exec
+from haddock import log, modules_defaults_path
+from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.config_reader import read_config
-from haddock.libs.libhpc import (
-    HPCScheduler,
-    HPCScheduler_CONCAT_DEFAULT,
-    HPCWorker_QUEUE_DEFAULT,
-    HPCWorker_QUEUE_LIMIT_DEFAULT,
-    )
+from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
@@ -35,15 +30,8 @@ values are their categories. Categories are the modules parent folders."""
 # module where the module definition overwrites global definition. Not all
 # modules will use these parameters. It is the responsibility of the module to
 # extract the parameters it needs.
-non_mandatory_general_parameters_defaults = {
-    "concat": HPCScheduler_CONCAT_DEFAULT,
-    "cns_exec": str(cns_exec),
-    "mode": "local",
-    "ncores": 8,
-    "queue": HPCWorker_QUEUE_DEFAULT,
-    "queue_limit": HPCWorker_QUEUE_LIMIT_DEFAULT,
-    "self_contained": False,
-    }
+# the config file is in modules/defaults.cfg
+non_mandatory_general_parameters_defaults = read_config(modules_defaults_path)
 
 
 class BaseHaddockModule(ABC):

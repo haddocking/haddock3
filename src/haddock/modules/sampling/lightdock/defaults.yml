@@ -1,0 +1,85 @@
+glowworms:
+  default: 200
+  type: integer
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+steps:
+  default: 100
+  type: integer
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+swarms:
+  default: 400
+  type: integer
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+scoring:
+  default: fastdfire
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+top:
+  default: 10
+  type: integer
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+receptor_chains:
+  default: A
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+receptor_active:
+  default: ''
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+receptor_passive:
+  default: ''
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+ligand_chains:
+  default: B
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+ligand_active:
+  default: ''
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+ligand_passive:
+  default: ''
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+noxt:
+  default: true
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+noh:
+  default: true
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+restraints:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet

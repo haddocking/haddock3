@@ -1,0 +1,16 @@
+top_cluster:
+  default:
+  - 1
+  - 2
+  - 3
+  - 4
+  type: list
+  hoover: No help yet
+  doc: No help yet
+top_models:
+  default: 4
+  type: integer
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet

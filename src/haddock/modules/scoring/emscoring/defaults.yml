@@ -1,0 +1,278 @@
+tolerance:
+  default: 5
+  type: integer
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+log_level:
+  default: verbose
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+dielec:
+  default: cdie
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+epsilon:
+  default: 1
+  type: integer
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+dihedflag:
+  default: true
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+elecflag:
+  default: true
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+par_nonbonded:
+  default: OPLSX
+  type: string
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+ligand_param_fname:
+  default: ''
+  type: path
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+ligand_top_fname:
+  default: ''
+  type: path
+  length: 9999
+  hoover: No help yet
+  doc: No help yet
+individualize:
+  default: true
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+w_air:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_bsa:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_cdih:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_dani:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_deint:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_desolv:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_dist:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_elec:
+  default: 0.2
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_lcc:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_rg:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_sani:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_sym:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_vdw:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_vean:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_xpcs:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_xrdc:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+w_zres:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  hoover: No help yet
+  doc: No help yet
+shape_1:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_2:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_3:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_4:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_5:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_6:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_7:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_8:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_9:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_10:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_11:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_12:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_13:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_14:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_15:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_16:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_17:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_18:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_19:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet
+shape_20:
+  default: false
+  type: bool
+  hoover: No help yet
+  doc: No help yet

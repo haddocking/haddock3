@@ -42,19 +42,19 @@ def read_from_yaml_config(cfg_file):
     # there's no need to make a deep copy here, a shallow copy suffices.
     cfg = {}
     for level in config_expert_levels:
-        cfg.update(flat_yaml(ycfg[level]))
+        cfg.update(flat_complex_cfg(ycfg[level]))
 
     return cfg
 
 
-def flat_yaml(cfg):
+def flat_complex_cfg(cfg):
     """Flat a yaml config."""
     new = {}
     for param, values in cfg.items():
         try:
             new[param] = values["default"]
         except KeyError:
-            new[param] = flat_yaml(values)
+            new[param] = flat_complex_cfg(values)
     return new
 
 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from functools import partial
 from pathlib import Path
 
-from haddock import log as log
+from haddock import log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.config_reader import read_config
 from haddock.libs.libhpc import HPCScheduler
@@ -25,19 +25,13 @@ modules_category = {
 values are their categories. Categories are the modules parent folders."""
 
 
-general_parameters_affecting_modules = {
-    'cns_exec',
-    'concat',
-    'mode',
-    'ncores',
-    'queue',
-    'queue_limit',
-    'self_contained',
-    }
-"""These parameters are general parameters that may be applicable to modules
-specifically. Therefore, they should be considered as part of the "default"
-module's parameters. Usually, this set is used to filter parameters during
-the run prepraration phase. See, `gear.prepare_run`."""
+# this dictionary defines non-mandatory general parameters that can be defined
+# as global parameters thus affect all modules, or, instead, can be defined per
+# module where the module definition overwrites global definition. Not all
+# modules will use these parameters. It is the responsibility of the module to
+# extract the parameters it needs.
+# the config file is in modules/defaults.cfg
+non_mandatory_general_parameters_defaults = read_config(modules_defaults_path)
 
 
 config_readers = {
@@ -49,7 +43,7 @@ config_readers = {
 class BaseHaddockModule(ABC):
     """HADDOCK3 module's base class."""
 
-    def __init__(self, order, path, params):
+    def __init__(self, order, path, params_fname):
         """
         HADDOCK3 modules base class.
 
@@ -63,47 +57,69 @@ class BaseHaddockModule(ABC):
         self.order = order
         self.path = path
         self.previous_io = self._load_previous_io()
-        self.params = params
+
+        # instantiate module's parameters
+        self._origignal_config_file = params_fname
+        self._params = {}
+        self.update_params(update_from_cfg_file=params_fname)
 
     @property
     def params(self):
         """Configuration parameters."""  # noqa: D401
         return self._params
 
-    @params.setter
-    def params(self, path_or_dict):
-        if isinstance(path_or_dict, dict):
-            self._params = path_or_dict
-        else:
-            try:
-                self._params = read_config(path_or_dict)
-            except FileNotFoundError as err:
-                _msg = (
-                    "Default configuration file not found: "
-                    f"{str(path_or_dict)!r}"
-                    )
-                raise FileNotFoundError(_msg) from err
-            except TypeError as err:
-                _msg = (
-                    "Argument does not satisfy condition, must be path or "
-                    f"dict. {type(path_or_dict)} given."
-                    )
-                raise TypeError(_msg) from err
+    def reset_params(self):
+        """Reset parameters to the ones used to instantiate the class."""
+        self._params.clear()
+        self.update_params(update_from_cfg_file=self._original_config_file)
 
-        for param, value in self._params.items():
-            if param.endswith('_fname'):
-                if not Path(value).exists():
-                    raise FileNotFoundError(f'File not found: {str(value)!r}')
+    def update_params(self, update_from_cfg_file=None, **params):
+        """
+        Update the modules parameters.
 
-    def update_params_with_defaults(self, **params):
-        """Update config parameters."""
-        self.update_params(**params)
-        self.params.setdefault('ncores', None)
-        self.params.setdefault('cns_exec', None)
-        self.params.setdefault('mode', None)
-        self.params.setdefault('concat', None)
-        self.params.setdefault('queue_limit', None)
-        return
+        Add/update to the current modules parameters the ones given in
+        the function call. If you want to enterily replace the modules
+        parameters to their default values use the `reset_params()`
+        method.
+
+        Update takes places recursively, that is, nested dictionaries
+        will be updated accordingly.
+
+        To update the current config with the parameters defined in an
+        HADDOCK3 configuration file use the `update_from_cfg_file`
+        parameter.
+
+        To update from a JSON file, first load the JSON into a
+        dictionary and unpack the dictionary to the function call.
+
+        Examples
+        --------
+        >>> m.update_params(param1=value1, param2=value2)
+
+        >>> m.update_params(**param_dict)
+
+        >>> m.update_params(update_from_cfg_file=path_to_file)
+
+        # if you wish to start from scratch
+        >>> m.reset_params()
+        >>> m.update_params(...)
+        """
+        if update_from_cfg_file and params:
+            _msg = (
+                "You can not provide both `update_from_cfg_file` "
+                "and key arguments."
+                )
+            raise TypeError(_msg)
+
+        if update_from_cfg_file:
+            params = read_config(update_from_cfg_file)
+
+        # the updating order is relevant
+        _n = recursive_dict_update(
+            non_mandatory_general_parameters_defaults,
+            self._params)
+        self._params = recursive_dict_update(_n, params)
+        self._confirm_fnames_exist()
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""
@@ -118,7 +134,7 @@ class BaseHaddockModule(ABC):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
-        self.update_params_with_defaults(**params)
+        self.update_params(**params)
         self.add_parent_to_paths()
 
         with working_directory(self.path):
@@ -162,10 +178,6 @@ class BaseHaddockModule(ABC):
         except IndexError:
             return self.path
 
-    def update_params(self, **parameters):
-        """Update defaults parameters with run-specific parameters."""
-        self.params = recursive_dict_update(self._params, parameters)
-
     def log(self, msg, level='info'):
         """
         Log a message with a common header.
@@ -182,6 +194,12 @@ class BaseHaddockModule(ABC):
             Defaults to 'info'.
         """
         getattr(log, level)(f'[{self.name}] {msg}')
+
+    def _confirm_fnames_exist(self):
+        for param, value in self._params.items():
+            if param.endswith('_fname'):
+                if not Path(value).exists():
+                    raise FileNotFoundError(f'File not found: {str(value)!r}')
 
 
 def get_engine(mode, params):

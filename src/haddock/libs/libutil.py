@@ -222,13 +222,26 @@ def recursive_dict_update(d, u):
     Update dictionary recursively.
 
     https://stackoverflow.com/questions/3232943
+
+    Returns
+    -------
+    dict
+        A new dict object with updated key: values. The original dictionaries
+        are not modified.
     """
-    for k, v in u.items():
-        if isinstance(v, collections.abc.Mapping):
-            d[k] = recursive_dict_update(d.get(k, {}), v)
-        else:
-            d[k] = v
-    return d
+    def _recurse(d_, u_):
+        for k, v in u_.items():
+            if isinstance(v, collections.abc.Mapping):
+                d_[k] = _recurse(d_.get(k, {}), v)
+            else:
+                d_[k] = deepcopy(v)  # in case these are also lists
+
+        return d_
+
+    new = deepcopy(d)
+    _recurse(new, u)
+
+    return new
 
 
 def get_number_from_path_stem(path):

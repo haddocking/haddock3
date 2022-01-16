@@ -8,7 +8,6 @@ import importlib
 import pytest
 
 from haddock.core.exceptions import ConfigurationError
-from haddock.gear.config_reader import read_config
 from haddock.modules import (
     _not_valid_config,
     config_readers,

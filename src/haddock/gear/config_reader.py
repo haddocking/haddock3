@@ -66,7 +66,7 @@ _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
 # https://regex101.com/r/YCZSAo/1
 _list_one_liner_re = re.compile(
-    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\\\.\:\"\'\[\]]*\])'
+    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\\\.\"\'\[\]]*\])'
     )
 
 # https://regex101.com/r/bWlaWB/1

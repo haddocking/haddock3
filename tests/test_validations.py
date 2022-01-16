@@ -1,4 +1,6 @@
 """Test specific validations modules."""
+from pathlib import Path
+
 import pytest
 
 from haddock.gear.validations import v_rundir
@@ -11,6 +13,7 @@ from haddock.gear.validations import v_rundir
         "some_folder/other",
         "some_folder_2/other",
         r"some\folder\on\windows",
+        Path('some', 'folder', 'file.f'),
         ]
     )
 def test_v_rundir_okay(rundir):

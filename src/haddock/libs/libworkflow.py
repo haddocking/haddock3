@@ -4,16 +4,13 @@ import sys
 from pathlib import Path
 
 from haddock import log
-from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
-from haddock.libs.libhpc import (
-    HPCScheduler_CONCAT_DEFAULT,
-    HPCWorker_QUEUE_DEFAULT,
-    HPCWorker_QUEUE_LIMIT_DEFAULT,
+from haddock.libs.libutil import recursive_dict_update, zero_fill
+from haddock.modules import (
+    modules_category,
+    non_mandatory_general_parameters_defaults,
     )
-from haddock.libs.libutil import zero_fill
-from haddock.modules import modules_category
 
 
 class WorkflowManager:
@@ -33,39 +30,31 @@ class WorkflowManager:
 class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
 
-    def __init__(
-            self,
-            content,
-            ncores=None,
-            cns_exec=global_cns_exec,
-            config_path=None,
-            mode='local',
-            queue=HPCWorker_QUEUE_DEFAULT,
-            concat=HPCScheduler_CONCAT_DEFAULT,
-            queue_limit=HPCWorker_QUEUE_LIMIT_DEFAULT,
-            self_contained=False,
-            **others):
+    def __init__(self, modules_parameters, **other_params):
+
+        # filter out those parameters not belonging to the modules
+        general_modules = {
+            k: v
+            for k, v in other_params.items()
+            if k in non_mandatory_general_parameters_defaults
+            }
+
         # Create the list of steps contained in this workflow
         self.steps = []
-        for num_stage, (stage_name, params) in enumerate(content.items()):
+        _items = enumerate(modules_parameters.items())
+        for num_stage, (stage_name, params) in _items:
             log.info(f"Reading instructions of [{stage_name}] step")
 
-            # uses gobal ncores parameter unless module-specific value
-            # hasn't been used
-            params.setdefault('ncores', ncores)
-            params.setdefault('cns_exec', cns_exec)
-            params.setdefault('config_path', config_path)
-            params.setdefault('mode', mode)
-            params.setdefault('queue', queue)
-            params.setdefault('concat', concat)
-            params.setdefault('queue_limit', queue_limit)
-            params.setdefault('self_contained', self_contained)
+            # updates the module's specific parameter with global parameters
+            # that are applicable to the modules. But keep priority to the local
+            # level
+            params_up = recursive_dict_update(general_modules, params)
 
             try:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
-                    **params,
+                    **params_up,
                     )
                 self.steps.append(_)
 

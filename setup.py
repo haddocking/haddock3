@@ -73,6 +73,7 @@ setup(
             'haddock3 = haddock.clis.cli:maincli',
             'haddock3-bm = haddock.clis.cli_bm:maincli',
             'haddock3-dmn = haddock.clis.cli_dmn:maincli',
+            'haddock3-cfg = haddock.clis.cli_cfg:maincli',
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

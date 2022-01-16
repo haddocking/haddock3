@@ -52,7 +52,7 @@ _string_re = re.compile(
 # https://regex101.com/r/OCcP6l/1
 _path_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([a-zA-Z0-9_\-\/\\\.]*?)"|'([a-zA-Z0-9_\-\/\\\.]*?)')'''
+    r'''("([a-zA-Z0-9_\-\/\.]*?)"|'([a-zA-Z0-9_\-\/\.]*?)')'''
     )
 
 # https://regex101.com/r/6X4j7n/2
@@ -66,7 +66,7 @@ _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
 # https://regex101.com/r/YCZSAo/1
 _list_one_liner_re = re.compile(
-    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\\\.\"\'\[\]]*\])'
+    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\.\"\'\[\]]*\])'
     )
 
 # https://regex101.com/r/bWlaWB/1

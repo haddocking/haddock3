@@ -40,7 +40,7 @@ _main_header_re = re.compile(r'^ *\[(\w+)\]')
 # thanks https://stackoverflow.com/questions/39158902
 _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 
-# https://regex101.com/r/q2fuFl/1
+# https://regex101.com/r/q2fuFl/3
 _string_re = re.compile(
     r'''^ *(\w+) *= *'''
     r'''("([a-zA-Z0-9_,\-\/\\\.\:]*?)"|'([a-zA-Z0-9_,\-\/\\\.\:]*?)')'''

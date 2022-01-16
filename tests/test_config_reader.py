@@ -66,8 +66,10 @@ def test_sub_header_re_wrong(line):
 @pytest.mark.parametrize(
     'line,name,value',
     [
-        ('value = "some_string"', 'value', '"some_string"'),
+        # ('value = "some_string"', 'value', '"some_string"'),
         ("value = 'some'", 'value', "'some'"),
+        ("value = ''", 'value', "''"),
+        ('value = ""', 'value', '""'),
         ("var2='other'", 'var2', "'other'"),
         ("var2='other'#somecomment", 'var2', "'other'"),
         ("var2='other'    #somecomment", 'var2', "'other'"),
@@ -89,6 +91,7 @@ def test_string_re(line, name, value):
         'value=other',
         'value=true',
         'value=string with spaces',
+        'value = "string_with-other/chars"',
         'value = ["list"]',
         ],
     )
@@ -102,6 +105,15 @@ def test_string_re_wrong(line):
     [
         ('value = ".gitignore"', 'value', Path('.gitignore').resolve()),
         ("value = '.'", 'value', Path.cwd().resolve()),
+        (
+            'value = "file_that_does_not_exist"',
+            "value",
+            Path("file_that_does_not_exist").resolve(),
+            ),
+        (
+            "value = 'src/contacts_fcc'",
+            "value",
+            Path('src', 'contacts_fcc').resolve()),
         ],
     )
 def test_Path_re(line, name, value):
@@ -115,7 +127,6 @@ def test_Path_re(line, name, value):
 @pytest.mark.parametrize(
     'line',
     [
-        'value = "file_that_does_not_exist"',
         "value = 4",
         "value=''",
         ],
@@ -405,13 +416,13 @@ def test_process_line(line, expected):
 _config_example_1 = """
 # some comment
 num1 = 10
-name="some_string"
+name="somestring"
 null_value = None#some comment
 w_vdw_1 = 1.0
 w_vdw_0 = 0.01
 w_vdw_2 = 1.0
 [headerone]
-name = "the_other-string"
+name = "theotherstring"
 _list = [
     12,
     "foo",
@@ -431,13 +442,13 @@ other = 50
 
 _config_example_dict_1 = {
     "num1": 10,
-    "name": "some_string",
+    "name": "somestring",
     "null_value": None,
     "w_vdw_0": 0.01,
     "w_vdw_1": 1.0,
     "w_vdw_2": 1.0,
     "headerone": {
-        "name": "the_other-string",
+        "name": "theotherstring",
         "_list": [12, "foo", [56, 86]],
         "weights": {
             "val": 1,

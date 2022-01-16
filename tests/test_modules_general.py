@@ -7,6 +7,7 @@ import importlib
 
 import pytest
 
+from haddock import modules_defaults_path
 from haddock.gear.config_reader import read_config
 from haddock.modules import modules_category
 
@@ -26,6 +27,11 @@ def test_config_reader_can_read_defaults(module):
         read_config(module.DEFAULT_CONFIG)
     else:
         assert read_config(module.DEFAULT_CONFIG)
+
+
+def test_general_config(module):
+    """Test general config is readable."""
+    assert read_config(modules_defaults_path)
 
 
 def test_all_defaults_have_the_same_name(module):

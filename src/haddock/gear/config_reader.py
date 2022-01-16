@@ -40,10 +40,19 @@ _main_header_re = re.compile(r'^ *\[(\w+)\]')
 # thanks https://stackoverflow.com/questions/39158902
 _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 
-# https://regex101.com/r/q2fuFl/3
+# string regular expression here matches the expectations of modules' defaults
+# there are no modules defaults that expect any other character. So, if we
+# block it's read from here, avoid also downstream errors.
+# https://regex101.com/r/TRMx0B/1
 _string_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([a-zA-Z0-9_,\-\/\\\.\:]*?)"|'([a-zA-Z0-9_,\-\/\\\.\:]*?)')'''
+    r'''("([a-zA-Z]*?)"|'([a-zA-Z]*?)')'''
+    )
+
+# https://regex101.com/r/OCcP6l/1
+_path_re = re.compile(
+    r'''^ *(\w+) *= *'''
+    r'''("([a-zA-Z0-9_\-\/\\\.]*?)"|'([a-zA-Z0-9_\-\/\\\.]*?)')'''
     )
 
 # https://regex101.com/r/6X4j7n/2
@@ -71,7 +80,7 @@ _false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 class _Path_re:
     def __init__(self):
         """Map to Path regex."""
-        self.re = _string_re
+        self.re = _path_re
 
     def match(self, string):
         """
@@ -86,10 +95,9 @@ class _Path_re:
         group = self.re.match(string)
         if group:
             value = ast.literal_eval(group[2])
-            if value:  # not empty string
+            if value:
                 p = Path(value).resolve()
-                if p.exists():
-                    return group[0], group[1], p.resolve()
+                return group[0], group[1], p.resolve()
 
         # everything else returns None by definition
         return None  # we want to return None to match the re.match()
@@ -308,8 +316,8 @@ def get_module_name(name):
 # methods to parse single line values
 # (regex, func)
 regex_single_line_methods = [
-    (_Path_re(), lambda x: x),
     (_string_re, ast.literal_eval),
+    (_Path_re(), lambda x: x),
     (_number_re, ast.literal_eval),
     (_none_re, lambda x: None),
     (_list_one_liner_re, _eval_list_str),

@@ -1,7 +1,10 @@
-select:
-  default: 400
-  type: integer
-  min: -9999
-  max: 9999
-  hoover: No help yet
-  doc: No help yet
+basic:
+  select:
+    default: 400
+    type: integer
+    min: -9999
+    max: 9999
+    hoover: No help yet
+    doc: No help yet
+intermediate: {}
+guru: {}

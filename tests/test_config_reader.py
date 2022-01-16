@@ -38,7 +38,7 @@ def test_sub_header_re(line, expected):
     'line',
     [
         '[[header]]',
-        'value = "some string"',
+        'value = "some_string"',
         '[header with spaces]',
         '[not.valid]',
         ],
@@ -52,7 +52,7 @@ def test_main_header_re_wrong(line):
     'line',
     [
         '[[header]]',
-        'value = "some string"',
+        'value = "some_string"',
         '[header with spaces]',
         '[not.valid with spaces]',
         '[single]',
@@ -66,7 +66,7 @@ def test_sub_header_re_wrong(line):
 @pytest.mark.parametrize(
     'line,name,value',
     [
-        ('value = "some string"', 'value', '"some string"'),
+        ('value = "some_string"', 'value', '"some_string"'),
         ("value = 'some'", 'value', "'some'"),
         ("var2='other'", 'var2', "'other'"),
         ("var2='other'#somecomment", 'var2', "'other'"),
@@ -88,6 +88,7 @@ def test_string_re(line, name, value):
         'value=1',
         'value=other',
         'value=true',
+        'value=string with spaces',
         'value = ["list"]',
         ],
     )
@@ -149,7 +150,7 @@ def test_none_re(line, name, value):
         'value=1',
         'value=other',
         'value=true',
-        'value="some string"',
+        'value="some_string"',
         'value = ["list"]',
         ],
     )
@@ -404,13 +405,13 @@ def test_process_line(line, expected):
 _config_example_1 = """
 # some comment
 num1 = 10
-name="some string"
+name="some_string"
 null_value = None#some comment
 w_vdw_1 = 1.0
 w_vdw_0 = 0.01
 w_vdw_2 = 1.0
 [headerone]
-name = "the other string"
+name = "the_other-string"
 _list = [
     12,
     "foo",
@@ -430,13 +431,13 @@ other = 50
 
 _config_example_dict_1 = {
     "num1": 10,
-    "name": "some string",
+    "name": "some_string",
     "null_value": None,
     "w_vdw_0": 0.01,
     "w_vdw_1": 1.0,
     "w_vdw_2": 1.0,
     "headerone": {
-        "name": "the other string",
+        "name": "the_other-string",
         "_list": [12, "foo", [56, 86]],
         "weights": {
             "val": 1,

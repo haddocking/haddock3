@@ -41,16 +41,24 @@ _main_header_re = re.compile(r'^ *\[(\w+)\]')
 _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 
 # https://regex101.com/r/q2fuFl/1
-_string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
+_string_re = re.compile(
+    r'''^ *(\w+) *= *'''
+    r'''("([a-zA-Z0-9_,\-\/\\\.\:]*?)"|'([a-zA-Z0-9_,\-\/\\\.\:]*?)')'''
+    )
 
 # https://regex101.com/r/6X4j7n/2
-_number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d+|-?\d+\.?\d*[eE]\d+)(?: |#|$)')  # noqa: #501
+_number_re = re.compile(
+    r'^ *(\w+) *= *'
+    r'(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d+|-?\d+\.?\d*[eE]\d+)(?: |#|$)'
+    )
 
 # https://regex101.com/r/K6yXbe/1
 _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
 # https://regex101.com/r/YCZSAo/1
-_list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')
+_list_one_liner_re = re.compile(
+    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\\\.\:\"\'\[\]]*\])'
+    )
 
 # https://regex101.com/r/bWlaWB/1
 _list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
@@ -257,7 +265,7 @@ def _get_one_line_group(line):
         except Exception:
             continue
 
-    raise NoGroupFoundError('Line does not match any group.')
+    raise NoGroupFoundError(f"Line does not match any group: {line!r}")
 
 
 def _get_list_block(fin):

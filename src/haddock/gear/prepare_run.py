@@ -13,6 +13,7 @@ from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
+from haddock.gear.validations import v_rundir
 from haddock.libs.libutil import (
     make_list_if_string,
     recursive_dict_update,
@@ -78,6 +79,7 @@ def setup_run(workflow_path, restart_from=None):
 
     check_mandatory_argments_are_present(params)
     validate_module_names_are_not_mispelled(params)
+    check_specific_validations(params)
 
     # update default non-mandatory parameters with user params
     params = recursive_dict_update(
@@ -347,3 +349,9 @@ def validate_module_names_are_not_mispelled(params):
                     f"Valid modules are: {', '.join(module_names)}."
                     )
                 raise ValueError(emsg)
+
+
+@with_config_error
+def check_specific_validations(params):
+    """Make specific validations."""
+    v_rundir(params["run_dir"])

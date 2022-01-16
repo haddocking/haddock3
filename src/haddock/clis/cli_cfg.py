@@ -86,7 +86,7 @@ def main(module, explevel):
     else:
         new_config.append(write_params(ycfg[explevel], module, explevel))
 
-    Path("test_new_config.cfg").write_text(os.linesep.join(new_config))
+    Path(f"haddock3_{module}.cfg").write_text(os.linesep.join(new_config))
 
     return
 

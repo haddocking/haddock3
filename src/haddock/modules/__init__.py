@@ -1,10 +1,12 @@
 """HADDOCK3 modules."""
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
-from haddock import log, modules_defaults_path
+from haddock import config_expert_levels, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import read_from_yaml, working_directory
@@ -34,10 +36,44 @@ values are their categories. Categories are the modules parent folders."""
 non_mandatory_general_parameters_defaults = read_config(modules_defaults_path)
 
 
+def read_from_yaml_config(cfg_file):
+    """Read config from yaml by collapsing the expert levels."""
+    ycfg = read_from_yaml(cfg_file)
+    # there's no need to make a deep copy here, a shallow copy suffices.
+    cfg = {}
+    for level in config_expert_levels:
+        cfg.update(flat_yaml(ycfg[level]))
+
+    return cfg
+
+
+def flat_yaml(cfg):
+    """Flat a yaml config."""
+    new = {}
+    for param, values in cfg.items():
+        try:
+            new[param] = values["default"]
+        except KeyError:
+            new[param] = flat_yaml(values)
+    return new
+
+
 config_readers = {
-    "yml": read_from_yaml,
-    "cfg": read_config,
+    ".yml": read_from_yaml_config,
+    ".cfg": read_config,
     }
+
+
+@contextmanager
+def _not_valid_config():
+    try:
+        yield
+    except KeyError as err:
+        emsg = (
+            "The configuration file extension is not supported. "
+            f"Supported types are {', '.join(config_readers.keys())}."
+            )
+        raise ConfigurationError(emsg) from err
 
 
 class BaseHaddockModule(ABC):
@@ -112,7 +148,9 @@ class BaseHaddockModule(ABC):
             raise TypeError(_msg)
 
         if update_from_cfg_file:
-            params = read_config(update_from_cfg_file)
+            with _not_valid_config():
+                extension = Path(update_from_cfg_file).suffix
+                params = config_readers[extension](update_from_cfg_file)
 
         # the updating order is relevant
         _n = recursive_dict_update(

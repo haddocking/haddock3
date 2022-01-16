@@ -18,6 +18,8 @@ modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.cfg")
 
 FCC_path = Path(haddock3_source_path.parent, 'fcc')
 
+config_expert_levels = ("basic", "intermediate", "guru")
+
 # version
 version = "3.0.0"
 v_major, v_minor, v_patch = version.split('.')

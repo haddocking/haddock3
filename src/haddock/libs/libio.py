@@ -8,7 +8,7 @@ import yaml
 
 def read_from_yaml(yaml_file):
     """Read a configuration from a yaml file."""
-    with open(cfg, 'r') as fin:
+    with open(yaml_file, 'r') as fin:
         ycfg = yaml.safe_load(fin)
     return ycfg
 

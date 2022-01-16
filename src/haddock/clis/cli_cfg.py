@@ -15,6 +15,7 @@ import os
 import sys
 from pathlib import Path
 
+from haddock import config_expert_levels
 from haddock.lib.libio import read_from_yaml
 from haddock.modules import modules_category
 
@@ -78,7 +79,7 @@ def main(module, explevel):
     new_config.append(f"[{module}]")
 
     if explevel == "all":
-        for level in ("basic", "intermediate", "guru"):
+        for level in config_expert_levels:
             new_config.append(write_params(ycfg[level], module, level))
 
     else:

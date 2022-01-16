@@ -15,8 +15,7 @@ import os
 import sys
 from pathlib import Path
 
-import yaml
-
+from haddock.lib.libio import read_from_yaml
 from haddock.modules import modules_category
 
 
@@ -73,8 +72,7 @@ def main(module, explevel):
     module_lib = importlib.import_module(module_name)
     cfg = module_lib.DEFAULT_CONFIG
 
-    with open(cfg, 'r') as fin:
-        ycfg = yaml.safe_load(fin)
+    ycfg = read_from_yaml(cfg)
 
     new_config = []
     new_config.append(f"[{module}]")

@@ -7,7 +7,7 @@ from haddock import log as log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.config_reader import read_config
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libio import working_directory
+from haddock.libs.libio import read_from_yaml, working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
@@ -38,6 +38,12 @@ general_parameters_affecting_modules = {
 specifically. Therefore, they should be considered as part of the "default"
 module's parameters. Usually, this set is used to filter parameters during
 the run prepraration phase. See, `gear.prepare_run`."""
+
+
+config_readers = {
+    "yml": read_from_yaml,
+    "cfg": read_config,
+    }
 
 
 class BaseHaddockModule(ABC):

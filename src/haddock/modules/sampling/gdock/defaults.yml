@@ -3,7 +3,7 @@ basic:
     default: ''
     type: path
     length: 9999
-    hoover: No help yet
+    hover: No help yet
     doc: No help yet
 intermediate: {}
 guru: {}

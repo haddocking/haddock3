@@ -9,14 +9,12 @@ USAGE:
     $ haddock3-cfg -m MODULE -l LEVEL
 """
 import argparse
-import collections
 import importlib
-import os
 import sys
 from pathlib import Path
 
-from haddock import config_expert_levels
-from haddock.lib.libio import read_from_yaml
+from haddock.gear.yaml2cfg import yaml2cfg_text_with_explevels
+from haddock.libs.libio import read_from_yaml
 from haddock.modules import modules_category
 
 
@@ -75,57 +73,19 @@ def main(module, explevel):
 
     ycfg = read_from_yaml(cfg)
 
-    new_config = []
-    new_config.append(f"[{module}]")
-
     if explevel == "all":
-        for level in config_expert_levels:
-            new_config.append(write_params(ycfg[level], module, level))
+        new_config = yaml2cfg_text_with_explevels(ycfg, module)
 
     else:
-        new_config.append(write_params(ycfg[explevel], module, explevel))
+        new_config = yaml2cfg_text_with_explevels(
+            ycfg,
+            module,
+            expert_levels=[explevel],
+            )
 
-    Path(f"haddock3_{module}.cfg").write_text(os.linesep.join(new_config))
+    Path(f"haddock3_{module}.cfg").write_text(new_config)
 
-    return
-
-
-def write_params(cfg, module, subtitle=None):
-    """Write config parameters with comments."""
-    params = []
-
-    if subtitle:
-        params.append(f"# {subtitle}")
-
-    for param_name, param in cfg.items():
-
-        if isinstance(param, collections.abc.Mapping) \
-                and "default" not in param:
-
-            params.append("")  # give extra space
-            curr_module = f"{module}.{param_name}"
-            params.append(f"[{curr_module}]")
-            params.append(write_params(param, module=curr_module))
-
-        else:
-
-            comment = []
-            comment.append(param["hoover"])
-            if "min" in param:
-                comment.append(f"$min {param['min']} $max {param['max']}")
-            if "length" in param:
-                comment.append(f"$maxlen {param['length']}")
-
-            params.append("{} = {!r}  # {}".format(
-                param_name,
-                param["default"],
-                " ".join(comment),
-                ))
-
-            if param["type"] == "list":
-                params.append(os.linesep)
-
-    return os.linesep.join(params)
+    return 0
 
 
 if __name__ == "__main__":

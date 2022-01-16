@@ -8,13 +8,8 @@ import importlib
 import pytest
 
 from haddock.core.exceptions import ConfigurationError
-from haddock.modules import (
-    _not_valid_config,
-    config_readers,
-    flat_complex_cfg,
-    modules_category,
-    read_from_yaml_config,
-    )
+from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.modules import _not_valid_config, config_readers, modules_category
 
 
 @pytest.fixture(params=modules_category.items())
@@ -37,50 +32,6 @@ def test_config_reader_can_read_defaults(module):
 def test_all_defaults_have_the_same_name(module):
     """Test all default configuration files have the same name."""
     assert module.DEFAULT_CONFIG.name == 'defaults.yml'
-
-
-complex_cfg = {
-    "param1": {
-        "default": 1,
-        "other": None,
-        "others": [None, None],
-        },
-    "param2": {
-        "default": 2,
-        "other": None,
-        "others": [None, None],
-        },
-    "param3": {
-        "param4": {
-            "default": 4,
-            "other": None,
-            "others": [None, None],
-            },
-        },
-    "param5": {
-        "param6": {
-            "param7": {
-                "default": 7,
-                "other": None,
-                "others": [None, None],
-                },
-            },
-        },
-    }
-
-
-complex_cfg_simplified = {
-    "param1": 1,
-    "param2": 2,
-    "param3": {"param4": 4},
-    "param5": {"param6": {"param7": 7}},
-    }
-
-
-def test_flat_complex_config_1():
-    """Test if complex config is flatten properly."""
-    result = flat_complex_cfg(complex_cfg)
-    assert result == complex_cfg_simplified
 
 
 def test_config_readers_keys():

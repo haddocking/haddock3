@@ -1,0 +1,274 @@
+basic:
+  autohis:
+    default: true
+    type: bool
+    hoover: No help yet
+    doc: No help yet
+intermediate:
+  delenph:
+    default: true
+    type: bool
+    hoover: No help yet
+    doc: No help yet
+  randorien:
+    default: true
+    type: bool
+    hoover: No help yet
+    doc: No help yet
+  log_level:
+    default: verbose
+    type: string
+    length: 9999
+    hoover: No help yet
+    doc: No help yet
+  iniseed:
+    default: 917
+    type: integer
+    min: -9999
+    max: 9999
+    hoover: No help yet
+    doc: No help yet
+  ligand_param_fname:
+    default: ''
+    type: path
+    length: 9999
+    hoover: No help yet
+    doc: No help yet
+  ligand_top_fname:
+    default: ''
+    type: path
+    length: 9999
+    hoover: No help yet
+    doc: No help yet
+guru:
+  limit:
+    default: true
+    type: bool
+    hoover: No help yet
+    doc: No help yet
+  tolerance:
+    default: 0
+    type: integer
+    min: -9999
+    max: 9999
+    hoover: No help yet
+    doc: No help yet
+  input:
+    mol1:
+      prot_segid:
+        default: A
+        type: string
+        length: 9999
+        hoover: No help yet
+        doc: No help yet
+      fix_origin:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      dna:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      shape:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      cg:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      cyclicpept:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      nhisd:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_1:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_2:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_3:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_4:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_5:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_6:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_7:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_8:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_9:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_10:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+    mol2:
+      prot_segid:
+        default: B
+        type: string
+        length: 9999
+        hoover: No help yet
+        doc: No help yet
+      fix_origin:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      dna:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      shape:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      cg:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      cyclicpept:
+        default: false
+        type: bool
+        hoover: No help yet
+        doc: No help yet
+      nhisd:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_1:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_2:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_3:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_4:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_5:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_6:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_7:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_8:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_9:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet
+      hisd_10:
+        default: 0
+        type: integer
+        min: -9999
+        max: 9999
+        hoover: No help yet
+        doc: No help yet

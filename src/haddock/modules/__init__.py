@@ -4,12 +4,13 @@ from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
-from haddock import config_expert_levels, log, modules_defaults_path
+from haddock import log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
+from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libio import read_from_yaml, working_directory
+from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
@@ -34,29 +35,6 @@ values are their categories. Categories are the modules parent folders."""
 # extract the parameters it needs.
 # the config file is in modules/defaults.cfg
 non_mandatory_general_parameters_defaults = read_config(modules_defaults_path)
-
-
-def read_from_yaml_config(cfg_file):
-    """Read config from yaml by collapsing the expert levels."""
-    ycfg = read_from_yaml(cfg_file)
-    # there's no need to make a deep copy here, a shallow copy suffices.
-    cfg = {}
-    for level in config_expert_levels:
-        cfg.update(flat_complex_cfg(ycfg[level]))
-
-    return cfg
-
-
-def flat_complex_cfg(cfg):
-    """Flat a yaml config."""
-    new = {}
-    for param, values in cfg.items():
-        try:
-            new[param] = values["default"]
-        except KeyError:
-            new[param] = flat_complex_cfg(values)
-    return new
-
 
 config_readers = {
     ".yml": read_from_yaml_config,

@@ -1,5 +1,6 @@
 """CNS scripts util functions."""
 import itertools
+import math
 from functools import partial
 from os import linesep
 from pathlib import Path
@@ -63,7 +64,8 @@ def filter_empty_vars(v):
         If the type of `value` is not supported by CNS.
     """
     cases = (
-        (lambda x: isinstance(x, str), true),
+        (lambda x: math.isnan(x), false),
+        (lambda x: isinstance(x, str) and bool(x), true),
         (lambda x: isinstance(x, bool), true),  # it should return True
         (lambda x: isinstance(x, Path), true),
         (lambda x: type(x) in (int, float), true),
@@ -86,8 +88,8 @@ def load_workflow_params(
     """
     Write the values at the header section.
 
-    "Empty variables" are ignored. These are defined accoring to
-    :func:`filter_empty_vars`.
+    "Empty variables" are ignored and NOT written to the CNS file. These
+    are defined accoring to :func:`filter_empty_vars`.
 
     Parameters
     ----------
@@ -129,6 +131,7 @@ def write_eval_line(param, value, eval_line="eval (${}={})"):
         return eval_line.format(param, value)
 
     elif isinstance(value, (int, float)):
+        value = '"' + str(value) + '"'
         return eval_line.format(param, value)
 
     else:

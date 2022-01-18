@@ -7,7 +7,7 @@ from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-from haddock import contact_us, haddock3_source_path, log
+from haddock import EmptyPath, contact_us, haddock3_source_path, log
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
@@ -277,13 +277,18 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
-                # path is created here to avoid creating empty folders
-                # for those modules without '_fname' parameters
-                pf = Path(data_dir, end_path)
-                pf.mkdir(exist_ok=True)
-                name = Path(value).name
-                shutil.copy(value, Path(pf, name))
-                new_mp[module][parameter] = Path(rel_data_dir, end_path, name)
+                pv = Path(value)
+                name = pv.name
+                if name:
+                    # path is created here to avoid creating empty folders
+                    # for those modules without '_fname' parameters
+                    pf = Path(data_dir, end_path)
+                    pf.mkdir(exist_ok=True)
+                    shutil.copy(value, Path(pf, name))
+                    _p = Path(rel_data_dir, end_path, name)
+                    new_mp[module][parameter] = _p
+                else:
+                    new_mp[module][parameter] = EmptyPath()
 
     return new_mp
 

@@ -74,6 +74,7 @@ def filter_empty_vars(v):
     cases = (
         (lambda x: _is_nan(x), false),
         (lambda x: isinstance(x, str) and bool(x), true),
+        (lambda x: isinstance(x, str) and not bool(x), false),
         (lambda x: isinstance(x, bool), true),  # it should return True
         (lambda x: isinstance(x, Path), true),
         (lambda x: type(x) in (int, float), true),

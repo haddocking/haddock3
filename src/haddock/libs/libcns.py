@@ -143,7 +143,6 @@ def write_eval_line(param, value, eval_line="eval (${}={})"):
         return eval_line.format(param, '""')
 
     elif isinstance(value, (int, float)):
-        value = '"' + str(value) + '"'
         return eval_line.format(param, value)
 
     else:

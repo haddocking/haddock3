@@ -73,7 +73,7 @@ def filter_empty_vars(v):
     """
     cases = (
         (lambda x: _is_nan(x), false),
-        (lambda x: isinstance(x, str), true),
+        (lambda x: isinstance(x, str) and bool(x), true),
         (lambda x: isinstance(x, bool), true),  # it should return True
         (lambda x: isinstance(x, Path), true),
         (lambda x: type(x) in (int, float), true),
@@ -139,6 +139,7 @@ def write_eval_line(param, value, eval_line="eval (${}={})"):
         return eval_line.format(param, value)
 
     elif isinstance(value, (int, float)):
+        value = '"' + str(value) + '"'
         return eval_line.format(param, value)
 
     else:

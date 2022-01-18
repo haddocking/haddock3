@@ -20,9 +20,6 @@ end if
 !==================================================================!
 
 evaluate ($saprotocol.iniseed=$iniseed)
-evaluate ($saprotocol.timestep=$timestep)
-evaluate ($saprotocol.fbeta=100)
-evaluate ($saprotocol.mass=100)
 
 evaluate ($ini_count    =1)
 evaluate ($w_vdw        =$w_vdw )
@@ -233,9 +230,9 @@ if ($data.ranair eq true) then
 end if
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
-evaluate ($data.kcont=$kcont)
 evaluate ($data.surfrest=$surfrest)
 evaluate ($data.ksurf=$ksurf)
+evaluate ($data.kcont=$kcont)
 
 !Electrostatics:
 evaluate ($Data.flags.dihed =$dihedflag)
@@ -510,7 +507,7 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     do (harm = 0)  (attribute store5 = $nchain1) 
 end loop nloop1
 
-minimize powell nstep=200 drop=10 end
+minimize powell nstep=$nemsteps drop=10 end
 
 ! second round of minimization with weak harmonic restraints on non interface backbone atoms
 do (harm = 0)  (all)
@@ -522,7 +519,7 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     do (harm = 0)  (attribute store5 = $nchain1) 
 end loop nloop1
 
-minimize powell nstep=200 drop=10 end
+minimize powell nstep=$nemsteps drop=10 end
 
 ! final minimization without harmonic restraints
 

@@ -303,6 +303,7 @@ def get_module_name(name):
 # (regex, func)
 regex_single_line_methods = [
     (_Path_re(), lambda x: x),
+    (_nan_re, lambda x: float('nan')),
     (_string_re, ast.literal_eval),
     (_number_re, ast.literal_eval),
     (_none_re, lambda x: None),

@@ -22,7 +22,8 @@ FCC_path = Path(haddock3_source_path.parent, 'fcc')
 class EmptyPath:
     """Define the type EmptyPath."""
 
-    pass
+    def __bool__(self):
+        return False
 
 
 # version

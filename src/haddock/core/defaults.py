@@ -14,6 +14,8 @@ if not cns_exec.exists():
         )
     sys.exit()
 
+print(cns_exec)
+
 # Module input and generated data will be stored in folder starting by
 #  this prefix
 MODULE_PATH_NAME = "step_"

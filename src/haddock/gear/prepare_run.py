@@ -2,6 +2,7 @@
 import importlib
 import shutil
 import sys
+from collections import Counter
 from contextlib import contextmanager
 from copy import deepcopy
 from functools import wraps
@@ -172,10 +173,13 @@ def validate_modules_params(modules_params):
         if not defaults:
             return
 
+        blocks = get_blocks(defaults)
+        block_params = read_blocks(blocks, args)
+
         diff = set(args.keys()) \
             - set(defaults.keys()) \
             - set(config_mandatory_general_parameters) \
-            - set(non_mandatory_general_parameters_defaults.keys())
+            - set(non_mandatory_general_parameters_defaults.keys()) - block_params
 
         if diff:
             _msg = (
@@ -352,3 +356,89 @@ def validate_module_names_are_not_mispelled(params):
                     f"Valid modules are: {', '.join(module_names)}."
                     )
                 raise ValueError(emsg)
+
+
+# reading parameter blocks
+def get_blocks(config):
+    """some parameter are separated by underscores.
+
+    Block parameters follow the rule:
+
+    - part1_something1_1
+    - part1_something2_1
+    - part1_something3_1
+    - part1_something4_1
+
+    We want to know:
+        - part1
+        - how many somethings exist (this defined the size of the block)
+        - _1, defines the number of the block
+
+    """
+    #blocks = {}
+    splitted = (parameter.split("_") for parameter in config)
+    parts = (_parts for _parts in splitted if len(_parts) > 2 and _parts[-1].isdigit())
+
+    blocks = {}
+    for p in parts:
+        new = blocks.setdefault((p[0], p[-1]), {})
+        new.setdefault("counts", 0)
+        new["counts"] += 1
+        new.setdefault("mid", set())
+        new["mid"].add("_".join(p[1:-1]))
+
+    final_blocks = {k: v["mid"] for k, v in blocks.items() if v["counts"] > 1}
+    return final_blocks
+
+
+def read_blocks(eblocks, params):
+    """."""
+    pblocks = get_blocks(params)
+
+    enames = [_[0] for _ in eblocks]
+    new = set()
+
+    for block in pblocks:
+
+        if block[0] not in enames:
+            emsg = (
+                f"There parameter block {block!r} "
+                "is not a valid expandable parameter.")
+            raise ConfigurationError(emsg)
+
+        diff = pblocks[block].difference(eblocks[(block[0], "1")])
+        if diff:
+            emsg = (
+                f"These parameters do not belong to the block '{block[0]}_*_{block[1]}': "
+                f"{', '.join(diff)}"
+                )
+            raise ConfigurationError(emsg)
+
+        num_found = len(pblocks[block])  # len of the set of elements
+        num_expected = len(eblocks[(block[0], "1")])
+
+        if num_found < num_expected:
+            emsg = (
+                f"The parameter block '{block[0]}_*_{block[1]}' expects {num_expected} "
+                f"parameters, but only {num_found} are present in the configuration "
+                "file."
+                )
+            raise ConfigurationError(emsg)
+
+        if num_found > num_expected:
+            emsg = (
+                f"The parameter block {block!r} expects {num_expected} "
+                f"parameters, but {num_found} are present in the configuration "
+                "file."
+                )
+            raise ConfigurationError(emsg)
+
+        for p in params:
+            try:
+                pname, *_, pidx = p.split("_")
+            except ValueError:
+                continue
+            if pname == block[0] and pidx == block[-1]:
+                new.add(p)
+
+    return new

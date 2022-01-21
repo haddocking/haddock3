@@ -394,6 +394,7 @@ def get_blocks(config):
 def read_blocks(eblocks, params):
     """."""
     pblocks = get_blocks(params)
+    eblocks = {k: v for k, v in eblocks.items() if k[1] == "1"}
 
     enames = [_[0] for _ in eblocks]
     new = set()

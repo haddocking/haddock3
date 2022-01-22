@@ -23,9 +23,9 @@ while ($nchain1 < $data.ncomponents) loop nloop1
         evaluate($nf=0)
         while ($nf < $nfle_$nchain1) loop Xfflex
             evaluate($nf=$nf + 1)
-            do (store5 = $nchain1) ( resid $start_fle_$nchain1_$nf : $end_fle_$nchain1_$nf
+            do (store5 = $nchain1) ( resid $fle_start_$nchain1_$nf : $fle_end_$nchain1_$nf
                                      and segid $Toppar.prot_segid_$nchain1 )
-            display FULLY FLEXIBLE SEGMENT NR $nf FROM $start_fle_$nchain1_$nf TO $end_fle_$nchain1_$nf
+            display FULLY FLEXIBLE SEGMENT NR $nf FROM $fle_start_$nchain1_$nf TO $fle_end_$nchain1_$nf
         end loop Xfflex
     end if
 end loop nloop1

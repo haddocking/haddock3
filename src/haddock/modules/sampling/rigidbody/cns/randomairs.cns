@@ -104,9 +104,9 @@ while ($nchain1 < $data.ncomponents) loop nloop1
         display RANDOM AIRS SAMPLED FROM SEGMENTS FOR MOLECULE $nchain1
         while ($fcounter < $numseg) loop Xflex
             evaluate($fcounter=$fcounter + 1)
-            do (store5 = $nchain1) ( resid $Toppar.start_rair_$nchain1_$fcounter : $Toppar.end_rair_$nchain1_$fcounter
+            do (store5 = $nchain1) ( resid $Toppar.rair_start_$nchain1_$fcounter : $Toppar.rair_end_$nchain1_$fcounter
                                      and segid $Toppar.prot_segid_$nchain1)
-            display FLEXIBLE SEGMENT NR $fcounter FROM $Toppar.start_rair_$nchain1_$fcounter TO $Toppar.end_rair_$nchain1_$fcounter
+            display FLEXIBLE SEGMENT NR $fcounter FROM $Toppar.rair_start_$nchain1_$fcounter TO $Toppar.rair_end_$nchain1_$fcounter
         end loop Xflex
     end if
 end loop nloop1

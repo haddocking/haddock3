@@ -30,12 +30,12 @@ while ($nchain1 < $data.ncomponents) loop nloop1
             display FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1
             while ($nf < $nseg_$nchain1) loop Xflex
                 evaluate($nf=$nf + 1)
-                do (store5 = $nchain1) ( resid $start_seg_$nchain1_$nf : $end_seg_$nchain1_$nf
+                do (store5 = $nchain1) ( resid $seg_start_$nchain1_$nf : $seg_end_$nchain1_$nf
                                          and segid $Toppar.prot_segid_$nchain1
                                          and not(name CA or name BB or name C or name N or name O) )
-                do (store7 = $nchain1) ( resid $start_seg_$nchain1_$nf : $end_seg_$nchain1_$nf
+                do (store7 = $nchain1) ( resid $seg_start_$nchain1_$nf : $seg_end_$nchain1_$nf
                                          and segid $Toppar.prot_segid_$nchain1)
-                display FLEXIBLE SIDE-CHAINS SEGMENT NR $nf FROM $start_seg_$nchain1_$nf TO $end_seg_$nchain1_$nf
+                display FLEXIBLE SIDE-CHAINS SEGMENT NR $nf FROM $seg_start_$nchain1_$nf TO $seg_end_$nchain1_$nf
             end loop Xflex
         end if
     end if
@@ -52,11 +52,11 @@ while ($nchain1 < $data.ncomponents) loop nloop2
         evaluate($nf=0)
         while ($nf < $nfle_$nchain1) loop Xfflex
             evaluate($nf=$nf + 1)
-            do (store5 = $nchain1) ( resid $start_fle_$nchain1_$nf : $end_fle_$nchain1_$nf
+            do (store5 = $nchain1) ( resid $fle_start_$nchain1_$nf : $fle_end_$nchain1_$nf
                                      and segid $Toppar.prot_segid_$nchain1)
-            do (store7 = $nchain1) ( resid $start_fle_$nchain1_$nf : $end_fle_$nchain1_$nf
+            do (store7 = $nchain1) ( resid $fle_start_$nchain1_$nf : $fle_end_$nchain1_$nf
                                      and segid $Toppar.prot_segid_$nchain1)
-            display FULLY FLEXIBLE SEGMENT NR $nf FROM $start_fle_$nchain1_$nf TO $end_fle_$nchain1_$nf
+            display FULLY FLEXIBLE SEGMENT NR $nf FROM $fle_start_$nchain1_$nf TO $fle_end_$nchain1_$nf
         end loop Xfflex
     end if
 end loop nloop2

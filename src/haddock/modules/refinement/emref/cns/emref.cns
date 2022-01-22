@@ -56,8 +56,8 @@ while ($nmol <= $data.ncomponents) loop mol
     evaluate ($toppar.nseg_$nmol = $nseg_$nmol)
     evaluate ($nseg = 1)
     while ($nseg <=$toppar.nseg_$nmol) loop seg
-        evaluate ($toppar.start_seg_$nmol_$nseg = $start_seg_$nmol_$nseg)
-        evaluate ($toppar.end_seg_$nmol_$nseg = $end_seg_$nmol_$nseg)
+        evaluate ($toppar.seg_start_$nmol_$nseg = $seg_start_$nmol_$nseg)
+        evaluate ($toppar.seg_end_$nmol_$nseg = $seg_end_$nmol_$nseg)
         evaluate ($nseg = $nseg + 1)
     end loop seg
 
@@ -65,8 +65,8 @@ while ($nmol <= $data.ncomponents) loop mol
     evaluate ($toppar.nfle_$nmol = $nfle_$nmol)
     evaluate ($nfle = 1)
     while ($nfle <=$toppar.nfle_$nmol) loop fle
-        evaluate ($toppar.start_fle_$nmol_$nfle = $start_fle_$nmol_$nfle)
-        evaluate ($toppar.end_fle_$nmol_$nfle = $end_fle_$nmol_$nfle)
+        evaluate ($toppar.fle_start_$nmol_$nfle = $fle_start_$nmol_$nfle)
+        evaluate ($toppar.fle_end_$nmol_$nfle = $fle_end_$nmol_$nfle)
         evaluate ($nfle = $nfle + 1)
     end loop fle
     evaluate ($nmol = $nmol + 1)

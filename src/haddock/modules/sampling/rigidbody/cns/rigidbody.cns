@@ -46,7 +46,6 @@ evaluate ($w_zres       =$w_zres)
 evaluate ($w_bsa        =$w_bsa)
 evaluate ($w_deint      =$w_deint)
 evaluate ($w_desolv     =$w_desolv)
-evaluate ($anastruc     =$anastruc)
 evaluate ($w_lcc        =$w_lcc)
 
 

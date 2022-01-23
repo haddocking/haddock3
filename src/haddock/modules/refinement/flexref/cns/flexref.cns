@@ -75,20 +75,20 @@ evaluate ($nmol=1)
 while ($nmol <= $data.ncomponents) loop mol
 
     !semi flexible segments
-    evaluate ($toppar.nseg_$nmol = $nseg_$nmol)
+    evaluate ($toppar.nseg$nmol = $nseg$nmol)
     evaluate ($nseg = 1)
-    while ($nseg <=$toppar.nseg_$nmol) loop seg
-        evaluate ($toppar.seg_start_$nmol_$nseg = $seg_start_$nmol_$nseg)
-        evaluate ($toppar.seg_end_$nmol_$nseg = $seg_end_$nmol_$nseg)
+    while ($nseg <=$toppar.nseg$nmol) loop seg
+        evaluate ($toppar.seg$nmol_start_$nseg = $seg$nmol_start_$nseg)
+        evaluate ($toppar.seg$nmol_end_$nseg = $seg$nmol_end_$nseg)
         evaluate ($nseg = $nseg + 1)
     end loop seg
 
     !fully flexible segments
-    evaluate ($toppar.nfle_$nmol = $nfle_$nmol)
+    evaluate ($toppar.nfle$nmol = $nfle$nmol)
     evaluate ($nfle = 1)
-    while ($nfle <=$toppar.nfle_$nmol) loop fle
-        evaluate ($toppar.fle_start_$nmol_$nfle = $fle_start_$nmol_$nfle)
-        evaluate ($toppar.fle_end_$nmol_$nfle = $fle_end_$nmol_$nfle)
+    while ($nfle <=$toppar.nfle$nmol) loop fle
+        evaluate ($toppar.fle$nmol_start_$nfle = $fle$nmol_start_$nfle)
+        evaluate ($toppar.fle$nmol_end_$nfle = $fle$nmol_end_$nfle)
         evaluate ($nfle = $nfle + 1)
     end loop fle
     evaluate ($nmol = $nmol + 1)
@@ -741,7 +741,14 @@ evaluate ($eair= $noe)
 evaluate ($esym = 0.0)
 evaluate ($ncs = 0.0)
 evaluate ($zhar = 0.0)
-if ($Data.flags.sym  eq true) then
+evaluate ($rms_test_noe = 0.0)
+evaluate ($violations_test_noe = 0)
+evaluate ($esym = 0.0)
+evaluate ($ncs = 0.0)
+evaluate ($zhar = 0.0)
+evaluate ($rms_test_noe = 0.0)
+evaluate ($violations_test_noe = 0)
+if ($Data.flags.sym eq true) then
     ! calculatee first the symmetry energy
     noe reset nres= 1200000 end
     @MODULE:symmultimer.cns
@@ -758,22 +765,29 @@ if ($Data.flags.sym  eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
+    set message=normal echo=on end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
-end if
-
-print threshold=0.3 noe
-evaluate ($rms_noe=$result)
-evaluate ($violations_noe=$violations)
-if ($Data.noecv eq true) then
-    evaluate ($rms_test_noe=$test_rms)
-    evaluate ($violations_test_noe=$test_violations)
+    noe
+        scale dist $unamb_scale
+        scale ambi $ambig_scale
+        scale hbon $hbond_scale
+    end
 else
-    evaluate ($rms_test_noe=0.0)
-    evaluate ($violations_test_noe=0)
-end if
+    if ($Data.noecv eq true) then
+        set message=on echo=on end
+        noe cv $ncvbest ? end
+    end if
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.noecv eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
+    end if
+end if 
 
-if ($Data.dnarest eq true) then
+if ($Data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns
 end if
 

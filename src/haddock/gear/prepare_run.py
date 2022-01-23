@@ -2,7 +2,6 @@
 import importlib
 import shutil
 import sys
-from collections import Counter
 from contextlib import contextmanager
 from copy import deepcopy
 from functools import wraps
@@ -179,12 +178,13 @@ def validate_modules_params(modules_params):
         diff = set(args.keys()) \
             - set(defaults.keys()) \
             - set(config_mandatory_general_parameters) \
-            - set(non_mandatory_general_parameters_defaults.keys()) - block_params
+            - set(non_mandatory_general_parameters_defaults.keys()) \
+            - block_params
 
         if diff:
             _msg = (
                 'The following parameters do not match any expected '
-                f'parameters for module {module_name!r}: {diff}.'
+                f'parameters for module {module_name!r}: {", ".join(diff)}.'
                 )
             raise ConfigurationError(_msg)
 
@@ -360,7 +360,7 @@ def validate_module_names_are_not_mispelled(params):
 
 # reading parameter blocks
 def get_blocks(config):
-    """some parameter are separated by underscores.
+    """Get parameter blocks.
 
     Block parameters follow the rule:
 
@@ -375,9 +375,12 @@ def get_blocks(config):
         - _1, defines the number of the block
 
     """
-    #blocks = {}
     splitted = (parameter.split("_") for parameter in config)
-    parts = (_parts for _parts in splitted if len(_parts) > 2 and _parts[-1].isdigit())
+    parts = (
+        _parts
+        for _parts in splitted
+        if len(_parts) > 2 and _parts[-1].isdigit()
+        )
 
     blocks = {}
     for p in parts:
@@ -403,15 +406,15 @@ def read_blocks(eblocks, params):
 
         if block[0] not in enames:
             emsg = (
-                f"There parameter block {block!r} "
+                f"The parameter block '{block[0]}_*_{block[1]}' "
                 "is not a valid expandable parameter.")
             raise ConfigurationError(emsg)
 
         diff = pblocks[block].difference(eblocks[(block[0], "1")])
         if diff:
             emsg = (
-                f"These parameters do not belong to the block '{block[0]}_*_{block[1]}': "
-                f"{', '.join(diff)}"
+                "These parameters do not belong to the block "
+                f"'{block[0]}_*_{block[1]}': {', '.join(diff)}."
                 )
             raise ConfigurationError(emsg)
 
@@ -420,9 +423,9 @@ def read_blocks(eblocks, params):
 
         if num_found < num_expected:
             emsg = (
-                f"The parameter block '{block[0]}_*_{block[1]}' expects {num_expected} "
-                f"parameters, but only {num_found} are present in the configuration "
-                "file."
+                f"The parameter block '{block[0]}_*_{block[1]}' expects "
+                f"{num_expected} parameters, but only {num_found} are present "
+                "in the configuration file."
                 )
             raise ConfigurationError(emsg)
 

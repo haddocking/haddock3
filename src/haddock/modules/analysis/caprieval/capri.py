@@ -43,7 +43,7 @@ PROT_RES = [
     "TRP",
     "TYR",
     "VAL",
-    ]
+]
 
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
@@ -66,27 +66,29 @@ DNA_ATOMS = [
     "N3",
     "C4",
     "O6",
-    ]
+]
 
 
 class CAPRI:
     """CAPRI class."""
 
-    def __init__(self,
-                 reference,
-                 model_list,
-                 receptor_chain,
-                 ligand_chain,
-                 aln_method,
-                 path,
-                 **params):
+    def __init__(
+        self,
+        reference,
+        model_list,
+        receptor_chain,
+        ligand_chain,
+        aln_method,
+        path,
+        **params,
+    ):
         self.reference = reference
         self.model_list = []
         self.irmsd_dic = {}
         self.lrmsd_dic = {}
         self.ilrmsd_dic = {}
         self.fnat_dic = {}
-        self.atoms = get_atoms(model_list)
+        self.atoms = get_atoms(model_list + [reference])
         self.r_chain = receptor_chain
         self.l_chain = ligand_chain
         self.score_dic = {}
@@ -114,12 +116,12 @@ class CAPRI:
 
         # Load interface coordinates
         ref_coord_dic, _ = self.load_coords(
-            self.reference, ref_interface_resdic, match=False)
+            self.reference, ref_interface_resdic, match=False
+        )
 
         for model in self.model_list:
 
-            mod_coord_dic, _ = self.load_coords(
-                model, ref_interface_resdic, match=True)
+            mod_coord_dic, _ = self.load_coords(model, ref_interface_resdic, match=True)
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -196,8 +198,8 @@ class CAPRI:
             P = P - self.centroid(P)
 
             # get receptor coordinates
-            Q_r = Q[r_start:r_end - 1]
-            P_r = P[r_start:r_end - 1]
+            Q_r = Q[r_start : r_end - 1]
+            P_r = P[r_start : r_end - 1]
 
             # Center receptors and get rotation matrix
             # Q_r = Q_r - self.centroid(Q_r)
@@ -217,8 +219,8 @@ class CAPRI:
             # write_coords('model.pdb', P)
 
             # Identify the ligand coordinates
-            Q_l = Q[l_start:l_end - 1]
-            P_l = P[l_start:l_end - 1]
+            Q_l = Q[l_start : l_end - 1]
+            P_l = P[l_start : l_end - 1]
 
             # write_coords('ref_l.pdb', Q_l)
             # write_coords('model_l.pdb', P_l)
@@ -243,7 +245,7 @@ class CAPRI:
 
         ref_int_coord_dic, _ = self.load_coords(
             self.reference, ref_interface_resdic, match=False
-            )
+        )
 
         for model in self.model_list:
 
@@ -251,7 +253,7 @@ class CAPRI:
 
             mod_int_coord_dic, _ = self.load_coords(
                 model, ref_interface_resdic, match=True
-                )
+            )
 
             # write_coord_dic('ref.pdb', ref_int_coord_dic)
             # write_coord_dic('model.pdb', mod_int_coord_dic)
@@ -259,8 +261,7 @@ class CAPRI:
             # find atoms present in both interfaces
             Q_int = []
             P_int = []
-            for k in sorted(ref_int_coord_dic.keys()
-                            & mod_int_coord_dic.keys()):
+            for k in sorted(ref_int_coord_dic.keys() & mod_int_coord_dic.keys()):
                 ref_xyz = ref_int_coord_dic[k]
                 mod_xyz = mod_int_coord_dic[k]
 
@@ -336,8 +337,8 @@ class CAPRI:
             # write_coords('model_i.pdb', P)
 
             # Calculate the rmsd of the ligand
-            Q_l = Q[l_start:l_end - 1]
-            P_l = P[l_start:l_end - 1]
+            Q_l = Q[l_start : l_end - 1]
+            P_l = P[l_start : l_end - 1]
 
             # write_coords('ref_l.pdb', Q_l)
             # write_coords('model_l.pdb', P_l)
@@ -358,8 +359,7 @@ class CAPRI:
             self.fnat_dic[model] = fnat
         return self.fnat_dic
 
-    def output(self, output_f, sortby_key, sort_ascending, rankby_key,
-               rank_ascending):
+    def output(self, output_f, sortby_key, sort_ascending, rankby_key, rank_ascending):
         """Output the CAPRI results to a .tsv file."""
         output_l = []
         for model in self.model_list:
@@ -396,7 +396,7 @@ class CAPRI:
         hmodel = "model".center(max_model_space, " ")
         header = hmodel + "".join(
             _.rjust(10, " ") for _ in list(output_l[0].keys())[1:]
-            )
+        )
 
         with open(output_f, "w") as out_fh:
             out_fh.write(header + os.linesep)
@@ -524,8 +524,7 @@ class CAPRI:
 
                     if filter_resdic:
                         # Only retrieve coordinates from the filter_resdic
-                        if (chain in filter_resdic
-                                and resnum in filter_resdic[chain]):
+                        if chain in filter_resdic and resnum in filter_resdic[chain]:
                             coord_dic[identifier] = coords
                             chain_dic[chain].append(idx)
                             idx += 1
@@ -563,13 +562,15 @@ def get_atoms(pdb_list):
             pdb = pdb.rel_path
         with open(pdb) as fh:
             for line in fh.readlines():
-                if line.startswith("ATOM"):
+                if line.startswith(("ATOM", "HETATM")):
                     resname = line[17:20].strip()
                     atom_name = line[12:16].strip()
                     element = line[76:78].strip()
-                    if (resname not in PROT_RES
-                            and resname not in DNA_RES
-                            and resname not in IGNORE_RES):
+                    if (
+                        resname not in PROT_RES
+                        and resname not in DNA_RES
+                        and resname not in IGNORE_RES
+                    ):
                         # its neither DNA nor protein, use the heavy atoms
                         # WARNING: Atoms that belong to unknown residues mutt
                         #  be bound to a residue name;
@@ -614,8 +615,8 @@ def pdb2fastadic(pdb_f):
             ("DG", "G"),
             ("DC", "C"),
             ("DT", "T"),
-            ]
-        )
+        ]
+    )
     seq_dic = {}
     with open(pdb_f) as fh:
         for line in fh.readlines():
@@ -639,7 +640,7 @@ def get_align(method, **kwargs):
     """Get the alignment function."""
     log.info(f"Using {method} alignment")
     if method == "structure":
-        return partial(align_strct, lovoalign_exec=kwargs['lovoalign_exec'])
+        return partial(align_strct, lovoalign_exec=kwargs["lovoalign_exec"])
     elif method == "sequence":
         return partial(align_seq)
     else:
@@ -647,16 +648,15 @@ def get_align(method, **kwargs):
         raise ValueError(
             f"Alignment method {method!r} not recognized. "
             f"Available options are {', '.join(available_alns)}"
-            )
+        )
 
 
 def align_strct(reference, model, output_path, lovoalign_exec=None):
     """Structuraly align and get numbering relationship."""
     if lovoalign_exec is None:
         log.error(
-            "Structural alignment needs LovoAlign "
-            "get it at github.com/m3g/lovoalign"
-            )
+            "Structural alignment needs LovoAlign " "get it at github.com/m3g/lovoalign"
+        )
         raise CAPRIError("Path to LovoAlign executable required.")
 
     if not lovoalign_exec:
@@ -668,10 +668,8 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
     numbering_dic = {}
     protein_a_dic = dict(
         (str(e.stem).split("_")[-1], e) for e in split_by_chain(reference)
-        )
-    protein_b_dic = dict(
-        (str(e.stem).split("_")[-1], e) for e in split_by_chain(model)
-        )
+    )
+    protein_b_dic = dict((str(e.stem).split("_")[-1], e) for e in split_by_chain(model))
 
     # check if chain ids match
     if protein_a_dic.keys() != protein_b_dic.keys():
@@ -687,7 +685,7 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
             f"{lovoalign_exec} -p1 {protein_a_dic[chain]} "
             f"-p2 {protein_b_dic[chain]} "
             f"-c1 {chain} -c2 {chain}"
-            )
+        )
 
         # logging.debug(f'Command is: {cmd}')
         p = subprocess.run(shlex.split(cmd), capture_output=True, text=True)
@@ -708,9 +706,7 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
                 alignment_end_index = i - 2
             elif "ERROR" in line:
                 failed_pdb = line.split()[-1]
-                _msg = (
-                    f"LovoAlign could not read {failed_pdb} " "is it a ligand?"
-                    )
+                _msg = f"LovoAlign could not read {failed_pdb} " "is it a ligand?"
                 log.warning(_msg)
                 alignment_pass = False
 
@@ -720,9 +716,8 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
         if not alignment_pass:
             # This alignment failed, move on to the next
             log.warning(
-                f"Skipping alignment of chain {chain}, "
-                "used sequential matching"
-                )
+                f"Skipping alignment of chain {chain}, " "used sequential matching"
+            )
             continue
 
         aln_l = lovoalign_out[alignment_start_index:alignment_end_index]
@@ -734,7 +729,7 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
             fh.write(os.linesep.join(aln_l))
 
         # remove the line between the alignment segments
-        alignment = [aln_l[i:i + 3][:2] for i in range(0, len(aln_l), 3)]
+        alignment = [aln_l[i : i + 3][:2] for i in range(0, len(aln_l), 3)]
         # 100% (5 identical nucleotides / min(length(A),length(B))).
         len_seq_a = len(pa_seqdic[chain])
         len_seq_b = len(pb_seqdic[chain])
@@ -742,17 +737,15 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
             (len_seq_a - sum([e[0].count("-") for e in alignment]))
             / min(len_seq_a, len_seq_b)
             * 100
-            )
+        )
 
         if identity <= 40.0:
             log.warning(
                 f'"Structural" identity of chain {chain} is {identity:.2f}%,'
                 " please check the results carefully"
-                )
+            )
         else:
-            log.info(
-                f'"Structural" identity of chain {chain} is {identity:.2f}%'
-                )
+            log.info(f'"Structural" identity of chain {chain} is {identity:.2f}%')
 
         # logging.debug('Reading alignment and matching numbering')
         for element in alignment:
@@ -812,16 +805,14 @@ def align_seq(reference, model, output_path):
         # this should always be true
         assert len(aligned_seg_a) == len(aligned_seg_b)
 
-        identity = (
-            str(top_aln).count("|") / float(min(len(seq_a), len(seq_b)))
-            ) * 100
+        identity = (str(top_aln).count("|") / float(min(len(seq_a), len(seq_b)))) * 100
 
         if not any(e for e in top_aln.aligned):
             # No alignment!
             log.warning(
                 f"No alignment for chain {a} is it protein/dna? "
                 "Matching sequentially"
-                )
+            )
             if all("X" in s for s in seq_a) and all("X" in s for s in seq_b):
                 # this sequence contains only ligands, do it manually
                 if len(seq_a) != len(seq_b):
@@ -835,7 +826,7 @@ def align_seq(reference, model, output_path):
                 log.warning(
                     f"Sequence identity of chain {a} is {identity:.2f}%,"
                     " please check the results carefully"
-                    )
+                )
                 log.warning('Please use alignment_method = "structure" instead')
             else:
                 log.info(f"Sequence identity of chain {a} is {identity:.2f}%")
@@ -846,9 +837,7 @@ def align_seq(reference, model, output_path):
                 reslist_a = list(seqdic_a[a].keys())[start_a:end_a]
                 reslist_b = list(seqdic_b[b].keys())[start_b:end_b]
 
-                align_dic[a].update(
-                    dict((i, j) for i, j in zip(reslist_a, reslist_b))
-                    )
+                align_dic[a].update(dict((i, j) for i, j in zip(reslist_a, reslist_b)))
     izone_fname = Path(output_path, "blosum62.izone")
     log.debug(f"Saving .izone to {izone_fname.name}")
     dump_as_izone(izone_fname, align_dic)
@@ -875,10 +864,8 @@ def dump_as_izone(fname, numbering_dic):
                 unbound_res = numbering_dic[chain][bound_res]
                 #
                 izone_str = (
-                    "ZONE "
-                    f"{chain}{bound_res}:{chain}{unbound_res}"
-                    f"{os.linesep}"
-                    )
+                    "ZONE " f"{chain}{bound_res}:{chain}{unbound_res}" f"{os.linesep}"
+                )
                 fh.write(izone_str)
 
 

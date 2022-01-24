@@ -16,6 +16,7 @@ import io
 import itertools as it
 import string
 from collections import namedtuple
+from copy import deepcopy
 from functools import partial, wraps
 from os import linesep
 from pathlib import Path
@@ -242,6 +243,7 @@ def process_pdbs(
     # these functions take the whole PDB content, evaluate it, and
     # modify it if needed.
     whole_pdb_processing_steps = [
+        models_should_have_the_same_labels,
         solve_no_chainID_no_segID,
         homogenize_chains,
         ]
@@ -550,3 +552,35 @@ def correct_equal_chain_segids(structures):
 
     assert len(new_structures) == len(structures)
     return new_structures
+
+
+# this id bad
+@_report("Check models are the same")
+def models_should_have_the_same_labels(lines):
+    """
+    Confirm models have the same labels.
+    """
+    # if MODEL in lines.
+    ## split models.
+    for line in lines:
+        if line.startswith("MODEL"):
+            break
+    else:
+        return lines
+
+    models = []
+    new_model = []
+    for line in lines:
+        if line.startswith("MODEL") and new_model:
+            models.append(deepcopy(new_model))
+            new_model.clear()
+
+        elif line.startswith(("ATOM", "HETATM")):
+            new_model.append(line[12:27])
+
+    for model in models[1:]:
+        if model != models[0]:
+            raise ValueError("Models differ.")
+
+    # check if all labels are the same.
+    return lines

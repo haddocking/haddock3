@@ -20,7 +20,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libpdb import split_by_chain
 
 
-IGNORE_RES = ["SHA"]
+RES_TO_BE_IGNORED = ["SHA"]
 
 PROT_RES = [
     "ALA",
@@ -574,10 +574,10 @@ def get_atoms(pdb_list):
                     if (
                             resname not in PROT_RES
                             and resname not in DNA_RES
-                            and resname not in IGNORE_RES
+                            and resname not in RES_TO_BE_IGNORED
                             ):
                         # its neither DNA nor protein, use the heavy atoms
-                        # WARNING: Atoms that belong to unknown residues mutt
+                        # WARNING: Atoms that belong to unknown residues must
                         #  be bound to a residue name;
                         #   For example: residue NEP, also contains
                         #  CB and CG atoms, if we do not bind it to the
@@ -629,7 +629,7 @@ def pdb2fastadic(pdb_f):
                 res_num = int(line[22:26])
                 res_name = line[17:20].strip()
                 chain = line[21]
-                if res_name in IGNORE_RES:
+                if res_name in RES_TO_BE_IGNORED:
                     continue
                 try:
                     one_letter = res_codes[res_name]

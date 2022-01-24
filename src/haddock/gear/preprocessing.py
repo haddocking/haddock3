@@ -233,7 +233,7 @@ def process_pdbs(
         partial(remove_unsupported_atom),
         ##
         partial(wrep_pdb_reatom, starting_value=1),
-        partial(wrep_pdb_reres, starting_resid=1),
+        #partial(wrep_pdb_reres, starting_resid=1),
         partial(wrep_pdb_tidy, strict=True),
         ##
         wrep_rstrip,

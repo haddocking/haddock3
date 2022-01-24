@@ -18,6 +18,14 @@ modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.cfg")
 
 FCC_path = Path(haddock3_source_path.parent, 'fcc')
 
+
+class EmptyPath:
+    """Define the type EmptyPath."""
+
+    def __bool__(self):
+        return False
+
+
 # version
 version = "3.0.0"
 v_major, v_minor, v_patch = version.split('.')

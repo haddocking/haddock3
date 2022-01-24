@@ -49,6 +49,8 @@ _number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d
 # https://regex101.com/r/K6yXbe/1
 _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
+_nan_re = re.compile(r'^ *(\w+) *= *([nN][aA][nN])')
+
 # https://regex101.com/r/YCZSAo/1
 _list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')
 
@@ -301,6 +303,7 @@ def get_module_name(name):
 # (regex, func)
 regex_single_line_methods = [
     (_Path_re(), lambda x: x),
+    (_nan_re, lambda x: float('nan')),
     (_string_re, ast.literal_eval),
     (_number_re, ast.literal_eval),
     (_none_re, lambda x: None),

@@ -82,17 +82,17 @@ do (store3 = store3 / 170.0) (resn U)
 evaluate ($icount = 1)
 do (store4 = 0) (all)
 
-! Check if flexible segments defined from which to sample random AIRs
+! Check if segments defined from which to sample random AIRs
 evaluate($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     evaluate($nchain1 = $nchain1 + 1)
     evaluate($fcounter=0)
     evaluate($samplesurf = false)
 
-    if ($Toppar.nseg_$nchain1 = 0) then
+    if ($Toppar.nrair_$nchain1 = 0) then
         evaluate($samplesurf = true)
     end if
-    if ($Toppar.nseg_$nchain1 = -1) then
+    if ($Toppar.nrair_$nchain1 = -1) then
         evaluate($samplesurf = true)
     end if
 
@@ -100,13 +100,13 @@ while ($nchain1 < $data.ncomponents) loop nloop1
         do (store5 = $nchain1) (segid $Toppar.prot_segid_$nchain1)
         display RANDOM AIRS SAMPLED FROM ENTIRE SURFACE FOR MOLECULE $nchain1
     else
-        evaluate ($numseg = abs($Toppar.nseg_$nchain1))
-        display RANDOM AIRS SAMPLED FROM SEMI-FLEXIBLE SEGMENTS FOR MOLECULE $nchain1
+        evaluate ($numseg = abs($Toppar.nrair_$nchain1))
+        display RANDOM AIRS SAMPLED FROM SEGMENTS FOR MOLECULE $nchain1
         while ($fcounter < $numseg) loop Xflex
             evaluate($fcounter=$fcounter + 1)
-            do (store5 = $nchain1) ( resid $Toppar.start_seg_$nchain1_$fcounter : $Toppar.end_seg_$nchain1_$fcounter
+            do (store5 = $nchain1) ( resid $Toppar.rair_start_$nchain1_$fcounter : $Toppar.rair_end_$nchain1_$fcounter
                                      and segid $Toppar.prot_segid_$nchain1)
-            display FLEXIBLE SEGMENT NR $fcounter FROM $Toppar.start_seg_$nchain1_$fcounter TO $Toppar.end_seg_$nchain1_$fcounter
+            display FLEXIBLE SEGMENT NR $fcounter FROM $Toppar.rair_start_$nchain1_$fcounter TO $Toppar.rair_end_$nchain1_$fcounter
         end loop Xflex
     end if
 end loop nloop1
@@ -133,7 +133,7 @@ evaluate ($rmax = $result)
 evaluate ($nres = $rmax - $rmin + 1)
 display $nres RESIDUE IN MOLECULE A SELECTED FOR RANDOM AIR DEFINITION
 if ($nres < 1) then
-    display NO RESIDUES IN DEFINED FLEXIBLE SEGMENTS FOR MOLECULE A
+    display NO RESIDUES IN DEFINED RANAIR SEGMENTS FOR MOLECULE A
     display RANDOM RESTRAINTS DEFINITION FAILED
     display STOPPING...
     stop
@@ -162,7 +162,7 @@ evaluate ($rmax = $result)
 display $nres RESIDUE IN MOLECULE B SELECTED FOR RANDOM AIR DEFINITION
 evaluate ($nres = $rmax - $rmin + 1)
 if ($nres < 1) then
-    display NO RESIDUES IN DEFINED FLEXIBLE SEGMENTS FOR MOLECULE B
+    display NO RESIDUES IN DEFINED RANAIR SEGMENTS FOR MOLECULE B
     display RANDOM RESTRAINTS DEFINITION FAILED
     display STOPPING...
     stop

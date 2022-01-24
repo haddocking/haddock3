@@ -159,6 +159,25 @@ def test_none_re_wrong(line):
 
 
 @pytest.mark.parametrize(
+    'line,name,value',
+    [
+        ('value = nan', 'value', 'nan'),
+        ('value = nAn', 'value', 'nAn'),
+        ('value = naN', 'value', 'naN'),
+        ('value = NaN', 'value', 'NaN'),
+        ("var2=nan", 'var2', 'nan'),
+        ("var2=NaN#somecomment", 'var2', 'NaN'),
+        ("var2=NaN    #somecomment", 'var2', 'NaN'),
+        ],
+    )
+def test_nan_re(line, name, value):
+    """Test none regex."""
+    result = config_reader._nan_re.match(line)
+    assert result[1] == name
+    assert result[2] == value
+
+
+@pytest.mark.parametrize(
     'line,number',
     [
         ('value = 00', "00"),

@@ -1,10 +1,11 @@
 """CNS scripts util functions."""
 import itertools
+import math
 from functools import partial
 from os import linesep
 from pathlib import Path
 
-from haddock import log
+from haddock import EmptyPath, log
 from haddock.core import cns_paths
 from haddock.libs import libpdb
 from haddock.libs.libfunc import false, true
@@ -44,6 +45,14 @@ def generate_default_header(path=None):
         )
 
 
+def _is_nan(x):
+    """Inspect if is nan."""
+    try:
+        return math.isnan(x)
+    except (ValueError, TypeError):
+        return False
+
+
 def filter_empty_vars(v):
     """
     Filter empty variables.
@@ -63,9 +72,11 @@ def filter_empty_vars(v):
         If the type of `value` is not supported by CNS.
     """
     cases = (
-        (lambda x: isinstance(x, str), true),
+        (lambda x: _is_nan(x), false),
+        (lambda x: isinstance(x, str) and bool(x), true),
+        (lambda x: isinstance(x, str) and not bool(x), false),
         (lambda x: isinstance(x, bool), true),  # it should return True
-        (lambda x: isinstance(x, Path), true),
+        (lambda x: isinstance(x, (EmptyPath, Path)), true),
         (lambda x: type(x) in (int, float), true),
         (lambda x: x is None, false),
         )
@@ -127,6 +138,9 @@ def write_eval_line(param, value, eval_line="eval (${}={})"):
     elif isinstance(value, Path):
         value = '"' + str(value) + '"'
         return eval_line.format(param, value)
+
+    elif isinstance(value, EmptyPath):
+        return eval_line.format(param, '""')
 
     elif isinstance(value, (int, float)):
         return eval_line.format(param, value)

@@ -53,7 +53,18 @@ evaluate ($Data.flags.xpcs = false)
 evaluate ($Data.flags.dani = false)
 evaluate ($Data.flags.vean = false)
 
+evaluate ($Data.noecv = false)
+evaluate ($refine.keepwater = false)
+
 evaluate ($data.ncomponents=$ncomponents)
+
+evaluate ($nmol=1)
+while ($nmol <= $data.ncomponents) loop mol
+    evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
+    evaluate ($toppar.shape_$nmol = false)
+    evaluate ($nmol = $nmol + 1)
+end loop mol
+
 
 ! non-bonded parameter set to use
 evaluate ($toppar.par_nonbonded = $par_nonbonded)
@@ -118,7 +129,7 @@ fix sele = (not all) end
 
 ! Short minimization
 
-mini powell nstep 40 drop=10 end
+mini powell nstep $nemsteps drop=10 end
 
 {* ======================= calculate free molecules internal energy ============ *}
 
@@ -145,7 +156,6 @@ do (z = refz) (all)
 {* ===================== calculate complex internal energy *}
 
 evaluate ($kinter = 1.0)
-energy end
 
 @MODULE:scale_intra_only.cns
 

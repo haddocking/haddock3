@@ -12,7 +12,10 @@ from haddock import contact_us, haddock3_source_path, log
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
-from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.gear.parameters import (
+    config_mandatory_general_parameters,
+    config_optional_general_parameters,
+    )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.libs.libutil import (
@@ -82,6 +85,8 @@ def setup_run(workflow_path, restart_from=None):
     validate_module_names_are_not_mispelled(params)
 
     # update default non-mandatory parameters with user params
+    params = recursive_dict_update(config_optional_general_parameters, params)
+
     params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
         params)
@@ -104,7 +109,11 @@ def setup_run(workflow_path, restart_from=None):
 
     # create datadir
     data_dir = create_data_dir(general_params["run_dir"])
-    new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
+    new_mp = copy_input_files_to_data_dir(
+        data_dir,
+        modules_params,
+        keep_original=general_params["skip_preprocess"],
+        )
 
     # return the modules' parameters and general parameters separately
     return new_mp, general_params
@@ -263,7 +272,36 @@ def copy_molecules_to_topology(params):
     params['topoaa']['molecules'] = list(map(Path, params['molecules']))
 
 
-def copy_input_files_to_data_dir(data_dir, modules_params):
+def _copy_original(molecule, data_dir):
+    """."""
+    rel_data_dir = data_dir.name
+    pmol = Path(molecule)
+    end_path = Path(data_dir, "00_topoaa")
+    end_path.mkdir(parents=True, exist_ok=True)
+    shutil.copy(molecule, Path(end_path, pmol.name))
+    return Path(rel_data_dir, "00_topoaa", pmol.name)
+
+
+def _preprocess_molecules(molecule, data_dir, top_fname):
+    """."""
+    rel_data_dir = data_dir.name
+    pmol = Path(molecule)
+
+    mol_path = Path(data_dir, 'molecules')
+    mol_path.mkdir(parents=True, exist_ok=True)
+    shutil.copy(molecule, Path(mol_path, pmol.name))
+
+    end_path = Path(data_dir, '00_topoaa')
+    end_path.mkdir(parents=True, exist_ok=True)
+
+    new_residues = read_additional_residues(top_fname) if top_fname else None
+    new_pdb = process_pdbs([molecule], user_supported_residues=new_residues)
+    Path(end_path, pmol.name).write_text(os.linesep.join(new_pdb[0]))
+
+    return Path(rel_data_dir, '00_topoaa', pmol.name)
+
+
+def copy_input_files_to_data_dir(data_dir, modules_params, keep_original=False):
     """Copy files to data directory."""
     new_mp = deepcopy(modules_params)
     # this line must be synchronized with create_data_dir()
@@ -271,26 +309,18 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
 
     for i, molecule in enumerate(modules_params['topoaa']['molecules']):
 
-        pmol = Path(molecule)
+        if keep_original:
+            new_mol = _copy_original(molecule, data_dir)
 
-        mol_path = Path(data_dir, 'molecules')
-        mol_path.mkdir(parents=True, exist_ok=True)
-        shutil.copy(molecule, Path(mol_path, pmol.name))
+        else:
+            top_file = modules_params["topoaa"].get("ligand_top_fname", False)
+            new_mol = _preprocess_molecules(
+                molecule,
+                data_dir,
+                top_file,
+                )
 
-        end_path = Path(data_dir, '00_topoaa')
-        end_path.mkdir(parents=True, exist_ok=True)
-
-        top_file = modules_params["topoaa"].get("ligand_top_fname", False)
-        new_residues = read_additional_residues(top_file) if top_file else None
-
-        new_pdb = process_pdbs([molecule], user_supported_residues=new_residues)
-        Path(end_path, pmol.name).write_text(os.linesep.join(new_pdb[0]))
-
-        new_mp['topoaa']['molecules'][i] = Path(
-            rel_data_dir,
-            '00_topoaa',
-            pmol.name,
-            )
+        new_mp['topoaa']['molecules'][i] = new_mol
 
     # topology always starts with 0
     for i, (module, params) in enumerate(modules_params.items(), start=0):

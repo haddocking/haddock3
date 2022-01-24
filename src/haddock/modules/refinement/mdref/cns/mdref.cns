@@ -59,8 +59,8 @@ while ($nmol <= $data.ncomponents) loop mol
     evaluate ($toppar.nseg$nmol = $nseg$nmol)
     evaluate ($nseg = 1)
     while ($nseg <=$toppar.nseg$nmol) loop seg
-        evaluate ($toppar.seg$nmol_start_$nseg = $seg$nmol_start_$nseg)
-        evaluate ($toppar.seg$nmol_end_$nseg = $seg$nmol_end_$nseg)
+        evaluate ($toppar.segsta$nmol_$nseg = $segsta$nmol_$nseg)
+        evaluate ($toppar.segend$nmol_$nseg = $segend$nmol_$nseg)
         evaluate ($nseg = $nseg + 1)
     end loop seg
 
@@ -68,8 +68,8 @@ while ($nmol <= $data.ncomponents) loop mol
     evaluate ($toppar.nfle$nmol = $nfle$nmol)
     evaluate ($nfle = 1)
     while ($nfle <=$toppar.nfle$nmol) loop fle
-        evaluate ($toppar.fle$nmol_start_$nfle = $fle$nmol_start_$nfle)
-        evaluate ($toppar.fle$nmol_end_$nfle = $fle$nmol_end_$nfle)
+        evaluate ($toppar.flesta$nmol_$nfle = $flesta$nmol_$nfle)
+        evaluate ($toppar.fleend$nmol_$nfle = $fleend$nmol_$nfle)
         evaluate ($nfle = $nfle + 1)
     end loop fle
     evaluate ($nmol = $nmol + 1)
@@ -522,7 +522,7 @@ evaluate($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     evaluate($nchain1 = $nchain1 + 1)
     evaluate($fcounter=0)
-    if ($Toppar.nseg_$nchain1 = 0) then
+    if ($Toppar.nseg$nchain1 = 0) then
         display NO FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1
         display FIXING IT
         fix sele = (segid $Toppar.prot_segid_$nchain1 and not name H*) end
@@ -724,7 +724,7 @@ end if
 noe
     scale dist $Data.unamb_scale
     scale ambi $Data.amb_scale
-    scale hbon 0.0
+    scale hbon $Data.hbond_scale
     scale symm 0.0
     scale cont 0.0
 end
@@ -757,15 +757,11 @@ if ($Data.flags.sym eq true) then
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
     noe
-        scale dist $unamb_scale
-        scale ambi $amb_scale
-        scale hbon $hond_scale
+        scale dist $Data.unamb_scale
+        scale ambi $Data.amb_scale
+        scale hbon $Data.hbond_scale
     end
 else
-    if ($Data.noecv eq true) then
-        set message=on echo=on end
-        noe cv $ncvbest ? end
-    end if
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)

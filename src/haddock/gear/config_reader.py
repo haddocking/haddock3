@@ -49,7 +49,7 @@ _number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d
 # https://regex101.com/r/K6yXbe/1
 _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
-_nan_re = re.compile(r'^ *(\w+) *= *(nan)')
+_nan_re = re.compile(r'^ *(\w+) *= *([nN][aA][nN])')
 
 # https://regex101.com/r/YCZSAo/1
 _list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')

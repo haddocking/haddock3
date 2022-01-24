@@ -262,8 +262,8 @@ class CAPRI:
             # find atoms present in both interfaces
             Q_int = []
             P_int = []
-            for k in sorted(
-                    ref_int_coord_dic.keys() & mod_int_coord_dic.keys()):
+            common_keys = ref_int_coord_dic.keys() & mod_int_coord_dic.keys()
+            for k in sorted(common_keys):
                 ref_xyz = ref_int_coord_dic[k]
                 mod_xyz = mod_int_coord_dic[k]
 

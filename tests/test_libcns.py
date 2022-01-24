@@ -33,7 +33,7 @@ def test_empty_vars_error(value):
         3453.543,
         'str',
         Path('path'),
-        EmptyPath(),  # mepty paths needs to be written as ""
+        EmptyPath(),  # empty paths need to be written as ""
         ]
     )
 def test_empty_vars_True(value):

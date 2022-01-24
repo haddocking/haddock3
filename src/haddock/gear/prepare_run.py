@@ -360,20 +360,33 @@ def validate_module_names_are_not_mispelled(params):
 
 # reading parameter blocks
 def get_blocks(config):
-    """Get parameter blocks.
+    """
+    Get parameter blocks.
 
-    Block parameters follow the rule:
+    Block parameters follow the rule <preffix>_<something>_<digit>
 
     - part1_something1_1
     - part1_something2_1
-    - part1_something3_1
+    - part1_something_else_1
     - part1_something4_1
 
-    We want to know:
-        - part1
-        - how many somethings exist (this defined the size of the block)
-        - _1, defines the number of the block
+    When used to read the modules' default configuration we expect the
+    <digit> to be only "_1". But having <digit> allows to identify
+    blocks from the user configuration.
 
+    We want to know:
+
+    - part1
+    - how many somethings exist (this defined the size of the block)
+    - _1, defines the number of the block
+
+    Returns
+    -------
+    dictionary
+        In the form of:
+        {("part1", "1"): {
+            "something1", "something2", "something_else",
+            "something4"}
     """
     splitted = (parameter.split("_") for parameter in config)
     parts = (
@@ -391,11 +404,31 @@ def get_blocks(config):
         new["mid"].add("_".join(p[1:-1]))
 
     final_blocks = {k: v["mid"] for k, v in blocks.items() if v["counts"] > 1}
+
     return final_blocks
 
 
 def read_blocks(eblocks, params):
-    """."""
+    """
+    Read the blocks from the user configuration file.
+
+    Compare them with those defined in the default config.
+
+    Parameters
+    ----------
+    eblocks : dict
+        Parameter blocks identified in the `default.cfg` file using the
+        :func:`get_blocks`.
+
+    params : dict
+        The user configuration dictionary.
+
+    Returns
+    -------
+    ser
+        A set of the new parameters that are allowed considering the
+        groups found in the `default.cfg`.
+    """
     pblocks = get_blocks(params)
     eblocks = {k: v for k, v in eblocks.items() if k[1] == "1"}
 

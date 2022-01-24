@@ -12,12 +12,13 @@ Availabe functions:
 #
 # functions can be defined with `def` or as variables with functools.partial
 #
+import io
 import itertools as it
 import string
 from collections import namedtuple
 from functools import partial, wraps
-from pathlib import Path
 from os import linesep
+from pathlib import Path
 
 from pdbtools import (
     pdb_chain,
@@ -42,18 +43,17 @@ from haddock.core.supported_molecules import (
     supported_single_ions_elements,
     supported_single_ions_resnames,
     )
-from haddock.libs.libio import open_files_to_lines
 from haddock.libs.libfunc import chainf
 from haddock.libs.libpdb import (
     read_chainids,
     read_segids,
-    slc_resname,
     slc_name,
+    slc_resname,
     )
 
 
 _OSUFFIX = '_processed'
-_upper_case = list(string.ascii_uppercase)[::-1]
+_upper_case = list(string.ascii_uppercase + string.ascii_lowercase)[::-1]
 _CHAINS = it.cycle(_upper_case)
 
 
@@ -113,7 +113,7 @@ def _report(log_msg):
     return decorator
 
 
-def _open_or_give(paths_or_lines):
+def _open_or_give(inputdata):
     """
     Adapt input to the functions.
 
@@ -121,22 +121,34 @@ def _open_or_give(paths_or_lines):
 
     Parameters
     ----------
-    paths_or_lines : list
-        If is a list of strings (expected PDB lines), return it as is.
-        If is a list of pathlib.Paths, opens them and returns a list
-        of strings (lines).
+    inputdata : list
+        The list can contain file objects, list of strings, or paths
+        or strings pointing to files. If paths and file objects are read
+        to list of strings. Right `new line` chars are striped.
+
+    Returns
+    -------
+    list of list of strings
+        Each sublist has the contents of the input file.
 
     Raises
     ------
     TypeError
         In any other circumstances.
     """
-    if all(isinstance(i, (Path, str)) for i in paths_or_lines):
-        return open_files_to_lines(*paths_or_lines)
-    elif all(isinstance(i, (list, tuple)) for i in paths_or_lines):
-        return paths_or_lines
-    else:
-        raise TypeError('Unexpected types in `paths_or_lines`.')
+    lines = []
+    for idata in inputdata:
+        if isinstance(idata, (Path, str)):
+            lines.append(Path(idata).read_text().split(linesep))
+        elif isinstance(idata, io.TextIOBase):
+            lines.append([line.rstrip(linesep) for line in idata.readlines()])
+        elif isinstance(idata, (list, tuple)):
+            lines.append([line.rstrip(linesep) for line in idata])
+        else:
+            emsg = f"Unexpected type in `inputdata`: {type(idata)}"
+            raise TypeError(emsg)
+
+    return lines
 
 
 def read_additional_residues(top_fname):
@@ -159,7 +171,7 @@ def read_additional_residues(top_fname):
 
 
 def process_pdbs(
-        paths_or_lines,
+        inputdata,
         save_output=False,
         osuffix=_OSUFFIX,
         dry=False,
@@ -170,9 +182,10 @@ def process_pdbs(
 
     Parameters
     ----------
-    paths_or_lines : list
-        A list of paths pointing to files or a list of lists of strings
-        with the lines of the file contents.
+    inputdata : list of (str, path, list of str, file handler)
+        The list can contain file objects, list of strings, or paths
+        or strings pointing to files. If paths and file objects are read
+        to list of strings. Right `new line` chars are striped.
 
     save_output : bool
         Whether to directly save the output to files. If False, returns
@@ -191,7 +204,7 @@ def process_pdbs(
         The same data structure as `structures` but with the corrected
         (processed) content.
     """
-    structures = _open_or_give(paths_or_lines)
+    structures = _open_or_give(inputdata)
 
     # these are the processing or checking functions that should (if needed)
     # modify the input PDB and return the corrected lines
@@ -208,7 +221,10 @@ def process_pdbs(
         add_charges_to_ions,
         partial(
             convert_ATOM_to_HETATM,
-            must_be=set.union(supported_HETATM, user_supported_residues),
+            must_be=set.union(
+                supported_HETATM,
+                user_supported_residues or set(),
+                ),
             ),
         convert_HETATM_to_ATOM,
         # partial(pdb_fixinsert.run, option_list=[]),
@@ -253,28 +269,30 @@ def process_pdbs(
     # combined processing
     final_result = chainf(result_2, *processed_combined_steps)
 
-    if dry:
-        return None
+    return final_result
 
-    if save_output:
-        try:  # in case paths_or_lines is paths
-            o_paths = (
-                Path(f.parent, f.stem + osuffix).with_suffix(f.suffix)
-                for f in map(Path, paths_or_lines)
-                )
-        except TypeError:  # happens when paths_or_lines was lines
-            o_paths = map(
-                'processed_{}.pdb'.format,
-                range(1, len(structures) + 1),
-                )
+    #if dry:
+    #    return None
 
-        for out_p, lines in zip(o_paths, final_result):
-            out_p.write_text(linesep.join(lines) + linesep)
+    #if save_output:
+    #    try:  # in case inputdata is paths
+    #        o_paths = (
+    #            Path(f.parent, f.stem + osuffix).with_suffix(f.suffix)
+    #            for f in map(Path, inputdata)
+    #            )
+    #    except TypeError:  # happens when paths_or_lines was lines
+    #        o_paths = map(
+    #            'processed_{}.pdb'.format,
+    #            range(1, len(structures) + 1),
+    #            )
 
-        return
+    #    for out_p, lines in zip(o_paths, final_result):
+    #        out_p.write_text(linesep.join(lines) + linesep)
 
-    else:
-        return final_result
+    #    return
+
+    #else:
+    #    return final_result
 
 
 # Functions operating line-by-line
@@ -510,6 +528,8 @@ def homogenize_chains(lines):
                 pdb_chainxseg.run,
                 ]
             ))
+    else:
+        return lines
 
 
 # Functions operating in all PDBs at once
@@ -528,7 +548,8 @@ def correct_equal_chain_segids(structures):
     list of lists of str
         The new structures.
     """
-    all_chain_ids = set(read_chainids(s) for s in structures)
+    _all_chains = (read_chainids(s) for s in structures)
+    all_chain_ids = set(it.chain.from_iterable(_all_chains))
     remaining_chars = it.cycle(set(_upper_case).difference(all_chain_ids))
 
     chain_ids = []

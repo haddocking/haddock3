@@ -3,6 +3,7 @@ import argparse
 import sys
 
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
+from haddock.libs.libio import add_suffix_to_files, save_lines_to_files
 
 
 ap = argparse.ArgumentParser(
@@ -36,12 +37,14 @@ def main(pdb_files, dry=False, topfile=None):
     """Process PDB files."""
     new_residues = read_additional_residues(topfile) if topfile else None
 
-    process_pdbs(
+    processed_pdbs = process_pdbs(
         pdb_files,
         dry=dry,
-        save_output=True,
         user_supported_residues=new_residues,
         )
+
+    out_files = add_suffix_to_files(pdb_files)
+    save_lines_to_files(processed_pdbs, out_files)
 
     return
 

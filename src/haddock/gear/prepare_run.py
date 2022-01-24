@@ -13,8 +13,8 @@ from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
-from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
+from haddock.gear.restart_run import remove_folders_after_number
 from haddock.libs.libutil import (
     make_list_if_string,
     recursive_dict_update,
@@ -100,7 +100,7 @@ def setup_run(workflow_path, restart_from=None):
     validate_modules_params(modules_params)
     check_if_modules_are_installed(modules_params)
 
-    #complete_modules_params(modules_params)
+    # complete_modules_params(modules_params)
 
     # create datadir
     data_dir = create_data_dir(general_params["run_dir"])
@@ -270,17 +270,27 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
     rel_data_dir = data_dir.name
 
     for i, molecule in enumerate(modules_params['topoaa']['molecules']):
+
+        pmol = Path(molecule)
+
+        mol_path = Path(data_dir, 'molecules')
+        mol_path.mkdir(parents=True, exist_ok=True)
+        shutil.copy(molecule, Path(mol_path, pmol.name))
+
         end_path = Path(data_dir, '00_topoaa')
         end_path.mkdir(parents=True, exist_ok=True)
-        name = Path(molecule).name
 
         top_file = modules_params["topoaa"].get("ligand_top_fname", False)
         new_residues = read_additional_residues(top_file) if top_file else None
 
         new_pdb = process_pdbs([molecule], user_supported_residues=new_residues)
-        Path(end_path, name).write_text(os.linesep.join(new_pdb[0]))
+        Path(end_path, pmol.name).write_text(os.linesep.join(new_pdb[0]))
 
-        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
+        new_mp['topoaa']['molecules'][i] = Path(
+            rel_data_dir,
+            '00_topoaa',
+            pmol.name,
+            )
 
     # topology always starts with 0
     for i, (module, params) in enumerate(modules_params.items(), start=0):
@@ -359,17 +369,17 @@ def validate_module_names_are_not_mispelled(params):
                 raise ValueError(emsg)
 
 
-#def complete_modules_params(modules_params):
-#    ""","""
-#    for module_name, kwargs in modules_params.items():
-#        _module_name = get_module_name(module_name)
-#        pdef = Path(
-#            haddock3_source_path,
-#            'modules',
-#            modules_category[_module_name],
-#            _module_name,
-#            'defaults.cfg',
-#            ).resolve()
+# def complete_modules_params(modules_params):
+#     ""","""
+#     for module_name, kwargs in modules_params.items():
+#         _module_name = get_module_name(module_name)
+#         pdef = Path(
+#             haddock3_source_path,
+#             'modules',
+#             modules_category[_module_name],
+#             _module_name,
+#             'defaults.cfg',
+#             ).resolve()
 #
-#        defaults = read_config(pdef)
-#        modules_params[module_name] = {**defaults, **kwargs}
+#         defaults = read_config(pdef)
+#         modules_params[module_name] = {**defaults, **kwargs}

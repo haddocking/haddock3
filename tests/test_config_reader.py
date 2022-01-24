@@ -73,13 +73,6 @@ def test_sub_header_re_wrong(line):
         ("var2='other'    #somecomment", 'var2', "'other'"),
         ("var_2='other'    #somecomment", 'var_2', "'other'"),
         ("v_ar_2='other'    #somecomment", 'v_ar_2', "'other'"),
-        ("var-2='other'    #somecomment", 'var-2', "'other'"),
-        ("var-some_2='other'    #somecomment", 'var-some_2', "'other'"),
-        (
-            "var-some-other_none_2='other'    #somecomment",
-            'var-some-other_none_2',
-            "'other'",
-            ),
         ],
     )
 def test_string_re(line, name, value):
@@ -108,7 +101,6 @@ def test_string_re_wrong(line):
     [
         ('value = ".gitignore"', 'value', Path('.gitignore').resolve()),
         ("value = '.'", 'value', Path.cwd().resolve()),
-        ("value-dash= '.'", 'value-dash', Path.cwd().resolve()),
         ],
     )
 def test_Path_re(line, name, value):
@@ -139,7 +131,6 @@ def test_Path_re_wrong(line):
     [
         ('value = null', 'value', 'null'),
         ("value = Null", 'value', 'Null'),
-        ("value-other = Null", 'value-other', 'Null'),
         ("var2=None", 'var2', 'None'),
         ("var2=none#somecomment", 'var2', 'none'),
         ("var2=None    #somecomment", 'var2', 'None'),
@@ -201,7 +192,6 @@ def test_none_re_wrong(line):
         ('value = -.10#E-30', "-.10"),
         ('va_lue_0 = -.10#E-30', "-.10"),
         ('va_lue_0 = -.10#e-30', "-.10"),
-        ('value-dash=12.34', "12.34"),
         ],
     )
 def test_number_re(line, number):
@@ -251,7 +241,6 @@ def test_number_re_wrong(line):
             ),
         ("ports = [8000]]]", "ports", "[8000]]]"),
         ("ports=[8000]", "ports", "[8000]"),
-        ("ports-dash=[8000]", "ports-dash", "[8000]"),
         # wrong bracket closing are accepted at this stage,
         # It will then raise error when evaluating
         ],
@@ -296,7 +285,6 @@ def test_list_multi_liner(line):
         'value=',
         'value = "some" ## some comment',
         'value = [1]',
-        'value-dash = [1]',
         ],
     )
 def test_list_multi_liner_wrong(line):
@@ -309,7 +297,6 @@ def test_list_multi_liner_wrong(line):
     [
         ('value = 1', 'value', 1),
         ('value = "some"', 'value', "some"),
-        ('value-dash="some"', 'value-dash', "some"),
         ('list = [12, 13]', 'list', [12, 13]),
         (
             'date = 1979-05-27T07:32:00-08:00',
@@ -417,7 +404,6 @@ def test_process_line(line, expected):
 _config_example_1 = """
 # some comment
 num1 = 10
-num1-1= 10
 name="some string"
 null_value = None#some comment
 w_vdw_1 = 1.0
@@ -444,7 +430,6 @@ other = 50
 
 _config_example_dict_1 = {
     "num1": 10,
-    "num1-1": 10,
     "name": "some string",
     "null_value": None,
     "w_vdw_0": 0.01,

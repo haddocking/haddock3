@@ -41,25 +41,25 @@ _main_header_re = re.compile(r'^ *\[(\w+)\]')
 _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 
 # https://regex101.com/r/q2fuFl/1
-_string_re = re.compile(r'''^ *([\w\-]+) *= *("(.*?)"|'(.*?)')''')
+_string_re = re.compile(r'''^ *(\w+) *= *("(.*?)"|'(.*?)')''')
 
 # https://regex101.com/r/6X4j7n/2
-_number_re = re.compile(r'^ *([\w\-]+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d+|-?\d+\.?\d*[eE]\d+)(?: |#|$)')  # noqa: #501
+_number_re = re.compile(r'^ *(\w+) *= *(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d+|-?\d+\.?\d*[eE]\d+)(?: |#|$)')  # noqa: #501
 
 # https://regex101.com/r/K6yXbe/1
-_none_re = re.compile(r'^ *([\w\-]+) *= *([Nn]one|[Nn]ull)')
+_none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
-_nan_re = re.compile(r'^ *([\w\-]+) *= *(nan)')
+_nan_re = re.compile(r'^ *(\w+) *= *(nan)')
 
 # https://regex101.com/r/YCZSAo/1
-_list_one_liner_re = re.compile(r'^ *([\w\-]+) *= *(\[.*\])')
+_list_one_liner_re = re.compile(r'^ *(\w+) *= *(\[.*\])')
 
 # https://regex101.com/r/bWlaWB/1
-_list_multiliner_re = re.compile(r" *([\w\-]+) *= *\[\ *#?[^\]\n]*$")
+_list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
 
 # https://regex101.com/r/kY49lw/1
-_true_re = re.compile(r'^ *([\w\-]+) *= *([tT]rue)')
-_false_re = re.compile(r'^ *([\w\-]+) *= *([fF]alse)')
+_true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
+_false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 
 
 class _Path_re:

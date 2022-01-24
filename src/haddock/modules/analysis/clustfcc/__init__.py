@@ -8,7 +8,7 @@ from haddock import FCC_path, log
 from haddock.gear.config_reader import read_config
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
-from haddock.libs.libsubprocess import Job
+from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule
 
 
@@ -51,12 +51,11 @@ class HaddockModule(BaseHaddockModule):
         for model in models_to_cluster:
             pdb_f = Path(model.rel_path)
             contact_f = Path(model.file_name.replace('.pdb', '.con'))
-            job = Job(
+            job = JobInputFirst(
                 pdb_f,
                 contact_f,
                 contact_executable,
                 self.params['contact_distance_cutoff'],
-                arg_first=True,
                 )
             contact_jobs.append(job)
 
@@ -163,11 +162,10 @@ class HaddockModule(BaseHaddockModule):
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
                 # sort the models by score
-                model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
-                model_score_l.sort()
+                clt_dic[cluster_id].sort()
                 # rank the models
-                for model_ranking, element in enumerate(model_score_l, start=1):
-                    score, pdb = element
+                for model_ranking, pdb in enumerate(clt_dic[cluster_id],
+                                                    start=1):
                     pdb.clt_id = cluster_id
                     pdb.clt_rank = cluster_rank
                     pdb.clt_model_rank = model_ranking

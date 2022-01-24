@@ -12,20 +12,18 @@ from haddock import contact_us, haddock3_source_path, log
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
-from haddock.gear.parameters import (
-    config_mandatory_general_parameters,
-    non_mandatory_general_parameters_defaults,
-    )
+from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.libs.libutil import (
     make_list_if_string,
+    recursive_dict_update,
     remove_dict_keys,
     zero_fill,
     )
 from haddock.modules import (
-    general_parameters_affecting_modules,
     modules_category,
+    non_mandatory_general_parameters_defaults,
     )
 
 
@@ -80,12 +78,13 @@ def setup_run(workflow_path, restart_from=None):
     # read config
     params = read_config(workflow_path)
 
+    check_mandatory_argments_are_present(params)
     validate_module_names_are_not_mispelled(params)
 
     # update default non-mandatory parameters with user params
-    params = {**non_mandatory_general_parameters_defaults, **params}
-
-    check_mandatory_argments_are_present(params)
+    params = recursive_dict_update(
+        non_mandatory_general_parameters_defaults,
+        params)
 
     clean_rundir_according_to_restart(params['run_dir'], restart_from)
 
@@ -140,7 +139,7 @@ def validate_modules_names(params):
     keys = \
         set(params) \
         - set(config_mandatory_general_parameters) \
-        - set(general_parameters_affecting_modules)
+        - set(non_mandatory_general_parameters_defaults)
 
     for module in keys:
         if get_module_name(module) not in modules_category.keys():
@@ -180,7 +179,7 @@ def validate_modules_params(modules_params):
         diff = set(args.keys()) \
             - set(defaults.keys()) \
             - set(config_mandatory_general_parameters) \
-            - general_parameters_affecting_modules
+            - set(non_mandatory_general_parameters_defaults.keys())
 
         if diff:
             _msg = (

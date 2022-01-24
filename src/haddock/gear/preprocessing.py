@@ -271,29 +271,6 @@ def process_pdbs(
 
     return final_result
 
-    #if dry:
-    #    return None
-
-    #if save_output:
-    #    try:  # in case inputdata is paths
-    #        o_paths = (
-    #            Path(f.parent, f.stem + osuffix).with_suffix(f.suffix)
-    #            for f in map(Path, inputdata)
-    #            )
-    #    except TypeError:  # happens when paths_or_lines was lines
-    #        o_paths = map(
-    #            'processed_{}.pdb'.format,
-    #            range(1, len(structures) + 1),
-    #            )
-
-    #    for out_p, lines in zip(o_paths, final_result):
-    #        out_p.write_text(linesep.join(lines) + linesep)
-
-    #    return
-
-    #else:
-    #    return final_result
-
 
 # Functions operating line-by-line
 

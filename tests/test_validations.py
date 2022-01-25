@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from haddock.core.exceptions import ConfigurationError
 from haddock.gear.validations import v_rundir
 
 
@@ -31,5 +32,5 @@ def test_v_rundir_okay(rundir):
     )
 def test_v_rundir_invalid(rundir):
     """Test rundir validation okay."""
-    with pytest.raises(ValueError):
+    with pytest.raises(ConfigurationError):
         v_rundir(rundir)

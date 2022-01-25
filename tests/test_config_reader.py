@@ -9,7 +9,6 @@ from haddock import EmptyPath
 from haddock.gear import config_reader
 
 
-
 def on_windows():
     """Check we if are on windows."""
     try:
@@ -134,6 +133,7 @@ def test_string_re_wrong(line):
     'line,name,value_fname',
     [
         (r'value_fname = "file"', 'value_fname', Path('file')),
+        (r'molecules = "../../data/2oob.pdb"', 'molecules', Path('../../data/2oob.pdb')),
         (
             'value_fname = "file_that_does_not_exist"#with comments',
             "value_fname",
@@ -709,6 +709,7 @@ broken_list = [
 
 """
 
+
 @pytest.mark.parametrize(
     'config, error',
     [
@@ -716,9 +717,9 @@ broken_list = [
         (_config_broken_2, config_reader.ConfigFormatError),
         (_config_broken_3, config_reader.DuplicatedParameterError),
         (_config_broken_4, config_reader.DuplicatedParameterError),
-        (_config_broken_5, config_reader.MultilineListDefinitionError),
+        #(_config_broken_5, config_reader.MultilineListDefinitionError),
         (_config_broken_6, config_reader.MultilineListDefinitionError),
-        (_config_broken_7, config_reader.MultilineListDefinitionError),
+        #(_config_broken_7, config_reader.MultilineListDefinitionError),
         (_config_broken_8, config_reader.MultilineListDefinitionError),
         ],
     )

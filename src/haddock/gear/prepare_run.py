@@ -16,7 +16,6 @@ from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
 from haddock.libs.libutil import (
-    make_list_if_string,
     recursive_dict_update,
     remove_dict_keys,
     zero_fill,
@@ -361,6 +360,7 @@ def validate_module_names_are_not_mispelled(params):
 @with_config_error
 def check_specific_validations(params):
     """Make specific validations."""
+    # double check though this is confirmed already in the config reader
     v_rundir(params[RUNDIR])
 
 

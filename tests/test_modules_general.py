@@ -29,7 +29,7 @@ def test_config_reader_can_read_defaults(module):
         assert read_config(module.DEFAULT_CONFIG)
 
 
-def test_general_config(module):
+def test_general_config():
     """Test general config is readable."""
     assert read_config(modules_defaults_path)
 

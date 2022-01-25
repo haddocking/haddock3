@@ -33,8 +33,9 @@ from datetime import datetime
 from pathlib import Path, PosixPath, WindowsPath
 
 from haddock import EmptyPath
+from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError
-from haddock.libs.libfunc import false, give_same, none, nan, true
+from haddock.libs.libfunc import false, give_same, nan, none, true
 
 
 # line regexes
@@ -70,8 +71,12 @@ _list_one_liner_re = re.compile(
     r'''^ *(\w+) *= *(\[[\w\ \,\-\"\'\[\]\.\\\/]*\])'''
     )
 
-# https://regex101.com/r/bWlaWB/1
-_list_multiliner_re = re.compile(r"^ *(\w+) *= *\[\ *(#+[\w\ ]*)?$")
+# https://regex101.com/r/bWlaWB/2
+_list_multiliner_re = re.compile(
+    r'''^ *(\w+) *= *\[(?:\ *[\w\ \,\-\"\'\[\]\.\\\/]*'''
+    r'''[\w\ \,\-\"\'\[\.\\\/](?:#+[\w\ ]*)?)?$'''
+    )
+
 _list_multiline_content_re = re.compile(
     r'''^ *([\w\ \,\-\"\'\[\]\.\\\/]*)'''
     )
@@ -80,17 +85,27 @@ _list_multiline_content_re = re.compile(
 _true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
 _false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 
-# https://regex101.com/r/X4i3Je/4
+# https://regex101.com/r/X4i3Je/5
+
+_keys_that_accept_files = [
+    "cns_exec",
+    "executable",
+    "molecules",
+    RUNDIR,
+    ]
+
+_keys_files_regex = "|".join(_keys_that_accept_files)
+
 _file_linux_re = re.compile(
-    r'''^ *(\w+_fname) *= *'''
-    r'''("((\.{1,2}\/)?[\w\-\/]+[\w\-]\.?[\w\-]+)"'''
-    r'''|'((\.{1,2}\/)?[\w\-\/]+[\w\-]\.?[\w\-]+)')'''
+    f'''^ *(\w+_fname|{_keys_files_regex}) *= *'''
+    r'''("((\.{1,2}\/)*[\w\-\/]+[\w\-]\.?[\w\-]+)"'''
+    r'''|'((\.{1,2}\/)*[\w\-\/]+[\w\-]\.?[\w\-]+)')'''
     )
 
 _file_windows_re = re.compile(
-    r'''^ *(\w+_fname) *= *'''
-    r'''("((\.{1,2}\\)?[\w\-\\]+[\w\-]\.?[\w\-]+)"'''
-    r'''|'((\.{1,2}\\)?[\w\-\\]+[\w\-]\.?[\w\-]+)')'''
+    r'''^ *(\w+_fname|{_keys_files_regex}) *= *'''
+    r'''("((\.{1,2}\\)*[\w\-\\]+[\w\-]\.?[\w\-]+)"'''
+    r'''|'((\.{1,2}\\)*[\w\-\\]+[\w\-]\.?[\w\-]+)')'''
     )
 
 # https://regex101.com/r/ktjrDo/1

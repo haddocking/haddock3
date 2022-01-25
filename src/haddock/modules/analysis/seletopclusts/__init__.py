@@ -4,6 +4,7 @@ from pathlib import Path
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 
+import math
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
@@ -14,13 +15,8 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(
-            self,
-            order,
-            path,
-            *ignore,
-            init_params=DEFAULT_CONFIG,
-            **everything):
+    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG,
+                 **everything):
         super().__init__(order, path, init_params)
 
     @classmethod
@@ -34,20 +30,32 @@ class HaddockModule(BaseHaddockModule):
 
         # how many models should we output?
         models = []
-        for target_ranking in self.params['top_cluster']:
-            if self.params['top_models'] == 'all':
+        if not self.params["top_cluster"]:
+            target_rankings = list(set([p.clt_rank for p in models_to_select]))
+            target_rankins_str = ",".join(map(str, target_rankings))
+            self.log(f"Selecting all clusters: {target_rankins_str}")
+        else:
+            target_rankings = list(set(self.params["top_cluster"]))
+            target_rankins_str = ",".join(map(str, target_rankings))
+            self.log(f"Selecting clusters: {target_rankins_str}")
+
+        for target_ranking in target_rankings:
+            if math.isnan(self.params["top_models"]):
                 for pdb in models_to_select:
                     if pdb.clt_rank == target_ranking:
                         models.append(pdb)
             else:
-                for model_ranking in range(1, self.params['top_models'] + 1):
+                for model_ranking in range(1, self.params["top_models"] + 1):
                     for pdb in models_to_select:
-                        if (pdb.clt_rank == target_ranking
-                                and pdb.clt_model_rank == model_ranking):
+                        if (
+                                pdb.clt_rank == target_ranking
+                                and pdb.clt_model_rank == model_ranking
+                                ):
                             self.log(
                                 f"Selecting {pdb.file_name} "
                                 f"Cluster {target_ranking} "
-                                f"Model {model_ranking}")
+                                f"Model {model_ranking}"
+                                )
                             models.append(pdb)
 
         # Save module information

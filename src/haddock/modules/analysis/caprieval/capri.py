@@ -88,6 +88,7 @@ class CAPRI:
         self.lrmsd_dic = {}
         self.ilrmsd_dic = {}
         self.fnat_dic = {}
+        self.dockq_dic = {}
         self.atoms = get_atoms(model_list + [reference])
         self.r_chain = receptor_chain
         self.l_chain = ligand_chain
@@ -357,6 +358,19 @@ class CAPRI:
             self.fnat_dic[model] = fnat
         return self.fnat_dic
 
+    def dockq(self):
+        """Calculate the DockQ metric."""
+        for model in self.model_list:
+            irmsd = self.irmsd_dic[model]
+            fnat = self.fnat_dic[model]
+            lrmsd = self.lrmsd_dic[model]
+            dockq = (float(fnat) + 1 / (1 + (irmsd / 1.5) * (irmsd / 1.5))
+                     + 1 / (1 + (lrmsd / 8.5) * (lrmsd / 8.5))
+                     ) / 3
+            self.dockq_dic[model] = dockq
+
+        return self.dockq_dic
+
     def output(
             self, output_f, sortby_key, sort_ascending, rankby_key,
             rank_ascending):
@@ -378,12 +392,12 @@ class CAPRI:
                 data["lrmsd"] = self.lrmsd_dic[model]
             if model in self.ilrmsd_dic:
                 data["ilrmsd"] = self.ilrmsd_dic[model]
-
+            if model in self.dockq_dic:
+                data["dockq"] = self.dockq_dic[model]
             # add cluster data
             data["cluster-id"] = model.clt_id
             data["cluster-ranking"] = model.clt_rank
             data["model-cluster-ranking"] = model.clt_model_rank
-
             # list of dictionaries
             output_l.append(data)
 

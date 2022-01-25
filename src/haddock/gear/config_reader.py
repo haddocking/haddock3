@@ -31,6 +31,8 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from haddock.core.excetions import ConfigurationError
+
 
 # line regexes
 # https://regex101.com/r/r4BlJf/1
@@ -46,13 +48,19 @@ _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 # https://regex101.com/r/TRMx0B/1
 _string_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([a-zA-Z0-9\.]*?)"|'([a-zA-Z0-9\.]*?)')'''
+    r'''("([a-zA-Z0-9_\-]*?)"|'([a-zA-Z0-9_\-]*?)')'''
     )
 
-# https://regex101.com/r/OCcP6l/1
-_path_re = re.compile(
+_windows_path_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([a-zA-Z0-9_\-\/\.]*?)"|'([a-zA-Z0-9_\-\/\.]*?)')'''
+    r'''("([\.\\|\.\.\\][a-zA-Z0-9_\-\.\\]*?)"'''
+    r'''|'([\.\\|\.\.\\][a-zA-Z0-9_\-\.\\]*?)')'''
+    )
+
+_posix_path_re = re.compile(
+    r'''^ *(\w+) *= *'''
+    r'''("([\.\/|\.\.\/][a-zA-Z0-9_\-\.\/]*?)"'''
+    r'''|'([\.\/|\.\.\/][a-zA-Z0-9_\-\.\/]*?)')'''
     )
 
 # https://regex101.com/r/6X4j7n/2
@@ -64,9 +72,11 @@ _number_re = re.compile(
 # https://regex101.com/r/K6yXbe/1
 _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
+_nan_re = re.compile(r'^ *(\w+) *= *([nN][aA][nN])')
+
 # https://regex101.com/r/YCZSAo/1
 _list_one_liner_re = re.compile(
-    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\.\"\'\[\]]*\])'
+    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\"\'\[\]\\]*\])'
     )
 
 # https://regex101.com/r/bWlaWB/1
@@ -80,7 +90,10 @@ _false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 class _Path_re:
     def __init__(self):
         """Map to Path regex."""
-        self.re = _path_re
+        self.re_groups = (
+            (_posix_path_re, PosixPath),
+            (_windows_path_re, WindowsPath),
+            )
 
     def match(self, string):
         """
@@ -92,12 +105,23 @@ class _Path_re:
 
         Made specifically to :func:`_get_one_line_group`.
         """
-        group = self.re.match(string)
-        if group:
-            value = ast.literal_eval(group[2])
-            if value:
-                p = Path(value).resolve()
-                return group[0], group[1], p.resolve()
+        for regex, pathtype in self.re_groups:
+            group = regex.match(string)
+            if group:
+                try:
+                    PathType()
+                except NotImplementedError:
+                    emsg = (
+                        "The path type you defined is not compatible with "
+                        "your system. Maybe you define a Windows path and you "
+                        "are running HADDOCK3 on Linux."
+                        )
+                    raise ConfigurationError(emsg) from NotImplementedError
+
+                value = ast.literal_eval(group[2])
+                if value:
+                    p = Path(value)
+                    return group[0], group[1], p
 
         # everything else returns None by definition
         return None  # we want to return None to match the re.match()
@@ -315,15 +339,16 @@ def get_module_name(name):
 
 # methods to parse single line values
 # (regex, func)
-regex_single_line_methods = [
-    (_string_re, ast.literal_eval),
+regex_single_line_methods = (
     (_Path_re(), lambda x: x),
+    (_string_re, ast.literal_eval),
     (_number_re, ast.literal_eval),
+    (_nan_re, lambda x: float('nan')),
     (_none_re, lambda x: None),
     (_list_one_liner_re, _eval_list_str),
     (_true_re, lambda x: True),
     (_false_re, lambda x: False),
-    ]
+    )
 
 regex_single_line_special_methods = [
     datetime.fromisoformat,

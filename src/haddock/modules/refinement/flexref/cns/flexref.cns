@@ -21,31 +21,29 @@ end if
 !==================================================================!
 
 evaluate ($saprotocol.iniseed=$iniseed)
-evaluate ($saprotocol.tadhigh_t=$tadhigh_t)
-evaluate ($saprotocol.t1_init=$tadinit1_t)
-evaluate ($saprotocol.t2_init=$tadinit2_t)
-evaluate ($saprotocol.t3_init=$tadinit3_t)
-evaluate ($saprotocol.t1_final=$tadfinal1_t)
-evaluate ($saprotocol.t2_final=$tadfinal2_t)
-evaluate ($saprotocol.t3_final=$tadfinal3_t)
-evaluate ($saprotocol.inter_rigid=$inter_rigid)
-evaluate ($saprotocol.inter_init_rigid=$init_rigid)
-evaluate ($saprotocol.inter_fin_rigid=$fin_rigid)
-evaluate ($saprotocol.inter_init_cool2=$init_cool2)
-evaluate ($saprotocol.inter_fin_cool2=$fin_cool2)
-evaluate ($saprotocol.inter_init_cool3=$init_cool3)
-evaluate ($saprotocol.inter_fin_cool3=$fin_cool3)
+evaluate ($saprotocol.tadhigh_t=$temp_high)
+evaluate ($saprotocol.t1_init=$temp_cool1_init)
+evaluate ($saprotocol.t2_init=$temp_cool2_init)
+evaluate ($saprotocol.t3_init=$temp_cool3_init)
+evaluate ($saprotocol.t1_final=$temp_cool1_final)
+evaluate ($saprotocol.t2_final=$temp_cool2_final)
+evaluate ($saprotocol.t3_final=$temp_cool3_final)
+evaluate ($saprotocol.inter_init_rigid=$sinter_rigid_init)
+evaluate ($saprotocol.inter_fin_rigid=$sinter_rigid_final)
+evaluate ($saprotocol.inter_init_cool2=$sinter_cool2_init)
+evaluate ($saprotocol.inter_fin_cool2=$sinter_cool2_final)
+evaluate ($saprotocol.inter_init_cool3=$sinter_cool3_init)
+evaluate ($saprotocol.inter_fin_cool3=$sinter_cool3_final)
 evaluate ($saprotocol.tempstep=50)
 evaluate ($saprotocol.timestep=$timestep)
 evaluate ($saprotocol.tadfactor=$tadfactor)
-evaluate ($saprotocol.initiosteps=$initiosteps)
-evaluate ($saprotocol.cool1_steps=$cool1_steps)
-evaluate ($saprotocol.cool2_steps=$cool2_steps)
-evaluate ($saprotocol.cool3_steps=$cool3_steps)
+evaluate ($saprotocol.initiosteps=$mdsteps_rigid)
+evaluate ($saprotocol.cool1_steps=$mdsteps_cool1)
+evaluate ($saprotocol.cool2_steps=$mdsteps_cool2)
+evaluate ($saprotocol.cool3_steps=$mdsteps_cool3)
 evaluate ($saprotocol.fbeta=100)
 evaluate ($saprotocol.mass=100)
 
-evaluate ($ini_count    =1)
 evaluate ($w_vdw        =$w_vdw )
 evaluate ($w_elec       =$w_elec )
 evaluate ($w_dist       =$w_dist )
@@ -69,7 +67,6 @@ evaluate ($nmol=1)
 while ($nmol <= $data.ncomponents) loop mol
     evaluate ($toppar.fix_origin_$nmol=$fix_origin_$nmol)
     evaluate ($toppar.shape_$nmol = $shape_$nmol)
-    evaluate ($toppar.cg_$nmol = $cg_$nmol)
     evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
     evaluate ($nmol = $nmol + 1)
 end loop mol
@@ -78,20 +75,20 @@ evaluate ($nmol=1)
 while ($nmol <= $data.ncomponents) loop mol
 
     !semi flexible segments
-    evaluate ($toppar.nseg_$nmol = $nseg_$nmol)
+    evaluate ($toppar.nseg$nmol = $nseg$nmol)
     evaluate ($nseg = 1)
-    while ($nseg <=$toppar.nseg_$nmol) loop seg
-        evaluate ($toppar.start_seg_$nmol_$nseg = $start_seg_$nmol_$nseg)
-        evaluate ($toppar.end_seg_$nmol_$nseg = $end_seg_$nmol_$nseg)
+    while ($nseg <=$toppar.nseg$nmol) loop seg
+        evaluate ($toppar.segsta$nmol_$nseg = $segsta$nmol_$nseg)
+        evaluate ($toppar.segend$nmol_$nseg = $segend$nmol_$nseg)
         evaluate ($nseg = $nseg + 1)
     end loop seg
 
     !fully flexible segments
-    evaluate ($toppar.nfle_$nmol = $nfle_$nmol)
+    evaluate ($toppar.nfle$nmol = $nfle$nmol)
     evaluate ($nfle = 1)
-    while ($nfle <=$toppar.nfle_$nmol) loop fle
-        evaluate ($toppar.start_fle_$nmol_$nfle = $start_fle_$nmol_$nfle)
-        evaluate ($toppar.end_fle_$nmol_$nfle = $end_fle_$nmol_$nfle)
+    while ($nfle <=$toppar.nfle$nmol) loop fle
+        evaluate ($toppar.flesta$nmol_$nfle = $flesta$nmol_$nfle)
+        evaluate ($toppar.fleend$nmol_$nfle = $fleend$nmol_$nfle)
         evaluate ($nfle = $nfle + 1)
     end loop fle
     evaluate ($nmol = $nmol + 1)
@@ -734,7 +731,7 @@ end if
 noe
     scale dist $Data.unamb_cool3
     scale ambi $Data.amb_cool3
-    scale hbon 0.0
+    scale hbon $Data.hbond_cool3
     scale symm 0.0
     scale cont 0.0
 end
@@ -744,7 +741,9 @@ evaluate ($eair= $noe)
 evaluate ($esym = 0.0)
 evaluate ($ncs = 0.0)
 evaluate ($zhar = 0.0)
-if ($Data.flags.sym  eq true) then
+evaluate ($rms_test_noe = 0.0)
+evaluate ($violations_test_noe = 0)
+if ($Data.flags.sym eq true) then
     ! calculatee first the symmetry energy
     noe reset nres= 1200000 end
     @MODULE:symmultimer.cns
@@ -761,22 +760,25 @@ if ($Data.flags.sym  eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
+    set message=normal echo=on end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
-end if
-
-print threshold=0.3 noe
-evaluate ($rms_noe=$result)
-evaluate ($violations_noe=$violations)
-if ($Data.noecv eq true) then
-    evaluate ($rms_test_noe=$test_rms)
-    evaluate ($violations_test_noe=$test_violations)
+    noe
+        scale dist $Data.unamb_cool3
+        scale ambi $Data.amb_cool3
+        scale hbon $Data.hbond_cool3
+    end
 else
-    evaluate ($rms_test_noe=0.0)
-    evaluate ($violations_test_noe=0)
-end if
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.noecv eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
+    end if
+end if 
 
-if ($Data.dnarest eq true) then
+if ($Data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns
 end if
 

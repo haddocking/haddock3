@@ -7,7 +7,8 @@ from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-from haddock import contact_us, haddock3_source_path, log
+from haddock import EmptyPath, contact_us, haddock3_source_path, log
+from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.greetings import get_goodbye_help
@@ -86,7 +87,7 @@ def setup_run(workflow_path, restart_from=None):
         non_mandatory_general_parameters_defaults,
         params)
 
-    clean_rundir_according_to_restart(params['run_dir'], restart_from)
+    clean_rundir_according_to_restart(params[RUNDIR], restart_from)
 
     # copy molecules parameter to topology module
     copy_molecules_to_topology(params)
@@ -101,7 +102,7 @@ def setup_run(workflow_path, restart_from=None):
     check_if_modules_are_installed(modules_params)
 
     # create datadir
-    data_dir = create_data_dir(general_params["run_dir"])
+    data_dir = create_data_dir(general_params[RUNDIR])
     new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
 
     # return the modules' parameters and general parameters separately
@@ -174,15 +175,19 @@ def validate_modules_params(modules_params):
         if not defaults:
             return
 
+        blocks = get_blocks(defaults)
+        block_params = read_blocks(blocks, args)
+
         diff = set(args.keys()) \
             - set(defaults.keys()) \
             - set(config_mandatory_general_parameters) \
-            - set(non_mandatory_general_parameters_defaults.keys())
+            - set(non_mandatory_general_parameters_defaults.keys()) \
+            - block_params
 
         if diff:
             _msg = (
                 'The following parameters do not match any expected '
-                f'parameters for module {module_name!r}: {diff}.'
+                f'parameters for module {module_name!r}: {", ".join(diff)}.'
                 )
             raise ConfigurationError(_msg)
 
@@ -235,8 +240,8 @@ def convert_molecules_to_path(params):
 @with_config_error
 def convert_run_dir_to_path(params):
     """Convert run directory value to Python Path."""
-    project_dir = Path(params['run_dir'])
-    params['run_dir'] = project_dir.resolve()
+    project_dir = Path(params[RUNDIR])
+    params[RUNDIR] = project_dir.resolve()
     return
 
 
@@ -279,13 +284,18 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
-                # path is created here to avoid creating empty folders
-                # for those modules without '_fname' parameters
-                pf = Path(data_dir, end_path)
-                pf.mkdir(exist_ok=True)
-                name = Path(value).name
-                shutil.copy(value, Path(pf, name))
-                new_mp[module][parameter] = Path(rel_data_dir, end_path, name)
+                if value:
+                    pv = Path(value)
+                    name = pv.name
+                    # path is created here to avoid creating empty folders
+                    # for those modules without '_fname' parameters
+                    pf = Path(data_dir, end_path)
+                    pf.mkdir(exist_ok=True)
+                    shutil.copy(value, Path(pf, name))
+                    _p = Path(rel_data_dir, end_path, name)
+                    new_mp[module][parameter] = _p
+                else:
+                    new_mp[module][parameter] = EmptyPath()
 
     return new_mp
 
@@ -305,7 +315,7 @@ def clean_rundir_according_to_restart(run_dir, restart_from=None):
         _p = Path(run_dir)
         if _p.exists() and len(list(_p.iterdir())) > 0:
             log.info(
-                f"The `run_dir` {str(_p)!r} exists and is not empty. "
+                f"The {RUNDIR!r} {str(_p)!r} exists and is not empty. "
                 "We can't work on it unless you provide the `--restart` "
                 "option. If you want to start a run from scratch, "
                 "indicate a new folder, or manually delete this one first, "
@@ -354,4 +364,127 @@ def validate_module_names_are_not_mispelled(params):
 @with_config_error
 def check_specific_validations(params):
     """Make specific validations."""
-    v_rundir(params["run_dir"])
+    v_rundir(params[RUNDIR])
+
+
+# reading parameter blocks
+def get_blocks(config):
+    """
+    Get parameter blocks.
+
+    Block parameters follow the rule <preffix>_<something>_<digit>
+
+    - part1_something1_1
+    - part1_something2_1
+    - part1_something_else_1
+    - part1_something4_1
+
+    When used to read the modules' default configuration we expect the
+    <digit> to be only "_1". But having <digit> allows to identify
+    blocks from the user configuration.
+
+    We want to know:
+
+    - part1
+    - how many somethings exist (this defined the size of the block)
+    - _1, defines the number of the block
+
+    Returns
+    -------
+    dictionary
+        In the form of:
+        {("part1", "1"): {
+            "something1", "something2", "something_else",
+            "something4"}
+    """
+    splitted = (parameter.split("_") for parameter in config)
+    parts = (
+        _parts
+        for _parts in splitted
+        if len(_parts) > 2 and _parts[-1].isdigit()
+        )
+
+    blocks = {}
+    for p in parts:
+        new = blocks.setdefault((p[0], p[-1]), {})
+        new.setdefault("counts", 0)
+        new["counts"] += 1
+        new.setdefault("mid", set())
+        new["mid"].add("_".join(p[1:-1]))
+
+    final_blocks = {k: v["mid"] for k, v in blocks.items() if v["counts"] > 1}
+
+    return final_blocks
+
+
+def read_blocks(eblocks, params):
+    """
+    Read the blocks from the user configuration file.
+
+    Compare them with those defined in the default config.
+
+    Parameters
+    ----------
+    eblocks : dict
+        Parameter blocks identified in the `default.cfg` file using the
+        :func:`get_blocks`.
+
+    params : dict
+        The user configuration dictionary.
+
+    Returns
+    -------
+    ser
+        A set of the new parameters that are allowed considering the
+        groups found in the `default.cfg`.
+    """
+    pblocks = get_blocks(params)
+    eblocks = {k: v for k, v in eblocks.items() if k[1] == "1"}
+
+    enames = [_[0] for _ in eblocks]
+    new = set()
+
+    for block in pblocks:
+
+        if block[0] not in enames:
+            emsg = (
+                f"The parameter block '{block[0]}_*_{block[1]}' "
+                "is not a valid expandable parameter.")
+            raise ConfigurationError(emsg)
+
+        diff = pblocks[block].difference(eblocks[(block[0], "1")])
+        if diff:
+            emsg = (
+                "These parameters do not belong to the block "
+                f"'{block[0]}_*_{block[1]}': {', '.join(diff)}."
+                )
+            raise ConfigurationError(emsg)
+
+        num_found = len(pblocks[block])  # len of the set of elements
+        num_expected = len(eblocks[(block[0], "1")])
+
+        if num_found < num_expected:
+            emsg = (
+                f"The parameter block '{block[0]}_*_{block[1]}' expects "
+                f"{num_expected} parameters, but only {num_found} are present "
+                "in the configuration file."
+                )
+            raise ConfigurationError(emsg)
+
+        if num_found > num_expected:
+            emsg = (
+                f"The parameter block {block!r} expects {num_expected} "
+                f"parameters, but {num_found} are present in the configuration "
+                "file."
+                )
+            raise ConfigurationError(emsg)
+
+        for p in params:
+            try:
+                pname, *_, pidx = p.split("_")
+            except ValueError:
+                continue
+            if pname == block[0] and pidx == block[-1]:
+                new.add(p)
+
+    return new

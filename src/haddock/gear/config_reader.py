@@ -28,6 +28,7 @@ dictionaries see `test/test_config_reader.py`.
 """
 import ast
 import re
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path, PosixPath, WindowsPath
 
@@ -70,7 +71,10 @@ _list_one_liner_re = re.compile(
     )
 
 # https://regex101.com/r/bWlaWB/1
-_list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
+_list_multiliner_re = re.compile(r"^ *(\w+) *= *\[\ *(#+[\w\ ]*)?$")
+_list_multiline_content_re = re.compile(
+    r'''^ *([\w\ \,\-\"\'\[\]\.\\\/]*)'''
+    )
 
 # https://regex101.com/r/kY49lw/1
 _true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
@@ -178,6 +182,12 @@ class DuplicatedParameterError(Exception):
     pass
 
 
+class MultilineListDefinitionError(Exception):
+    """Exception when a multiline list is wrongly formatted."""
+
+    pass
+
+
 def read_config(f):
     """Parse HADDOCK3 config file to a dictionary."""
     with open(f, 'r') as fin:
@@ -256,16 +266,35 @@ def _read_value(line, fin):
     # evals if key:value is defined in multiple lines
     mll_group = _list_multiliner_re.match(line)
 
+    # to be used later
+    emsg = (
+        f"Can't process this line {line!r}. "
+        "The multiline list is not properly formatted."
+        )
+
     if mll_group:
         key = mll_group[1]
         idx = line.find('[')
         # need to send `fin` and not `pure_lines`
-        block = line[idx:] + _get_list_block(fin)
-        list_ = _eval_list_str(block)
+        with _multiline_block_error(emsg, ValueError):
+            block = line[idx:] + _get_list_block(fin)
+
+        with _multiline_block_error(emsg, SyntaxError):
+            list_ = _eval_list_str(block)
+
         return key, list_
 
     # if the flow reaches here...
-    raise ValueError(f'Can\'t process this line: {line!r}')
+    raise MultilineListDefinitionError(emsg)
+
+
+@contextmanager
+def _multiline_block_error(emsg, exception):
+    """Error context."""
+    try:
+        yield
+    except exception as err:
+        raise MultilineListDefinitionError(emsg) from err
 
 
 def _is_correct_line(line):
@@ -345,7 +374,11 @@ def _get_list_block(fin):
         if not line:
             break
 
-        block.append(line)
+        group = _list_multiline_content_re.match(line)
+        if group:
+            block.append(line)
+        else:
+            raise ValueError("Bad group in multiline list.")
 
     return ''.join(block).strip()
 

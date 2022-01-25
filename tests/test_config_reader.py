@@ -593,7 +593,7 @@ _config_example_dict_2 = {
             "var2": None,
             "d2": {
                 "var3": True,
-                "list_": [1, 2, 3],
+                "list_": [1, 2, 3, 4],
                 },
             },
         },
@@ -608,10 +608,11 @@ var1 = 1
 var2 = None
 [module.d1.d2]
 var3 = True
-list_ = [ 1,
-2,
-3,
-]
+list_ = [
+    1,
+    2,
+    3, 4
+    ]
 """
 
 # this examples shows the behaviour of subkey repetition
@@ -677,6 +678,36 @@ val2 = 10
 val2 = 20
 """
 
+_config_broken_5 = """
+broken_list = [ 1,
+    2,3
+    ]
+
+"""
+
+_config_broken_6 = """
+broken_list = [
+    1,
+    2,3
+    ]
+name = 1
+"""
+
+_config_broken_7 = """
+broken_list = [ 1,
+    2,3]
+name = 1
+"""
+
+_config_broken_8 = """
+broken_list = [
+    1,
+    2,3,
+    strängé,
+    +
+    ]
+
+"""
 
 @pytest.mark.parametrize(
     'config, error',
@@ -685,6 +716,10 @@ val2 = 20
         (_config_broken_2, config_reader.ConfigFormatError),
         (_config_broken_3, config_reader.DuplicatedParameterError),
         (_config_broken_4, config_reader.DuplicatedParameterError),
+        (_config_broken_5, config_reader.MultilineListDefinitionError),
+        (_config_broken_6, config_reader.MultilineListDefinitionError),
+        (_config_broken_7, config_reader.MultilineListDefinitionError),
+        (_config_broken_8, config_reader.MultilineListDefinitionError),
         ],
     )
 def test_config_format_errors(config, error):

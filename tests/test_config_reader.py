@@ -133,7 +133,11 @@ def test_string_re_wrong(line):
     'line,name,value_fname',
     [
         (r'value_fname = "file"', 'value_fname', Path('file')),
-        (r'molecules = "../../data/2oob.pdb"', 'molecules', Path('../../data/2oob.pdb')),
+        (
+            r'molecules = "../../data/2oob.pdb"',
+            'molecules',
+            Path('../../data/2oob.pdb'),
+            ),
         (
             'value_fname = "file_that_does_not_exist"#with comments',
             "value_fname",
@@ -679,13 +683,6 @@ val2 = 20
 """
 
 _config_broken_5 = """
-broken_list = [ 1,
-    2,3
-    ]
-
-"""
-
-_config_broken_6 = """
 broken_list = [
     1,
     2,3
@@ -693,13 +690,13 @@ broken_list = [
 name = 1
 """
 
-_config_broken_7 = """
+_config_broken_6 = """
 broken_list = [ 1,
     2,3]
 name = 1
 """
 
-_config_broken_8 = """
+_config_broken_7 = """
 broken_list = [
     1,
     2,3,
@@ -717,10 +714,9 @@ broken_list = [
         (_config_broken_2, config_reader.ConfigFormatError),
         (_config_broken_3, config_reader.DuplicatedParameterError),
         (_config_broken_4, config_reader.DuplicatedParameterError),
-        #(_config_broken_5, config_reader.MultilineListDefinitionError),
+        (_config_broken_5, config_reader.MultilineListDefinitionError),
         (_config_broken_6, config_reader.MultilineListDefinitionError),
-        #(_config_broken_7, config_reader.MultilineListDefinitionError),
-        (_config_broken_8, config_reader.MultilineListDefinitionError),
+        (_config_broken_7, config_reader.MultilineListDefinitionError),
         ],
     )
 def test_config_format_errors(config, error):

@@ -97,7 +97,8 @@ _keys_that_accept_files = [
 _keys_files_regex = "|".join(_keys_that_accept_files)
 
 _file_linux_re = re.compile(
-    f'''^ *(\w+_fname|{_keys_files_regex}) *= *'''
+    r'''^ *(\w+_fname'''
+    f'''|{_keys_files_regex}) *= *'''
     r'''("((\.{1,2}\/)*[\w\-\/]+[\w\-]\.?[\w\-]+)"'''
     r'''|'((\.{1,2}\/)*[\w\-\/]+[\w\-]\.?[\w\-]+)')'''
     )

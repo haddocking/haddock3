@@ -26,6 +26,15 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self):
         """Execute the module's protocol."""
+
+        if self.params["top_models"] <= 0:
+            _msg = "top_models must be either > 0 or nan."
+            self.finish_with_error(_msg)
+
+        if not isinstance(self.params["top_cluster"], list):
+            _msg = "top_cluster must be a list, it can be an empty one."
+            self.finish_with_error(_msg)
+
         models_to_select = self.previous_io.retrieve_models()
 
         # how many models should we output?

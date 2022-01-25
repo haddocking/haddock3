@@ -26,7 +26,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self):
         """Execute the module's protocol."""
-
         if self.params["top_models"] <= 0:
             _msg = "top_models must be either > 0 or nan."
             self.finish_with_error(_msg)

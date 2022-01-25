@@ -80,6 +80,10 @@ class HaddockModule(BaseHaddockModule):
                 cutoff=ilrmsd_cutoff,
                 )
 
+        if self.params["dockq"]:
+            self.log("Calculating DockQ metric")
+            capri.dockq()
+
         output_fname = "capri.tsv"
         self.log(f" Saving output to {output_fname}")
         capri.output(

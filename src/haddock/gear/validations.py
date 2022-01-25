@@ -1,11 +1,14 @@
 """Module to define specific validations in Haddock3."""
-import string
+from haddock.core.defaults import RUNDIR, valid_run_dir_chars
+from haddock.core.exceptions import ConfigurationError
+from haddock.modules.util import read_all_configs
 
 
 def v_rundir(rundir):
     """Validate string defining the run directory."""
-    valid = string.ascii_letters + string.digits + "._-/\\"
-    if set(str(rundir)) - set(valid):
-        emsg = \
-            r"The `run_dir` parameter can only have [a-zA-Z0-9_-/\] characters."
-        raise ValueError(emsg)
+    if set(str(rundir)) - set(valid_run_dir_chars):
+        emsg = (
+            f"The {RUNDIR!r} parameter can only have "
+            r"[a-zA-Z0-9._-/\] characters."
+            )
+        raise ConfigurationError(emsg)

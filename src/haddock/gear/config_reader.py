@@ -29,7 +29,7 @@ dictionaries see `test/test_config_reader.py`.
 import ast
 import re
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PosixPath, WindowsPath
 
 from haddock.core.excetions import ConfigurationError
 
@@ -105,7 +105,7 @@ class _Path_re:
 
         Made specifically to :func:`_get_one_line_group`.
         """
-        for regex, pathtype in self.re_groups:
+        for regex, PathType in self.re_groups:
             group = regex.match(string)
             if group:
                 try:

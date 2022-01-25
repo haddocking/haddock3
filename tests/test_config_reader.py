@@ -103,17 +103,17 @@ def test_string_re_wrong(line):
 @pytest.mark.parametrize(
     'line,name,value',
     [
-        ('value = ".gitignore"', 'value', Path('.gitignore').resolve()),
-        ("value = '.'", 'value', Path.cwd().resolve()),
+        ('value = "./.gitignore"', 'value', Path('.gitignore').resolve()),
+        ("value = './'", 'value', Path.cwd().resolve()),
         (
-            'value = "file_that_does_not_exist"',
+            'value = "./file_that_does_not_exist"#with comments',
             "value",
-            Path("file_that_does_not_exist").resolve(),
+            Path("file_that_does_not_exist"),
             ),
         (
-            "value = 'src/contacts_fcc'",
+            "value = './src/contacts_fcc'",
             "value",
-            Path('src', 'contacts_fcc').resolve()),
+            Path('src', 'contacts_fcc')),
         ],
     )
 def test_Path_re(line, name, value):
@@ -129,6 +129,7 @@ def test_Path_re(line, name, value):
     [
         "value = 4",
         "value=''",
+        "value='some_file'",
         ],
     )
 def test_Path_re_wrong(line):
@@ -329,6 +330,7 @@ def test_list_multi_liner_wrong(line):
         ('value = 1', 'value', 1),
         ('value = "some"', 'value', "some"),
         ('list = [12, 13]', 'list', [12, 13]),
+        ('path = "./here"', 'path', Path("./here")),
         (
             'date = 1979-05-27T07:32:00-08:00',
             'date',
@@ -481,6 +483,7 @@ _config_example_dict_1 = {
 
 _config_example_dict_2 = {
     "num1": 10,
+    "some_path": Path("pointing", "to", "some", "path"),
     "module": {
         "name": ["../some/file", "../some/otherfile"],
         "d1": {
@@ -495,6 +498,7 @@ _config_example_dict_2 = {
     }
 
 _config_example_2 = """num1 = 10
+some_path = "./poiting/to/some/path"
 [module]
 name = ["../some/file", "../some/otherfile"]
 [module.d1]

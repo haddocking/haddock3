@@ -1,10 +1,10 @@
 """HADDOCK3 module to select a top cluster/model."""
+import math
 from pathlib import Path
 
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 
-import math
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")

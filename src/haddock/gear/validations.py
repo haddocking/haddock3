@@ -1,7 +1,6 @@
 """Module to define specific validations in Haddock3."""
 from haddock.core.defaults import RUNDIR, valid_run_dir_chars
 from haddock.core.exceptions import ConfigurationError
-from haddock.modules.util import read_all_configs
 
 
 def v_rundir(rundir):

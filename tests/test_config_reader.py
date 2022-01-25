@@ -1,11 +1,33 @@
 """Test config reader."""
 import os
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PosixPath, WindowsPath
 
 import pytest
 
+from haddock import EmptyPath
 from haddock.gear import config_reader
+
+
+
+def on_windows():
+    """Check we if are on windows."""
+    try:
+        WindowsPath()
+    except NotImplementedError:
+        return False
+    else:
+        return True
+
+
+def on_linux():
+    """Check we if are on windows."""
+    try:
+        PosixPath()
+    except NotImplementedError:
+        return False
+    else:
+        return True
 
 
 @pytest.mark.parametrize(
@@ -66,8 +88,13 @@ def test_sub_header_re_wrong(line):
 @pytest.mark.parametrize(
     'line,name,value',
     [
-        # ('value = "some_string"', 'value', '"some_string"'),
+        ('value = "some_string"', 'value', '"some_string"'),
         ("value = 'some'", 'value', "'some'"),
+        (
+            "value = 'someSOME123790'",
+            'value',
+            "'someSOME123790'",
+            ),
         ("value = ''", 'value', "''"),
         ('value = ""', 'value', '""'),
         ("var2='other'", 'var2', "'other'"),
@@ -87,6 +114,8 @@ def test_string_re(line, name, value):
 @pytest.mark.parametrize(
     'line',
     [
+        "value='s*ràngë'",
+        "value='.'",
         'value=1',
         'value=other',
         'value=true',
@@ -100,28 +129,60 @@ def test_string_re_wrong(line):
     assert config_reader._string_re.match(line) is None
 
 
+@pytest.mark.skipif(on_windows(), reason="We are on Windows")
 @pytest.mark.parametrize(
-    'line,name,value',
+    'line,name,value_fname',
     [
-        ('value = "./.gitignore"', 'value', Path('.gitignore').resolve()),
-        ("value = './'", 'value', Path.cwd().resolve()),
+        (r'value_fname = "file"', 'value_fname', Path('file')),
         (
-            'value = "./file_that_does_not_exist"#with comments',
-            "value",
+            'value_fname = "file_that_does_not_exist"#with comments',
+            "value_fname",
             Path("file_that_does_not_exist"),
             ),
         (
-            "value = './src/contacts_fcc'",
-            "value",
-            Path('src', 'contacts_fcc')),
+            "value_fname = './path/to/file'",
+            "value_fname",
+            Path('path', 'to', 'file')),
+        (
+            "value_fname = '../path/to/file'",
+            "value_fname",
+            Path('..', 'path', 'to', 'file')),
         ],
     )
-def test_Path_re(line, name, value):
+def test_File_re_linux(line, name, value_fname):
     """Test string regex."""
-    path_re = config_reader._Path_re()
+    path_re = config_reader._File_re()
     result = path_re.match(line)
     assert result[1] == name
-    assert result[2] == value
+    assert result[2] == value_fname
+
+
+@pytest.mark.skipif(on_linux(), reason="We are on Linux")
+@pytest.mark.parametrize(
+    'line,name,value_fname',
+    [
+        (r'value_fname = "file"', 'value_fname', Path('file')),
+        (
+            r'value_fname = ".\file_that_does_not_exist"#with comments',
+            "value_fname",
+            Path("file_that_does_not_exist"),
+            ),
+        (
+            r"value_fname = '.\path\to\file'",
+            "value_fname",
+            Path('path', 'to', 'file')),
+        (
+            r"value_fname = '..\path\to\file'",
+            "value_fname",
+            Path('..', 'path', 'to', 'file')),
+        ],
+    )
+def test_File_re_windows(line, name, value_fname):
+    """Test string regex."""
+    path_re = config_reader._File_re()
+    result = path_re.match(line)
+    assert result[1] == name
+    assert result[2] == value_fname
 
 
 @pytest.mark.parametrize(
@@ -130,12 +191,53 @@ def test_Path_re(line, name, value):
         "value = 4",
         "value=''",
         "value='some_file'",
+        "value='./path with spaces/file'",
+        "value='./path.with.dots/file'",
+        r"value='.\path with spaces\file'",
+        r"value='./path/with/strângë/ch*rs/",
+        "value_fname = 4",
+        "value_fname=''",
+        "value_fname='./'",
+        "value_fname='./path with spaces/file'",
+        "value_fname='./path.with.dots/file'",
+        r"value_fname='.\path with spaces\file'",
+        r"value_fname='./path/with/strângë/ch*rs/",
         ],
     )
-def test_Path_re_wrong(line):
+def test_File_re_wrong(line):
     """Test string regex."""
-    path_re = config_reader._Path_re()
+    path_re = config_reader._File_re()
     result = path_re.match(line)
+    assert result is None
+
+
+@pytest.mark.parametrize(
+    "string, name",
+    [
+        ("value_fname = ''", "value_fname"),
+        ('value_fname = ""', "value_fname"),
+        ]
+    )
+def test_EmptyPath_re(string, name):
+    """Test empty path."""
+    emptypath_re = config_reader._EmptyFilePath_re()
+    result = emptypath_re.match(string)
+    assert result[1] == name
+    assert isinstance(result[2], EmptyPath)
+
+
+@pytest.mark.parametrize(
+    "string",
+    [
+        "value_fname = 'something'",
+        'value_fname = "./path/file.ext"',
+        'value = 4',
+        ]
+    )
+def test_EmptyPath_re_wrong(string):
+    """Test empty path."""
+    emptypath_re = config_reader._EmptyFilePath_re()
+    result = emptypath_re.match(string)
     assert result is None
 
 
@@ -330,7 +432,7 @@ def test_list_multi_liner_wrong(line):
         ('value = 1', 'value', 1),
         ('value = "some"', 'value', "some"),
         ('list = [12, 13]', 'list', [12, 13]),
-        ('path = "./here"', 'path', Path("./here")),
+        ('path_fname = "./here"', 'path_fname', Path("./here")),
         (
             'date = 1979-05-27T07:32:00-08:00',
             'date',
@@ -483,7 +585,7 @@ _config_example_dict_1 = {
 
 _config_example_dict_2 = {
     "num1": 10,
-    "some_path": Path("pointing", "to", "some", "path"),
+    "some_path_fname": Path("pointing", "to", "some", "path"),
     "module": {
         "name": ["../some/file", "../some/otherfile"],
         "d1": {
@@ -498,7 +600,7 @@ _config_example_dict_2 = {
     }
 
 _config_example_2 = """num1 = 10
-some_path = "./poiting/to/some/path"
+some_path_fname = "./pointing/to/some/path"
 [module]
 name = ["../some/file", "../some/otherfile"]
 [module.d1]

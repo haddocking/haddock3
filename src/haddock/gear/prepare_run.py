@@ -7,7 +7,7 @@ from copy import deepcopy
 from functools import wraps
 from pathlib import Path
 
-from haddock import EmptyPath, contact_us, haddock3_source_path, log
+from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
@@ -216,33 +216,33 @@ def check_if_modules_are_installed(params):
             raise ModuleError(_msg) from err
 
 
-def convert_params_to_path(params):
-    """Convert parameters to path."""
-    convert_molecules_to_path(params)
-    convert_run_dir_to_path(params)
-    return
-
-
-@with_config_error
-def convert_molecules_to_path(params):
-    """
-    Convert molecules path strings to Python Paths.
-
-    And... convert `molecules` in `params` to a dictionary where keys
-    are `key` + `sep` + enumerate(`start`), and values are the new Path
-    values.
-    """
-    molecules = make_list_if_string(params['molecules'])
-    params['molecules'] = [Path(i).resolve() for i in molecules]
-    return
-
-
-@with_config_error
-def convert_run_dir_to_path(params):
-    """Convert run directory value to Python Path."""
-    project_dir = Path(params[RUNDIR])
-    params[RUNDIR] = project_dir.resolve()
-    return
+# depecrated
+# def convert_params_to_path(params):
+#     """Convert parameters to path."""
+#     convert_molecules_to_path(params)
+#     convert_run_dir_to_path(params)
+#     return
+#
+#
+# @with_config_error
+# def convert_molecules_to_path(params):
+#     """
+#     Convert molecules path strings to Python Paths.
+#
+#     And... convert `molecules` in `params` to a dictionary where keys
+#     are `key` + `sep` + enumerate(`start`), and values are the new Path
+#     values.
+#     """
+#     molecules = make_list_if_string(params['molecules'])
+#     params['molecules'] = [Path(i).resolve() for i in molecules]
+#     return
+#
+#
+# @with_config_error
+# def convert_run_dir_to_path(params):
+#     """Convert run directory value to Python Path."""
+#     params[RUNDIR] = Path(params[RUNDIR])
+#     return
 
 
 @with_config_error
@@ -285,8 +285,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
                 if value:
-                    pv = Path(value)
-                    name = pv.name
+                    name = value.name
                     # path is created here to avoid creating empty folders
                     # for those modules without '_fname' parameters
                     pf = Path(data_dir, end_path)
@@ -294,8 +293,6 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
                     shutil.copy(value, Path(pf, name))
                     _p = Path(rel_data_dir, end_path, name)
                     new_mp[module][parameter] = _p
-                else:
-                    new_mp[module][parameter] = EmptyPath()
 
     return new_mp
 

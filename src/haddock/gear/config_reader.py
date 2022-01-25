@@ -31,7 +31,9 @@ import re
 from datetime import datetime
 from pathlib import Path, PosixPath, WindowsPath
 
-from haddock.core.excetions import ConfigurationError
+from haddock import EmptyPath
+from haddock.core.exceptions import ConfigurationError
+from haddock.libs.libfunc import false, give_same, none, nan, true
 
 
 # line regexes
@@ -48,19 +50,7 @@ _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
 # https://regex101.com/r/TRMx0B/1
 _string_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([a-zA-Z0-9_\-]*?)"|'([a-zA-Z0-9_\-]*?)')'''
-    )
-
-_windows_path_re = re.compile(
-    r'''^ *(\w+) *= *'''
-    r'''("([\.\\|\.\.\\][a-zA-Z0-9_\-\.\\]*?)"'''
-    r'''|'([\.\\|\.\.\\][a-zA-Z0-9_\-\.\\]*?)')'''
-    )
-
-_posix_path_re = re.compile(
-    r'''^ *(\w+) *= *'''
-    r'''("([\.\/|\.\.\/][a-zA-Z0-9_\-\.\/]*?)"'''
-    r'''|'([\.\/|\.\.\/][a-zA-Z0-9_\-\.\/]*?)')'''
+    r'''("([\w\-]*?)"|'([\w\-]*?)')'''
     )
 
 # https://regex101.com/r/6X4j7n/2
@@ -74,9 +64,9 @@ _none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
 
 _nan_re = re.compile(r'^ *(\w+) *= *([nN][aA][nN])')
 
-# https://regex101.com/r/YCZSAo/1
+# https://regex101.com/r/YCZSAo/4
 _list_one_liner_re = re.compile(
-    r'^ *(\w+) *= *(\[[a-zA-Z0-9 _,\-\/\"\'\[\]\\]*\])'
+    r'''^ *(\w+) *= *(\[[\w\ \,\-\"\'\[\]\.\\\/]*\])'''
     )
 
 # https://regex101.com/r/bWlaWB/1
@@ -86,13 +76,29 @@ _list_multiliner_re = re.compile(r" *(\w+) *= *\[\ *#?[^\]\n]*$")
 _true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
 _false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
 
+# https://regex101.com/r/X4i3Je/4
+_file_linux_re = re.compile(
+    r'''^ *(\w+_fname) *= *'''
+    r'''("((\.{1,2}\/)?[\w\-\/]+[\w\-]\.?[\w\-]+)"'''
+    r'''|'((\.{1,2}\/)?[\w\-\/]+[\w\-]\.?[\w\-]+)')'''
+    )
 
-class _Path_re:
+_file_windows_re = re.compile(
+    r'''^ *(\w+_fname) *= *'''
+    r'''("((\.{1,2}\\)?[\w\-\\]+[\w\-]\.?[\w\-]+)"'''
+    r'''|'((\.{1,2}\\)?[\w\-\\]+[\w\-]\.?[\w\-]+)')'''
+    )
+
+# https://regex101.com/r/ktjrDo/1
+_emptypath_re = re.compile(r'''^ *(\w+_fname) *= *(""|'')''')
+
+
+class _File_re:
     def __init__(self):
-        """Map to Path regex."""
+        """Map to file path regex."""
         self.re_groups = (
-            (_posix_path_re, PosixPath),
-            (_windows_path_re, WindowsPath),
+            (_file_linux_re, PosixPath),
+            (_file_windows_re, WindowsPath),
             )
 
     def match(self, string):
@@ -118,10 +124,33 @@ class _Path_re:
                         )
                     raise ConfigurationError(emsg) from NotImplementedError
 
-                value = ast.literal_eval(group[2])
+                value = group[2].strip("'\"")
                 if value:
                     p = Path(value)
                     return group[0], group[1], p
+
+        # everything else returns None by definition
+        return None  # we want to return None to match the re.match()
+
+
+class _EmptyFilePath_re:
+    def __init__(self):
+        """Map to EmptyPath regex."""
+        self.re = _emptypath_re
+
+    def match(self, string):
+        """
+        Polymorphs re.match.
+
+        Return the match group if the file exists.
+
+        Else, return false.
+
+        Made specifically to :func:`_get_one_line_group`.
+        """
+        group = self.re.match(string)
+        if group:
+            return group[0], group[1], EmptyPath()
 
         # everything else returns None by definition
         return None  # we want to return None to match the re.match()
@@ -340,14 +369,15 @@ def get_module_name(name):
 # methods to parse single line values
 # (regex, func)
 regex_single_line_methods = (
-    (_Path_re(), lambda x: x),
+    (_File_re(), give_same),
+    (_EmptyFilePath_re(), give_same),
     (_string_re, ast.literal_eval),
     (_number_re, ast.literal_eval),
-    (_nan_re, lambda x: float('nan')),
-    (_none_re, lambda x: None),
+    (_nan_re, nan),
+    (_none_re, none),
     (_list_one_liner_re, _eval_list_str),
-    (_true_re, lambda x: True),
-    (_false_re, lambda x: False),
+    (_true_re, true),
+    (_false_re, false),
     )
 
 regex_single_line_special_methods = [

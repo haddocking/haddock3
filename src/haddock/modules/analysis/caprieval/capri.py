@@ -411,6 +411,8 @@ class CAPRI:
                         row_l.append(str(value.rel_path))
                     elif isinstance(value, int):
                         row_l.append(f"{value}")
+                    elif value is None:
+                        row_l.append("-")
                     else:
                         row_l.append(f"{value:.3f}")
                 out_fh.write("\t".join(row_l) + os.linesep)
@@ -418,7 +420,10 @@ class CAPRI:
     @staticmethod
     def identify_interface(pdb_f, cutoff=5.0):
         """Identify the interface."""
+        if isinstance(pdb_f, PDBFile):
+            pdb_f = pdb_f.rel_path
         pdb = read_pdb(pdb_f)
+
         interface_resdic = {}
         for atom_i, atom_j in get_intermolecular_contacts(pdb, cutoff):
 

@@ -718,6 +718,7 @@ _config_broken_8 = """
 nämé1 = "good"
 """
 
+
 @pytest.mark.parametrize(
     'config, error',
     [

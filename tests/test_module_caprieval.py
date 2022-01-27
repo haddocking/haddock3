@@ -35,8 +35,8 @@ def round_two_dec(dic):
 def protprot_input_list():
     """Prot-prot input."""
     return [
-        Path(golden_data, "protprot_complex_1.pdb"),
-        Path(golden_data, "protprot_complex_2.pdb"),
+        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data)
         ]
 
 
@@ -44,8 +44,8 @@ def protprot_input_list():
 def protdna_input_list():
     """Prot-DNA input."""
     return [
-        Path(golden_data, "protdna_complex_1.pdb"),
-        Path(golden_data, "protdna_complex_2.pdb"),
+        PDBFile(Path(golden_data, "protdna_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protdna_complex_2.pdb"), path=golden_data)
         ]
 
 
@@ -53,22 +53,18 @@ def protdna_input_list():
 def protlig_input_list():
     """Protein-Ligand input."""
     return [
-        Path(golden_data, "protlig_complex_1.pdb"),
-        Path(golden_data, "protlig_complex_2.pdb"),
+        PDBFile(Path(golden_data, "protlig_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protlig_complex_2.pdb"), path=golden_data),
         ]
 
 
 @pytest.fixture
 def protdna_caprimodule(protdna_input_list):
     """Protein-DNA CAPRI module."""
-    ref = protdna_input_list[0]
-    mod_l = [
-        PDBFile(protdna_input_list[0], path=golden_data),
-        PDBFile(protdna_input_list[1], path=golden_data),
-        ]
+    ref = protdna_input_list[0].rel_path
     capri = CAPRI(
         reference=ref,
-        model_list=mod_l,
+        model_list=protdna_input_list,
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
@@ -80,14 +76,10 @@ def protdna_caprimodule(protdna_input_list):
 @pytest.fixture
 def protlig_caprimodule(protlig_input_list):
     """Protein-Ligand CAPRI module."""
-    ref = protlig_input_list[0]
-    mod_l = [
-        PDBFile(protlig_input_list[0], path=golden_data),
-        PDBFile(protlig_input_list[1], path=golden_data),
-        ]
+    ref = protlig_input_list[0].rel_path
     capri = CAPRI(
         reference=ref,
-        model_list=mod_l,
+        model_list=protlig_input_list,
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
@@ -99,14 +91,10 @@ def protlig_caprimodule(protlig_input_list):
 @pytest.fixture
 def protprot_caprimodule(protprot_input_list):
     """Protein-Protein CAPRI module."""
-    ref = protprot_input_list[0]
-    mod_l = [
-        PDBFile(protprot_input_list[0], path=golden_data),
-        PDBFile(protprot_input_list[1], path=golden_data),
-        ]
+    ref = protprot_input_list[0].rel_path
     capri = CAPRI(
         reference=ref,
-        model_list=mod_l,
+        model_list=protprot_input_list,
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
@@ -281,7 +269,6 @@ def test_output(protprot_caprimodule):
     """Test the writing of capri.tsv file."""
     factor = 1
     for m in protprot_caprimodule.model_list:
-        protprot_caprimodule.score_dic[m] = -42.0 * factor
         protprot_caprimodule.irmsd_dic[m] = 0.111 * factor
         protprot_caprimodule.fnat_dic[m] = 0.333 * factor
         protprot_caprimodule.lrmsd_dic[m] = 0.444 * factor
@@ -289,7 +276,7 @@ def test_output(protprot_caprimodule):
         factor += 1.5
 
     output_f = tempfile.NamedTemporaryFile(delete=False)
-    sortby_key = "score"
+    sortby_key = "fnat"
     sort_ascending = True
     rankby_key = "irmsd"
     rank_ascending = True
@@ -306,9 +293,10 @@ def test_output(protprot_caprimodule):
     #  the test
     observed_outf_l = [e.split()[1:] for e in open(output_f.name).readlines()]
     expected_outf_l = [
-        ['rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd'],
-        ['2', '-105.000', '0.278', '0.833', '1.110', '1.388'],
-        ['1', '-42.000', '0.111', '0.333', '0.444', '0.555']
+        ['rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
+            'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+        ['1', 'nan', '0.111', '0.333', '0.444', '0.555', '-', '-', '-'],
+        ['2', 'nan', '0.278', '0.833', '1.110', '1.388', '-', '-', '-']
         ]
 
     assert observed_outf_l == expected_outf_l

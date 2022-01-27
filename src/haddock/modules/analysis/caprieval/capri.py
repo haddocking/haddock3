@@ -83,7 +83,7 @@ class CAPRI:
             **params,
             ):
         self.reference = reference
-        self.model_list = []
+        self.model_list = model_list
         self.irmsd_dic = {}
         self.lrmsd_dic = {}
         self.ilrmsd_dic = {}
@@ -92,7 +92,6 @@ class CAPRI:
         self.atoms = get_atoms(model_list + [reference])
         self.r_chain = receptor_chain
         self.l_chain = ligand_chain
-        self.score_dic = {}
         self.path = path
 
         # TODO: For scoring we might need to get one alignment per model
@@ -105,10 +104,7 @@ class CAPRI:
 
         # Load the models in the class
         for struct in model_list:
-            pdb_f = struct.rel_path
-            pdb_w_chain = self.add_chain_from_segid(pdb_f)
-            self.model_list.append(pdb_w_chain)
-            self.score_dic[pdb_f] = struct.score
+            _ = self.add_chain_from_segid(struct.rel_path)
 
     def irmsd(self, cutoff=5.0):
         """Calculate the I-RMSD."""
@@ -387,7 +383,7 @@ class CAPRI:
             # create the empty rank here so that it will appear
             #  as the second column
             data["rank"] = None
-            data["score"] = self.score_dic[model]
+            data["score"] = model.score
             if model in self.irmsd_dic:
                 data["irmsd"] = self.irmsd_dic[model]
             if model in self.fnat_dic:
@@ -398,6 +394,10 @@ class CAPRI:
                 data["ilrmsd"] = self.ilrmsd_dic[model]
             if model in self.dockq_dic:
                 data["dockq"] = self.dockq_dic[model]
+            # add cluster data
+            data["cluster-id"] = model.clt_id
+            data["cluster-ranking"] = model.clt_rank
+            data["model-cluster-ranking"] = model.clt_model_rank
             # list of dictionaries
             output_l.append(data)
 
@@ -412,11 +412,7 @@ class CAPRI:
         key_values = [(i, k[sortby_key]) for i, k in enumerate(output_l)]
         key_values.sort(key=lambda x: x[1], reverse=not sort_ascending)
 
-        max_model_space = max(len(str(_d["model"])) for _d in output_l) + 2
-        hmodel = "model".center(max_model_space, " ")
-        header = hmodel + "".join(
-            _.rjust(10, " ") for _ in list(output_l[0].keys())[1:]
-            )
+        header = '\t'.join(output_l[0].keys())
 
         with open(output_f, "w") as out_fh:
             out_fh.write(header + os.linesep)
@@ -424,17 +420,24 @@ class CAPRI:
                 row_l = []
                 for value in output_l[idx].values():
                     if isinstance(value, Path):
-                        row_l.append(str(value).ljust(max_model_space, " "))
+                        row_l.append(str(value))
+                    elif isinstance(value, PDBFile):
+                        row_l.append(str(value.rel_path))
                     elif isinstance(value, int):
-                        row_l.append(f"{value}".rjust(10, " "))
+                        row_l.append(f"{value}")
+                    elif value is None:
+                        row_l.append("-")
                     else:
-                        row_l.append(f"{value:.3f}".rjust(10, " "))
-                out_fh.write("".join(row_l) + os.linesep)
+                        row_l.append(f"{value:.3f}")
+                out_fh.write("\t".join(row_l) + os.linesep)
 
     @staticmethod
     def identify_interface(pdb_f, cutoff=5.0):
         """Identify the interface."""
+        if isinstance(pdb_f, PDBFile):
+            pdb_f = pdb_f.rel_path
         pdb = read_pdb(pdb_f)
+
         interface_resdic = {}
         for atom_i, atom_j in get_intermolecular_contacts(pdb, cutoff):
 
@@ -454,6 +457,8 @@ class CAPRI:
     def load_contacts(pdb_f, cutoff=5.0):
         """Load residue-based contacts."""
         con_list = []
+        if isinstance(pdb_f, PDBFile):
+            pdb_f = pdb_f.rel_path
         structure = read_pdb(pdb_f)
         for atom_i, atom_j in get_intermolecular_contacts(structure, cutoff):
             con = (atom_i.chain, atom_i.resid, atom_j.chain, atom_j.resid)
@@ -507,6 +512,8 @@ class CAPRI:
         coord_dic = {}
         chain_dic = {}
         idx = 0
+        if isinstance(pdb_f, PDBFile):
+            pdb_f = pdb_f.rel_path
         with open(pdb_f, "r") as fh:
             for line in fh.readlines():
                 if line.startswith("ATOM"):

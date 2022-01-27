@@ -59,6 +59,7 @@ def test_sub_header_re(line, expected):
     'line',
     [
         '[[header]]',
+        '[héàder]',
         'value = "some_string"',
         '[header with spaces]',
         '[not.valid]',
@@ -114,6 +115,7 @@ def test_string_re(line, name, value):
     'line',
     [
         "value='s*ràngë'",
+        "vàlüé = 'some'",
         "value='.'",
         'value=1',
         'value=other',
@@ -200,6 +202,7 @@ def test_File_re_windows(line, name, value_fname):
         r"value='.\path with spaces\file'",
         r"value='./path/with/strângë/ch*rs/",
         "value_fname = 4",
+        "vàlüé_fname = 'somepath'",
         "value_fname=''",
         "value_fname='./'",
         "value_fname='./path with spaces/file'",
@@ -236,6 +239,7 @@ def test_EmptyPath_re(string, name):
         "value_fname = 'something'",
         'value_fname = "./path/file.ext"',
         'value = 4',
+        'vàlue = ""',
         ]
     )
 def test_EmptyPath_re_wrong(string):
@@ -266,6 +270,7 @@ def test_none_re(line, name, value):
     'line',
     [
         'value=1',
+        'valué = None',
         'value=other',
         'value=true',
         'value="some_string"',
@@ -342,6 +347,7 @@ def test_number_re(line, number):
 @pytest.mark.parametrize(
     'line',
     [
+        "válúe = 12",
         "value = 12.34wrong",
         "value = 12.34.12",
         "value = 1E4.4",
@@ -394,6 +400,7 @@ def test_list_one_liner_re(line, name, value):
     'line',
     [
         'value = ][8000]',
+        'valué = [8000]',
         'value = 8000',
         'value = [8000',
         'value ="somestring',
@@ -421,6 +428,7 @@ def test_list_multi_liner(line):
     'line',
     [
         'value=',
+        'valué=[',
         'value = "some" ## some comment',
         'value = [1]',
         ],
@@ -706,6 +714,9 @@ broken_list = [
 
 """
 
+_config_broken_8 = """
+nämé1 = "good"
+"""
 
 @pytest.mark.parametrize(
     'config, error',
@@ -717,6 +728,7 @@ broken_list = [
         (_config_broken_5, config_reader.MultilineListDefinitionError),
         (_config_broken_6, config_reader.MultilineListDefinitionError),
         (_config_broken_7, config_reader.MultilineListDefinitionError),
+        (_config_broken_8, config_reader.NoGroupFoundError),
         ],
     )
 def test_config_format_errors(config, error):

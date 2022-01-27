@@ -1,30 +1,40 @@
 """
-In-house implementation of enhanced toml-like config files for HADDOCK3.
+In-house implementation of toml-like variation config files for HADDOCK3.
 
-(Likely) It does not implement all features of TOML files, but it does implement
-the features needed for HADDOCK3. The config reader:
+(Likely) It does not implement all features of TOML files, but it does
+implement the toml features needed for HADDOCK3 and, especially, needed
+features for HADDOCK3. The config reader:
 
 * Accepts repeated keys.
-  * Repetitions get `.#` suffixes, where `#` is an integer
+    * Blocks can have repeated names, for example:
 
-* Allows in-line comments for regex-defined values
+        [topoaa]
+        # parameters here...
 
-* lines with special values not defined by regexes do not accept
-  comments
+        [rigidbody]
+        # parameters here...
 
-* Regex defined values:
-  * strings
-  * numbers
-  * null/nones
-  * lists defined in one lines
-  * lists defined in multiple lines (require empty line after the list
-    definition)
+        [caprieval]
+        # parameters here...
 
-* Values attempted without regex (do not accept comment in lines):
-  * `datetime.fromisoformat`
+        [flexref]
+        # parameters here...
 
-To see examples of possible configuration files and generated
-dictionaries see `test/test_config_reader.py`.
+        [caprieval]
+        # parameters here...
+
+* Allows in-line comments:
+    `parameter = value # some comment`
+
+* Allowed values:
+    * strings
+    * numbers
+    * null/none
+    * nan
+    * lists defined in one lines
+    * lists defined in multiple lines (require empty line after the list
+      definition)
+    * datetime.fromisoformat
 """
 import ast
 import re
@@ -38,55 +48,91 @@ from haddock.core.exceptions import ConfigurationError
 from haddock.libs.libfunc import false, give_same, nan, none, true
 
 
-# line regexes
-# https://regex101.com/r/r4BlJf/1
-_main_header_re = re.compile(r'^ *\[(\w+)\]')
+# The main value types are parsed from the configuration file using
+# regular expressions. There is a regular expression for each type of
+# parameter: str, numbers, null, etc. There are also regular expressions
+# to capture lists. For each regex there is a link at regex101 that
+# explains what is captured and what is not.
+#
+# Also, these regular expressions avoid introduction of strange
+# characters that would be useless for the HADDOCK3 or may create
+# problems.
+#
+# At the end of the file there is a list that maps each regular
+# expression with the function that reads the captured value from the
+# configuration file.
+#
+# the re.ASCII parameter makes sure non-ascii chars are rejected with \w key
 
-# https://regex101.com/r/wKm07b/1
+# Captures the main headers.
+# https://regex101.com/r/9urqti/1
+_main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
+
+# Captures sub-headers
+# https://regex101.com/r/6OpJJ8/1
 # thanks https://stackoverflow.com/questions/39158902
-_sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]')
+_sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]', re.ASCII)
 
-# string regular expression here matches the expectations of modules' defaults
-# there are no modules defaults that expect any other character. So, if we
-# block it's read from here, avoid also downstream errors.
-# https://regex101.com/r/TRMx0B/1
+# capture string parameters (paths are not strings, see later)
+# https://regex101.com/r/0LYCAG/1
 _string_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([\w\-]*?)"|'([\w\-]*?)')'''
+    r'''("([\w\-]*?)"|'([\w\-]*?)')''',
+    re.ASCII,
     )
 
-# https://regex101.com/r/6X4j7n/2
+# captures numbers
+# https://regex101.com/r/Ur6TUK/1
 _number_re = re.compile(
     r'^ *(\w+) *= *'
-    r'(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d+|-?\d+\.?\d*[eE]\d+)(?: |#|$)'
+    r'(\-?\d+\.?\d*|\-?\.\d+|\-?\.?\d+[eE]\-?\d+|-?\d+\.?\d*[eE]\d+)(?: |#|$)',
+    re.ASCII,
     )
 
-# https://regex101.com/r/K6yXbe/1
-_none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)')
+# captures None or Null
+# https://regex101.com/r/izatQ3/1
+_none_re = re.compile(r'^ *(\w+) *= *([Nn]one|[Nn]ull)', re.ASCII)
 
-_nan_re = re.compile(r'^ *(\w+) *= *([nN][aA][nN])')
+# captures Nan
+# https://regex101.com/r/3OVbqs/1
+_nan_re = re.compile(r'^ *(\w+) *= *([nN][aA][nN])', re.ASCII)
 
-# https://regex101.com/r/YCZSAo/4
+# captures a list that is defined in a single line
+# https://regex101.com/r/XtgU8I/1
 _list_one_liner_re = re.compile(
-    r'''^ *(\w+) *= *(\[[\w\ \,\-\"\'\[\]\.\\\/]*\])'''
+    r'''^ *(\w+) *= *(\[[\w\ \,\-\"\'\[\]\.\\\/]*\])''',
+    re.ASCII,
     )
 
-# https://regex101.com/r/bWlaWB/2
+# captures the beginning of a list defined in multiple lines. The rest
+# of the list will be captured with a function later on.
+# https://regex101.com/r/eakIzB/1
 _list_multiliner_re = re.compile(
-    r'''^ *(\w+) *= *\[(?:\ *[\w\ \,\-\"\'\[\]\.\\\/]*'''
-    r'''[\w\ \,\-\"\'\[\.\\\/](?:#+[\w\ ]*)?)?$'''
+    r'''^ *(\w+) *= *\[(?:[\w\ \,\-\"\'\[\]\.\\\/]*'''
+    r'''[\w\ \,\-\"\'\[\.\\\/](?:#+[\w\ ]*)?)?$''',
+    re.ASCII,
     )
 
+# captures the inside of a multiline list to make sure no strange chars
+# are passed in. This is read within a special function so, there's no
+# need for a regex101 link here.
 _list_multiline_content_re = re.compile(
-    r'''^ *([\w\ \,\-\"\'\[\]\.\\\/]*)'''
+    r'''^ *([\w\ \,\-\"\'\[\]\.\\\/]*)''',
+    re.ASCII,
     )
 
-# https://regex101.com/r/kY49lw/1
-_true_re = re.compile(r'^ *(\w+) *= *([tT]rue)')
-_false_re = re.compile(r'^ *(\w+) *= *([fF]alse)')
+# captures true or false
+# https://regex101.com/r/mkImqk/1
+_true_re = re.compile(r'^ *(\w+) *= *([tT]rue)', re.ASCII)
+# https://regex101.com/r/duMPt3/1
+_false_re = re.compile(r'^ *(\w+) *= *([fF]alse)', re.ASCII)
 
-# https://regex101.com/r/X4i3Je/5
 
+# Some parameters are paths. The configuration reader reads those as
+# pathlib.Paths so that they are injected properly in the rest of the
+# workflow. In general, any parameter ending with `_fname` is a path,
+# but there are also other parameters that are paths. Those need to be
+# added to this list bellow:
 _keys_that_accept_files = [
     "cns_exec",
     "executable",
@@ -94,25 +140,45 @@ _keys_that_accept_files = [
     RUNDIR,
     ]
 
+# we join the list and inject it in the regex below
 _keys_files_regex = "|".join(_keys_that_accept_files)
 
+# regex accepting linux paths (PosixPaths)
+# https://regex101.com/r/UQelVX/1
 _file_linux_re = re.compile(
-    r'''^ *(\w+_fname'''
-    f'''|{_keys_files_regex}) *= *'''
+    r'''^ *(\w+_fname|'''
+    f'''{_keys_files_regex}'''
+    r''') *= *'''
     r'''("((\.{1,2}\/)*[\w\-\/]+[\w\-]\.?[\w\-]+)"'''
-    r'''|'((\.{1,2}\/)*[\w\-\/]+[\w\-]\.?[\w\-]+)')'''
+    r'''|'((\.{1,2}\/)*[\w\-\/]+[\w\-]\.?[\w\-]+)')''',
+    re.ASCII,
     )
 
+# regex accepting Windows paths (WindowsPaths)
+# same as linux but with \.
+# at the time of wrinting HADDOCK3 did not supported windows.
 _file_windows_re = re.compile(
-    r'''^ *(\w+_fname|{_keys_files_regex}) *= *'''
+    r'''^ *(\w+_fname|'''
+    f'''{_keys_files_regex}'''
+    r''') *= *'''
     r'''("((\.{1,2}\\)*[\w\-\\]+[\w\-]\.?[\w\-]+)"'''
-    r'''|'((\.{1,2}\\)*[\w\-\\]+[\w\-]\.?[\w\-]+)')'''
+    r'''|'((\.{1,2}\\)*[\w\-\\]+[\w\-]\.?[\w\-]+)')''',
+    re.ASCII,
     )
 
-# https://regex101.com/r/ktjrDo/1
-_emptypath_re = re.compile(r'''^ *(\w+_fname) *= *(""|'')''')
+# Empty paths are defined path parameters with empty strings "".
+# https://regex101.com/r/jtGbT2/1
+_emptypath_re = re.compile(
+    r'''^ *(\w+_fname|'''
+    f'''{_keys_files_regex}'''
+    r''') *= *(""|'')''',
+    re.ASCII,
+    )
 
 
+# re.compile objects have a `.match` method. This _File_re class
+# implements the logic to identify paths with a `.match` method so that
+# all regex match methods can be chained, see below.
 class _File_re:
     def __init__(self):
         """Map to file path regex."""
@@ -144,6 +210,8 @@ class _File_re:
                         )
                     raise ConfigurationError(emsg) from NotImplementedError
 
+                # strip the quotes so we don't need to use
+                # ast.literal_eval
                 value = group[2].strip("'\"")
                 if value:
                     p = Path(value)
@@ -153,6 +221,7 @@ class _File_re:
         return None  # we want to return None to match the re.match()
 
 
+# same as for _File_re but simulates _EmptyFilePath_re.
 class _EmptyFilePath_re:
     def __init__(self):
         """Map to EmptyPath regex."""
@@ -176,6 +245,7 @@ class _EmptyFilePath_re:
         return None  # we want to return None to match the re.match()
 
 
+# defines some specific exceptions
 class NoGroupFoundError(Exception):
     """
     Exception if no group is found.
@@ -204,6 +274,7 @@ class MultilineListDefinitionError(Exception):
     pass
 
 
+# main public API
 def read_config(f):
     """Parse HADDOCK3 config file to a dictionary."""
     with open(f, 'r') as fin:
@@ -220,7 +291,7 @@ def _read_config(fin):
         A generator expressing the content of a file in lines. Cannot be
         a list.
     """
-    # it must be kept as a generator
+    # main dictionary to store the configuration
     d = {}
 
     # main keys always come before any subdictionary
@@ -228,15 +299,19 @@ def _read_config(fin):
 
     pure_lines = filter(_is_correct_line, map(_process_line, fin))
     header = None
+    # this loops only over the lines that have meaningful information
     for line in pure_lines:
 
+        # collects header and subheader
         main_header_group = _main_header_re.match(line)
         sub_header_group = _sub_header_re.match(line)
 
+        # prepares header
         if main_header_group:
             header = _update_key_number(main_header_group[1], d)
             d1 = d.setdefault(header, {})
 
+        # prepares subheader
         elif sub_header_group:
             headers = sub_header_group[1].split('.')
             header_ = _update_key_number(headers[0], d, offset=-1)
@@ -250,7 +325,9 @@ def _read_config(fin):
             for head in headers[1:]:
                 d1 = d1.setdefault(head, {})
 
+        # is a value line
         else:
+            # reads the parameter line
             value_key, value = _read_value(line, fin)
             if value_key in d1:
                 _msg = (
@@ -265,16 +342,23 @@ def _read_config(fin):
 
 
 def _update_key_number(key, d, sep='.', offset=0):
+    """
+    Update key number pairs.
+
+    Despite the original config can accept repated header keys,
+    a python dictionary cannot. So a integer suffix is added.
+    """
     _num = str(sum(1 for k in d if k.startswith(key)) + offset)
     return key + sep + _num
 
 
 def _read_value(line, fin):
-    """Read values defined in one line."""
-    # evals if key:value are defined in a single line
+    """Read parameter:value pairs."""
+    # attempts to read a parameter defined in a single line
     try:
         key, value = _get_one_line_group(line)
     except NoGroupFoundError:
+        # if the group is not found, try the multiline list
         pass
     else:
         return key, value
@@ -282,17 +366,20 @@ def _read_value(line, fin):
     # evals if key:value is defined in multiple lines
     mll_group = _list_multiliner_re.match(line)
 
-    # to be used later
-    emsg = (
-        f"Can't process this line {line!r}. "
-        "The multiline list is not properly formatted."
-        )
-
+    # tries to read the multiline list.
     if mll_group:
+
+        # define the error message to be used later
+        emsg = (
+            f"Can't process this line {line!r}. "
+            "The multiline list is not properly formatted."
+            )
+
         key = mll_group[1]
         idx = line.find('[')
         # need to send `fin` and not `pure_lines`
         with _multiline_block_error(emsg, ValueError):
+            # defines a block to pass to _eval_list_str
             block = line[idx:] + _get_list_block(fin)
 
         with _multiline_block_error(emsg, SyntaxError):
@@ -300,13 +387,15 @@ def _read_value(line, fin):
 
         return key, list_
 
-    # if the flow reaches here...
-    raise MultilineListDefinitionError(emsg)
+        # if the flow reaches here...
+        raise MultilineListDefinitionError(emsg)
+
+    raise NoGroupFoundError(f"Could not read line: {line!r}.")
 
 
 @contextmanager
 def _multiline_block_error(emsg, exception):
-    """Error context."""
+    """Error context for multiline lists."""
     try:
         yield
     except exception as err:
@@ -314,6 +403,11 @@ def _multiline_block_error(emsg, exception):
 
 
 def _is_correct_line(line):
+    """
+    Define what is a correct line.
+
+    Can be expanded in the future if needed.
+    """
     return not _is_comment(line)
 
 
@@ -335,7 +429,7 @@ def _process_line(line):
 
 
 def _replace_bool(s):
-    """Replace booleans and try to parse."""
+    """Replace booleans and before passing to ast.literal_eval."""
     s = s.replace('true', 'True')
     s = s.replace('false', 'False')
     return s
@@ -353,10 +447,14 @@ def _eval_list_str(s):
 
 def _get_one_line_group(line):
     """Attempt to identify a key:value pair in a single line."""
+    # attempts to read `key = value` pairs in a line.
+    # the order by which the reading is performed is important
+    # that is, the order of `regex_single_line_methods`.
     for method, func in regex_single_line_methods:
         group = method.match(line)
         if group:
-            return group[1], func(group[2])  # return first found
+            # return the first found
+            return group[1], func(group[2])
 
     # all regex-based methods have failed
     # now try methods not based on regex
@@ -416,7 +514,10 @@ def get_module_name(name):
 
 
 # methods to parse single line values
-# (regex, func)
+# the order of this list matters
+# the idea is simple: one regex compile object (or polymorphism) maps to
+# a function that should process the captured value or return some
+# predifined value accordingly.
 regex_single_line_methods = (
     (_File_re(), give_same),
     (_EmptyFilePath_re(), give_same),
@@ -429,6 +530,9 @@ regex_single_line_methods = (
     (_false_re, false),
     )
 
+# methods to parse other values not defined by regex
+# at the time of writing there are no parameters that require a date
+# but, for a matter of demonstration, I added that functionality here
 regex_single_line_special_methods = [
     datetime.fromisoformat,
     ]

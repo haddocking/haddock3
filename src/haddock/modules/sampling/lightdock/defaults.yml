@@ -1,88 +1,141 @@
-basic:
-  glowworms:
-    default: 200
-    type: integer
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-  steps:
-    default: 100
-    type: integer
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-  swarms:
-    default: 400
-    type: integer
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-  scoring:
-    default: fastdfire
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-  top:
-    default: 10
-    type: integer
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-  receptor_chains:
-    default: A
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-  receptor_active:
-    default: ''
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-  receptor_passive:
-    default: ''
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-  ligand_chains:
-    default: B
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-  ligand_active:
-    default: ''
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-  ligand_passive:
-    default: ''
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-  noxt:
-    default: true
-    type: bool
-    hover: No help yet
-    doc: No help yet
-  noh:
-    default: true
-    type: bool
-    hover: No help yet
-    doc: No help yet
-  restraints:
-    default: false
-    type: bool
-    hover: No help yet
-    doc: No help yet
-intermediate: {}
-guru: {}
+glowworms:
+  default: 200
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+steps:
+  default: 100
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+swarms:
+  default: 400
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+scoring:
+  default: fastdfire
+  type: string
+  maxchars: 100
+  minchars: 0
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+top:
+  default: 10
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+receptor_chains:
+  default: A
+  type: string
+  maxchars: 100
+  minchars: 0
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+receptor_active:
+  default: ''
+  type: string
+  maxchars: 100
+  minchars: 0
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+receptor_passive:
+  default: ''
+  type: string
+  maxchars: 100
+  minchars: 0
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+ligand_chains:
+  default: B
+  type: string
+  maxchars: 100
+  minchars: 0
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+ligand_active:
+  default: ''
+  type: string
+  maxchars: 100
+  minchars: 0
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+ligand_passive:
+  default: ''
+  type: string
+  maxchars: 100
+  minchars: 0
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+noxt:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+noh:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+restraints:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic

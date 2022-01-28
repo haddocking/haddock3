@@ -1,9 +1,8 @@
-basic:
-  ambig_fname:
-    default: ''
-    type: path
-    length: 9999
-    hover: No help yet
-    doc: No help yet
-intermediate: {}
-guru: {}
+ambig_fname:
+  default: ''
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic

@@ -1,37 +1,50 @@
-basic:
-  contact_distance_cutoff:
-    default: 5.0
-    type: float
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-  threshold:
-    default: 4
-    type: integer
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-intermediate:
-  fraction_cutoff:
-    default: 0.6
-    type: float
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-  strictness:
-    default: 0.75
-    type: float
-    min: -9999
-    max: 9999
-    hover: No help yet
-    doc: No help yet
-guru:
-  executable:
-    default: src/contact_fcc
-    type: string
-    length: 9999
-    hover: No help yet
-    doc: No help yet
+executable:
+  default: !!python/object/apply:pathlib.PosixPath
+  - src
+  - contact_fcc
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+contact_distance_cutoff:
+  default: 5.0
+  type: float
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+fraction_cutoff:
+  default: 0.6
+  type: float
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+threshold:
+  default: 4
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+strictness:
+  default: 0.75
+  type: float
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic

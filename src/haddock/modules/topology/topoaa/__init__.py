@@ -86,11 +86,10 @@ class HaddockModule(BaseCNSModule):
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
-        mol_params = {
-            k:v
-            for k, v in self.params.items()
-            if k.startswith("mol") and k[3:].isdigit()
-            } #self.params.pop('input')
+        mol_params = {}
+        for k in list(self.params.keys()):
+            if k.startswith("mol") and k[3:].isdigit():
+                mol_params[k] = self.params.pop(k)
 
         # to facilite the for loop down the line, we create a list with the keys
         # of `mol_params` with inverted order (we will use .pop)

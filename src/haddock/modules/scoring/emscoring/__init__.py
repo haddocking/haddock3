@@ -75,7 +75,6 @@ class HaddockModule(BaseCNSModule):
         weights = {e: self.params[e] for e in _weight_keys}
 
         # Check for generated output, fail it not all expected files are found
-        expected = []
         for pdb in scored_structure_list:
             if pdb.is_present():
                 haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
@@ -83,13 +82,12 @@ class HaddockModule(BaseCNSModule):
                     )
 
                 pdb.score = haddock_score
-                expected.append(pdb)
 
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         with open(output_fname, "w") as fh:
             fh.write(f"structure\toriginal_name\tscore{linesep}")
-            for pdb in expected:
+            for pdb in scored_structure_list:
                 # temporary solution to get the original name
                 #  here one .pdb = one .psf and the .psf is not changed by
                 #  the module so use its name as the original one
@@ -100,7 +98,7 @@ class HaddockModule(BaseCNSModule):
 
         # Save module information
         io = ModuleIO()
-        io.add(expected, "o")
+        io.add(scored_structure_list, "o")
         faulty = io.check_faulty()
         tolerance = self.params["tolerance"]
         if faulty > tolerance:

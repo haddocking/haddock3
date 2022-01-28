@@ -87,7 +87,6 @@ class HaddockModule(BaseCNSModule):
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
 
-        expected = []
         for pdb in refined_structure_list:
             if pdb.is_present():
                 haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
@@ -95,11 +94,10 @@ class HaddockModule(BaseCNSModule):
                     )
 
                 pdb.score = haddock_score
-                expected.append(pdb)
 
         # Save module information
         io = ModuleIO()
-        io.add(expected, "o")
+        io.add(refined_structure_list, "o")
         faulty = io.check_faulty()
         tolerance = self.params["tolerance"]
         if faulty > tolerance:

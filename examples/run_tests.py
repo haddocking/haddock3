@@ -41,17 +41,17 @@ except Exception:
 # edit this dictionary to add or remove examples.
 # keys are the examples folder, and values are the configuration files
 examples = (
-    ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),
-    ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),
-    ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),
+    ("docking-protein-DNA", "docking-protein-DNA-test.cfg"),
+    ("docking-protein-DNA", "docking-protein-DNA-mdref-test.cfg"),
+    ("docking-protein-homotrimer", "docking-protein-homotrimer-test.cfg"),
     ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),
-    ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),
-    ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),
-    ("refine-complex"              , "refine-complex-test.cfg"),
-    ("scoring"                     , "scoring-test.cfg"),
+    ("docking-protein-ligand", "docking-protein-ligand-test.cfg"),
+    ("docking-protein-peptide", "docking-protein-peptide-test.cfg"),
+    ("docking-protein-protein", "docking-protein-protein-test.cfg"),
+    ("docking-protein-protein", "docking-protein-protein-cltsel-test.cfg"),
+    ("docking-protein-protein", "docking-protein-protein-mdref-test.cfg"),
+    ("refine-complex", "refine-complex-test.cfg"),
+    ("scoring", "scoring-test.cfg"),
     )
 
 
@@ -87,6 +87,10 @@ def main(examples, break_on_errors=True):
         with working_directory(folder):
 
             params = read_config(file_)
+            # https://github.com/haddocking/haddock3/pull/295#issuecomment-1024057662
+            for p in params:
+                if isinstance(params[p], dict) and p != "topoaa":
+                    params[p]['tolerance'] = 20
             rmtree(params["run_dir"], ignore_errors=True)
             p = subprocess.run(
                 f"haddock3 {file_}",

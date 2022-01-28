@@ -45,13 +45,14 @@ examples = (
     ("docking-protein-DNA", "docking-protein-DNA-mdref-test.cfg"),
     ("docking-protein-homotrimer", "docking-protein-homotrimer-test.cfg"),
     ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),
-    ("docking-protein-ligand", "docking-protein-ligand-test.cfg"),
-    ("docking-protein-peptide", "docking-protein-peptide-test.cfg"),
-    ("docking-protein-protein", "docking-protein-protein-test.cfg"),
-    ("docking-protein-protein", "docking-protein-protein-cltsel-test.cfg"),
-    ("docking-protein-protein", "docking-protein-protein-mdref-test.cfg"),
-    ("refine-complex", "refine-complex-test.cfg"),
-    ("scoring", "scoring-test.cfg"),
+    ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),
+    ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),
+    ("docking-protein-peptide"     , "docking-protein-peptide-mdref-test.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),
+    ("refine-complex"              , "refine-complex-test.cfg"),
+    ("scoring"                     , "scoring-test.cfg"),
     )
 
 

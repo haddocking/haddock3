@@ -47,6 +47,7 @@ examples = (
     ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),
     ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),
     ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),
+    ("docking-protein-peptide"     , "docking-protein-peptide-mdref-test.cfg"),
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),
     ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),

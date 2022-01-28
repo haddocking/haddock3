@@ -165,6 +165,10 @@ class ModuleIO:
                 if element.is_present():
                     present += 1
 
+        if total == 0:
+            _msg = ("No expected output was passed to ModuleIO")
+            raise Exception(_msg)
+
         faulty_per = (1 - (present / total)) * 100
 
         return faulty_per

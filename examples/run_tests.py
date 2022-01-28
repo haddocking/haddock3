@@ -40,6 +40,7 @@ except Exception:
 
 # edit this dictionary to add or remove examples.
 # keys are the examples folder, and values are the configuration files
+#  the whitespaces below were added on purpose and must not be removed
 examples = (
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),

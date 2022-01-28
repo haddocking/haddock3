@@ -13,7 +13,7 @@ import importlib
 import sys
 from pathlib import Path
 
-from haddock.gear.yaml2cfg import yaml2cfg_text_with_explevels
+from haddock.gear.yaml2cfg import yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
 from haddock.modules import modules_category
 
@@ -68,20 +68,13 @@ def main(module, explevel):
         modules_category[module],
         module,
         ))
+
     module_lib = importlib.import_module(module_name)
     cfg = module_lib.DEFAULT_CONFIG
 
     ycfg = read_from_yaml(cfg)
 
-    if explevel == "all":
-        new_config = yaml2cfg_text_with_explevels(ycfg, module)
-
-    else:
-        new_config = yaml2cfg_text_with_explevels(
-            ycfg,
-            module,
-            expert_levels=[explevel],
-            )
+    new_config = yaml2cfg_text(ycfg, module)
 
     Path(f"haddock3_{module}.cfg").write_text(new_config)
 

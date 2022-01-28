@@ -2,7 +2,7 @@
 import filecmp
 from pathlib import Path
 
-from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text_with_explevels
+from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
 
 from . import haddock3_yaml_cfg_examples, haddock3_yaml_converted
@@ -55,7 +55,7 @@ def test_flat_complex_config_1():
 def test_yaml2cfg_test():
     """Test yaml dict to cfg."""
     ycfg = read_from_yaml(haddock3_yaml_cfg_examples)
-    result = yaml2cfg_text_with_explevels(ycfg, "topoaa")
+    result = yaml2cfg_text(ycfg, "topoaa")
     assert isinstance(result, str)
 
     p = Path('dummy_test.cfg')

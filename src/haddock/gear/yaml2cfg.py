@@ -6,16 +6,12 @@ function names. In these cases, we always mean the HADDOCK3 YAML
 configuration files which have specific keys.
 """
 import os
+from collections.abc import Mapping
 
-from haddock import config_expert_levels
 from haddock.libs.libio import read_from_yaml
 
 
-def yaml2cfg_text_with_explevels(
-        ycfg,
-        module,
-        expert_levels=config_expert_levels,
-        ):
+def yaml2cfg_text(ymlcfg, module):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -23,7 +19,7 @@ def yaml2cfg_text_with_explevels(
 
     Parameters
     ----------
-    ycfg : dict
+    ymlcfg : dict
         The dictionary representing the HADDOCK3 config file.
 
     module : str
@@ -35,13 +31,12 @@ def yaml2cfg_text_with_explevels(
     new_config = []
     new_config.append(f"[{module}]")
 
-    for level in expert_levels:
-        new_config.append(_yaml2cfg_text(ycfg[level], module, level))
+    new_config.append(_yaml2cfg_text(ymlcfg, module))
 
     return os.linesep.join(new_config) + os.linesep
 
 
-def _yaml2cfg_text(ycfg, module, subtitle=None):
+def _yaml2cfg_text(ycfg, module):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -57,38 +52,41 @@ def _yaml2cfg_text(ycfg, module, subtitle=None):
     """
     params = []
 
-    if subtitle:
-        # empty strings represent new lines
-        params.extend(["", f"# {subtitle}", ""])
-
     for param_name, param in ycfg.items():
 
         # "default" is not in param when the key points to a subdictionary
         # of parameters.
-        if "default" not in param:
+        if isinstance(param, Mapping) and "default" not in param:
 
             params.append("")  # give extra space
             curr_module = f"{module}.{param_name}"
             params.append(f"[{curr_module}]")
             params.append(_yaml2cfg_text(param, module=curr_module))
 
-        else:
+        elif isinstance(param, Mapping):
 
             comment = []
-            comment.append(param["hoover"])
-            if "min" in param:
-                comment.append(f"$min {param['min']} $max {param['max']}")
-            if "length" in param:
-                comment.append(f"$maxlen {param['length']}")
+            for _comment, cvalue in param.items():
+                if _comment in ("default", "explevel", "short", "long", "type"):
+                    continue
+
+                if not cvalue:
+                    continue
+
+                comment.append(f"${_comment} {cvalue}")
 
             params.append("{} = {!r}  # {}".format(
                 param_name,
                 param["default"],
-                " ".join(comment),
+                " / ".join(comment),
                 ))
 
             if param["type"] == "list":
                 params.append(os.linesep)
+
+        else:
+            # ignore some other parameters that are defined for sections.
+            continue
 
     return os.linesep.join(params)
 
@@ -98,9 +96,7 @@ def read_from_yaml_config(cfg_file):
     ycfg = read_from_yaml(cfg_file)
     # there's no need to make a deep copy here, a shallow copy suffices.
     cfg = {}
-    for level in config_expert_levels:
-        cfg.update(flat_yaml_cfg(ycfg[level]))
-
+    cfg.update(flat_yaml_cfg(ycfg))
     return cfg
 
 
@@ -109,7 +105,13 @@ def flat_yaml_cfg(cfg):
     new = {}
     for param, values in cfg.items():
         try:
-            new[param] = values["default"]
+            new_value = values["default"]
         except KeyError:
-            new[param] = flat_yaml_cfg(values)
+            new_value = flat_yaml_cfg(values)
+        except TypeError:
+            # happens when values is a string for example,
+            # addresses `explevel` in `mol*` topoaa.
+            continue
+
+        new[param] = new_value
     return new

@@ -1,4 +1,5 @@
 """All default parameters used by the framework."""
+import string
 import sys
 from pathlib import Path
 
@@ -14,6 +15,7 @@ if not cns_exec.exists():
         )
     sys.exit()
 
+
 # Module input and generated data will be stored in folder starting by
 #  this prefix
 MODULE_PATH_NAME = "step_"
@@ -23,3 +25,7 @@ MODULE_IO_FILE = "io.json"
 
 # Temptative number of max allowed number of modules to execute
 MAX_NUM_MODULES = 10000
+
+valid_run_dir_chars = string.ascii_letters + string.digits + "._-/\\"
+
+RUNDIR = "run_dir"

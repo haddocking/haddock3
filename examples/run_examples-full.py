@@ -41,17 +41,15 @@ except Exception:
 # edit this dictionary to add or remove examples.
 # keys are the examples folder, and values are the configuration files
 examples = (
-    ("docking-protein-DNA"         , "docking-protein-DNA.cfg"),
-    ("docking-protein-DNA"         , "docking-protein-DNA-mdref.cfg"),
-    ("docking-protein-homotrimer"  , "docking-protein-homotrimer.cfg"),
-    ("docking-protein-ligand-shape", "docking-protein-ligand-shape.cfg"),
-    ("docking-protein-ligand"      , "docking-protein-ligand.cfg"),
-    ("docking-protein-peptide"     , "docking-protein-peptide.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein-cltsel.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein-mdref.cfg"),
-    ("refine-complex"              , "refine-complex.cfg"),
-    ("scoring"                     , "scoring.cfg"),
+    ("docking-protein-DNA"         , "docking-protein-DNA-full.cfg"),
+    ("docking-protein-DNA"         , "docking-protein-DNA-mdref-full.cfg"),
+    ("docking-protein-homotrimer"  , "docking-protein-homotrimer-full.cfg"),
+    ("docking-protein-ligand-shape", "docking-protein-ligand-shape-full.cfg"),
+    ("docking-protein-ligand"      , "docking-protein-ligand-full.cfg"),
+    ("docking-protein-peptide"     , "docking-protein-peptide-full.cfg"),
+    ("docking-protein-peptide"     , "docking-protein-peptide-mdref-full.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein-full.cfg"),
+    ("docking-protein-protein"     , "docking-protein-protein-mdref-full.cfg"),
     )
 
 

@@ -4,7 +4,7 @@ from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
-from haddock import log, modules_defaults_path
+from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
@@ -135,6 +135,7 @@ class BaseHaddockModule(ABC):
             non_mandatory_general_parameters_defaults,
             self._params)
         self._params = recursive_dict_update(_n, params)
+        self._fill_emptypaths()
         self._confirm_fnames_exist()
 
     def add_parent_to_paths(self):
@@ -213,9 +214,15 @@ class BaseHaddockModule(ABC):
 
     def _confirm_fnames_exist(self):
         for param, value in self._params.items():
-            if param.endswith('_fname'):
+            if param.endswith('_fname') and value:
                 if not Path(value).exists():
                     raise FileNotFoundError(f'File not found: {str(value)!r}')
+
+    def _fill_emptypaths(self):
+        """Fill empty paths."""
+        for param, value in list(self._params.items()):
+            if param.endswith('_fname') and not value:
+                self._params[param] = EmptyPath()
 
 
 def get_engine(mode, params):

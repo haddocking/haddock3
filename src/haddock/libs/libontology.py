@@ -167,7 +167,8 @@ class ModuleIO:
 
         if total == 0:
             _msg = ("No outputs were expected to exist, "
-                    "make sure you are passing the correct variable to ModuleIO")
+                    "make sure you are passing the correct"
+                    " variable to ModuleIO")
             raise Exception(_msg)
 
         faulty_per = (1 - (present / total)) * 100

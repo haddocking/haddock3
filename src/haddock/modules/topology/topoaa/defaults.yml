@@ -27,7 +27,6 @@ log_level:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -38,6 +37,7 @@ iniseed:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -72,6 +72,7 @@ tolerance:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -83,7 +84,6 @@ mol1:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -134,6 +134,7 @@ mol1:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -144,6 +145,7 @@ mol1:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -154,6 +156,7 @@ mol1:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -164,6 +167,7 @@ mol1:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -176,7 +180,6 @@ mol2:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -227,6 +230,7 @@ mol2:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -237,6 +241,7 @@ mol2:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -247,6 +252,7 @@ mol2:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -257,6 +263,7 @@ mol2:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -269,7 +276,6 @@ mol3:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -320,6 +326,7 @@ mol3:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -330,6 +337,7 @@ mol3:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -340,6 +348,7 @@ mol3:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -350,6 +359,7 @@ mol3:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -362,7 +372,6 @@ mol4:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -413,6 +422,7 @@ mol4:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -423,6 +433,7 @@ mol4:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -433,6 +444,7 @@ mol4:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -443,6 +455,7 @@ mol4:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -455,7 +468,6 @@ mol5:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -506,6 +518,7 @@ mol5:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -516,6 +529,7 @@ mol5:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -526,6 +540,7 @@ mol5:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -536,6 +551,7 @@ mol5:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -548,7 +564,6 @@ mol6:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -599,6 +614,7 @@ mol6:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -609,6 +625,7 @@ mol6:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -619,6 +636,7 @@ mol6:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -629,6 +647,7 @@ mol6:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -641,7 +660,6 @@ mol7:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -692,6 +710,7 @@ mol7:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -702,6 +721,7 @@ mol7:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -712,6 +732,7 @@ mol7:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -722,6 +743,7 @@ mol7:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -734,7 +756,6 @@ mol8:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -785,6 +806,7 @@ mol8:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -795,6 +817,7 @@ mol8:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -805,6 +828,7 @@ mol8:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -815,6 +839,7 @@ mol8:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -827,7 +852,6 @@ mol9:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -878,6 +902,7 @@ mol9:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -888,6 +913,7 @@ mol9:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -898,6 +924,7 @@ mol9:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -908,6 +935,7 @@ mol9:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -920,7 +948,6 @@ mol10:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -971,6 +998,7 @@ mol10:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -981,6 +1009,7 @@ mol10:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -991,6 +1020,7 @@ mol10:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1001,6 +1031,7 @@ mol10:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1013,7 +1044,6 @@ mol11:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1064,6 +1094,7 @@ mol11:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1074,6 +1105,7 @@ mol11:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1084,6 +1116,7 @@ mol11:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1094,6 +1127,7 @@ mol11:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1106,7 +1140,6 @@ mol12:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1157,6 +1190,7 @@ mol12:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1167,6 +1201,7 @@ mol12:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1177,6 +1212,7 @@ mol12:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1187,6 +1223,7 @@ mol12:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1199,7 +1236,6 @@ mol13:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1250,6 +1286,7 @@ mol13:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1260,6 +1297,7 @@ mol13:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1270,6 +1308,7 @@ mol13:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1280,6 +1319,7 @@ mol13:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1292,7 +1332,6 @@ mol14:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1343,6 +1382,7 @@ mol14:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1353,6 +1393,7 @@ mol14:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1363,6 +1404,7 @@ mol14:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1373,6 +1415,7 @@ mol14:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1385,7 +1428,6 @@ mol15:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1436,6 +1478,7 @@ mol15:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1446,6 +1489,7 @@ mol15:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1456,6 +1500,7 @@ mol15:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1466,6 +1511,7 @@ mol15:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1478,7 +1524,6 @@ mol16:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1529,6 +1574,7 @@ mol16:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1539,6 +1585,7 @@ mol16:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1549,6 +1596,7 @@ mol16:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1559,6 +1607,7 @@ mol16:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1571,7 +1620,6 @@ mol17:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1622,6 +1670,7 @@ mol17:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1632,6 +1681,7 @@ mol17:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1642,6 +1692,7 @@ mol17:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1652,6 +1703,7 @@ mol17:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1664,7 +1716,6 @@ mol18:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1715,6 +1766,7 @@ mol18:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1725,6 +1777,7 @@ mol18:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1735,6 +1788,7 @@ mol18:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1745,6 +1799,7 @@ mol18:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1757,7 +1812,6 @@ mol19:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1808,6 +1862,7 @@ mol19:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1818,6 +1873,7 @@ mol19:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1828,6 +1884,7 @@ mol19:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1838,6 +1895,7 @@ mol19:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1850,7 +1908,6 @@ mol20:
     type: string
     maxchars: 100
     minchars: 0
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1901,6 +1958,7 @@ mol20:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1911,6 +1969,7 @@ mol20:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1921,6 +1980,7 @@ mol20:
     type: integer
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1931,6 +1991,7 @@ mol20:
     type: float
     min: -9999
     max: 9999
+    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet

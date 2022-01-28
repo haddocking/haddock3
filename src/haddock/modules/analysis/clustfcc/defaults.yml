@@ -1,7 +1,5 @@
 executable:
-  default: !!python/object/apply:pathlib.PosixPath
-  - src
-  - contact_fcc
+  default: src/contact_fcc
   type: file
   title: No title yet
   short: No short description yet
@@ -13,6 +11,7 @@ contact_distance_cutoff:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -23,6 +22,7 @@ fraction_cutoff:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -33,6 +33,7 @@ threshold:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -43,6 +44,7 @@ strictness:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

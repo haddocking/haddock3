@@ -51,6 +51,7 @@ irmsd_cutoff:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -61,6 +62,7 @@ fnat_cutoff:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -71,6 +73,7 @@ lrmsd_cutoff:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -81,7 +84,6 @@ receptor_chain:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -92,7 +94,6 @@ ligand_chain:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -103,7 +104,6 @@ rankby:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -122,7 +122,6 @@ sortby:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -141,7 +140,6 @@ alignment_method:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -152,7 +150,6 @@ lovoalign_exec:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

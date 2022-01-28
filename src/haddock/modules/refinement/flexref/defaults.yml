@@ -3,6 +3,7 @@ tolerance:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -13,7 +14,6 @@ log_level:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -72,6 +72,7 @@ sampling_factor:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -82,6 +83,7 @@ iniseed:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -100,6 +102,7 @@ mdsteps_rigid:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -110,6 +113,7 @@ mdsteps_cool1:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -120,6 +124,7 @@ mdsteps_cool2:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -130,6 +135,7 @@ mdsteps_cool3:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -140,6 +146,7 @@ timestep:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -150,6 +157,7 @@ tadfactor:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -160,6 +168,7 @@ sinter_rigid_init:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -170,6 +179,7 @@ sinter_rigid_final:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -180,6 +190,7 @@ sinter_cool2_init:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -190,6 +201,7 @@ sinter_cool2_final:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -200,6 +212,7 @@ sinter_cool3_init:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -210,6 +223,7 @@ sinter_cool3_final:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -220,6 +234,7 @@ temp_high:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -230,6 +245,7 @@ temp_cool1_init:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -240,6 +256,7 @@ temp_cool1_final:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -250,6 +267,7 @@ temp_cool2_init:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -260,6 +278,7 @@ temp_cool2_final:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -270,6 +289,7 @@ temp_cool3_init:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -280,6 +300,7 @@ temp_cool3_final:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -290,7 +311,6 @@ prot_segid_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -301,7 +321,6 @@ prot_segid_2:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -312,7 +331,6 @@ prot_segid_3:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -323,7 +341,6 @@ prot_segid_4:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -334,7 +351,6 @@ prot_segid_5:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -345,7 +361,6 @@ prot_segid_6:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -356,7 +371,6 @@ prot_segid_7:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -367,7 +381,6 @@ prot_segid_8:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -378,7 +391,6 @@ prot_segid_9:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -389,7 +401,6 @@ prot_segid_10:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -400,7 +411,6 @@ prot_segid_11:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -411,7 +421,6 @@ prot_segid_12:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -422,7 +431,6 @@ prot_segid_13:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -433,7 +441,6 @@ prot_segid_14:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -444,7 +451,6 @@ prot_segid_15:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -455,7 +461,6 @@ prot_segid_16:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -466,7 +471,6 @@ prot_segid_17:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -477,7 +481,6 @@ prot_segid_18:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -488,7 +491,6 @@ prot_segid_19:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -499,7 +501,6 @@ prot_segid_20:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -670,6 +671,7 @@ amb_hot:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -680,6 +682,7 @@ amb_cool1:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -690,6 +693,7 @@ amb_cool2:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -700,6 +704,7 @@ amb_cool3:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -710,6 +715,7 @@ unamb_hot:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -720,6 +726,7 @@ unamb_cool1:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -730,6 +737,7 @@ unamb_cool2:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -740,6 +748,7 @@ unamb_cool3:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -750,6 +759,7 @@ hbond_hot:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -760,6 +770,7 @@ hbond_cool1:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -770,6 +781,7 @@ hbond_cool2:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -780,6 +792,7 @@ hbond_cool3:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -806,6 +819,7 @@ ncvpart:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -816,6 +830,7 @@ mrswi_hot:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -826,6 +841,7 @@ mrswi_cool1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -836,6 +852,7 @@ mrswi_cool2:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -846,6 +863,7 @@ mrswi_cool3:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -856,6 +874,7 @@ rswi_hot:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -866,6 +885,7 @@ rswi_cool1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -876,6 +896,7 @@ rswi_cool2:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -886,6 +907,7 @@ rswi_cool3:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -896,6 +918,7 @@ masy_hot:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -906,6 +929,7 @@ masy_cool1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -916,6 +940,7 @@ masy_cool2:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -926,6 +951,7 @@ masy_cool3:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -936,6 +962,7 @@ asy_hot:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -946,6 +973,7 @@ asy_cool1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -956,6 +984,7 @@ asy_cool2:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -966,6 +995,7 @@ asy_cool3:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1000,6 +1030,7 @@ kcont:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1010,6 +1041,7 @@ ksurf:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1036,6 +1068,7 @@ dihedrals_hot:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1046,6 +1079,7 @@ dihedrals_cool1:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1056,6 +1090,7 @@ dihedrals_cool2:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1066,6 +1101,7 @@ dihedrals_cool3:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1076,7 +1112,6 @@ ssdihed:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1087,6 +1122,7 @@ error_dih:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1113,6 +1149,7 @@ ksym:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1123,6 +1160,7 @@ numc2sym:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1133,6 +1171,7 @@ c2sym_sta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1143,6 +1182,7 @@ c2sym_end1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1153,7 +1193,6 @@ c2sym_seg1_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1164,6 +1203,7 @@ c2sym_sta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1174,6 +1214,7 @@ c2sym_end2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1184,7 +1225,6 @@ c2sym_seg2_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1195,6 +1235,7 @@ numc3sym:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1205,6 +1246,7 @@ c3sym_sta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1215,6 +1257,7 @@ c3sym_end1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1225,7 +1268,6 @@ c3sym_seg1_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1236,6 +1278,7 @@ c3sym_sta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1246,6 +1289,7 @@ c3sym_end2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1256,7 +1300,6 @@ c3sym_seg2_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1267,6 +1310,7 @@ c3sym_sta3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1277,6 +1321,7 @@ c3sym_end3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1287,7 +1332,6 @@ c3sym_seg3_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1298,6 +1342,7 @@ numc4sym:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1308,6 +1353,7 @@ c4sym_sta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1318,6 +1364,7 @@ c4sym_end1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1328,7 +1375,6 @@ c4sym_seg1_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1339,6 +1385,7 @@ c4sym_sta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1349,6 +1396,7 @@ c4sym_end2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1359,7 +1407,6 @@ c4sym_seg2_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1370,6 +1417,7 @@ c4sym_sta3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1380,6 +1428,7 @@ c4sym_end3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1390,7 +1439,6 @@ c4sym_seg3_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1401,6 +1449,7 @@ c4sym_sta4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1411,6 +1460,7 @@ c4sym_end4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1421,7 +1471,6 @@ c4sym_seg4_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1432,6 +1481,7 @@ numc5sym:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1442,6 +1492,7 @@ c5sym_sta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1452,6 +1503,7 @@ c5sym_end1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1462,7 +1514,6 @@ c5sym_seg1_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1473,6 +1524,7 @@ c5sym_sta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1483,6 +1535,7 @@ c5sym_end2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1493,7 +1546,6 @@ c5sym_seg2_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1504,6 +1556,7 @@ c5sym_sta3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1514,6 +1567,7 @@ c5sym_end3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1524,7 +1578,6 @@ c5sym_seg3_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1535,6 +1588,7 @@ c5sym_sta4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1545,6 +1599,7 @@ c5sym_end4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1555,7 +1610,6 @@ c5sym_seg4_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1566,6 +1620,7 @@ c5sym_sta5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1576,6 +1631,7 @@ c5sym_end5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1586,7 +1642,6 @@ c5sym_seg5_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1597,6 +1652,7 @@ numc6sym:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1607,6 +1663,7 @@ c6sym_sta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1617,6 +1674,7 @@ c6sym_end1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1627,7 +1685,6 @@ c6sym_seg1_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1638,6 +1695,7 @@ c6sym_sta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1648,6 +1706,7 @@ c6sym_end2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1658,7 +1717,6 @@ c6sym_seg2_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1669,6 +1727,7 @@ c6sym_sta3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1679,6 +1738,7 @@ c6sym_end3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1689,7 +1749,6 @@ c6sym_seg3_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1700,6 +1759,7 @@ c6sym_sta4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1710,6 +1770,7 @@ c6sym_end4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1720,7 +1781,6 @@ c6sym_seg4_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1731,6 +1791,7 @@ c6sym_sta5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1741,6 +1802,7 @@ c6sym_end5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1751,7 +1813,6 @@ c6sym_seg5_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1762,6 +1823,7 @@ c6sym_sta6_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1772,6 +1834,7 @@ c6sym_end6_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1782,7 +1845,6 @@ c6sym_seg6_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1793,6 +1855,7 @@ nums3sym:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1803,6 +1866,7 @@ s3sym_sta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1813,6 +1877,7 @@ s3sym_end1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1823,7 +1888,6 @@ s3sym_seg1_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1834,6 +1898,7 @@ s3sym_sta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1844,6 +1909,7 @@ s3sym_end2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1854,7 +1920,6 @@ s3sym_seg2_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1865,6 +1930,7 @@ s3sym_sta3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1875,6 +1941,7 @@ s3sym_end3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1885,7 +1952,6 @@ s3sym_seg3_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1904,6 +1970,7 @@ kncs:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1914,6 +1981,7 @@ numncs:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1924,6 +1992,7 @@ ncs_sta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1934,6 +2003,7 @@ ncs_end1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1944,7 +2014,6 @@ ncs_seg1_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1955,6 +2024,7 @@ ncs_sta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1965,6 +2035,7 @@ ncs_end2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1975,7 +2046,6 @@ ncs_seg2_1:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2146,6 +2216,7 @@ nfle1:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2156,6 +2227,7 @@ flesta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2166,6 +2238,7 @@ fleend1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2176,6 +2249,7 @@ nfle2:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2186,6 +2260,7 @@ flesta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2196,6 +2271,7 @@ fleend2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2206,6 +2282,7 @@ nfle3:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2216,6 +2293,7 @@ flesta3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2226,6 +2304,7 @@ fleend3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2236,6 +2315,7 @@ nfle4:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2246,6 +2326,7 @@ flesta4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2256,6 +2337,7 @@ fleend4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2266,6 +2348,7 @@ nfle5:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2276,6 +2359,7 @@ flesta5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2286,6 +2370,7 @@ fleend5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2296,6 +2381,7 @@ nfle6:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2306,6 +2392,7 @@ flesta6_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2316,6 +2403,7 @@ fleend6_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2326,6 +2414,7 @@ nfle7:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2336,6 +2425,7 @@ flesta7_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2346,6 +2436,7 @@ fleend7_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2356,6 +2447,7 @@ nfle8:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2366,6 +2458,7 @@ flesta8_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2376,6 +2469,7 @@ fleend8_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2386,6 +2480,7 @@ nfle9:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2396,6 +2491,7 @@ flesta9_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2406,6 +2502,7 @@ fleend9_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2416,6 +2513,7 @@ nfle10:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2426,6 +2524,7 @@ flesta10_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2436,6 +2535,7 @@ fleend10_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2446,6 +2546,7 @@ nfle11:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2456,6 +2557,7 @@ flesta11_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2466,6 +2568,7 @@ fleend11_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2476,6 +2579,7 @@ nfle12:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2486,6 +2590,7 @@ flesta12_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2496,6 +2601,7 @@ fleend12_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2506,6 +2612,7 @@ nfle13:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2516,6 +2623,7 @@ flesta13_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2526,6 +2634,7 @@ fleend13_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2536,6 +2645,7 @@ nfle14:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2546,6 +2656,7 @@ flesta14_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2556,6 +2667,7 @@ fleend14_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2566,6 +2678,7 @@ nfle15:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2576,6 +2689,7 @@ flesta15_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2586,6 +2700,7 @@ fleend15_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2596,6 +2711,7 @@ nfle16:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2606,6 +2722,7 @@ flesta16_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2616,6 +2733,7 @@ fleend16_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2626,6 +2744,7 @@ nfle17:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2636,6 +2755,7 @@ flesta17_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2646,6 +2766,7 @@ fleend17_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2656,6 +2777,7 @@ nfle18:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2666,6 +2788,7 @@ flesta18_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2676,6 +2799,7 @@ fleend18_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2686,6 +2810,7 @@ nfle19:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2696,6 +2821,7 @@ flesta19_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2706,6 +2832,7 @@ fleend19_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2716,6 +2843,7 @@ nfle20:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2726,6 +2854,7 @@ flesta20_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2736,6 +2865,7 @@ fleend20_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2746,6 +2876,7 @@ nseg1:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2756,6 +2887,7 @@ segsta1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2766,6 +2898,7 @@ segend1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2776,6 +2909,7 @@ nseg2:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2786,6 +2920,7 @@ segsta2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2796,6 +2931,7 @@ segend2_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2806,6 +2942,7 @@ nseg3:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2816,6 +2953,7 @@ segsta3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2826,6 +2964,7 @@ segend3_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2836,6 +2975,7 @@ nseg4:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2846,6 +2986,7 @@ segsta4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2856,6 +2997,7 @@ segend4_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2866,6 +3008,7 @@ nseg5:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2876,6 +3019,7 @@ segsta5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2886,6 +3030,7 @@ segend5_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2896,6 +3041,7 @@ nseg6:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2906,6 +3052,7 @@ segsta6_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2916,6 +3063,7 @@ segend6_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2926,6 +3074,7 @@ nseg7:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2936,6 +3085,7 @@ segsta7_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2946,6 +3096,7 @@ segend7_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2956,6 +3107,7 @@ nseg8:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2966,6 +3118,7 @@ segsta8_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2976,6 +3129,7 @@ segend8_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2986,6 +3140,7 @@ nseg9:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2996,6 +3151,7 @@ segsta9_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3006,6 +3162,7 @@ segend9_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3016,6 +3173,7 @@ nseg10:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3026,6 +3184,7 @@ segsta10_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3036,6 +3195,7 @@ segend10_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3046,6 +3206,7 @@ nseg11:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3056,6 +3217,7 @@ segsta11_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3066,6 +3228,7 @@ segend11_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3076,6 +3239,7 @@ nseg12:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3086,6 +3250,7 @@ segsta12_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3096,6 +3261,7 @@ segend12_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3106,6 +3272,7 @@ nseg13:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3116,6 +3283,7 @@ segsta13_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3126,6 +3294,7 @@ segend13_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3136,6 +3305,7 @@ nseg14:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3146,6 +3316,7 @@ segsta14_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3156,6 +3327,7 @@ segend14_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3166,6 +3338,7 @@ nseg15:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3176,6 +3349,7 @@ segsta15_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3186,6 +3360,7 @@ segend15_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3196,6 +3371,7 @@ nseg16:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3206,6 +3382,7 @@ segsta16_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3216,6 +3393,7 @@ segend16_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3226,6 +3404,7 @@ nseg17:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3236,6 +3415,7 @@ segsta17_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3246,6 +3426,7 @@ segend17_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3256,6 +3437,7 @@ nseg18:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3266,6 +3448,7 @@ segsta18_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3276,6 +3459,7 @@ segend18_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3286,6 +3470,7 @@ nseg19:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3296,6 +3481,7 @@ segsta19_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3306,6 +3492,7 @@ segend19_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3316,6 +3503,7 @@ nseg20:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3326,6 +3514,7 @@ segsta20_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3336,6 +3525,7 @@ segend20_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3346,6 +3536,7 @@ w_air:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3356,6 +3547,7 @@ w_bsa:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3366,6 +3558,7 @@ w_cdih:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3376,6 +3569,7 @@ w_dani:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3386,6 +3580,7 @@ w_deint:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3396,6 +3591,7 @@ w_desolv:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3406,6 +3602,7 @@ w_dist:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3416,6 +3613,7 @@ w_elec:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3426,6 +3624,7 @@ w_lcc:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3436,6 +3635,7 @@ w_rg:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3446,6 +3646,7 @@ w_sani:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3456,6 +3657,7 @@ w_sym:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3466,6 +3668,7 @@ w_vdw:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3476,6 +3679,7 @@ w_vean:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3486,6 +3690,7 @@ w_xpcs:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3496,6 +3701,7 @@ w_xrdc:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3506,6 +3712,7 @@ w_zres:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3524,7 +3731,6 @@ dielec:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3535,6 +3741,7 @@ epsilon:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3553,7 +3760,6 @@ par_nonbonded:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3564,6 +3770,7 @@ int_1_1:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3574,6 +3781,7 @@ int_1_2:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3584,6 +3792,7 @@ int_1_3:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3594,6 +3803,7 @@ int_1_4:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3604,6 +3814,7 @@ int_1_5:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3614,6 +3825,7 @@ int_1_6:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3624,6 +3836,7 @@ int_1_7:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3634,6 +3847,7 @@ int_1_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3644,6 +3858,7 @@ int_1_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3654,6 +3869,7 @@ int_1_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3664,6 +3880,7 @@ int_1_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3674,6 +3891,7 @@ int_1_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3684,6 +3902,7 @@ int_1_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3694,6 +3913,7 @@ int_1_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3704,6 +3924,7 @@ int_1_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3714,6 +3935,7 @@ int_1_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3724,6 +3946,7 @@ int_1_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3734,6 +3957,7 @@ int_1_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3744,6 +3968,7 @@ int_1_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3754,6 +3979,7 @@ int_1_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3764,6 +3990,7 @@ int_2_2:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3774,6 +4001,7 @@ int_2_3:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3784,6 +4012,7 @@ int_2_4:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3794,6 +4023,7 @@ int_2_5:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3804,6 +4034,7 @@ int_2_6:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3814,6 +4045,7 @@ int_2_7:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3824,6 +4056,7 @@ int_2_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3834,6 +4067,7 @@ int_2_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3844,6 +4078,7 @@ int_2_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3854,6 +4089,7 @@ int_2_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3864,6 +4100,7 @@ int_2_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3874,6 +4111,7 @@ int_2_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3884,6 +4122,7 @@ int_2_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3894,6 +4133,7 @@ int_2_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3904,6 +4144,7 @@ int_2_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3914,6 +4155,7 @@ int_2_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3924,6 +4166,7 @@ int_2_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3934,6 +4177,7 @@ int_2_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3944,6 +4188,7 @@ int_2_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3954,6 +4199,7 @@ int_3_3:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3964,6 +4210,7 @@ int_3_4:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3974,6 +4221,7 @@ int_3_5:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3984,6 +4232,7 @@ int_3_6:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3994,6 +4243,7 @@ int_3_7:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4004,6 +4254,7 @@ int_3_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4014,6 +4265,7 @@ int_3_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4024,6 +4276,7 @@ int_3_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4034,6 +4287,7 @@ int_3_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4044,6 +4298,7 @@ int_3_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4054,6 +4309,7 @@ int_3_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4064,6 +4320,7 @@ int_3_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4074,6 +4331,7 @@ int_3_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4084,6 +4342,7 @@ int_3_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4094,6 +4353,7 @@ int_3_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4104,6 +4364,7 @@ int_3_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4114,6 +4375,7 @@ int_3_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4124,6 +4386,7 @@ int_3_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4134,6 +4397,7 @@ int_4_4:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4144,6 +4408,7 @@ int_4_5:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4154,6 +4419,7 @@ int_4_6:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4164,6 +4430,7 @@ int_4_7:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4174,6 +4441,7 @@ int_4_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4184,6 +4452,7 @@ int_4_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4194,6 +4463,7 @@ int_4_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4204,6 +4474,7 @@ int_4_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4214,6 +4485,7 @@ int_4_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4224,6 +4496,7 @@ int_4_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4234,6 +4507,7 @@ int_4_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4244,6 +4518,7 @@ int_4_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4254,6 +4529,7 @@ int_4_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4264,6 +4540,7 @@ int_4_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4274,6 +4551,7 @@ int_4_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4284,6 +4562,7 @@ int_4_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4294,6 +4573,7 @@ int_4_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4304,6 +4584,7 @@ int_5_5:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4314,6 +4595,7 @@ int_5_6:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4324,6 +4606,7 @@ int_5_7:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4334,6 +4617,7 @@ int_5_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4344,6 +4628,7 @@ int_5_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4354,6 +4639,7 @@ int_5_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4364,6 +4650,7 @@ int_5_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4374,6 +4661,7 @@ int_5_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4384,6 +4672,7 @@ int_5_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4394,6 +4683,7 @@ int_5_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4404,6 +4694,7 @@ int_5_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4414,6 +4705,7 @@ int_5_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4424,6 +4716,7 @@ int_5_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4434,6 +4727,7 @@ int_5_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4444,6 +4738,7 @@ int_5_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4454,6 +4749,7 @@ int_5_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4464,6 +4760,7 @@ int_6_6:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4474,6 +4771,7 @@ int_6_7:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4484,6 +4782,7 @@ int_6_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4494,6 +4793,7 @@ int_6_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4504,6 +4804,7 @@ int_6_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4514,6 +4815,7 @@ int_6_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4524,6 +4826,7 @@ int_6_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4534,6 +4837,7 @@ int_6_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4544,6 +4848,7 @@ int_6_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4554,6 +4859,7 @@ int_6_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4564,6 +4870,7 @@ int_6_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4574,6 +4881,7 @@ int_6_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4584,6 +4892,7 @@ int_6_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4594,6 +4903,7 @@ int_6_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4604,6 +4914,7 @@ int_6_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4614,6 +4925,7 @@ int_7_7:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4624,6 +4936,7 @@ int_7_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4634,6 +4947,7 @@ int_7_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4644,6 +4958,7 @@ int_7_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4654,6 +4969,7 @@ int_7_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4664,6 +4980,7 @@ int_7_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4674,6 +4991,7 @@ int_7_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4684,6 +5002,7 @@ int_7_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4694,6 +5013,7 @@ int_7_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4704,6 +5024,7 @@ int_7_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4714,6 +5035,7 @@ int_7_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4724,6 +5046,7 @@ int_7_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4734,6 +5057,7 @@ int_7_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4744,6 +5068,7 @@ int_8_8:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4754,6 +5079,7 @@ int_8_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4764,6 +5090,7 @@ int_7_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4774,6 +5101,7 @@ int_8_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4784,6 +5112,7 @@ int_8_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4794,6 +5123,7 @@ int_8_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4804,6 +5134,7 @@ int_8_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4814,6 +5145,7 @@ int_8_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4824,6 +5156,7 @@ int_8_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4834,6 +5167,7 @@ int_8_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4844,6 +5178,7 @@ int_8_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4854,6 +5189,7 @@ int_8_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4864,6 +5200,7 @@ int_8_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4874,6 +5211,7 @@ int_8_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4884,6 +5222,7 @@ int_9_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4894,6 +5233,7 @@ int_9_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4904,6 +5244,7 @@ int_9_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4914,6 +5255,7 @@ int_9_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4924,6 +5266,7 @@ int_9_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4934,6 +5277,7 @@ int_9_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4944,6 +5288,7 @@ int_9_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4954,6 +5299,7 @@ int_9_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4964,6 +5310,7 @@ int_9_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4974,6 +5321,7 @@ int_9_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4984,6 +5332,7 @@ int_9_9:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -4994,6 +5343,7 @@ int_9_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5004,6 +5354,7 @@ int_10_10:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5014,6 +5365,7 @@ int_10_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5024,6 +5376,7 @@ int_10_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5034,6 +5387,7 @@ int_10_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5044,6 +5398,7 @@ int_10_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5054,6 +5409,7 @@ int_10_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5064,6 +5420,7 @@ int_10_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5074,6 +5431,7 @@ int_10_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5084,6 +5442,7 @@ int_10_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5094,6 +5453,7 @@ int_10_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5104,6 +5464,7 @@ int_10_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5114,6 +5475,7 @@ int_11_11:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5124,6 +5486,7 @@ int_11_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5134,6 +5497,7 @@ int_11_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5144,6 +5508,7 @@ int_11_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5154,6 +5519,7 @@ int_11_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5164,6 +5530,7 @@ int_11_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5174,6 +5541,7 @@ int_11_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5184,6 +5552,7 @@ int_11_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5194,6 +5563,7 @@ int_11_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5204,6 +5574,7 @@ int_11_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5214,6 +5585,7 @@ int_12_12:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5224,6 +5596,7 @@ int_12_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5234,6 +5607,7 @@ int_12_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5244,6 +5618,7 @@ int_12_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5254,6 +5629,7 @@ int_12_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5264,6 +5640,7 @@ int_12_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5274,6 +5651,7 @@ int_12_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5284,6 +5662,7 @@ int_12_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5294,6 +5673,7 @@ int_12_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5304,6 +5684,7 @@ int_13_13:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5314,6 +5695,7 @@ int_13_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5324,6 +5706,7 @@ int_13_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5334,6 +5717,7 @@ int_13_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5344,6 +5728,7 @@ int_13_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5354,6 +5739,7 @@ int_13_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5364,6 +5750,7 @@ int_13_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5374,6 +5761,7 @@ int_13_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5384,6 +5772,7 @@ int_14_14:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5394,6 +5783,7 @@ int_14_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5404,6 +5794,7 @@ int_14_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5414,6 +5805,7 @@ int_14_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5424,6 +5816,7 @@ int_14_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5434,6 +5827,7 @@ int_14_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5444,6 +5838,7 @@ int_14_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5454,6 +5849,7 @@ int_15_15:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5464,6 +5860,7 @@ int_15_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5474,6 +5871,7 @@ int_15_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5484,6 +5882,7 @@ int_15_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5494,6 +5893,7 @@ int_15_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5504,6 +5904,7 @@ int_15_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5514,6 +5915,7 @@ int_16_16:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5524,6 +5926,7 @@ int_16_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5534,6 +5937,7 @@ int_16_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5544,6 +5948,7 @@ int_16_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5554,6 +5959,7 @@ int_16_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5564,6 +5970,7 @@ int_17_17:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5574,6 +5981,7 @@ int_17_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5584,6 +5992,7 @@ int_17_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5594,6 +6003,7 @@ int_17_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5604,6 +6014,7 @@ int_18_18:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5614,6 +6025,7 @@ int_18_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5624,6 +6036,7 @@ int_18_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5634,6 +6047,7 @@ int_19_19:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5644,6 +6058,7 @@ int_19_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -5654,6 +6069,7 @@ int_20_20:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

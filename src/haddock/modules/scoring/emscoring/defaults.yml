@@ -3,6 +3,7 @@ tolerance:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -13,7 +14,6 @@ log_level:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -48,6 +48,7 @@ nemsteps:
   type: integer
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -66,7 +67,6 @@ dielec:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -77,6 +77,7 @@ epsilon:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -95,7 +96,6 @@ par_nonbonded:
   type: string
   maxchars: 100
   minchars: 0
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -106,6 +106,7 @@ w_air:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -116,6 +117,7 @@ w_bsa:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -126,6 +128,7 @@ w_cdih:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -136,6 +139,7 @@ w_dani:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -146,6 +150,7 @@ w_deint:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -156,6 +161,7 @@ w_desolv:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -166,6 +172,7 @@ w_dist:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -176,6 +183,7 @@ w_elec:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -186,6 +194,7 @@ w_lcc:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -196,6 +205,7 @@ w_rg:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -206,6 +216,7 @@ w_sani:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -216,6 +227,7 @@ w_sym:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -226,6 +238,7 @@ w_vdw:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -236,6 +249,7 @@ w_vean:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -246,6 +260,7 @@ w_xpcs:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -256,6 +271,7 @@ w_xrdc:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -266,6 +282,7 @@ w_zres:
   type: float
   min: -9999
   max: 9999
+  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

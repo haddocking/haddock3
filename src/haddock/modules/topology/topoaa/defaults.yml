@@ -2,16 +2,28 @@ autohis:
   default: true
   type: boolean
   title: Automatic HIS protonation state
-  short: The protonation state of histidine (+1: HIS or 0: HISD/HISE) will be automatically set by HADDOCK
-  long: If set to true, HADDOCK will automatically define the protonation state of histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest electrostatic energy
+  short:
+    "The protonation state of histidine (+1: HIS or 0: HISD/HISE)
+    will be automatically set by HADDOCK"
+  long:
+    "If set to true, HADDOCK will automatically define the protonation
+    state of histidines ((+1: HIS or 0: HISD/HISE) by selecting the
+    state leading to the lowest electrostatic energy"
   group: 'molecule'
   explevel: basic
 delenph:
   default: true
   type: boolean
   title: Keep or remove non-polar hydrogen atoms
-  short: If set to true, non-polar hydrogen atoms will be discarded to save computing time
-  long: Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms can be in principle discarded. This saves computing time. However this should not be done if you are defining distance restraints to specific hydrogen atoms (e.g. when using NMR distance restraints).
+  short:
+    If set to true, non-polar hydrogen atoms will be discarded to save
+    computing time
+  long:
+    Since HADDOCK uses a united atom force field, the non-polar hydrogen
+    atoms can be in principle discarded. This saves computing time.
+    However this should not be done if you are defining distance
+    restraints to specific hydrogen atoms (e.g. when using NMR distance
+    restraints).
   group: 'molecule'
   explevel: basic
 log_level:
@@ -21,7 +33,10 @@ log_level:
   minchars: 0
   title: Log level verbosity for CNS
   short: Set the log level verbosity for CNS (minimal or verbose)
-  long: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (minimal or verbose)
+  long:
+    CNS, the computational engine used by HADDOCK can generate a lot of
+    output messages. This parameter controls the verbosity of CNS
+    (minimal or verbose)
   group: 'module'
   explevel: expert
 iniseed:

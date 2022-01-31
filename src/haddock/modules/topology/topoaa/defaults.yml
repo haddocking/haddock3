@@ -29,8 +29,8 @@ delenph:
 log_level:
   default: verbose
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: Log level verbosity for CNS
   short: Set the log level verbosity for CNS (minimal or verbose)
   long:
@@ -89,8 +89,8 @@ mol1:
   prot_segid:
     default: A
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -185,8 +185,8 @@ mol2:
   prot_segid:
     default: B
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -281,8 +281,8 @@ mol3:
   prot_segid:
     default: C
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -377,8 +377,8 @@ mol4:
   prot_segid:
     default: D
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -473,8 +473,8 @@ mol5:
   prot_segid:
     default: E
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -569,8 +569,8 @@ mol6:
   prot_segid:
     default: F
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -665,8 +665,8 @@ mol7:
   prot_segid:
     default: G
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -761,8 +761,8 @@ mol8:
   prot_segid:
     default: H
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -857,8 +857,8 @@ mol9:
   prot_segid:
     default: I
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -953,8 +953,8 @@ mol10:
   prot_segid:
     default: J
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1049,8 +1049,8 @@ mol11:
   prot_segid:
     default: K
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1145,8 +1145,8 @@ mol12:
   prot_segid:
     default: L
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1241,8 +1241,8 @@ mol13:
   prot_segid:
     default: M
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1337,8 +1337,8 @@ mol14:
   prot_segid:
     default: N
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1433,8 +1433,8 @@ mol15:
   prot_segid:
     default: O
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1529,8 +1529,8 @@ mol16:
   prot_segid:
     default: P
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1625,8 +1625,8 @@ mol17:
   prot_segid:
     default: Q
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1721,8 +1721,8 @@ mol18:
   prot_segid:
     default: R
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1817,8 +1817,8 @@ mol19:
   prot_segid:
     default: S
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1913,8 +1913,8 @@ mol20:
   prot_segid:
     default: T
     type: string
-    maxchars: 100
     minchars: 0
+    maxchars: 100
     title: No title yet
     short: No short description yet
     long: No long description yet

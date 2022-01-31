@@ -70,7 +70,7 @@ def _yaml2cfg_text(ycfg, module):
                 if _comment in ("default", "explevel", "short", "long", "type"):
                     continue
 
-                if not cvalue:
+                if cvalue == "":
                     continue
 
                 comment.append(f"${_comment} {cvalue}")

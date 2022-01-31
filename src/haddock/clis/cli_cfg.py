@@ -11,7 +11,6 @@ USAGE:
 import argparse
 import importlib
 import sys
-from pathlib import Path
 
 from haddock.gear.yaml2cfg import yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
@@ -75,8 +74,7 @@ def main(module, explevel):
     ycfg = read_from_yaml(cfg)
 
     new_config = yaml2cfg_text(ycfg, module)
-
-    Path(f"haddock3_{module}.cfg").write_text(new_config)
+    print(new_config, file=sys.stdout, flush=True)  # noqa: T001
 
     return 0
 

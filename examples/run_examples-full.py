@@ -30,7 +30,7 @@ try:
     from haddock.libs.libio import working_directory
     from haddock.gear.config_reader import read_config
 except Exception:
-    print(
+    print(  # noqa: T001
         "Haddock3 could not be imported. "
         "Please activate the haddock3 python environment.",
         file=sys.stderr,
@@ -40,16 +40,17 @@ except Exception:
 
 # edit this dictionary to add or remove examples.
 # keys are the examples folder, and values are the configuration files
+# spacings are anti-pythonic but facilitate reading :-)
 examples = (
-    ("docking-protein-DNA"         , "docking-protein-DNA-full.cfg"),
-    ("docking-protein-DNA"         , "docking-protein-DNA-mdref-full.cfg"),
-    ("docking-protein-homotrimer"  , "docking-protein-homotrimer-full.cfg"),
-    ("docking-protein-ligand-shape", "docking-protein-ligand-shape-full.cfg"),
-    ("docking-protein-ligand"      , "docking-protein-ligand-full.cfg"),
-    ("docking-protein-peptide"     , "docking-protein-peptide-full.cfg"),
-    ("docking-protein-peptide"     , "docking-protein-peptide-mdref-full.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein-full.cfg"),
-    ("docking-protein-protein"     , "docking-protein-protein-mdref-full.cfg"),
+    ("docking-protein-DNA"         , "docking-protein-DNA-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-DNA"         , "docking-protein-DNA-mdref-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-homotrimer"  , "docking-protein-homotrimer-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-ligand-shape", "docking-protein-ligand-shape-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-ligand"      , "docking-protein-ligand-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-peptide"     , "docking-protein-peptide-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-peptide"     , "docking-protein-peptide-mdref-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-protein-protein-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-protein-protein-mdref-full.cfg"),  # noqa: E203, E501
     )
 
 
@@ -78,15 +79,15 @@ def main(examples, break_on_errors=True):
     """Run all the examples."""
     for folder, file_ in examples:
 
-        print()
-        print(f" {file_.upper()} ".center(80, "*"))
-        print()
+        print()  # noqa: T001
+        print(f" {file_.upper()} ".center(80, "*"))  # noqa: T001
+        print()  # noqa: T001
 
         with working_directory(folder):
 
             params = read_config(file_)
             rmtree(params["run_dir"], ignore_errors=True)
-            p = subprocess.run(
+            subprocess.run(
                 f"haddock3 {file_}",
                 shell=True,
                 check=break_on_errors,

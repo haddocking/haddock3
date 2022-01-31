@@ -82,8 +82,8 @@ lrmsd_cutoff:
 receptor_chain:
   default: A
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -92,8 +92,8 @@ receptor_chain:
 ligand_chain:
   default: B
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -102,8 +102,8 @@ ligand_chain:
 rankby:
   default: score
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -120,8 +120,8 @@ rank_ascending:
 sortby:
   default: score
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -138,8 +138,8 @@ sort_ascending:
 alignment_method:
   default: sequence
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -148,8 +148,8 @@ alignment_method:
 lovoalign_exec:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet

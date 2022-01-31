@@ -12,8 +12,8 @@ tolerance:
 log_level:
   default: verbose
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -135,8 +135,8 @@ keepwater:
 prot_segid_1:
   default: A
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -145,8 +145,8 @@ prot_segid_1:
 prot_segid_2:
   default: B
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -155,8 +155,8 @@ prot_segid_2:
 prot_segid_3:
   default: C
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -165,8 +165,8 @@ prot_segid_3:
 prot_segid_4:
   default: D
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -175,8 +175,8 @@ prot_segid_4:
 prot_segid_5:
   default: E
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -185,8 +185,8 @@ prot_segid_5:
 prot_segid_6:
   default: F
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -195,8 +195,8 @@ prot_segid_6:
 prot_segid_7:
   default: G
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -205,8 +205,8 @@ prot_segid_7:
 prot_segid_8:
   default: H
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -215,8 +215,8 @@ prot_segid_8:
 prot_segid_9:
   default: I
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -225,8 +225,8 @@ prot_segid_9:
 prot_segid_10:
   default: J
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -235,8 +235,8 @@ prot_segid_10:
 prot_segid_11:
   default: K
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -245,8 +245,8 @@ prot_segid_11:
 prot_segid_12:
   default: L
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -255,8 +255,8 @@ prot_segid_12:
 prot_segid_13:
   default: M
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -265,8 +265,8 @@ prot_segid_13:
 prot_segid_14:
   default: N
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -275,8 +275,8 @@ prot_segid_14:
 prot_segid_15:
   default: O
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -285,8 +285,8 @@ prot_segid_15:
 prot_segid_16:
   default: P
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -295,8 +295,8 @@ prot_segid_16:
 prot_segid_17:
   default: Q
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -305,8 +305,8 @@ prot_segid_17:
 prot_segid_18:
   default: R
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -315,8 +315,8 @@ prot_segid_18:
 prot_segid_19:
   default: S
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -325,8 +325,8 @@ prot_segid_19:
 prot_segid_20:
   default: T
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -928,8 +928,8 @@ c2sym_end1_1:
 c2sym_seg1_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -960,8 +960,8 @@ c2sym_end2_1:
 c2sym_seg2_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1003,8 +1003,8 @@ c3sym_end1_1:
 c3sym_seg1_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1035,8 +1035,8 @@ c3sym_end2_1:
 c3sym_seg2_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1067,8 +1067,8 @@ c3sym_end3_1:
 c3sym_seg3_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1110,8 +1110,8 @@ c4sym_end1_1:
 c4sym_seg1_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1142,8 +1142,8 @@ c4sym_end2_1:
 c4sym_seg2_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1174,8 +1174,8 @@ c4sym_end3_1:
 c4sym_seg3_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1206,8 +1206,8 @@ c4sym_end4_1:
 c4sym_seg4_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1249,8 +1249,8 @@ c5sym_end1_1:
 c5sym_seg1_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1281,8 +1281,8 @@ c5sym_end2_1:
 c5sym_seg2_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1313,8 +1313,8 @@ c5sym_end3_1:
 c5sym_seg3_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1345,8 +1345,8 @@ c5sym_end4_1:
 c5sym_seg4_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1377,8 +1377,8 @@ c5sym_end5_1:
 c5sym_seg5_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1420,8 +1420,8 @@ c6sym_end1_1:
 c6sym_seg1_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1452,8 +1452,8 @@ c6sym_end2_1:
 c6sym_seg2_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1484,8 +1484,8 @@ c6sym_end3_1:
 c6sym_seg3_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1516,8 +1516,8 @@ c6sym_end4_1:
 c6sym_seg4_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1548,8 +1548,8 @@ c6sym_end5_1:
 c6sym_seg5_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1580,8 +1580,8 @@ c6sym_end6_1:
 c6sym_seg6_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1623,8 +1623,8 @@ s3sym_end1_1:
 s3sym_seg1_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1655,8 +1655,8 @@ s3sym_end2_1:
 s3sym_seg2_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1687,8 +1687,8 @@ s3sym_end3_1:
 s3sym_seg3_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1749,8 +1749,8 @@ ncs_end1_1:
 ncs_seg1_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1781,8 +1781,8 @@ ncs_end2_1:
 ncs_seg2_1:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2806,8 +2806,8 @@ elecflag:
 dielec:
   default: rdie
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2838,8 +2838,8 @@ inter_rigid:
 par_nonbonded:
   default: OPLSX
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet

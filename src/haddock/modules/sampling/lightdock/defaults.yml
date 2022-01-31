@@ -34,8 +34,8 @@ swarms:
 scoring:
   default: fastdfire
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -55,8 +55,8 @@ top:
 receptor_chains:
   default: A
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -65,8 +65,8 @@ receptor_chains:
 receptor_active:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -75,8 +75,8 @@ receptor_active:
 receptor_passive:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -85,8 +85,8 @@ receptor_passive:
 ligand_chains:
   default: B
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -95,8 +95,8 @@ ligand_chains:
 ligand_active:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -105,8 +105,8 @@ ligand_active:
 ligand_passive:
   default: ''
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet

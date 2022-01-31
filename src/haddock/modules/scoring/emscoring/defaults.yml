@@ -12,8 +12,8 @@ tolerance:
 log_level:
   default: verbose
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -65,8 +65,8 @@ elecflag:
 dielec:
   default: cdie
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -94,8 +94,8 @@ dihedflag:
 par_nonbonded:
   default: OPLSX
   type: string
-  maxchars: 100
   minchars: 0
+  maxchars: 100
   title: No title yet
   short: No short description yet
   long: No long description yet

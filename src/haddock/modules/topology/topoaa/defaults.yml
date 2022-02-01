@@ -2,29 +2,24 @@ autohis:
   default: true
   type: boolean
   title: Automatic HIS protonation state
-  short:
-    "The protonation state of histidine (+1: HIS or 0: HISD/HISE)
-    will be automatically set by HADDOCK"
-  long:
-    "If set to true, HADDOCK will automatically define the protonation
-    state of histidines ((+1: HIS or 0: HISD/HISE) by selecting the
-    state leading to the lowest electrostatic energy"
-  group: 'molecule'
+  short: 'The protonation state of histidine (+1: HIS or 0: HISD/HISE) will be automatically
+    set by HADDOCK'
+  long: 'If set to true, HADDOCK will automatically define the protonation state of
+    histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest
+    electrostatic energy'
+  group: molecule
   explevel: basic
 delenph:
   default: true
   type: boolean
   title: Keep or remove non-polar hydrogen atoms
-  short:
-    If set to true, non-polar hydrogen atoms will be discarded to save
-    computing time
-  long:
-    Since HADDOCK uses a united atom force field, the non-polar hydrogen
-    atoms can be in principle discarded. This saves computing time.
-    However this should not be done if you are defining distance
-    restraints to specific hydrogen atoms (e.g. when using NMR distance
-    restraints).
-  group: 'molecule'
+  short: If set to true, non-polar hydrogen atoms will be discarded to save computing
+    time
+  long: Since HADDOCK uses a united atom force field, the non-polar hydrogen atoms
+    can be in principle discarded. This saves computing time. However this should
+    not be done if you are defining distance restraints to specific hydrogen atoms
+    (e.g. when using NMR distance restraints).
+  group: molecule
   explevel: basic
 log_level:
   default: verbose
@@ -33,22 +28,19 @@ log_level:
   maxchars: 100
   title: Log level verbosity for CNS
   short: Set the log level verbosity for CNS (minimal or verbose)
-  long:
-    CNS, the computational engine used by HADDOCK can generate a lot of
-    output messages. This parameter controls the verbosity of CNS
-    (minimal or verbose)
-  group: 'module'
+  long: CNS, the computational engine used by HADDOCK can generate a lot of output
+    messages. This parameter controls the verbosity of CNS (minimal or verbose)
+  group: module
   explevel: expert
 iniseed:
   default: 917
   type: integer
   min: 0
   max: 9999999999999999
-  precision: 3
   title: Random seed
   short: Random seed used in CNS to initialize the random seed function
   long: Random seed used in CNS to initialize the random seed function
-  group: 'molecule'
+  group: molecule
   explevel: expert
 ligand_param_fname:
   default: ''
@@ -79,7 +71,6 @@ tolerance:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -141,7 +132,6 @@ mol1:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -163,7 +153,6 @@ mol1:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -237,7 +226,6 @@ mol2:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -259,7 +247,6 @@ mol2:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -333,7 +320,6 @@ mol3:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -355,7 +341,6 @@ mol3:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -429,7 +414,6 @@ mol4:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -451,7 +435,6 @@ mol4:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -525,7 +508,6 @@ mol5:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -547,7 +529,6 @@ mol5:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -621,7 +602,6 @@ mol6:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -643,7 +623,6 @@ mol6:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -717,7 +696,6 @@ mol7:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -739,7 +717,6 @@ mol7:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -813,7 +790,6 @@ mol8:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -835,7 +811,6 @@ mol8:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -909,7 +884,6 @@ mol9:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -931,7 +905,6 @@ mol9:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1005,7 +978,6 @@ mol10:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1027,7 +999,6 @@ mol10:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1101,7 +1072,6 @@ mol11:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1123,7 +1093,6 @@ mol11:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1197,7 +1166,6 @@ mol12:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1219,7 +1187,6 @@ mol12:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1293,7 +1260,6 @@ mol13:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1315,7 +1281,6 @@ mol13:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1389,7 +1354,6 @@ mol14:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1411,7 +1375,6 @@ mol14:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1485,7 +1448,6 @@ mol15:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1507,7 +1469,6 @@ mol15:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1581,7 +1542,6 @@ mol16:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1603,7 +1563,6 @@ mol16:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1677,7 +1636,6 @@ mol17:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1699,7 +1657,6 @@ mol17:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1773,7 +1730,6 @@ mol18:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1795,7 +1751,6 @@ mol18:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1869,7 +1824,6 @@ mol19:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1891,7 +1845,6 @@ mol19:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1965,7 +1918,6 @@ mol20:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet
@@ -1987,7 +1939,6 @@ mol20:
     type: integer
     min: -9999
     max: 9999
-    precision: 3
     title: No title yet
     short: No short description yet
     long: No long description yet

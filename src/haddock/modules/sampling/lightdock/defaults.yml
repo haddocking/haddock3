@@ -3,7 +3,6 @@ glowworms:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -14,7 +13,6 @@ steps:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -25,7 +23,6 @@ swarms:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -46,7 +43,6 @@ top:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

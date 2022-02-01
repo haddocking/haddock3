@@ -3,7 +3,6 @@ tolerance:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -64,7 +63,6 @@ sampling:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -83,7 +81,6 @@ ntrials:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -118,7 +115,6 @@ iniseed:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -497,7 +493,6 @@ amb_cool1:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -508,7 +503,6 @@ amb_cool2:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -519,7 +513,6 @@ amb_cool3:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -530,7 +523,6 @@ amb_hot:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -541,7 +533,6 @@ unamb_cool1:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -552,7 +543,6 @@ unamb_cool2:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -563,7 +553,6 @@ unamb_cool3:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -574,7 +563,6 @@ unamb_hot:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -585,7 +573,6 @@ hbond_cool1:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -596,7 +583,6 @@ hbond_cool2:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -607,7 +593,6 @@ hbond_cool3:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -618,7 +603,6 @@ hbond_hot:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -637,7 +621,6 @@ ncvpart:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -897,7 +880,6 @@ numc2sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -972,7 +954,6 @@ numc3sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1079,7 +1060,6 @@ numc4sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1218,7 +1198,6 @@ numc5sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1389,7 +1368,6 @@ numc6sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1592,7 +1570,6 @@ nums3sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1718,7 +1695,6 @@ numncs:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1953,7 +1929,6 @@ nrair_1:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1986,7 +1961,6 @@ nrair_2:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2019,7 +1993,6 @@ nrair_3:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2052,7 +2025,6 @@ nrair_4:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2085,7 +2057,6 @@ nrair_5:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2118,7 +2089,6 @@ nrair_6:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2151,7 +2121,6 @@ nrair_7:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2184,7 +2153,6 @@ nrair_8:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2217,7 +2185,6 @@ nrair_9:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2250,7 +2217,6 @@ nrair_10:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2283,7 +2249,6 @@ nrair_11:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2316,7 +2281,6 @@ nrair_12:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2349,7 +2313,6 @@ nrair_13:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2382,7 +2345,6 @@ nrair_14:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2415,7 +2377,6 @@ nrair_15:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2448,7 +2409,6 @@ nrair_16:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2481,7 +2441,6 @@ nrair_17:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2514,7 +2473,6 @@ nrair_18:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2547,7 +2505,6 @@ nrair_19:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2580,7 +2537,6 @@ nrair_20:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

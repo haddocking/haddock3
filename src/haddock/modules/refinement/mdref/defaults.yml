@@ -3,7 +3,6 @@ tolerance:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -72,7 +71,6 @@ sampling_factor:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -83,7 +81,6 @@ iniseed:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -123,7 +120,6 @@ waterheatsteps:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -134,7 +130,6 @@ watersteps:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -145,7 +140,6 @@ watercoolsteps:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -516,7 +510,6 @@ amb_scale:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -527,7 +520,6 @@ unamb_scale:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -538,7 +530,6 @@ hbond_scale:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -565,7 +556,6 @@ ncvpart:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -630,7 +620,6 @@ dihedrals_scale:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -659,7 +648,6 @@ error_dih:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -697,7 +685,6 @@ numc2sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -772,7 +759,6 @@ numc3sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -879,7 +865,6 @@ numc4sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1018,7 +1003,6 @@ numc5sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1189,7 +1173,6 @@ numc6sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1392,7 +1375,6 @@ nums3sym:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1518,7 +1500,6 @@ numncs:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1753,7 +1734,6 @@ nfle1:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1786,7 +1766,6 @@ nfle2:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1819,7 +1798,6 @@ nfle3:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1852,7 +1830,6 @@ nfle4:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1885,7 +1862,6 @@ nfle5:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1918,7 +1894,6 @@ nfle6:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1951,7 +1926,6 @@ nfle7:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -1984,7 +1958,6 @@ nfle8:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2017,7 +1990,6 @@ nfle9:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2050,7 +2022,6 @@ nfle10:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2083,7 +2054,6 @@ nfle11:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2116,7 +2086,6 @@ nfle12:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2149,7 +2118,6 @@ nfle13:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2182,7 +2150,6 @@ nfle14:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2215,7 +2182,6 @@ nfle15:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2248,7 +2214,6 @@ nfle16:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2281,7 +2246,6 @@ nfle17:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2314,7 +2278,6 @@ nfle18:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2347,7 +2310,6 @@ nfle19:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2380,7 +2342,6 @@ nfle20:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2413,7 +2374,6 @@ nseg1:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2446,7 +2406,6 @@ nseg2:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2479,7 +2438,6 @@ nseg3:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2512,7 +2470,6 @@ nseg4:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2545,7 +2502,6 @@ nseg5:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2578,7 +2534,6 @@ nseg6:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2611,7 +2566,6 @@ nseg7:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2644,7 +2598,6 @@ nseg8:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2677,7 +2630,6 @@ nseg9:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2710,7 +2662,6 @@ nseg10:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2743,7 +2694,6 @@ nseg11:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2776,7 +2726,6 @@ nseg12:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2809,7 +2758,6 @@ nseg13:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2842,7 +2790,6 @@ nseg14:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2875,7 +2822,6 @@ nseg15:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2908,7 +2854,6 @@ nseg16:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2941,7 +2886,6 @@ nseg17:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -2974,7 +2918,6 @@ nseg18:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3007,7 +2950,6 @@ nseg19:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet
@@ -3040,7 +2982,6 @@ nseg20:
   type: integer
   min: -9999
   max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

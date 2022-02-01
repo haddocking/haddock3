@@ -37,12 +37,12 @@ def test_general_config():
 
 def test_all_defaults_have_the_same_name(module):
     """Test all default configuration files have the same name."""
-    assert module.DEFAULT_CONFIG.name == 'defaults.yml'
+    assert module.DEFAULT_CONFIG.name == 'defaults.yaml'
 
 
 def test_config_readers_keys():
     """Test config readers have all options."""
-    assert set(config_readers.keys()) == {".yml", ".cfg"}
+    assert set(config_readers.keys()) == {".yaml", ".cfg"}
 
 
 def test_not_valid_config():

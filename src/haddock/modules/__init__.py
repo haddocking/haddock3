@@ -38,7 +38,7 @@ non_mandatory_general_parameters_defaults = \
     read_from_yaml_config(modules_defaults_path)
 
 config_readers = {
-    ".yml": read_from_yaml_config,
+    ".yaml": read_from_yaml_config,
     ".cfg": read_config,
     }
 

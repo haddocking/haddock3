@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 
 from haddock import log, modules_defaults_path
-from haddock.gear.config_reader import read_config
+from haddock.gear.yaml2cfg import read_from_yaml_config
 
 
 STATE_REGEX = r"JobState=(\w*)"
@@ -23,7 +23,7 @@ JOB_STATUS_DIC = {
 
 # if you change these defaults, chage also the values in the
 # modules/defaults.cfg file
-_tmpcfg = read_config(modules_defaults_path)
+_tmpcfg = read_from_yaml_config(modules_defaults_path)
 HPCScheduler_CONCAT_DEFAULT = _tmpcfg["concat"]  # original value 1
 HPCWorker_QUEUE_LIMIT_DEFAULT = _tmpcfg["queue"]  # original value 100
 HPCWorker_QUEUE_DEFAULT = _tmpcfg["queue_limit"]  # original value None

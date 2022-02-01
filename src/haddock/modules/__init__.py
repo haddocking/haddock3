@@ -34,7 +34,8 @@ values are their categories. Categories are the modules parent folders."""
 # modules will use these parameters. It is the responsibility of the module to
 # extract the parameters it needs.
 # the config file is in modules/defaults.cfg
-non_mandatory_general_parameters_defaults = read_config(modules_defaults_path)
+non_mandatory_general_parameters_defaults = \
+    read_from_yaml_config(modules_defaults_path)
 
 config_readers = {
     ".yml": read_from_yaml_config,

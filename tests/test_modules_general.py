@@ -9,7 +9,6 @@ import pytest
 
 from haddock import modules_defaults_path
 from haddock.core.exceptions import ConfigurationError
-from haddock.gear.config_reader import read_config
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules import _not_valid_config, config_readers, modules_category
 
@@ -33,7 +32,7 @@ def test_config_reader_can_read_defaults(module):
 
 def test_general_config():
     """Test general config is readable."""
-    assert read_config(modules_defaults_path)
+    assert read_from_yaml_config(modules_defaults_path)
 
 
 def test_all_defaults_have_the_same_name(module):

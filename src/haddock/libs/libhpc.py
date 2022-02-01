@@ -25,8 +25,8 @@ JOB_STATUS_DIC = {
 # modules/defaults.cfg file
 _tmpcfg = read_config(modules_defaults_path)
 HPCScheduler_CONCAT_DEFAULT = _tmpcfg["concat"]  # original value 1
-HPCWorker_QUEUE_LIMIT_DEFAULT = _tmpcfg["queue"]  # original value 100
-HPCWorker_QUEUE_DEFAULT = _tmpcfg["queue_limit"]  # original value None
+HPCWorker_QUEUE_LIMIT_DEFAULT = _tmpcfg["queue_limit"]  # original value 100
+HPCWorker_QUEUE_DEFAULT = _tmpcfg["queue"]  # original value ""
 del _tmpcfg
 
 

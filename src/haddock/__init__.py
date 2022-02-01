@@ -14,9 +14,11 @@ add_syserr_handler(log)
 haddock3_source_path = Path(__file__).resolve().parent
 haddock3_repository_path = haddock3_source_path.parents[1]
 toppar_path = Path(haddock3_source_path, "cns", "toppar")
-modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.cfg")
+modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.yaml")
 
 FCC_path = Path(haddock3_source_path.parent, 'fcc')
+
+config_expert_levels = ("basic", "intermediate", "guru")
 
 
 class EmptyPath:

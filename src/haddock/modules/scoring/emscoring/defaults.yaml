@@ -1,0 +1,448 @@
+tolerance:
+  default: 5
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+log_level:
+  default: verbose
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+ligand_param_fname:
+  default: ''
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+ligand_top_fname:
+  default: ''
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+individualize:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+nemsteps:
+  default: 40
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+elecflag:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+dielec:
+  default: cdie
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+epsilon:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+dihedflag:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+par_nonbonded:
+  default: OPLSX
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_air:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_bsa:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_cdih:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_dani:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_deint:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_desolv:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_dist:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_elec:
+  default: 0.2
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_lcc:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_rg:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_sani:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_sym:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_vdw:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_vean:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_xpcs:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_xrdc:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+w_zres:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_1:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_2:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_3:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_4:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_5:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_6:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_7:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_8:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_9:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_10:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_11:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_12:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_13:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_14:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_15:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_16:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_17:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_18:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_19:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+shape_20:
+  default: false
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic

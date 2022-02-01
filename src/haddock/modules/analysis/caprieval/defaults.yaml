@@ -1,0 +1,157 @@
+reference_fname:
+  default: ''
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+irmsd:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+fnat:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+lrmsd:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+ilrmsd:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+dockq:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+irmsd_cutoff:
+  default: 10.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+fnat_cutoff:
+  default: 5.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+lrmsd_cutoff:
+  default: 10.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+receptor_chain:
+  default: A
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+ligand_chain:
+  default: B
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+rankby:
+  default: score
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+rank_ascending:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+sortby:
+  default: score
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+sort_ascending:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+alignment_method:
+  default: sequence
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+lovoalign_exec:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic

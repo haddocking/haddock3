@@ -1,11 +1,14 @@
 """HADDOCK3 modules."""
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
+from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
@@ -31,7 +34,25 @@ values are their categories. Categories are the modules parent folders."""
 # modules will use these parameters. It is the responsibility of the module to
 # extract the parameters it needs.
 # the config file is in modules/defaults.cfg
-non_mandatory_general_parameters_defaults = read_config(modules_defaults_path)
+non_mandatory_general_parameters_defaults = \
+    read_from_yaml_config(modules_defaults_path)
+
+config_readers = {
+    ".yaml": read_from_yaml_config,
+    ".cfg": read_config,
+    }
+
+
+@contextmanager
+def _not_valid_config():
+    try:
+        yield
+    except KeyError as err:
+        emsg = (
+            "The configuration file extension is not supported. "
+            f"Supported types are {', '.join(config_readers.keys())}."
+            )
+        raise ConfigurationError(emsg) from err
 
 
 class BaseHaddockModule(ABC):
@@ -106,7 +127,9 @@ class BaseHaddockModule(ABC):
             raise TypeError(_msg)
 
         if update_from_cfg_file:
-            params = read_config(update_from_cfg_file)
+            with _not_valid_config():
+                extension = Path(update_from_cfg_file).suffix
+                params = config_readers[extension](update_from_cfg_file)
 
         # the updating order is relevant
         _n = recursive_dict_update(

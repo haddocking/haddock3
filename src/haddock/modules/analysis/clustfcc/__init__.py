@@ -5,15 +5,14 @@ from pathlib import Path
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
-from haddock.gear.config_reader import read_config
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, read_from_yaml_config
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
 class HaddockModule(BaseHaddockModule):
@@ -27,7 +26,7 @@ class HaddockModule(BaseHaddockModule):
     @classmethod
     def confirm_installation(cls):
         """Confirm if FCC is installed and available."""
-        dcfg = read_config(DEFAULT_CONFIG)
+        dcfg = read_from_yaml_config(DEFAULT_CONFIG)
         exec_path = Path(FCC_path, dcfg['executable'])
 
         if not os.access(exec_path, mode=os.F_OK):

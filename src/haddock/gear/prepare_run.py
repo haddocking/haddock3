@@ -15,6 +15,7 @@ from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
+from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libutil import (
     recursive_dict_update,
     remove_dict_keys,
@@ -167,10 +168,10 @@ def validate_modules_params(modules_params):
             'modules',
             modules_category[_module_name],
             _module_name,
-            'defaults.cfg',
+            'defaults.yaml',
             ).resolve()
 
-        defaults = read_config(pdef)
+        defaults = read_from_yaml_config(pdef)
         if not defaults:
             return
 

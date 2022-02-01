@@ -1,0 +1,74 @@
+cns_exec:
+  default: ''
+  type: file
+  title: "Path to the cns executable"
+  short:
+    If not provided, HADDOCK3 will use the cns path configured
+    during the installation.
+  long: No long description yet
+  group: ''
+  explevel: basic
+ncores:
+  default: 8
+  type: integer
+  min: 1
+  max: 200
+  precision: 0
+  title: Number of CPU cores to use for the CNS calculation processes
+  short: Number of CPUs is truncated to max CPUs available minus 1
+  long: No long description yet
+  group: ''
+  explevel: basic
+mode:
+  default: local
+  type: string
+  minchars: 0
+  maxchars: 20
+  choices:
+    - local
+    - hpc
+  title: Mode of execution
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+concat:
+  default: 1
+  type: integer
+  min: 1
+  max: 9999
+  precision: 0
+  title: Number of models to produce per job in HPC mode.
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+queue:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+queue_limit:
+  default: 100
+  type: integer
+  min: 1
+  max: 9999
+  precision: 0
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: basic
+self_contained:
+  default: false
+  type: boolean
+  title: Whether to create a CNS contained run
+  short: Copies the CNS scripts and executable to the run folder
+  long: No long description yet
+  group: ''
+  explevel: basic

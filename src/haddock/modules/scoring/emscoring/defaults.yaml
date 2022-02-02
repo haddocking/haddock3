@@ -7,7 +7,7 @@ tolerance:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 log_level:
   default: verbose
   type: string
@@ -17,7 +17,7 @@ log_level:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_param_fname:
   default: ''
   type: file
@@ -25,7 +25,7 @@ ligand_param_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -33,7 +33,7 @@ ligand_top_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 individualize:
   default: true
   type: boolean
@@ -41,7 +41,7 @@ individualize:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nemsteps:
   default: 40
   type: integer
@@ -51,7 +51,7 @@ nemsteps:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 elecflag:
   default: true
   type: boolean
@@ -59,7 +59,7 @@ elecflag:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dielec:
   default: cdie
   type: string
@@ -69,7 +69,7 @@ dielec:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 epsilon:
   default: 1.0
   type: float
@@ -80,7 +80,7 @@ epsilon:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dihedflag:
   default: true
   type: boolean
@@ -88,7 +88,7 @@ dihedflag:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 par_nonbonded:
   default: OPLSX
   type: string
@@ -98,7 +98,7 @@ par_nonbonded:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_air:
   default: 0.0
   type: float
@@ -109,7 +109,7 @@ w_air:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_bsa:
   default: 0.0
   type: float
@@ -120,7 +120,7 @@ w_bsa:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_cdih:
   default: 0.0
   type: float
@@ -131,7 +131,7 @@ w_cdih:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_dani:
   default: 0.0
   type: float
@@ -142,7 +142,7 @@ w_dani:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_deint:
   default: 0.0
   type: float
@@ -153,7 +153,7 @@ w_deint:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_desolv:
   default: 1.0
   type: float
@@ -164,7 +164,7 @@ w_desolv:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_dist:
   default: 0.0
   type: float
@@ -175,7 +175,7 @@ w_dist:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_elec:
   default: 0.2
   type: float
@@ -186,7 +186,7 @@ w_elec:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_lcc:
   default: 0.0
   type: float
@@ -197,7 +197,7 @@ w_lcc:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_rg:
   default: 0.0
   type: float
@@ -208,7 +208,7 @@ w_rg:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_sani:
   default: 0.0
   type: float
@@ -219,7 +219,7 @@ w_sani:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_sym:
   default: 0.0
   type: float
@@ -230,7 +230,7 @@ w_sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_vdw:
   default: 1.0
   type: float
@@ -241,7 +241,7 @@ w_vdw:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_vean:
   default: 0.0
   type: float
@@ -252,7 +252,7 @@ w_vean:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_xpcs:
   default: 0.0
   type: float
@@ -263,7 +263,7 @@ w_xpcs:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_xrdc:
   default: 0.0
   type: float
@@ -274,7 +274,7 @@ w_xrdc:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_zres:
   default: 0.0
   type: float
@@ -285,7 +285,7 @@ w_zres:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_1:
   default: false
   type: boolean
@@ -293,7 +293,7 @@ shape_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_2:
   default: false
   type: boolean
@@ -301,7 +301,7 @@ shape_2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_3:
   default: false
   type: boolean
@@ -309,7 +309,7 @@ shape_3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_4:
   default: false
   type: boolean
@@ -317,7 +317,7 @@ shape_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_5:
   default: false
   type: boolean
@@ -325,7 +325,7 @@ shape_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_6:
   default: false
   type: boolean
@@ -333,7 +333,7 @@ shape_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_7:
   default: false
   type: boolean
@@ -341,7 +341,7 @@ shape_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_8:
   default: false
   type: boolean
@@ -349,7 +349,7 @@ shape_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_9:
   default: false
   type: boolean
@@ -357,7 +357,7 @@ shape_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_10:
   default: false
   type: boolean
@@ -365,7 +365,7 @@ shape_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_11:
   default: false
   type: boolean
@@ -373,7 +373,7 @@ shape_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_12:
   default: false
   type: boolean
@@ -381,7 +381,7 @@ shape_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_13:
   default: false
   type: boolean
@@ -389,7 +389,7 @@ shape_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_14:
   default: false
   type: boolean
@@ -397,7 +397,7 @@ shape_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_15:
   default: false
   type: boolean
@@ -405,7 +405,7 @@ shape_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_16:
   default: false
   type: boolean
@@ -413,7 +413,7 @@ shape_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_17:
   default: false
   type: boolean
@@ -421,7 +421,7 @@ shape_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_18:
   default: false
   type: boolean
@@ -429,7 +429,7 @@ shape_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_19:
   default: false
   type: boolean
@@ -437,7 +437,7 @@ shape_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_20:
   default: false
   type: boolean
@@ -445,4 +445,4 @@ shape_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy

@@ -8,7 +8,7 @@ autohis:
     histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest
     electrostatic energy'
   group: molecule
-  explevel: basic
+  explevel: easy
 delenph:
   default: true
   type: boolean
@@ -20,7 +20,7 @@ delenph:
     not be done if you are defining distance restraints to specific hydrogen atoms
     (e.g. when using NMR distance restraints).
   group: molecule
-  explevel: basic
+  explevel: easy
 log_level:
   default: verbose
   type: string
@@ -31,7 +31,7 @@ log_level:
   long: CNS, the computational engine used by HADDOCK can generate a lot of output
     messages. This parameter controls the verbosity of CNS (minimal or verbose)
   group: module
-  explevel: expert
+  explevel: guru
 iniseed:
   default: 917
   type: integer
@@ -41,7 +41,7 @@ iniseed:
   short: Random seed used in CNS to initialize the random seed function
   long: Random seed used in CNS to initialize the random seed function
   group: molecule
-  explevel: expert
+  explevel: guru
 ligand_param_fname:
   default: ''
   type: file
@@ -49,7 +49,7 @@ ligand_param_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -57,7 +57,7 @@ ligand_top_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 limit:
   default: true
   type: boolean
@@ -65,7 +65,7 @@ limit:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 tolerance:
   default: 0
   type: integer
@@ -75,7 +75,7 @@ tolerance:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 mol1:
   prot_segid:
     default: A
@@ -86,7 +86,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -94,7 +94,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -102,7 +102,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -110,7 +110,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -118,7 +118,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -126,7 +126,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -136,7 +136,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -147,7 +147,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -157,7 +157,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -168,8 +168,8 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol2:
   prot_segid:
     default: B
@@ -180,7 +180,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -188,7 +188,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -196,7 +196,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -204,7 +204,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -212,7 +212,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -220,7 +220,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -230,7 +230,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -241,7 +241,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -251,7 +251,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -262,8 +262,8 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol3:
   prot_segid:
     default: C
@@ -274,7 +274,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -282,7 +282,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -290,7 +290,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -298,7 +298,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -306,7 +306,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -314,7 +314,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -324,7 +324,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -335,7 +335,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -345,7 +345,7 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -356,8 +356,8 @@ mol3:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol4:
   prot_segid:
     default: D
@@ -368,7 +368,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -376,7 +376,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -384,7 +384,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -392,7 +392,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -400,7 +400,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -408,7 +408,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -418,7 +418,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -429,7 +429,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -439,7 +439,7 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -450,8 +450,8 @@ mol4:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol5:
   prot_segid:
     default: E
@@ -462,7 +462,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -470,7 +470,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -478,7 +478,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -486,7 +486,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -494,7 +494,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -502,7 +502,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -512,7 +512,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -523,7 +523,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -533,7 +533,7 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -544,8 +544,8 @@ mol5:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol6:
   prot_segid:
     default: F
@@ -556,7 +556,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -564,7 +564,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -572,7 +572,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -580,7 +580,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -588,7 +588,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -596,7 +596,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -606,7 +606,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -617,7 +617,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -627,7 +627,7 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -638,8 +638,8 @@ mol6:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol7:
   prot_segid:
     default: G
@@ -650,7 +650,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -658,7 +658,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -666,7 +666,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -674,7 +674,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -682,7 +682,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -690,7 +690,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -700,7 +700,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -711,7 +711,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -721,7 +721,7 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -732,8 +732,8 @@ mol7:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol8:
   prot_segid:
     default: H
@@ -744,7 +744,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -752,7 +752,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -760,7 +760,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -768,7 +768,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -776,7 +776,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -784,7 +784,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -794,7 +794,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -805,7 +805,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -815,7 +815,7 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -826,8 +826,8 @@ mol8:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol9:
   prot_segid:
     default: I
@@ -838,7 +838,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -846,7 +846,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -854,7 +854,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -862,7 +862,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -870,7 +870,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -878,7 +878,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -888,7 +888,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -899,7 +899,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -909,7 +909,7 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -920,8 +920,8 @@ mol9:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol10:
   prot_segid:
     default: J
@@ -932,7 +932,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -940,7 +940,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -948,7 +948,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -956,7 +956,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -964,7 +964,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -972,7 +972,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -982,7 +982,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -993,7 +993,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1003,7 +1003,7 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1014,8 +1014,8 @@ mol10:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol11:
   prot_segid:
     default: K
@@ -1026,7 +1026,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1034,7 +1034,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1042,7 +1042,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1050,7 +1050,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1058,7 +1058,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1066,7 +1066,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1076,7 +1076,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1087,7 +1087,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1097,7 +1097,7 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1108,8 +1108,8 @@ mol11:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol12:
   prot_segid:
     default: L
@@ -1120,7 +1120,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1128,7 +1128,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1136,7 +1136,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1144,7 +1144,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1152,7 +1152,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1160,7 +1160,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1170,7 +1170,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1181,7 +1181,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1191,7 +1191,7 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1202,8 +1202,8 @@ mol12:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol13:
   prot_segid:
     default: M
@@ -1214,7 +1214,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1222,7 +1222,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1230,7 +1230,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1238,7 +1238,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1246,7 +1246,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1254,7 +1254,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1264,7 +1264,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1275,7 +1275,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1285,7 +1285,7 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1296,8 +1296,8 @@ mol13:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol14:
   prot_segid:
     default: N
@@ -1308,7 +1308,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1316,7 +1316,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1324,7 +1324,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1332,7 +1332,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1340,7 +1340,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1348,7 +1348,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1358,7 +1358,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1369,7 +1369,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1379,7 +1379,7 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1390,8 +1390,8 @@ mol14:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol15:
   prot_segid:
     default: O
@@ -1402,7 +1402,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1410,7 +1410,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1418,7 +1418,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1426,7 +1426,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1434,7 +1434,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1442,7 +1442,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1452,7 +1452,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1463,7 +1463,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1473,7 +1473,7 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1484,8 +1484,8 @@ mol15:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol16:
   prot_segid:
     default: P
@@ -1496,7 +1496,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1504,7 +1504,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1512,7 +1512,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1520,7 +1520,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1528,7 +1528,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1536,7 +1536,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1546,7 +1546,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1557,7 +1557,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1567,7 +1567,7 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1578,8 +1578,8 @@ mol16:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol17:
   prot_segid:
     default: Q
@@ -1590,7 +1590,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1598,7 +1598,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1606,7 +1606,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1614,7 +1614,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1622,7 +1622,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1630,7 +1630,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1640,7 +1640,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1651,7 +1651,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1661,7 +1661,7 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1672,8 +1672,8 @@ mol17:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol18:
   prot_segid:
     default: R
@@ -1684,7 +1684,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1692,7 +1692,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1700,7 +1700,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1708,7 +1708,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1716,7 +1716,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1724,7 +1724,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1734,7 +1734,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1745,7 +1745,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1755,7 +1755,7 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1766,8 +1766,8 @@ mol18:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol19:
   prot_segid:
     default: S
@@ -1778,7 +1778,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1786,7 +1786,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1794,7 +1794,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1802,7 +1802,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1810,7 +1810,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1818,7 +1818,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1828,7 +1828,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1839,7 +1839,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1849,7 +1849,7 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1860,8 +1860,8 @@ mol19:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol20:
   prot_segid:
     default: T
@@ -1872,7 +1872,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -1880,7 +1880,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -1888,7 +1888,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -1896,7 +1896,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -1904,7 +1904,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -1912,7 +1912,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -1922,7 +1922,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -1933,7 +1933,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -1943,7 +1943,7 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -1954,5 +1954,5 @@ mol20:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy

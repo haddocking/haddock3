@@ -7,7 +7,7 @@ tolerance:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 log_level:
   default: verbose
   type: string
@@ -17,7 +17,7 @@ log_level:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ambig_fname:
   default: ''
   type: file
@@ -25,7 +25,7 @@ ambig_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 unambig_fname:
   default: ''
   type: file
@@ -33,7 +33,7 @@ unambig_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dihe_fname:
   default: ''
   type: file
@@ -41,7 +41,7 @@ dihe_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 hbond_fname:
   default: ''
   type: file
@@ -49,7 +49,7 @@ hbond_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_param_fname:
   default: ''
   type: file
@@ -57,7 +57,7 @@ ligand_param_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -65,7 +65,7 @@ ligand_top_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 sampling:
   default: 5
   type: integer
@@ -75,7 +75,7 @@ sampling:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 sampling_factor:
   default: 1
   type: integer
@@ -85,7 +85,7 @@ sampling_factor:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nemsteps:
   default: 200
   type: integer
@@ -95,7 +95,7 @@ nemsteps:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 iniseed:
   default: 917
   type: integer
@@ -105,7 +105,7 @@ iniseed:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 keepwater:
   default: false
   type: boolean
@@ -113,7 +113,7 @@ keepwater:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_1:
   default: A
   type: string
@@ -123,7 +123,7 @@ prot_segid_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_2:
   default: B
   type: string
@@ -133,7 +133,7 @@ prot_segid_2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_3:
   default: C
   type: string
@@ -143,7 +143,7 @@ prot_segid_3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_4:
   default: D
   type: string
@@ -153,7 +153,7 @@ prot_segid_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_5:
   default: E
   type: string
@@ -163,7 +163,7 @@ prot_segid_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_6:
   default: F
   type: string
@@ -173,7 +173,7 @@ prot_segid_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_7:
   default: G
   type: string
@@ -183,7 +183,7 @@ prot_segid_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_8:
   default: H
   type: string
@@ -193,7 +193,7 @@ prot_segid_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_9:
   default: I
   type: string
@@ -203,7 +203,7 @@ prot_segid_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_10:
   default: J
   type: string
@@ -213,7 +213,7 @@ prot_segid_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_11:
   default: K
   type: string
@@ -223,7 +223,7 @@ prot_segid_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_12:
   default: L
   type: string
@@ -233,7 +233,7 @@ prot_segid_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_13:
   default: M
   type: string
@@ -243,7 +243,7 @@ prot_segid_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_14:
   default: N
   type: string
@@ -253,7 +253,7 @@ prot_segid_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_15:
   default: O
   type: string
@@ -263,7 +263,7 @@ prot_segid_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_16:
   default: P
   type: string
@@ -273,7 +273,7 @@ prot_segid_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_17:
   default: Q
   type: string
@@ -283,7 +283,7 @@ prot_segid_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_18:
   default: R
   type: string
@@ -293,7 +293,7 @@ prot_segid_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_19:
   default: S
   type: string
@@ -303,7 +303,7 @@ prot_segid_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 prot_segid_20:
   default: T
   type: string
@@ -313,7 +313,7 @@ prot_segid_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_1:
   default: false
   type: boolean
@@ -321,7 +321,7 @@ shape_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_2:
   default: false
   type: boolean
@@ -329,7 +329,7 @@ shape_2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_3:
   default: false
   type: boolean
@@ -337,7 +337,7 @@ shape_3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_4:
   default: false
   type: boolean
@@ -345,7 +345,7 @@ shape_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_5:
   default: false
   type: boolean
@@ -353,7 +353,7 @@ shape_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_6:
   default: false
   type: boolean
@@ -361,7 +361,7 @@ shape_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_7:
   default: false
   type: boolean
@@ -369,7 +369,7 @@ shape_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_8:
   default: false
   type: boolean
@@ -377,7 +377,7 @@ shape_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_9:
   default: false
   type: boolean
@@ -385,7 +385,7 @@ shape_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_10:
   default: false
   type: boolean
@@ -393,7 +393,7 @@ shape_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_11:
   default: false
   type: boolean
@@ -401,7 +401,7 @@ shape_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_12:
   default: false
   type: boolean
@@ -409,7 +409,7 @@ shape_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_13:
   default: false
   type: boolean
@@ -417,7 +417,7 @@ shape_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_14:
   default: false
   type: boolean
@@ -425,7 +425,7 @@ shape_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_15:
   default: false
   type: boolean
@@ -433,7 +433,7 @@ shape_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_16:
   default: false
   type: boolean
@@ -441,7 +441,7 @@ shape_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_17:
   default: false
   type: boolean
@@ -449,7 +449,7 @@ shape_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_18:
   default: false
   type: boolean
@@ -457,7 +457,7 @@ shape_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_19:
   default: false
   type: boolean
@@ -465,7 +465,7 @@ shape_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 shape_20:
   default: false
   type: boolean
@@ -473,7 +473,7 @@ shape_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 amb_scale:
   default: 50
   type: integer
@@ -483,7 +483,7 @@ amb_scale:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 unamb_scale:
   default: 50
   type: integer
@@ -493,7 +493,7 @@ unamb_scale:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 hbond_scale:
   default: 50
   type: integer
@@ -503,7 +503,7 @@ hbond_scale:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 hbonds_on:
   default: false
   type: boolean
@@ -511,7 +511,7 @@ hbonds_on:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 noecv:
   default: false
   type: boolean
@@ -519,7 +519,7 @@ noecv:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncvpart:
   default: 2
   type: integer
@@ -529,7 +529,7 @@ ncvpart:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 cmrest:
   default: false
   type: boolean
@@ -537,7 +537,7 @@ cmrest:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 cmtight:
   default: false
   type: boolean
@@ -545,7 +545,7 @@ cmtight:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ranair:
   default: false
   type: boolean
@@ -553,7 +553,7 @@ ranair:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 kcont:
   default: 1.0
   type: float
@@ -564,7 +564,7 @@ kcont:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ksurf:
   default: 1.0
   type: float
@@ -575,7 +575,7 @@ ksurf:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 surfrest:
   default: false
   type: boolean
@@ -583,7 +583,7 @@ surfrest:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dihedrals_on:
   default: false
   type: boolean
@@ -591,7 +591,7 @@ dihedrals_on:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dihedrals_scale:
   default: 200
   type: integer
@@ -601,7 +601,7 @@ dihedrals_scale:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ssdihed:
   default: none
   type: string
@@ -611,7 +611,7 @@ ssdihed:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 error_dih:
   default: 10
   type: integer
@@ -621,7 +621,7 @@ error_dih:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dnarest_on:
   default: false
   type: boolean
@@ -629,7 +629,7 @@ dnarest_on:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 sym_on:
   default: false
   type: boolean
@@ -637,7 +637,7 @@ sym_on:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ksym:
   default: 10.0
   type: float
@@ -648,7 +648,7 @@ ksym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 numc2sym:
   default: 0
   type: integer
@@ -658,7 +658,7 @@ numc2sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c2sym_sta1_1:
   default: .nan
   type: float
@@ -669,7 +669,7 @@ c2sym_sta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c2sym_end1_1:
   default: .nan
   type: float
@@ -680,7 +680,7 @@ c2sym_end1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c2sym_seg1_1:
   default: ''
   type: string
@@ -690,7 +690,7 @@ c2sym_seg1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c2sym_sta2_1:
   default: .nan
   type: float
@@ -701,7 +701,7 @@ c2sym_sta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c2sym_end2_1:
   default: .nan
   type: float
@@ -712,7 +712,7 @@ c2sym_end2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c2sym_seg2_1:
   default: ''
   type: string
@@ -722,7 +722,7 @@ c2sym_seg2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 numc3sym:
   default: 0
   type: integer
@@ -732,7 +732,7 @@ numc3sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_sta1_1:
   default: .nan
   type: float
@@ -743,7 +743,7 @@ c3sym_sta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_end1_1:
   default: .nan
   type: float
@@ -754,7 +754,7 @@ c3sym_end1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_seg1_1:
   default: ''
   type: string
@@ -764,7 +764,7 @@ c3sym_seg1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_sta2_1:
   default: .nan
   type: float
@@ -775,7 +775,7 @@ c3sym_sta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_end2_1:
   default: .nan
   type: float
@@ -786,7 +786,7 @@ c3sym_end2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_seg2_1:
   default: ''
   type: string
@@ -796,7 +796,7 @@ c3sym_seg2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_sta3_1:
   default: .nan
   type: float
@@ -807,7 +807,7 @@ c3sym_sta3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_end3_1:
   default: .nan
   type: float
@@ -818,7 +818,7 @@ c3sym_end3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c3sym_seg3_1:
   default: ''
   type: string
@@ -828,7 +828,7 @@ c3sym_seg3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 numc4sym:
   default: 0
   type: integer
@@ -838,7 +838,7 @@ numc4sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_sta1_1:
   default: .nan
   type: float
@@ -849,7 +849,7 @@ c4sym_sta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_end1_1:
   default: .nan
   type: float
@@ -860,7 +860,7 @@ c4sym_end1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_seg1_1:
   default: ''
   type: string
@@ -870,7 +870,7 @@ c4sym_seg1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_sta2_1:
   default: .nan
   type: float
@@ -881,7 +881,7 @@ c4sym_sta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_end2_1:
   default: .nan
   type: float
@@ -892,7 +892,7 @@ c4sym_end2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_seg2_1:
   default: ''
   type: string
@@ -902,7 +902,7 @@ c4sym_seg2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_sta3_1:
   default: .nan
   type: float
@@ -913,7 +913,7 @@ c4sym_sta3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_end3_1:
   default: .nan
   type: float
@@ -924,7 +924,7 @@ c4sym_end3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_seg3_1:
   default: ''
   type: string
@@ -934,7 +934,7 @@ c4sym_seg3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_sta4_1:
   default: .nan
   type: float
@@ -945,7 +945,7 @@ c4sym_sta4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_end4_1:
   default: .nan
   type: float
@@ -956,7 +956,7 @@ c4sym_end4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c4sym_seg4_1:
   default: ''
   type: string
@@ -966,7 +966,7 @@ c4sym_seg4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 numc5sym:
   default: 0
   type: integer
@@ -976,7 +976,7 @@ numc5sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_sta1_1:
   default: .nan
   type: float
@@ -987,7 +987,7 @@ c5sym_sta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_end1_1:
   default: .nan
   type: float
@@ -998,7 +998,7 @@ c5sym_end1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_seg1_1:
   default: ''
   type: string
@@ -1008,7 +1008,7 @@ c5sym_seg1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_sta2_1:
   default: .nan
   type: float
@@ -1019,7 +1019,7 @@ c5sym_sta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_end2_1:
   default: .nan
   type: float
@@ -1030,7 +1030,7 @@ c5sym_end2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_seg2_1:
   default: ''
   type: string
@@ -1040,7 +1040,7 @@ c5sym_seg2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_sta3_1:
   default: .nan
   type: float
@@ -1051,7 +1051,7 @@ c5sym_sta3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_end3_1:
   default: .nan
   type: float
@@ -1062,7 +1062,7 @@ c5sym_end3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_seg3_1:
   default: ''
   type: string
@@ -1072,7 +1072,7 @@ c5sym_seg3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_sta4_1:
   default: .nan
   type: float
@@ -1083,7 +1083,7 @@ c5sym_sta4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_end4_1:
   default: .nan
   type: float
@@ -1094,7 +1094,7 @@ c5sym_end4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_seg4_1:
   default: ''
   type: string
@@ -1104,7 +1104,7 @@ c5sym_seg4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_sta5_1:
   default: .nan
   type: float
@@ -1115,7 +1115,7 @@ c5sym_sta5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_end5_1:
   default: .nan
   type: float
@@ -1126,7 +1126,7 @@ c5sym_end5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c5sym_seg5_1:
   default: ''
   type: string
@@ -1136,7 +1136,7 @@ c5sym_seg5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 numc6sym:
   default: 0
   type: integer
@@ -1146,7 +1146,7 @@ numc6sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_sta1_1:
   default: .nan
   type: float
@@ -1157,7 +1157,7 @@ c6sym_sta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_end1_1:
   default: .nan
   type: float
@@ -1168,7 +1168,7 @@ c6sym_end1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_seg1_1:
   default: ''
   type: string
@@ -1178,7 +1178,7 @@ c6sym_seg1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_sta2_1:
   default: .nan
   type: float
@@ -1189,7 +1189,7 @@ c6sym_sta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_end2_1:
   default: .nan
   type: float
@@ -1200,7 +1200,7 @@ c6sym_end2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_seg2_1:
   default: ''
   type: string
@@ -1210,7 +1210,7 @@ c6sym_seg2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_sta3_1:
   default: .nan
   type: float
@@ -1221,7 +1221,7 @@ c6sym_sta3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_end3_1:
   default: .nan
   type: float
@@ -1232,7 +1232,7 @@ c6sym_end3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_seg3_1:
   default: ''
   type: string
@@ -1242,7 +1242,7 @@ c6sym_seg3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_sta4_1:
   default: .nan
   type: float
@@ -1253,7 +1253,7 @@ c6sym_sta4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_end4_1:
   default: .nan
   type: float
@@ -1264,7 +1264,7 @@ c6sym_end4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_seg4_1:
   default: ''
   type: string
@@ -1274,7 +1274,7 @@ c6sym_seg4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_sta5_1:
   default: .nan
   type: float
@@ -1285,7 +1285,7 @@ c6sym_sta5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_end5_1:
   default: .nan
   type: float
@@ -1296,7 +1296,7 @@ c6sym_end5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_seg5_1:
   default: ''
   type: string
@@ -1306,7 +1306,7 @@ c6sym_seg5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_sta6_1:
   default: .nan
   type: float
@@ -1317,7 +1317,7 @@ c6sym_sta6_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_end6_1:
   default: .nan
   type: float
@@ -1328,7 +1328,7 @@ c6sym_end6_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 c6sym_seg6_1:
   default: ''
   type: string
@@ -1338,7 +1338,7 @@ c6sym_seg6_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nums3sym:
   default: 0
   type: integer
@@ -1348,7 +1348,7 @@ nums3sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_sta1_1:
   default: .nan
   type: float
@@ -1359,7 +1359,7 @@ s3sym_sta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_end1_1:
   default: .nan
   type: float
@@ -1370,7 +1370,7 @@ s3sym_end1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_seg1_1:
   default: ''
   type: string
@@ -1380,7 +1380,7 @@ s3sym_seg1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_sta2_1:
   default: .nan
   type: float
@@ -1391,7 +1391,7 @@ s3sym_sta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_end2_1:
   default: .nan
   type: float
@@ -1402,7 +1402,7 @@ s3sym_end2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_seg2_1:
   default: ''
   type: string
@@ -1412,7 +1412,7 @@ s3sym_seg2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_sta3_1:
   default: .nan
   type: float
@@ -1423,7 +1423,7 @@ s3sym_sta3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_end3_1:
   default: .nan
   type: float
@@ -1434,7 +1434,7 @@ s3sym_end3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 s3sym_seg3_1:
   default: ''
   type: string
@@ -1444,7 +1444,7 @@ s3sym_seg3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncs_on:
   default: false
   type: boolean
@@ -1452,7 +1452,7 @@ ncs_on:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 kncs:
   default: 1.0
   type: float
@@ -1463,7 +1463,7 @@ kncs:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 numncs:
   default: 0
   type: integer
@@ -1473,7 +1473,7 @@ numncs:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncs_sta1_1:
   default: .nan
   type: float
@@ -1484,7 +1484,7 @@ ncs_sta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncs_end1_1:
   default: .nan
   type: float
@@ -1495,7 +1495,7 @@ ncs_end1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncs_seg1_1:
   default: ''
   type: string
@@ -1505,7 +1505,7 @@ ncs_seg1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncs_sta2_1:
   default: .nan
   type: float
@@ -1516,7 +1516,7 @@ ncs_sta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncs_end2_1:
   default: .nan
   type: float
@@ -1527,7 +1527,7 @@ ncs_end2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncs_seg2_1:
   default: ''
   type: string
@@ -1537,7 +1537,7 @@ ncs_seg2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_1:
   default: false
   type: boolean
@@ -1545,7 +1545,7 @@ fix_origin_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_2:
   default: false
   type: boolean
@@ -1553,7 +1553,7 @@ fix_origin_2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_3:
   default: false
   type: boolean
@@ -1561,7 +1561,7 @@ fix_origin_3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_4:
   default: false
   type: boolean
@@ -1569,7 +1569,7 @@ fix_origin_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_5:
   default: false
   type: boolean
@@ -1577,7 +1577,7 @@ fix_origin_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_6:
   default: false
   type: boolean
@@ -1585,7 +1585,7 @@ fix_origin_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_7:
   default: false
   type: boolean
@@ -1593,7 +1593,7 @@ fix_origin_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_8:
   default: false
   type: boolean
@@ -1601,7 +1601,7 @@ fix_origin_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_9:
   default: false
   type: boolean
@@ -1609,7 +1609,7 @@ fix_origin_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_10:
   default: false
   type: boolean
@@ -1617,7 +1617,7 @@ fix_origin_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_11:
   default: false
   type: boolean
@@ -1625,7 +1625,7 @@ fix_origin_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_12:
   default: false
   type: boolean
@@ -1633,7 +1633,7 @@ fix_origin_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_13:
   default: false
   type: boolean
@@ -1641,7 +1641,7 @@ fix_origin_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_14:
   default: false
   type: boolean
@@ -1649,7 +1649,7 @@ fix_origin_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_15:
   default: false
   type: boolean
@@ -1657,7 +1657,7 @@ fix_origin_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_16:
   default: false
   type: boolean
@@ -1665,7 +1665,7 @@ fix_origin_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_17:
   default: false
   type: boolean
@@ -1673,7 +1673,7 @@ fix_origin_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_18:
   default: false
   type: boolean
@@ -1681,7 +1681,7 @@ fix_origin_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_19:
   default: false
   type: boolean
@@ -1689,7 +1689,7 @@ fix_origin_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fix_origin_20:
   default: false
   type: boolean
@@ -1697,7 +1697,7 @@ fix_origin_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle1:
   default: 0
   type: integer
@@ -1707,7 +1707,7 @@ nfle1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta1_1:
   default: .nan
   type: float
@@ -1718,7 +1718,7 @@ flesta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend1_1:
   default: .nan
   type: float
@@ -1729,7 +1729,7 @@ fleend1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle2:
   default: 0
   type: integer
@@ -1739,7 +1739,7 @@ nfle2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta2_1:
   default: .nan
   type: float
@@ -1750,7 +1750,7 @@ flesta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend2_1:
   default: .nan
   type: float
@@ -1761,7 +1761,7 @@ fleend2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle3:
   default: 0
   type: integer
@@ -1771,7 +1771,7 @@ nfle3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta3_1:
   default: .nan
   type: float
@@ -1782,7 +1782,7 @@ flesta3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend3_1:
   default: .nan
   type: float
@@ -1793,7 +1793,7 @@ fleend3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle4:
   default: 0
   type: integer
@@ -1803,7 +1803,7 @@ nfle4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta4_1:
   default: .nan
   type: float
@@ -1814,7 +1814,7 @@ flesta4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend4_1:
   default: .nan
   type: float
@@ -1825,7 +1825,7 @@ fleend4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle5:
   default: 0
   type: integer
@@ -1835,7 +1835,7 @@ nfle5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta5_1:
   default: .nan
   type: float
@@ -1846,7 +1846,7 @@ flesta5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend5_1:
   default: .nan
   type: float
@@ -1857,7 +1857,7 @@ fleend5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle6:
   default: 0
   type: integer
@@ -1867,7 +1867,7 @@ nfle6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta6_1:
   default: .nan
   type: float
@@ -1878,7 +1878,7 @@ flesta6_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend6_1:
   default: .nan
   type: float
@@ -1889,7 +1889,7 @@ fleend6_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle7:
   default: 0
   type: integer
@@ -1899,7 +1899,7 @@ nfle7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta7_1:
   default: .nan
   type: float
@@ -1910,7 +1910,7 @@ flesta7_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend7_1:
   default: .nan
   type: float
@@ -1921,7 +1921,7 @@ fleend7_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle8:
   default: 0
   type: integer
@@ -1931,7 +1931,7 @@ nfle8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta8_1:
   default: .nan
   type: float
@@ -1942,7 +1942,7 @@ flesta8_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend8_1:
   default: .nan
   type: float
@@ -1953,7 +1953,7 @@ fleend8_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle9:
   default: 0
   type: integer
@@ -1963,7 +1963,7 @@ nfle9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta9_1:
   default: .nan
   type: float
@@ -1974,7 +1974,7 @@ flesta9_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend9_1:
   default: .nan
   type: float
@@ -1985,7 +1985,7 @@ fleend9_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle10:
   default: 0
   type: integer
@@ -1995,7 +1995,7 @@ nfle10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta10_1:
   default: .nan
   type: float
@@ -2006,7 +2006,7 @@ flesta10_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend10_1:
   default: .nan
   type: float
@@ -2017,7 +2017,7 @@ fleend10_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle11:
   default: 0
   type: integer
@@ -2027,7 +2027,7 @@ nfle11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta11_1:
   default: .nan
   type: float
@@ -2038,7 +2038,7 @@ flesta11_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend11_1:
   default: .nan
   type: float
@@ -2049,7 +2049,7 @@ fleend11_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle12:
   default: 0
   type: integer
@@ -2059,7 +2059,7 @@ nfle12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta12_1:
   default: .nan
   type: float
@@ -2070,7 +2070,7 @@ flesta12_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend12_1:
   default: .nan
   type: float
@@ -2081,7 +2081,7 @@ fleend12_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle13:
   default: 0
   type: integer
@@ -2091,7 +2091,7 @@ nfle13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta13_1:
   default: .nan
   type: float
@@ -2102,7 +2102,7 @@ flesta13_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend13_1:
   default: .nan
   type: float
@@ -2113,7 +2113,7 @@ fleend13_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle14:
   default: 0
   type: integer
@@ -2123,7 +2123,7 @@ nfle14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta14_1:
   default: .nan
   type: float
@@ -2134,7 +2134,7 @@ flesta14_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend14_1:
   default: .nan
   type: float
@@ -2145,7 +2145,7 @@ fleend14_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle15:
   default: 0
   type: integer
@@ -2155,7 +2155,7 @@ nfle15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta15_1:
   default: .nan
   type: float
@@ -2166,7 +2166,7 @@ flesta15_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend15_1:
   default: .nan
   type: float
@@ -2177,7 +2177,7 @@ fleend15_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle16:
   default: 0
   type: integer
@@ -2187,7 +2187,7 @@ nfle16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta16_1:
   default: .nan
   type: float
@@ -2198,7 +2198,7 @@ flesta16_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend16_1:
   default: .nan
   type: float
@@ -2209,7 +2209,7 @@ fleend16_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle17:
   default: 0
   type: integer
@@ -2219,7 +2219,7 @@ nfle17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta17_1:
   default: .nan
   type: float
@@ -2230,7 +2230,7 @@ flesta17_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend17_1:
   default: .nan
   type: float
@@ -2241,7 +2241,7 @@ fleend17_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle18:
   default: 0
   type: integer
@@ -2251,7 +2251,7 @@ nfle18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta18_1:
   default: .nan
   type: float
@@ -2262,7 +2262,7 @@ flesta18_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend18_1:
   default: .nan
   type: float
@@ -2273,7 +2273,7 @@ fleend18_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle19:
   default: 0
   type: integer
@@ -2283,7 +2283,7 @@ nfle19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta19_1:
   default: .nan
   type: float
@@ -2294,7 +2294,7 @@ flesta19_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend19_1:
   default: .nan
   type: float
@@ -2305,7 +2305,7 @@ fleend19_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nfle20:
   default: 0
   type: integer
@@ -2315,7 +2315,7 @@ nfle20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 flesta20_1:
   default: .nan
   type: float
@@ -2326,7 +2326,7 @@ flesta20_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fleend20_1:
   default: .nan
   type: float
@@ -2337,7 +2337,7 @@ fleend20_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg1:
   default: -1
   type: integer
@@ -2347,7 +2347,7 @@ nseg1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta1_1:
   default: .nan
   type: float
@@ -2358,7 +2358,7 @@ segsta1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend1_1:
   default: .nan
   type: float
@@ -2369,7 +2369,7 @@ segend1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg2:
   default: -1
   type: integer
@@ -2379,7 +2379,7 @@ nseg2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta2_1:
   default: .nan
   type: float
@@ -2390,7 +2390,7 @@ segsta2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend2_1:
   default: .nan
   type: float
@@ -2401,7 +2401,7 @@ segend2_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg3:
   default: -1
   type: integer
@@ -2411,7 +2411,7 @@ nseg3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta3_1:
   default: .nan
   type: float
@@ -2422,7 +2422,7 @@ segsta3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend3_1:
   default: .nan
   type: float
@@ -2433,7 +2433,7 @@ segend3_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg4:
   default: -1
   type: integer
@@ -2443,7 +2443,7 @@ nseg4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta4_1:
   default: .nan
   type: float
@@ -2454,7 +2454,7 @@ segsta4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend4_1:
   default: .nan
   type: float
@@ -2465,7 +2465,7 @@ segend4_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg5:
   default: -1
   type: integer
@@ -2475,7 +2475,7 @@ nseg5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta5_1:
   default: .nan
   type: float
@@ -2486,7 +2486,7 @@ segsta5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend5_1:
   default: .nan
   type: float
@@ -2497,7 +2497,7 @@ segend5_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg6:
   default: -1
   type: integer
@@ -2507,7 +2507,7 @@ nseg6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta6_1:
   default: .nan
   type: float
@@ -2518,7 +2518,7 @@ segsta6_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend6_1:
   default: .nan
   type: float
@@ -2529,7 +2529,7 @@ segend6_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg7:
   default: -1
   type: integer
@@ -2539,7 +2539,7 @@ nseg7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta7_1:
   default: .nan
   type: float
@@ -2550,7 +2550,7 @@ segsta7_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend7_1:
   default: .nan
   type: float
@@ -2561,7 +2561,7 @@ segend7_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg8:
   default: -1
   type: integer
@@ -2571,7 +2571,7 @@ nseg8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta8_1:
   default: .nan
   type: float
@@ -2582,7 +2582,7 @@ segsta8_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend8_1:
   default: .nan
   type: float
@@ -2593,7 +2593,7 @@ segend8_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg9:
   default: -1
   type: integer
@@ -2603,7 +2603,7 @@ nseg9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta9_1:
   default: .nan
   type: float
@@ -2614,7 +2614,7 @@ segsta9_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend9_1:
   default: .nan
   type: float
@@ -2625,7 +2625,7 @@ segend9_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg10:
   default: -1
   type: integer
@@ -2635,7 +2635,7 @@ nseg10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta10_1:
   default: .nan
   type: float
@@ -2646,7 +2646,7 @@ segsta10_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend10_1:
   default: .nan
   type: float
@@ -2657,7 +2657,7 @@ segend10_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg11:
   default: -1
   type: integer
@@ -2667,7 +2667,7 @@ nseg11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta11_1:
   default: .nan
   type: float
@@ -2678,7 +2678,7 @@ segsta11_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend11_1:
   default: .nan
   type: float
@@ -2689,7 +2689,7 @@ segend11_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg12:
   default: -1
   type: integer
@@ -2699,7 +2699,7 @@ nseg12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta12_1:
   default: .nan
   type: float
@@ -2710,7 +2710,7 @@ segsta12_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend12_1:
   default: .nan
   type: float
@@ -2721,7 +2721,7 @@ segend12_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg13:
   default: -1
   type: integer
@@ -2731,7 +2731,7 @@ nseg13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta13_1:
   default: .nan
   type: float
@@ -2742,7 +2742,7 @@ segsta13_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend13_1:
   default: .nan
   type: float
@@ -2753,7 +2753,7 @@ segend13_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg14:
   default: -1
   type: integer
@@ -2763,7 +2763,7 @@ nseg14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta14_1:
   default: .nan
   type: float
@@ -2774,7 +2774,7 @@ segsta14_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend14_1:
   default: .nan
   type: float
@@ -2785,7 +2785,7 @@ segend14_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg15:
   default: -1
   type: integer
@@ -2795,7 +2795,7 @@ nseg15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta15_1:
   default: .nan
   type: float
@@ -2806,7 +2806,7 @@ segsta15_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend15_1:
   default: .nan
   type: float
@@ -2817,7 +2817,7 @@ segend15_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg16:
   default: -1
   type: integer
@@ -2827,7 +2827,7 @@ nseg16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta16_1:
   default: .nan
   type: float
@@ -2838,7 +2838,7 @@ segsta16_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend16_1:
   default: .nan
   type: float
@@ -2849,7 +2849,7 @@ segend16_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg17:
   default: -1
   type: integer
@@ -2859,7 +2859,7 @@ nseg17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta17_1:
   default: .nan
   type: float
@@ -2870,7 +2870,7 @@ segsta17_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend17_1:
   default: .nan
   type: float
@@ -2881,7 +2881,7 @@ segend17_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg18:
   default: -1
   type: integer
@@ -2891,7 +2891,7 @@ nseg18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta18_1:
   default: .nan
   type: float
@@ -2902,7 +2902,7 @@ segsta18_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend18_1:
   default: .nan
   type: float
@@ -2913,7 +2913,7 @@ segend18_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg19:
   default: -1
   type: integer
@@ -2923,7 +2923,7 @@ nseg19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta19_1:
   default: .nan
   type: float
@@ -2934,7 +2934,7 @@ segsta19_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend19_1:
   default: .nan
   type: float
@@ -2945,7 +2945,7 @@ segend19_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 nseg20:
   default: -1
   type: integer
@@ -2955,7 +2955,7 @@ nseg20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segsta20_1:
   default: .nan
   type: float
@@ -2966,7 +2966,7 @@ segsta20_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 segend20_1:
   default: .nan
   type: float
@@ -2977,7 +2977,7 @@ segend20_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_air:
   default: 0.1
   type: float
@@ -2988,7 +2988,7 @@ w_air:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_bsa:
   default: 0.0
   type: float
@@ -2999,7 +2999,7 @@ w_bsa:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_cdih:
   default: 0.0
   type: float
@@ -3010,7 +3010,7 @@ w_cdih:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_dani:
   default: 0.1
   type: float
@@ -3021,7 +3021,7 @@ w_dani:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_deint:
   default: 0.0
   type: float
@@ -3032,7 +3032,7 @@ w_deint:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_desolv:
   default: 1.0
   type: float
@@ -3043,7 +3043,7 @@ w_desolv:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_dist:
   default: 0.1
   type: float
@@ -3054,7 +3054,7 @@ w_dist:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_elec:
   default: 0.2
   type: float
@@ -3065,7 +3065,7 @@ w_elec:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_lcc:
   default: -10000.0
   type: float
@@ -3076,7 +3076,7 @@ w_lcc:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_rg:
   default: 1.0
   type: float
@@ -3087,7 +3087,7 @@ w_rg:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_sani:
   default: 0.1
   type: float
@@ -3098,7 +3098,7 @@ w_sani:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_sym:
   default: 0.1
   type: float
@@ -3109,7 +3109,7 @@ w_sym:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_vdw:
   default: 1.0
   type: float
@@ -3120,7 +3120,7 @@ w_vdw:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_vean:
   default: 0.1
   type: float
@@ -3131,7 +3131,7 @@ w_vean:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_xpcs:
   default: 0.1
   type: float
@@ -3142,7 +3142,7 @@ w_xpcs:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_xrdc:
   default: 0.1
   type: float
@@ -3153,7 +3153,7 @@ w_xrdc:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 w_zres:
   default: 0.1
   type: float
@@ -3164,7 +3164,7 @@ w_zres:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 elecflag:
   default: true
   type: boolean
@@ -3172,7 +3172,7 @@ elecflag:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dielec:
   default: cdie
   type: string
@@ -3182,7 +3182,7 @@ dielec:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 epsilon:
   default: 1.0
   type: float
@@ -3193,7 +3193,7 @@ epsilon:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dihedflag:
   default: true
   type: boolean
@@ -3201,7 +3201,7 @@ dihedflag:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 par_nonbonded:
   default: OPLSX
   type: string
@@ -3211,7 +3211,7 @@ par_nonbonded:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_1:
   default: 1.0
   type: float
@@ -3222,7 +3222,7 @@ int_1_1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_2:
   default: 1.0
   type: float
@@ -3233,7 +3233,7 @@ int_1_2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_3:
   default: 1.0
   type: float
@@ -3244,7 +3244,7 @@ int_1_3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_4:
   default: 1.0
   type: float
@@ -3255,7 +3255,7 @@ int_1_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_5:
   default: 1.0
   type: float
@@ -3266,7 +3266,7 @@ int_1_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_6:
   default: 1.0
   type: float
@@ -3277,7 +3277,7 @@ int_1_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_7:
   default: 1.0
   type: float
@@ -3288,7 +3288,7 @@ int_1_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_8:
   default: 1.0
   type: float
@@ -3299,7 +3299,7 @@ int_1_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_9:
   default: 1.0
   type: float
@@ -3310,7 +3310,7 @@ int_1_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_10:
   default: 1.0
   type: float
@@ -3321,7 +3321,7 @@ int_1_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_11:
   default: 1.0
   type: float
@@ -3332,7 +3332,7 @@ int_1_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_12:
   default: 1.0
   type: float
@@ -3343,7 +3343,7 @@ int_1_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_13:
   default: 1.0
   type: float
@@ -3354,7 +3354,7 @@ int_1_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_14:
   default: 1.0
   type: float
@@ -3365,7 +3365,7 @@ int_1_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_15:
   default: 1.0
   type: float
@@ -3376,7 +3376,7 @@ int_1_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_16:
   default: 1.0
   type: float
@@ -3387,7 +3387,7 @@ int_1_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_17:
   default: 1.0
   type: float
@@ -3398,7 +3398,7 @@ int_1_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_18:
   default: 1.0
   type: float
@@ -3409,7 +3409,7 @@ int_1_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_19:
   default: 1.0
   type: float
@@ -3420,7 +3420,7 @@ int_1_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_1_20:
   default: 1.0
   type: float
@@ -3431,7 +3431,7 @@ int_1_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_2:
   default: 1.0
   type: float
@@ -3442,7 +3442,7 @@ int_2_2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_3:
   default: 1.0
   type: float
@@ -3453,7 +3453,7 @@ int_2_3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_4:
   default: 1.0
   type: float
@@ -3464,7 +3464,7 @@ int_2_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_5:
   default: 1.0
   type: float
@@ -3475,7 +3475,7 @@ int_2_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_6:
   default: 1.0
   type: float
@@ -3486,7 +3486,7 @@ int_2_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_7:
   default: 1.0
   type: float
@@ -3497,7 +3497,7 @@ int_2_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_8:
   default: 1.0
   type: float
@@ -3508,7 +3508,7 @@ int_2_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_9:
   default: 1.0
   type: float
@@ -3519,7 +3519,7 @@ int_2_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_10:
   default: 1.0
   type: float
@@ -3530,7 +3530,7 @@ int_2_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_11:
   default: 1.0
   type: float
@@ -3541,7 +3541,7 @@ int_2_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_12:
   default: 1.0
   type: float
@@ -3552,7 +3552,7 @@ int_2_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_13:
   default: 1.0
   type: float
@@ -3563,7 +3563,7 @@ int_2_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_14:
   default: 1.0
   type: float
@@ -3574,7 +3574,7 @@ int_2_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_15:
   default: 1.0
   type: float
@@ -3585,7 +3585,7 @@ int_2_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_16:
   default: 1.0
   type: float
@@ -3596,7 +3596,7 @@ int_2_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_17:
   default: 1.0
   type: float
@@ -3607,7 +3607,7 @@ int_2_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_18:
   default: 1.0
   type: float
@@ -3618,7 +3618,7 @@ int_2_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_19:
   default: 1.0
   type: float
@@ -3629,7 +3629,7 @@ int_2_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_2_20:
   default: 1.0
   type: float
@@ -3640,7 +3640,7 @@ int_2_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_3:
   default: 1.0
   type: float
@@ -3651,7 +3651,7 @@ int_3_3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_4:
   default: 1.0
   type: float
@@ -3662,7 +3662,7 @@ int_3_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_5:
   default: 1.0
   type: float
@@ -3673,7 +3673,7 @@ int_3_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_6:
   default: 1.0
   type: float
@@ -3684,7 +3684,7 @@ int_3_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_7:
   default: 1.0
   type: float
@@ -3695,7 +3695,7 @@ int_3_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_8:
   default: 1.0
   type: float
@@ -3706,7 +3706,7 @@ int_3_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_9:
   default: 1.0
   type: float
@@ -3717,7 +3717,7 @@ int_3_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_10:
   default: 1.0
   type: float
@@ -3728,7 +3728,7 @@ int_3_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_11:
   default: 1.0
   type: float
@@ -3739,7 +3739,7 @@ int_3_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_12:
   default: 1.0
   type: float
@@ -3750,7 +3750,7 @@ int_3_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_13:
   default: 1.0
   type: float
@@ -3761,7 +3761,7 @@ int_3_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_14:
   default: 1.0
   type: float
@@ -3772,7 +3772,7 @@ int_3_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_15:
   default: 1.0
   type: float
@@ -3783,7 +3783,7 @@ int_3_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_16:
   default: 1.0
   type: float
@@ -3794,7 +3794,7 @@ int_3_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_17:
   default: 1.0
   type: float
@@ -3805,7 +3805,7 @@ int_3_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_18:
   default: 1.0
   type: float
@@ -3816,7 +3816,7 @@ int_3_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_19:
   default: 1.0
   type: float
@@ -3827,7 +3827,7 @@ int_3_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_3_20:
   default: 1.0
   type: float
@@ -3838,7 +3838,7 @@ int_3_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_4:
   default: 1.0
   type: float
@@ -3849,7 +3849,7 @@ int_4_4:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_5:
   default: 1.0
   type: float
@@ -3860,7 +3860,7 @@ int_4_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_6:
   default: 1.0
   type: float
@@ -3871,7 +3871,7 @@ int_4_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_7:
   default: 1.0
   type: float
@@ -3882,7 +3882,7 @@ int_4_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_8:
   default: 1.0
   type: float
@@ -3893,7 +3893,7 @@ int_4_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_9:
   default: 1.0
   type: float
@@ -3904,7 +3904,7 @@ int_4_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_10:
   default: 1.0
   type: float
@@ -3915,7 +3915,7 @@ int_4_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_11:
   default: 1.0
   type: float
@@ -3926,7 +3926,7 @@ int_4_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_12:
   default: 1.0
   type: float
@@ -3937,7 +3937,7 @@ int_4_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_13:
   default: 1.0
   type: float
@@ -3948,7 +3948,7 @@ int_4_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_14:
   default: 1.0
   type: float
@@ -3959,7 +3959,7 @@ int_4_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_15:
   default: 1.0
   type: float
@@ -3970,7 +3970,7 @@ int_4_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_16:
   default: 1.0
   type: float
@@ -3981,7 +3981,7 @@ int_4_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_17:
   default: 1.0
   type: float
@@ -3992,7 +3992,7 @@ int_4_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_18:
   default: 1.0
   type: float
@@ -4003,7 +4003,7 @@ int_4_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_19:
   default: 1.0
   type: float
@@ -4014,7 +4014,7 @@ int_4_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_4_20:
   default: 1.0
   type: float
@@ -4025,7 +4025,7 @@ int_4_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_5:
   default: 1.0
   type: float
@@ -4036,7 +4036,7 @@ int_5_5:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_6:
   default: 1.0
   type: float
@@ -4047,7 +4047,7 @@ int_5_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_7:
   default: 1.0
   type: float
@@ -4058,7 +4058,7 @@ int_5_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_8:
   default: 1.0
   type: float
@@ -4069,7 +4069,7 @@ int_5_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_9:
   default: 1.0
   type: float
@@ -4080,7 +4080,7 @@ int_5_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_10:
   default: 1.0
   type: float
@@ -4091,7 +4091,7 @@ int_5_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_11:
   default: 1.0
   type: float
@@ -4102,7 +4102,7 @@ int_5_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_12:
   default: 1.0
   type: float
@@ -4113,7 +4113,7 @@ int_5_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_13:
   default: 1.0
   type: float
@@ -4124,7 +4124,7 @@ int_5_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_14:
   default: 1.0
   type: float
@@ -4135,7 +4135,7 @@ int_5_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_15:
   default: 1.0
   type: float
@@ -4146,7 +4146,7 @@ int_5_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_16:
   default: 1.0
   type: float
@@ -4157,7 +4157,7 @@ int_5_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_17:
   default: 1.0
   type: float
@@ -4168,7 +4168,7 @@ int_5_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_18:
   default: 1.0
   type: float
@@ -4179,7 +4179,7 @@ int_5_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_19:
   default: 1.0
   type: float
@@ -4190,7 +4190,7 @@ int_5_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_5_20:
   default: 1.0
   type: float
@@ -4201,7 +4201,7 @@ int_5_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_6:
   default: 1.0
   type: float
@@ -4212,7 +4212,7 @@ int_6_6:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_7:
   default: 1.0
   type: float
@@ -4223,7 +4223,7 @@ int_6_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_8:
   default: 1.0
   type: float
@@ -4234,7 +4234,7 @@ int_6_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_9:
   default: 1.0
   type: float
@@ -4245,7 +4245,7 @@ int_6_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_10:
   default: 1.0
   type: float
@@ -4256,7 +4256,7 @@ int_6_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_11:
   default: 1.0
   type: float
@@ -4267,7 +4267,7 @@ int_6_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_12:
   default: 1.0
   type: float
@@ -4278,7 +4278,7 @@ int_6_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_13:
   default: 1.0
   type: float
@@ -4289,7 +4289,7 @@ int_6_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_14:
   default: 1.0
   type: float
@@ -4300,7 +4300,7 @@ int_6_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_15:
   default: 1.0
   type: float
@@ -4311,7 +4311,7 @@ int_6_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_16:
   default: 1.0
   type: float
@@ -4322,7 +4322,7 @@ int_6_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_17:
   default: 1.0
   type: float
@@ -4333,7 +4333,7 @@ int_6_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_18:
   default: 1.0
   type: float
@@ -4344,7 +4344,7 @@ int_6_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_19:
   default: 1.0
   type: float
@@ -4355,7 +4355,7 @@ int_6_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_6_20:
   default: 1.0
   type: float
@@ -4366,7 +4366,7 @@ int_6_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_7:
   default: 1.0
   type: float
@@ -4377,7 +4377,7 @@ int_7_7:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_8:
   default: 1.0
   type: float
@@ -4388,7 +4388,7 @@ int_7_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_9:
   default: 1.0
   type: float
@@ -4399,7 +4399,7 @@ int_7_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_10:
   default: 1.0
   type: float
@@ -4410,7 +4410,7 @@ int_7_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_11:
   default: 1.0
   type: float
@@ -4421,7 +4421,7 @@ int_7_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_12:
   default: 1.0
   type: float
@@ -4432,7 +4432,7 @@ int_7_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_13:
   default: 1.0
   type: float
@@ -4443,7 +4443,7 @@ int_7_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_14:
   default: 1.0
   type: float
@@ -4454,7 +4454,7 @@ int_7_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_15:
   default: 1.0
   type: float
@@ -4465,7 +4465,7 @@ int_7_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_16:
   default: 1.0
   type: float
@@ -4476,7 +4476,7 @@ int_7_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_17:
   default: 1.0
   type: float
@@ -4487,7 +4487,7 @@ int_7_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_18:
   default: 1.0
   type: float
@@ -4498,7 +4498,7 @@ int_7_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_19:
   default: 1.0
   type: float
@@ -4509,7 +4509,7 @@ int_7_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_8:
   default: 1.0
   type: float
@@ -4520,7 +4520,7 @@ int_8_8:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_9:
   default: 1.0
   type: float
@@ -4531,7 +4531,7 @@ int_8_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_7_20:
   default: 1.0
   type: float
@@ -4542,7 +4542,7 @@ int_7_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_10:
   default: 1.0
   type: float
@@ -4553,7 +4553,7 @@ int_8_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_11:
   default: 1.0
   type: float
@@ -4564,7 +4564,7 @@ int_8_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_12:
   default: 1.0
   type: float
@@ -4575,7 +4575,7 @@ int_8_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_13:
   default: 1.0
   type: float
@@ -4586,7 +4586,7 @@ int_8_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_14:
   default: 1.0
   type: float
@@ -4597,7 +4597,7 @@ int_8_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_15:
   default: 1.0
   type: float
@@ -4608,7 +4608,7 @@ int_8_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_16:
   default: 1.0
   type: float
@@ -4619,7 +4619,7 @@ int_8_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_17:
   default: 1.0
   type: float
@@ -4630,7 +4630,7 @@ int_8_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_18:
   default: 1.0
   type: float
@@ -4641,7 +4641,7 @@ int_8_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_19:
   default: 1.0
   type: float
@@ -4652,7 +4652,7 @@ int_8_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_8_20:
   default: 1.0
   type: float
@@ -4663,7 +4663,7 @@ int_8_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_11:
   default: 1.0
   type: float
@@ -4674,7 +4674,7 @@ int_9_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_12:
   default: 1.0
   type: float
@@ -4685,7 +4685,7 @@ int_9_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_13:
   default: 1.0
   type: float
@@ -4696,7 +4696,7 @@ int_9_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_14:
   default: 1.0
   type: float
@@ -4707,7 +4707,7 @@ int_9_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_15:
   default: 1.0
   type: float
@@ -4718,7 +4718,7 @@ int_9_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_16:
   default: 1.0
   type: float
@@ -4729,7 +4729,7 @@ int_9_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_17:
   default: 1.0
   type: float
@@ -4740,7 +4740,7 @@ int_9_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_18:
   default: 1.0
   type: float
@@ -4751,7 +4751,7 @@ int_9_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_19:
   default: 1.0
   type: float
@@ -4762,7 +4762,7 @@ int_9_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_20:
   default: 1.0
   type: float
@@ -4773,7 +4773,7 @@ int_9_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_9:
   default: 1.0
   type: float
@@ -4784,7 +4784,7 @@ int_9_9:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_9_10:
   default: 1.0
   type: float
@@ -4795,7 +4795,7 @@ int_9_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_10:
   default: 1.0
   type: float
@@ -4806,7 +4806,7 @@ int_10_10:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_11:
   default: 1.0
   type: float
@@ -4817,7 +4817,7 @@ int_10_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_12:
   default: 1.0
   type: float
@@ -4828,7 +4828,7 @@ int_10_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_13:
   default: 1.0
   type: float
@@ -4839,7 +4839,7 @@ int_10_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_14:
   default: 1.0
   type: float
@@ -4850,7 +4850,7 @@ int_10_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_15:
   default: 1.0
   type: float
@@ -4861,7 +4861,7 @@ int_10_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_16:
   default: 1.0
   type: float
@@ -4872,7 +4872,7 @@ int_10_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_17:
   default: 1.0
   type: float
@@ -4883,7 +4883,7 @@ int_10_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_18:
   default: 1.0
   type: float
@@ -4894,7 +4894,7 @@ int_10_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_19:
   default: 1.0
   type: float
@@ -4905,7 +4905,7 @@ int_10_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_10_20:
   default: 1.0
   type: float
@@ -4916,7 +4916,7 @@ int_10_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_11:
   default: 1.0
   type: float
@@ -4927,7 +4927,7 @@ int_11_11:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_12:
   default: 1.0
   type: float
@@ -4938,7 +4938,7 @@ int_11_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_13:
   default: 1.0
   type: float
@@ -4949,7 +4949,7 @@ int_11_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_14:
   default: 1.0
   type: float
@@ -4960,7 +4960,7 @@ int_11_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_15:
   default: 1.0
   type: float
@@ -4971,7 +4971,7 @@ int_11_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_16:
   default: 1.0
   type: float
@@ -4982,7 +4982,7 @@ int_11_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_17:
   default: 1.0
   type: float
@@ -4993,7 +4993,7 @@ int_11_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_18:
   default: 1.0
   type: float
@@ -5004,7 +5004,7 @@ int_11_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_19:
   default: 1.0
   type: float
@@ -5015,7 +5015,7 @@ int_11_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_11_20:
   default: 1.0
   type: float
@@ -5026,7 +5026,7 @@ int_11_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_12:
   default: 1.0
   type: float
@@ -5037,7 +5037,7 @@ int_12_12:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_13:
   default: 1.0
   type: float
@@ -5048,7 +5048,7 @@ int_12_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_14:
   default: 1.0
   type: float
@@ -5059,7 +5059,7 @@ int_12_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_15:
   default: 1.0
   type: float
@@ -5070,7 +5070,7 @@ int_12_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_16:
   default: 1.0
   type: float
@@ -5081,7 +5081,7 @@ int_12_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_17:
   default: 1.0
   type: float
@@ -5092,7 +5092,7 @@ int_12_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_18:
   default: 1.0
   type: float
@@ -5103,7 +5103,7 @@ int_12_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_19:
   default: 1.0
   type: float
@@ -5114,7 +5114,7 @@ int_12_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_12_20:
   default: 1.0
   type: float
@@ -5125,7 +5125,7 @@ int_12_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_13:
   default: 1.0
   type: float
@@ -5136,7 +5136,7 @@ int_13_13:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_14:
   default: 1.0
   type: float
@@ -5147,7 +5147,7 @@ int_13_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_15:
   default: 1.0
   type: float
@@ -5158,7 +5158,7 @@ int_13_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_16:
   default: 1.0
   type: float
@@ -5169,7 +5169,7 @@ int_13_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_17:
   default: 1.0
   type: float
@@ -5180,7 +5180,7 @@ int_13_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_18:
   default: 1.0
   type: float
@@ -5191,7 +5191,7 @@ int_13_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_19:
   default: 1.0
   type: float
@@ -5202,7 +5202,7 @@ int_13_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_13_20:
   default: 1.0
   type: float
@@ -5213,7 +5213,7 @@ int_13_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_14_14:
   default: 1.0
   type: float
@@ -5224,7 +5224,7 @@ int_14_14:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_14_15:
   default: 1.0
   type: float
@@ -5235,7 +5235,7 @@ int_14_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_14_16:
   default: 1.0
   type: float
@@ -5246,7 +5246,7 @@ int_14_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_14_17:
   default: 1.0
   type: float
@@ -5257,7 +5257,7 @@ int_14_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_14_18:
   default: 1.0
   type: float
@@ -5268,7 +5268,7 @@ int_14_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_14_19:
   default: 1.0
   type: float
@@ -5279,7 +5279,7 @@ int_14_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_14_20:
   default: 1.0
   type: float
@@ -5290,7 +5290,7 @@ int_14_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_15_15:
   default: 1.0
   type: float
@@ -5301,7 +5301,7 @@ int_15_15:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_15_16:
   default: 1.0
   type: float
@@ -5312,7 +5312,7 @@ int_15_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_15_17:
   default: 1.0
   type: float
@@ -5323,7 +5323,7 @@ int_15_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_15_18:
   default: 1.0
   type: float
@@ -5334,7 +5334,7 @@ int_15_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_15_19:
   default: 1.0
   type: float
@@ -5345,7 +5345,7 @@ int_15_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_15_20:
   default: 1.0
   type: float
@@ -5356,7 +5356,7 @@ int_15_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_16_16:
   default: 1.0
   type: float
@@ -5367,7 +5367,7 @@ int_16_16:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_16_17:
   default: 1.0
   type: float
@@ -5378,7 +5378,7 @@ int_16_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_16_18:
   default: 1.0
   type: float
@@ -5389,7 +5389,7 @@ int_16_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_16_19:
   default: 1.0
   type: float
@@ -5400,7 +5400,7 @@ int_16_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_16_20:
   default: 1.0
   type: float
@@ -5411,7 +5411,7 @@ int_16_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_17_17:
   default: 1.0
   type: float
@@ -5422,7 +5422,7 @@ int_17_17:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_17_18:
   default: 1.0
   type: float
@@ -5433,7 +5433,7 @@ int_17_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_17_19:
   default: 1.0
   type: float
@@ -5444,7 +5444,7 @@ int_17_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_17_20:
   default: 1.0
   type: float
@@ -5455,7 +5455,7 @@ int_17_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_18_18:
   default: 1.0
   type: float
@@ -5466,7 +5466,7 @@ int_18_18:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_18_19:
   default: 1.0
   type: float
@@ -5477,7 +5477,7 @@ int_18_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_18_20:
   default: 1.0
   type: float
@@ -5488,7 +5488,7 @@ int_18_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_19_19:
   default: 1.0
   type: float
@@ -5499,7 +5499,7 @@ int_19_19:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_19_20:
   default: 1.0
   type: float
@@ -5510,7 +5510,7 @@ int_19_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 int_20_20:
   default: 1.0
   type: float
@@ -5521,4 +5521,4 @@ int_20_20:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy

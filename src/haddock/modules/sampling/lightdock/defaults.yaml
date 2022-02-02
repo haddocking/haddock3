@@ -7,7 +7,7 @@ glowworms:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 steps:
   default: 100
   type: integer
@@ -17,7 +17,7 @@ steps:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 swarms:
   default: 400
   type: integer
@@ -27,7 +27,7 @@ swarms:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 scoring:
   default: fastdfire
   type: string
@@ -37,7 +37,7 @@ scoring:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 top:
   default: 10
   type: integer
@@ -47,7 +47,7 @@ top:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 receptor_chains:
   default: A
   type: string
@@ -57,7 +57,7 @@ receptor_chains:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 receptor_active:
   default: ''
   type: string
@@ -67,7 +67,7 @@ receptor_active:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 receptor_passive:
   default: ''
   type: string
@@ -77,7 +77,7 @@ receptor_passive:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_chains:
   default: B
   type: string
@@ -87,7 +87,7 @@ ligand_chains:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_active:
   default: ''
   type: string
@@ -97,7 +97,7 @@ ligand_active:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_passive:
   default: ''
   type: string
@@ -107,7 +107,7 @@ ligand_passive:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 noxt:
   default: true
   type: boolean
@@ -115,7 +115,7 @@ noxt:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 noh:
   default: true
   type: boolean
@@ -123,7 +123,7 @@ noh:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 restraints:
   default: false
   type: boolean
@@ -131,4 +131,4 @@ restraints:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy

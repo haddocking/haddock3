@@ -5,7 +5,7 @@ reference_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 irmsd:
   default: true
   type: boolean
@@ -13,7 +13,7 @@ irmsd:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fnat:
   default: true
   type: boolean
@@ -21,7 +21,7 @@ fnat:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 lrmsd:
   default: true
   type: boolean
@@ -29,7 +29,7 @@ lrmsd:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ilrmsd:
   default: true
   type: boolean
@@ -37,7 +37,7 @@ ilrmsd:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 dockq:
   default: true
   type: boolean
@@ -45,7 +45,7 @@ dockq:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 irmsd_cutoff:
   default: 10.0
   type: float
@@ -56,7 +56,7 @@ irmsd_cutoff:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fnat_cutoff:
   default: 5.0
   type: float
@@ -67,7 +67,7 @@ fnat_cutoff:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 lrmsd_cutoff:
   default: 10.0
   type: float
@@ -78,7 +78,7 @@ lrmsd_cutoff:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 receptor_chain:
   default: A
   type: string
@@ -88,7 +88,7 @@ receptor_chain:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_chain:
   default: B
   type: string
@@ -98,7 +98,7 @@ ligand_chain:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 rankby:
   default: score
   type: string
@@ -108,7 +108,7 @@ rankby:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 rank_ascending:
   default: true
   type: boolean
@@ -116,7 +116,7 @@ rank_ascending:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 sortby:
   default: score
   type: string
@@ -126,7 +126,7 @@ sortby:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 sort_ascending:
   default: true
   type: boolean
@@ -134,7 +134,7 @@ sort_ascending:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 alignment_method:
   default: sequence
   type: string
@@ -144,7 +144,7 @@ alignment_method:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 lovoalign_exec:
   default: ''
   type: string
@@ -154,4 +154,4 @@ lovoalign_exec:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy

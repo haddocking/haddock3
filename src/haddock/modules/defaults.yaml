@@ -7,7 +7,7 @@ cns_exec:
     during the installation.
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ncores:
   default: 8
   type: integer
@@ -18,7 +18,7 @@ ncores:
   short: Number of CPUs is truncated to max CPUs available minus 1
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 mode:
   default: local
   type: string
@@ -31,7 +31,7 @@ mode:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 concat:
   default: 1
   type: integer
@@ -42,7 +42,7 @@ concat:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 queue:
   default: ''
   type: string
@@ -52,7 +52,7 @@ queue:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 queue_limit:
   default: 100
   type: integer
@@ -63,7 +63,7 @@ queue_limit:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 self_contained:
   default: false
   type: boolean
@@ -71,4 +71,4 @@ self_contained:
   short: Copies the CNS scripts and executable to the run folder
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy

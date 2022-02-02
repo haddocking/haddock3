@@ -5,7 +5,7 @@ executable:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 contact_distance_cutoff:
   default: 5.0
   type: float
@@ -16,7 +16,7 @@ contact_distance_cutoff:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 fraction_cutoff:
   default: 0.6
   type: float
@@ -27,7 +27,7 @@ fraction_cutoff:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 threshold:
   default: 4
   type: integer
@@ -37,7 +37,7 @@ threshold:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 strictness:
   default: 0.75
   type: float
@@ -48,4 +48,4 @@ strictness:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy

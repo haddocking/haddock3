@@ -18,7 +18,7 @@ modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.yaml")
 
 FCC_path = Path(haddock3_source_path.parent, 'fcc')
 
-config_expert_levels = ("basic", "intermediate", "guru")
+config_expert_levels = ("easy", "expert", "guru")
 
 
 class EmptyPath:

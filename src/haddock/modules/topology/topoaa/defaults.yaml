@@ -8,7 +8,7 @@ autohis:
     histidines ((+1: HIS or 0: HISD/HISE) by selecting the state leading to the lowest
     electrostatic energy'
   group: molecule
-  explevel: easy
+  explevel: expert
 delenph:
   default: true
   type: boolean
@@ -45,19 +45,21 @@ iniseed:
 ligand_param_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Custom ligand parameter file
+  short: Ligand parameter file in CNS format
+  long: Ligand parameter file in CNS format containing all force field parameters 
+    (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: intermediate
 ligand_top_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Custom ligand topology file
+  short: Ligand topology file in CNS format
+  long: Ligand topology file in CNS format containing the ligand topologies 
+    (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: expert
 limit:
   default: true
   type: boolean
@@ -69,1890 +71,1311 @@ limit:
 tolerance:
   default: 0
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 99
+  precision: 3
+  title: Failure tolerance percentage
+  short: Percentage of allowed failures for a module to successfully complete
+  long: Percentage of allowed failures for a module to successfully complete
+  group: 'module'
+  explevel: expert
 mol1:
   prot_segid:
     default: A
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol2:
   prot_segid:
     default: B
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol3:
   prot_segid:
     default: C
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol4:
   prot_segid:
     default: D
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol5:
   prot_segid:
     default: E
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol6:
   prot_segid:
     default: F
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol7:
   prot_segid:
     default: G
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol8:
   prot_segid:
     default: H
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol9:
   prot_segid:
     default: I
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol10:
   prot_segid:
     default: J
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol11:
   prot_segid:
     default: K
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol12:
   prot_segid:
     default: L
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol13:
   prot_segid:
     default: M
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol14:
   prot_segid:
     default: N
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol15:
   prot_segid:
     default: O
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol16:
   prot_segid:
     default: P
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol17:
   prot_segid:
     default: Q
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol18:
   prot_segid:
     default: R
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol19:
   prot_segid:
     default: S
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy
 mol20:
   prot_segid:
     default: T
     type: string
     minchars: 0
-    maxchars: 100
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  fix_origin:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  dna:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  shape:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  cg:
-    default: false
-    type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: 'molecule'
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+          This cutoff can be changed in the generate-topology.cns script.
+    group: 'molecule'
     explevel: easy
   nhisd:
     default: 0
     type: integer
-    min: -9999
+    min: 0
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: Number of HISD residue
+    short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hisd_1:
     default: .nan
-    type: float
-    min: -9999
-    max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
-  nhise:
-    default: 0
     type: integer
     min: -9999
     max: 9999
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISD residue number
+    short: Residue number of the Histidine to be defined as HISD
+    long: Residue number of the Histidine to be defined as HISD 
+    group: 'molecule'
+    explevel: expert
+  nhise:
+    default: 0
+    type: integer
+    min: 0
+    max: 9999
+    title: Number of HISE residue
+    short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+          The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
+          Note that HIS is interpreted as a charged Histidine)
+    group: 'molecule'
+    explevel: expert
   hise_1:
     default: .nan
-    type: float
+    type: integer
     min: -9999
     max: 9999
-    precision: 3
-    title: No title yet
-    short: No short description yet
-    long: No long description yet
-    group: ''
-    explevel: easy
+    title: HISE residue number
+    short: Residue number of the Histidine to be defined as HISE
+    long: Residue number of the Histidine to be defined as HISE 
+    group: 'molecule'
+    explevel: expert
   explevel: easy

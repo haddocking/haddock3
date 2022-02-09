@@ -15,9 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        repository: haddocking/fcc
-        path: src/fcc
+      #with:
+      #  repository: haddocking/fcc
+      #  path: src/fcc
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2.2.2

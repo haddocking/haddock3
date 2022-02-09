@@ -192,8 +192,8 @@ evaluate ($data.unamb_hot=$unamb_hot)
 evaluate ($data.unamb_cool1=$unamb_cool1)
 evaluate ($data.unamb_cool2=$unamb_cool2)
 evaluate ($data.unamb_cool3=$unamb_cool3)
-evaluate ($data.noecv=$noecv)
-evaluate ($data.ncvpart=$ncvpart)
+evaluate ($data.randremoval=$randremoval)
+evaluate ($data.npart=$npart)
 
 evaluate ($data.amb_hot=$amb_hot)
 evaluate ($data.amb_cool1=$amb_cool1)
@@ -227,7 +227,7 @@ evaluate ($data.asy_cool3=$asy_cool3)
 
 evaluate ($data.ranair=$ranair)
 if ($data.ranair eq true) then
-    evaluate ($data.noecv = false)
+    evaluate ($data.randremoval = false)
 end if
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
@@ -257,7 +257,7 @@ end loop mol1
 
 
 ! Restraints
-evaluate ($npart = $ncvpart)
+evaluate ($npart = $npart)
 
 
 ! Unsupported restraints
@@ -289,8 +289,8 @@ end
 
 flag include bond angle impr vdw end
 
-if ($Data.noecv eq true) then
-    evaluate ($npart = 1 + mod($count,$Data.ncvpart))
+if ($Data.randremoval eq true) then
+    evaluate ($npart = 1 + mod($count,$Data.npart))
     evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
     evaluate ($seed = $count*$Saprotocol.iniseed)
     set display=$fileseed end
@@ -322,7 +322,7 @@ if ($Data.flags.noe  =  TRUE) then
 end if
 
 {* random removal of restaints ================================== *}
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     set message=on echo=on end
     noe cv $npart ? end
 else
@@ -368,14 +368,14 @@ if ($NUMNOE = 0) then
             end if
         end if
     end if
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
-if ($NUMNOE lt $Data.ncvpart) then
+if ($NUMNOE lt $Data.npart) then
     noe part=1 end
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
 flag excl bond angl dihe impr end
@@ -410,7 +410,7 @@ if ($Data.ranair eq true) then
         end if
         stop
     end if
-    evaluate ($Data.noecv = false)
+    evaluate ($Data.randremoval = false)
     noe
         reset
         nrestraints = 100000     ! allocate space for NOEs
@@ -670,7 +670,7 @@ if ($Data.flags.sym eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         display Print out of cross-validated violations and rms not
         display possible in combination with symmetry restraints
         display CV values set therefore to 0
@@ -685,7 +685,7 @@ if ($Data.flags.sym eq true) then
         set message=off echo=off end
     end if
 else
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         set message=on echo=on end
         noe cv $ncvbest ? end
     end if
@@ -697,7 +697,7 @@ else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if

@@ -1,99 +1,110 @@
 tolerance:
   default: 0
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 99
+  precision: 3
+  title: Failure tolerance percentage
+  short: Percentage of allowed failures for a module to successfully complete
+  long: Percentage of allowed failures for a module to successfully complete
+  group: 'module'
+  explevel: expert
 log_level:
   default: verbose
   type: string
   minchars: 0
   maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Log level verbosity for CNS
+  short: Set the log level verbosity for CNS (minimal or verbose)
+  long: CNS, the computational engine used by HADDOCK can generate a lot of output
+    messages. This parameter controls the verbosity of CNS (minimal or verbose)
+  group: module
+  explevel: guru
 ambig_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Ambiguous distance restraints filename
+  short: Filename of the ambiguous distance restraints file
+  long: Filename of the ambiguous distance restraints file. By default 50% of those restraints will be randomly discared. 
+    This can be changed/turned off and is controlled by the randremoval and npart parameters.
+    Note that this file can contain both ambiguous and unambiguous restraints.
+  group: 'distance restraints'
   explevel: easy
 unambig_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Unambiguous restraints filename
+  short: Filename of the unambiguous distance restraints file
+  long: Filename of the unambiguous distance restraints file. All restraints in that file will be used. 
+    Note that this file can contain both ambiguous and unambiguous restraints.
+  group: 'distance restraints'
   explevel: easy
 hbond_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: H-bond restraints filename
+  short: Filename of the hydrogen bond distance restraints file
+  long: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints. 
+  group: 'distance restraints'
   explevel: easy
 ligand_param_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Custom ligand parameter file
+  short: Ligand parameter file in CNS format
+  long: Ligand parameter file in CNS format containing all force field parameters 
+    (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: intermediate
 ligand_top_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Custom ligand topology file
+  short: Ligand topology file in CNS format
+  long: Ligand topology file in CNS format containing the ligand topologies 
+    (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: expert
 sampling:
-  default: 5
+  default: 1000
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  min: 1
+  max: 50000
+  title: Number of models to generate
+  short: Number of rigidbody docking models to generate
+  long: Number of rigidbody docking models to generate
+  group: 'sampling'
   explevel: easy
 crossdock:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Cross docking of starting ensembles
+  short: In case ensembles of starting structures are provided, if set to true, takes all possible combinations for the docking.
+  long: This variable controls on starting models are combined in case ensembles of starting structures are provided.
+    If set to true, all possible combinations of starting models will be used for the docking.
+    If set to false, the first model from molecule1 will be combined with the first model from molecule2 and so on.
+  group: 'sampling'
+  explevel: expert
 ntrials:
   default: 5
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 1
+  max: 100
+  title: Number of internal docking trials
+  short: Number of internal docking trials. Only the best model will be written to disk.
+  long: Number of internal docking trials. HADDOCK will repeat the docking internally multiple times, 
+    ranking them internally and only writing the best model to disk.
+  group: 'sampling'
+  explevel: expert
 rotate180:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Sample 180-rotated solutions
+  short: If true, HADDOCK will rotate the molecule by 180 degree around an axis perpendicular to the interface.
+  long: This parameter controls the sampling of 180 degree rotated solutions. 
+    If set to true, HADDOCK will rotate the molecule by 180 degree around an axis perpendicular to the interface.
+  group: 'sampling'
+  explevel: expert
 randorien:
   default: true
   type: boolean
@@ -105,388 +116,189 @@ randorien:
 rigidtrans:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Allow translation during EM
+  short: Enables translation during rigidbody energy minimization
+  long: Enables translation during rigidbody energy minimization.
+    If set to false, only a rotational energy minimization will be performed.
+  group: 'sampling'
+  explevel: guru
 iniseed:
   default: 917
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 9999999999999999
+  title: Random seed
+  short: Random seed used in CNS to initialize the random seed function
+  long: Random seed used in CNS to initialize the random seed function
+  group: molecule
+  explevel: guru
 keepwater:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_1:
-  default: A
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_2:
-  default: B
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_3:
-  default: C
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_4:
-  default: D
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_5:
-  default: E
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_6:
-  default: F
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_7:
-  default: G
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_8:
-  default: H
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_9:
-  default: I
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_10:
-  default: J
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_11:
-  default: K
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_12:
-  default: L
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_13:
-  default: M
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_14:
-  default: N
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_15:
-  default: O
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_16:
-  default: P
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_17:
-  default: Q
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_18:
-  default: R
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_19:
-  default: S
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-prot_segid_20:
-  default: T
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Write water molecules to output file
+  short: Write water molecules if present to the output file.
+  long: Write water molecules if present to the output file.
+  group: 'sampling'
+  explevel: guru
 shape_1:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_2:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_3:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_4:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_5:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_6:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_7:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_8:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_9:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_10:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_11:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_12:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_13:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_14:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_15:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_16:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_17:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_18:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_19:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 shape_20:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Is the molecule a shape?
+  short: Defines a molecule as a shape.
+  long: Defines a molecule as a shape, which is a collection of beads. 
+  group: 'molecule'
   explevel: easy
 amb_cool1:
   default: 10
@@ -608,24 +420,28 @@ hbond_hot:
   long: No long description yet
   group: ''
   explevel: easy
-noecv:
-  default: false
+randremoval:
+  default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-ncvpart:
+  title: Random removal of ambiguous restraints
+  short: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated.
+  long: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated. 
+    The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. 
+    The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.
+  group: 'distance restraints'
+  explevel: expert
+npart:
   default: 2
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 1
+  max: 20
+  title: Number partitions for ambiguous restraints
+  short: Number of sets into which to randomly partition the ambiguous restraints. 
+  long: Number of sets into which to randomly partition the ambiguous restraints. 
+    The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. 
+    The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.
+  group: 'distance restraints'
+  explevel: expert
 mrswi_hot:
   default: 0.5
   type: float

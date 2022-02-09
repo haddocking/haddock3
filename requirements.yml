@@ -11,5 +11,5 @@ dependencies:
   - tox
   - biopython
   - pip:
-      - pdb-tools>=2.4.1
+      - pdb-tools>=2.4.3
       - git+https://github.com/joaorodrigues/fcc@fcc2

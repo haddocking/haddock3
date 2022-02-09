@@ -14,7 +14,11 @@ jobs:
         platform: [ubuntu-latest, macos-latest]
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Checkout FCC
+      uses: actions/checkout@v2
       with:
         repository: haddocking/fcc
         path: src/fcc
@@ -35,7 +39,6 @@ jobs:
         ls -lsa
         mkdir bin
         touch bin/cns
-        cd src
         cd src/fcc/src
         chmod u+x Makefile
         ./Makefile 2>%1 >/dev/null || true

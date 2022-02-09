@@ -1,7 +1,7 @@
-pdb-tools>=2.4.3
-jsonpickle==2.0.0
-numpy==1.20.2
-tox==3
-pyyaml==6
+pdb-tools==2.4.3
+biopython==1.79
 git+git://github.com/joaorodrigues/fcc@fcc2
-biopython
+jsonpickle==2.1.0
+numpy==1.22.2
+pyyaml==6.0
+tox==3.24.5

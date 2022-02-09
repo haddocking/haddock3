@@ -1,23 +1,36 @@
 # 1. Installation
 
+Navigate to the folder where you want to install the HADDOCK3 subfolder.
+
+You can safely follow the commands indicated below for the different
+steps.
+
 ## 1.1 Clone this repository:
 
 ```bash
-git clone --recursive https://github.com/haddocking/haddock3.git
-cd haddock3
-cd src/fcc/src
+git clone https://github.com/haddocking/haddock3
+cd haddock3/src
+git clone https://github.com/haddocking/fcc
+cd fcc/src
 chmod u+x Makefile
 make
-cd -
+cd ../../..
 ```
 
-## 1.2 Create a virtual environment with Python 3.8+ and install dependencies:
+## 1.2 Create a virtual environment with Python 3.9 and install dependencies:
+
+You can use Python's `venv` or Anaconda depending on your choice.
+Commands are provided below:
+
 ### with `venv`
 
 ```bash
-virtualenv-3.8 venv
+virtualenv venv --python=3.9
 source venv/bin/activate
 pip install -r requirements.txt
+
+# install the HADDOCK3's Python shell and command-line clients (CLIs) on
+# the newly created environment.
 python setup.py develop --no-deps
 ```
 
@@ -43,15 +56,28 @@ ln -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns
 ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
 ```
 
+As long as you have the HADDOCK3 python environment activated you can
+navigate away from the HADDOCK3 installation folder. You can run
+HADDOCK3 from anywhere. To run HADDOCK3, follow the [usage
+guidelines](USAGE.md).
+
 ## 1.4 Keep up to date
 
-In the `github` folder of `haddock3` run:
+Navigate to the `github` folder of `haddock3`. Ensure you have the
+haddock3 python environment activated:
 
 ```bash
-git pull --recurse-submodules
+# if you used `venv`
+source venv/bin/activate
 
-# this is only needed when new CLIs are introduced, but it doesn't hurt
-# at all doing it. So, it always better to do it.
+# if you used `conda`
+conda activate haddock3
+```
+
+Afterwards:
+
+```bash
+git pull
 python setup.py develop --no-deps
 ```
 

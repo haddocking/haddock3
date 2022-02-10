@@ -33,6 +33,14 @@ haddock3 docking-protein-protein-test.cfg
 Feel free to open the `cfg` files with your preferred test editor, these
 are plain text files.
 
+To get the list of all possible parameters for each module:
+
+```bash
+haddock3-cfg -h
+haddock3-cfg -m <MODULE NAME>
+haddock3-cfg -m rigidbody
+```
+
 We are actively working towards expanding our documentation pages.
 Thanks for using HADDOCK3! For any question please [open an issue
 here](https://github.com/haddocking/haddock3/issues).

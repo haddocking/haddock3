@@ -180,7 +180,7 @@ class ModuleIO:
 
     def remove_missing(self):
         """Remove missing structure from `output`."""
-        # can't modify a dictionary within a loop
+        # can't modify a list/dictionary within a loop
         idxs = []
         for idx, element in enumerate(self.output):
             if isinstance(element, dict):

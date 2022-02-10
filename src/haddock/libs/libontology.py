@@ -159,7 +159,7 @@ class ModuleIO:
         for element in self.output:
             if isinstance(element, dict):
                 total += len(element.values())
-                present += sum([j.is_present() for j in element.values()])
+                present += sum(j.is_present() for j in element.values())
             else:
                 total += 1
                 if element.is_present():
@@ -171,7 +171,26 @@ class ModuleIO:
 
         faulty_per = (1 - (present / total)) * 100
 
+        # added this method here to avoid modifying all calls in the
+        # modules' run method. We can think about restructure this part
+        # in the future.
+        self.remove_missing()
+
         return faulty_per
+
+    def remove_missing(self):
+        """Remove missing structure from `output`."""
+        # can't modify a dictionary within a loop
+        keys = list(self.output.keys())
+        for key in keys:
+            element = self.output[key]
+            if isinstance(element, dict):
+                for key2 in list(element.keys()):
+                    if not element[key2].is_present():
+                        element.pop(key2)
+            else:
+                if not element.is_present():
+                    self.output.pop(key)
 
     def __repr__(self):
         return f"Input: {self.input}{linesep}Output: {self.output}"

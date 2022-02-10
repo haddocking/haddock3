@@ -27,6 +27,13 @@ modules_category = {
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
 
+category_hierarchy = [
+    "topology",
+    "sampling",
+    "refinement",
+    "scoring",
+    "analysis",
+    ]
 
 # this dictionary defines non-mandatory general parameters that can be defined
 # as global parameters thus affect all modules, or, instead, can be defined per

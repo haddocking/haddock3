@@ -50,7 +50,7 @@ ligand_param_fname:
   long: Ligand parameter file in CNS format containing all force field parameters 
     (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
   group: 'force field'
-  explevel: intermediate
+  explevel: expert
 ligand_top_fname:
   default: ''
   type: file

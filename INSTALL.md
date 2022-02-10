@@ -1,8 +1,12 @@
 # 1. Installation
 
+Open a `terminal` window and navigate to the folder where you want to
+install HADDOCK3; for example: `software`. The current installation
+instructions are local and will affect only your user.
+
 ## 1.1 Clone this repository:
 
-Mind the `--recursive` flag!
+Mind the `--recursive` flag when cloning!
 
 ```bash
 git clone --recursive https://github.com/haddocking/haddock3.git
@@ -62,11 +66,11 @@ guidelines](USAGE.md).
 
 ## 1.5 Keep your installation up to date
 
-Navigate to the `github` folder of `haddock3`. Ensure you have the
-`haddock3` python environment activated. Please consider HADDOCK3 is
-under active development, as well as its dependencies. In case the
-updating processing fails, it is safe to reinstall from scratch. Always
-refer to the latest installation guidelines.
+Navigate to the `haddock3` installation folder (the one you cloned from
+GitHub). Ensure you have the `haddock3` python environment activated.
+Please consider HADDOCK3 is under active development, as well as its
+dependencies. If the updating processing fails, it is safe to reinstall
+from scratch. Always refer to the latest installation guidelines.
 
 ```bash
 # if you used `venv`
@@ -96,11 +100,10 @@ python setup.py develop --no-deps
 
 # Installing third-party packages
 
-HADDOCK3 is able to integrate third-party software in its workflows.
-However, we are not responsible to the proper installation of such
-packages, but we do help you to install them. Bellow, you will find a
-list of all third-party packages HADDOCK3 can use and guidelines for
-their proper installation.
+HADDOCK3 can integrate third-party software in its workflows. However,
+we are not responsible for the proper installation of such packages, but
+we help you install them. Below, you will find a list of all third-party
+packages HADDOCK3 can use and guidelines for their proper installation.
 
 ## `lightdock`
 

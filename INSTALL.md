@@ -11,7 +11,9 @@ steps.
 git clone https://github.com/haddocking/haddock3
 cd haddock3/src
 git clone https://github.com/haddocking/fcc
-cd fcc/src
+cd fcc
+git checkout 3a1626de3366f6db8b45caed3bd9fbc6b2881286
+cd src
 chmod u+x Makefile
 make
 cd ../../..
@@ -78,6 +80,8 @@ Afterwards:
 
 ```bash
 git pull
+pip install -r requirements.txt  --upgrade  # for venv
+conda env update -f requirements.yml  # for conda
 python setup.py develop --no-deps
 ```
 

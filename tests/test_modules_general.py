@@ -10,7 +10,12 @@ import pytest
 from haddock import modules_defaults_path
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.yaml2cfg import read_from_yaml_config
-from haddock.modules import _not_valid_config, config_readers, modules_category
+from haddock.modules import (
+    _not_valid_config,
+    category_hierarchy,
+    config_readers,
+    modules_category,
+    )
 
 
 @pytest.fixture(params=modules_category.items())
@@ -50,3 +55,12 @@ def test_not_valid_config():
     with pytest.raises(ConfigurationError):
         with _not_valid_config():
             config_readers[".zzz"]
+
+
+def test_category_hierarchy():
+    """Test all categories are listed in hierarchies."""
+    categories_1 = set(category_hierarchy)
+    assert len(categories_1) == len(category_hierarchy)
+
+    categories_2 = set(modules_category.values())
+    assert categories_1 == categories_2

@@ -191,8 +191,11 @@ class ModuleIO:
                 if not element.is_present():
                     idxs.append(idx)
 
-        for idx in idxs:
-            self.output.pop(idx)
+        self.output = [
+            value
+            for i, value in enumerate(self.output)
+            if i not in idxs
+            ]
 
     def __repr__(self):
         return f"Input: {self.input}{linesep}Output: {self.output}"

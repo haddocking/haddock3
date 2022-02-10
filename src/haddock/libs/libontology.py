@@ -181,16 +181,18 @@ class ModuleIO:
     def remove_missing(self):
         """Remove missing structure from `output`."""
         # can't modify a dictionary within a loop
-        keys = list(self.output.keys())
-        for key in keys:
-            element = self.output[key]
+        idxs = []
+        for idx, element in enumerate(self.output):
             if isinstance(element, dict):
                 for key2 in list(element.keys()):
                     if not element[key2].is_present():
                         element.pop(key2)
             else:
                 if not element.is_present():
-                    self.output.pop(key)
+                    idxs.append(idx)
+
+        for idx in idxs:
+            self.output.pop(idx)
 
     def __repr__(self):
         return f"Input: {self.input}{linesep}Output: {self.output}"

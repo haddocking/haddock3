@@ -1,0 +1,13 @@
+run_dir:
+  type: directory
+  title: Run folder
+  short: Folder to store the HADDOCK3 run
+  long: The new folder that will be created to save the HADDOCK3 run
+  group: mandatory
+molecules:
+  type: list
+  title: Input molecules
+  short: The input molecules that will be used for docking.
+  long:
+    Molecules must be PDB files. These PDB files can be single molecules
+    or ensembles.

@@ -1,20 +1,14 @@
 """Test mandatory parameters."""
-from pathlib import Path
-
 import pytest
 
-from haddock import haddock3_source_path
 from haddock.core.defaults import RUNDIR
-from haddock.gear.yaml2cfg import read_from_yaml_config
 # this import is also a test
-from haddock.gear.parameters import (
+from haddock.gear.parameters import (  # noqa: F401
     MANDATORY_YAML,
     config_mandatory_general_parameters,
     mandatory_parameters,
     )
-
-
-MANDATORY_YAML = Path(haddock3_source_path, "core", "mandatory.yaml")
+from haddock.gear.yaml2cfg import read_from_yaml_config
 
 
 @pytest.fixture

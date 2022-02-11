@@ -1,7 +1,6 @@
 """
 Path to CNS-related files.
 
-
 Most paths are defined by dictionaries that gather several related
 paths. Here, instead of defining the dictionaries with static paths, we
 have functions that create those dict-containing paths dynamically. The

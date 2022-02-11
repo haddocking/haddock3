@@ -8,10 +8,11 @@ configuration files which have specific keys.
 import os
 from collections.abc import Mapping
 
+from haddock import config_expert_levels
 from haddock.libs.libio import read_from_yaml
 
 
-def yaml2cfg_text(ymlcfg, module):
+def yaml2cfg_text(ymlcfg, module, explevel):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -25,18 +26,20 @@ def yaml2cfg_text(ymlcfg, module):
     module : str
         The module to which the config belongs to.
 
-    expert_levels : list-list
-        A list with the expert levels to consider. Defaults to all.
+    explevel : str
+        The expert level to consider. Provides all parameters for that
+        level and those of inferior hierarchy. If you give "all", all
+        parameters will be considered.
     """
     new_config = []
     new_config.append(f"[{module}]")
 
-    new_config.append(_yaml2cfg_text(ymlcfg, module))
+    new_config.append(_yaml2cfg_text(ymlcfg, module, explevel))
 
     return os.linesep.join(new_config) + os.linesep
 
 
-def _yaml2cfg_text(ycfg, module):
+def _yaml2cfg_text(ycfg, module, explevel):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -51,6 +54,11 @@ def _yaml2cfg_text(ycfg, module):
         expectes the first level of keys to be the parameter name.
     """
     params = []
+    exp_levels = {
+        _el: i
+        for i, _el in enumerate(config_expert_levels + ("all",))
+        }
+    exp_level_idx = exp_levels[explevel]
 
     for param_name, param in ycfg.items():
 
@@ -61,9 +69,15 @@ def _yaml2cfg_text(ycfg, module):
             params.append("")  # give extra space
             curr_module = f"{module}.{param_name}"
             params.append(f"[{curr_module}]")
-            params.append(_yaml2cfg_text(param, module=curr_module))
+            _ = _yaml2cfg_text(param, module=curr_module, explevel=explevel)
+            params.append(_)
 
         elif isinstance(param, Mapping):
+
+            if exp_levels[param["explevel"]] > exp_level_idx:
+                # ignore this parameter because is of an expert level
+                # superior to the one request:
+                continue
 
             comment = []
             for _comment, cvalue in param.items():

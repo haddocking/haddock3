@@ -55,7 +55,7 @@ def test_flat_complex_config_1():
 def test_yaml2cfg_test():
     """Test yaml dict to cfg."""
     ycfg = read_from_yaml(haddock3_yaml_cfg_examples)
-    result = yaml2cfg_text(ycfg, "topoaa")
+    result = yaml2cfg_text(ycfg, "topoaa", "all")
     assert isinstance(result, str)
 
     p = Path('dummy_test.cfg')

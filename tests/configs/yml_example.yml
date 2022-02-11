@@ -10,7 +10,7 @@ autohis:
     state of histidines ((+1: HIS or 0: HISD/HISE) by selecting the
     state leading to the lowest electrostatic energy"
   group: 'molecule'
-  explevel: basic
+  explevel: easy
 delenph:
   default: true
   type: boolean
@@ -25,7 +25,7 @@ delenph:
     restraints to specific hydrogen atoms (e.g. when using NMR distance
     restraints).
   group: 'molecule'
-  explevel: basic
+  explevel: easy
 log_level:
   default: verbose
   type: string
@@ -57,7 +57,7 @@ ligand_param_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 ligand_top_fname:
   default: ''
   type: file
@@ -65,7 +65,7 @@ ligand_top_fname:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 limit:
   default: true
   type: boolean
@@ -73,7 +73,7 @@ limit:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 tolerance:
   default: 0
   type: integer
@@ -84,7 +84,7 @@ tolerance:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: basic
+  explevel: easy
 mol1:
   prot_segid:
     default: A
@@ -95,7 +95,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -103,7 +103,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -111,7 +111,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -119,7 +119,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -127,7 +127,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -135,7 +135,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -146,7 +146,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -157,7 +157,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -168,7 +168,7 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -179,8 +179,8 @@ mol1:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy
 mol2:
   prot_segid:
     default: B
@@ -191,7 +191,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   fix_origin:
     default: false
     type: boolean
@@ -199,7 +199,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   dna:
     default: false
     type: boolean
@@ -207,7 +207,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   shape:
     default: false
     type: boolean
@@ -215,7 +215,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cg:
     default: false
     type: boolean
@@ -223,7 +223,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   cyclicpept:
     default: false
     type: boolean
@@ -231,7 +231,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhisd:
     default: 0
     type: integer
@@ -242,7 +242,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hisd_1:
     default: .nan
     type: float
@@ -253,7 +253,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   nhise:
     default: 0
     type: integer
@@ -264,7 +264,7 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
+    explevel: easy
   hise_1:
     default: .nan
     type: float
@@ -275,5 +275,5 @@ mol2:
     short: No short description yet
     long: No long description yet
     group: ''
-    explevel: basic
-  explevel: basic
+    explevel: easy
+  explevel: easy

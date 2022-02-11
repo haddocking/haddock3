@@ -1,34 +1,33 @@
 #!/usr/bin/env python3
-"""Main HADDOCK3 command-line client."""
+"""
+Run HADDOCK3 docking simulation.
+
+This is the main command-line client to run HADDOCK3 docking
+simulations. To prepare a simulation, setup configuration file defining
+a HADDOCK3 workflow and use this command-line client to execute that
+workflow.
+
+USAGE:
+    $ haddock3 -h
+    $ haddock3 <CONFIG FILE>
+"""
 import argparse
 import sys
-from argparse import ArgumentTypeError
-from functools import partial
 from pathlib import Path
 
-from haddock import log, version
+from haddock import log
+from haddock.core.defaults import RUNDIR
 from haddock.gear.restart_run import add_restart_arg
-from haddock.libs.libio import working_directory
-from haddock.libs.liblog import (
-    add_log_for_CLI,
-    add_loglevel_arg,
-    add_stringio_handler,
-    log_file_name,
-    log_formatters,
-    )
-from haddock.libs.libutil import file_exists
+from haddock.libs.libcli import add_version_arg, arg_file_exist
+from haddock.libs.liblog import add_loglevel_arg
 
 
 # Command line interface parser
 ap = argparse.ArgumentParser()
 
-_arg_file_exist = partial(
-    file_exists,
-    exception=ArgumentTypeError,
-    emsg="File {!r} does not exist or is not a file.")
 ap.add_argument(
     "recipe",
-    type=_arg_file_exist,
+    type=arg_file_exist,
     help="The input recipe file path",
     )
 
@@ -42,14 +41,7 @@ ap.add_argument(
     )
 
 add_loglevel_arg(ap)
-
-ap.add_argument(
-    "-v",
-    "--version",
-    help="show version",
-    action="version",
-    version=f'{ap.prog} - {version}',
-    )
+add_version_arg(ap)
 
 
 def load_args(ap):
@@ -75,25 +67,32 @@ def main(
         log_level="INFO",
         ):
     """
-    Execute HADDOCK3 client logic.
+    Run HADDOCK3 docking simulation.
 
     Parameters
     ----------
     recipe : str or pathlib.Path
         The path to the recipe (config file).
 
-    restart : int
+    restart : int, optional
         At which step to restart haddock3 run.
 
-    setup_only : bool
+    setup_only : bool, optional
         Whether to setup the run without running it.
 
-    log_level : str
+    log_level : str, optional
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # anti-pattern to speed up CLI initiation
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
+    from haddock.libs.libio import working_directory
+    from haddock.libs.liblog import (
+        add_log_for_CLI,
+        add_stringio_handler,
+        log_file_name,
+        log_formatters,
+        )
     from haddock.libs.libutil import log_error_and_exit
     from haddock.libs.libworkflow import WorkflowManager
 
@@ -110,7 +109,6 @@ def main(
         formatter=log_formatters[log_level],
         )
 
-    # Special case only using print instead of logging
     log.info(get_initial_greeting())
 
     with log_error_and_exit():
@@ -119,7 +117,7 @@ def main(
     # here we the io.StringIO handler log information, and reset the log
     # handlers to fit the CLI and HADDOCK3 specifications.
     log_temporary = log.handlers[-1].stream.getvalue()
-    _run_dir = other_params['run_dir']
+    _run_dir = other_params[RUNDIR]
     log_file = Path(_run_dir, log_file_name)
     add_log_for_CLI(log, log_level, log_file)
 
@@ -129,12 +127,12 @@ def main(
         fout.write(log_temporary)
 
     if setup_only:
-        log.info('We have setup the run only.')
+        log.info('We have setup the run, only.')
         log.info(get_adieu())
         return
 
     with (
-            working_directory(other_params['run_dir']),
+            working_directory(other_params[RUNDIR]),
             log_error_and_exit(),
             ):
 

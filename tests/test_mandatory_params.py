@@ -5,8 +5,8 @@ from haddock.core.defaults import RUNDIR
 # this import is also a test
 from haddock.gear.parameters import (  # noqa: F401
     MANDATORY_YAML,
+    _mandatory_parameters,
     config_mandatory_general_parameters,
-    mandatory_parameters,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 

@@ -3,11 +3,11 @@ run_dir:
   title: Run directory
   short: Folder to store the HADDOCK3 run
   long: The new folder that will be created to save the HADDOCK3 run
-  group: mandatory
   explevel: easy
 molecules:
   type: list
-  itemtype: ".pdb"
+  accept:
+    - ".pdb"
   minitems: 1
   maxitems: 20
   title: Input Molecules
@@ -15,5 +15,4 @@ molecules:
   long:
     Molecules must be PDB files. These PDB files can be single molecules
     or ensembles.
-  group: mandatory
   explevel: easy

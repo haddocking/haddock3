@@ -13,6 +13,6 @@ molecules:
   title: Input Molecules
   short: The input molecules that will be used for docking.
   long:
-    Molecules must be PDB files. These PDB files can be single molecules
-    or ensembles.
+    Molecules must be provided in PDB format. These PDB files can be
+    single molecules or ensembles using the MODEL/ENDMDL statements.
   explevel: easy

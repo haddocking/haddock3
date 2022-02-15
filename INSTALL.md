@@ -1,6 +1,12 @@
 # 1. Installation
 
+Open a `terminal` window and navigate to the folder where you want to
+install HADDOCK3; for example: `software`. The current installation
+instructions are local and will affect only your user.
+
 ## 1.1 Clone this repository:
+
+Mind the `--recursive` flag when cloning!
 
 ```bash
 git clone --recursive https://github.com/haddocking/haddock3.git
@@ -11,27 +17,36 @@ make
 cd -
 ```
 
-## 1.2 Create a virtual environment with Python 3.8+ and install dependencies:
+By the end of the above commands, you should be back to the `haddock3`
+main folder.
+
+## 1.2 Create a virtual environment with Python 3.9+ and install dependencies:
+
+You can use Python's `venv` or Anaconda depending on your choice.
+Commands are provided below:
+
 ### with `venv`
 
 ```bash
-virtualenv-3.8 venv
+virtualenv venv --python=3.9
 source venv/bin/activate
 pip install -r requirements.txt
-python setup.py develop --no-deps
 ```
 
 ### with `conda`
+
 ```bash
 conda env create -f requirements.yml
 conda activate haddock3
+```
 
-# install the HADDOCK3's Python shell and command-line clients (CLIs) on
-# the newly created environment.
+## 1.3 Install the HADDOCK3 package and command line clients
+
+```bash
 python setup.py develop --no-deps
 ```
 
-## 1.3 Make a CNS binary shortcut to the expected path:
+## 1.4 Make a CNS binary shortcut to the expected path:
 
 ```bash
 mkdir -p bin/
@@ -43,31 +58,52 @@ ln -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns
 ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
 ```
 
-## 1.4 Keep up to date
+As long as you have the HADDOCK3 python environment activated, you can
+navigate away from the HADDOCK3 installation folder. You can run
+HADDOCK3 from anywhere. To run HADDOCK3, follow the [usage
+guidelines](USAGE.md).
 
-In the `github` folder of `haddock3` run:
+
+## 1.5 Keep your installation up to date
+
+Navigate to the `haddock3` installation folder (the one you cloned from
+GitHub). Ensure you have the `haddock3` python environment activated.
+Please consider HADDOCK3 is under active development, as well as its
+dependencies. If the updating processing fails, it is safe to reinstall
+from scratch. Always refer to the latest installation guidelines.
 
 ```bash
-git pull --recurse-submodules
+# if you used `venv`
+source venv/bin/activate
 
-# this is only needed when new CLIs are introduced, but it doesn't hurt
-# at all doing it. So, it always better to do it.
-python setup.py develop --no-deps
+# if you used `conda`
+conda activate haddock3
 ```
 
-This will pull the latest changes to your local folder and because you
-installed `haddock3` with the option `develop` those changes become
-available immediately.
+Afterwards:
+
+```bash
+# pull the latest source code from our repository to your computer
+git pull
+
+# if you used venv to create the python environment, run:
+pip install -r requirements.txt  --upgrade
+
+# if you used anaconda to create the python environment, run:
+conda env update -f requirements.yml
+
+# ensure all command-lines clients are installed
+python setup.py develop --no-deps
+```
 
 * * *
 
 # Installing third-party packages
 
-HADDOCK3 is able to integrate third-party software in its workflows.
-However, we are not responsible to the proper installation of such
-packages, but we do help you to install them. Bellow, you will find a
-list of all third-party packages HADDOCK3 can use and guidelines for
-their proper installation.
+HADDOCK3 can integrate third-party software in its workflows. However,
+we are not responsible for the proper installation of such packages, but
+we help you install them. Below, you will find a list of all third-party
+packages HADDOCK3 can use and guidelines for their proper installation.
 
 ## `lightdock`
 

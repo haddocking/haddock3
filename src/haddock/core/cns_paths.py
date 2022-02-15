@@ -1,21 +1,54 @@
-"""Path to CNS-related files."""
+"""
+Path to CNS-related files.
+
+Most paths are defined by dictionaries that gather several related
+paths. Here, instead of defining the dictionaries with static paths, we
+have functions that create those dict-containing paths dynamically. The
+default values are defined by:
+
+- axis
+- tensors
+- translation_vectors
+- water_box
+
+But you can re-use the functions to create new dictionaries with updated
+paths. This is useful for those cases when the `cns/` folder is moved
+to a different folder.
+"""
 from pathlib import Path
 
 from haddock import toppar_path
 
 
+# exact file names as present in the cns/ scripts folder
 PARAMETERS_FILE = "haddock.param"
 TOPOLOGY_FILE = "haddock.top"
 LINK_FILE = "protein-allhdg5-4-noter.link"
 SCATTER_LIB = "scatter.lib"
+INITIAL_POSITIONS_DIR = "initial_positions"
+
+# default prepared paths
+parameters_file = Path(toppar_path, PARAMETERS_FILE)
+topology_file = Path(toppar_path, TOPOLOGY_FILE)
+link_file = Path(toppar_path, LINK_FILE)
+scatter_lib = Path(toppar_path, SCATTER_LIB)
 
 
 def get_translation_vectors(path):
-    """Generate paths for translation vectors."""
+    """
+    Generate paths for translation vectors.
+
+    Parameters
+    ----------
+    path : pathlib.Path
+        If absolute, paths will be absolute, if relative paths will be
+        relative. Adds the INITIAL_POSITIONS_DIR path before the file
+        name.
+    """
     translation_vectors = {}
     for i in range(51):
         _s = f'trans_vector_{i}'
-        _p = Path(path, 'initial_positions', _s)
+        _p = Path(path, INITIAL_POSITIONS_DIR, _s)
         translation_vectors[_s] = _p
 
     return translation_vectors
@@ -53,10 +86,6 @@ def get_water_box(path):
 
 
 axis = get_axis(toppar_path)
-link_file = Path(toppar_path, LINK_FILE)
-parameters_file = Path(toppar_path, PARAMETERS_FILE)
-scatter_lib = Path(toppar_path, SCATTER_LIB)
 tensors = get_tensors(toppar_path)
-topology_file = Path(toppar_path, TOPOLOGY_FILE)
 translation_vectors = get_translation_vectors(toppar_path)
 water_box = get_water_box(toppar_path)

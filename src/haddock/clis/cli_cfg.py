@@ -12,6 +12,7 @@ import argparse
 import importlib
 import sys
 
+from haddock import config_expert_levels
 from haddock.gear.yaml2cfg import yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
 from haddock.modules import modules_category
@@ -37,7 +38,7 @@ ap.add_argument(
     required=False,
     help="The expertise level of the parameters. Defaults to \"all\".",
     default="all",
-    choices=("basic", "intermediate", "guru", "all"),
+    choices=config_expert_levels + ("all",),
     )
 
 
@@ -73,7 +74,7 @@ def main(module, explevel):
 
     ycfg = read_from_yaml(cfg)
 
-    new_config = yaml2cfg_text(ycfg, module)
+    new_config = yaml2cfg_text(ycfg, module, explevel)
     print(new_config, file=sys.stdout, flush=True)  # noqa: T001
 
     return 0

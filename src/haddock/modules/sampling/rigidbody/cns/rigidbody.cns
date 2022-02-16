@@ -188,42 +188,13 @@ end if
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.unamb_hot=$unamb_hot)
-evaluate ($data.unamb_cool1=$unamb_cool1)
-evaluate ($data.unamb_cool2=$unamb_cool2)
-evaluate ($data.unamb_cool3=$unamb_cool3)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_hot=$amb_hot)
-evaluate ($data.amb_cool1=$amb_cool1)
-evaluate ($data.amb_cool2=$amb_cool2)
-evaluate ($data.amb_cool3=$amb_cool3)
+evaluate ($data.amb_scale=$amb_scale)
+evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.hbond_scale=$hbond_scale)
 
-evaluate ($data.hbond_hot=$hbond_hot)
-evaluate ($data.hbond_cool1=$hbond_cool1)
-evaluate ($data.hbond_cool2=$hbond_cool2)
-evaluate ($data.hbond_cool3=$hbond_cool3)
-
-evaluate ($data.mrswi_hot=$mrswi_hot)
-evaluate ($data.mrswi_cool1=$mrswi_cool1)
-evaluate ($data.mrswi_cool2=$mrswi_cool2)
-evaluate ($data.mrswi_cool3=$mrswi_cool3)
-
-evaluate ($data.rswi_hot=$rswi_hot)
-evaluate ($data.rswi_cool1=$rswi_cool1)
-evaluate ($data.rswi_cool2=$rswi_cool2)
-evaluate ($data.rswi_cool3=$rswi_cool3)
-
-evaluate ($data.masy_hot=$masy_hot)
-evaluate ($data.masy_cool1=$masy_cool1)
-evaluate ($data.masy_cool2=$masy_cool2)
-evaluate ($data.masy_cool3=$masy_cool3)
-
-evaluate ($data.asy_hot=$asy_hot)
-evaluate ($data.asy_cool1=$asy_cool1)
-evaluate ($data.asy_cool2=$asy_cool2)
-evaluate ($data.asy_cool3=$asy_cool3)
 
 evaluate ($data.ranair=$ranair)
 if ($data.ranair eq true) then
@@ -231,7 +202,7 @@ if ($data.ranair eq true) then
 end if
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
-evaluate ($data.kcont=$kcont)
+evaluate ($data.kcm=$kcm)
 evaluate ($data.surfrest=$surfrest)
 evaluate ($data.ksurf=$ksurf)
 
@@ -523,9 +494,9 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             flag include elec end
         end if
 
-        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_cool3))
-        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_cool3))
-        evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_cool3))
+        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_scale))
+        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_scale))
+        evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_scale))
         evaluate ($symm_scale = min(($symm_scale * 2),$Data.ksym))
 
         noe
@@ -549,7 +520,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     if ($SaProtocol.rigidtrans eq true) then
 
-        evaluate ($cont_scale = $Data.kcont)
+        evaluate ($cont_scale = $Data.kcm)
         evaluate ($surf_scale = $Data.ksurf)
         noe
             scale contact $cont_scale
@@ -703,9 +674,9 @@ else
     end if
 end if
 
-evaluate ($unamb_scale = $Data.unamb_cool3)
-evaluate ($ambig_scale = $Data.amb_cool3)
-evaluate ($hbond_scale = $Data.hbond_cool3)
+evaluate ($unamb_scale = $Data.unamb_scale)
+evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe
     scale dist $unamb_scale

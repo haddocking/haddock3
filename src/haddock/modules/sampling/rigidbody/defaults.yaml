@@ -47,6 +47,14 @@ hbond_fname:
   long: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints. 
   group: 'distance restraints'
   explevel: easy
+symtbl_fname:
+  default: ''
+  type: file
+  title: Custom symmetry restraints filename
+  short: Filename of the custom symmetry restraints file
+  long: Filename of the custom symmetry restraints file. 
+  group: 'symmetry'
+  explevel: expert
 ligand_param_fname:
   default: ''
   type: file
@@ -300,17 +308,17 @@ shape_20:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-amb_cool1:
-  default: 10
+amb_scale:
+  default: 50
   type: integer
-  min: -9999
-  max: 9999
+  min: 0
+  max: 10000
   title: No title yet
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
-amb_cool2:
+  explevel: expert
+unamb_scale:
   default: 50
   type: integer
   min: -9999
@@ -319,8 +327,8 @@ amb_cool2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
-amb_cool3:
+  explevel: expert
+hbond_scale:
   default: 50
   type: integer
   min: -9999
@@ -329,97 +337,7 @@ amb_cool3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
-amb_hot:
-  default: 10
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-unamb_cool1:
-  default: 10
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-unamb_cool2:
-  default: 50
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-unamb_cool3:
-  default: 50
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-unamb_hot:
-  default: 10
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-hbond_cool1:
-  default: 10
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-hbond_cool2:
-  default: 50
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-hbond_cool3:
-  default: 50
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-hbond_hot:
-  default: 10
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  explevel: expert
 randremoval:
   default: true
   type: boolean
@@ -442,1059 +360,1471 @@ npart:
     The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.
   group: 'distance restraints'
   explevel: expert
-mrswi_hot:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-mrswi_cool1:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-mrswi_cool2:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-mrswi_cool3:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rswi_hot:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rswi_cool1:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rswi_cool2:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rswi_cool3:
-  default: 0.5
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-masy_hot:
-  default: -1.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-masy_cool1:
-  default: -1.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-masy_cool2:
-  default: -0.1
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-masy_cool3:
-  default: -0.1
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-asy_hot:
-  default: 1.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-asy_cool1:
-  default: 1.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-asy_cool2:
-  default: 0.1
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-asy_cool3:
-  default: 0.1
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
 cmrest:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Center of mass restraints
+  short: Automatically defines distance restraints between the geometric center of the various molecules.
+  long: When turned on, this option will automatically define center of mass restraints between the various molecules. 
+    This allows HADDOCK to operate in ab-initio mode in the absence of any other restraints. But those restraints can also
+    be combined with other restraints to ensure more compact solutions. The distance restraints are defined between the 
+    geometrical centers of the various molecules (calculated on CA atoms for proteins (BB in case of Martini coarse-grained
+    molecules) and N1 atoms for nucleic acids. For small ligands, all atoms will be used to define the geometric center.
+    The upper limit distance is automatically calculated based on the dimension of the molecules (see cmtight description).
+  group: 'ab initio mode'
+  explevel: expert
 cmtight:
-  default: false
+  default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Center of mass restraint tightness
+  short: Defines the upper distance limit based on the sum of the average dimension of the two molecule, 
+    if cmtight=false all three dimensions are used, if set to true the shortest two only are used, 
+    resulting in tighter distance restraints.
+  long: This parameter controls how the upper limit distance is defined for the center of mass restraints between molecules.
+    Each molecule is oriented along its principle components and the x,y and z dimensions are calculated.
+    If cmtight=true, the molecule distance (size) is set to the average of its smallest two half dimensions. 
+    If cmtight=false, the molecule distance (size) is set to the average of its three half dimensions..
+    In case of DNA or small ligands the molecule distance (size) is set to 0.
+    The effective upper distance limit for the center or mass distance restraint is the sum of the two molecule distances.
+  group: 'ab initio mode'
+  explevel: expert
+kcm:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1000
+  precision: 1
+  title: Center of mass restraints force constant
+  short: Force constant applied to the center of mass restraints
+  long: Force constant applied to the center of mass restraints
+  group: 'ab initio mode'
+  explevel: expert
 ranair:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-ksurf:
-  default: 1.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-kcont:
-  default: 1.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-surfrest:
-  default: false
-  type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-sym_on:
-  default: false
-  type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-ksym:
-  default: 10.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-numc2sym:
+  title: Random interaction restraints
+  short: Ambiguous interaction restraints will be defined randomly from surface patches around solvent accessible residues.
+  long: When turned on, this option will automatically define ambigous interaction restraints between the various molecules 
+    from randomly selected surface patches from solvent accessible residues . 
+    This allows HADDOCK to operate in ab-initio mode. 
+    Note that this type of restraints can not be combined with any other distance restraints. 
+    By default the entire surface will be sampled, but it is possible to define per molecule segments 
+    from which the random restraints will be defined (see the nrair_X parameter).
+  group: 'ab initio mode'
+  explevel: expert
+nrair_1:
   default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+  explevel: expert
+rair_start_1_1:
+  default: .nan
   type: integer
   min: -9999
   max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_1_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_2:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_2_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_3:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_3_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_4:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_4_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_5:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_5_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_6:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_6_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_6_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_7:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_7_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_7_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_8:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_8_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_8_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_9:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_9_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_9_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_10:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_10_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_10_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_11:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_11_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_11_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_12:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_12_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_12_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_13:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_13_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_13_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_14:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_14_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_14_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_15:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_15_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_15_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_16:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_16_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_16_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_17:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_17_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_17_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_18:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_18_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_18_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_19:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_19_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_19_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+nrair_20:
+  default: 0
+  type: integer
+  min: 0
+  max: 100
+  title: Number of segments from which to pick random restraints
+  short: Defines the number of segments for this molecule from which to randomly define random interaction restraints.
+  long: Defines the number of segments for this molecule from which to randomly define random interaction restraints. 
+    Only solvent accessible residues will be considered. See also the ranair parameter. 
+  group: 'ab initio mode'
+rair_start_20_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Starting residue number
+  short: Starting residue number for segment from which to define random interaction restraints
+  long: Starting residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+rair_end_20_1:
+  default: .nan
+  type: integer
+  min: -9999
+  max: 9999
+  title: Ending residue number
+  short: Ending residue number for segment from which to define random interaction restraints
+  long: Ending residue number for segment from which to define random interaction restraints
+  group: 'ab initio mode'
+  explevel: expert
+surfrest:
+  default: false
+  type: boolean
+  title: Surface contact restraints
+  short: Surface contact restraints between molecules
+  long: Surface contact restraints between molecules. These are defined as an ambiguous distance restraint
+    between all CA,BB or N1 atoms of two molecules (for small ligands all atoms are considered).
+    The upper limit is set to 7A (or 4.5A in case of small ligands).
+    Note that this option is computationally more expensive than the center of mass restraints (see cmrest).
+  group: 'ab initio mode'
+  explevel: expert
+ksurf:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1000
+  precision: 1
+  title: Surface contact restraints force constant
+  short: Force constant applied to the surface contact restraints.
+  long: Force constant applied to the surface contact restraints.
+  group: 'ab initio mode'
+  explevel: expert
+sym_on:
+  default: false
+  type: boolean
+  title: Symmetry restraints
+  short: Enables symmetry restraints
+  long: Enables symmetry restraints. The symmetry type (C2,C3,C4,C5,C6,S3 supported) 
+    and the segments to which those apply must be defined. In addition a custom symmetry restraint file can be supplied (symrest_fname).
+  group: 'symmetry'
+  explevel: expert
+ksym:
+  default: 10.0
+  type: float
+  min: 0
+  max: 1000
+  precision: 1
+  title: Force constant for symmetry restraints
+  short: Force constant for symmetry restraints
+  long: Force constant for symmetry restraints
+  group: 'symmetry'
+  explevel: expert
+numc2sym:
+  default: 0
+  type: integer
+  min: 0
+  max: 40
+  title: Number of C2 symmetry restraints
+  short: Defines the number of C2 symmetry restraints.
+  long: Defines the number of C2 symmetry restraints. 
+    For each, a pair of segments on which the symmetry restraint is applied will have to be defined.
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: expert
 c2sym_sta1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C2 symmetry segment
+  long: Residue number of first residue in the first C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c2sym_end1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C2 symmetry segment
+  long: Residue number of last residue in the first C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c2sym_seg1_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of first C2 segment
+  short: Segment ID of first C2 segment
+  long: Segment ID of first C2 segment
+  group: 'symmetry'
+  explevel: expert
 c2sym_sta2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C2 symmetry segment
+  long: Residue number of first residue in the second C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c2sym_end2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C2 symmetry segment
+  long: Residue number of last residue in the second C2 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c2sym_seg2_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of second C2 segment
+  short: Segment ID of second C2 segment
+  long: Segment ID of second C2 segment
+  group: 'symmetry'
+  explevel: expert
 numc3sym:
   default: 0
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 10
+  title: Number of C3 symmetry restraints
+  short: Defines the number of C3 symmetry restraints.
+  long: Defines the number of C3 symmetry restraints. 
+    For each, three segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: expert
 c3sym_sta1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C3 symmetry segment
+  long: Residue number of first residue in the first C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_end1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C3 symmetry segment
+  long: Residue number of last residue in the first C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_seg1_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of first C3 segment
+  short: Segment ID of first C3 segment
+  long: Segment ID of first C3 segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_sta2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C3 symmetry segment
+  long: Residue number of first residue in the second C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_end2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C3 symmetry segment
+  long: Residue number of last residue in the second C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_seg2_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of second C3 segment
+  short: Segment ID of second C3 segment
+  long: Segment ID of second C3 segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_sta3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C3 symmetry segment
+  long: Residue number of first residue in the third C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_end3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C3 symmetry segment
+  long: Residue number of last residue in the third C3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c3sym_seg3_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of third C3 segment
+  short: Segment ID of third C3 segment
+  long: Segment ID of third C3 segment
+  group: 'symmetry'
+  explevel: expert
 numc4sym:
   default: 0
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 10
+  title: Number of C4 symmetry restraints
+  short: Defines the number of C4 symmetry restraints.
+  long: Defines the number of C4 symmetry restraints. 
+    For each, four segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: expert
 c4sym_sta1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C4 symmetry segment
+  long: Residue number of first residue in the first C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_end1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C4 symmetry segment
+  long: Residue number of last residue in the first C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_seg1_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of first C4 segment
+  short: Segment ID of first C4 segment
+  long: Segment ID of first C4 segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_sta2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C4 symmetry segment
+  long: Residue number of first residue in the second C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_end2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C4 symmetry segment
+  long: Residue number of last residue in the second C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_seg2_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of second C4 segment
+  short: Segment ID of second C4 segment
+  long: Segment ID of second C4 segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_sta3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C4 symmetry segment
+  long: Residue number of first residue in the third C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_end3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C4 symmetry segment
+  long: Residue number of last residue in the third C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_seg3_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of third C4 segment
+  short: Segment ID of third C4 segment
+  long: Segment ID of third C4 segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_sta4_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the fourth C4 symmetry segment
+  long: Residue number of first residue in the fourth C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_end4_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the fourth C4 symmetry segment
+  long: Residue number of last residue in the fourth C4 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c4sym_seg4_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of fourth C4 segment
+  short: Segment ID of fourth C4 segment
+  long: Segment ID of fourth C4 segment
+  group: 'symmetry'
+  explevel: expert
 numc5sym:
   default: 0
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 10
+  title: Number of C5 symmetry restraints
+  short: Defines the number of C5 symmetry restraints.
+  long: Defines the number of C5 symmetry restraints. 
+    For each, five segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: expert
 c5sym_sta1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C5 symmetry segment
+  long: Residue number of first residue in the first C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_end1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C5 symmetry segment
+  long: Residue number of last residue in the first C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_seg1_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of first C5 segment
+  short: Segment ID of first C5 segment
+  long: Segment ID of first C5 segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_sta2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C5 symmetry segment
+  long: Residue number of first residue in the second C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_end2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C5 symmetry segment
+  long: Residue number of last residue in the second C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_seg2_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of second C5 segment
+  short: Segment ID of second C5 segment
+  long: Segment ID of second C5 segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_sta3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C5 symmetry segment
+  long: Residue number of first residue in the third C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_end3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C5 symmetry segment
+  long: Residue number of last residue in the third C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_seg3_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of third C5 segment
+  short: Segment ID of third C5 segment
+  long: Segment ID of third C5 segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_sta4_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the fourth C5 symmetry segment
+  long: Residue number of first residue in the fourth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_end4_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the fourth C5 symmetry segment
+  long: Residue number of last residue in the fourth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_seg4_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of fourth C5 segment
+  short: Segment ID of fourth C5 segment
+  long: Segment ID of fourth C5 segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_sta5_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the fifth C5 symmetry segment
+  long: Residue number of first residue in the fifth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_end5_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the fifth C5 symmetry segment
+  long: Residue number of last residue in the fifth C5 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c5sym_seg5_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of fifth C5 segment
+  short: Segment ID of fifth C5 segment
+  long: Segment ID of fifth C5 segment
+  group: 'symmetry'
+  explevel: expert
 numc6sym:
   default: 0
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 10
+  title: Number of C6 symmetry restraints
+  short: Defines the number of C6 symmetry restraints.
+  long: Defines the number of C6 symmetry restraints. 
+    For each, six segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: expert
 c6sym_sta1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the first C6 symmetry segment
+  long: Residue number of first residue in the first C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_end1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the first C6 symmetry segment
+  long: Residue number of last residue in the first C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_seg1_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of first C6 segment
+  short: Segment ID of first C6 segment
+  long: Segment ID of first C6 segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_sta2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the second C6 symmetry segment
+  long: Residue number of first residue in the second C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_end2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the second C6 symmetry segment
+  long: Residue number of last residue in the second C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_seg2_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of second C6 segment
+  short: Segment ID of second C6 segment
+  long: Segment ID of second C6 segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_sta3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the third C6 symmetry segment
+  long: Residue number of first residue in the third C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_end3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the third C6 symmetry segment
+  long: Residue number of last residue in the third C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_seg3_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of third C6 segment
+  short: Segment ID of third C6 segment
+  long: Segment ID of third C6 segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_sta4_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the fourth C6 symmetry segment
+  long: Residue number of first residue in the fourth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_end4_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the fourth C6 symmetry segment
+  long: Residue number of last residue in the fourth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_seg4_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of fourth C6 segment
+  short: Segment ID of fourth C6 segment
+  long: Segment ID of fourth C6 segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_sta5_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the fifth C6 symmetry segment
+  long: Residue number of first residue in the fifth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_end5_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the fifth C6 symmetry segment
+  long: Residue number of last residue in the fifth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_seg5_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of fifth C6 segment
+  short: Segment ID of fifth C6 segment
+  long: Segment ID of fifth C6 segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_sta6_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the sixth C6 symmetry segment
+  long: Residue number of first residue in the sixth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_end6_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the sixth C6 symmetry segment
+  long: Residue number of last residue in the sixth C6 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 c6sym_seg6_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of sixth C6 segment
+  short: Segment ID of sixth C6 segment
+  long: Segment ID of sixth C6 segment
+  group: 'symmetry'
+  explevel: expert
 nums3sym:
   default: 0
   type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  min: 0
+  max: 10
+  title: Number of S3 symmetry restraints
+  short: Defines the number of S3 symmetry restraints.
+  long: Defines the number of S3 symmetry restraints. 
+    For each, three segments on which the symmetry restraint is applied will have to be defined. 
+    Those must all have the same length.
+  group: 'symmetry'
+  explevel: expert
 s3sym_sta1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the first S3 symmetry segment
+  long: Residue number of first residue in the first S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_end1_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the first S3 symmetry segment
+  long: Residue number of last residue in the first S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_seg1_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of first S3 segment
+  short: Segment ID of first S3 segment
+  long: Segment ID of first S3 segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_sta2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the second S3 symmetry segment
+  long: Residue number of first residue in the second S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_end2_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the second S3 symmetry segment
+  long: Residue number of last residue in the second S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_seg2_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of second S3 segment
+  short: Segment ID of second S3 segment
+  long: Segment ID of second S3 segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_sta3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of first residue
+  short: Residue number of first residue in the third S3 symmetry segment
+  long: Residue number of first residue in the third S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_end3_1:
   default: .nan
-  type: float
+  type: integer
   min: -9999
   max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Residue number of last residue
+  short: Residue number of last residue in the third S3 symmetry segment
+  long: Residue number of last residue in the third S3 symmetry segment
+  group: 'symmetry'
+  explevel: expert
 s3sym_seg3_1:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
+  maxchars: 4
+  title: Segment ID of third S3 segment
+  short: Segment ID of third S3 segment
+  long: Segment ID of third S3 segment
+  group: 'symmetry'
+  explevel: expert
 ncs_on:
   default: false
   type: boolean
-  title: No title yet
+  title: Non-crystallographic symmetry restraints
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 kncs:
   default: 1.0
   type: float
@@ -1504,8 +1834,8 @@ kncs:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 numncs:
   default: 0
   type: integer
@@ -1514,8 +1844,8 @@ numncs:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 ncs_sta1_1:
   default: .nan
   type: float
@@ -1525,8 +1855,8 @@ ncs_sta1_1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 ncs_end1_1:
   default: .nan
   type: float
@@ -1536,8 +1866,8 @@ ncs_end1_1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 ncs_seg1_1:
   default: ''
   type: string
@@ -1546,8 +1876,8 @@ ncs_seg1_1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 ncs_sta2_1:
   default: .nan
   type: float
@@ -1557,8 +1887,8 @@ ncs_sta2_1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 ncs_end2_1:
   default: .nan
   type: float
@@ -1568,8 +1898,8 @@ ncs_end2_1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 ncs_seg2_1:
   default: ''
   type: string
@@ -1578,16 +1908,16 @@ ncs_seg2_1:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 fix_origin_1:
   default: false
   type: boolean
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'symmetry'
+  explevel: expert
 fix_origin_2:
   default: false
   type: boolean
@@ -1735,646 +2065,6 @@ fix_origin_19:
 fix_origin_20:
   default: false
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_1:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_1_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_1_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_2:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_2_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_2_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_3:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_3_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_3_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_4:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_4_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_4_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_5:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_5_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_5_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_6:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_6_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_6_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_7:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_7_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_7_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_8:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_8_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_8_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_9:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_9_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_9_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_10:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_10_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_10_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_11:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_11_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_11_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_12:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_12_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_12_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_13:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_13_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_13_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_14:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_14_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_14_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_15:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_15_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_15_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_16:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_16_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_16_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_17:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_17_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_17_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_18:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_18_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_18_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_19:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_19_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_19_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-nrair_20:
-  default: 0
-  type: integer
-  min: -9999
-  max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_start_20_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-rair_end_20_1:
-  default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
   title: No title yet
   short: No short description yet
   long: No long description yet

@@ -13,9 +13,9 @@
 eval ($kinter = 1.0)
 @MODULE:scale_inter_mini.cns
 
-evaluate ($unamb_scale = $Data.unamb_cool3)
-evaluate ($ambig_scale = $Data.amb_cool3)
-evaluate ($hbond_scale = $Data.hbond_cool3)
+evaluate ($unamb_scale = $Data.unamb_scale)
+evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe 
     scale dist $unamb_scale 

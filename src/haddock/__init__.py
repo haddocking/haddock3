@@ -19,6 +19,8 @@ modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.yaml")
 FCC_path = Path(haddock3_source_path.parent, 'fcc')
 
 config_expert_levels = ("easy", "expert", "guru")
+# yaml parameters with this `explevel` should be ignored when reading the yaml
+_hidden_level = "hidden"
 
 
 class EmptyPath:

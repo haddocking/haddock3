@@ -245,8 +245,8 @@ def prepare_single_input(pdb_input, psf_input=None):
     ncomponents = len(chainsegs)
     input_str += write_eval_line("ncomponents", ncomponents)
 
-    for i, segid in enumerate(chainsegs):
-        input_str += write_eval_line(f"prot_segid_{i + 1}", segid)
+    for i, segid in enumerate(chainsegs, start=1):
+        input_str += write_eval_line(f"prot_segid_{i}", segid)
 
     seed = RND.randint(100, 99999)
     input_str += write_eval_line('seed', seed)
@@ -305,7 +305,7 @@ def prepare_cns_input(
     if native_segid:
         pdb_list = []
         if isinstance(input_element, (list, tuple)):
-            id_counter = 0
+            id_counter = 1
             for pdb in input_element:
                 segids, chains = libpdb.identify_chainseg(
                     pdb.rel_path, sort=False

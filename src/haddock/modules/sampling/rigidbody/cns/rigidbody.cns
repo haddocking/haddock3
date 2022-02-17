@@ -33,7 +33,7 @@ evaluate ($ini_count    =1)
 evaluate ($structures   =$sampling)
 evaluate ($w_vdw        =$w_vdw)
 evaluate ($w_elec       =$w_elec)
-evaluate ($w_dist       =$w_dist)
+evaluate ($w_air        =$w_air)
 evaluate ($w_rg         =$w_rg)
 evaluate ($w_sani       =$w_sani)
 evaluate ($w_xrdc       =$w_xrdc)
@@ -60,7 +60,7 @@ while ($nmol <= $data.ncomponents) loop mol
 end loop mol
 
 ! non-bonded parameter set to use
-evaluate ($toppar.par_nonbonded = $par_nonbonded)
+evaluate ($toppar.par_nonbonded = "OPLSX")
 
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)
@@ -188,50 +188,21 @@ end if
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.unamb_hot=$unamb_hot)
-evaluate ($data.unamb_cool1=$unamb_cool1)
-evaluate ($data.unamb_cool2=$unamb_cool2)
-evaluate ($data.unamb_cool3=$unamb_cool3)
-evaluate ($data.noecv=$noecv)
-evaluate ($data.ncvpart=$ncvpart)
+evaluate ($data.randremoval=$randremoval)
+evaluate ($data.npart=$npart)
 
-evaluate ($data.amb_hot=$amb_hot)
-evaluate ($data.amb_cool1=$amb_cool1)
-evaluate ($data.amb_cool2=$amb_cool2)
-evaluate ($data.amb_cool3=$amb_cool3)
+evaluate ($data.amb_scale=$amb_scale)
+evaluate ($data.unamb_scale=$unamb_scale)
+evaluate ($data.hbond_scale=$hbond_scale)
 
-evaluate ($data.hbond_hot=$hbond_hot)
-evaluate ($data.hbond_cool1=$hbond_cool1)
-evaluate ($data.hbond_cool2=$hbond_cool2)
-evaluate ($data.hbond_cool3=$hbond_cool3)
-
-evaluate ($data.mrswi_hot=$mrswi_hot)
-evaluate ($data.mrswi_cool1=$mrswi_cool1)
-evaluate ($data.mrswi_cool2=$mrswi_cool2)
-evaluate ($data.mrswi_cool3=$mrswi_cool3)
-
-evaluate ($data.rswi_hot=$rswi_hot)
-evaluate ($data.rswi_cool1=$rswi_cool1)
-evaluate ($data.rswi_cool2=$rswi_cool2)
-evaluate ($data.rswi_cool3=$rswi_cool3)
-
-evaluate ($data.masy_hot=$masy_hot)
-evaluate ($data.masy_cool1=$masy_cool1)
-evaluate ($data.masy_cool2=$masy_cool2)
-evaluate ($data.masy_cool3=$masy_cool3)
-
-evaluate ($data.asy_hot=$asy_hot)
-evaluate ($data.asy_cool1=$asy_cool1)
-evaluate ($data.asy_cool2=$asy_cool2)
-evaluate ($data.asy_cool3=$asy_cool3)
 
 evaluate ($data.ranair=$ranair)
 if ($data.ranair eq true) then
-    evaluate ($data.noecv = false)
+    evaluate ($data.randremoval = false)
 end if
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
-evaluate ($data.kcont=$kcont)
+evaluate ($data.kcm=$kcm)
 evaluate ($data.surfrest=$surfrest)
 evaluate ($data.ksurf=$ksurf)
 
@@ -257,7 +228,7 @@ end loop mol1
 
 
 ! Restraints
-evaluate ($npart = $ncvpart)
+evaluate ($npart = $npart)
 
 
 ! Unsupported restraints
@@ -289,8 +260,8 @@ end
 
 flag include bond angle impr vdw end
 
-if ($Data.noecv eq true) then
-    evaluate ($npart = 1 + mod($count,$Data.ncvpart))
+if ($Data.randremoval eq true) then
+    evaluate ($npart = 1 + mod($count,$Data.npart))
     evaluate ($fileseed=$output_pdb_filename - ".pdb" + ".seed")
     evaluate ($seed = $count*$Saprotocol.iniseed)
     set display=$fileseed end
@@ -322,7 +293,7 @@ if ($Data.flags.noe  =  TRUE) then
 end if
 
 {* random removal of restaints ================================== *}
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     set message=on echo=on end
     noe cv $npart ? end
 else
@@ -368,14 +339,14 @@ if ($NUMNOE = 0) then
             end if
         end if
     end if
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
-if ($NUMNOE lt $Data.ncvpart) then
+if ($NUMNOE lt $Data.npart) then
     noe part=1 end
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
 flag excl bond angl dihe impr end
@@ -410,7 +381,7 @@ if ($Data.ranair eq true) then
         end if
         stop
     end if
-    evaluate ($Data.noecv = false)
+    evaluate ($Data.randremoval = false)
     noe
         reset
         nrestraints = 100000     ! allocate space for NOEs
@@ -523,9 +494,9 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             flag include elec end
         end if
 
-        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_cool3))
-        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_cool3))
-        evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_cool3))
+        evaluate ($unamb_scale = min(($unamb_scale * 2),$Data.unamb_scale))
+        evaluate ($ambig_scale = min(($ambig_scale * 2),$Data.amb_scale))
+        evaluate ($hbond_scale = min(($hbond_scale * 2),$Data.hbond_scale))
         evaluate ($symm_scale = min(($symm_scale * 2),$Data.ksym))
 
         noe
@@ -549,7 +520,7 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     if ($SaProtocol.rigidtrans eq true) then
 
-        evaluate ($cont_scale = $Data.kcont)
+        evaluate ($cont_scale = $Data.kcm)
         evaluate ($surf_scale = $Data.ksurf)
         noe
             scale contact $cont_scale
@@ -670,7 +641,7 @@ if ($Data.flags.sym eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         display Print out of cross-validated violations and rms not
         display possible in combination with symmetry restraints
         display CV values set therefore to 0
@@ -685,7 +656,7 @@ if ($Data.flags.sym eq true) then
         set message=off echo=off end
     end if
 else
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         set message=on echo=on end
         noe cv $ncvbest ? end
     end if
@@ -697,15 +668,15 @@ else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if
 end if
 
-evaluate ($unamb_scale = $Data.unamb_cool3)
-evaluate ($ambig_scale = $Data.amb_cool3)
-evaluate ($hbond_scale = $Data.hbond_cool3)
+evaluate ($unamb_scale = $Data.unamb_scale)
+evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe
     scale dist $unamb_scale

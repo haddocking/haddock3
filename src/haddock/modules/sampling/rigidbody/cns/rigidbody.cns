@@ -33,7 +33,7 @@ evaluate ($ini_count    =1)
 evaluate ($structures   =$sampling)
 evaluate ($w_vdw        =$w_vdw)
 evaluate ($w_elec       =$w_elec)
-evaluate ($w_dist       =$w_dist)
+evaluate ($w_air        =$w_air)
 evaluate ($w_rg         =$w_rg)
 evaluate ($w_sani       =$w_sani)
 evaluate ($w_xrdc       =$w_xrdc)
@@ -60,7 +60,7 @@ while ($nmol <= $data.ncomponents) loop mol
 end loop mol
 
 ! non-bonded parameter set to use
-evaluate ($toppar.par_nonbonded = $par_nonbonded)
+evaluate ($toppar.par_nonbonded = "OPLSX")
 
 ! Symmetry restraints
 evaluate ($data.ksym = $ksym)

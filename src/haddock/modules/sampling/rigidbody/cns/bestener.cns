@@ -60,8 +60,8 @@ end if
 
 evaluate ($etot = $w_vdw  * $vdw)
 evaluate ($etot = $etot + $w_elec * $elec)
-evaluate ($etot = $etot + $w_dist * $eair)
-evaluate ($etot = $etot + $w_rg *   $coll)
+evaluate ($etot = $etot + $w_air  * $eair)
+evaluate ($etot = $etot + $w_rg   * $coll)
 evaluate ($etot = $etot + $w_cdih * $cdih)
 evaluate ($etot = $etot + $w_sani * $sani)
 evaluate ($etot = $etot + $w_xrdc * $xrdc)

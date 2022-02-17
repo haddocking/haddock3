@@ -2,8 +2,6 @@
 import filecmp
 from pathlib import Path
 
-import pytest
-
 from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
 

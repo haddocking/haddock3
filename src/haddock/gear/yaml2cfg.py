@@ -9,6 +9,7 @@ import os
 from collections.abc import Mapping
 
 from haddock import _hidden_level, config_expert_levels
+from haddock.core.exceptions import ConfigurationError
 from haddock.libs.libio import read_from_yaml
 
 
@@ -56,7 +57,7 @@ def _yaml2cfg_text(ycfg, module, explevel):
     params = []
     exp_levels = {
         _el: i
-        for i, _el in enumerate(config_expert_levels + ("all",))
+        for i, _el in enumerate(config_expert_levels + ("all", _hidden_level))
         }
     exp_level_idx = exp_levels[explevel]
 
@@ -127,8 +128,12 @@ def flat_yaml_cfg(cfg):
             # addresses `explevel` in `mol*` topoaa.
             continue
         else:
-            if values["explevel"] == _hidden_level:
-                continue
+            # coordinates with tests.
+            # users should not edit yaml files. So this error triggers
+            # only during development
+            if "explevel" not in values:
+                emsg = f"`explevel` not defined for: {param!r}"
+                raise ConfigurationError(emsg)
 
         new[param] = new_value
 

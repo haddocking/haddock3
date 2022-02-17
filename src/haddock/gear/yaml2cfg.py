@@ -132,7 +132,8 @@ def flat_yaml_cfg(cfg):
             # users should not edit yaml files. So this error triggers
             # only during development
             if "explevel" not in values:
-                raise ConfigurationError(f"`explvl` not defined for: {param!r}")
+                emsg = f"`explevel` not defined for: {param!r}"
+                raise ConfigurationError(emsg)
 
         new[param] = new_value
 

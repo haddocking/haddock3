@@ -8,7 +8,7 @@ configuration files which have specific keys.
 import os
 from collections.abc import Mapping
 
-from haddock import config_expert_levels
+from haddock import _hidden_level, config_expert_levels
 from haddock.libs.libio import read_from_yaml
 
 
@@ -126,6 +126,10 @@ def flat_yaml_cfg(cfg):
             # happens when values is a string for example,
             # addresses `explevel` in `mol*` topoaa.
             continue
+        else:
+            if values["explevel"] == _hidden_level:
+                continue
 
         new[param] = new_value
+
     return new

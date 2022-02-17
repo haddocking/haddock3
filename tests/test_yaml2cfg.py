@@ -2,6 +2,8 @@
 import filecmp
 from pathlib import Path
 
+import pytest
+
 from haddock.gear.yaml2cfg import flat_yaml_cfg, yaml2cfg_text
 from haddock.libs.libio import read_from_yaml
 
@@ -13,17 +15,20 @@ complex_cfg = {
         "default": 1,
         "other": None,
         "others": [None, None],
+        "explevel": "easy",
         },
     "param2": {
         "default": 2,
         "other": None,
         "others": [None, None],
+        "explevel": "easy",
         },
     "param3": {
         "param4": {
             "default": 4,
             "other": None,
             "others": [None, None],
+            "explevel": "easy",
             },
         },
     "param5": {
@@ -32,8 +37,13 @@ complex_cfg = {
                 "default": 7,
                 "other": None,
                 "others": [None, None],
+                "explevel": "easy",
                 },
             },
+        },
+    "param8": {
+        "default": 5,
+        "explevel": "hidden",
         },
     }
 
@@ -46,10 +56,25 @@ complex_cfg_simplified = {
     }
 
 
+no_explvl_key = {
+    "param1": {
+        "default": 1,
+        "other": None,
+        "others": [None, None],
+        },
+    }
+
+
 def test_flat_complex_config_1():
     """Test if complex config is flatten properly."""
     result = flat_yaml_cfg(complex_cfg)
     assert result == complex_cfg_simplified
+
+
+def test_flat_complex_keyerror():
+    """Test missing `explvl` raises Keyerror."""
+    with pytest.raises(KeyError):
+        flat_yaml_cfg(no_explvl_key)
 
 
 def test_yaml2cfg_test():

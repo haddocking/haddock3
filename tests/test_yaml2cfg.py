@@ -41,10 +41,6 @@ complex_cfg = {
                 },
             },
         },
-    "param8": {
-        "default": 5,
-        "explevel": "hidden",
-        },
     }
 
 
@@ -69,12 +65,6 @@ def test_flat_complex_config_1():
     """Test if complex config is flatten properly."""
     result = flat_yaml_cfg(complex_cfg)
     assert result == complex_cfg_simplified
-
-
-def test_flat_complex_keyerror():
-    """Test missing `explvl` raises Keyerror."""
-    with pytest.raises(KeyError):
-        flat_yaml_cfg(no_explvl_key)
 
 
 def test_yaml2cfg_test():

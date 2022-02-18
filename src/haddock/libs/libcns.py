@@ -315,10 +315,8 @@ def prepare_cns_input(
     # prepare chain/seg IDs
     segid_str = ""
     if native_segid:
-        #pdb_list = []
         chainid_list = []
         if isinstance(input_element, (list, tuple)):
-            #id_counter = 1
             for pdb in input_element:
 
                 segids, chains = \
@@ -326,12 +324,10 @@ def prepare_cns_input(
 
                 chainsegs = sorted(list(set(segids) | set(chains)))
                 chainid_list.extend(chainsegs)
-                #print("LEEEEEN", input_element, len(chainsegs))
 
             for i, _chainseg in enumerate(chainid_list, start=1):
-                segid_str += \
-                    f"eval ($prot_segid_{i}=\"{_chainseg}\"{linesep}"
-                    #id_counter += 1
+                segid_str += write_eval_line(f'prot_segid_{i}', _chainseg)
+
         else:
             segids, chains = \
                 libpdb.identify_chainseg(input_element.rel_path, sort=False)
@@ -339,9 +335,9 @@ def prepare_cns_input(
             chainsegs = sorted(list(set(segids) | set(chains)))
 
             for i, _chainseg in enumerate(chainsegs, start=1):
-                segid_str += f"eval ($prot_segid_{i}=\"{_chainseg}\"){linesep}"
+                segid_str += write_eval_line(f'prot_segid_{i}', _chainseg)
 
-    output += f"eval ($count= {model_number}){linesep}"
+    output += write_eval_line('count', model_number)
 
     inp = (
         default_params

@@ -197,10 +197,6 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
     for pdb in pdb_input_list:
         input_str += f"coor @@{pdb}{linesep}"
         input_str += write_eval_line(f'input_pdb_filename_{ncount}', pdb)
-        #input_str += (
-        #    f"eval ($input_pdb_filename_{ncount}="
-        #    f' "{pdb}"){linesep}'
-        #    )
         ncount += 1
 
     # check how many chains there are across all the PDBs

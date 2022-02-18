@@ -92,7 +92,7 @@ yaml_params_types = {
     "boolean": (bool,),
     "string": (str,),
     "list": (list,),
-    "file": (type(Path()), type(EmptyPath())),
+    "file": (str,),
     }
 
 
@@ -159,13 +159,13 @@ def inspect_types(d, module):
         if isinstance(value, dict) and "default" in value:
             inspect_commons(value, param, module)
             _type = value["type"]
-            yaml_types_to_keys[_type](value, param, module)
             inspect_default_type(
-                (str,) if param.endswith('_fname') else yaml_params_types[_type],
+                yaml_params_types[_type],
                 value["default"],
                 param,
                 module,
                 )
+            yaml_types_to_keys[_type](value, param, module)
 
         elif isinstance(value, dict):
             inspect_types(value, f'{module}_{param}')

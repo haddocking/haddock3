@@ -4,11 +4,10 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 import importlib
-from pathlib import Path
 
 import pytest
 
-from haddock import EmptyPath, modules_defaults_path
+from haddock import modules_defaults_path
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libio import read_from_yaml

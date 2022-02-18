@@ -1,23 +1,27 @@
 cns_exec:
   default: ''
   type: file
-  title: "Path to the cns executable"
+  title: "Path to the CNS executable"
   short:
     If not provided, HADDOCK3 will use the cns path configured
     during the installation.
-  long: No long description yet
-  group: ''
+  long: CNS is a required component to run HADDOCK. Ideally it should have been 
+    configured during installation. If not you can specify with the cns_exec parameter
+    its path.
+  group: 'execution'
   explevel: easy
 ncores:
   default: 8
   type: integer
   min: 1
-  max: 200
-  precision: 0
-  title: Number of CPU cores to use for the CNS calculation processes
-  short: Number of CPUs is truncated to max CPUs available minus 1
-  long: No long description yet
-  group: ''
+  max: 500
+  title: Number of CPU cores
+  short: Number of CPU cores to use for the CNS calculations. 
+    It is truncated to max available CPUs  minus 1.
+  long: Number of CPU cores to use for the CNS calculations. 
+    This will define the number of concurrent jobs being executed.
+    Note that is truncated to the total number of available CPUs minus 1.
+  group: 'execution'
   explevel: easy
 mode:
   default: local
@@ -28,9 +32,44 @@ mode:
     - local
     - hpc
   title: Mode of execution
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  short: Mode of execution of the jobs, either local or using a batch system.
+  long: Mode of execution of the jobs, either local or using a batch system. 
+    Currently slurm and torque are supported. For the HPC mode the queue command must be 
+    specified in the queue parameter.
+  group: 'execution'
+  explevel: easy
+batch_type:
+  default: 'slurm'
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - slurm
+    - torque
+  title: Batch system
+  short: Type of batch system running on your server
+  long: Type of batch system running on your server. Only slurm and torque are supported at this time
+  group: 'execution'
+  explevel: 'easy'
+queue:
+  default: ''
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: Queue name
+  short: Name of the batch queue to which jobs will be submitted
+  long: Name of the batch queue to which jobs will be submitted. If not defined the batch system default will be used.
+  group: 'execution'
+  explevel: easy
+queue_limit:
+  default: 100
+  type: integer
+  min: 1
+  max: 9999
+  title: Number of jobs to submit to the batch system
+  short: Number of jobs to submit to the batch system
+  long: This parameter controls the number of jobs that will be submitted to the batch system. In combination with the concat parameter this allow to limit the load on the queueing system and also make sure jobs remain in the queue for some time (if concat > 1) to avoid high system loads on the batch system.
+  group: 'execution'
   explevel: easy
 concat:
   default: 1
@@ -38,37 +77,20 @@ concat:
   min: 1
   max: 9999
   precision: 0
-  title: Number of models to produce per job in HPC mode.
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-queue:
-  default: ''
-  type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
-  explevel: easy
-queue_limit:
-  default: 100
-  type: integer
-  min: 1
-  max: 9999
-  precision: 0
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Number of models to produce per job.
+  short: Multiple models can be calculated within one job
+  long: The defins the number of models that will be generated within on job script. 
+    This allows to concatenate the generation of models into one script. 
+    In that way jobs might run longer in the batch system and reduce the load on the scheduler.
+  group: 'execution'
   explevel: easy
 self_contained:
   default: false
   type: boolean
-  title: Whether to create a CNS contained run
-  short: Copies the CNS scripts and executable to the run folder
-  long: No long description yet
-  group: ''
-  explevel: easy
+  title: Create a self-contained run
+  short: This option will copy the CNS scripts and executable to the run folder.
+  long: This option will copy the CNS scripts and executable to the run folder to ensure that all scripts are available within the run dir.
+    This can be useful for for example remote execution of a job or for debugging purpose to allow to edit the scripts without touching the 
+    main installation.
+  group: 'execution'
+  explevel: guru

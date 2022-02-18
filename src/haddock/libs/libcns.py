@@ -264,7 +264,16 @@ def prepare_cns_input(
         native_segid=False,
         default_params_path=None,
         ):
-    """Generate the .inp file needed by the CNS engine."""
+    """
+    Generate the .inp file needed by the CNS engine.
+
+    Parameters
+    ----------
+    model_number : int
+        The number of the model. Will be used as file name suffix.
+
+    input_element : `libs.libontology.Persisten`, list of those
+    """
     # read the default parameters
     default_params = load_workflow_params(**defaults)
 
@@ -285,6 +294,7 @@ def prepare_cns_input(
             else:
                 psf_fname = pdb.topology.rel_path
                 psf_list.append(psf_fname)
+
     elif isinstance(input_element.topology, (list, tuple)):
         pdb = input_element  # for clarity
         for psf in pdb.topology:
@@ -298,32 +308,40 @@ def prepare_cns_input(
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
+
     output = f"{linesep}! Output structure{linesep}"
     output += write_eval_line('output_pdb_filename', output_pdb_filename)
 
+    # prepare chain/seg IDs
     segid_str = ""
     if native_segid:
-        pdb_list = []
+        #pdb_list = []
+        chainid_list = []
         if isinstance(input_element, (list, tuple)):
-            id_counter = 1
+            #id_counter = 1
             for pdb in input_element:
-                segids, chains = libpdb.identify_chainseg(
-                    pdb.rel_path, sort=False
-                    )
-                chainsegs = sorted(list(set(segids) | set(chains)))
-                for i, _ in enumerate(chainsegs, start=1):
-                    segid_str += (f"eval ($prot_segid_{i}=\"{id_counter}\")"
-                                  f"{linesep}")
-                    id_counter += 1
-        else:
-            segids, chains = libpdb.identify_chainseg(
-                input_element.rel_path, sort=False
-                )
-            chainsegs = sorted(list(set(segids) | set(chains)))
-            for i, id in enumerate(chainsegs, start=1):
-                segid_str += f"eval ($prot_segid_{i}=\"{id}\"){linesep}"
 
-    output += f"eval ($count=" f" {model_number}){linesep}"
+                segids, chains = \
+                    libpdb.identify_chainseg(pdb.rel_path, sort=False)
+
+                chainsegs = sorted(list(set(segids) | set(chains)))
+                chainid_list.extend(chainsegs)
+                #print("LEEEEEN", input_element, len(chainsegs))
+
+            for i, _chainseg in enumerate(chainid_list, start=1):
+                segid_str += \
+                    f"eval ($prot_segid_{i}=\"{_chainseg}\"{linesep}"
+                    #id_counter += 1
+        else:
+            segids, chains = \
+                libpdb.identify_chainseg(input_element.rel_path, sort=False)
+
+            chainsegs = sorted(list(set(segids) | set(chains)))
+
+            for i, _chainseg in enumerate(chainsegs, start=1):
+                segid_str += f"eval ($prot_segid_{i}=\"{_chainseg}\"){linesep}"
+
+    output += f"eval ($count= {model_number}){linesep}"
 
     inp = (
         default_params

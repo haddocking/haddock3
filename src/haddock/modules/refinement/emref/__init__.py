@@ -60,6 +60,7 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "emref",
+                    native_segid=True,
                     )
                 out_file = f"emref_{idx}.out"
 

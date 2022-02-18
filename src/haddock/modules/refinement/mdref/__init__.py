@@ -58,6 +58,7 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "mdref",
+                    native_segid=True,
                     )
                 out_file = f"mdref_{idx}.out"
 

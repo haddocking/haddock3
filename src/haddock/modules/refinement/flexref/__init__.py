@@ -59,6 +59,7 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "flexref",
+                    native_segid=True,
                     )
 
                 out_file = f"flexref_{idx}.out"

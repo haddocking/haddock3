@@ -12,9 +12,9 @@ fantastic project. There are several ways to contribute:
 Before attempting any development, please install HADDOCK3 following the
 instructions in the [INSTALL](INSTALL.md) file.
 
-## Contributing with new code
+## Contributing new code
 
-HADDOCK3 has two main testing workflows. Here, at the repository, we
+HADDOCK3 has two main testing workflows. Here, within the repository, we
 test the HADDOCK3's Python shell, code style, and building.  Our
 Continuous Integration (CI) pipeline is based on
 [tox](https://tox.wiki/en/latest/index.html) and GitHub Actions.

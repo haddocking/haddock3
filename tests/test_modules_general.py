@@ -4,10 +4,11 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 import importlib
+from pathlib import Path
 
 import pytest
 
-from haddock import modules_defaults_path
+from haddock import EmptyPath, modules_defaults_path
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libio import read_from_yaml
@@ -21,7 +22,88 @@ from haddock.modules import (
 
 # defines which modules are already working
 working_modules = [t for t in modules_category.items() if t[0] != 'topocg']
-etmsg = '{!r} not in {!r} for {!r}'  # errors message for param types
+
+# errors message for missing params keys
+ekmsg = '{!r} not in {!r} for {!r}'
+
+# errors message for wrong param types
+etmsg = 'Wrong type for {!r} in {!r}: got {!r}, expected {!r}'
+
+
+# helper functions for tests below
+def inspect_default_type(expected_type, value, param, module):
+    """Inspect the default value is of expected type."""
+    _vtype = type(value)
+    assert _vtype in expected_type, \
+        etmsg.format(param, module, _vtype, expected_type)
+
+
+def ignore(*args, **kwargs):
+    """Ignore this."""
+    return
+
+
+def inspect_commons(*args):
+    """Inspect keys that are common to all parameters."""
+    keys = (
+        'title',
+        'short',
+        'long',
+        'group',
+        'explevel',
+        )
+    keys_inspect(keys, *args)
+
+
+def inspect_int(*args):
+    """Inspect keys that are needed for integer type parameters."""
+    keys = ('min', 'max')
+    keys_inspect(keys, *args)
+
+
+def inspect_float(*args):
+    """Inspect keys that are needed for float type parameters."""
+    keys = ('min', 'max', 'precision')
+    keys_inspect(keys, *args)
+
+
+def inspect_list(*args):
+    """Inspect keys that are needed for list type parameters."""
+    keys = ('minitems', 'maxitems')
+    keys_inspect(keys, *args)
+
+
+def inspect_str(*args):
+    """Inspect keys that are needed for string type parameters."""
+    keys = ('minchars', 'maxchars')
+    keys_inspect(keys, *args)
+
+
+def keys_inspect(keys, d, param, module):
+    """Loop over keys to inspect."""
+    for key in keys:
+        assert key in d, ekmsg.format(key, param, module)
+
+
+# global dictionaries helping functions below
+yaml_params_types = {
+    "integer": (int, float),
+    "float": (float,),
+    "boolean": (bool,),
+    "string": (str,),
+    "list": (list,),
+    "file": (type(Path()), type(EmptyPath())),
+    }
+
+
+yaml_types_to_keys = {
+    "integer": inspect_int,
+    "float": inspect_float,
+    "string": inspect_str,
+    "list": inspect_list,
+    "file": ignore,
+    "boolean": ignore,
+    }
 
 
 @pytest.fixture(params=working_modules)
@@ -72,19 +154,18 @@ def inspect_types(d, module):
     # this dictionary also asserts that all types are controlled
     # it there's a type in the yaml that is not in this dict, a KeyError
     # raises
-    test_options = {
-        "integer": inspect_int,
-        "float": inspect_float,
-        "string": inspect_str,
-        "list": inspect_list,
-        "file": ignore,
-        "boolean": ignore,
-        }
 
     for param, value in d.items():
         if isinstance(value, dict) and "default" in value:
             inspect_commons(value, param, module)
-            test_options[value["type"]](value, param, module)
+            _type = value["type"]
+            yaml_types_to_keys[_type](value, param, module)
+            inspect_default_type(
+                (str,) if param.endswith('_fname') else yaml_params_types[_type],
+                value["default"],
+                param,
+                module,
+                )
 
         elif isinstance(value, dict):
             inspect_types(value, f'{module}_{param}')
@@ -93,53 +174,6 @@ def inspect_types(d, module):
             return
 
     return
-
-
-def ignore(*args, **kwargs):
-    """Ignore this."""
-    return
-
-
-def inspect_commons(*args):
-    """Inspect keys that are common to all parameters."""
-    keys = (
-        'title',
-        'short',
-        'long',
-        'group',
-        'explevel',
-        )
-    keys_inspect(keys, *args)
-
-
-def inspect_int(*args):
-    """Inspect keys that are needed for integer type parameters."""
-    keys = ('min', 'max')
-    keys_inspect(keys, *args)
-
-
-def inspect_float(*args):
-    """Inspect keys that are needed for float type parameters."""
-    keys = ('min', 'max', 'precision')
-    keys_inspect(keys, *args)
-
-
-def inspect_list(*args):
-    """Inspect keys that are needed for list type parameters."""
-    keys = ('minitems', 'maxitems')
-    keys_inspect(keys, *args)
-
-
-def inspect_str(*args):
-    """Inspect keys that are needed for string type parameters."""
-    keys = ('minchars', 'maxchars')
-    keys_inspect(keys, *args)
-
-
-def keys_inspect(keys, d, param, module):
-    """Loop over keys to inspect."""
-    for key in keys:
-        assert key in d, etmsg.format(key, param, module)
 
 
 def test_all_defaults_have_the_same_name(modules):

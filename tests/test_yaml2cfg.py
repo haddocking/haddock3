@@ -13,17 +13,20 @@ complex_cfg = {
         "default": 1,
         "other": None,
         "others": [None, None],
+        "explevel": "easy",
         },
     "param2": {
         "default": 2,
         "other": None,
         "others": [None, None],
+        "explevel": "easy",
         },
     "param3": {
         "param4": {
             "default": 4,
             "other": None,
             "others": [None, None],
+            "explevel": "easy",
             },
         },
     "param5": {
@@ -32,6 +35,7 @@ complex_cfg = {
                 "default": 7,
                 "other": None,
                 "others": [None, None],
+                "explevel": "easy",
                 },
             },
         },
@@ -43,6 +47,15 @@ complex_cfg_simplified = {
     "param2": 2,
     "param3": {"param4": 4},
     "param5": {"param6": {"param7": 7}},
+    }
+
+
+no_explvl_key = {
+    "param1": {
+        "default": 1,
+        "other": None,
+        "others": [None, None],
+        },
     }
 
 

@@ -24,7 +24,6 @@ evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($ini_count    =1)
 evaluate ($w_vdw        =$w_vdw )
 evaluate ($w_elec       =$w_elec )
-evaluate ($w_dist       =$w_dist )
 evaluate ($w_rg         =$w_rg )
 evaluate ($w_sani       =$w_sani )
 evaluate ($w_xrdc       =$w_xrdc )
@@ -74,7 +73,7 @@ end loop mol
 
 
 ! non-bonded parameter set to use
-evaluate ($toppar.par_nonbonded = $par_nonbonded)
+evaluate ($toppar.par_nonbonded = "OPLSX" )
 
 
 ! NCS restraints
@@ -202,14 +201,11 @@ end loop sym
 
 
 !Dihedrals, DNA and distance restraints
-evaluate ($Data.dnarest =$dnarest_on)
+evaluate ($data.dihedrals_scale=$dihedrals_scale)
 evaluate ($Data.flags.cdih =$dihedrals_on)
-evaluate ($Data.cdih.on =$dihedrals_on)
+evaluate ($Data.dnarest =$dnarest_on)
 evaluate ($Data.ssdihed =$ssdihed)
 evaluate ($Data.error_dih =$error_dih)
-evaluate ($data.dihedrals.on=$dihedrals_on)
-evaluate ($data.dihedrals_scale=$dihedrals_scale)
-evaluate ($data.hbonds_on=$hbonds_on)
 
 
 ! planarity restraints
@@ -217,25 +213,23 @@ evaluate ($Data.flags.plan =  false)
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.noecv=$noecv)
-evaluate ($data.ncvpart=$ncvpart)
+evaluate ($data.randremoval=$randremoval)
+evaluate ($data.npart=$npart)
 
 evaluate ($data.amb_scale=$amb_scale)
 evaluate ($data.unamb_scale=$unamb_scale)
 evaluate ($data.hbond_scale=$hbond_scale)
 
-evaluate ($data.ranair=$ranair)
-if ($data.ranair eq true) then
-    evaluate ($data.noecv = false)
+evaluate ($data.contactairs=$contactairs)
+if ($data.contactairs eq true) then
+    evaluate ($data.randremoval = false)
 end if
-evaluate ($data.cmrest=$cmrest)
-evaluate ($data.cmtight=$cmtight)
-evaluate ($data.surfrest=$surfrest)
-evaluate ($data.ksurf=$ksurf)
 evaluate ($data.kcont=$kcont)
 
+!Dihedral angle energy term:
+evaluate ($Data.flags.dihed = true) 
+
 !Electrostatics:
-evaluate ($Data.flags.dihed =$dihedflag)
 evaluate ($Data.flags.elec =$elecflag)
 evaluate ($Data.epsilon =$epsilon)
 evaluate ($Data.dielec  =$dielec)
@@ -252,10 +246,6 @@ while ($nmol1 <=$data.ncomponents) loop mol1
     end loop mol2
     evaluate ($nmol1 = $nmol1 + 1)
 end loop mol1
-
-
-! Restraints
-evaluate ($npart = $ncvpart)
 
 
 ! Unsupported restraints
@@ -315,9 +305,9 @@ else
 end if
 
 
-{* Read and write random seed in case noecv=true ===============*}
+{* Read and write random seed in case randremoval=true ===============*}
 
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
     fileexist $fileseed end
     if ($result eq true) then
@@ -346,7 +336,7 @@ set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     set message=on echo=on end
     noe cv $npart ? end
 else
@@ -367,15 +357,15 @@ evaluate ($numnoe = 0)
 evaluate ($numnoe = 999)
 noe ? end
 
-if ($NUMNOE lt $Data.ncvpart) then
+if ($NUMNOE lt $Data.npart) then
     noe part=1 end
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
 
-{* In ranair=true define contact restraint ===================================== *}
-if ($Data.ranair eq true) then
+{* In contactairs=true define contact restraint ===================================== *}
+if ($Data.contactairs eq true) then
     if ($Data.ncomponents > 2) then
         evaluate ($errfile = "FAILED")
         fileexist $errfile end
@@ -389,7 +379,7 @@ if ($Data.ranair eq true) then
         end if
         stop
     end if
-    evaluate ($Data.noecv = false)
+    evaluate ($Data.randremoval = false)
     noe
         reset
         nrestraints = 100000     ! allocate space for NOEs
@@ -433,12 +423,8 @@ inline @MODULE:setflags.cns
 
 @MODULE:symmultimer.cns
 
-if ($Data.cmrest eq true ) then
-    @MODULE:cm-restraints.cns
-end if
-
 ! use contact airs rather than surface restraints at it1
-if ($Data.surfrest eq true ) then
+if ($Data.contactairs eq true ) then
     @MODULE:contactairs.cns
 end if
 
@@ -618,7 +604,7 @@ if ($Data.flags.sym eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         evaluate ($violations_test_noe=0)
         evaluate ($rms_test_noe=0.0)
         display Print out of cross-validated violations and rms not
@@ -638,7 +624,7 @@ else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if

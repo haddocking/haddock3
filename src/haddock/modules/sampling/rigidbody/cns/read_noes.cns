@@ -30,8 +30,8 @@ if ($result eq true) then
      noe class ambi @@$filenam0 end
 end if
 
-if ($Data.noecv eq true) then
-     noe part $Data.ncvpart end
+if ($Data.randremoval eq true) then
+     noe part $Data.npart end
 end if
 
 fileexist $unambig_fname end

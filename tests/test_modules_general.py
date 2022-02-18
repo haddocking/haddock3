@@ -10,6 +10,7 @@ import pytest
 from haddock import modules_defaults_path
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.libs.libio import read_from_yaml
 from haddock.modules import (
     _not_valid_config,
     category_hierarchy,
@@ -18,8 +19,13 @@ from haddock.modules import (
     )
 
 
-@pytest.fixture(params=modules_category.items())
-def module(request):
+# defines which modules are already working
+working_modules = [t for t in modules_category.items() if t[0] != 'topocg']
+etmsg = '{!r} not in {!r} for {!r}'  # errors message for param types
+
+
+@pytest.fixture(params=working_modules)
+def modules(request):
     """Give imported HADDOCK3 modules."""
     module_name, category = request.param
     mod = ".".join(['haddock', 'modules', category, module_name])
@@ -27,22 +33,118 @@ def module(request):
     return module
 
 
-def test_config_reader_can_read_defaults(module):
-    """Test gear.config_reader can read modules' default file."""
-    if module.DEFAULT_CONFIG.parent.name == 'topocg':
-        read_from_yaml_config(module.DEFAULT_CONFIG)
-    else:
-        assert read_from_yaml_config(module.DEFAULT_CONFIG)
+@pytest.fixture()
+def module_yaml_dict(modules):
+    """Give flatted yaml config dictionaries."""
+    cfg = read_from_yaml_config(modules.DEFAULT_CONFIG)
+    return cfg
+
+
+@pytest.fixture()
+def module_yaml_pure(modules):
+    """Give the pure yaml dictionaries."""
+    # this is the pure yaml config
+    cfg = read_from_yaml(modules.DEFAULT_CONFIG)
+    return cfg, modules
+
+
+def test_config_reader_can_read_defaults(module_yaml_dict):
+    """Test all yaml dictionaries are not empty."""
+    assert module_yaml_dict
 
 
 def test_general_config():
-    """Test general config is readable."""
+    """Test general config is readable and not empty."""
     assert read_from_yaml_config(modules_defaults_path)
 
 
-def test_all_defaults_have_the_same_name(module):
+def test_yaml_keys(module_yaml_pure):
+    """
+    Test keys in each parameter.
+
+    Each parameter should have all the keys it is expected to have.
+    """
+    inspect_types(module_yaml_pure[0], module_yaml_pure[1].__name__)
+
+
+def inspect_types(d, module):
+    """Recursively inspect parameter keys according to their types."""
+    # this dictionary also asserts that all types are controlled
+    # it there's a type in the yaml that is not in this dict, a KeyError
+    # raises
+    test_options = {
+        "integer": inspect_int,
+        "float": inspect_float,
+        "string": inspect_str,
+        "list": inspect_list,
+        "file": ignore,
+        "boolean": ignore,
+        }
+
+    for param, value in d.items():
+        if isinstance(value, dict) and "default" in value:
+            inspect_commons(value, param, module)
+            test_options[value["type"]](value, param, module)
+
+        elif isinstance(value, dict):
+            inspect_types(value, f'{module}_{param}')
+
+        else:
+            return
+
+    return
+
+
+def ignore(*args, **kwargs):
+    """Ignore this."""
+    return
+
+
+def inspect_commons(*args):
+    """Inspect keys that are common to all parameters."""
+    keys = (
+        'title',
+        'short',
+        'long',
+        'group',
+        'explevel',
+        )
+    keys_inspect(keys, *args)
+
+
+def inspect_int(*args):
+    """Inspect keys that are needed for integer type parameters."""
+    keys = ('min', 'max')
+    keys_inspect(keys, *args)
+
+
+def inspect_float(*args):
+    """Inspect keys that are needed for float type parameters."""
+    keys = ('min', 'max', 'precision')
+    keys_inspect(keys, *args)
+
+
+def inspect_list(*args):
+    """Inspect keys that are needed for list type parameters."""
+    keys = ('minitems', 'maxitems')
+    keys_inspect(keys, *args)
+
+
+def inspect_str(*args):
+    """Inspect keys that are needed for string type parameters."""
+    keys = ('minchars', 'maxchars')
+    keys_inspect(keys, *args)
+
+
+def keys_inspect(keys, d, param, module):
+    """Loop over keys to inspect."""
+    for key in keys:
+        assert key in d, etmsg.format(key, param, module)
+
+
+def test_all_defaults_have_the_same_name(modules):
     """Test all default configuration files have the same name."""
-    assert module.DEFAULT_CONFIG.name == 'defaults.yaml'
+    assert modules.DEFAULT_CONFIG.name == 'defaults.yaml'
 
 
 def test_config_readers_keys():

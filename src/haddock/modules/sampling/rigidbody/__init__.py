@@ -68,6 +68,7 @@ class HaddockModule(BaseCNSModule):
                     self.params,
                     "rigidbody",
                     default_params_path=self.toppar_path,
+                    native_segid=True,
                     )
 
                 log_fname = f"rigidbody_{idx}.out"

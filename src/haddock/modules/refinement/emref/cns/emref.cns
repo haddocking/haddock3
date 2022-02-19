@@ -363,38 +363,6 @@ if ($NUMNOE lt $Data.npart) then
     evaluate ($Data.randremoval = FALSE)
 end if
 
-
-{* In contactairs=true define contact restraint ===================================== *}
-if ($Data.contactairs eq true) then
-    if ($Data.ncomponents > 2) then
-        evaluate ($errfile = "FAILED")
-        fileexist $errfile end
-        if ($result eq false) then
-            set display=$errfile end
-            display ========= Unsupported option ===========
-            display Random definition of AIRs with more than
-            display two molecules currently unsupported
-            display ========================================
-            close $errfile end
-        end if
-        stop
-    end if
-    evaluate ($Data.randremoval = false)
-    noe
-        reset
-        nrestraints = 100000     ! allocate space for NOEs
-        ceiling 1000
-    end
-    @MODULE:contactairs.cns
-
-    !Read back in hbond data
-    fileexist $hbond_fname end
-    if ($result eq true) then
-        noe @@$hbond_fname end
-    end if
-
-end if
-
 noe
     averaging  * sum
     potential  * soft
@@ -423,7 +391,6 @@ inline @MODULE:setflags.cns
 
 @MODULE:symmultimer.cns
 
-! use contact airs rather than surface restraints at it1
 if ($Data.contactairs eq true ) then
     @MODULE:contactairs.cns
 end if

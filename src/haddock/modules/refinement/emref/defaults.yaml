@@ -1465,7 +1465,7 @@ w_elec:
   title: Weight of the intermolecular electrostatic energy
   short: Weight of the intermolecular electrostatic energy in the scoring function
   long: Weight of the intermolecular electrostatic energy in the scoring function.
-    Note that this does not affect the electostatic energy during the rigidbody minimization.
+    Note that this does not affect the electostatic energy during the EM minimization.
   group: 'scoring'
   explevel: expert
 w_lcc:
@@ -1522,7 +1522,7 @@ w_vdw:
   title: Weight of the intermolecular van der Waals energy
   short: Weight of the intermolecular van der Waals energy in the scoring function
   long: Weight of the intermolecular van der Waals energy in the scoring function.
-    Note that this does not affect the van der Waals energy during the rigidbody minimization.
+    Note that this does not affect the van der Waals energy during the EM minimization.
   group: 'scoring'
   explevel: expert
 w_vean:
@@ -1641,8 +1641,8 @@ sampling:
   min: 1
   max: 50000
   title: Number of models to generate
-  short: Number of rigidbody docking models to generate
-  long: Number of rigidbody docking models to generate
+  short: Number of EM refined models to generate
+  long: Number of EM refined models to generate
   group: 'sampling'
   explevel: easy
 sampling_factor:
@@ -1661,8 +1661,8 @@ nemsteps:
   min: 1
   max: 10000
   title: Number of EM steps
-  short: Number of energy minimisation stesp to perform.
-  long: Number of energy minimisation stesp to perform. Note that the effective number might be smaller if the minimisation converges earlier.
+  short: Number of energy minimisation steps to perform.
+  long: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.
   group: 'sampling'
   explevel: expert
 iniseed:

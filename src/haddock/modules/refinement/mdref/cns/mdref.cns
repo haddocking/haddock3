@@ -77,7 +77,7 @@ end loop mol
 
 
 ! non-bonded parameter set to use
-evaluate ($toppar.par_nonbonded = $par_nonbonded)
+evaluate ($toppar.par_nonbonded = "OPLSX")
 
 
 ! NCS restraints
@@ -220,8 +220,8 @@ evaluate ($Data.flags.plan =  false)
 
 ! distance restraints
 evaluate ($Data.flags.noe  =  true)
-evaluate ($data.noecv=$noecv)
-evaluate ($data.ncvpart=$ncvpart)
+evaluate ($data.randremoval=$randremoval)
+evaluate ($data.npart=$npart)
 
 evaluate ($data.amb_scale=$amb_scale)
 evaluate ($data.unamb_scale=$unamb_scale)
@@ -229,13 +229,13 @@ evaluate ($data.hbond_scale=$hbond_scale)
 
 evaluate ($data.ranair=$ranair)
 if ($data.ranair eq true) then
-    evaluate ($data.noecv = false)
+    evaluate ($data.randremoval = false)
 end if
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
+evaluate ($data.kcm=$kcm)
+evaluate ($data.contactairs=$contactairs)
 evaluate ($data.kcont=$kcont)
-evaluate ($data.surfrest=$surfrest)
-evaluate ($data.ksurf=$ksurf)
 
 !Electrostatics:
 evaluate ($Data.flags.dihed =$dihedflag)
@@ -255,10 +255,6 @@ while ($nmol1 <=$data.ncomponents) loop mol1
     end loop mol2
     evaluate ($nmol1 = $nmol1 + 1)
 end loop mol1
-
-
-! Restraints
-evaluate ($npart = $ncvpart)
 
 
 ! Unsupported restraints
@@ -336,9 +332,9 @@ elseif ($refine.solvent = "dmso") then
     do (segid = "    ") (segid "PROT")
 end if
 
-{* Read and write random seed in case noecv=true ===============*}
+{* Read and write random seed in case randremoval=true ===============*}
 
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
     fileexist $fileseed end
     if ($result eq true) then
@@ -367,7 +363,7 @@ set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     noe cv $npart ? end
 else
     evaluate ($npart = 0)
@@ -388,7 +384,7 @@ evaluate ($numnoe = 999)
 noe ? end
 if ($NUMNOE = 0) then
     if ($Data.ncomponents > 1) then
-        if ($Data.surfrest eq FALSE) then
+        if ($Data.contactairs eq FALSE) then
             if ($Data.cmrest eq FALSE) then
                 if ($Data.ranair eq FALSE) then
                     evaluate ($errfile = "MODDIR:WARNING")
@@ -403,14 +399,14 @@ if ($NUMNOE = 0) then
             end if
         end if
     end if
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
-if ($NUMNOE lt $Data.ncvpart) then
+if ($NUMNOE lt $Data.npart) then
     noe part=1 end
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
 
@@ -429,7 +425,7 @@ if ($Data.ranair eq true) then
         end if
         stop
     end if
-    evaluate ($Data.noecv = false)
+    evaluate ($Data.randremoval = false)
     noe
         reset
         nrestraints = 100000     ! allocate space for NOEs
@@ -477,8 +473,7 @@ if ($Data.cmrest eq true ) then
     @MODULE:cm-restraints.cns
 end if
 
-! use contact airs rather than surface restraints at it1
-if ($Data.surfrest eq true ) then
+if ($Data.contactaits eq true ) then
     @MODULE:contactairs.cns
 end if
 
@@ -507,7 +502,7 @@ end if
 ! fix everything except the solvent for initial minimization
 fix sele = (not (resn WAT or resn HOH or resn TIP* or resn DMS)) end
 
-minimize powell nstep=200 drop=100 end
+minimize powell nstep=$nemsteps drop=100 end
 
 
 {* Energy minimisation with harmonic restraints on the molecules ==================== *}
@@ -546,7 +541,7 @@ igroup
                 (resn ANI or resn DAN or resn XAN) weight * 1 vdw 0.0 elec 0.0 end
 end
 
-minimize powell nstep=200 drop=10 end
+minimize powell nstep=$nemsteps drop=10 end
 
 
 {* MD refinement with harmonic restraints on the molecules ==================== *}
@@ -651,7 +646,7 @@ end loop cool
 ! final minimization without harmonic restraints
 
 flag excl harm end
-mini powell nstep 200 drop=10 end
+mini powell nstep $nemsteps drop=10 end
 
 
 {* ======================= calculate free molecules internal energy *}
@@ -745,7 +740,7 @@ if ($Data.flags.sym eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         evaluate ($violations_test_noe=0)
         evaluate ($rms_test_noe=0.0)
         display Print out of cross-validated violations and rms not
@@ -765,7 +760,7 @@ else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if

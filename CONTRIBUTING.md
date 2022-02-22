@@ -41,7 +41,8 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
     1.  `tox -e py39` runs tests in Python 3.9 environment.
     2.  `tox -e lint` shows you errors in the code style.
     3.  `tox -e build` simulates building the HADDOCK3 package.
-    4.  If you want to submit high-quality code, you may wish to run
+    4.  Run the above altogether with the simple `tox` command
+    5.  If you want to submit high-quality code, you may wish to run
     `tox -e radon` to assess your code cyclomatic complexity.
 
 5.  You can work on these `tox` tests until they all pass green before
@@ -50,11 +51,17 @@ submitting your PR.
 (should) to ensure the integrity of the python shell as a whole:
     1.  Navigate to any of the examples folder and run the `-test.cfg`
     file (see [USAGE](USAGE.md)).
+    2. `*-test.cfg` runs are meant for testing purposes only. The
+    `examples/` folder also contain `*-full.cfg` files for production runs.
+    You don't need to run these for testin.
     2.  If you have a powerful computer and want to run all tests in a
     row, navigate to the `examples` folder and run `python run_tests.py
     -b`. The `-b` flag ensures the run will stop asap an error is found.
     3. if your computer is not powerful enough, you can ask us to run
     those tests once you submitted the pull request.
+    4. For example, the `docking-protein-protein-test.cfg` run in less
+    than 3 minutes on a `Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz` laptop
+    using 7 cores.
 
 7.  Add a list of your new additions to the `CHANGELOG.md` file by
 adding a new sub-header as described bellow. This is mandatory for `tox
@@ -128,6 +135,8 @@ developing new functionalities. How?
 
 1. Use the Python standard library as much as possible.
 1. Numpy is always allowed.
+1. If you need to implement heavy calculations, it is best you use
+[Numba][numba] instead of C libraries. Talk with us before.
 1. You need a small function from a large library. Try to reimplement it
 yourself with the Python standard library.
     1. If you can't, talk first with
@@ -277,3 +286,4 @@ described above for *code contributions*.
 [flake]: https://flake8.pycqa.org/en/latest/ "flake8"
 [fr]: https://github.com/haddocking/haddock3/blob/b44304f0a1509d44d9689d7e2e4124f0ae3af0a1/tox.ini#L116-L130
 [numpydoc]: https://numpydoc.readthedocs.io/en/latest/format.html
+[numba]: https://numba.pydata.org/ "Numba"

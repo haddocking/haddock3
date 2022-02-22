@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libutil import (
+    convert_seconds_to_min_sec,
     file_exists,
     get_number_from_path_stem,
     non_negative_int,
@@ -122,3 +123,18 @@ def test_recursive_dict_update():
     assert a["b"]["d"] is not c["b"]["d"]
     assert b["z"]["z1"] is not c["z"]["z1"]
     assert c == {"a": 2, "b": {"c": 2, "d": {"e": 4}}, "z": {"z1": _list}}
+
+
+@pytest.mark.parametrize(
+    "seconds,expected",
+    [
+        (60, "1m0s"),
+        (120, "2m0s"),
+        (40, "0m40s"),
+        (179, "2m59s"),
+        ]
+    )
+def test_convert_seconds(seconds, expected):
+    """Convert seconds to min&sec."""
+    result = convert_seconds_to_min_sec(seconds)
+    assert result == expected

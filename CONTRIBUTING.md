@@ -61,7 +61,7 @@ submitting your PR.
     those tests once you submitted the pull request.
     4. For example, the `docking-protein-protein-test.cfg` run in less
     than 3 minutes on a `Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz` laptop
-    using 7 cores.
+    using 7 cores. All `-test.cfg` together take about 45 minutes.
 
 7.  Add a list of your new additions to the `CHANGELOG.md` file by
 adding a new sub-header as described bellow. This is mandatory for `tox

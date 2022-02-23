@@ -2,11 +2,16 @@
 import importlib
 import sys
 from pathlib import Path
+from time import time
 
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
-from haddock.libs.libutil import recursive_dict_update, zero_fill
+from haddock.libs.libutil import (
+    convert_seconds_to_min_sec,
+    recursive_dict_update,
+    zero_fill,
+    )
 from haddock.modules import (
     modules_category,
     non_mandatory_general_parameters_defaults,
@@ -96,9 +101,14 @@ class Step:
             path=self.working_path)
 
         # Run module
+        start = time()
         try:
             module.run(**self.config)
         except KeyboardInterrupt:
             log.info("You have halted subprocess execution by hitting Ctrl+c")
             log.info("Exiting...")
             sys.exit(1)
+
+        end = time()
+        elapsed = convert_seconds_to_min_sec(end - start)
+        module.log(f"took {elapsed}")

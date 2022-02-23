@@ -84,6 +84,8 @@ def main(
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
     """
     # anti-pattern to speed up CLI initiation
+    from time import time
+
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
     from haddock.libs.libio import working_directory
@@ -93,9 +95,13 @@ def main(
         log_file_name,
         log_formatters,
         )
-    from haddock.libs.libutil import log_error_and_exit
+    from haddock.libs.libutil import (
+        convert_seconds_to_min_sec,
+        log_error_and_exit,
+        )
     from haddock.libs.libworkflow import WorkflowManager
 
+    start = time()
     # the io.StringIO handler is a trick to save the log while run_dir
     # is not read from the configuration file and the log can be saved
     # in the final file.
@@ -146,6 +152,9 @@ def main(
         workflow.run()
 
     # Finish
+    end = time()
+    elapsed = convert_seconds_to_min_sec(end - start)
+    log.info(f"This HADDOCK3 run took: {elapsed}")
     log.info(get_adieu())
 
 

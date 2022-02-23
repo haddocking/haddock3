@@ -327,3 +327,41 @@ def log_error_and_exit():
             )
         log.info(get_goodbye_help())
         sys.exit(1)
+
+
+def convert_seconds_to_min_sec(seconds):
+    """
+    Convert seconds to min&sec.
+
+    Examples
+    --------
+    >>> convert_seconds_to_min_sec(60)
+    1 minute
+    >>> convert_seconds_to_min_sec(120)
+    2 minutes and 0 seconds
+    >>> convert_seconds_to_min_sec(179)
+    2 minutes and 59 seconds
+
+    Parameters
+    ----------
+    seconds : int
+        The elapsed time in seconds. Seconds are round to integers.
+
+    Returns
+    -------
+    str
+    """
+    seconds = int(round(seconds, 0))
+    hours = seconds // 3600
+    minutes = (seconds) // 60 % 60
+    seconds = (seconds) % 60
+
+    if hours:
+        return f"{hours}h{minutes}m{seconds}s"
+
+    if minutes:
+        s = "" if minutes == 1 else "s"
+        return f"{minutes} minute{s} and {seconds} seconds"
+
+    s = "" if seconds == 1 else "s"
+    return f"{seconds} seconds"

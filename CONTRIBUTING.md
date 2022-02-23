@@ -49,7 +49,7 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
 submitting your PR.
 
 6. Check if your contribution fulfills the requeriments proposed in the
-PR template, these are based on our experience to ensure the long-term
+PR template, these are based on the experience of some developers to ensure the long-term
 survival of the codebase. Suggestions are always welcomed.
 
 7.  We also have an `examples` folder with test cases that you can run

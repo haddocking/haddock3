@@ -48,9 +48,9 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
 5.  You can work on these `tox` tests until they all pass green before
 submitting your PR.
 
-6. Check if your contribution fulfills the requeriments proposed in the PR template, 
-these are based on the experience of our developer @joaomcteixeira and are in place
-to ensure the long-term survival of the codebase.
+6. Check if your contribution fulfills the requeriments proposed in the
+PR template, these are based on our experience to ensure the long-term
+survival of the codebase. Suggestions are always welcomed.
 
 7.  We also have an `examples` folder with test cases that you can run
 (should) to ensure the integrity of the python shell as a whole:
@@ -154,10 +154,10 @@ and comply with license requirements.
     alternative.
 1. Your new module largely depends on a library and reimplementing or
 copying is not an option. Then, consider if we can use that dependency
-as a runtime dependency (like `gdock` or `lightdock`) instead of an
+as a **runtime dependency** (like `gdock` or `lightdock`) instead of an
 installation dependency.
-1. Nothing of the above is possible. You **really** need an install
-dependency. Talk with us before.
+1. Nothing of the above is possible. You **really** need an *install
+dependency*. Talk with us before.
 
 ### 1.4 Code style
 

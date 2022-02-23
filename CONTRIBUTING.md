@@ -47,7 +47,12 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
 
 5.  You can work on these `tox` tests until they all pass green before
 submitting your PR.
-6.  We also have an `examples` folder with test cases that you can run
+
+6. Check if your contribution fulfills the requeriments proposed in the PR template, 
+these are based on the experience of our developer @joaomcteixeira and are in place
+to ensure the long-term survival of the codebase.
+
+7.  We also have an `examples` folder with test cases that you can run
 (should) to ensure the integrity of the python shell as a whole:
     1.  Navigate to any of the examples folder and run the `-test.cfg`
     file (see [USAGE](USAGE.md)).
@@ -63,7 +68,7 @@ submitting your PR.
     than 3 minutes on a `Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz` laptop
     using 7 cores. All `-test.cfg` together take about 45 minutes.
 
-7.  Add a list of your new additions to the `CHANGELOG.md` file by
+8.  Add a list of your new additions to the `CHANGELOG.md` file by
 adding a new sub-header as described bellow. This is mandatory for `tox
 -e build` to pass. Note this applies only after we have released the
 stable `3.0.0` version.

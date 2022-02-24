@@ -1,4 +1,16 @@
-"""Task running for libmpi."""
+"""
+MPI-wrapper for executing pickled CNSJobs created by libmpi.
+
+This was developed for use of lbimpi but it might be useful in some specific
+ scenario as a cli.
+
+For more information please refer to the README.md in the examples folder.
+
+Usage:
+    haddock3-mpi -h
+    haddock3-mpi tasks.pkl
+"""
+
 import argparse
 import pickle
 import sys
@@ -7,7 +19,10 @@ import sys
 try:
     from mpi4py import MPI
 except ImportError as e:
-    sys.exit(e)
+    _msg = (
+        f"{e} - To run this cli you must have mpi4py and "
+        "OpenMPI installed in the system")
+    sys.exit(_msg)
 
 
 COMM = MPI.COMM_WORLD
@@ -18,8 +33,14 @@ def split_tasks(task_l, n):
     return [task_l[_i::n] for _i in range(n)]
 
 
-# @joaomcteixeira factory pattern loader stuff #=============================#
-ap = argparse.ArgumentParser()
+# ========================================================================#
+# @joaomcteixeira proposed these helper functions to enhance flexibility
+#  and modularity of the CLIs #
+
+ap = argparse.ArgumentParser(
+    prog="MPI-wrapper for executing pickled CNSJobs created by libmpi",
+    description=__doc__,
+    )
 
 ap.add_argument(
     "pickled_tasks",

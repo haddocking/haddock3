@@ -267,7 +267,7 @@ def get_engine(mode, params):
         return partial(MPIScheduler, ncores=params["ncores"])
 
     else:
-        available_engines = ('hpc', 'local')
+        available_engines = ('hpc', 'local', "mpi")
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"

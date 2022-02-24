@@ -10,6 +10,7 @@ from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
+from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libio import working_directory
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
@@ -262,6 +263,8 @@ def get_engine(mode, params):
             Scheduler,
             ncores=params['ncores'],
             )
+    elif mode == "mpi":
+        return partial(MPIScheduler, ncores=params["ncores"])
 
     else:
         available_engines = ('hpc', 'local')

@@ -1,6 +1,8 @@
+"""Task running for libmpi."""
 import argparse
 import pickle
 import sys
+
 
 try:
     from mpi4py import MPI
@@ -22,7 +24,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument(
     "pickled_tasks",
     help="The input pickled tasks path",
-)
+    )
 
 
 def load_args(ap):

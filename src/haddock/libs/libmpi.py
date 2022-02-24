@@ -1,3 +1,4 @@
+"""Module in charge of MPI execution of tasks."""
 import pickle
 import shlex
 import subprocess
@@ -8,6 +9,8 @@ from haddock import log
 
 
 class MPIScheduler:
+    """Schedules tasks to be executed via MPI."""
+
     def __init__(self, tasks, ncores=None):
         self.tasks = tasks
         self.cwd = Path.cwd()
@@ -20,11 +23,12 @@ class MPIScheduler:
         log.debug(f"MPI cmd is {cmd}")
 
         log.info(
-            f"Executing tasks with the haddock3-mpi runner using {self.ncores} processors..."
-        )
+            f"Executing tasks with the haddock3-mpi runner using "
+            f"{self.ncores} processors..."
+            )
         p = subprocess.run(
             shlex.split(cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+            )
 
         # out = p.stdout.decode("utf-8")
         err = p.stderr.decode("utf-8")

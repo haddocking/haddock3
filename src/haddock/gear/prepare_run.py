@@ -175,8 +175,8 @@ def validate_modules_params(modules_params):
         if not defaults:
             return
 
-        blocks = get_blocks(defaults)
-        block_params = read_blocks(blocks, args)
+        block_params = get_blocks(args, defaults)
+        # block_params = read_blocks(blocks, args)
 
         diff = set(args.keys()) \
             - set(defaults.keys()) \
@@ -366,16 +366,113 @@ def check_specific_validations(params):
 
 
 # reading parameter blocks
-def get_blocks(config):
+def get_blocks(user_config, defaults):
+    """
+    Get configuration expandable blocks.
+
+    Parameters
+    ----------
+    user_config : dict
+        The user configuration file for a module.
+
+    defaults : dict
+        The default configuration file defined for the module.
+    """
+    type_1 = get_blocks_single_index(defaults)
+    type_2 = get_blocks_multiple_index(defaults)
+
+    allowed_params = set()
+    allowed_params.update(read_single_index_blocks(type_1, user_config))
+    allowed_params.update(read_multiple_index_blocks(type_2, user_config))
+    return allowed_params
+
+
+def get_blocks_multiple_index(config, limit=1):
+    """
+    Get parameter blocks with multiple indexes.
+
+    These blocks of params apply, for example, to different molecules.
+    That's why they have two looping indexes: one for the molecule and
+    other for the group.
+
+    This block of parameters follow the rule:
+
+    <param>_<something>_<N>_<G>
+
+    Where the actual param name is `paramN`, where `N` is an integer.
+
+    <something> be can any combination of alphanumeric chars and
+    underscores.
+
+    <G> is the number of the group, the will be incremented as we
+    expand.
+
+    These belong to the same parameter (`param1`) of the group `1`:
+    - param_something_1_1
+    - param_something2_1_1
+    - param_something_else_1_1
+    - param_something4_1
+
+    You could expand these with:
+    - param_something_1_2
+    - param_something2_1_2
+    - param_something_else_1_2
+    - param_something4_2
+
+    When used to read the modules' default configuration we expect the
+    <digit> to be only "_1". But having <digit> allows to identify
+    blocks from the user configuration.
+
+    We want to know:
+
+    Returns
+    -------
+    dictionary
+        In the form of:
+        {"param1": {
+            "something1", "something2", "something_else",
+            "something4"}
+    """
+    splitted = (parameter.split("_") for parameter in config)
+    parts = (
+        _parts
+        for _parts in splitted
+        if len(_parts) >= 4 and ''.join(_parts[-2:]).isdigit()
+        )
+
+    blocks = {}
+    for p in parts:
+        new = blocks.setdefault((p[0] + p[-2], p[-1]), {})
+        new.setdefault("counts", 0)
+        new["counts"] += 1
+        new.setdefault("mid", set())
+        new["mid"].add("_".join(p[1:-2]))
+
+    final_blocks = {
+        k: v["mid"]
+        for k, v in blocks.items()
+        if v["counts"] > limit
+        }
+    return final_blocks
+
+
+def get_blocks_single_index(config):
     """
     Get parameter blocks.
 
-    Block parameters follow the rule <preffix>_<something>_<digit>
+    Block parameters follow the rule <preffix>_<something>_<digit>.
 
-    - part1_something1_1
-    - part1_something2_1
-    - part1_something_else_1
-    - part1_something4_1
+    These belong to the same parameter (`param`) of the group `1`:
+    - param_something1_1
+    - param_something2_1
+    - param_something_else_1
+    - param_something4_1
+
+    You could expand these with:
+    - param_something1_2
+    - param_something2_2
+    - param_something_else_2
+    - param_something4_2
 
     When used to read the modules' default configuration we expect the
     <digit> to be only "_1". But having <digit> allows to identify
@@ -399,7 +496,7 @@ def get_blocks(config):
     parts = (
         _parts
         for _parts in splitted
-        if len(_parts) > 2 and _parts[-1].isdigit()
+        if len(_parts) > 2 and _parts[-1].isdigit() and not _parts[-2].isdigit()
         )
 
     blocks = {}
@@ -415,7 +512,7 @@ def get_blocks(config):
     return final_blocks
 
 
-def read_blocks(eblocks, params):
+def read_single_index_blocks(eblocks, params):
     """
     Read the blocks from the user configuration file.
 
@@ -436,7 +533,7 @@ def read_blocks(eblocks, params):
         A set of the new parameters that are allowed considering the
         groups found in the `default.cfg`.
     """
-    pblocks = get_blocks(params)
+    pblocks = get_blocks_single_index(params)
     eblocks = {k: v for k, v in eblocks.items() if k[1] == "1"}
 
     enames = [_[0] for _ in eblocks]
@@ -483,6 +580,52 @@ def read_blocks(eblocks, params):
             except ValueError:
                 continue
             if pname == block[0] and pidx == block[-1]:
+                new.add(p)
+
+    return new
+
+
+def read_multiple_index_blocks(eblocks, params):
+    """Read multiple index blocks."""
+    pblocks = get_blocks_multiple_index(params, limit=0)
+    eblocks = {k: v for k, v in eblocks.items() if k[1] == "1"}
+
+    enames = [_[0] for _ in eblocks]
+    new = set()
+
+    for block in pblocks:
+
+        if block[0] not in enames:
+            emsg = (
+                f"The parameter block '{block[0]}_*_{block[1]}_*' "
+                "is not a valid expandable parameter.")
+            raise ConfigurationError(emsg)
+
+        diff = pblocks[block].difference(eblocks[(block[0], "1")])
+        if diff:
+            emsg = (
+                "These parameters do not belong to the block "
+                f"'{block[0]}_*_{block[1]}_*': {', '.join(diff)!r}."
+                )
+            raise ConfigurationError(emsg)
+
+        num_found = len(pblocks[block])  # len of the set of elements
+        num_expected = len(eblocks[(block[0], "1")])
+
+        if num_found < num_expected:
+            emsg = (
+                f"The parameter block {block!r} expects "
+                f"{num_expected} parameters, but only {num_found} are present "
+                "in the configuration file."
+                )
+            raise ConfigurationError(emsg)
+
+        for p in params:
+            try:
+                pname, *_, molidx, pidx = p.split("_")
+            except ValueError:
+                continue
+            if pname + molidx == block[0]:
                 new.add(p)
 
     return new

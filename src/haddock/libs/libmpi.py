@@ -17,13 +17,13 @@ class MPIScheduler:
         self.ncores = ncores
 
     def run(self):
-        """Send it to the haddock3-mpi runner."""
+        """Send it to the haddock3-mpitask runner."""
         pkl_tasks = self._pickle_tasks()
-        cmd = f"mpirun -np {self.ncores} haddock3-mpi {pkl_tasks}"
+        cmd = f"mpirun -np {self.ncores} haddock3-mpitask {pkl_tasks}"
         log.debug(f"MPI cmd is {cmd}")
 
         log.info(
-            f"Executing tasks with the haddock3-mpi runner using "
+            f"Executing tasks with the haddock3-mpitask runner using "
             f"{self.ncores} processors..."
             )
         p = subprocess.run(

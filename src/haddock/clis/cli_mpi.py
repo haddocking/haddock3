@@ -7,8 +7,8 @@ This was developed for use of lbimpi but it might be useful in some specific
 For more information please refer to the README.md in the examples folder.
 
 Usage:
-    haddock3-mpi -h
-    haddock3-mpi tasks.pkl
+    haddock3-mpitask -h
+    haddock3-mpitask tasks.pkl
 """
 
 import argparse
@@ -34,8 +34,7 @@ def split_tasks(task_l, n):
 
 
 # ========================================================================#
-# @joaomcteixeira proposed these helper functions to enhance flexibility
-#  and modularity of the CLIs #
+# helper functions to enhance flexibility and modularity of the CLIs
 
 ap = argparse.ArgumentParser(
     prog="MPI-wrapper for executing pickled CNSJobs created by libmpi",

@@ -469,7 +469,7 @@ nrair_1:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_1_1:
+rair_sta_1_1:
   default: .nan
   type: integer
   min: -9999
@@ -500,7 +500,7 @@ nrair_2:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_2_1:
+rair_sta_2_1:
   default: .nan
   type: integer
   min: -9999
@@ -531,7 +531,7 @@ nrair_3:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_3_1:
+rair_sta_3_1:
   default: .nan
   type: integer
   min: -9999
@@ -562,7 +562,7 @@ nrair_4:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_4_1:
+rair_sta_4_1:
   default: .nan
   type: integer
   min: -9999
@@ -593,7 +593,7 @@ nrair_5:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_5_1:
+rair_sta_5_1:
   default: .nan
   type: integer
   min: -9999
@@ -624,7 +624,7 @@ nrair_6:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_6_1:
+rair_sta_6_1:
   default: .nan
   type: integer
   min: -9999
@@ -655,7 +655,7 @@ nrair_7:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_7_1:
+rair_sta_7_1:
   default: .nan
   type: integer
   min: -9999
@@ -686,7 +686,7 @@ nrair_8:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_8_1:
+rair_sta_8_1:
   default: .nan
   type: integer
   min: -9999
@@ -717,7 +717,7 @@ nrair_9:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_9_1:
+rair_sta_9_1:
   default: .nan
   type: integer
   min: -9999
@@ -748,7 +748,7 @@ nrair_10:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_10_1:
+rair_sta_10_1:
   default: .nan
   type: integer
   min: -9999
@@ -779,7 +779,7 @@ nrair_11:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_11_1:
+rair_sta_11_1:
   default: .nan
   type: integer
   min: -9999
@@ -810,7 +810,7 @@ nrair_12:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_12_1:
+rair_sta_12_1:
   default: .nan
   type: integer
   min: -9999
@@ -841,7 +841,7 @@ nrair_13:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_13_1:
+rair_sta_13_1:
   default: .nan
   type: integer
   min: -9999
@@ -872,7 +872,7 @@ nrair_14:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_14_1:
+rair_sta_14_1:
   default: .nan
   type: integer
   min: -9999
@@ -903,7 +903,7 @@ nrair_15:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_15_1:
+rair_sta_15_1:
   default: .nan
   type: integer
   min: -9999
@@ -934,7 +934,7 @@ nrair_16:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_16_1:
+rair_sta_16_1:
   default: .nan
   type: integer
   min: -9999
@@ -965,7 +965,7 @@ nrair_17:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_17_1:
+rair_sta_17_1:
   default: .nan
   type: integer
   min: -9999
@@ -996,7 +996,7 @@ nrair_18:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_18_1:
+rair_sta_18_1:
   default: .nan
   type: integer
   min: -9999
@@ -1027,7 +1027,7 @@ nrair_19:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_19_1:
+rair_sta_19_1:
   default: .nan
   type: integer
   min: -9999
@@ -1058,7 +1058,7 @@ nrair_20:
     Only solvent accessible residues will be considered. See also the ranair parameter. 
   group: 'ab initio mode'
   explevel: expert
-rair_start_20_1:
+rair_sta_20_1:
   default: .nan
   type: integer
   min: -9999

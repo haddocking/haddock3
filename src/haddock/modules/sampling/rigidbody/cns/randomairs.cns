@@ -196,7 +196,7 @@ evaluate ($selseg2 = $result)
 show (resn) (attribute store4 = $iselres2 and tag)
 evaluate ($selnam2 = $result)
 
-evaluate ($dispname="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".disp")
+evaluate ($dispname= $output_pdb_filename - ".pdb" + ".disp")
 set display=$dispname end
 
 display $selnam1 $selres1 $selseg1

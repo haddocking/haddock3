@@ -9,20 +9,20 @@
 ! * as part of this package.                                            *
 ! ***********************************************************************
 !
-for $id in id (tag and segid $Toppar.prot_segid_1 and (segid $Toppar.prot_segid_2) around 5.0) loop defnoe1
+for $id in id (tag and segid $prot_segid_1 and (segid $prot_segid_2) around 5.0) loop defnoe1
     show (resid) (id $id)
     evaluate ($inres = $result)
     noe
-        assign (resid $inres and segid $Toppar.prot_segid_1)
-               (byres (segid $Toppar.prot_segid_2 and (segid $Toppar.prot_segid_1) around 5.0)) 2.0 2.0 0.0
+        assign (resid $inres and segid $prot_segid_1)
+               (byres (segid $prot_segid_2 and (segid $prot_segid_1) around 5.0)) 2.0 2.0 0.0
     end
 end loop defnoe1
 
-for $id in id (tag and segid $Toppar.prot_segid_2 and (segid $Toppar.prot_segid_1) around 5.0) loop defnoe2
+for $id in id (tag and segid $prot_segid_2 and (segid $prot_segid_1) around 5.0) loop defnoe2
     show (resid) (id $id)
     evaluate ($inres = $result)
     noe
-        assign (resid $inres and segid $Toppar.prot_segid_2)
-               (byres (segid $Toppar.prot_segid_1 and (segid $Toppar.prot_segid_2) around 5.0)) 2.0 2.0 0.0
+        assign (resid $inres and segid $prot_segid_2)
+               (byres (segid $prot_segid_1 and (segid $prot_segid_2) around 5.0)) 2.0 2.0 0.0
     end
 end loop defnoe2

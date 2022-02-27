@@ -19,17 +19,17 @@ eval($xb = 0.0)
 eval($zb = 0.0)
 eval($zb = 0.0)
 
-show aver (x) (segid $Toppar.prot_segid_$nchain1 and ((segid $Toppar.prot_segid_$nchain2) around $distcu))
+show aver (x) (segid $prot_segid_$nchain1 and ((segid $prot_segid_$nchain2) around $distcu))
 evaluate ($xa = $result)
-show aver (y) (segid $Toppar.prot_segid_$nchain1 and ((segid $Toppar.prot_segid_$nchain2) around $distcu))
+show aver (y) (segid $prot_segid_$nchain1 and ((segid $prot_segid_$nchain2) around $distcu))
 evaluate ($ya = $result)
-show aver (z) (segid $Toppar.prot_segid_$nchain1 and ((segid $Toppar.prot_segid_$nchain2) around $distcu))
+show aver (z) (segid $prot_segid_$nchain1 and ((segid $prot_segid_$nchain2) around $distcu))
 evaluate ($za = $result)
-show aver (x) (segid $Toppar.prot_segid_$nchain2 and ((segid $Toppar.prot_segid_$nchain1) around $distcu))
+show aver (x) (segid $prot_segid_$nchain2 and ((segid $prot_segid_$nchain1) around $distcu))
 evaluate ($xb = $result)
-show aver (y) (segid $Toppar.prot_segid_$nchain2 and ((segid $Toppar.prot_segid_$nchain1) around $distcu))
+show aver (y) (segid $prot_segid_$nchain2 and ((segid $prot_segid_$nchain1) around $distcu))
 evaluate ($yb = $result)
-show aver (z) (segid $Toppar.prot_segid_$nchain2 and ((segid $Toppar.prot_segid_$nchain1) around $distcu))
+show aver (z) (segid $prot_segid_$nchain2 and ((segid $prot_segid_$nchain1) around $distcu))
 evaluate ($zb = $result)
 eval($xdiff=$xa-$xb)
 eval($ydiff=$ya-$yb)
@@ -39,7 +39,7 @@ eval($rnorm=$xdiff**2+$ydiff**2+$zdiff**2)
 if ($rnorm > 0.0) then
 
     coor
-        rotate sele= (segid $Toppar.prot_segid_$nchain2 or segid $watersegname_$nchain2 and not name MAP)
+        rotate sele= (segid $prot_segid_$nchain2 or segid $watersegname_$nchain2 and not name MAP)
                center=($xa $ya $za)
                axis ($xdiff $ydiff $zdiff)
                $rotate180
@@ -51,8 +51,8 @@ if ($rnorm > 0.0) then
         eval ($nch1 = 0)
         while ($nch1 < $data.ncomponents) loop nloop1
             eval($nch1 = $nch1 + 1)
-            if ($Toppar.fix_origin_$nch1 eq false) then
-                group (segid $Toppar.prot_segid_$nch1 or segid $watersegname_$nch1 and not name MAP)
+            if ($mol_fix_origin_$nch1 eq false) then
+                group (segid $prot_segid_$nch1 or segid $watersegname_$nch1 and not name MAP)
             end if
             translation=true
         end loop nloop1
@@ -65,8 +65,8 @@ if ($rnorm > 0.0) then
         eval ($nch1 = 0)
         while ($nch1 < $data.ncomponents) loop nloop1
             eval($nch1 = $nch1 + 1)
-            if ($Toppar.fix_origin_$nch1 eq false) then
-                group (segid $Toppar.prot_segid_$nch1 or segid $watersegname_$nch1 and not name MAP)
+            if ($mol_fix_origin_$nch1 eq false) then
+                group (segid $prot_segid_$nch1 or segid $watersegname_$nch1 and not name MAP)
             end if
             translation=true
         end loop nloop1

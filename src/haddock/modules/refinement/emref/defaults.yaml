@@ -1,7 +1,7 @@
 #
 # Group molecule
 #
-fix_origin_1:
+mol_fix_origin_1:
   default: false
   type: boolean
   title: Fix molecule
@@ -9,7 +9,7 @@ fix_origin_1:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_2:
+mol_fix_origin_2:
   default: false
   type: boolean
   title: Fix molecule
@@ -17,7 +17,7 @@ fix_origin_2:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_3:
+mol_fix_origin_3:
   default: false
   type: boolean
   title: Fix molecule
@@ -25,7 +25,7 @@ fix_origin_3:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_4:
+mol_fix_origin_4:
   default: false
   type: boolean
   title: Fix molecule
@@ -33,7 +33,7 @@ fix_origin_4:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_5:
+mol_fix_origin_5:
   default: false
   type: boolean
   title: Fix molecule
@@ -41,7 +41,7 @@ fix_origin_5:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_6:
+mol_fix_origin_6:
   default: false
   type: boolean
   title: Fix molecule
@@ -49,7 +49,7 @@ fix_origin_6:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_7:
+mol_fix_origin_7:
   default: false
   type: boolean
   title: Fix molecule
@@ -57,7 +57,7 @@ fix_origin_7:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_8:
+mol_fix_origin_8:
   default: false
   type: boolean
   title: Fix molecule
@@ -65,7 +65,7 @@ fix_origin_8:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_9:
+mol_fix_origin_9:
   default: false
   type: boolean
   title: Fix molecule
@@ -73,7 +73,7 @@ fix_origin_9:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_10:
+mol_fix_origin_10:
   default: false
   type: boolean
   title: Fix molecule
@@ -81,7 +81,7 @@ fix_origin_10:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_11:
+mol_fix_origin_11:
   default: false
   type: boolean
   title: Fix molecule
@@ -89,7 +89,7 @@ fix_origin_11:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_12:
+mol_fix_origin_12:
   default: false
   type: boolean
   title: Fix molecule
@@ -97,7 +97,7 @@ fix_origin_12:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_13:
+mol_fix_origin_13:
   default: false
   type: boolean
   title: Fix molecule
@@ -105,7 +105,7 @@ fix_origin_13:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_14:
+mol_fix_origin_14:
   default: false
   type: boolean
   title: Fix molecule
@@ -113,7 +113,7 @@ fix_origin_14:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_15:
+mol_fix_origin_15:
   default: false
   type: boolean
   title: Fix molecule
@@ -121,7 +121,7 @@ fix_origin_15:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_16:
+mol_fix_origin_16:
   default: false
   type: boolean
   title: Fix molecule
@@ -129,7 +129,7 @@ fix_origin_16:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_17:
+mol_fix_origin_17:
   default: false
   type: boolean
   title: Fix molecule
@@ -137,7 +137,7 @@ fix_origin_17:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_18:
+mol_fix_origin_18:
   default: false
   type: boolean
   title: Fix molecule
@@ -145,7 +145,7 @@ fix_origin_18:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_19:
+mol_fix_origin_19:
   default: false
   type: boolean
   title: Fix molecule
@@ -153,7 +153,7 @@ fix_origin_19:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_20:
+mol_fix_origin_20:
   default: false
   type: boolean
   title: Fix molecule
@@ -161,7 +161,7 @@ fix_origin_20:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-shape_1:
+mol_shape_1:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -169,7 +169,7 @@ shape_1:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_2:
+mol_shape_2:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -177,7 +177,7 @@ shape_2:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_3:
+mol_shape_3:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -185,7 +185,7 @@ shape_3:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_4:
+mol_shape_4:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -193,7 +193,7 @@ shape_4:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_5:
+mol_shape_5:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -201,7 +201,7 @@ shape_5:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_6:
+mol_shape_6:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -209,7 +209,7 @@ shape_6:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_7:
+mol_shape_7:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -217,7 +217,7 @@ shape_7:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_8:
+mol_shape_8:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -225,7 +225,7 @@ shape_8:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_9:
+mol_shape_9:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -233,7 +233,7 @@ shape_9:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_10:
+mol_shape_10:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -241,7 +241,7 @@ shape_10:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_11:
+mol_shape_11:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -249,7 +249,7 @@ shape_11:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_12:
+mol_shape_12:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -257,7 +257,7 @@ shape_12:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_13:
+mol_shape_13:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -265,7 +265,7 @@ shape_13:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_14:
+mol_shape_14:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -273,7 +273,7 @@ shape_14:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_15:
+mol_shape_15:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -281,7 +281,7 @@ shape_15:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_16:
+mol_shape_16:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -289,7 +289,7 @@ shape_16:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_17:
+mol_shape_17:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -297,7 +297,7 @@ shape_17:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_18:
+mol_shape_18:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -305,7 +305,7 @@ shape_18:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_19:
+mol_shape_19:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -313,7 +313,7 @@ shape_19:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_20:
+mol_shape_20:
   default: false
   type: boolean
   title: Is the molecule a shape?

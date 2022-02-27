@@ -28,12 +28,12 @@ do (store1 = 1) (all)
 evaluate ($group=1)
 evaluate ($done=false)
 while ( $done = false ) loop bdihe
-    if ( $exist_Toppar.prot_segid_$group = true ) then
-        show sum(1) ( segid $Toppar.prot_segid_$group )
+    if ( $exist_prot_segid_$group = true ) then
+        show sum(1) ( segid $prot_segid_$group )
         if ( $result > 0 ) then
             evaluate ($error_phi=$Data.error_dih)
             evaluate ($error_psi=$Data.error_dih)
-            for $id in id (segid $Toppar.prot_segid_$group and tag and not resn TIP3 ) loop resid
+            for $id in id (segid $prot_segid_$group and tag and not resn TIP3 ) loop resid
                 show (segid) (id $id)
                 evaluate ($segid=$result)
                 show (resid) ( id $id )

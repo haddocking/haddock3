@@ -18,9 +18,9 @@ evaluate ($ncount = 0)
 evaluate ($nfixed = 0)
 while ($ncount < $data.ncomponents) loop orientmol
     evaluate ($ncount = $ncount + 1)
-    if ($Toppar.fix_origin_$ncount eq true) then
+    if ($mol_fix_origin_$ncount eq true) then
         evaluate ($nfixed = $nfixed + 1)
-        do (store4 = 1) (segid $Toppar.prot_segid_$ncount)
+        do (store4 = 1) (segid $prot_segid_$ncount)
     end if
 end loop orientmol
  
@@ -50,12 +50,12 @@ if ($nfixed < $data.ncomponents) then
     while ($ncount < $data.ncomponents) loop orientmol
         evaluate ($ncount = $ncount +1)
         eval($watersegname_$ncount="WA" + encode($ncount))
-        if ($Toppar.fix_origin_$ncount eq false) then
-            coor orient sele=(segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount) end
-            coor sele=(segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount) translate vector = ($xc $yc $zc) end
-            do (xcomp = x) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
-            do (ycomp = y) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
-            do (zcomp = z) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        if ($mol_fix_origin_$ncount eq false) then
+            coor orient sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) end
+            coor sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) translate vector = ($xc $yc $zc) end
+            do (xcomp = x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+            do (ycomp = y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+            do (zcomp = z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         end if
     end loop orientmol
   
@@ -71,19 +71,19 @@ if ($nfixed < $data.ncomponents) then
     while ($ncount < $data.ncomponents) loop findmax
         evaluate ($ncount = $ncount +1)
   
-        show max (x) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show max (x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($xdim = $result)
-        show min (x) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show min (x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($xdim = $xdim - $result)
   
-        show max (y) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show max (y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($ydim = $result)
-        show min (y) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show min (y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($ydim = $ydim - $result)
   
-        show max (z) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show max (z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($zdim = $result)
-        show min (z) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show min (z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($zdim = $zdim - $result)
   
         ! Check which dimension (x,y,z) is the largest = mxdim
@@ -107,8 +107,8 @@ if ($nfixed < $data.ncomponents) then
         evaluate ($ncount = 0)
         while ($ncount < $data.ncomponents) loop orientmol
             evaluate ($ncount = $ncount + 1)
-            if ($Toppar.fix_origin_$ncount eq false) then
-                do (store4 = 1) (segid $Toppar.prot_segid_$ncount)
+            if ($mol_fix_origin_$ncount eq false) then
+                do (store4 = 1) (segid $prot_segid_$ncount)
             end if
         end loop orientmol
   
@@ -124,7 +124,7 @@ if ($nfixed < $data.ncomponents) then
         evaluate ($increment = 360/$n_moving_mol)
         while ($ncount le $data.ncomponents) loop orientsym
   
-            if ($Toppar.fix_origin_$ncount eq false) then
+            if ($mol_fix_origin_$ncount eq false) then
                 {* rotate around z axis *}
                 evaluate ($xr = $increment)
                 evaluate ($x1 = cos($xr))
@@ -139,7 +139,7 @@ if ($nfixed < $data.ncomponents) then
                 coor
                     center=($xc $yc $zc)
                     rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
-                    sele=(segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+                    sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount)
                 end
                 evaluate ($increment = $xr + 360/$n_moving_mol)
   
@@ -154,7 +154,7 @@ if ($nfixed < $data.ncomponents) then
         evaluate ($ncount = 0)
         while ($ncount < $data.ncomponents) loop centermol
             evaluate ($ncount = $ncount + 1)
-            if ($Toppar.fix_origin_$ncount eq false) then
+            if ($mol_fix_origin_$ncount eq false) then
                 evaluate($n_moving_mol = $n_moving_mol + 1)
             end if
         end loop centermol
@@ -178,7 +178,7 @@ if ($nfixed < $data.ncomponents) then
         evaluate ($ncount = 0)
         while ($ncount < $data.ncomponents) loop genrandom
             evaluate ($ncount = $ncount + 1)
-            if ($Toppar.fix_origin_$ncount eq true) then
+            if ($mol_fix_origin_$ncount eq true) then
                 evaluate ($random_$ncount = 0.0)
             else
                 evaluate ($random_$ncount = random())
@@ -204,9 +204,9 @@ if ($nfixed < $data.ncomponents) then
                 end if
             end loop selectmol
   
-            if ($Toppar.fix_origin_$maxid eq false) then
+            if ($mol_fix_origin_$maxid eq false) then
                 coor trans 
-  	                 sele=(segid $Toppar.prot_segid_$maxid or segid $watersegname_$maxid) 
+  	                 sele=(segid $prot_segid_$maxid or segid $watersegname_$maxid) 
   	                 vector=($x_$molcounter, $y_$molcounter, $z_$molcounter)
   	            end
   

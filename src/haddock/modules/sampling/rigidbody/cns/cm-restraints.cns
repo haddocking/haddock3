@@ -24,49 +24,52 @@ while ($ncount < $data.ncomponents) loop nloop1
     evaluate ($dim_$ncount = 0.0)
 
     !orient molecule
-    coor orient sele=(segid $Toppar.prot_segid_$ncount) end
+    coor orient sele=(segid $prot_segid_$ncount) end
 
     ! find dimensions
-    show max (x) (segid $Toppar.prot_segid_$ncount and (name CA or name BB or name N1))
+    show max (x) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
     evaluate ($xdim = $result)
-    show max (y) (segid $Toppar.prot_segid_$ncount and (name CA or name BB or name N1))
+    show max (y) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
     evaluate ($ydim = $result)
-    show max (z) (segid $Toppar.prot_segid_$ncount and (name CA or name BB or name N1))
+    show max (z) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
     evaluate ($zdim = $result)
-    show min (x) (segid $Toppar.prot_segid_$ncount and (name CA or name BB or name N1))
+    show min (x) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
     evaluate ($xdim = $xdim - $result)
-    show min (y) (segid $Toppar.prot_segid_$ncount and (name CA or name BB or name N1))
+    show min (y) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
     evaluate ($ydim = $ydim - $result)
-    show min (z) (segid $Toppar.prot_segid_$ncount and (name CA or name BB or name N1))
+    show min (z) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
     evaluate ($zdim = $zdim - $result)
 
     evaluate ($corr = max($xdim,$ydim))
     evaluate ($corr = max($corr,$zdim))
 
     if  ($data.cmtight eq false) then
-        ! use average of all three dimensions
+        ! use average of all three dimensions + 10A
         evaluate ($dim_$ncount = ($xdim + $ydim + $zdim)/6.0)
     else
         ! use only the average of the smallest two dimensions
         evaluate ($dim_$ncount = ($xdim + $ydim + $zdim - $corr)/4.0)
     end if
 
-    ! check if the molecule is a DNA
-    do (store6 = 0) (all)
-    do (store6 = 1) (segid $Toppar.prot_segid_$ncount and tag)
-    show sum (store6) (all)
-    evaluate ($nresmol = $result)
-    do (store6 = 0) (all)
-    do (store6 = 1) (segid $Toppar.prot_segid_$ncount and (resn DA or resn DC or resn DG or resn DT) and tag)
-    show sum (store6) (all)
-    if ($result eq $nresmol) then
-        ! we are dealing with DNA set dimension to 0
-        evaluate ($dim_$ncount = 0.0)
+    if ($toppar.dna_$ncount = true) then
+        ! Check first if not protein-DNA complex
+        do (store6 = 0) (all)
+        do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB))
+        show sum (store6) (all)
+        if ($result eq 0) then
+            ! we are dealing with a nucleic acid - check if DNA or RNA 
+            do (store6 = 0) (all)
+            do (store6 = 1) (resn DA or resn DT or resn DC or resn DG)
+            show sum (store6) (all)
+            if ($result > 0) then
+                ! we are delaing with DNA - set dimension to 0
+                evaluate ($dim_$ncount = 0.0)
+            end if
+        end if
     end if
 
-    ! check if the molecule is a small ligand
     do (store6 = 0) (all)
-    do (store6 = 1) (segid $Toppar.prot_segid_$ncount and (name CA or name BB or name N1))
+    do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
     show sum (store6) (all)
     if ($result eq 0) then
         ! we are dealing with a ligand set dimension to 0
@@ -85,7 +88,7 @@ do (store9 = 0) (all)
 do (store9 = 1) (name CA or name BB or name N1)
 while ($nchain < $data.ncomponents) loop nloop0
     eval($nchain = $nchain + 1)
-    show sum (store9) (segid $Toppar.prot_segid_$nchain)
+    show sum (store9) (segid $prot_segid_$nchain)
     if ($result < 3) then
         evaluate ($selat$nchain = 0 )
     else
@@ -99,10 +102,10 @@ noe
     while ($nchain1 < $data.ncomponents) loop nloop1
         eval($nchain1 = $nchain1 + 1)
         eval($nchain2 = $nchain1 )
-        if ($Toppar.shape_$nchain1 eq false) then
+        if ($mol_shape_$nchain1 eq false) then
             while ($nchain2 < $data.ncomponents) loop nloop2
                 eval($nchain2 = $nchain2 + 1)
-                if ($Toppar.shape_$nchain2 eq false) then
+                if ($mol_shape_$nchain2 eq false) then
                     if  ($data.cmtight eq false) then
                         eval($cm_dist = $dim_$nchain1 + $dim_$nchain2)
                     else
@@ -110,19 +113,19 @@ noe
                     end if
                     if ($selat$nchain1 = 1) then
                         if ($selat$nchain2 = 1) then
-                            assign (segid $Toppar.prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
-                                   (segid $Toppar.prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $cm_dist $cm_dist 1.0
+                            assign (segid $prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
+                                   (segid $prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $cm_dist $cm_dist 1.0
                         else
-                            assign (segid $Toppar.prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
-                                   (segid $Toppar.prot_segid_$nchain2) $cm_dist $cm_dist 1.0
+                            assign (segid $prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
+                                   (segid $prot_segid_$nchain2) $cm_dist $cm_dist 1.0
                         end if
                     else
                         if ($selat$nchain2 = 1) then
-                            assign (segid $Toppar.prot_segid_$nchain1)
-                                   (segid $Toppar.prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $cm_dist $cm_dist 1.0
+                            assign (segid $prot_segid_$nchain1)
+                                   (segid $prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $cm_dist $cm_dist 1.0
                         else
-                            assign (segid $Toppar.prot_segid_$nchain1)
-                                   (segid $Toppar.prot_segid_$nchain2) $cm_dist $cm_dist 1.0
+                            assign (segid $prot_segid_$nchain1)
+                                   (segid $prot_segid_$nchain2) $cm_dist $cm_dist 1.0
                         end if
                     end if
                 end if
@@ -131,7 +134,7 @@ noe
     end loop nloop1
 
     averaging  contact center
-    scale      contact $Data.kcm
+    scale      contact $Data.kcont
     sqconstant contact 1.0
     sqexponent contact 2
     soexponent contact 1

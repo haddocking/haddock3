@@ -11,6 +11,7 @@ from haddock.gear.config_reader import read_config
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
+from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
@@ -262,9 +263,11 @@ def get_engine(mode, params):
             Scheduler,
             ncores=params['ncores'],
             )
+    elif mode == "mpi":
+        return partial(MPIScheduler, ncores=params["ncores"])
 
     else:
-        available_engines = ('hpc', 'local')
+        available_engines = ("hpc", "local", "mpi")
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"

@@ -127,86 +127,6 @@ def _get_groups(
     return final_groups
 
 
-def make_param_name_single_index(param_parts):
-    """
-    Make the key name from param parts.
-
-    For example, ("param", "tag", "1") -> ("param", "1").
-    """
-    return (param_parts[0], param_parts[-1])
-
-
-def make_param_name_multiple_index(param_parts):
-    """
-    Make the key name from param parts.
-
-    For example, ("param", "tag", "2", "1") -> ("param2", "1").
-    """
-    return (param_parts[0] + param_parts[-2], param_parts[-1])
-
-
-def belongs_to_single_index(param_parts):
-    """
-    Assert param belong to single index group.
-
-    Parameter
-    ---------
-    param_parts : list of str
-        The parameter name parts after `str.split("_")`.
-
-    Returns
-    -------
-    boolean
-        True if the parameter name follows the rules of single index
-        expandable parameters.
-
-        Rules:
-        - param names have more than 2 parts
-        - the last part is a digit
-        - the part before last is not a digit
-    """
-    return \
-        len(param_parts) > 2 \
-        and param_parts[-1].isdigit() \
-        and not param_parts[-2].isdigit()
-
-
-def belongs_to_multiple_index(param_parts):
-    """
-    Assert param belong to multiple index group.
-
-    Parameter
-    ---------
-    param_parts : list of str
-        The parameter name parts after `str.split("_")`.
-
-    Returns
-    -------
-    boolean
-        True if the parameter name follows the rules of multiple index
-        expandable parameters.
-
-        Rules:
-        - param names have more than 4 parts
-        - the last part is a digit
-        - the part before last is a digit
-    """
-    return \
-        len(param_parts) > 4 \
-        and param_parts[-1].isdigit() \
-        and param_parts[-2].isdigit()
-
-
-def rejoin_parts_single_index(param_parts):
-    """Join parameter name parts."""
-    return "_".join(param_parts[1: -1])
-
-
-def rejoin_parts_multiple_index(param_parts):
-    """Join parameter name parts."""
-    return "_".join(param_parts[1: -2])
-
-
 def _read_groups_in_user_config(
         user_config,
         default_groups,
@@ -285,6 +205,86 @@ def _read_groups_in_user_config(
         new.update(related_params)
 
     return new
+
+
+def make_param_name_single_index(param_parts):
+    """
+    Make the key name from param parts.
+
+    For example, ("param", "tag", "1") -> ("param", "1").
+    """
+    return (param_parts[0], param_parts[-1])
+
+
+def make_param_name_multiple_index(param_parts):
+    """
+    Make the key name from param parts.
+
+    For example, ("param", "tag", "2", "1") -> ("param2", "1").
+    """
+    return (param_parts[0] + param_parts[-2], param_parts[-1])
+
+
+def belongs_to_single_index(param_parts):
+    """
+    Assert param belong to single index group.
+
+    Parameter
+    ---------
+    param_parts : list of str
+        The parameter name parts after `str.split("_")`.
+
+    Returns
+    -------
+    boolean
+        True if the parameter name follows the rules of single index
+        expandable parameters.
+
+        Rules:
+        - param names have more than 2 parts
+        - the last part is a digit
+        - the part before last is not a digit
+    """
+    return \
+        len(param_parts) > 2 \
+        and param_parts[-1].isdigit() \
+        and not param_parts[-2].isdigit()
+
+
+def belongs_to_multiple_index(param_parts):
+    """
+    Assert param belong to multiple index group.
+
+    Parameter
+    ---------
+    param_parts : list of str
+        The parameter name parts after `str.split("_")`.
+
+    Returns
+    -------
+    boolean
+        True if the parameter name follows the rules of multiple index
+        expandable parameters.
+
+        Rules:
+        - param names have more than 4 parts
+        - the last part is a digit
+        - the part before last is a digit
+    """
+    return \
+        len(param_parts) > 4 \
+        and param_parts[-1].isdigit() \
+        and param_parts[-2].isdigit()
+
+
+def rejoin_parts_single_index(param_parts):
+    """Join parameter name parts."""
+    return "_".join(param_parts[1: -1])
+
+
+def rejoin_parts_multiple_index(param_parts):
+    """Join parameter name parts."""
+    return "_".join(param_parts[1: -2])
 
 
 def extract_single_index_params(user_config, param_name, group_idx):

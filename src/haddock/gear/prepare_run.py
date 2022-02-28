@@ -11,6 +11,12 @@ from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
+from haddock.gear.expandable_parameters import (
+    get_blocks_multiple_index,
+    get_blocks_single_index,
+    read_multiple_index_blocks,
+    read_single_index_blocks,
+    )
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number

@@ -23,9 +23,9 @@ while ($nchain1 < $data.ncomponents) loop nloop1
         evaluate($nf=0)
         while ($nf < $nfle$nchain1) loop Xfflex
             evaluate($nf=$nf + 1)
-            do (store5 = $nchain1) ( resid $flesta$nchain1_$nf : $fleend$nchain1_$nf
-                                     and segid $Toppar.prot_segid_$nchain1 )
-            display FULLY FLEXIBLE SEGMENT NR $nf FROM $flesta$nchain1_$nf TO $fleend$nchain1_$nf
+            do (store5 = $nchain1) ( resid $fle_sta_$nchain1_$nf : $fle_end_$nchain1_$nf
+                                     and segid $prot_segid_$nchain1 )
+            display FULLY FLEXIBLE SEGMENT NR $nf FROM $fle_sta_$nchain1_$nf TO $fle_end_$nchain1_$nf
         end loop Xfflex
     end if
 end loop nloop1
@@ -42,11 +42,11 @@ while ($nchain1 < $data.ncomponents) loop nloop2
     show sum (store6) (all)
     evaluate ($numfle=$result)
     do (store6 = 0) (all)
-    do (store6 = 1) (tag and segid $Toppar.prot_segid_$nchain1 and not attr store5 = $nchain1)
+    do (store6 = 1) (tag and segid $prot_segid_$nchain1 and not attr store5 = $nchain1)
     show sum (store6) (all)
     evaluate ($numrig=$result)
     do (store6 = 0) (all)
-    do (store6 = 1) (tag and segid $Toppar.prot_segid_$nchain1)
+    do (store6 = 1) (tag and segid $prot_segid_$nchain1)
     show sum (store6) (all)
     evaluate ($numres=$result)
     display FLEXIBILITY STATISTIC FOR MOLECULE $nchain1 : Nres=$numres Nrigid=$numrig Nflex=$numfle

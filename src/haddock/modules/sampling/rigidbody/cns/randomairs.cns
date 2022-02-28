@@ -24,11 +24,11 @@ end if
 ! first calculate accessible surface area
 !
 do (store3 = 0) (all)
-surface mode=access rh2o=1.4 sele=(segid $Toppar.prot_segid_1 and not (resn WAT or resn HOH or resn TIP*)) end
-show sum (rmsd) (segid $Toppar.prot_segid_1 and not (resn WAT or resn HOH or resn TIP*))
-do (store3 = rmsd) (segid $Toppar.prot_segid_1 and not (resn WAT or resn HOH or resn TIP*))
-surface mode=access rh2o=1.4 sele=(segid $Toppar.prot_segid_2 and not (resn WAT or resn HOH or resn TIP*)) end
-do (store3 = rmsd) (segid $Toppar.prot_segid_2 and not (resn WAT or resn HOH or resn TIP*))
+surface mode=access rh2o=1.4 sele=(segid $prot_segid_1 and not (resn WAT or resn HOH or resn TIP*)) end
+show sum (rmsd) (segid $prot_segid_1 and not (resn WAT or resn HOH or resn TIP*))
+do (store3 = rmsd) (segid $prot_segid_1 and not (resn WAT or resn HOH or resn TIP*))
+surface mode=access rh2o=1.4 sele=(segid $prot_segid_2 and not (resn WAT or resn HOH or resn TIP*)) end
+do (store3 = rmsd) (segid $prot_segid_2 and not (resn WAT or resn HOH or resn TIP*))
 !
 ! normalize by standard residue accessibilities (taken from NACCESS)
 !
@@ -89,24 +89,24 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     evaluate($fcounter=0)
     evaluate($samplesurf = false)
 
-    if ($Toppar.nrair_$nchain1 = 0) then
+    if ($nrair_$nchain1 = 0) then
         evaluate($samplesurf = true)
     end if
-    if ($Toppar.nrair_$nchain1 = -1) then
+    if ($nrair_$nchain1 = -1) then
         evaluate($samplesurf = true)
     end if
 
     if ($samplesurf eq true) then
-        do (store5 = $nchain1) (segid $Toppar.prot_segid_$nchain1)
+        do (store5 = $nchain1) (segid $prot_segid_$nchain1)
         display RANDOM AIRS SAMPLED FROM ENTIRE SURFACE FOR MOLECULE $nchain1
     else
-        evaluate ($numseg = abs($Toppar.nrair_$nchain1))
+        evaluate ($numseg = abs($nrair_$nchain1))
         display RANDOM AIRS SAMPLED FROM SEGMENTS FOR MOLECULE $nchain1
         while ($fcounter < $numseg) loop Xflex
             evaluate($fcounter=$fcounter + 1)
-            do (store5 = $nchain1) ( resid $Toppar.rair_start_$nchain1_$fcounter : $Toppar.rair_end_$nchain1_$fcounter
-                                     and segid $Toppar.prot_segid_$nchain1)
-            display FLEXIBLE SEGMENT NR $fcounter FROM $Toppar.rair_start_$nchain1_$fcounter TO $Toppar.rair_end_$nchain1_$fcounter
+            do (store5 = $nchain1) ( resid $rair_sta_$nchain1_$fcounter : $rair_end_$nchain1_$fcounter
+                                     and segid $prot_segid_$nchain1)
+            display FLEXIBLE SEGMENT NR $fcounter FROM $rair_sta_$nchain1_$fcounter TO $rair_end_$nchain1_$fcounter
         end loop Xflex
     end if
 end loop nloop1
@@ -124,10 +124,10 @@ for $atom_id in id ( tag and (attr store5 ne 0)) loop count
     evaluate ($icount = $icount + 1)
 end loop count
 
-show min(store4) (segid $Toppar.prot_segid_1 and (attr store5 ne 0))
+show min(store4) (segid $prot_segid_1 and (attr store5 ne 0))
 evaluate ($rmin = $result)
 
-show max(store4) (segid $Toppar.prot_segid_1 and (attr store5 ne 0))
+show max(store4) (segid $prot_segid_1 and (attr store5 ne 0))
 evaluate ($rmax = $result)
 
 evaluate ($nres = $rmax - $rmin + 1)
@@ -153,10 +153,10 @@ else
     end loop trial
 end if
 
-show min(store4) (segid $Toppar.prot_segid_2 and (attr store5 ne 0))
+show min(store4) (segid $prot_segid_2 and (attr store5 ne 0))
 evaluate ($rmin = $result)
 
-show max(store4) (segid $Toppar.prot_segid_2 and (attr store5 ne 0))
+show max(store4) (segid $prot_segid_2 and (attr store5 ne 0))
 evaluate ($rmax = $result)
 
 display $nres RESIDUE IN MOLECULE B SELECTED FOR RANDOM AIR DEFINITION
@@ -196,7 +196,7 @@ evaluate ($selseg2 = $result)
 show (resn) (attribute store4 = $iselres2 and tag)
 evaluate ($selnam2 = $result)
 
-evaluate ($dispname="NEWIT:" + $Filenames.fileroot + "_" + encode($count) + ".disp")
+evaluate ($dispname= $output_pdb_filename - ".pdb" + ".disp")
 set display=$dispname end
 
 display $selnam1 $selres1 $selseg1
@@ -204,11 +204,11 @@ display $selnam1 $selres1 $selseg1
 noe class ambig end
 
 noe
-    assign (resid $selres1 and segid $Toppar.prot_segid_1)
-           (attr store2 > 0.2 and segid $Toppar.prot_segid_2 and 
+    assign (resid $selres1 and segid $prot_segid_1)
+           (attr store2 > 0.2 and segid $prot_segid_2 and 
             attr store5 ne 0 and (resid $selres2 or (resid $selres2) around 7.5)) 2.0 2.0 0.0
-    assign (resid $selres2 and segid $Toppar.prot_segid_2)
-           (attr store2 > 0.2 and segid $Toppar.prot_segid_1 and 
+    assign (resid $selres2 and segid $prot_segid_2)
+           (attr store2 > 0.2 and segid $prot_segid_1 and 
             attr store5 ne 0 and (resid $selres1 or (resid $selres1) around 7.5)) 2.0 2.0 0.0
 end
 
@@ -221,8 +221,8 @@ for $id in id ((resid $selres1 and attr store2 > 0.2) around 5.0 and tag and seg
     evaluate ($inrsn = $result)
     display $inrsn $inres $inseg
     noe
-        assign (resid $inres and segid $Toppar.prot_segid_1)
-               (attr store2 > 0.2 and segid $Toppar.prot_segid_2 and 
+        assign (resid $inres and segid $prot_segid_1)
+               (attr store2 > 0.2 and segid $prot_segid_2 and 
                 attr store5 ne 0 and (resid $selres2 or (resid $selres2) around 7.5)) 2.0 2.0 0.0
     end
 end loop neighbors1
@@ -236,8 +236,8 @@ for $id in id ((resid $selres2 and attr store2 > 0.2) around 5.0 and tag and seg
     evaluate ($inrsn = $result)
     display $inrsn $inres $inseg
     noe
-        assign (resid $inres and segid $Toppar.prot_segid_2)
-               (attr store2 > 0.2 and segid $Toppar.prot_segid_1 and 
+        assign (resid $inres and segid $prot_segid_2)
+               (attr store2 > 0.2 and segid $prot_segid_1 and 
                 attr store5 ne 0 and (resid $selres1 or (resid $selres1) around 7.5)) 2.0 2.0 0.0
     end
 end loop neighbors2

@@ -19,21 +19,21 @@ while ($ncount < $data.ncomponents) loop nsloop
 
     evaluate ($ncount = $ncount + 1)
 
-    for $id1 in id ( name C and bondedto(name CA) and segid $Toppar.prot_segid_$ncount) loop break
+    for $id1 in id ( name C and bondedto(name CA) and segid $prot_segid_$ncount) loop break
         show (resid) (id $id1)
         evaluate ($resid1=$result)
         evaluate ($resid2=encode(decode($resid1)+1))
         show sum(1) (id $id1 and known)
         if ( $result ne 0 ) then
-            identity (store1) ( name N and bondedto(name CA) and segid $Toppar.prot_segid_$ncount and resid $resid2 )
+            identity (store1) ( name N and bondedto(name CA) and segid $prot_segid_$ncount and resid $resid2 )
             show element (store1) (attribute store1 > 0)
             if ( $result ne 0) then
                 evaluate ($id2=$result)
                 show sum(1) (id $id2 and known)
                 if ( $result ne 0 ) then
                     pick bond
-                        (name c and segid $Toppar.prot_segid_$ncount and resid $resid1)
-                        (name n and segid $Toppar.prot_segid_$ncount and resid $resid2)
+                        (name c and segid $prot_segid_$ncount and resid $resid1)
+                        (name n and segid $prot_segid_$ncount and resid $resid2)
                         geometry
                     if ( $result > 2.5 ) then
                         evaluate ($break=$break+1)
@@ -51,15 +51,15 @@ while ($ncount < $data.ncomponents) loop nsloop
         evaluate ($resid2=encode(decode($resid1)+1))
         show sum(1) (id $id1 and known)
         if ( $result ne 0 ) then
-            identity (store1) ( name BB and segid $Toppar.prot_segid_$ncount and resid $resid2 )
+            identity (store1) ( name BB and segid $prot_segid_$ncount and resid $resid2 )
             show element (store1) (attribute store1 > 0)
             if ( $result ne 0) then
                 evaluate ($id2=$result)
                 show sum(1) (id $id2 and known)
                 if ( $result ne 0 ) then
                     pick bond
-                        (name BB and segid $Toppar.prot_segid_$ncount and resid $resid1)
-                        (name BB and segid $Toppar.prot_segid_$ncount and resid $resid2)
+                        (name BB and segid $prot_segid_$ncount and resid $resid1)
+                        (name BB and segid $prot_segid_$ncount and resid $resid2)
                         geometry
                     if ( $result > 8.0 ) then
                         evaluate ($break=$break+1)

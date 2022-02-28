@@ -16,7 +16,7 @@ evaluate($n_moving_mol = 0)
 evaluate ($ncount = 0)
 while ($ncount < $data.ncomponents) loop checkmol
     evaluate ($ncount = $ncount + 1)
-    if ($Toppar.shape_$ncount eq false) then
+    if ($mol_shape_$ncount eq false) then
         evaluate($n_moving_mol = $n_moving_mol + 1)
     end if
 end loop checkmol

@@ -40,179 +40,24 @@ evaluate ($w_desolv     =$w_desolv )
 
 evaluate ($data.ncomponents=$ncomponents)
 
-evaluate ($nmol=1)
-while ($nmol <= $data.ncomponents) loop mol
-    evaluate ($toppar.fix_origin_$nmol = $fix_origin_$nmol)
-    evaluate ($toppar.shape_$nmol = $shape_$nmol)
-    evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
-    evaluate ($nmol = $nmol + 1)
-end loop mol
-
-evaluate ($nmol=1)
-while ($nmol <= $data.ncomponents) loop mol
-
-    !semi flexible segments
-    evaluate ($toppar.nseg$nmol = $nseg$nmol)
-    evaluate ($nseg = 1)
-    while ($nseg <=$toppar.nseg$nmol) loop seg
-        evaluate ($toppar.segsta$nmol_$nseg = $segsta$nmol_$nseg)
-        evaluate ($toppar.segend$nmol_$nseg = $segend$nmol_$nseg)
-        evaluate ($nseg = $nseg + 1)
-    end loop seg
-
-    !fully flexible segments
-    evaluate ($toppar.nfle$nmol = $nfle$nmol)
-    evaluate ($nfle = 1)
-    while ($nfle <=$toppar.nfle$nmol) loop fle
-        evaluate ($toppar.flesta$nmol_$nfle = $flesta$nmol_$nfle)
-        evaluate ($toppar.fleend$nmol_$nfle = $fleend$nmol_$nfle)
-        evaluate ($nfle = $nfle + 1)
-    end loop fle
-    evaluate ($nmol = $nmol + 1)
-end loop mol
-
 
 ! non-bonded parameter set to use
 evaluate ($toppar.par_nonbonded = "OPLSX" )
 
 
-! NCS restraints
-evaluate ($data.kncs = $kncs)
-evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.numncs = $numncs)
-evaluate ($ncc=1)
-while ($ncc <= $numncs) loop ncs
-    evaluate ($toppar.ncs_sta1_$ncc = $ncs_sta1_$ncc)
-    evaluate ($toppar.ncs_end1_$ncc = $ncs_end1_$ncc)
-    evaluate ($toppar.ncs_seg1_$ncc = $ncs_seg1_$ncc)
-    evaluate ($toppar.ncs_sta2_$ncc = $ncs_sta2_$ncc)
-    evaluate ($toppar.ncs_end2_$ncc = $ncs_end2_$ncc)
-    evaluate ($toppar.ncs_seg2_$ncc = $ncs_seg2_$ncc)
-    evaluate ($ncc = $ncc + 1)
-end loop ncs
-
-! Symmetry restraints
-evaluate ($data.ksym = $ksym)
-evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($nsym=1)
-while ($nsym <= $numc2sym) loop sym
-    evaluate ($toppar.c2sym_sta1_$nsym = $c2sym_sta1_$nsym)
-    evaluate ($toppar.c2sym_end1_$nsym = $c2sym_end1_$nsym)
-    evaluate ($toppar.c2sym_seg1_$nsym = $c2sym_seg1_$nsym)
-    evaluate ($toppar.c2sym_sta2_$nsym = $c2sym_sta2_$nsym)
-    evaluate ($toppar.c2sym_end2_$nsym = $c2sym_end2_$nsym)
-    evaluate ($toppar.c2sym_seg2_$nsym = $c2sym_seg2_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc3sym) loop sym
-    evaluate ($toppar.c3sym_sta1_$nsym = $c3sym_sta1_$nsym)
-    evaluate ($toppar.c3sym_end1_$nsym = $c3sym_end1_$nsym)
-    evaluate ($toppar.c3sym_seg1_$nsym = $c3sym_seg1_$nsym)
-    evaluate ($toppar.c3sym_sta2_$nsym = $c3sym_sta2_$nsym)
-    evaluate ($toppar.c3sym_end2_$nsym = $c3sym_end2_$nsym)
-    evaluate ($toppar.c3sym_seg2_$nsym = $c3sym_seg2_$nsym)
-    evaluate ($toppar.c3sym_sta3_$nsym = $c3sym_sta3_$nsym)
-    evaluate ($toppar.c3sym_end3_$nsym = $c3sym_end3_$nsym)
-    evaluate ($toppar.c3sym_seg3_$nsym = $c3sym_seg3_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.nums3sym=$nums3sym)
-evaluate ($nsym=1)
-while ($nsym <=$nums3sym) loop sym
-    evaluate ($toppar.s3sym_sta1_$nsym = $s3sym_sta1_$nsym)
-    evaluate ($toppar.s3sym_end1_$nsym = $s3sym_end1_$nsym)
-    evaluate ($toppar.s3sym_seg1_$nsym = $s3sym_seg1_$nsym)
-    evaluate ($toppar.s3sym_sta2_$nsym = $s3sym_sta2_$nsym)
-    evaluate ($toppar.s3sym_end2_$nsym = $s3sym_end2_$nsym)
-    evaluate ($toppar.s3sym_seg2_$nsym = $s3sym_seg2_$nsym)
-    evaluate ($toppar.s3sym_sta3_$nsym = $s3sym_sta3_$nsym)
-    evaluate ($toppar.s3sym_end3_$nsym = $s3sym_end3_$nsym)
-    evaluate ($toppar.s3sym_seg3_$nsym = $s3sym_seg3_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc4sym=$numc4sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc4sym) loop sym
-    evaluate ($toppar.c4sym_sta1_$nsym = $c4sym_sta1_$nsym)
-    evaluate ($toppar.c4sym_end1_$nsym = $c4sym_end1_$nsym)
-    evaluate ($toppar.c4sym_seg1_$nsym = $c4sym_seg1_$nsym)
-    evaluate ($toppar.c4sym_sta2_$nsym = $c4sym_sta2_$nsym)
-    evaluate ($toppar.c4sym_end2_$nsym = $c4sym_end2_$nsym)
-    evaluate ($toppar.c4sym_seg2_$nsym = $c4sym_seg2_$nsym)
-    evaluate ($toppar.c4sym_sta3_$nsym = $c4sym_sta3_$nsym)
-    evaluate ($toppar.c4sym_end3_$nsym = $c4sym_end3_$nsym)
-    evaluate ($toppar.c4sym_seg3_$nsym = $c4sym_seg3_$nsym)
-    evaluate ($toppar.c4sym_sta4_$nsym = $c4sym_sta4_$nsym)
-    evaluate ($toppar.c4sym_end4_$nsym = $c4sym_end4_$nsym)
-    evaluate ($toppar.c4sym_seg4_$nsym = $c4sym_seg4_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc5sym=$numc5sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc5sym) loop sym
-    evaluate ($toppar.c5sym_sta1_$nsym = $c5sym_sta1_$nsym)
-    evaluate ($toppar.c5sym_end1_$nsym = $c5sym_end1_$nsym)
-    evaluate ($toppar.c5sym_seg1_$nsym = $c5sym_seg1_$nsym)
-    evaluate ($toppar.c5sym_sta2_$nsym = $c5sym_sta2_$nsym)
-    evaluate ($toppar.c5sym_end2_$nsym = $c5sym_end2_$nsym)
-    evaluate ($toppar.c5sym_seg2_$nsym = $c5sym_seg2_$nsym)
-    evaluate ($toppar.c5sym_sta3_$nsym = $c5sym_sta3_$nsym)
-    evaluate ($toppar.c5sym_end3_$nsym = $c5sym_end3_$nsym)
-    evaluate ($toppar.c5sym_seg3_$nsym = $c5sym_seg3_$nsym)
-    evaluate ($toppar.c5sym_sta4_$nsym = $c5sym_sta4_$nsym)
-    evaluate ($toppar.c5sym_end4_$nsym = $c5sym_end4_$nsym)
-    evaluate ($toppar.c5sym_seg4_$nsym = $c5sym_seg4_$nsym)
-    evaluate ($toppar.c5sym_sta5_$nsym = $c5sym_sta5_$nsym)
-    evaluate ($toppar.c5sym_end5_$nsym = $c5sym_end5_$nsym)
-    evaluate ($toppar.c5sym_seg5_$nsym = $c5sym_seg5_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc6sym=$numc6sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc6sym) loop sym
-    evaluate ($toppar.c6sym_sta1_$nsym = $c6sym_sta1_$nsym)
-    evaluate ($toppar.c6sym_end1_$nsym = $c6sym_end1_$nsym)
-    evaluate ($toppar.c6sym_seg1_$nsym = $c6sym_seg1_$nsym)
-    evaluate ($toppar.c6sym_sta2_$nsym = $c6sym_sta2_$nsym)
-    evaluate ($toppar.c6sym_end2_$nsym = $c6sym_end2_$nsym)
-    evaluate ($toppar.c6sym_seg2_$nsym = $c6sym_seg2_$nsym)
-    evaluate ($toppar.c6sym_sta3_$nsym = $c6sym_sta3_$nsym)
-    evaluate ($toppar.c6sym_end3_$nsym = $c6sym_end3_$nsym)
-    evaluate ($toppar.c6sym_seg3_$nsym = $c6sym_seg3_$nsym)
-    evaluate ($toppar.c6sym_sta4_$nsym = $c6sym_sta4_$nsym)
-    evaluate ($toppar.c6sym_end4_$nsym = $c6sym_end4_$nsym)
-    evaluate ($toppar.c6sym_seg4_$nsym = $c6sym_seg4_$nsym)
-    evaluate ($toppar.c6sym_sta5_$nsym = $c6sym_sta5_$nsym)
-    evaluate ($toppar.c6sym_end5_$nsym = $c6sym_end5_$nsym)
-    evaluate ($toppar.c6sym_seg5_$nsym = $c6sym_seg5_$nsym)
-    evaluate ($toppar.c6sym_sta6_$nsym = $c6sym_sta6_$nsym)
-    evaluate ($toppar.c6sym_end6_$nsym = $c6sym_end6_$nsym)
-    evaluate ($toppar.c6sym_seg6_$nsym = $c6sym_seg6_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-
 !Dihedrals, DNA and distance restraints
 evaluate ($data.dihedrals_scale=$dihedrals_scale)
-evaluate ($Data.flags.cdih =$dihedrals_on)
-evaluate ($Data.dnarest =$dnarest_on)
-evaluate ($Data.ssdihed =$ssdihed)
-evaluate ($Data.error_dih =$error_dih)
+evaluate ($data.flags.cdih =$dihedrals_on)
+evaluate ($data.dnarest =$dnarest_on)
+evaluate ($data.ssdihed =$ssdihed)
+evaluate ($data.error_dih =$error_dih)
 
 
 ! planarity restraints
-evaluate ($Data.flags.plan =  false)
+evaluate ($data.flags.plan =  false)
 
 ! distance restraints
-evaluate ($Data.flags.noe  =  true)
+evaluate ($data.flags.noe  =  true)
 evaluate ($data.randremoval=$randremoval)
 evaluate ($data.npart=$npart)
 
@@ -226,22 +71,37 @@ if ($data.contactairs eq true) then
 end if
 evaluate ($data.kcont=$kcont)
 
+! NCS restraints
+evaluate ($data.kncs = $kncs)
+evaluate ($Data.flags.ncs = $ncs_on)
+evaluate ($data.numncs = $numncs)
+
+! Symmetry restraints
+evaluate ($data.ksym = $ksym)
+evaluate ($Data.flags.sym = $sym_on)
+evaluate ($data.numc2sym = $numc2sym)
+evaluate ($data.numc3sym = $numc3sym)
+evaluate ($data.nums3sym = $nums3sym)
+evaluate ($data.numc4sym = $numc4sym)
+evaluate ($data.numc5sym = $numc5sym)
+evaluate ($data.numc6sym = $numc6sym)
+
 !Dihedral angle energy term:
-evaluate ($Data.flags.dihed = true) 
+evaluate ($data.flags.dihed = true) 
 
 !Electrostatics:
-evaluate ($Data.flags.elec =$elecflag)
-evaluate ($Data.epsilon =$epsilon)
-evaluate ($Data.dielec  =$dielec)
+evaluate ($data.flags.elec =$elecflag)
+evaluate ($data.epsilon =$epsilon)
+evaluate ($data.dielec  =$dielec)
 
 !Interaction matrix:
 evaluate ($nmol1=1)
 while ($nmol1 <=$data.ncomponents) loop mol1
     evaluate ($nmol2=$nmol1 + 1)
-    evaluate ($toppar.int_$nmol1_$nmol1 =$int_$nmol1_$nmol1)
+    evaluate ($scale.int_$nmol1_$nmol1 =$int_$nmol1_$nmol1)
     while ($nmol2 <=$data.ncomponents) loop mol2
-        evaluate ($toppar.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
-        evaluate ($toppar.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
+        evaluate ($scale.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
+        evaluate ($scale.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
         evaluate ($nmol2=$nmol2 + 1)
     end loop mol2
     evaluate ($nmol1 = $nmol1 + 1)
@@ -249,14 +109,14 @@ end loop mol1
 
 
 ! Unsupported restraints
-evaluate ($Data.flags.em   = false)
-evaluate ($Data.flags.rg   = false)
-evaluate ($Data.flags.zres = false)
-evaluate ($Data.flags.sani = false)
-evaluate ($Data.flags.xrdc = false)
-evaluate ($Data.flags.xpcs = false)
-evaluate ($Data.flags.dani = false)
-evaluate ($Data.flags.vean = false)
+evaluate ($data.flags.em   = false)
+evaluate ($data.flags.rg   = false)
+evaluate ($data.flags.zres = false)
+evaluate ($data.flags.sani = false)
+evaluate ($data.flags.xrdc = false)
+evaluate ($data.flags.xpcs = false)
+evaluate ($data.flags.dani = false)
+evaluate ($data.flags.vean = false)
 
 ! Other parameters
 evaluate ($refine.keepwater = false)
@@ -286,17 +146,17 @@ end
 
 flag include bond angle impr vdw end
 
-if ($Data.flags.dihed eq true) then
+if ($data.flags.dihed eq true) then
   flag include dihed end
 end if
 
-if ($Data.flags.elec eq true) then
+if ($data.flags.elec eq true) then
     flag include elec end
-    if ($Data.dielec eq "rdie") then
-        parameter nbonds eps=$Data.epsilon rdie shift switch end end
+    if ($data.dielec eq "rdie") then
+        parameter nbonds eps=$data.epsilon rdie shift switch end end
         ! shift statement needed first to activate switch (CNS bug?)
     else
-        parameter nbonds eps=$Data.epsilon cdie end end
+        parameter nbonds eps=$data.epsilon cdie end end
     end if
     parameter nbonds ? end end
 else
@@ -307,7 +167,7 @@ end if
 
 {* Read and write random seed in case randremoval=true ===============*}
 
-if ($Data.randremoval eq true) then
+if ($data.randremoval eq true) then
     evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
     fileexist $fileseed end
     if ($result eq true) then
@@ -336,7 +196,7 @@ set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
-if ($Data.randremoval eq true) then
+if ($data.randremoval eq true) then
     set message=on echo=on end
     noe cv $npart ? end
 else
@@ -357,10 +217,10 @@ evaluate ($numnoe = 0)
 evaluate ($numnoe = 999)
 noe ? end
 
-if ($NUMNOE lt $Data.npart) then
+if ($NUMNOE lt $data.npart) then
     noe part=1 end
-    evaluate ($Data.npart = 1)
-    evaluate ($Data.randremoval = FALSE)
+    evaluate ($data.npart = 1)
+    evaluate ($data.randremoval = FALSE)
 end if
 
 noe
@@ -391,30 +251,30 @@ inline @MODULE:setflags.cns
 
 @MODULE:symmultimer.cns
 
-if ($Data.contactairs eq true ) then
+if ($data.contactairs eq true ) then
     @MODULE:contactairs.cns
 end if
 
-if ($Data.dnarest eq true ) then
+if ($data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns
 end if
 
-if ($Data.ssdihed eq "all" ) then
+if ($data.ssdihed eq "all" ) then
     inline @MODULE:/protein-ss-restraints-all.cns
 end if
-if ($Data.ssdihed eq "alpha" ) then
+if ($data.ssdihed eq "alpha" ) then
     inline @MODULE:protein-ss-restraints-alpha.cns
 end if
-if ($Data.ssdihed eq "alphabeta" ) then
+if ($data.ssdihed eq "alphabeta" ) then
     inline @MODULE:protein-ss-restraints-alpha-beta.cns
 end if
 
 
 restraints dihedral 
-    scale=$Data.dihedrals_scale
+    scale=$data.dihedrals_scale
 end 
 
-if ($Data.flags.cdih eq true) then
+if ($data.flags.cdih eq true) then
   flag incl cdih end
 end if
 
@@ -435,10 +295,10 @@ evaluate($nchain1 = 0)
 while ($nchain1 < $data.ncomponents) loop nloop1
     evaluate($nchain1 = $nchain1 + 1)
     evaluate($fcounter=0)
-    if ($Toppar.nseg$nchain1 = 0) then
+    if ($nseg$nchain1 = 0) then
         display NO FLEXIBLE SIDE-CHAINS SEGMENTS for molecule $nchain1
         display FIXING IT
-        fix sele = (segid $Toppar.prot_segid_$nchain1 and not name H*) end
+        fix sele = (segid $prot_segid_$nchain1 and not name H*) end
     end if
 end loop nloop1
 
@@ -498,15 +358,15 @@ flag include bond angle dihe impr vdw end
 
 evaluate ($elec = 0.0)
 evaluate ($eintfree = 0.0)
-if ($Data.flags.elec eq true) then
+if ($data.flags.elec eq true) then
     flag include elec end
 end if
 
-if ($Data.dielec eq "rdie") then
-    parameter nbonds eps=$Data.epsilon rdie shift switch end end
+if ($data.dielec eq "rdie") then
+    parameter nbonds eps=$data.epsilon rdie shift switch end end
     ! shift statement needed first to activate switch (CNS bug?)
 else
-    parameter nbonds eps=$Data.epsilon cdie end end
+    parameter nbonds eps=$data.epsilon cdie end end
 end if
 parameter nbonds ? end end
 inline @MODULE:calc_free-ene.cns
@@ -528,7 +388,7 @@ energy end
 
 evaluate ($elec = 0.0)
 evaluate ($eintcplx = 0.0)
-if ($Data.flags.elec eq true) then
+if ($data.flags.elec eq true) then
     flag include elec end
 end if
 
@@ -540,7 +400,7 @@ evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
 {* ===================== calculate final energies and write structure *}
 evaluate ($cdih=0.0)
 flag incl noe cdih end
-if ($Data.ncomponents > 1) then
+if ($data.ncomponents > 1) then
     evaluate ($kinter = 1.0)
     @MODULE:scale_inter_final.cns
 else
@@ -548,9 +408,9 @@ else
 end if
 
 noe
-    scale dist $Data.unamb_scale
-    scale ambi $Data.amb_scale
-    scale hbon $Data.hbond_scale
+    scale dist $data.unamb_scale
+    scale ambi $data.amb_scale
+    scale hbon $data.hbond_scale
     scale symm 0.0
     scale cont 0.0
 end
@@ -562,16 +422,16 @@ evaluate ($ncs = 0.0)
 evaluate ($zhar = 0.0)
 evaluate ($rms_test_noe = 0.0)
 evaluate ($violations_test_noe = 0)
-if ($Data.flags.sym eq true) then
+if ($data.flags.sym eq true) then
     ! calculatee first the symmetry energy
     noe reset nres= 1200000 end
     @MODULE:symmultimer.cns
     noe
-        scale symm $Data.ksym
+        scale symm $data.ksym
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.randremoval eq true) then
+    if ($data.randremoval eq true) then
         evaluate ($violations_test_noe=0)
         evaluate ($rms_test_noe=0.0)
         display Print out of cross-validated violations and rms not
@@ -583,21 +443,21 @@ if ($Data.flags.sym eq true) then
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
     noe
-        scale dist $Data.unamb_scale
-        scale ambi $Data.amb_scale
-        scale hbon $Data.hbond_scale
+        scale dist $data.unamb_scale
+        scale ambi $data.amb_scale
+        scale hbon $data.hbond_scale
     end
 else
     print threshold=0.3 noe
     evaluate ($rms_noe=$result)
     evaluate ($violations_noe=$violations)
-    if ($Data.randremoval eq true) then
+    if ($data.randremoval eq true) then
         evaluate ($rms_test_noe=$test_rms)
         evaluate ($violations_test_noe=$test_violations)
     end if
 end if 
 
-if ($Data.dnarest eq true ) then
+if ($data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns
 end if
 
@@ -616,7 +476,7 @@ evaluate ($ncount = 0)
 while ($ncount < $data.ncomponents) loop orientmol
     evaluate ($ncount = $ncount + 1)
     eval($watersegname_$ncount="WA" + encode($ncount))
-    if ($Toppar.fix_origin_$ncount eq true) then
+    if ($mol_fix_origin_$ncount eq true) then
         eval($reorient = false)
     end if
 end loop orientmol

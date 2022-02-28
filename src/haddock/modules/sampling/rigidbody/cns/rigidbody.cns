@@ -51,14 +51,6 @@ evaluate ($w_lcc        =$w_lcc)
 
 evaluate ($data.ncomponents=$ncomponents)
 
-evaluate ($nmol=1)
-while ($nmol <= $data.ncomponents) loop mol
-    evaluate ($toppar.fix_origin_$nmol=$fix_origin_$nmol)
-    evaluate ($toppar.shape_$nmol = $shape_$nmol)
-    evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
-    evaluate ($nmol = $nmol + 1)
-end loop mol
-
 ! non-bonded parameter set to use
 evaluate ($toppar.par_nonbonded = "OPLSX")
 
@@ -66,109 +58,11 @@ evaluate ($toppar.par_nonbonded = "OPLSX")
 evaluate ($data.ksym = $ksym)
 evaluate ($Data.flags.sym = $sym_on)
 evaluate ($data.numc2sym = $numc2sym)
-evaluate ($nsym=1)
-while ($nsym <= $numc2sym) loop sym
-    evaluate ($toppar.c2sym_sta1_$nsym = $c2sym_sta1_$nsym)
-    evaluate ($toppar.c2sym_end1_$nsym = $c2sym_end1_$nsym)
-    evaluate ($toppar.c2sym_seg1_$nsym = $c2sym_seg1_$nsym)
-    evaluate ($toppar.c2sym_sta2_$nsym = $c2sym_sta2_$nsym)
-    evaluate ($toppar.c2sym_end2_$nsym = $c2sym_end2_$nsym)
-    evaluate ($toppar.c2sym_seg2_$nsym = $c2sym_seg2_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
 evaluate ($data.numc3sym = $numc3sym)
-evaluate ($nsym=1)
-while ($nsym <= $numc3sym) loop sym
-    evaluate ($toppar.c3sym_sta1_$nsym = $c3sym_sta1_$nsym)
-    evaluate ($toppar.c3sym_end1_$nsym = $c3sym_end1_$nsym)
-    evaluate ($toppar.c3sym_seg1_$nsym = $c3sym_seg1_$nsym)
-    evaluate ($toppar.c3sym_sta2_$nsym = $c3sym_sta2_$nsym)
-    evaluate ($toppar.c3sym_end2_$nsym = $c3sym_end2_$nsym)
-    evaluate ($toppar.c3sym_seg2_$nsym = $c3sym_seg2_$nsym)
-    evaluate ($toppar.c3sym_sta3_$nsym = $c3sym_sta3_$nsym)
-    evaluate ($toppar.c3sym_end3_$nsym = $c3sym_end3_$nsym)
-    evaluate ($toppar.c3sym_seg3_$nsym = $c3sym_seg3_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
 evaluate ($data.nums3sym= $nums3sym)
-evaluate ($nsym=1)
-while ($nsym <= $nums3sym) loop sym
-     evaluate ($toppar.s3sym_sta1_$nsym = $s3sym_sta1_$nsym)
-     evaluate ($toppar.s3sym_end1_$nsym = $s3sym_end1_$nsym)
-     evaluate ($toppar.s3sym_seg1_$nsym = $s3sym_seg1_$nsym)
-     evaluate ($toppar.s3sym_sta2_$nsym = $s3sym_sta2_$nsym)
-     evaluate ($toppar.s3sym_end2_$nsym = $s3sym_end2_$nsym)
-     evaluate ($toppar.s3sym_seg2_$nsym = $s3sym_seg2_$nsym)
-     evaluate ($toppar.s3sym_sta3_$nsym = $s3sym_sta3_$nsym)
-     evaluate ($toppar.s3sym_end3_$nsym = $s3sym_end3_$nsym)
-     evaluate ($toppar.s3sym_seg3_$nsym = $s3sym_seg3_$nsym)
-     evaluate ($nsym = $nsym + 1)
-end loop sym
-
 evaluate ($data.numc4sym = $numc4sym)
-evaluate ($nsym=1)
-while ($nsym <= $numc4sym) loop sym
-     evaluate ($toppar.c4sym_sta1_$nsym = $c4sym_sta1_$nsym)
-     evaluate ($toppar.c4sym_end1_$nsym = $c4sym_end1_$nsym)
-     evaluate ($toppar.c4sym_seg1_$nsym = $c4sym_seg1_$nsym)
-     evaluate ($toppar.c4sym_sta2_$nsym = $c4sym_sta2_$nsym)
-     evaluate ($toppar.c4sym_end2_$nsym = $c4sym_end2_$nsym)
-     evaluate ($toppar.c4sym_seg2_$nsym = $c4sym_seg2_$nsym)
-     evaluate ($toppar.c4sym_sta3_$nsym = $c4sym_sta3_$nsym)
-     evaluate ($toppar.c4sym_end3_$nsym = $c4sym_end3_$nsym)
-     evaluate ($toppar.c4sym_seg3_$nsym = $c4sym_seg3_$nsym)
-     evaluate ($toppar.c4sym_sta4_$nsym = $c4sym_sta4_$nsym)
-     evaluate ($toppar.c4sym_end4_$nsym = $c4sym_end4_$nsym)
-     evaluate ($toppar.c4sym_seg4_$nsym = $c4sym_seg4_$nsym)
-     evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc5sym=$numc5sym)
-evaluate ($nsym=1)
-while ($nsym <= $numc5sym) loop sym
-    evaluate ($toppar.c5sym_sta1_$nsym = $c5sym_sta1_$nsym)
-    evaluate ($toppar.c5sym_end1_$nsym = $c5sym_end1_$nsym)
-    evaluate ($toppar.c5sym_seg1_$nsym = $c5sym_seg1_$nsym)
-    evaluate ($toppar.c5sym_sta2_$nsym = $c5sym_sta2_$nsym)
-    evaluate ($toppar.c5sym_end2_$nsym = $c5sym_end2_$nsym)
-    evaluate ($toppar.c5sym_seg2_$nsym = $c5sym_seg2_$nsym)
-    evaluate ($toppar.c5sym_sta3_$nsym = $c5sym_sta3_$nsym)
-    evaluate ($toppar.c5sym_end3_$nsym = $c5sym_end3_$nsym)
-    evaluate ($toppar.c5sym_seg3_$nsym = $c5sym_seg3_$nsym)
-    evaluate ($toppar.c5sym_sta4_$nsym = $c5sym_sta4_$nsym)
-    evaluate ($toppar.c5sym_end4_$nsym = $c5sym_end4_$nsym)
-    evaluate ($toppar.c5sym_seg4_$nsym = $c5sym_seg4_$nsym)
-    evaluate ($toppar.c5sym_sta5_$nsym = $c5sym_sta5_$nsym)
-    evaluate ($toppar.c5sym_end5_$nsym = $c5sym_end5_$nsym)
-    evaluate ($toppar.c5sym_seg5_$nsym = $c5sym_seg5_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc6sym=$numc6sym)
-evaluate ($nsym=1)
-while ($nsym <= $numc6sym) loop sym
-    evaluate ($toppar.c6sym_sta1_$nsym = $c6sym_sta1_$nsym)
-    evaluate ($toppar.c6sym_end1_$nsym = $c6sym_end1_$nsym)
-    evaluate ($toppar.c6sym_seg1_$nsym = $c6sym_seg1_$nsym)
-    evaluate ($toppar.c6sym_sta2_$nsym = $c6sym_sta2_$nsym)
-    evaluate ($toppar.c6sym_end2_$nsym = $c6sym_end2_$nsym)
-    evaluate ($toppar.c6sym_seg2_$nsym = $c6sym_seg2_$nsym)
-    evaluate ($toppar.c6sym_sta3_$nsym = $c6sym_sta3_$nsym)
-    evaluate ($toppar.c6sym_end3_$nsym = $c6sym_end3_$nsym)
-    evaluate ($toppar.c6sym_seg3_$nsym = $c6sym_seg3_$nsym)
-    evaluate ($toppar.c6sym_sta4_$nsym = $c6sym_sta4_$nsym)
-    evaluate ($toppar.c6sym_end4_$nsym = $c6sym_end4_$nsym)
-    evaluate ($toppar.c6sym_seg4_$nsym = $c6sym_seg4_$nsym)
-    evaluate ($toppar.c6sym_sta5_$nsym = $c6sym_sta5_$nsym)
-    evaluate ($toppar.c6sym_end5_$nsym = $c6sym_end5_$nsym)
-    evaluate ($toppar.c6sym_seg5_$nsym = $c6sym_seg5_$nsym)
-    evaluate ($toppar.c6sym_sta6_$nsym = $c6sym_sta6_$nsym)
-    evaluate ($toppar.c6sym_end6_$nsym = $c6sym_end6_$nsym)
-    evaluate ($toppar.c6sym_seg6_$nsym = $c6sym_seg6_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
+evaluate ($data.numc5sym = $numc5sym)
+evaluate ($data.numc6sym = $numc6sym)
 
 if ( $data.numc2sym eq 6) then
     evaluate ($saprotocol.rotate180 = false)
@@ -217,10 +111,10 @@ evaluate ($Data.dielec  =$dielec)
 evaluate ($nmol1=1)
 while ($nmol1 <=$data.ncomponents) loop mol1
     evaluate ($nmol2=$nmol1 + 1)
-    evaluate ($toppar.int_$nmol1_$nmol1 =int_$nmol1_$nmol1)
+    evaluate ($scale.int_$nmol1_$nmol1 =int_$nmol1_$nmol1)
     while ($nmol2 <=$data.ncomponents) loop mol2
-        evaluate ($toppar.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
-        evaluate ($toppar.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
+        evaluate ($scale.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
+        evaluate ($scale.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
         evaluate ($nmol2=$nmol2 + 1)
     end loop mol2
     evaluate ($nmol1 = $nmol1 + 1)
@@ -309,7 +203,7 @@ evaluate ($ncount = 0)
 while ($ncount < $data.ncomponents) loop orientmol
     evaluate ($ncount = $ncount + 1)
     eval($watersegname_$ncount="WA" + encode($ncount))
-    if ($Toppar.fix_origin_$ncount eq true) then
+    if ($mol_fix_origin_$ncount eq true) then
         eval($reorient = false)
         eval($fixmol = true)
     end if
@@ -474,11 +368,11 @@ while ($nrig < $SaProtocol.ntrials) loop trials
         eval ($nchain1 = 0)
         while ($nchain1 < $data.ncomponents) loop nloop1
             eval($nchain1 = $nchain1 + 1)
-            if ($Toppar.fix_origin_$nchain1 eq false) then
+            if ($mol_fix_origin_$nchain1 eq false) then
                 fix sele=(not all) end
-                fix sele=( not (segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name OO) end
+                fix sele=( not (segid $prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name OO) end
                 minimize rigid
-                    group ((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
+                    group ((segid $prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
                     translation=false
                     nstep $ministeps
                     drop 10.0
@@ -531,8 +425,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             eval ($nchain1 = 0)
             while ($nchain1 < $data.ncomponents) loop nloop1
                 eval($nchain1 = $nchain1 + 1)
-                if ($Toppar.fix_origin_$nchain1 eq false) then
-                    group ((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
+                if ($mol_fix_origin_$nchain1 eq false) then
+                    group ((segid $prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
                 end if
                 translation=false
             end loop nloop1
@@ -547,8 +441,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             eval ($nchain1 = 0)
             while ($nchain1 < $data.ncomponents) loop nloop1
                 eval($nchain1 = $nchain1 + 1)
-                if ($Toppar.fix_origin_$nchain1 eq false) then
-                    group ((segid $Toppar.prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
+                if ($mol_fix_origin_$nchain1 eq false) then
+                    group ((segid $prot_segid_$nchain1 or segid $watersegname_$nchain1) and not name MAP)
                 end if
                 translation=true
             end loop nloop1
@@ -563,8 +457,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
             eval ($nchain1 = 0)
             while ($nchain1 < $data.ncomponents) loop nloop1
                 eval($nchain1 = $nchain1 + 1)
-                if ($Toppar.fix_origin_$nchain1 eq false) then
-                    group (segid $Toppar.prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or name MAP))
+                if ($mol_fix_origin_$nchain1 eq false) then
+                    group (segid $prot_segid_$nchain1 and not (resn WAT or resn HOH or resn TIP* or name MAP))
                 end if
                 translation=true
             end loop nloop1
@@ -587,11 +481,11 @@ while ($nrig < $SaProtocol.ntrials) loop trials
         eval($nchain1 = 0)
         while ($nchain1 < $data.ncomponents) loop nloop4
             eval($nchain1 = $nchain1 + 1)
-            if ($Toppar.shape_$nchain1 eq false) then
+            if ($mol_shape_$nchain1 eq false) then
                 eval($nchain2 = $nchain1 )
                 while ($nchain2 < $data.ncomponents) loop nloop3
                     eval($nchain2 = $nchain2 + 1)
-                    if ($Toppar.shape_$nchain2 eq false) then
+                    if ($mol_shape_$nchain2 eq false) then
                         @MODULE:rotation180.cns
                         inline @MODULE:bestener.cns
                     end if
@@ -705,7 +599,7 @@ evaluate ($Data.flags.dihed = false)
 inline @MODULE:print_coorheader.cns
 
 if ($reorient eq true) then
-    coor sele=(segid $Toppar.prot_segid_1) orient end
+    coor sele=(segid $prot_segid_1) orient end
 end if
 
 write coordinates format=pdbo output=$output_pdb_filename end

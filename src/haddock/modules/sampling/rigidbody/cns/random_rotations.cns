@@ -18,8 +18,8 @@ evaluate ($ncount = 0)
 while ($ncount < $data.ncomponents) loop fixed
     evaluate ($ncount = $ncount + 1)
     eval($watersegname_$ncount="WA" + encode($ncount))
-    if ($Toppar.fix_origin_$ncount eq true) then
-        do (store4 = 1) (segid $Toppar.prot_segid_$ncount)
+    if ($mol_fix_origin_$ncount eq true) then
+        do (store4 = 1) (segid $prot_segid_$ncount)
     end if
 end loop fixed
 
@@ -28,11 +28,11 @@ if ($homosymmetry eq false) then
     evaluate ($ncount = 0)
     while ($ncount < $data.ncomponents) loop randtrans
         evaluate ($ncount = $ncount +1)
-        if ($Toppar.fix_origin_$ncount eq false) then
+        if ($mol_fix_origin_$ncount eq false) then
             evaluate ($xd = 10.0 * (0.5 - ran()))
             evaluate ($yd = 10.0 * (0.5 - ran()))
             evaluate ($zd = 10.0 * (0.5 - ran()))
-            coor trans sele=(segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount) vector=($xd,$yd,$zd) end
+            coor trans sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) vector=($xd,$yd,$zd) end
         end if
     end loop randtrans
 end if
@@ -42,12 +42,12 @@ evaluate ($ncount = 0)
 evaluate ($nrotset = 0)
 while ($ncount < $data.ncomponents) loop randrot
     evaluate ($ncount = $ncount +1)
-    if ($Toppar.fix_origin_$ncount eq false) then
-        show ave (x) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+    if ($mol_fix_origin_$ncount eq false) then
+        show ave (x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($xc = $result)
-        show ave (y) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show ave (y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($yc = $result)
-        show ave (z) (segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+        show ave (z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
         evaluate ($zc = $result)
 
         ! Random rotation for each molecule except for symmtrical homomers for which
@@ -99,7 +99,7 @@ while ($ncount < $data.ncomponents) loop randrot
         coor 
             center=($xc $yc $zc)
             rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
-            sele=(segid $Toppar.prot_segid_$ncount or segid $watersegname_$ncount)
+            sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount)
         end
     end if
 end loop randrot

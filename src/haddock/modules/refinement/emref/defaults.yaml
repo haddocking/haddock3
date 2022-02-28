@@ -1,7 +1,7 @@
 #
 # Group molecule
 #
-fix_origin_1:
+mol_fix_origin_1:
   default: false
   type: boolean
   title: Fix molecule
@@ -9,7 +9,7 @@ fix_origin_1:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_2:
+mol_fix_origin_2:
   default: false
   type: boolean
   title: Fix molecule
@@ -17,7 +17,7 @@ fix_origin_2:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_3:
+mol_fix_origin_3:
   default: false
   type: boolean
   title: Fix molecule
@@ -25,7 +25,7 @@ fix_origin_3:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_4:
+mol_fix_origin_4:
   default: false
   type: boolean
   title: Fix molecule
@@ -33,7 +33,7 @@ fix_origin_4:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_5:
+mol_fix_origin_5:
   default: false
   type: boolean
   title: Fix molecule
@@ -41,7 +41,7 @@ fix_origin_5:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_6:
+mol_fix_origin_6:
   default: false
   type: boolean
   title: Fix molecule
@@ -49,7 +49,7 @@ fix_origin_6:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_7:
+mol_fix_origin_7:
   default: false
   type: boolean
   title: Fix molecule
@@ -57,7 +57,7 @@ fix_origin_7:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_8:
+mol_fix_origin_8:
   default: false
   type: boolean
   title: Fix molecule
@@ -65,7 +65,7 @@ fix_origin_8:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_9:
+mol_fix_origin_9:
   default: false
   type: boolean
   title: Fix molecule
@@ -73,7 +73,7 @@ fix_origin_9:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_10:
+mol_fix_origin_10:
   default: false
   type: boolean
   title: Fix molecule
@@ -81,7 +81,7 @@ fix_origin_10:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_11:
+mol_fix_origin_11:
   default: false
   type: boolean
   title: Fix molecule
@@ -89,7 +89,7 @@ fix_origin_11:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_12:
+mol_fix_origin_12:
   default: false
   type: boolean
   title: Fix molecule
@@ -97,7 +97,7 @@ fix_origin_12:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_13:
+mol_fix_origin_13:
   default: false
   type: boolean
   title: Fix molecule
@@ -105,7 +105,7 @@ fix_origin_13:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_14:
+mol_fix_origin_14:
   default: false
   type: boolean
   title: Fix molecule
@@ -113,7 +113,7 @@ fix_origin_14:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_15:
+mol_fix_origin_15:
   default: false
   type: boolean
   title: Fix molecule
@@ -121,7 +121,7 @@ fix_origin_15:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_16:
+mol_fix_origin_16:
   default: false
   type: boolean
   title: Fix molecule
@@ -129,7 +129,7 @@ fix_origin_16:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_17:
+mol_fix_origin_17:
   default: false
   type: boolean
   title: Fix molecule
@@ -137,7 +137,7 @@ fix_origin_17:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_18:
+mol_fix_origin_18:
   default: false
   type: boolean
   title: Fix molecule
@@ -145,7 +145,7 @@ fix_origin_18:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_19:
+mol_fix_origin_19:
   default: false
   type: boolean
   title: Fix molecule
@@ -153,7 +153,7 @@ fix_origin_19:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-fix_origin_20:
+mol_fix_origin_20:
   default: false
   type: boolean
   title: Fix molecule
@@ -161,7 +161,7 @@ fix_origin_20:
   long: Fixes the molecule in its original position. 
   group: 'molecule'
   explevel: expert
-shape_1:
+mol_shape_1:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -169,7 +169,7 @@ shape_1:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_2:
+mol_shape_2:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -177,7 +177,7 @@ shape_2:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_3:
+mol_shape_3:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -185,7 +185,7 @@ shape_3:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_4:
+mol_shape_4:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -193,7 +193,7 @@ shape_4:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_5:
+mol_shape_5:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -201,7 +201,7 @@ shape_5:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_6:
+mol_shape_6:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -209,7 +209,7 @@ shape_6:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_7:
+mol_shape_7:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -217,7 +217,7 @@ shape_7:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_8:
+mol_shape_8:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -225,7 +225,7 @@ shape_8:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_9:
+mol_shape_9:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -233,7 +233,7 @@ shape_9:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_10:
+mol_shape_10:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -241,7 +241,7 @@ shape_10:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_11:
+mol_shape_11:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -249,7 +249,7 @@ shape_11:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_12:
+mol_shape_12:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -257,7 +257,7 @@ shape_12:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_13:
+mol_shape_13:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -265,7 +265,7 @@ shape_13:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_14:
+mol_shape_14:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -273,7 +273,7 @@ shape_14:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_15:
+mol_shape_15:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -281,7 +281,7 @@ shape_15:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_16:
+mol_shape_16:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -289,7 +289,7 @@ shape_16:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_17:
+mol_shape_17:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -297,7 +297,7 @@ shape_17:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_18:
+mol_shape_18:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -305,7 +305,7 @@ shape_18:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_19:
+mol_shape_19:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -313,7 +313,7 @@ shape_19:
   long: Defines a molecule as a shape, which is a collection of beads. 
   group: 'molecule'
   explevel: easy
-shape_20:
+mol_shape_20:
   default: false
   type: boolean
   title: Is the molecule a shape?
@@ -1724,7 +1724,7 @@ nseg1:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta1_1:
+seg_sta_1_1:
   default: .nan
   type: integer
   min: -9999
@@ -1734,7 +1734,7 @@ segsta1_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend1_1:
+seg_end_1_1:
   default: .nan
   type: integer
   min: -9999
@@ -1757,7 +1757,7 @@ nseg2:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta2_1:
+seg_sta_2_1:
   default: .nan
   type: integer
   min: -9999
@@ -1767,7 +1767,7 @@ segsta2_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend2_1:
+seg_end_2_1:
   default: .nan
   type: integer
   min: -9999
@@ -1790,7 +1790,7 @@ nseg3:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta3_1:
+seg_sta_3_1:
   default: .nan
   type: integer
   min: -9999
@@ -1800,7 +1800,7 @@ segsta3_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend3_1:
+seg_end_3_1:
   default: .nan
   type: integer
   min: -9999
@@ -1823,7 +1823,7 @@ nseg4:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta4_1:
+seg_sta_4_1:
   default: .nan
   type: integer
   min: -9999
@@ -1833,7 +1833,7 @@ segsta4_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend4_1:
+seg_end_4_1:
   default: .nan
   type: integer
   min: -9999
@@ -1856,7 +1856,7 @@ nseg5:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta5_1:
+seg_sta_5_1:
   default: .nan
   type: integer
   min: -9999
@@ -1866,7 +1866,7 @@ segsta5_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend5_1:
+seg_end_5_1:
   default: .nan
   type: integer
   min: -9999
@@ -1889,7 +1889,7 @@ nseg6:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta6_1:
+seg_sta_6_1:
   default: .nan
   type: integer
   min: -9999
@@ -1899,7 +1899,7 @@ segsta6_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend6_1:
+seg_end_6_1:
   default: .nan
   type: integer
   min: -9999
@@ -1922,7 +1922,7 @@ nseg7:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta7_1:
+seg_sta_7_1:
   default: .nan
   type: integer
   min: -9999
@@ -1932,7 +1932,7 @@ segsta7_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend7_1:
+seg_end_7_1:
   default: .nan
   type: integer
   min: -9999
@@ -1955,7 +1955,7 @@ nseg8:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta8_1:
+seg_sta_8_1:
   default: .nan
   type: integer
   min: -9999
@@ -1965,7 +1965,7 @@ segsta8_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend8_1:
+seg_end_8_1:
   default: .nan
   type: integer
   min: -9999
@@ -1988,7 +1988,7 @@ nseg9:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta9_1:
+seg_sta_9_1:
   default: .nan
   type: integer
   min: -9999
@@ -1998,7 +1998,7 @@ segsta9_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend9_1:
+seg_end_9_1:
   default: .nan
   type: integer
   min: -9999
@@ -2021,7 +2021,7 @@ nseg10:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta10_1:
+seg_sta_10_1:
   default: .nan
   type: integer
   min: -9999
@@ -2031,7 +2031,7 @@ segsta10_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend10_1:
+seg_end_10_1:
   default: .nan
   type: integer
   min: -9999
@@ -2054,7 +2054,7 @@ nseg11:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta11_1:
+seg_sta_11_1:
   default: .nan
   type: integer
   min: -9999
@@ -2064,7 +2064,7 @@ segsta11_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend11_1:
+seg_end_11_1:
   default: .nan
   type: integer
   min: -9999
@@ -2087,7 +2087,7 @@ nseg12:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta12_1:
+seg_sta_12_1:
   default: .nan
   type: integer
   min: -9999
@@ -2097,7 +2097,7 @@ segsta12_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend12_1:
+seg_end_12_1:
   default: .nan
   type: integer
   min: -9999
@@ -2120,7 +2120,7 @@ nseg13:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta13_1:
+seg_sta_13_1:
   default: .nan
   type: integer
   min: -9999
@@ -2130,7 +2130,7 @@ segsta13_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend13_1:
+seg_end_13_1:
   default: .nan
   type: integer
   min: -9999
@@ -2153,7 +2153,7 @@ nseg14:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta14_1:
+seg_sta_14_1:
   default: .nan
   type: integer
   min: -9999
@@ -2163,7 +2163,7 @@ segsta14_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend14_1:
+seg_end_14_1:
   default: .nan
   type: integer
   min: -9999
@@ -2186,7 +2186,7 @@ nseg15:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta15_1:
+seg_sta_15_1:
   default: .nan
   type: integer
   min: -9999
@@ -2196,7 +2196,7 @@ segsta15_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend15_1:
+seg_end_15_1:
   default: .nan
   type: integer
   min: -9999
@@ -2219,7 +2219,7 @@ nseg16:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta16_1:
+seg_sta_16_1:
   default: .nan
   type: integer
   min: -9999
@@ -2229,7 +2229,7 @@ segsta16_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend16_1:
+seg_end_16_1:
   default: .nan
   type: integer
   min: -9999
@@ -2252,7 +2252,7 @@ nseg17:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta17_1:
+seg_sta_17_1:
   default: .nan
   type: integer
   min: -9999
@@ -2262,7 +2262,7 @@ segsta17_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend17_1:
+seg_end_17_1:
   default: .nan
   type: integer
   min: -9999
@@ -2285,7 +2285,7 @@ nseg18:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta18_1:
+seg_sta_18_1:
   default: .nan
   type: integer
   min: -9999
@@ -2295,7 +2295,7 @@ segsta18_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend18_1:
+seg_end_18_1:
   default: .nan
   type: integer
   min: -9999
@@ -2318,7 +2318,7 @@ nseg19:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta19_1:
+seg_sta_19_1:
   default: .nan
   type: integer
   min: -9999
@@ -2328,7 +2328,7 @@ segsta19_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend19_1:
+seg_end_19_1:
   default: .nan
   type: integer
   min: -9999
@@ -2351,7 +2351,7 @@ nseg20:
     will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig. 
   group: 'flexibility'
   explevel: expert
-segsta20_1:
+seg_sta_20_1:
   default: .nan
   type: integer
   min: -9999
@@ -2361,7 +2361,7 @@ segsta20_1:
   long: Residue number defining the start of the semi-flexible segment.
   group: 'flexibility'
   explevel: expert
-segend20_1:
+seg_end_20_1:
   default: .nan
   type: integer
   min: -9999
@@ -2382,10 +2382,10 @@ nfle1:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta1_1:
+fle_sta_1_1:
   default: .nan
   type: integer
   min: -9999
@@ -2395,7 +2395,7 @@ flesta1_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend1_1:
+fle_end_1_1:
   default: .nan
   type: integer
   min: -9999
@@ -2413,10 +2413,10 @@ nfle2:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta2_1:
+fle_sta_2_1:
   default: .nan
   type: integer
   min: -9999
@@ -2426,7 +2426,7 @@ flesta2_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend2_1:
+fle_end_2_1:
   default: .nan
   type: integer
   min: -9999
@@ -2444,10 +2444,10 @@ nfle3:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta3_1:
+fle_sta_3_1:
   default: .nan
   type: integer
   min: -9999
@@ -2457,7 +2457,7 @@ flesta3_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend3_1:
+fle_end_3_1:
   default: .nan
   type: integer
   min: -9999
@@ -2475,10 +2475,10 @@ nfle4:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta4_1:
+fle_sta_4_1:
   default: .nan
   type: integer
   min: -9999
@@ -2488,7 +2488,7 @@ flesta4_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend4_1:
+fle_end_4_1:
   default: .nan
   type: integer
   min: -9999
@@ -2506,10 +2506,10 @@ nfle5:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta5_1:
+fle_sta_5_1:
   default: .nan
   type: integer
   min: -9999
@@ -2519,7 +2519,7 @@ flesta5_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend5_1:
+fle_end_5_1:
   default: .nan
   type: integer
   min: -9999
@@ -2537,10 +2537,10 @@ nfle6:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta6_1:
+fle_sta_6_1:
   default: .nan
   type: integer
   min: -9999
@@ -2550,7 +2550,7 @@ flesta6_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend6_1:
+fle_end_6_1:
   default: .nan
   type: integer
   min: -9999
@@ -2568,10 +2568,10 @@ nfle7:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta7_1:
+fle_sta_7_1:
   default: .nan
   type: integer
   min: -9999
@@ -2581,7 +2581,7 @@ flesta7_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend7_1:
+fle_end_7_1:
   default: .nan
   type: integer
   min: -9999
@@ -2599,10 +2599,10 @@ nfle8:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta8_1:
+fle_sta_8_1:
   default: .nan
   type: integer
   min: -9999
@@ -2612,7 +2612,7 @@ flesta8_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend8_1:
+fle_end_8_1:
   default: .nan
   type: integer
   min: -9999
@@ -2630,10 +2630,10 @@ nfle9:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta9_1:
+fle_sta_9_1:
   default: .nan
   type: integer
   min: -9999
@@ -2643,7 +2643,7 @@ flesta9_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend9_1:
+fle_end_9_1:
   default: .nan
   type: integer
   min: -9999
@@ -2661,10 +2661,10 @@ nfle10:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta10_1:
+fle_sta_10_1:
   default: .nan
   type: integer
   min: -9999
@@ -2674,7 +2674,7 @@ flesta10_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend10_1:
+fle_end_10_1:
   default: .nan
   type: integer
   min: -9999
@@ -2692,10 +2692,10 @@ nfle11:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta11_1:
+fle_sta_11_1:
   default: .nan
   type: integer
   min: -9999
@@ -2705,7 +2705,7 @@ flesta11_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend11_1:
+fle_end_11_1:
   default: .nan
   type: integer
   min: -9999
@@ -2723,10 +2723,10 @@ nfle12:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta12_1:
+fle_sta_12_1:
   default: .nan
   type: integer
   min: -9999
@@ -2736,7 +2736,7 @@ flesta12_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend12_1:
+fle_end_12_1:
   default: .nan
   type: integer
   min: -9999
@@ -2754,10 +2754,10 @@ nfle13:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta13_1:
+fle_sta_13_1:
   default: .nan
   type: integer
   min: -9999
@@ -2767,7 +2767,7 @@ flesta13_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend13_1:
+fle_end_13_1:
   default: .nan
   type: integer
   min: -9999
@@ -2785,10 +2785,10 @@ nfle14:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta14_1:
+fle_sta_14_1:
   default: .nan
   type: integer
   min: -9999
@@ -2798,7 +2798,7 @@ flesta14_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend14_1:
+fle_end_14_1:
   default: .nan
   type: integer
   min: -9999
@@ -2816,10 +2816,10 @@ nfle15:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta15_1:
+fle_sta_15_1:
   default: .nan
   type: integer
   min: -9999
@@ -2829,7 +2829,7 @@ flesta15_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend15_1:
+fle_end_15_1:
   default: .nan
   type: integer
   min: -9999
@@ -2847,10 +2847,10 @@ nfle16:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta16_1:
+fle_sta_16_1:
   default: .nan
   type: integer
   min: -9999
@@ -2860,7 +2860,7 @@ flesta16_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend16_1:
+fle_end_16_1:
   default: .nan
   type: integer
   min: -9999
@@ -2878,10 +2878,10 @@ nfle17:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta17_1:
+fle_sta_17_1:
   default: .nan
   type: integer
   min: -9999
@@ -2891,7 +2891,7 @@ flesta17_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend17_1:
+fle_end_17_1:
   default: .nan
   type: integer
   min: -9999
@@ -2909,10 +2909,10 @@ nfle18:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta18_1:
+fle_sta_18_1:
   default: .nan
   type: integer
   min: -9999
@@ -2922,7 +2922,7 @@ flesta18_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend18_1:
+fle_end_18_1:
   default: .nan
   type: integer
   min: -9999
@@ -2940,10 +2940,10 @@ nfle19:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta19_1:
+fle_sta_19_1:
   default: .nan
   type: integer
   min: -9999
@@ -2953,7 +2953,7 @@ flesta19_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend19_1:
+fle_end_19_1:
   default: .nan
   type: integer
   min: -9999
@@ -2971,10 +2971,10 @@ nfle20:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the flesta and fleend variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
   group: 'flexibility'
   explevel: expert
-flesta20_1:
+fle_sta_20_1:
   default: .nan
   type: integer
   min: -9999
@@ -2984,7 +2984,7 @@ flesta20_1:
   long: Residue number defining the start of the fully flexible segment.
   group: 'flexibility'
   explevel: expert
-fleend20_1:
+fle_end_20_1:
   default: .nan
   type: integer
   min: -9999

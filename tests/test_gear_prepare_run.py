@@ -1,7 +1,10 @@
 """Test prepare run module."""
 import pytest
 
-from haddock.gear.prepare_run import get_blocks, read_blocks
+from haddock.gear.prepare_run import (
+    get_blocks_single_index,
+    read_single_index_blocks,
+    )
 
 
 @pytest.mark.parametrize(
@@ -27,7 +30,7 @@ from haddock.gear.prepare_run import get_blocks, read_blocks
     )
 def test_get_blocks(inp, expected):
     """Test get blocks."""
-    result = get_blocks(inp)
+    result = get_blocks_single_index(inp)
     assert result == expected
 
 
@@ -68,7 +71,7 @@ def test_get_blocks(inp, expected):
             )
         ]
     )
-def test_read_blocks(default, user, expected):
+def test_read_single_index_blocks(default, user, expected):
     """Test read_blocks."""
-    result = read_blocks(default, user)
+    result = read_single_index_blocks(default, user)
     assert result == expected

@@ -303,12 +303,12 @@ def belongs_to_multiple_index(param_parts):
 
 def rejoin_parts_single_index(param_parts):
     """Join parameter name parts."""
-    return "_".join(param_parts[1: -1])
+    return "_".join(param_parts[1:-1])
 
 
 def rejoin_parts_multiple_index(param_parts):
     """Join parameter name parts."""
-    return "_".join(param_parts[1: -2])
+    return "_".join(param_parts[1:-2])
 
 
 def extract_single_index_params(user_config, param_name, group_idx):

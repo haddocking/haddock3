@@ -3,6 +3,7 @@ import importlib
 import shutil
 import sys
 from contextlib import contextmanager
+from contextlib import suppress
 from copy import deepcopy
 from functools import wraps
 from pathlib import Path
@@ -373,7 +374,6 @@ def check_specific_validations(params):
     v_rundir(params[RUNDIR])
 
 
-# reading parameter blocks
 def get_blocks(user_config, defaults, module_name):
     """
     Get configuration expandable blocks.
@@ -386,12 +386,46 @@ def get_blocks(user_config, defaults, module_name):
     defaults : dict
         The default configuration file defined for the module.
     """
+    # the topoaa module is an exception because it has subdictionaries
+    # for the `mol` parameter. Instead of defining a general recursive
+    # function, I decided to add a simple if/else exception.
+    # no other module should have subdictionaries has parameters
+    if module_name == "topoaa":
+        ap = set()  # allowed_parameters
+        ap.update(_get_blocks(user_config, defaults, module_name))
+        for i in range(1, 20):
+            key = f"mol{i}"
+            with suppress(KeyError):
+                ap.update(
+                    _get_blocks(
+                        user_config[key],
+                        defaults[key],
+                        module_name,
+                        )
+                    )
+
+        return ap
+
+    else:
+        return _get_blocks(user_config, defaults, module_name)
+
+
+# reading parameter blocks
+def _get_blocks(user_config, defaults, module_name):
+    print(module_name)
     type_1 = get_single_index_groups(defaults)
     type_2 = get_multiple_index_groups(defaults)
-    type_3 = type_simplest_ep[module_name]
+    print(type_1)
 
     allowed_params = set()
-    allowed_params.update(read_single_groups_user_config(type_1, user_config))
-    allowed_params.update(read_multiple_groups_user_config(type_2, user_config))
-    allowed_params.update(read_simplest_expandable(type_3, user_config))
+    allowed_params.update(read_single_groups_user_config(user_config, type_1))
+    allowed_params.update(read_multiple_groups_user_config(user_config, type_2))
+
+    try:
+        type_3 = type_simplest_ep[module_name]
+    except KeyError:
+        pass
+    else:
+        allowed_params.update(read_simplest_expandable(type_3, user_config))
+
     return allowed_params

@@ -70,6 +70,30 @@ _emsg_num_differ = (
     )
 
 
+type_simplest_ep = {
+    "topoaa": (
+        #"hisd",
+        #"hise",
+        ),
+    }
+
+
+def xxx(config, expparams):
+    """."""
+
+
+def read_simplest_expandable(expparams, config):
+    new = set()
+    for param in config:
+        try:
+            name, idx = param.split("_")
+        except ValueError:
+            continue
+        if idx.isdigit() and name in expparams:
+            new.add(param)
+    return new
+
+
 def _get_groups(
         config,
         belongs_to_group,
@@ -168,7 +192,7 @@ def _read_groups_in_user_config(
         A set with the new parameters in the user configuration file
         that are acceptable according to the expandable rules.
     """
-    user_groups = get_user_groups(user_config, limit=1)
+    user_groups = get_user_groups(user_config, minimum=1)
     default_group_names = [group[0] for group in default_groups]
 
     new = set()
@@ -313,13 +337,13 @@ def extract_multiple_index_params(user_config, param_name, group_idx):
     return new
 
 
+
+
 get_single_index_groups = partial(
     _get_groups,
     belongs_to_group=belongs_to_single_index,
     make_param_name=make_param_name_single_index,
     rejoin_parts=rejoin_parts_single_index,
-    _emsg_no_group=_emsg_no_group_single,
-    _emsg_unexpected_params=_emsg_unexpected_params_single,
     )
 """
 Get single indexed blocks from a configuration.
@@ -373,11 +397,9 @@ dictionary
 
 get_multiple_index_groups = partial(
     _get_groups,
-    belong_to_group=belongs_to_multiple_index,
+    belongs_to_group=belongs_to_multiple_index,
     make_param_name=make_param_name_multiple_index,
     rejoin_parts=rejoin_parts_multiple_index,
-    _emsg_no_group=_emsg_no_group_multiple,
-    _emsg_unexpected_params=_emsg_unexpected_params_multiple,
     )
 """
 Get parameter blocks with multiple indexes.
@@ -428,6 +450,9 @@ dictionary
 read_single_groups_user_config = partial(
     _read_groups_in_user_config,
     get_user_groups=get_single_index_groups,
+    extract_params=extract_single_index_params,
+    _emsg_no_group=_emsg_no_group_single,
+    _emsg_unexpected_params=_emsg_unexpected_params_single,
     )
 """
 Read single indexed groups in user config.
@@ -452,6 +477,9 @@ set
 read_multiple_groups_user_config = partial(
     _read_groups_in_user_config,
     get_user_groups=get_multiple_index_groups,
+    extract_params=extract_multiple_index_params,
+    _emsg_no_group=_emsg_no_group_multiple,
+    _emsg_unexpected_params=_emsg_unexpected_params_multiple,
     )
 """
 Read multiple indexed groups in user config.

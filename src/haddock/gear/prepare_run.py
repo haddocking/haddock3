@@ -12,10 +12,12 @@ from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
-    get_blocks_multiple_index,
-    get_blocks_single_index,
-    read_multiple_index_blocks,
-    read_single_index_blocks,
+    get_multiple_index_groups,
+    get_single_index_groups,
+    read_multiple_groups_user_config,
+    read_simplest_expandable,
+    read_single_groups_user_config,
+    type_simplest_ep,
     )
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -168,12 +170,12 @@ def validate_modules_params(modules_params):
         in the defaults.cfg of the module.
     """
     for module_name, args in modules_params.items():
-        _module_name = get_module_name(module_name)
+        module_name = get_module_name(module_name)
         pdef = Path(
             haddock3_source_path,
             'modules',
-            modules_category[_module_name],
-            _module_name,
+            modules_category[module_name],
+            module_name,
             'defaults.yaml',
             ).resolve()
 
@@ -181,7 +183,7 @@ def validate_modules_params(modules_params):
         if not defaults:
             return
 
-        block_params = get_blocks(args, defaults)
+        block_params = get_blocks(args, defaults, module_name)
         # block_params = read_blocks(blocks, args)
 
         diff = set(args.keys()) \
@@ -372,7 +374,7 @@ def check_specific_validations(params):
 
 
 # reading parameter blocks
-def get_blocks(user_config, defaults):
+def get_blocks(user_config, defaults, module_name):
     """
     Get configuration expandable blocks.
 
@@ -384,10 +386,12 @@ def get_blocks(user_config, defaults):
     defaults : dict
         The default configuration file defined for the module.
     """
-    type_1 = get_blocks_single_index(defaults)
-    type_2 = get_blocks_multiple_index(defaults)
+    type_1 = get_single_index_groups(defaults)
+    type_2 = get_multiple_index_groups(defaults)
+    type_3 = type_simplest_ep[module_name]
 
     allowed_params = set()
-    allowed_params.update(read_single_index_blocks(type_1, user_config))
-    allowed_params.update(read_multiple_index_blocks(type_2, user_config))
+    allowed_params.update(read_single_groups_user_config(type_1, user_config))
+    allowed_params.update(read_multiple_groups_user_config(type_2, user_config))
+    allowed_params.update(read_simplest_expandable(type_3, user_config))
     return allowed_params

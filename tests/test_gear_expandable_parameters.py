@@ -17,6 +17,7 @@ from haddock.gear.expandable_parameters import (
     read_single_idx_groups_user_config,
     rejoin_parts_multiple_index,
     rejoin_parts_single_index,
+    remove_ghost_groups,
     type_simplest_ep,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
@@ -50,9 +51,33 @@ def test_type_simplest_keys(mod_cat):
 
 
 @pytest.mark.parametrize(
+    "inp,expected",
+    [
+        (
+            dict.fromkeys({("param", "1"), ("param", "2"), ("param", "3")}),
+            {},
+            ),
+        (
+            dict.fromkeys({("param", "1"), ("param", "2"), ("other", "1")}),
+            {("other", "1"): None},
+            ),
+        (
+            dict.fromkeys({("param", "1"), ("other", "1")}),
+            dict.fromkeys({("param", "1"), ("other", "1")}),
+            ),
+        ]
+    )
+def test_remove_ghost_groups(inp, expected):
+    """Test remove ghost groups."""
+    result = remove_ghost_groups(inp)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
     "param,expected",
     (
         ("param_tag_1", True),
+        ("mol_param_tag_1", False),
         ("param_tag_else_1", True),
         ("param_tag_else2_1", True),
         ("param", False),
@@ -60,6 +85,8 @@ def test_type_simplest_keys(mod_cat):
         ("param_1_2", False),
         ("param_other", False),
         ("param_other_1_2", False),
+        ("mol_other_1_2", False),
+        ("mol_1", False),
         )
     )
 def test_belongs_to_single_index(param, expected):
@@ -81,6 +108,8 @@ def test_belongs_to_single_index(param, expected):
         ("param_other_1_2", True),
         ("param_other_else_2_1", True),
         ("param_other2_else_2_1", True),
+        ("mol_other_1_2", False),
+        ("mol_1", False),
         )
     )
 def test_belongs_to_multiple_index(param, expected):
@@ -238,6 +267,75 @@ def test_make_param_name_multiple(parts, expected):
         [
             {
                 "param_tag_1",
+                "param_tag_2",
+                "param_teg_1",
+                "param_teg_2",
+                "param_tig_1",
+                "param_tig_2",
+                "param_tog_1",
+                "param_tog_2",
+                "param_tug_1",
+                "param_tug_2",
+                "param_1",
+                "other_sta_1",
+                "other_end_1",
+                "param_newtag_1_1",
+                "param_newteg_1_1",
+                "param_newtig_1_1",
+                },
+            {
+                ("other", "1"): {"sta", "end"},
+                },
+            ],
+        ],
+    )
+def test_get_single_index_group_reference_true(config, expected):
+    """Test get single index group with reference=True."""
+    result = get_single_index_groups(config, reference=True)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "config,expected",
+    # here only the keys are represented
+    [
+        [
+            {
+                "param_tag_1",
+                "param_teg_1",
+                "param_tig_1",
+                "param_tog_1",
+                "param_tug_1",
+                "paramm_tag_1",
+                "paramm_teg_1",
+                "param_1",
+                "other_sta_1",
+                "other_end_1",
+                "param_newtag_1_1",
+                "param_newteg_1_1",
+                "param_newtig_1_1",
+                },
+            {
+                ("param", "1"): {"tag", "teg", "tig", "tog", "tug"},
+                ("paramm", "1"): {"tag", "teg"},
+                ("other", "1"): {"sta", "end"},
+                },
+            ],
+        ],
+    )
+def test_get_single_index_group_reference_true_2(config, expected):
+    """Test get single index group with reference=True."""
+    result = get_single_index_groups(config, reference=True)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "config,expected",
+    # here only the keys are represented
+    [
+        [
+            {
+                "param_tag_1",
                 "param_teg_1",
                 "param_tig_1",
                 "param_tog_1",
@@ -256,14 +354,15 @@ def test_make_param_name_multiple(parts, expected):
                 },
             {
                 ("param", "1"): {"tag", "teg", "tig", "tog", "tug"},
+                ("param", "2"): {"tag", "teg", "tig", "tog", "tug"},
                 ("other", "1"): {"sta", "end"},
                 },
             ],
         ],
     )
-def test_get_single_index_group(config, expected):
+def test_get_single_index_group_reference_false(config, expected):
     """Test get single index group."""
-    result = get_single_index_groups(config)
+    result = get_single_index_groups(config, reference=False)
     assert result == expected
 
 

@@ -64,6 +64,7 @@ However, because `<name>_<integer>` is too much of a simple rule, we
 need to define in this module which parameters are actualy expandable.
 If you are developing here look for the `type_simplest_ep` variable.
 """
+from copy import deepcopy
 from functools import partial
 
 from haddock.core.exceptions import ConfigurationError
@@ -152,9 +153,6 @@ def _get_groups(
     for p in parts:
         group_identity = make_param_name(p)  # ("param", "1")
 
-        if reference and group_identity[-1] != "1":
-            continue
-
         new = groups.setdefault(group_identity, {})
 
         # counts the number of parameters within the block
@@ -165,6 +163,9 @@ def _get_groups(
         new.setdefault("mid", set())
         new["mid"].add(rejoin_parts(p))
 
+    if reference:
+        groups = remove_ghost_groups(groups)
+
     # creates the final dictionary
     final_groups = {
         k: v["mid"]
@@ -173,6 +174,45 @@ def _get_groups(
         }
 
     return final_groups
+
+
+def remove_ghost_groups(groups):
+    """
+    Remove ghost groups from dictionary.
+
+    Ghost groups are parameters that are defined in the defaults
+    in a manner that they look they are already expanded. For example:
+
+    - mol_shape_1
+    - mol_shape_2
+    - mol_shape_3
+    - mol_fix_origin_1
+    - mol_fix_origin_2
+    - mol_fix_origin_3
+
+    These integer suffix refer to the input molecules and not to
+    expandable groups.
+
+    Parameters
+    ----------
+    groups : dict
+        A dictionary containing the groups. For example as those created
+        by `get_single_index_groups`.
+    """
+    counter = {}
+    for key in groups:
+        counter.setdefault(key[0], 0)
+        counter[key[0]] += 1
+
+    new_groups = deepcopy(groups)
+
+    for key, value in counter.items():
+        if value > 1:
+            for gk in groups.keys():
+                if gk[0] == key:
+                    new_groups.pop(gk)
+
+    return new_groups
 
 
 # this is an engine function that must be populated with the respective
@@ -221,6 +261,7 @@ def _read_groups_in_user_config(
         A set with the new parameters in the user configuration file
         that are acceptable according to the expandable rules.
     """
+    # minimum=1 is used to capture groups with missing parameters
     user_groups = get_user_groups(user_config, minimum=1, reference=False)
     default_group_names = set(group[0] for group in default_groups)
 
@@ -333,7 +374,8 @@ def belongs_to_single_index(param_parts):
     return \
         len(param_parts) > 2 \
         and param_parts[-1].isdigit() \
-        and not param_parts[-2].isdigit()
+        and not param_parts[-2].isdigit() \
+        and not param_parts[0].startswith("mol")
 
 
 def belongs_to_multiple_index(param_parts):
@@ -359,7 +401,8 @@ def belongs_to_multiple_index(param_parts):
     return \
         len(param_parts) >= 4 \
         and param_parts[-1].isdigit() \
-        and param_parts[-2].isdigit()
+        and param_parts[-2].isdigit() \
+        and not param_parts[0].startswith("mol")
 
 
 def rejoin_parts_single_index(param_parts):

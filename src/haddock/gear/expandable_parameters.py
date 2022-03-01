@@ -76,23 +76,11 @@ _emsg_num_differ = (
 # many other parameters with the same structure but that are not
 # supposed to be expandable.
 type_simplest_ep = {
-    "topoaa": (
-        "hisd",
-        "hise",
-        ),
+    "topoaa": {
+        "hisd",  # hisd_1 should be defined in the `defaults.yaml`
+        "hise",  # hise_1 should be defined in the `defaults.yaml`
+        },
     }
-
-
-def read_simplest_expandable(expparams, config):
-    new = set()
-    for param in config:
-        try:
-            name, idx = param.split("_")
-        except ValueError:
-            continue
-        if idx.isdigit() and name in expparams:
-            new.add(param)
-    return new
 
 
 def _get_groups(
@@ -228,6 +216,9 @@ def _read_groups_in_user_config(
         num_found = len(params)
         num_expected = len(expected_params)
 
+        # it should only trigger when num_found < num_expected
+        # when num_found > num_expected the error about in `diff` is
+        # triggered instead
         if num_found != num_expected:
             emsg = _emsg_num_differ.format(
                 param_name,
@@ -240,6 +231,35 @@ def _read_groups_in_user_config(
         related_params = extract_params(user_config, param_name, group_idx)
         new.update(related_params)
 
+    return new
+
+
+def read_simplest_expandable(expparams, config):
+    """
+    Read expandable parameters from config file of the type `param_1`.
+
+    Parameters
+    ----------
+    expparams : dict, dict.keys, set, or alike
+        The parameter name that should be considered as expandable.
+        Usually, this is a module subdictionary of `type_simplest_ep`.
+
+    config : dict, dict.keys, set, or alike
+        The user configuration file.
+
+    Returns
+    -------
+    set of str
+        The parameters in `config` that comply with `expparams`.
+    """
+    new = set()
+    for param in config:
+        try:
+            name, idx = param.split("_")
+        except ValueError:
+            continue
+        if idx.isdigit() and name in expparams:
+            new.add(param)
     return new
 
 
@@ -327,8 +347,8 @@ def extract_single_index_params(user_config, param_name, group_idx):
     """
     Extract the parameters belonging to a group.
 
-    Won't filter from single to multiindex parameters. Applies the rules
-    of single index parameters.
+    Descriminates between parameters of other expandable groups.
+    See: `belongs_to_single_index`.
 
     Examples
     --------
@@ -350,12 +370,12 @@ def extract_single_index_params(user_config, param_name, group_idx):
     >>> ES(
         {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
         "par", "2")
-        {"par_some_2_2", "par_other_2_2"}
+        set()
 
     >>> ES(
         {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
         "por", "2")
-        {}
+        set()
 
     Parameters
     ----------
@@ -377,11 +397,15 @@ def extract_single_index_params(user_config, param_name, group_idx):
     """
     new = set()
     for param in user_config:
+        parts = param.split("_")
         try:
-            pname, *_, pidx = param.split("_")
+            pname, *_, pidx = parts
         except ValueError:
             continue
-        if pname == param_name and pidx == group_idx:
+        if \
+                pname == param_name \
+                and pidx == group_idx \
+                and belongs_to_single_index(parts):
             new.add(param)
     return new
 
@@ -437,11 +461,15 @@ def extract_multiple_index_params(user_config, param_name, group_idx):
     """
     new = set()
     for param in user_config:
+        parts = param.split("_")
         try:
-            pname, *_, molidx, pidx = param.split("_")
+            pname, *_, molidx, pidx = parts
         except ValueError:
             continue
-        if pname + molidx == param_name and pidx == group_idx:
+        if \
+                pname + molidx == param_name \
+                and pidx == group_idx \
+                and belongs_to_multiple_index(parts):
             new.add(param)
     return new
 
@@ -554,7 +582,7 @@ dictionary
         "something4"}
 """
 
-read_single_groups_user_config = partial(
+read_single_idx_groups_user_config = partial(
     _read_groups_in_user_config,
     get_user_groups=get_single_index_groups,
     extract_params=extract_single_index_params,
@@ -581,7 +609,7 @@ set
     that are acceptable according to the expandable rules.
 """
 
-read_multiple_groups_user_config = partial(
+read_multiple_idx_groups_user_config = partial(
     _read_groups_in_user_config,
     get_user_groups=get_multiple_index_groups,
     extract_params=extract_multiple_index_params,

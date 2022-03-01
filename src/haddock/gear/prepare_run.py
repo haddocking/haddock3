@@ -2,9 +2,7 @@
 import importlib
 import shutil
 import sys
-from collections.abc import Mapping
-from contextlib import contextmanager
-from contextlib import suppress
+from contextlib import contextmanager, suppress
 from copy import deepcopy
 from functools import wraps
 from pathlib import Path
@@ -16,9 +14,9 @@ from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
     get_multiple_index_groups,
     get_single_index_groups,
-    read_multiple_groups_user_config,
+    read_multiple_idx_groups_user_config,
     read_simplest_expandable,
-    read_single_groups_user_config,
+    read_single_idx_groups_user_config,
     type_simplest_ep,
     )
 from haddock.gear.greetings import get_goodbye_help
@@ -27,10 +25,10 @@ from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libutil import (
+    extract_keys_recursive,
     recursive_dict_update,
     remove_dict_keys,
     zero_fill,
-    extract_keys_recursive,
     )
 from haddock.modules import (
     modules_category,
@@ -418,8 +416,8 @@ def _get_blocks(user_config, defaults, module_name):
     type_2 = get_multiple_index_groups(defaults)
 
     allowed_params = set()
-    allowed_params.update(read_single_groups_user_config(user_config, type_1))
-    allowed_params.update(read_multiple_groups_user_config(user_config, type_2))
+    allowed_params.update(read_single_idx_groups_user_config(user_config, type_1))
+    allowed_params.update(read_multiple_idx_groups_user_config(user_config, type_2))
 
     with suppress(KeyError):
         type_3 = type_simplest_ep[module_name]

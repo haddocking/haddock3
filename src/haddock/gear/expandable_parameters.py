@@ -100,6 +100,7 @@ def _get_groups(
         make_param_name,
         rejoin_parts,
         minimum=2,
+        reference=True,
         ):
     """
     Identify expandable parameter groups - main engine function.
@@ -123,6 +124,12 @@ def _get_groups(
 
     minimum : int
         Consider only the groups with at least `minimum` parameters.
+
+    reference : bool
+        Whether reading a default config file or not. If true, only
+        groups ending with "1" will be considered. This avoids capturing
+        parameters for molecules, such as "mol_fix_origin_1",
+        "mol_fix_origin_2", etc.
     """
     splitted = (parameter.split("_") for parameter in config)
     parts = (_parts for _parts in splitted if belongs_to_group(_parts))
@@ -131,6 +138,10 @@ def _get_groups(
     groups = {}
     for p in parts:
         group_identity = make_param_name(p)  # ("param", "1")
+
+        if reference and group_identity[-1] != "1":
+            continue
+
         new = groups.setdefault(group_identity, {})
 
         # counts the number of parameters within the block
@@ -192,7 +203,7 @@ def _read_groups_in_user_config(
         A set with the new parameters in the user configuration file
         that are acceptable according to the expandable rules.
     """
-    user_groups = get_user_groups(user_config, minimum=1)
+    user_groups = get_user_groups(user_config, minimum=1, reference=False)
     default_group_names = set(group[0] for group in default_groups)
 
     new = set()

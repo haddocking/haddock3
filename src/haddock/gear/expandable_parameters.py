@@ -86,7 +86,7 @@ _emsg_unexpected_params_multiple = \
 _emsg_num_differ = (
     "The parameter block {!r} expects "
     "{} parameters, but {} are present "
-    "in the user configuration file."
+    "in the user configuration file: {}."
     )
 
 
@@ -251,9 +251,9 @@ def _read_groups_in_user_config(
         if num_found != num_expected:
             emsg = _emsg_num_differ.format(
                 param_name,
-                group_idx,
                 num_expected,
                 num_found,
+                ", ".join(params),
                 )
             raise ConfigurationError(emsg)
 

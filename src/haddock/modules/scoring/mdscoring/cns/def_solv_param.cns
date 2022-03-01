@@ -1,0 +1,105 @@
+! def_solv_param.cns
+!    Define atomic solvation parameters 
+!    Original valus taken from Fernandez-Recio et al. JMB 335:843 (2004)
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+evaluate ($arofac = 6.26)
+evaluate ($alifac = 1.27)
+evaluate ($polfac = 2.30)
+
+
+do (store1 =  0.0000) (all)
+do (store1 =  0.0151 * $alifac) (name C*)
+do (store1 =  0.0176 * $arofac) ((name CG* or name CD* or name CE* or name CH* or name CZ*) and (resn PHE or resn TYR or resn HIS or resn TRP))
+do (store1 = -0.0170 * $polfac) (name N*)
+do (store1 = -0.0548 * $polfac) (name NT* or (name NZ* and resn LYS))
+do (store1 = -0.0273 * $polfac) (name NH* and resn ARG)
+do (store1 = -0.0136 * $polfac) (name O*)
+do (store1 = -0.0185 * $polfac) (name OG* or name OH)
+do (store1 = -0.0299 * $polfac) ((name OD* and resn ASP) or (name OE* and resn GLU))
+do (store1 =  0.0112 * $polfac) (name S*)
+do (store1 =  0.0022 * $polfac) ((name S* and attr charge = -0.3) or (name SD and resn MET))
+do (store1 =  0.0000) (name SHA)
+
+!
+! CG parameters matched from the original terms
+! 
+!                  Edesolv_aa
+! ASP_cg = _________________________
+!                    ASA_cg
+!
+! ASA_cg and Edesol_aa calculated on a GGXGG peptide
+! accuracy=0.0025, rh2o=1.4, delete H, sele=(resn X)
+!
+! e.g. BB bead alanine
+!  
+! BB = CA + C + N + O
+! ASA_cg = 176.4940
+! Edesolv_aa = -1.8889
+!
+! ASP_cg = -0.0107
+!
+! Charleen Don (2012), JR (2014), Jorge Roel (2017)
+! 
+!
+
+do (store1 =  0.0000) (name BB or name SC*)
+! Backbone beads
+do (store1 = -0.0107) (name BB and resn ALA)
+do (store1 = -0.0089) (name BB and resn GLY)
+do (store1 = -0.0153) (name BB and resn ILE)
+do (store1 = -0.0158) (name BB and resn VAL)
+do (store1 = -0.0046) (name BB and resn PRO)
+do (store1 = -0.0137) (name BB and resn ASN)
+do (store1 = -0.0147) (name BB and resn GLN)
+do (store1 = -0.0165) (name BB and resn THR)
+do (store1 = -0.0154) (name BB and resn SER)
+do (store1 = -0.0130) (name BB and resn MET)
+do (store1 = -0.0167) (name BB and resn CYS)
+do (store1 = -0.0126) (name BB and resn PHE)
+do (store1 = -0.0134) (name BB and resn TYR)
+do (store1 = -0.0134) (name BB and resn TRP)
+do (store1 = -0.0169) (name BB and resn ASP)
+do (store1 = -0.0150) (name BB and resn GLU)
+do (store1 = -0.0155) (name BB and resn HIS)
+do (store1 = -0.0163) (name BB and resn LYS)
+do (store1 = -0.0162) (name BB and resn ARG)
+
+! Side-chain beads
+!do (store1 =  0.0000) (name SC* and resn ALA)
+!do (store1 =  0.0000) (name SC* and resn GLY)
+do (store1 =  0.0255) (name SC* and resn ILE)
+do (store1 =  0.0222) (name SC* and resn VAL)
+do (store1 =  0.0230) (name SC* and resn PRO)
+do (store1 = -0.0192) (name SC* and resn ASN)
+do (store1 = -0.0135) (name SC* and resn GLN)
+do (store1 = -0.0009) (name SC* and resn THR)
+do (store1 = -0.0056) (name SC* and resn SER)
+do (store1 =  0.0202) (name SC* and resn MET)
+do (store1 =  0.0201) (name SC* and resn CYS)
+do (store1 =  0.1005) (name SC* and resn PHE)
+do (store1 =  0.0669) (name SC* and resn TYR)
+do (store1 =  0.0872) (name SC* and resn TRP)
+do (store1 = -0.0360) (name SC* and resn ASP)
+do (store1 = -0.0301) (name SC* and resn GLU)
+do (store1 =  0.0501) (name SC* and resn HIS)
+do (store1 = -0.0210) (name SC* and resn LYS)
+do (store1 = -0.0229) (name SC* and resn ARG)
+
+! Fake beads
+do (store1 = 0.0) (name SCD* and resn ASN)
+do (store1 = 0.0) (name SCD* and resn GLN)
+do (store1 = 0.0) (name SCD* and resn SER)
+do (store1 = 0.0) (name SCD* and resn THR)
+do (store1 = 0.0) (name SCD* and resn ARG)
+do (store1 = 0.0) (name SCD* and resn LYS)
+do (store1 = 0.0) (name SCD* and resn GLU)
+do (store1 = 0.0) (name SCD* and resn ASP)
+

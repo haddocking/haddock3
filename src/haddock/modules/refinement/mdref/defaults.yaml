@@ -1669,8 +1669,8 @@ dihedflag:
   title: Use torsion angle dihedral energy term
   short: Turns on the torsion angle dihedral energy terms of the force field.
   long: Turns on the torsion angle dihedral energy terms of the force field.
-  group: ''
-  explevel: guru
+  group: 'force field'
+  explevel: expert
 #
 # Group sampling
 #

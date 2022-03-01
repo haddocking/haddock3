@@ -21,21 +21,6 @@ end if
 !==================================================================!
 
 evaluate ($ini_count    =1)
-evaluate ($w_vdw        =$w_vdw )
-evaluate ($w_elec       =$w_elec )
-evaluate ($w_dist       =$w_dist )
-evaluate ($w_rg         =$w_rg )
-evaluate ($w_sani       =$w_sani )
-evaluate ($w_xrdc       =$w_xrdc )
-evaluate ($w_xpcs       =$w_xpcs )
-evaluate ($w_dani       =$w_dani )
-evaluate ($w_vean       =$w_vean )
-evaluate ($w_cdih       =$w_cdih )
-evaluate ($w_sym        =$w_sym )
-evaluate ($w_zres       =$w_zres )
-evaluate ($w_bsa        =$w_bsa )
-evaluate ($w_deint      =$w_deint )
-evaluate ($w_desolv     =$w_desolv )
 
 evaluate ($Data.flags.ncs  = false)
 evaluate ($Data.flags.sym  = false)
@@ -67,7 +52,7 @@ end loop mol
 
 
 ! non-bonded parameter set to use
-evaluate ($toppar.par_nonbonded = $par_nonbonded)
+evaluate ($toppar.par_nonbonded = "OPLSX")
 
 !Electrostatics:
 evaluate ($Data.flags.dihed =$dihedflag)

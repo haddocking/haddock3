@@ -1,0 +1,122 @@
+! generate_water.cns
+!    Generate a water solvent layer around the molecule
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * Originally adapted from Aria 1.2 from Nilges and Linge, EMBL.       *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+eval ($boxlength = 18.856)   ! length of Brooks' water box
+eval ($thickness = 8)        ! maxi. initial water-protein distance (heavy atoms)
+eval ($pw_dist = 2.4)        ! mini. initial water-protein distance (heavy atoms)
+eval ($water_diam = 2.4)     ! diameter of water molecule
+eval ($dyncount = 21)        ! for water segid  (max number of molecules + 1)
+
+eval ($water = "WA" + encode($dyncount))
+
+!--------------------------------------------------
+! read in the same box of water several times, and move it around
+! so as to cover all the space around the site of interest.
+! take into account box offset
+
+show max (x) ((not (resn WAT or resn HOH or resn TIP*)) and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+evaluate ($xmax = $result)
+show min (x) ((not (resn WAT or resn HOH or resn TIP*)) and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+evaluate ($xmin = $result)
+
+show max (y) ((not (resn WAT or resn HOH or resn TIP*)) and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+evaluate ($ymax = $result)
+show min (y) ((not (resn WAT or resn HOH or resn TIP*)) and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+evaluate ($ymin = $result)
+
+show max (z) ((not (resn WAT or resn HOH or resn TIP*)) and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+evaluate ($zmax = $result)
+show min (z) ((not (resn WAT or resn HOH or resn TIP*)) and not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+evaluate ($zmin = $result)
+
+
+! loop over several iterations of water filling and dynamics
+
+!--------------------------------------------------
+! read in the same box of water several times, and move it around
+! so as to cover all the space around the site of interest.
+! take into account box offset
+
+
+! determine how many boxes are necessary in each dimension
+eval ($xbox = int( ($xmax - $xmin + 2 * ($thickness + $water_diam)) / $boxlength  + 0.5))
+eval ($ybox = int( ($ymax - $ymin + 2 * ($thickness + $water_diam)) / $boxlength  + 0.5))
+eval ($zbox = int( ($zmax - $zmin + 2 * ($thickness + $water_diam)) / $boxlength  + 0.5))
+
+eval ($xmtran =  $xmax + $thickness - $boxlength/2 + $water_diam)
+eval ($ymtran =  $ymax + $thickness - $boxlength/2 + $water_diam)
+eval ($zmtran =  $zmax + $thickness - $boxlength/2 + $water_diam)
+
+eval ($xcount=0)
+eval ($xtrans = $xmin - $thickness - $water_diam - $boxlength/2 )
+while ($xtrans < $xmtran) loop wat1
+    eval ($xcount=$xcount+1)
+    eval ($xtrans = $xtrans + $boxlength)
+
+    eval ($ycount=0)
+    eval ($ytrans = $ymin - $thickness - $water_diam - $boxlength/2 )
+    while ($ytrans < $ymtran) loop wat2
+        eval ($ycount=$ycount+1)
+        eval ($ytrans = $ytrans + $boxlength)
+
+        eval ($zcount=0)                  
+        eval ($ztrans = $zmin - $thickness - $water_diam - $boxlength/2 )
+        while ($ztrans < $zmtran) loop wat3
+            eval ($zcount=$zcount+1)
+            eval ($ztrans = $ztrans + $boxlength)
+            segment
+                name="    "
+                chain
+                    coordinates @@TOPPAR:boxtyp20.pdb
+                end
+            end
+            coor @@TOPPAR:boxtyp20.pdb
+            do (segid=W000) (segid "    ")
+            coor sele=(segid W000) translate vector = ($xtrans $ytrans $ztrans) end
+
+            ! all new water oxygens
+            ident (store1) (segid W000 and name OH2) 
+            ! all new water oxygens close to a protein heavy atom
+            ident (store2) (store1 and (not (resn WAT or resn HOH or resn TIP* 
+                            or resn ANI or resn DAN or resn XAN or resn DUM or resn SHA or hydro)) around $pw_dist)
+            ! all new water oxygens close to old water oxygens
+            ident (store3) (store1 and (segid wat# and not hydro) around $water_diam)
+            ! all new water oxygens further than thickness away from a protein heavy atom
+            ident (store4) (store1 and not (not (resn WAT or resn HOH or resn TIP*
+                            or resn ANI or resn DAN or resn XAN or resn DUM or resn SHA or hydro)) around $thickness)
+            delete sele= (byres (store2 or store3 or store4)) end  
+
+            ! give waters unique segid name
+            eval ($segid= "W" + encode($xcount) + encode($ycount) + encode($zcount))
+            do (segid = $segid) (segid W000)
+
+        end loop wat3
+    end loop wat2
+end loop wat1
+
+! now, give waters a unique resid so that we get the segid to play around with
+ident (store1) (all)
+show min (store1) (segid w*)
+do (store1 = store1 - $result + 1) (segid w*)
+do (resid = encode(int(store1/3 -0.1) +1)) (segid w* and not segid wat#)
+do (segid = $water) (segid w* and not segid wat#)
+
+! shave off any waters that left
+delete sele= (byres (name oh2 and segid W* and 
+              not (not (resn WAT or resn HOH or resn TIP* 
+                   or resn ANI or resn DAN or resn XAN or resn DUM or resn SHA or hydro)) around $thickness)) end
+
+{* write out initial coordinates just for testing *}
+!evaluate ($filename=$output_pdb_filename - ".pdb" + "wini.pdb")
+!write coordinates sele= (all) output =$filename end
+

@@ -20,7 +20,7 @@ class HaddockModule(BaseCNSModule):
     name = RECIPE_PATH.name
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
-        cns_script = Path(RECIPE_PATH, "cns", "emscoring.cns")
+        cns_script = Path(RECIPE_PATH, "cns", "mdscoring.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
@@ -48,14 +48,14 @@ class HaddockModule(BaseCNSModule):
                 self.path,
                 self.recipe_str,
                 self.params,
-                "emscoring",
+                "mdscoring",
                 native_segid=True)
 
-            scoring_out = f"emscoring_{model_num}.out"
+            scoring_out = f"mdscoring_{model_num}.out"
 
             # create the expected PDBobject
             expected_pdb = prepare_expected_pdb(
-                model, model_num, ".", "emscoring"
+                model, model_num, ".", "mdscoring"
                 )
             scored_structure_list.append(expected_pdb)
 
@@ -83,7 +83,7 @@ class HaddockModule(BaseCNSModule):
 
                 pdb.score = haddock_score
 
-        output_fname = "emscoring.tsv"
+        output_fname = "mdscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         with open(output_fname, "w") as fh:
             fh.write(f"structure\toriginal_name\tscore{linesep}")

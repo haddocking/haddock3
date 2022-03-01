@@ -27,8 +27,8 @@ fileexist $filenam0 end
 if ($result eq true) then
     noe class ambi @@$filenam0 end
 end if
-if ($Data.noecv eq true) then
-    noe part $Data.ncvpart end
+if ($Data.randremoval eq true) then
+    noe part $Data.npart end
 end if
 
 fileexist $unambig_fname end
@@ -36,11 +36,9 @@ if ($result eq true) then
     noe class dist @@$unambig_fname end
 end if
 
-if ($Data.hbonds_on eq true) then
-    fileexist $hbond_fname end
-    if ($result eq true) then
-        noe @@$hbond_fname end
-    end if
+fileexist $hbond_fname end
+if ($result eq true) then
+    noe @@$hbond_fname end
 end if
 
 noe

@@ -48,7 +48,7 @@ if ($Data.flags.sym eq true) then
     evaluate ($violations_noe=$violations)
 end if
 
-if ($Data.noecv eq false) then
+if ($Data.randremoval eq false) then
     evaluate ($violations_test_noe= 0)
     evaluate ($rms_test_noe = 0)
     evaluate ($npart = 0)

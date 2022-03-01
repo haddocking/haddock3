@@ -486,13 +486,13 @@ dihedrals_on:
 dihedrals_scale:
   default: 200
   type: integer
-  min: -9999
-  max: 9999
+  min: 0
+  max: 1000
   title: Force constant for dihedral angle restraints
   short: Force constant applied to the dihedral angle restraints read from dihe_fname.
   long: Force constant applied to the dihedral angle restraints read from dihe_fname.
   group: 'dihedral restraints'
-  explevel: easy
+  explevel: expert
 ssdihed:
   default: none
   type: string
@@ -515,8 +515,8 @@ ssdihed:
 error_dih:
   default: 10
   type: integer
-  min: -9999
-  max: 9999
+  min: 0
+  max: 1000
   title: Force constant for backbone dihedral angle restraints
   short: Force constant for backbone dihedral angle restraints (ssdihed option)
   long: Force constant for backbone dihedral angle restraints (ssdihed option)
@@ -1666,24 +1666,14 @@ epsilon:
 dihedflag:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: Use torsion angle dihedral energy term
+  short: Turns on the torsion angle dihedral energy terms of the force field.
+  long: Turns on the torsion angle dihedral energy terms of the force field.
   group: ''
-  explevel: easy
+  explevel: guru
 #
 # Group sampling
 #
-sampling:
-  default: 200
-  type: integer
-  min: 1
-  max: 50000
-  title: Number of models to generate
-  short: Number of MD refined models to generate
-  long: Number of MD refined models to generate
-  group: 'sampling'
-  explevel: easy
 sampling_factor:
   default: 1
   type: integer

@@ -1,7 +1,7 @@
 """
 Expandable parameter module.
 
-This module contains all logic reading and preparing expandable parameters.
+This module contains all logic for reading and preparing expandable parameters.
 
 Expandable parameters are parameters that follow a specific name structure.
 They can be repeated multiple times (in groups) in the user configuration file
@@ -17,39 +17,59 @@ following:
 - `fle_sta_1_2`
 - `fle_end_1_2`
 
-The above parameter will be accepted and used in the CNS modules.
+The above parameters will be accepted and used in the CNS modules. We
+say they are the second groupd of the `fle1` group. We explain in detail
+below.
 
 Currently, there are three types of expandable parameters:
 
-1 - Parameters following the name structure `name_something_1`,
-`name_something_else_1`. These two parameters belong to the parameter
-name `name` and group `1`. The two parameters have the name `something`
-and `something_else`. Therefore, you could define also:
+1 - Parameters following the name structure:
+
+- `name_something_1`,
+- `name_something_else_1`
+
+These two parameters belong to the parameter name `name` and group `1`.
+The two parameters have the name `something` and `something_else`.
+Therefore, you could define also:
 
 - `name_something_2`
 - `name_something_else_2`
 
 Numbers are allowed as long as in combination with word characters, for
-example: `name_something1_2`, but not `name_something_1_1`. The latter
-is of the second type.
+example: `name_something1_2`, but not `name_something_1_1` because the
+latter is of the second type.
 
-2 - Parameters following the name structure `name_something_X_Y`. In
-these cases, the parameter name is `nameX`, where `X` is an integer. `Y`
-is the number of the group, and `something` is the name of the
-parameters. Taking above example, the parameter name is `fle1`; `sta`
-and `end` are the parameters of the group, and the group is either `1`
-or `2`.
+2 - Parameters following the name structure:
 
-3 - The simplest parameters in the form of `param_1`, where you could
-define `param_2`, `param_3`, etc. However, in these cases, the
-expandable rules apply only to the parameters manually defined in this
-file.
+- `name_something_X_Y`
+- `name_else_X_Y`
+
+In these cases, the parameter name is `nameX`, where `X` is an integer.
+`Y` is the number of the group, and `something` and `else` are the name
+of the parameters. Taking example:
+
+- `fle_sta_1_1`
+- `fle_end_1_1`
+
+The parameter name is `fle1` and the parameters belonging to the groups
+are `sta` and `end`, and the group is either `1`.
+
+3 - The simplest parameters in the form of:
+
+- `param_1`
+
+In these cases, you can define `param_2`, `param_3`, etc, in the user
+configuration file despite those are not defined in the `defaults.yaml`.
+However, because `<name>_<integer>` is too much of a simple rule, we
+need to define in this module which parameters are actualy expandable.
+If you are developing here look for the `type_simplest_ep` variable.
 """
 from functools import partial
 
 from haddock.core.exceptions import ConfigurationError
 
 
+# error messages used in _read_groups_in_user_config function
 # errors messages for single indexed groups
 _emsg_no_group_single = \
     "The parameter block '{}_*_{}' is not a valid expandable parameter."
@@ -72,7 +92,7 @@ _emsg_num_differ = (
 
 # this dictionary defines which parameters of the form "param_1" are
 # expandable, and for which modules. We cannot define a general
-# expandavble rule for such a simple parameter name because there can be
+# expandable rule for such a simple parameter name because there can be
 # many other parameters with the same structure but that are not
 # supposed to be expandable.
 type_simplest_ep = {
@@ -83,6 +103,10 @@ type_simplest_ep = {
     }
 
 
+# this is an engine function that must be populated with the respective
+# functions the specify its behaviour. This engine is used in
+# `get_single_index_groups` and `get_multiple_index_groups`, for
+# example. The latter are defined later on with `partial`.
 def _get_groups(
         config,
         belongs_to_group,
@@ -151,6 +175,11 @@ def _get_groups(
     return final_groups
 
 
+# this is an engine function that must be populated with the respective
+# functions the specify its behaviour. This engine is used in
+# `read_single_idx_groups_user_config` and
+# `read_multiple_idx_groups_user_config`, for example. The latter are
+# defined later on with `partial`.
 def _read_groups_in_user_config(
         user_config,
         default_groups,
@@ -241,7 +270,7 @@ def read_simplest_expandable(expparams, config):
     Parameters
     ----------
     expparams : dict, dict.keys, set, or alike
-        The parameter name that should be considered as expandable.
+        The parameter names that should be considered as expandable.
         Usually, this is a module subdictionary of `type_simplest_ep`.
 
     config : dict, dict.keys, set, or alike
@@ -414,6 +443,8 @@ def extract_multiple_index_params(user_config, param_name, group_idx):
     """
     Extract the parameters belonging to a group.
 
+    See also: `belongs_to_multiple_index`.
+
     Examples
     --------
     >>> EM = extract_multiple_index_params
@@ -474,6 +505,8 @@ def extract_multiple_index_params(user_config, param_name, group_idx):
     return new
 
 
+# define public API by functionalizing the engines with the specific
+# functions. The docstring below is the docstring of the function.
 get_single_index_groups = partial(
     _get_groups,
     belongs_to_group=belongs_to_single_index,
@@ -501,7 +534,7 @@ You could expand these with:
 
 When used to read the modules' default configuration we expect the
 <group> to be only "_1". But having <group> allows to identify
-blocks from the user configuration.
+blocks from the user configuration. See `reference` parameter.
 
 When we execute this function, we want to know:
 
@@ -516,6 +549,12 @@ config : dictionary
 
 minimum : int
     Consider only the groups with at least `minimum` parameters.
+
+reference : bool
+    Whether reading a default config file or not. If true, only
+    groups ending with "1" will be considered. This avoids capturing
+    parameters for molecules, such as "mol_fix_origin_1",
+    "mol_fix_origin_2", etc.
 
 Returns
 -------
@@ -571,15 +610,26 @@ When used to read the modules' default configuration we expect the
 <digit> to be only "_1". But having <digit> allows to identify
 blocks from the user configuration.
 
-We want to know:
+Parameters
+----------
+config : dictionary
+    Where keys are the parameter names. The values are not important.
+
+minimum : int
+    Consider only the groups with at least `minimum` parameters.
+
+reference : bool
+    Whether reading a default config file or not. If true, only
+    groups ending with "1" will be considered. This avoids capturing
+    parameters for molecules, such as "mol_fix_origin_1",
+    "mol_fix_origin_2", etc.
 
 Returns
 -------
 dictionary
     In the form of:
-    {"param1": {
-        "something1", "something2", "something_else",
-        "something4"}
+    {("param1", "1"): {
+        "something1", "something2", "something_else", "something4"}
 """
 
 read_single_idx_groups_user_config = partial(
@@ -599,8 +649,8 @@ user_config : dict
 
 default_groups : dict
     The groups present in the default configuration file for the
-    specific module. This dictionary is that created by,
-    `get_single_index_groups`, or `get_multiple_index_groups`.
+    specific module. This is the dictionary created by,
+    `get_single_index_groups`.
 
 Returns
 -------
@@ -626,8 +676,8 @@ user_config : dict
 
 default_groups : dict
     The groups present in the default configuration file for the
-    specific module. This dictionary is that created by,
-    `get_single_index_groups`, or `get_multiple_index_groups`.
+    specific module. This is the dictionary created by
+    `get_multiple_index_groups`.
 
 Returns
 -------

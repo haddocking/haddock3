@@ -5,12 +5,12 @@ import pytest
 
 from haddock.libs.libutil import (
     convert_seconds_to_min_sec,
+    extract_keys_recursive,
     file_exists,
     get_number_from_path_stem,
     non_negative_int,
     recursive_dict_update,
     sort_numbered_paths,
-    extract_keys_recursive,
     )
 
 
@@ -153,6 +153,7 @@ a = {
     "param2": {"param3": 4, "param4": {"param5": {"param6": 7, "param7": 8}}},
     }
 b = {"param1", "param3", "param6", "param7"}
+
 
 @pytest.mark.parametrize(
     "inp,expected",

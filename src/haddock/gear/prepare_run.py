@@ -184,8 +184,7 @@ def validate_modules_params(modules_params):
         if not defaults:
             return
 
-        block_params = get_blocks(args, defaults, module_name)
-        # block_params = read_blocks(blocks, args)
+        block_params = get_expandable_parameters(args, defaults, module_name)
 
         diff = set(extract_keys_recursive(args)) \
             - set(extract_keys_recursive(defaults)) \
@@ -374,7 +373,7 @@ def check_specific_validations(params):
     v_rundir(params[RUNDIR])
 
 
-def get_blocks(user_config, defaults, module_name):
+def get_expandable_parameters(user_config, defaults, module_name):
     """
     Get configuration expandable blocks.
 
@@ -416,8 +415,8 @@ def _get_blocks(user_config, defaults, module_name):
     type_2 = get_multiple_index_groups(defaults)
 
     allowed_params = set()
-    allowed_params.update(read_single_idx_groups_user_config(user_config, type_1))
-    allowed_params.update(read_multiple_idx_groups_user_config(user_config, type_2))
+    allowed_params.update(read_single_idx_groups_user_config(user_config, type_1))  # noqa: E501
+    allowed_params.update(read_multiple_idx_groups_user_config(user_config, type_2))  # noqa: E501
 
     with suppress(KeyError):
         type_3 = type_simplest_ep[module_name]

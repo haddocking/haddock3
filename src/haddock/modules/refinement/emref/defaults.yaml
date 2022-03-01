@@ -1630,8 +1630,8 @@ dihedflag:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
-  explevel: easy
+  group: 'force field'
+  explevel: expert
 #
 # Group sampling
 #

@@ -20,7 +20,7 @@ class HaddockModule(BaseCNSModule):
     name = RECIPE_PATH.name
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
-        cns_script = Path(RECIPE_PATH, "cns", "scoring.cns")
+        cns_script = Path(RECIPE_PATH, "cns", "emscoring.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod

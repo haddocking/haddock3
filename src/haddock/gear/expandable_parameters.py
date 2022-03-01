@@ -193,12 +193,12 @@ def _read_groups_in_user_config(
         that are acceptable according to the expandable rules.
     """
     user_groups = get_user_groups(user_config, minimum=1)
-    default_group_names = [group[0] for group in default_groups]
+    default_group_names = set(group[0] for group in default_groups)
 
     new = set()
     for (param_name, group_idx), params in user_groups.items():
 
-        if param_name in default_group_names:
+        if param_name not in default_group_names:
             emsg = _emsg_no_group.format(param_name, group_idx)
             raise ConfigurationError(emsg)
 

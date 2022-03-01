@@ -412,10 +412,8 @@ def get_blocks(user_config, defaults, module_name):
 
 # reading parameter blocks
 def _get_blocks(user_config, defaults, module_name):
-    print(module_name)
     type_1 = get_single_index_groups(defaults)
     type_2 = get_multiple_index_groups(defaults)
-    print(type_2)
 
     allowed_params = set()
     allowed_params.update(read_single_groups_user_config(user_config, type_1))

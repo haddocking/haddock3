@@ -421,11 +421,8 @@ def _get_blocks(user_config, defaults, module_name):
     allowed_params.update(read_single_groups_user_config(user_config, type_1))
     allowed_params.update(read_multiple_groups_user_config(user_config, type_2))
 
-    try:
+    with suppress(KeyError):
         type_3 = type_simplest_ep[module_name]
-    except KeyError:
-        pass
-    else:
         allowed_params.update(read_simplest_expandable(type_3, user_config))
 
     return allowed_params

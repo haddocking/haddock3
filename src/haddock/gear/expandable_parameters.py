@@ -70,16 +70,17 @@ _emsg_num_differ = (
     )
 
 
+# this dictionary defines which parameters of the form "param_1" are
+# expandable, and for which modules. We cannot define a general
+# expandavble rule for such a simple parameter name because there can be
+# many other parameters with the same structure but that are not
+# supposed to be expandable.
 type_simplest_ep = {
     "topoaa": (
-        #"hisd",
-        #"hise",
+        "hisd",
+        "hise",
         ),
     }
-
-
-def xxx(config, expparams):
-    """."""
 
 
 def read_simplest_expandable(expparams, config):

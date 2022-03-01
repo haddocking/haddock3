@@ -296,7 +296,7 @@ def belongs_to_multiple_index(param_parts):
         - the part before last is a digit
     """
     return \
-        len(param_parts) > 4 \
+        len(param_parts) >= 4 \
         and param_parts[-1].isdigit() \
         and param_parts[-2].isdigit()
 
@@ -312,7 +312,57 @@ def rejoin_parts_multiple_index(param_parts):
 
 
 def extract_single_index_params(user_config, param_name, group_idx):
-    """Extract the parameters belonging to a group."""
+    """
+    Extract the parameters belonging to a group.
+
+    Won't filter from single to multiindex parameters. Applies the rules
+    of single index parameters.
+
+    Examples
+    --------
+    >>> ES = extract_single_index_params
+
+    >>> ES({"param_some_1", "param_other_1", "param2", "ppp_ooo"}, "param", "1")
+        {"param_some_1", "param_other_1"}
+
+    >>> ES(
+        {"param_some_1", "param_other_1", "param_some_2", "param_other_2"},
+        "param", "2")
+        {"param_some_2", "param_other_2"}
+
+    >>> ES(
+        {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
+        "param", "1")
+        {"param_some_1", "param_other_1"}
+
+    >>> ES(
+        {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
+        "par", "2")
+        {"par_some_2_2", "par_other_2_2"}
+
+    >>> ES(
+        {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
+        "por", "2")
+        {}
+
+    Parameters
+    ----------
+    user_config : dict, or dict.keys(), or similar
+        The user configuration file - parameter keys should be parameter
+        names.
+
+    param_name : str
+        The parameter name of the group to select. For example: `c3sym`.
+
+    group_idx : str
+        The number of the group: "1", "2", "3", etc. Only that group
+        number will be selected.
+
+    Returns
+    -------
+    set of strings
+        A set with the selected parameters.
+    """
     new = set()
     for param in user_config:
         try:
@@ -325,7 +375,54 @@ def extract_single_index_params(user_config, param_name, group_idx):
 
 
 def extract_multiple_index_params(user_config, param_name, group_idx):
-    """Extract the parameters belonging to a group."""
+    """
+    Extract the parameters belonging to a group.
+
+    Examples
+    --------
+    >>> EM = extract_multiple_index_params
+
+    >>> EM({"param_some_1", "param_other_1", "param2", "ppp_ooo"}, "param", "1")
+        set()
+
+    >>> EM(
+        {"param_some_1", "param_other_1", "param_some_2", "param_other_2"},
+        "param", "2")
+        set()
+
+    >>> EM(
+        {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
+        "param", "1")
+        {"par_some_2_2", "par_other_2_2"},
+
+    >>> EM(
+        {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
+        "par", "2")
+        set()
+
+    >>> EM(
+        {"param_some_1", "param_other_1", "par_some_2_2", "par_other_2_2"},
+        "por", "2")
+        set()
+
+    Parameters
+    ----------
+    user_config : dict, or dict.keys(), or similar
+        The user configuration file - parameter keys should be parameter
+        names.
+
+    param_name : str
+        The parameter name of the group to select. For example: `c3sym`.
+
+    group_idx : str
+        The number of the group: "1", "2", "3", etc. Only that group
+        number will be selected.
+
+    Returns
+    -------
+    set of strings
+        A set with the selected parameters.
+    """
     new = set()
     for param in user_config:
         try:
@@ -335,8 +432,6 @@ def extract_multiple_index_params(user_config, param_name, group_idx):
         if pname + molidx == param_name and pidx == group_idx:
             new.add(param)
     return new
-
-
 
 
 get_single_index_groups = partial(

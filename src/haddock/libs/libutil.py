@@ -365,3 +365,12 @@ def convert_seconds_to_min_sec(seconds):
 
     s = "" if seconds == 1 else "s"
     return f"{seconds} seconds"
+
+
+def extract_keys_recursive(config):
+    """Extract keys recursively for the needed modules."""
+    for param_name, value in config.items():
+        if isinstance(value, collections.abc.Mapping):
+            yield from extract_keys_recursive(value)
+        else:
+            yield param_name

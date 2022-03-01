@@ -10,6 +10,7 @@ from haddock.libs.libutil import (
     non_negative_int,
     recursive_dict_update,
     sort_numbered_paths,
+    extract_keys_recursive,
     )
 
 
@@ -144,4 +145,22 @@ def test_recursive_dict_update():
 def test_convert_seconds(seconds, expected):
     """Convert seconds to min&sec."""
     result = convert_seconds_to_min_sec(seconds)
+    assert result == expected
+
+
+a = {
+    "param1": 1,
+    "param2": {"param3": 4, "param4": {"param5": {"param6": 7, "param7": 8}}},
+    }
+b = {"param1", "param3", "param6", "param7"}
+
+@pytest.mark.parametrize(
+    "inp,expected",
+    [
+        (a, b),
+        ]
+    )
+def test_extract_keys_recursive(inp, expected):
+    """Test extract keys recursive."""
+    result = set(extract_keys_recursive(inp))
     assert result == expected

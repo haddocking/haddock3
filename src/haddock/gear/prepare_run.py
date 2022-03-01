@@ -2,6 +2,7 @@
 import importlib
 import shutil
 import sys
+from collections.abc import Mapping
 from contextlib import contextmanager
 from contextlib import suppress
 from copy import deepcopy
@@ -29,6 +30,7 @@ from haddock.libs.libutil import (
     recursive_dict_update,
     remove_dict_keys,
     zero_fill,
+    extract_keys_recursive,
     )
 from haddock.modules import (
     modules_category,
@@ -187,8 +189,8 @@ def validate_modules_params(modules_params):
         block_params = get_blocks(args, defaults, module_name)
         # block_params = read_blocks(blocks, args)
 
-        diff = set(args.keys()) \
-            - set(defaults.keys()) \
+        diff = set(extract_keys_recursive(args)) \
+            - set(extract_keys_recursive(defaults)) \
             - set(config_mandatory_general_parameters) \
             - set(non_mandatory_general_parameters_defaults.keys()) \
             - block_params

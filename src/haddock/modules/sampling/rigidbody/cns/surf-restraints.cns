@@ -12,8 +12,6 @@
 !define surface contact restraints between all molecules
 !using distance restraints between CA atoms with sum averaging
   
-set echo=on message=on end
-
 eval($nchain = 0)
 do (store9 = 0) (all)
 do (store9 = 1) (name CA or name BB or name N1)

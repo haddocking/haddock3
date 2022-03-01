@@ -13,6 +13,8 @@
 
 if ( $log_level = "verbose" ) then
     set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
 else
     set message=off echo=off end
 end if
@@ -327,6 +329,8 @@ while ($nrig < $SaProtocol.ntrials) loop trials
 
     if ( $log_level = "verbose" ) then
         set message=normal echo=on end
+    elseif ( $log_level = "normal" ) then
+        set message=normal echo=off end
     else
         set message=off echo=off end
     end if
@@ -546,6 +550,8 @@ if ($Data.flags.sym eq true) then
     inline @@MODULE:read_noes.cns
     if ( $log_level = "verbose" ) then
         set message=normal echo=on end
+    elseif ( $log_level = "normal" ) then
+        set message=normal echo=off end
     else
         set message=off echo=off end
     end if
@@ -556,6 +562,8 @@ else
     end if
     if ( $log_level = "verbose" ) then
         set message=normal echo=on end
+    elseif ( $log_level = "normal" ) then
+        set message=normal echo=off end
     else
         set message=off echo=off end
     end if

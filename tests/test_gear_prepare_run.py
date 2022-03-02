@@ -1,77 +1,25 @@
 """Test prepare run module."""
 import pytest
 
-from haddock.gear.prepare_run import (
-    get_blocks_single_index,
-    read_single_index_blocks,
-    )
+from haddock.gear.prepare_run import get_expandable_parameters
+from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.modules.topology.topoaa import DEFAULT_CONFIG
 
 
 @pytest.mark.parametrize(
-    "inp, expected",
+    "inp,expected",
     [
         (
             {
-                "par1": 1,
-                "par_1": 1,
-                "this_is_not_a_group_1": None,
-                "group_something_1": None,
-                "group_else_1": None,
-                "par2": None,
-                "group2_else_other_1": None,
-                "group2_else_many_1": None,
+                "autohis": None,
+                "mol1": {"nhisd", "hisd_1", "hisd_2", "nhise", "hise_1"},
                 },
-            {
-                ("group", "1"): {"something", "else"},
-                ("group2", "1"): {"else_other", "else_many"},
-                },
+            {"hisd_1", "hisd_2", "hise_1"},
             )
         ]
     )
-def test_get_blocks(inp, expected):
+def test_get_expandable_parameters_topoaa(inp, expected):
     """Test get blocks."""
-    result = get_blocks_single_index(inp)
-    assert result == expected
-
-
-@pytest.mark.parametrize(
-    "default, user, expected",
-    [
-        (
-            {
-                ("group", "1"): {"something", "else"},
-                ("group2", "1"): {"else_other", "else_many"},
-                },
-            {
-                "par1": 1,
-                "par_1": 1,
-                "group_something_1": None,
-                "group_else_1": None,
-                "group_something_2": None,
-                "group_else_2": None,
-                "group2_else_other_1": None,
-                "group2_else_many_1": None,
-                "group2_else_other_2": None,
-                "group2_else_many_2": None,
-                "group2_else_other_3": None,
-                "group2_else_many_3": None,
-                },
-            {
-                "group_something_1",
-                "group_else_1",
-                "group_something_2",
-                "group_else_2",
-                "group2_else_other_1",
-                "group2_else_many_1",
-                "group2_else_other_2",
-                "group2_else_many_2",
-                "group2_else_other_3",
-                "group2_else_many_3",
-                }
-            )
-        ]
-    )
-def test_read_single_index_blocks(default, user, expected):
-    """Test read_blocks."""
-    result = read_single_index_blocks(default, user)
+    default_config = read_from_yaml_config(DEFAULT_CONFIG)
+    result = get_expandable_parameters(inp, default_config, "topoaa")
     assert result == expected

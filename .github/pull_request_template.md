@@ -9,8 +9,8 @@ You are about to submit a new Pull Request. Before continuing make sure you read
 - [ ] `-test.cfg` examples execute without errors. *Inside `examples/` run `python run_tests.py -b`*
 - [ ] PR does not add any *install dependencies* unless permission granted by the HADDOCK team
 - [ ] PR does not break licensing
-- [ ] You get extra bonus if you write documentation for already existing code :fire:
-- [ ] You get extra bonus if you write tests for already existing code :godmode:
+- [ ] Your PR is about writing documentation for already existing code :fire:
+- [ ] Your PR is about writing tests for already existing code :godmode:
 
 ---
 

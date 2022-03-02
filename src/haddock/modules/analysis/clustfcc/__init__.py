@@ -137,12 +137,17 @@ class HaddockModule(BaseHaddockModule):
             clt_centers = {}
             for clt in clusters:
                 cluster_id = clt.name
+                cluster_center_id = clt.center.name - 1
+                cluster_center_pdb = models_to_cluster[cluster_center_id]
+
                 clt_dic[cluster_id] = []
-                clt_centers[cluster_id] = models_to_cluster[clt.center.name - 1]
+                clt_centers[cluster_id] = cluster_center_pdb
+                clt_dic[cluster_id].append(cluster_center_pdb)
+
                 for model in clt.members:
                     model_id = model.name
-                    pdb = models_to_cluster[model_id - 1]
-                    clt_dic[cluster_id].append(pdb)
+                    model_pdb = models_to_cluster[model_id - 1]
+                    clt_dic[cluster_id].append(model_pdb)
 
             # Rank the clusters
             #  they are sorted by the top4 models in each cluster

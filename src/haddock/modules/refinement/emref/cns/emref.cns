@@ -11,6 +11,8 @@
 
 if ( $log_level = "verbose" ) then
     set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
 else
     set message=off echo=off end
 end if
@@ -190,6 +192,8 @@ end if
 
 if ( $log_level = "verbose" ) then
     set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
 else
     set message=off echo=off end
 end if

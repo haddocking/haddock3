@@ -22,7 +22,7 @@ delenph:
   group: molecule
   explevel: easy
 log_level:
-  default: "verbose"
+  default: "quiet"
   type: string
   minchars: 0
   maxchars: 100

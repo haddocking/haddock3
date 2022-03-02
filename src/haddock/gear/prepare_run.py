@@ -40,7 +40,6 @@ from haddock.modules import (
     modules_category,
     non_mandatory_general_parameters_defaults,
     )
-from haddock.modules.topology.topoaa import DEFAULT_CONFIG as topoaa_defaults
 
 
 @contextmanager
@@ -465,16 +464,46 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
 
 def populate_topology_molecule_params(topoaa):
     """Populate topoaa `molX` subdictionaries."""
-    topoaa_cfg = read_from_yaml_config(topoaa_defaults)
+    topoaa_dft = _read_defaults("topoaa")
+
+    # list of possible prot_segids
+    uppers = list(string.ascii_uppercase)[::-1]
+
+    # removes from the list those prot_segids that are already defined
+    for param in topoaa:
+        if param.startswith("mol") and param[3:].isdigit():
+            with suppress(KeyError):
+                uppers.remove(topoaa[param]["prot_segid"])
+
+    # populates the prot_segids just for those that were not defined
+    # in the user configuration file. Other parameters are populated as
+    # well. `prot_segid` is the only one differing per molecule.
     for i in range(1, len(topoaa["molecules"]) + 1):
-        topoaa_cfg["mol1"]["prot_segid"] = string.ascii_uppercase[i - 1]
         mol = f"mol{i}"
-        topoaa[mol] = recursive_dict_update(topoaa_cfg["mol1"], topoaa[mol])
+        if not(mol in topoaa and "prot_segid" in topoaa[mol]):
+            topoaa_dft["mol1"]["prot_segid"] = uppers.pop()
+
+        topoaa[mol] = recursive_dict_update(
+            topoaa_dft["mol1"],
+            topoaa[mol] if mol in topoaa else {},
+            )
     return
 
 
 def populate_mol_parameters(modules_params):
-    """Populate modules parameters."""
+    """
+    Populate modules parameters.
+
+    Parameters
+    ----------
+    modules_params : dict
+        A dictionary containing the parameters for all modules.
+
+    Returns
+    -------
+    None
+        Alter the dictionary in place.
+    """
     for module_name, _ in modules_params.items():
         defaults = _read_defaults(module_name)
 

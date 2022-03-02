@@ -102,6 +102,8 @@ def setup_run(workflow_path, restart_from=None):
 
     # copy molecules parameter to topology module
     copy_molecules_to_topology(params)
+    if int(params["topoaa"]["molecules"]) > max_molecules_allowed:
+        raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
     # separate general from modules parameters
     _modules_keys = identify_modules(params)
@@ -394,6 +396,12 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
 
     defaults : dict
         The default configuration file defined for the module.
+
+    module_name : str
+        The name the module being processed.
+
+    max_mols : int
+        The max number of molecules allowed.
     """
     # the topoaa module is an exception because it has subdictionaries
     # for the `mol` parameter. Instead of defining a general recursive
@@ -401,12 +409,12 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
     # no other module should have subdictionaries has parameters
     if module_name == "topoaa":
         ap = set()  # allowed_parameters
-        ap.update(_get_blocks(user_config, defaults, module_name))
-        for i in range(1, max_molecules_allowed + 1):
+        ap.update(_get_expandable(user_config, defaults, module_name, max_mols))
+        for i in range(1, max_mols + 1):
             key = f"mol{i}"
             with suppress(KeyError):
                 ap.update(
-                    _get_blocks(
+                    _get_expandable(
                         user_config[key],
                         defaults[key],
                         module_name,
@@ -417,11 +425,11 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
         return ap
 
     else:
-        return _get_blocks(user_config, defaults, module_name, max_mols)
+        return _get_expandable(user_config, defaults, module_name, max_mols)
 
 
 # reading parameter blocks
-def _get_blocks(user_config, defaults, module_name, max_mols):
+def _get_expandable(user_config, defaults, module_name, max_mols):
     type_1 = get_single_index_groups(defaults)
     type_2 = get_multiple_index_groups(defaults)
     type_4 = get_mol_parameters(defaults)

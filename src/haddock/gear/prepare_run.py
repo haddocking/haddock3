@@ -6,7 +6,7 @@ import string
 import sys
 from contextlib import contextmanager, suppress
 from copy import deepcopy
-from functools import wraps
+from functools import lru_cache, wraps
 from pathlib import Path
 
 from haddock import contact_us, haddock3_source_path, log
@@ -17,13 +17,13 @@ from haddock.gear.expandable_parameters import (
     get_mol_parameters,
     get_multiple_index_groups,
     get_single_index_groups,
+    is_mol_parameter,
     read_mol_parameters,
     read_multiple_idx_groups_user_config,
     read_simplest_expandable,
     read_single_idx_groups_user_config,
-    type_simplest_ep,
-    is_mol_parameter,
     remove_trail_idx,
+    type_simplest_ep,
     )
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -60,6 +60,21 @@ def with_config_error(func):
         with config_key_error():
             return func(*args, **kwargs)
     return wrapper
+
+
+@lru_cache
+def _read_defaults(module_name):
+    """Read the defaults.yaml given a module name."""
+    module_name_ = get_module_name(module_name)
+    pdef = Path(
+        haddock3_source_path,
+        'modules',
+        modules_category[module_name_],
+        module_name_,
+        'defaults.yaml',
+        ).resolve()
+
+    return read_from_yaml_config(pdef)
 
 
 def setup_run(workflow_path, restart_from=None):
@@ -187,16 +202,7 @@ def validate_modules_params(modules_params):
     max_mols = len(modules_params["topoaa"]["molecules"])
 
     for module_name, args in modules_params.items():
-        module_name = get_module_name(module_name)
-        pdef = Path(
-            haddock3_source_path,
-            'modules',
-            modules_category[module_name],
-            module_name,
-            'defaults.yaml',
-            ).resolve()
-
-        defaults = read_from_yaml_config(pdef)
+        defaults = _read_defaults(module_name)
         if not defaults:
             return
 
@@ -464,36 +470,21 @@ def populate_topology_molecule_params(topoaa):
         topoaa_cfg["mol1"]["prot_segid"] = string.ascii_uppercase[i - 1]
         mol = f"mol{i}"
         topoaa[mol] = recursive_dict_update(topoaa_cfg["mol1"], topoaa[mol])
-        print(topoaa[mol])
     return
 
 
 def populate_mol_parameters(modules_params):
     """Populate modules parameters."""
     for module_name, _ in modules_params.items():
-        module_name_ = get_module_name(module_name)
-        pdef = Path(
-            haddock3_source_path,
-            'modules',
-            modules_category[module_name_],
-            module_name_,
-            'defaults.yaml',
-            ).resolve()
+        defaults = _read_defaults(module_name)
 
-        defaults = read_from_yaml_config(pdef)
-
-        mol_params = (
-            p
-            for p in list(defaults.keys())
-            if is_mol_parameter(p)
-            )
-
+        mol_params = (p for p in list(defaults.keys()) if is_mol_parameter(p))
         num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
+
         for param, i in it.product(mol_params, num_mols):
             param_name = remove_trail_idx(param)
             modules_params[module_name].setdefault(
                 f"{param_name}_{i}",
                 defaults[param],
                 )
-
-        print(modules_params[module_name])
+    return

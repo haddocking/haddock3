@@ -150,13 +150,12 @@ class HaddockModule(BaseHaddockModule):
                     clt_dic[cluster_id].append(model_pdb)
 
             # Rank the clusters
-            #  they are sorted by the top4 models in each cluster
-            top_n = 4
+            #  they are sorted by the topX (threshold) models in each cluster
             score_dic = {}
             for clt_id in clt_dic:
                 score_l = [p.score for p in clt_dic[clt_id]]
                 score_l.sort()
-                top4_score = sum(score_l[:top_n]) / float(top_n)
+                top4_score = sum(score_l[:threshold]) / float(threshold)
                 score_dic[clt_id] = top4_score
 
             sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
@@ -206,15 +205,15 @@ class HaddockModule(BaseHaddockModule):
                 model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
                 model_score_l.sort()
                 top_score = sum(
-                    [e[0] for e in model_score_l][:top_n]
-                    ) / top_n
+                    [e[0] for e in model_score_l][:threshold]
+                    ) / threshold
                 output_str += (
                     f"{os.linesep}"
                     "-----------------------------------------------"
                     f"{os.linesep}"
                     f"Cluster {cluster_rank} (#{cluster_id}, "
                     f"n={len(model_score_l)}, "
-                    f"top{top_n}_avg_score = {top_score:.2f})"
+                    f"top{threshold}_avg_score = {top_score:.2f})"
                     f"{os.linesep}")
                 output_str += os.linesep
                 output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'

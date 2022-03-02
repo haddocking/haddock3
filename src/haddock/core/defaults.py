@@ -29,3 +29,5 @@ MAX_NUM_MODULES = 10000
 valid_run_dir_chars = string.ascii_letters + string.digits + "._-/\\"
 
 RUNDIR = "run_dir"
+
+max_molecules_allowed = 20

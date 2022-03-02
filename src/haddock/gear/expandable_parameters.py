@@ -63,10 +63,18 @@ configuration file despite those are not defined in the `defaults.yaml`.
 However, because `<name>_<integer>` is too much of a simple rule, we
 need to define in this module which parameters are actualy expandable.
 If you are developing here look for the `type_simplest_ep` variable.
+
+4. Parameters that are expandable to the max number of molecules:
+
+Those are the parameters starting with `mol`. For example:
+`mol_fix_origin_1`, which refers to the `fix_origin` parameter for
+molecule 1. These parameters are allowed to expand only to the maximum
+of input molecules, and at most to the max number of molecules allowed.
 """
 from copy import deepcopy
 from functools import partial
 
+from haddock.core.defaults import max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError
 
 
@@ -331,6 +339,65 @@ def read_simplest_expandable(expparams, config):
         if idx.isdigit() and name in expparams:
             new.add(param)
     return new
+
+
+def get_mol_parameters(config):
+    """Identify expandable `mol` parameters."""
+    return set(param for param in config if is_mol_parameter(param))
+
+
+def is_mol_parameter(param):
+    """Identify if a parameter is a `mol` parameter."""
+    parts = param.split("_")
+    return param.startswith("mol_") \
+        and parts[-1].isdigit() \
+        and len(parts) > 2
+
+
+def read_mol_parameters(
+        user_config,
+        default_groups,
+        max_mols=max_molecules_allowed,
+        ):
+    """
+    Read the mol parameters in the user_config following expectations.
+
+    Parameters
+    ----------
+    user_config : dict
+        The user configuration dictionary.
+
+    default_groups : dict or set.
+        The mol parameters present in the default configuration file for
+        the specific module. These are defined by `get_mol_parameters`.
+
+    max_mols : int
+        HADDOCK3 has a limit in the number of different molecules it
+        accepts for a calculation. Expandable parameters affecting molecules
+        should not be allowed to go beyond that number. Defaults to
+        `core.default.max_molecules_allowed`.
+
+    Returns
+    -------
+    set
+        The allowed parameters according to the default config and the
+        max allowed molecules.
+    """
+    # removes the integer suffix from the default mol parameters
+    default_names = [remove_trail_idx(p) for p in default_groups]
+
+    new = set()
+    for param in get_mol_parameters(user_config):
+        param_name = remove_trail_idx(param)
+        param_idx = param.split("_")[-1]
+        if param_name in default_names and int(param_idx) <= max_mols:
+            new.add(param)
+    return new
+
+
+def remove_trail_idx(param):
+    """Remove the trailing integer from a parameter."""
+    return "_".join(param.split("_")[:-1])
 
 
 def make_param_name_single_index(param_parts):

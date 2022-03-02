@@ -8,12 +8,14 @@ from functools import wraps
 from pathlib import Path
 
 from haddock import contact_us, haddock3_source_path, log
-from haddock.core.defaults import RUNDIR
+from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
+    get_mol_parameters,
     get_multiple_index_groups,
     get_single_index_groups,
+    read_mol_parameters,
     read_multiple_idx_groups_user_config,
     read_simplest_expandable,
     read_single_idx_groups_user_config,
@@ -170,6 +172,9 @@ def validate_modules_params(modules_params):
         If there is any parameter given by the user that is not defined
         in the defaults.cfg of the module.
     """
+    # needed definition before starting the loop
+    max_mols = len(modules_params["topoaa"]["molecules"])
+
     for module_name, args in modules_params.items():
         module_name = get_module_name(module_name)
         pdef = Path(
@@ -184,13 +189,18 @@ def validate_modules_params(modules_params):
         if not defaults:
             return
 
-        block_params = get_expandable_parameters(args, defaults, module_name)
+        expandable_params = get_expandable_parameters(
+            args,
+            defaults,
+            module_name,
+            max_mols,
+            )
 
         diff = set(extract_keys_recursive(args)) \
             - set(extract_keys_recursive(defaults)) \
             - set(config_mandatory_general_parameters) \
             - set(non_mandatory_general_parameters_defaults.keys()) \
-            - block_params
+            - expandable_params
 
         if diff:
             _msg = (
@@ -373,7 +383,7 @@ def check_specific_validations(params):
     v_rundir(params[RUNDIR])
 
 
-def get_expandable_parameters(user_config, defaults, module_name):
+def get_expandable_parameters(user_config, defaults, module_name, max_mols):
     """
     Get configuration expandable blocks.
 
@@ -392,7 +402,7 @@ def get_expandable_parameters(user_config, defaults, module_name):
     if module_name == "topoaa":
         ap = set()  # allowed_parameters
         ap.update(_get_blocks(user_config, defaults, module_name))
-        for i in range(1, 20):
+        for i in range(1, max_molecules_allowed + 1):
             key = f"mol{i}"
             with suppress(KeyError):
                 ap.update(
@@ -400,19 +410,21 @@ def get_expandable_parameters(user_config, defaults, module_name):
                         user_config[key],
                         defaults[key],
                         module_name,
+                        max_mols,
                         )
                     )
 
         return ap
 
     else:
-        return _get_blocks(user_config, defaults, module_name)
+        return _get_blocks(user_config, defaults, module_name, max_mols)
 
 
 # reading parameter blocks
-def _get_blocks(user_config, defaults, module_name):
+def _get_blocks(user_config, defaults, module_name, max_mols):
     type_1 = get_single_index_groups(defaults)
     type_2 = get_multiple_index_groups(defaults)
+    type_4 = get_mol_parameters(defaults)
 
     allowed_params = set()
     allowed_params.update(read_single_idx_groups_user_config(user_config, type_1))  # noqa: E501
@@ -421,5 +433,8 @@ def _get_blocks(user_config, defaults, module_name):
     with suppress(KeyError):
         type_3 = type_simplest_ep[module_name]
         allowed_params.update(read_simplest_expandable(type_3, user_config))
+
+    _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)
+    allowed_params.update(_)
 
     return allowed_params

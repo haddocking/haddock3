@@ -1695,14 +1695,14 @@ tolerance:
   group: 'module'
   explevel: expert
 log_level:
-  default: "quiet"
+  default: quiet
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - "verbose"
-    - "normal"
-    - "quiet"
+    - verbose
+    - normal
+    - quiet
   title: Log level verbosity for CNS
   short: Set the log level verbosity for CNS
   long: CNS, the computational engine used by HADDOCK can generate a lot of output

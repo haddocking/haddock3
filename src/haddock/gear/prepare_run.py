@@ -1,5 +1,6 @@
 """Logic pertraining to preparing the run files and folders."""
 import importlib
+import itertools as it
 import shutil
 import string
 import sys
@@ -21,6 +22,8 @@ from haddock.gear.expandable_parameters import (
     read_simplest_expandable,
     read_single_idx_groups_user_config,
     type_simplest_ep,
+    is_mol_parameter,
+    remove_trail_idx,
     )
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -114,6 +117,7 @@ def setup_run(workflow_path, restart_from=None):
 
     # populate topology molecules
     populate_topology_molecule_params(modules_params["topoaa"])
+    populate_mol_parameters(modules_params)
 
     # validations
     validate_modules_params(modules_params)
@@ -462,3 +466,34 @@ def populate_topology_molecule_params(topoaa):
         topoaa[mol] = recursive_dict_update(topoaa_cfg["mol1"], topoaa[mol])
         print(topoaa[mol])
     return
+
+
+def populate_mol_parameters(modules_params):
+    """Populate modules parameters."""
+    for module_name, _ in modules_params.items():
+        module_name_ = get_module_name(module_name)
+        pdef = Path(
+            haddock3_source_path,
+            'modules',
+            modules_category[module_name_],
+            module_name_,
+            'defaults.yaml',
+            ).resolve()
+
+        defaults = read_from_yaml_config(pdef)
+
+        mol_params = (
+            p
+            for p in list(defaults.keys())
+            if is_mol_parameter(p)
+            )
+
+        num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
+        for param, i in it.product(mol_params, num_mols):
+            param_name = remove_trail_idx(param)
+            modules_params[module_name].setdefault(
+                f"{param_name}_{i}",
+                defaults[param],
+                )
+
+        print(modules_params[module_name])

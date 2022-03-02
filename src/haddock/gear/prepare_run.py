@@ -1,6 +1,7 @@
 """Logic pertraining to preparing the run files and folders."""
 import importlib
 import shutil
+import string
 import sys
 from contextlib import contextmanager, suppress
 from copy import deepcopy
@@ -36,6 +37,7 @@ from haddock.modules import (
     modules_category,
     non_mandatory_general_parameters_defaults,
     )
+from haddock.modules.topology.topoaa import DEFAULT_CONFIG as topoaa_defaults
 
 
 @contextmanager
@@ -102,13 +104,16 @@ def setup_run(workflow_path, restart_from=None):
 
     # copy molecules parameter to topology module
     copy_molecules_to_topology(params)
-    if int(params["topoaa"]["molecules"]) > max_molecules_allowed:
+    if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
         raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
     # separate general from modules parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+
+    # populate topology molecules
+    populate_topology_molecule_params(modules_params["topoaa"])
 
     # validations
     validate_modules_params(modules_params)
@@ -416,7 +421,7 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
                 ap.update(
                     _get_expandable(
                         user_config[key],
-                        defaults[key],
+                        defaults["mol1"],
                         module_name,
                         max_mols,
                         )
@@ -446,3 +451,13 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
     allowed_params.update(_)
 
     return allowed_params
+
+
+def populate_topology_molecule_params(topoaa):
+    """Populate topoaa `molX` subdictionaries."""
+    topoaa_cfg = read_from_yaml_config(topoaa_defaults)
+    for i in range(1, len(topoaa["molecules"])):
+        topoaa_cfg["mol1"]["prot_segid"] = string.ascii_uppercase[i - 1]
+        mol = f"mol{i}"
+        topoaa[mol] = recursive_dict_update(topoaa_cfg["mol1"], topoaa[mol])
+    return

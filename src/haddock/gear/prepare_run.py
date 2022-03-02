@@ -456,8 +456,9 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
 def populate_topology_molecule_params(topoaa):
     """Populate topoaa `molX` subdictionaries."""
     topoaa_cfg = read_from_yaml_config(topoaa_defaults)
-    for i in range(1, len(topoaa["molecules"])):
+    for i in range(1, len(topoaa["molecules"]) + 1):
         topoaa_cfg["mol1"]["prot_segid"] = string.ascii_uppercase[i - 1]
         mol = f"mol{i}"
         topoaa[mol] = recursive_dict_update(topoaa_cfg["mol1"], topoaa[mol])
+        print(topoaa[mol])
     return

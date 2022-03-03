@@ -155,3 +155,13 @@ lovoalign_exec:
   long: No long description yet
   group: ''
   explevel: easy
+clt_threshold:
+  default: 4
+  type: integer
+  min: 0
+  max: 1000
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy

@@ -87,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
         output_fname = "capri.tsv"
         self.log(f" Saving output to {output_fname}")
         capri.output(
-            output_fname,
+            self.params["clt_threshold"],
             sortby_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
             rankby_key=self.params["rankby"],

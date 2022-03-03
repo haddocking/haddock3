@@ -536,7 +536,7 @@ class CAPRI:
             + os.linesep
             )
         info_header += (
-            "#   You might need to tweak the value of clt_threshold change"
+            "#   You might need to tweak the value of clt_threshold or change"
             " some parameters" + os.linesep
             )
         info_header += (

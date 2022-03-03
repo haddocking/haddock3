@@ -1,6 +1,7 @@
 You are about to submit a new Pull Request. Before continuing make sure you read the [contributing guidelines](CONTRIBUTING.md) and you comply with the following criteria:
 
 - [ ] You have stick to Python. Talk with us before adding other programming languages to HADDOCK3
+- [ ] Your PR is about CNS
 - [ ] Your code is well documented: proper docstrings and explanatory comments for those tricky parts
 - [ ] You structured the code into small functions as much as possible. You can use classes if there's a (state) purpose
 - [ ] code follows our coding style

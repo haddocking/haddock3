@@ -31,6 +31,16 @@ def round_two_dec(dic):
     return dict((k, round(dic[k], 2)) for k in dic)
 
 
+def remove_aln_files(class_name):
+    """Remove intermediary alignment files."""
+    file_l = [Path(class_name.path, 'blosum62.izone'),
+              Path(class_name.path, 'blosum62_A.aln'),
+              Path(class_name.path, 'blosum62_B.aln')]
+    for f in file_l:
+        if f.exists():
+            os.unlink(f)
+
+
 @pytest.fixture
 def protprot_input_list():
     """Prot-prot input."""
@@ -70,7 +80,10 @@ def protdna_caprimodule(protdna_input_list):
         aln_method="sequence",
         path=golden_data,
         )
-    return capri
+
+    yield capri
+
+    remove_aln_files(capri)
 
 
 @pytest.fixture
@@ -85,7 +98,10 @@ def protlig_caprimodule(protlig_input_list):
         aln_method="sequence",
         path=golden_data,
         )
-    return capri
+
+    yield capri
+
+    remove_aln_files(capri)
 
 
 @pytest.fixture
@@ -100,7 +116,10 @@ def protprot_caprimodule(protprot_input_list):
         aln_method="sequence",
         path=golden_data,
         )
-    return capri
+
+    yield capri
+
+    remove_aln_files(capri)
 
 
 def test_protprot_irmsd(protprot_caprimodule, protprot_input_list):
@@ -268,38 +287,59 @@ def test_protdna_fnat(protdna_caprimodule, protdna_input_list):
 def test_output(protprot_caprimodule):
     """Test the writing of capri.tsv file."""
     factor = 1
+    clt_id = 1
     for m in protprot_caprimodule.model_list:
         protprot_caprimodule.irmsd_dic[m] = 0.111 * factor
         protprot_caprimodule.fnat_dic[m] = 0.333 * factor
         protprot_caprimodule.lrmsd_dic[m] = 0.444 * factor
         protprot_caprimodule.ilrmsd_dic[m] = 0.555 * factor
+        m.clt_id = clt_id
+        clt_id += 1
         factor += 1.5
 
-    output_f = tempfile.NamedTemporaryFile(delete=False)
     sortby_key = "fnat"
     sort_ascending = True
     rankby_key = "irmsd"
     rank_ascending = True
+    clt_threshold = 1
     protprot_caprimodule.output(
-        output_f=output_f.name,
+        clt_threshold,
         sortby_key=sortby_key,
         sort_ascending=sort_ascending,
         rankby_key=rankby_key,
         rank_ascending=rank_ascending,
         )
 
-    assert Path(output_f.name).stat().st_size != 0
+    ss_fname = Path(protprot_caprimodule.path, "capri_ss.tsv")
+    clt_fname = Path(protprot_caprimodule.path, "capri_clt.tsv")
+
+    assert ss_fname.stat().st_size != 0
+    assert clt_fname.stat().st_size != 0
+
     # remove the model column since its name will depend on where we are running
     #  the test
-    observed_outf_l = [e.split()[1:] for e in open(output_f.name).readlines()]
+    observed_outf_l = [e.split()[1:] for e in open(
+        ss_fname).readlines() if not e.startswith('#')]
     expected_outf_l = [
-        ['rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
-            'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
-        ['1', 'nan', '0.111', '0.333', '0.444', '0.555', '-', '-', '-'],
-        ['2', 'nan', '0.278', '0.833', '1.110', '1.388', '-', '-', '-']
-        ]
+        ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
+         'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+        ['1', 'nan', '0.111', '0.333', '0.444', '0.555', '1', '-', '-'],
+        ['2', 'nan', '0.278', '0.833', '1.110', '1.388', '2', '-', '-']]
 
     assert observed_outf_l == expected_outf_l
+
+    observed_outf_l = [e.split() for e in open(
+        clt_fname).readlines() if not e.startswith('#')]
+    expected_outf_l = [
+        ['caprieval_rank', 'cluster_rank', 'cluster_id', 'n', 'under_eval',
+         'score', 'irmsd', 'fnat', 'lrmsd', 'dockq'],
+        ['1', '-', '1', '1', '-', 'nan', '0.111', '0.333', '0.444', 'nan'],
+        ['2', '-', '2', '1', '-', 'nan', '0.278', '0.833', '1.110', 'nan']]
+
+    assert observed_outf_l == expected_outf_l
+
+    os.unlink(ss_fname)
+    os.unlink(clt_fname)
 
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):

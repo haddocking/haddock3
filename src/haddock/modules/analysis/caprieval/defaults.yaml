@@ -7,38 +7,47 @@ reference_fname:
     If none is defined then the lowest scoring structure is selected by default.
   group: 'analysis'
   explevel: easy
+
 irmsd:
   default: true
   type: boolean
   title: Calculate the I-RMSD
-  short: Perform I-RMSD calculations.
-  long: Perform I-RMSD calculations.
+  short: Perform Interface RMSD calculations.
+  long: Calculate the Interface Root Mean Square Deviation.
+    This calculation evaluates the RMSD between two interfaces, not considering the rest of the complex.
   group: 'analysis'
   explevel: easy
+
 fnat:
   default: true
   type: boolean
-  title: No title yet
+  title: Calculate the FNAT.
   short: Perform FNAT calculations.
-  long: Perform FNAT calculations.
+  long: Calculate the Frequency of Native Contacts, this calculation evaluates how many contacts observed
+    in the reference are present in the model.
   group: 'analysis'
   explevel: easy
+
 lrmsd:
   default: true
   type: boolean
-  title: No title yet
-  short: Perform L-RMSD calculations.
-  long: Perform L-RMSD calculations.
+  title: Calculate the L-RMSD
+  short: Perform Ligand RMSD calculations.
+  long: Calculate the Ligand Root Mean Square Deviation. This calculation is done by superimposing
+    the receptors and then evaluating the RMSD of the ligands.
   group: 'analysis'
   explevel: easy
+
 ilrmsd:
   default: true
   type: boolean
-  title: No title yet
-  short: Perform I-L-RMSD calculations.
-  long: Perform I-L-RMSD calculations.
+  title: Calculate I-L-RMSD
+  short: Perform Interface Ligand RMSD calculations.
+  long: Perform I-L-RMSD calculations. This calculation is done by superimposing the receptors and evaluating
+    the RMSD of the interface of the ligands.
   group: 'analysis'
   explevel: easy
+
 dockq:
   default: true
   type: boolean
@@ -47,84 +56,55 @@ dockq:
   long: Evaluate DockQ.
   group: 'analysis'
   explevel: easy
+
 irmsd_cutoff:
   default: 10.0
   type: float
   min: 0.0
   max: 9999
   precision: 3
-  title: Distance cutoff (Å) to consider the interface
-  short: Distance cutoff (Å) to consider the interface.
-  long: Distance cutoff (Å) to consider the interface.
+  title: Distance cutoff (Å) used to define interface contacts.
+  short: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+  long: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
   group: 'analysis'
   explevel: easy
+
 fnat_cutoff:
   default: 5.0
   type: float
   min: 0.0
   max: 9999
   precision: 3
-  title: Distance cutoff (Å) to consider the interface
-  short: Distance cutoff (Å) to consider the interface.
-  long: Distance cutoff (Å) to consider the interface.
+  title: Distance cutoff (Å) used to define interface contacts.
+  short: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+  long: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
   group: 'analysis'
   explevel: easy
-lrmsd_cutoff:
-  default: 10.0
-  type: float
-  min: 0.0
-  max: 9999
-  precision: 3
-  title: Distance cutoff (Å) to consider the interface
-  short: Distance cutoff (Å) to consider the interface.
-  long: Distance cutoff (Å) to consider the interface.
-  group: 'analysis'
-  explevel: easy
+
 receptor_chain:
   default: A
   type: string
   minchars: 1
   maxchars: 1
   title: Receptor ChainID
-  short: Receptor ChainID.
-  long: Receptor ChainID.
+  short: Receptor ChainID to be considered for the RMSD calculations.
+  long: Receptor ChainID to be considered for the RMSD calculations. This determines which chain will be
+    treated as the receptor for the L-RMSD and for I-L-RMSD.
   group: 'analysis'
   explevel: easy
+
 ligand_chain:
   default: B
   type: string
   minchars: 1
   maxchars: 1
   title: Ligand ChainID
-  short: Ligand ChainID.
-  long: Ligand ChainID.
+  short: Ligand ChainID to be considered for the RMSD calculations.
+  long: Ligand ChainID to be considered for the RMSD calculations. This determines which chain will be
+    treated as the ligand for the L-RMSD and for I-L-RMSD.
   group: 'analysis'
   explevel: easy
-rankby:
-  default: score
-  type: string
-  minchars: -999999999999
-  maxchars: 999999999999
-  choices:
-    - score
-    - irmsd
-    - lrmsd
-    - ilrmsd
-    - fnat
-    - dockq
-  title: Rank the structures in the output file by this value
-  short: Which value should be used to rank the structures in the output file.
-  long: Which value should be used to rank the structures in the output file, this will determine the `caprieval_rank`
-  group: 'analysis'
-  explevel: easy
-rank_ascending:
-  default: true
-  type: boolean
-  title: Rank in ascending order
-  short: Rank in ascending order.
-  long: Rank in ascending order.
-  group: 'analysis'
-  explevel: easy
+
 sortby:
   default: score
   type: string
@@ -142,6 +122,7 @@ sortby:
   long: Which value should be used to sort the output, the output table will be sorted accordingly.
   group: 'analysis'
   explevel: easy
+
 sort_ascending:
   default: true
   type: boolean
@@ -150,6 +131,7 @@ sort_ascending:
   long: Sort in ascending order.
   group: 'analysis'
   explevel: easy
+
 alignment_method:
   default: sequence
   type: string
@@ -164,6 +146,7 @@ alignment_method:
     for structures that are too different, for that use
   group: 'analysis'
   explevel: easy
+
 lovoalign_exec:
   default: ''
   type: string
@@ -174,6 +157,7 @@ lovoalign_exec:
   long: Location (path) of the LovoAlign executable.
   group: 'analysis'
   explevel: easy
+
 clt_threshold:
   default: 4
   type: integer

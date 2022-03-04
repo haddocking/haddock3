@@ -299,15 +299,11 @@ def test_output(protprot_caprimodule):
 
     sortby_key = "fnat"
     sort_ascending = True
-    rankby_key = "irmsd"
-    rank_ascending = True
     clt_threshold = 1
     protprot_caprimodule.output(
         clt_threshold,
         sortby_key=sortby_key,
         sort_ascending=sort_ascending,
-        rankby_key=rankby_key,
-        rank_ascending=rank_ascending,
         )
 
     ss_fname = Path(protprot_caprimodule.path, "capri_ss.tsv")
@@ -331,13 +327,13 @@ def test_output(protprot_caprimodule):
     observed_outf_l = [e.split() for e in open(
         clt_fname).readlines() if not e.startswith('#')]
     expected_outf_l = [
-        ['caprieval_rank', 'cluster_rank', 'cluster_id', 'n', 'under_eval',
-         'score', 'score_std', 'irmsd', 'irmsd_std', 'fnat', 'fnat_std',
-         'lrmsd', 'lrmsd_std', 'dockqn', 'dockq_std'],
-        ['1', '-', '1', '1', '-', 'nan', 'nan', '0.111', '0.000', '0.333',
-         '0.000', '0.444', '0.000', 'nan', 'nan'],
-        ['2', '-', '2', '1', '-', 'nan', 'nan', '0.278', '0.000', '0.833',
-         '0.000', '1.110', '0.000', 'nan', 'nan']]
+        ['cluster_rank', 'cluster_id', 'n', 'under_eval', 'score', 'score_std',
+         'irmsd', 'irmsd_std', 'fnat', 'fnat_std', 'lrmsd', 'lrmsd_std',
+         'dockqn', 'dockq_std', 'caprieval_rank'],
+        ['-', '1', '1', '-', 'nan', 'nan', '0.111', '0.000', '0.333', '0.000',
+         '0.444', '0.000', 'nan', 'nan', '1'],
+        ['-', '2', '1', '-', 'nan', 'nan', '0.278', '0.000', '0.833', '0.000',
+         '1.110', '0.000', 'nan', 'nan', '2']]
 
     assert observed_outf_l == expected_outf_l
 

@@ -103,6 +103,8 @@ ligand_chain:
 rankby:
   default: score
   type: string
+  minchars: -999999999999
+  maxchars: 999999999999
   choices:
     - score
     - irmsd
@@ -126,6 +128,8 @@ rank_ascending:
 sortby:
   default: score
   type: string
+  minchars: -999999999999
+  maxchars: 999999999999
   choices:
     - score
     - irmsd
@@ -149,6 +153,8 @@ sort_ascending:
 alignment_method:
   default: sequence
   type: string
+  minchars: -999999999999
+  maxchars: 999999999999
   choices:
     - structure
     - sequence
@@ -161,8 +167,8 @@ alignment_method:
 lovoalign_exec:
   default: ''
   type: string
-  minchars: 0
-  maxchars: 999
+  minchars: -999999999999
+  maxchars: 999999999999
   title: Location (path) of the LovoAlign executable
   short: Location (path) of the LovoAlign executable.
   long: Location (path) of the LovoAlign executable.

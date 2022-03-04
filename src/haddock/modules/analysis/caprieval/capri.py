@@ -4,8 +4,8 @@ import shlex
 import shutil
 import subprocess
 import tempfile
-from math import sqrt
 from functools import partial
+from math import sqrt
 from pathlib import Path
 
 import numpy as np

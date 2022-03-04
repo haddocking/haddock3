@@ -332,9 +332,12 @@ def test_output(protprot_caprimodule):
         clt_fname).readlines() if not e.startswith('#')]
     expected_outf_l = [
         ['caprieval_rank', 'cluster_rank', 'cluster_id', 'n', 'under_eval',
-         'score', 'irmsd', 'fnat', 'lrmsd', 'dockq'],
-        ['1', '-', '1', '1', '-', 'nan', '0.111', '0.333', '0.444', 'nan'],
-        ['2', '-', '2', '1', '-', 'nan', '0.278', '0.833', '1.110', 'nan']]
+         'score', 'score_std', 'irmsd', 'irmsd_std', 'fnat', 'fnat_std',
+         'lrmsd', 'lrmsd_std', 'dockqn', 'dockq_std'],
+        ['1', '-', '1', '1', '-', 'nan', 'nan', '0.111', '0.000', '0.333',
+         '0.000', '0.444', '0.000', 'nan', 'nan'],
+        ['2', '-', '2', '1', '-', 'nan', 'nan', '0.278', '0.000', '0.833',
+         '0.000', '1.110', '0.000', 'nan', 'nan']]
 
     assert observed_outf_l == expected_outf_l
 

@@ -219,7 +219,7 @@ def file_exists(
 
 def recursive_dict_update(d, u):
     """
-    Update dictionary recursively.
+    Update dictionary `d` according to `u` recursively.
 
     https://stackoverflow.com/questions/3232943
 

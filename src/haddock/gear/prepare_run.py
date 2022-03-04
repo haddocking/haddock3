@@ -1,22 +1,28 @@
 """Logic pertraining to preparing the run files and folders."""
 import importlib
+import itertools as it
 import shutil
+import string
 import sys
 from contextlib import contextmanager, suppress
 from copy import deepcopy
-from functools import wraps
+from functools import lru_cache, wraps
 from pathlib import Path
 
 from haddock import contact_us, haddock3_source_path, log
-from haddock.core.defaults import RUNDIR
+from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
+    get_mol_parameters,
     get_multiple_index_groups,
     get_single_index_groups,
+    is_mol_parameter,
+    read_mol_parameters,
     read_multiple_idx_groups_user_config,
     read_simplest_expandable,
     read_single_idx_groups_user_config,
+    remove_trail_idx,
     type_simplest_ep,
     )
 from haddock.gear.greetings import get_goodbye_help
@@ -53,6 +59,21 @@ def with_config_error(func):
         with config_key_error():
             return func(*args, **kwargs)
     return wrapper
+
+
+@lru_cache
+def _read_defaults(module_name):
+    """Read the defaults.yaml given a module name."""
+    module_name_ = get_module_name(module_name)
+    pdef = Path(
+        haddock3_source_path,
+        'modules',
+        modules_category[module_name_],
+        module_name_,
+        'defaults.yaml',
+        ).resolve()
+
+    return read_from_yaml_config(pdef)
 
 
 def setup_run(workflow_path, restart_from=None):
@@ -100,11 +121,17 @@ def setup_run(workflow_path, restart_from=None):
 
     # copy molecules parameter to topology module
     copy_molecules_to_topology(params)
+    if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
+        raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
     # separate general from modules parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+
+    # populate topology molecules
+    populate_topology_molecule_params(modules_params["topoaa"])
+    populate_mol_parameters(modules_params)
 
     # validations
     validate_modules_params(modules_params)
@@ -170,27 +197,26 @@ def validate_modules_params(modules_params):
         If there is any parameter given by the user that is not defined
         in the defaults.cfg of the module.
     """
-    for module_name, args in modules_params.items():
-        module_name = get_module_name(module_name)
-        pdef = Path(
-            haddock3_source_path,
-            'modules',
-            modules_category[module_name],
-            module_name,
-            'defaults.yaml',
-            ).resolve()
+    # needed definition before starting the loop
+    max_mols = len(modules_params["topoaa"]["molecules"])
 
-        defaults = read_from_yaml_config(pdef)
+    for module_name, args in modules_params.items():
+        defaults = _read_defaults(module_name)
         if not defaults:
             return
 
-        block_params = get_expandable_parameters(args, defaults, module_name)
+        expandable_params = get_expandable_parameters(
+            args,
+            defaults,
+            module_name,
+            max_mols,
+            )
 
         diff = set(extract_keys_recursive(args)) \
             - set(extract_keys_recursive(defaults)) \
             - set(config_mandatory_general_parameters) \
             - set(non_mandatory_general_parameters_defaults.keys()) \
-            - block_params
+            - expandable_params
 
         if diff:
             _msg = (
@@ -373,7 +399,7 @@ def check_specific_validations(params):
     v_rundir(params[RUNDIR])
 
 
-def get_expandable_parameters(user_config, defaults, module_name):
+def get_expandable_parameters(user_config, defaults, module_name, max_mols):
     """
     Get configuration expandable blocks.
 
@@ -384,6 +410,12 @@ def get_expandable_parameters(user_config, defaults, module_name):
 
     defaults : dict
         The default configuration file defined for the module.
+
+    module_name : str
+        The name the module being processed.
+
+    max_mols : int
+        The max number of molecules allowed.
     """
     # the topoaa module is an exception because it has subdictionaries
     # for the `mol` parameter. Instead of defining a general recursive
@@ -391,28 +423,30 @@ def get_expandable_parameters(user_config, defaults, module_name):
     # no other module should have subdictionaries has parameters
     if module_name == "topoaa":
         ap = set()  # allowed_parameters
-        ap.update(_get_blocks(user_config, defaults, module_name))
-        for i in range(1, 20):
+        ap.update(_get_expandable(user_config, defaults, module_name, max_mols))
+        for i in range(1, max_mols + 1):
             key = f"mol{i}"
             with suppress(KeyError):
                 ap.update(
-                    _get_blocks(
+                    _get_expandable(
                         user_config[key],
-                        defaults[key],
+                        defaults["mol1"],
                         module_name,
+                        max_mols,
                         )
                     )
 
         return ap
 
     else:
-        return _get_blocks(user_config, defaults, module_name)
+        return _get_expandable(user_config, defaults, module_name, max_mols)
 
 
 # reading parameter blocks
-def _get_blocks(user_config, defaults, module_name):
+def _get_expandable(user_config, defaults, module_name, max_mols):
     type_1 = get_single_index_groups(defaults)
     type_2 = get_multiple_index_groups(defaults)
+    type_4 = get_mol_parameters(defaults)
 
     allowed_params = set()
     allowed_params.update(read_single_idx_groups_user_config(user_config, type_1))  # noqa: E501
@@ -422,4 +456,64 @@ def _get_blocks(user_config, defaults, module_name):
         type_3 = type_simplest_ep[module_name]
         allowed_params.update(read_simplest_expandable(type_3, user_config))
 
+    _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)
+    allowed_params.update(_)
+
     return allowed_params
+
+
+def populate_topology_molecule_params(topoaa):
+    """Populate topoaa `molX` subdictionaries."""
+    topoaa_dft = _read_defaults("topoaa")
+
+    # list of possible prot_segids
+    uppers = list(string.ascii_uppercase)[::-1]
+
+    # removes from the list those prot_segids that are already defined
+    for param in topoaa:
+        if param.startswith("mol") and param[3:].isdigit():
+            with suppress(KeyError):
+                uppers.remove(topoaa[param]["prot_segid"])
+
+    # populates the prot_segids just for those that were not defined
+    # in the user configuration file. Other parameters are populated as
+    # well. `prot_segid` is the only one differing per molecule.
+    for i in range(1, len(topoaa["molecules"]) + 1):
+        mol = f"mol{i}"
+        if not(mol in topoaa and "prot_segid" in topoaa[mol]):
+            topoaa_dft["mol1"]["prot_segid"] = uppers.pop()
+
+        topoaa[mol] = recursive_dict_update(
+            topoaa_dft["mol1"],
+            topoaa[mol] if mol in topoaa else {},
+            )
+    return
+
+
+def populate_mol_parameters(modules_params):
+    """
+    Populate modules parameters.
+
+    Parameters
+    ----------
+    modules_params : dict
+        A dictionary containing the parameters for all modules.
+
+    Returns
+    -------
+    None
+        Alter the dictionary in place.
+    """
+    for module_name, _ in modules_params.items():
+        defaults = _read_defaults(module_name)
+
+        mol_params = (p for p in list(defaults.keys()) if is_mol_parameter(p))
+        num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
+
+        for param, i in it.product(mol_params, num_mols):
+            param_name = remove_trail_idx(param)
+            modules_params[module_name].setdefault(
+                f"{param_name}_{i}",
+                defaults[param],
+                )
+    return

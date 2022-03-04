@@ -9,10 +9,13 @@ from haddock.gear.expandable_parameters import (
     belongs_to_single_index,
     extract_multiple_index_params,
     extract_single_index_params,
+    get_mol_parameters,
     get_multiple_index_groups,
     get_single_index_groups,
+    is_mol_parameter,
     make_param_name_multiple_index,
     make_param_name_single_index,
+    read_mol_parameters,
     read_multiple_idx_groups_user_config,
     read_single_idx_groups_user_config,
     rejoin_parts_multiple_index,
@@ -584,3 +587,60 @@ def test_read_multiple_idx_groups_user_config_less(
     """Test read single index groups in user config."""
     with pytest.raises(ConfigurationError):
         read_multiple_idx_groups_user_config(user_config, default_groups)
+
+
+@pytest.mark.parametrize(
+    "param,expected",
+    [
+        ("mol_fix_1", True),
+        ("mol_sta_1", True),
+        ("mol_sto_sta_1", True),
+        ("mol_what_ever_5", True),
+        # false
+        ("mol_1", False),
+        ("mol_fix", False),
+        ("mal_what_ever_5", False),
+        ("mal_what_ever", False),
+        ("mal_what", False),
+        ("param", False),
+        ]
+    )
+def test_is_mol_parameters(param, expected):
+    """Test if parameter belongs to mol type."""
+    result = is_mol_parameter(param)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "inp,expected",
+    (
+        [{"mol_1", "mol_fix_1", "mol_fix_2"}, {"mol_fix_1", "mol_fix_2"}],
+        )
+    )
+def test_get_mol_params(inp, expected):
+    """Test get mol params."""
+    result = get_mol_parameters(inp)
+    assert result == expected
+    assert isinstance(result, set)
+
+
+@pytest.mark.parametrize(
+    "inp,default,expected",
+    (
+        [
+            {"mol_1", "mol_fix_1", "mol_fix_2", "mol_fax_1"},
+            {"mol_fix_1"},
+            {"mol_fix_1", "mol_fix_2"},
+            ],
+        [
+            {"mol_1", "mol_fix_1", "mol_fix_2", "mol_fax_1", "mol_fax_11"},
+            {"mol_fax_1"},
+            {"mol_fax_1"},
+            ],
+        )
+    )
+def test_read_mol_params(inp, default, expected):
+    """Test get mol params."""
+    result = read_mol_parameters(inp, default, max_mols=10)
+    assert result == expected
+    assert isinstance(result, set)

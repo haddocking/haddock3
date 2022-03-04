@@ -1,167 +1,180 @@
 reference_fname:
   default: ''
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Reference structure
+  short: Structure to be used when calculating the CAPRI metrics.
+  long: Structure to be used when calculating the CAPRI metrics.
+    If none is defined then the lowest scoring structure is selected by default.
+  group: 'analysis'
   explevel: easy
 irmsd:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Calculate the I-RMSD
+  short: Perform I-RMSD calculations.
+  long: Perform I-RMSD calculations.
+  group: 'analysis'
   explevel: easy
 fnat:
   default: true
   type: boolean
   title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  short: Perform FNAT calculations.
+  long: Perform FNAT calculations.
+  group: 'analysis'
   explevel: easy
 lrmsd:
   default: true
   type: boolean
   title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  short: Perform L-RMSD calculations.
+  long: Perform L-RMSD calculations.
+  group: 'analysis'
   explevel: easy
 ilrmsd:
   default: true
   type: boolean
   title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  short: Perform I-L-RMSD calculations.
+  long: Perform I-L-RMSD calculations.
+  group: 'analysis'
   explevel: easy
 dockq:
   default: true
   type: boolean
   title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  short: Evaluate DockQ.
+  long: Evaluate DockQ.
+  group: 'analysis'
   explevel: easy
 irmsd_cutoff:
   default: 10.0
   type: float
-  min: -9999
+  min: 0.0
   max: 9999
   precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Distance cutoff (Å) to consider the interface
+  short: Distance cutoff (Å) to consider the interface.
+  long: Distance cutoff (Å) to consider the interface.
+  group: 'analysis'
   explevel: easy
 fnat_cutoff:
   default: 5.0
   type: float
-  min: -9999
+  min: 0.0
   max: 9999
   precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Distance cutoff (Å) to consider the interface
+  short: Distance cutoff (Å) to consider the interface.
+  long: Distance cutoff (Å) to consider the interface.
+  group: 'analysis'
   explevel: easy
 lrmsd_cutoff:
   default: 10.0
   type: float
-  min: -9999
+  min: 0.0
   max: 9999
   precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Distance cutoff (Å) to consider the interface
+  short: Distance cutoff (Å) to consider the interface.
+  long: Distance cutoff (Å) to consider the interface.
+  group: 'analysis'
   explevel: easy
 receptor_chain:
   default: A
   type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  minchars: 1
+  maxchars: 1
+  title: Receptor ChainID
+  short: Receptor ChainID.
+  long: Receptor ChainID.
+  group: 'analysis'
   explevel: easy
 ligand_chain:
   default: B
   type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  minchars: 1
+  maxchars: 1
+  title: Ligand ChainID
+  short: Ligand ChainID.
+  long: Ligand ChainID.
+  group: 'analysis'
   explevel: easy
 rankby:
   default: score
   type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  choices:
+    - score
+    - irmsd
+    - lrmsd
+    - ilrmsd
+    - fnat
+    - dockq
+  title: Rank the structures in the output file by this value
+  short: Which value should be used to rank the structures in the output file.
+  long: Which value should be used to rank the structures in the output file, this will determine the `caprieval_rank`
+  group: 'analysis'
   explevel: easy
 rank_ascending:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Rank in ascending order
+  short: Rank in ascending order.
+  long: Rank in ascending order.
+  group: 'analysis'
   explevel: easy
 sortby:
   default: score
   type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  choices:
+    - score
+    - irmsd
+    - lrmsd
+    - ilrmsd
+    - fnat
+    - dockq
+  title: Sort the structures in the output file by this value
+  short: Which value should be used to sort the output.
+  long: Which value should be used to sort the output, the output table will be sorted accordingly.
+  group: 'analysis'
   explevel: easy
 sort_ascending:
   default: true
   type: boolean
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Sort in ascending order
+  short: Sort in ascending order.
+  long: Sort in ascending order.
+  group: 'analysis'
   explevel: easy
 alignment_method:
   default: sequence
   type: string
-  minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  choices:
+    - structure
+    - sequence
+  title: Alignment method used to match the numbering.
+  short: Which alignment method should be used to match the numbering.
+  long: Alignment method used to match the numbering. Sequence alignment is haddock3-friendly but might not produce best results
+    for structures that are too different, for that use
+  group: 'analysis'
   explevel: easy
 lovoalign_exec:
   default: ''
   type: string
   minchars: 0
-  maxchars: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  maxchars: 999
+  title: Location (path) of the LovoAlign executable
+  short: Location (path) of the LovoAlign executable.
+  long: Location (path) of the LovoAlign executable.
+  group: 'analysis'
   explevel: easy
 clt_threshold:
   default: 4
   type: integer
-  min: 0
+  min: 1
   max: 1000
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
-  group: ''
+  title: Threshold (n) used for the average evaluation in the cluster-based output
+  short: Threshold (n) used for the average evaluation in the cluster-based output.
+  long: Threshold (n) used for the average evaluation in the cluster-based output.
+  group: 'analysis'
   explevel: easy

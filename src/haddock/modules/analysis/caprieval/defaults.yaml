@@ -113,7 +113,7 @@ ligand_chain:
 sortby:
   default: score
   type: string
-  minchars: -20
+  minchars: 0
   maxchars: 20
   choices:
     - score

@@ -3,38 +3,41 @@ reference_fname:
   type: file
   title: Reference structure
   short: Structure to be used when calculating the CAPRI metrics.
-  long: Structure to be used when calculating the CAPRI metrics.
-    If none is defined then the lowest scoring structure is selected by default.
+  long: Reference tructure to be used when calculating the CAPRI metrics.
+    If none is defined then the lowest scoring model is selected by default.
   group: 'analysis'
   explevel: easy
 
 irmsd:
   default: true
   type: boolean
-  title: Calculate the I-RMSD
-  short: Perform Interface RMSD calculations.
-  long: Calculate the Interface Root Mean Square Deviation.
-    This calculation evaluates the RMSD between two interfaces, not considering the rest of the complex.
+  title: Calculate I-RMSD
+  short: Performs Interface RMSD calculations.
+  long: Calculates the Interface Root Mean Square Deviation.
+    This calculate the RMSD of interface backbone atoms after fitting on the interface backbone atoms.
+    The interface is idenfied based on intermolecular contacts shorter than the defined irmsd_cutoff.
   group: 'analysis'
   explevel: easy
 
 fnat:
   default: true
   type: boolean
-  title: Calculate the FNAT.
-  short: Perform FNAT calculations.
-  long: Calculate the Frequency of Native Contacts, this calculation evaluates how many contacts observed
-    in the reference are present in the model.
+  title: Calculate FNAT
+  short: Performs FNAT calculations.
+  long: Calculates the Fraction of Native Contacts. This evaluates how many contacts observed
+    in the reference are present in the model. The distance cutoff used to define intermolecular contacts is
+    defined by the fnat_cutoff parameter.
   group: 'analysis'
   explevel: easy
 
 lrmsd:
   default: true
   type: boolean
-  title: Calculate the L-RMSD
-  short: Perform Ligand RMSD calculations.
-  long: Calculate the Ligand Root Mean Square Deviation. This calculation is done by superimposing
-    the receptors and then evaluating the RMSD of the ligands.
+  title: Calculate L-RMSD
+  short: Performs Ligand RMSD calculations.
+  long: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing
+    the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chain parameter). 
+    Superposition and RMSD calculations are done on backbone heavy atoms.
   group: 'analysis'
   explevel: easy
 
@@ -42,9 +45,10 @@ ilrmsd:
   default: true
   type: boolean
   title: Calculate I-L-RMSD
-  short: Perform Interface Ligand RMSD calculations.
-  long: Perform I-L-RMSD calculations. This calculation is done by superimposing the receptors and evaluating
-    the RMSD of the interface of the ligands.
+  short: Performs Interface Ligand RMSD calculations.
+  long: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target
+  on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms 
+  of the ligand (defined by the ligand_chain parameter).
   group: 'analysis'
   explevel: easy
 
@@ -53,8 +57,8 @@ dockq:
   type: boolean
   title: Calculate DockQ
   short: Evaluate DockQ.
-  long: Evaluate DockQ. A single continuous quality measure for protein docked models based on the CAPRI evaluation protocol,
-    check their publication for more info `10.1371/journal.pone.0161879`
+  long: Evaluate DockQ. A single continuous quality measure for protein docked models based on the CAPRI criteria, 
+    a combination of i-RMSD, l-RMSD and FNAT value. For details check the DockQ publication `DOI:10.1371/journal.pone.0161879`
   group: 'analysis'
   explevel: easy
 
@@ -64,9 +68,9 @@ irmsd_cutoff:
   min: 3.0
   max: 20.0
   precision: 3
-  title: Distance cutoff (Å) used to define interface contacts.
-  short: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
-  long: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+  title: Distance cutoff (Å) used to define interface residues.
+  short: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.
+  long: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.
   group: 'analysis'
   explevel: easy
 
@@ -118,7 +122,7 @@ sortby:
     - ilrmsd
     - fnat
     - dockq
-  title: Sort the structures in the output file by this value
+  title: Sort the structures/clusters in the output file by this value
   short: Which value should be used to sort the output.
   long: Which value should be used to sort the output, the output table will be sorted accordingly.
   group: 'analysis'
@@ -136,8 +140,8 @@ sort_ascending:
 alignment_method:
   default: sequence
   type: string
-  minchars: -999999999999
-  maxchars: 999999999999
+  minchars: 0
+  maxchars: 100
   choices:
     - structure
     - sequence
@@ -151,8 +155,8 @@ alignment_method:
 lovoalign_exec:
   default: ''
   type: string
-  minchars: -999999999999
-  maxchars: 999999999999
+  minchars: 0
+  maxchars: 200
   title: Location (path) of the LovoAlign executable
   short: Location (path) of the LovoAlign executable.
   long: Location (path) of the LovoAlign executable.

@@ -51,17 +51,18 @@ ilrmsd:
 dockq:
   default: true
   type: boolean
-  title: No title yet
+  title: Calculate DockQ
   short: Evaluate DockQ.
-  long: Evaluate DockQ.
+  long: Evaluate DockQ. A single continuous quality measure for protein docked models based on the CAPRI evaluation protocol,
+    check their publication for more info `10.1371/journal.pone.0161879`
   group: 'analysis'
   explevel: easy
 
 irmsd_cutoff:
   default: 10.0
   type: float
-  min: 0.0
-  max: 9999
+  min: 3.0
+  max: 20.0
   precision: 3
   title: Distance cutoff (Å) used to define interface contacts.
   short: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
@@ -72,8 +73,8 @@ irmsd_cutoff:
 fnat_cutoff:
   default: 5.0
   type: float
-  min: 0.0
-  max: 9999
+  min: 3.0
+  max: 20.
   precision: 3
   title: Distance cutoff (Å) used to define interface contacts.
   short: Distance cutoff (Å) used to define interface contacts between two interacting molecules.

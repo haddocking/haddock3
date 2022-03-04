@@ -84,14 +84,11 @@ class HaddockModule(BaseHaddockModule):
             self.log("Calculating DockQ metric")
             capri.dockq()
 
-        output_fname = "capri.tsv"
-        self.log(f" Saving output to {output_fname}")
+        self.log(" Saving output")
         capri.output(
-            output_fname,
+            self.params["clt_threshold"],
             sortby_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
-            rankby_key=self.params["rankby"],
-            rank_ascending=self.params["sort_ascending"],
             )
 
         selected_models = models_to_calc

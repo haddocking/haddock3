@@ -89,8 +89,6 @@ class HaddockModule(BaseHaddockModule):
             self.params["clt_threshold"],
             sortby_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
-            rankby_key=self.params["rankby"],
-            rank_ascending=self.params["sort_ascending"],
             )
 
         selected_models = models_to_calc

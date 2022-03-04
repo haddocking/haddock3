@@ -380,22 +380,12 @@ class CAPRI:
             clt_threshold,
             sortby_key,
             sort_ascending,
-            rankby_key,
-            rank_ascending,
             ):
         """Output the CAPRI results to a .tsv file."""
-        self._output_ss(sortby_key, sort_ascending, rankby_key, rank_ascending)
-        self._output_clt(
-            clt_threshold,
-            sortby_key,
-            sort_ascending,
-            rankby_key,
-            rank_ascending,
-            )
+        self._output_ss(sortby_key, sort_ascending)
+        self._output_clt(clt_threshold, sortby_key, sort_ascending,)
 
-    def _output_ss(
-            self, sortby_key, sort_ascending, rankby_key, rank_ascending
-            ):
+    def _output_ss(self, sortby_key, sort_ascending):
         output_l = []
         for model in self.model_list:
             data = {}
@@ -426,8 +416,6 @@ class CAPRI:
         self._dump_file(
             output_l,
             output_fname,
-            rankby_key,
-            rank_ascending,
             sortby_key,
             sort_ascending,
             )
@@ -437,8 +425,6 @@ class CAPRI:
             clt_threshold,
             sortby_key,
             sort_ascending,
-            rankby_key,
-            rank_ascending,
             ):
         """Output cluster-based results."""
         has_cluster_info = any(m.clt_id for m in self.model_list)
@@ -505,7 +491,6 @@ class CAPRI:
                 dockq_mean = float("nan")
                 dockq_stdev = float("nan")
 
-            data["caprieval_rank"] = None
             data["cluster_rank"] = element[0]
             data["cluster_id"] = element[1]
             data["n"] = number_of_models_in_cluster
@@ -533,8 +518,6 @@ class CAPRI:
         info_header = "#" * 40 + os.linesep
         info_header += "# `caprieval` cluster-based analysis" + os.linesep
         info_header += "#" + os.linesep
-        info_header += f"# > rankby_key={rankby_key}" + os.linesep
-        info_header += f"# > rank_ascending={rank_ascending}" + os.linesep
         info_header += f"# > sortby_key={sortby_key}" + os.linesep
         info_header += f"# > sort_ascending={sort_ascending}" + os.linesep
         info_header += f"# > clt_threshold={clt_threshold}" + os.linesep
@@ -560,8 +543,6 @@ class CAPRI:
         self._dump_file(
             output_l,
             output_fname,
-            rankby_key,
-            rank_ascending,
             sortby_key,
             sort_ascending,
             info_header=info_header,
@@ -571,8 +552,6 @@ class CAPRI:
             self,
             container,
             output_fname,
-            rankby_key,
-            rank_ascending,
             sortby_key,
             sort_ascending,
             info_header="",
@@ -580,7 +559,7 @@ class CAPRI:
 
         # rank
         ranked_output_l = self._rank(
-            container, key=rankby_key, ascending=rank_ascending
+            container, key='score', ascending=True
             )
 
         # sort

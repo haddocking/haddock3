@@ -150,6 +150,6 @@ mol1:
   explevel: easy
   tile: Input molecule configuration
   short: Specific molecule configuration
-  long: You can expand this parameter to the other input molecules. For example,
+  long: You can expand this parameter and associated sub-parameters to the other input molecules. For example,
         if you input three molecules, you can define mol1, mol2, and mol3
         subparameters. Those not defined will be populated with the defaults.

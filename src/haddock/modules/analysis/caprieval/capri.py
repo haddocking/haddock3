@@ -4,6 +4,7 @@ import shlex
 import shutil
 import subprocess
 import tempfile
+from math import sqrt
 from functools import partial
 from pathlib import Path
 
@@ -136,16 +137,16 @@ class CAPRI:
 
             Q = np.asarray(Q)
             P = np.asarray(P)
-            # write_coords('model.pdb', P)
-            # write_coords('ref.pdb', Q)
+            # write_coords("model.pdb", P)
+            # write_coords("ref.pdb", Q)
 
             Q = Q - self.centroid(Q)
             P = P - self.centroid(P)
             U = self.kabsch(P, Q)
             P = np.dot(P, U)
             i_rmsd = self.calc_rmsd(P, Q)
-            # write_coords('model_aln.pdb', P)
-            # write_coords('ref_aln.pdb', Q)
+            # write_coords("model_aln.pdb", P)
+            # write_coords("ref_aln.pdb", Q)
 
             self.irmsd_dic[model] = i_rmsd
 
@@ -186,11 +187,11 @@ class CAPRI:
             Q = np.asarray(Q)
             P = np.asarray(P)
 
-            # write_coord_dic('ref.pdb', ref_coord_dic)
-            # write_coord_dic('model.pdb', mod_coord_dic)
+            # write_coord_dic("ref.pdb", ref_coord_dic)
+            # write_coord_dic("model.pdb", mod_coord_dic)
 
-            # write_coords('ref.pdb', Q)
-            # write_coords('model.pdb', P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
             # # move to the origin
             Q = Q - self.centroid(Q)
@@ -214,21 +215,21 @@ class CAPRI:
             #  - complex are now aligned by the receptor
             P = np.dot(P, U_r)
 
-            # write_coords('ref.pdb', Q)
-            # write_coords('model.pdb', P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
             # Identify the ligand coordinates
             Q_l = Q[l_start: l_end - 1]
             P_l = P[l_start: l_end - 1]
 
-            # write_coords('ref_l.pdb', Q_l)
-            # write_coords('model_l.pdb', P_l)
+            # write_coords("ref_l.pdb", Q_l)
+            # write_coords("model_l.pdb", P_l)
 
             # Calculate the RMSD of the ligands
             l_rmsd = self.calc_rmsd(P_l, Q_l)
 
-            # write_coords('ref.pdb', Q)
-            # write_coords('model.pdb', P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
             self.lrmsd_dic[model] = l_rmsd
 
@@ -254,8 +255,8 @@ class CAPRI:
                 model, ref_interface_resdic, match=True
                 )
 
-            # write_coord_dic('ref.pdb', ref_int_coord_dic)
-            # write_coord_dic('model.pdb', mod_int_coord_dic)
+            # write_coord_dic("ref.pdb", ref_int_coord_dic)
+            # write_coord_dic("model.pdb", mod_int_coord_dic)
 
             # find atoms present in both interfaces
             Q_int = []
@@ -271,8 +272,8 @@ class CAPRI:
             Q_int = np.asarray(Q_int)
             P_int = np.asarray(P_int)
 
-            # write_coords('ref.pdb', Q_int)
-            # write_coords('model.pdb', P_int)
+            # write_coords("ref.pdb", Q_int)
+            # write_coords("model.pdb", P_int)
 
             # find atoms present in both molecules
             Q = []
@@ -298,8 +299,8 @@ class CAPRI:
             Q = np.asarray(Q)
             P = np.asarray(P)
 
-            # write_coords('ref.pdb', Q)
-            # write_coords('model.pdb', P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
             # put system at origin
             Q_int = Q_int - self.centroid(Q_int)
@@ -313,35 +314,35 @@ class CAPRI:
             U_int = self.kabsch(P_int, Q_int)
             P_int = np.dot(P_int, U_int)
 
-            # write_coords('ref.pdb', Q_int)
-            # write_coords('model.pdb', P_int)
+            # write_coords("ref.pdb", Q_int)
+            # write_coords("model.pdb", P_int)
 
             # # move the system to the centroid of the interfaces
             Q = Q - self.centroid(Q)
             P = P - self.centroid(P)
 
-            # write_coords('ref_1.pdb', Q)
-            # write_coords('model_1.pdb', P)
+            # write_coords("ref_1.pdb", Q)
+            # write_coords("model_1.pdb", P)
 
             Q = Q - self.centroid(Q_int)
             P = P - self.centroid(P_int)
 
-            # write_coords('ref_2.pdb', Q)
-            # write_coords('model_2.pdb', P)
+            # write_coords("ref_2.pdb", Q)
+            # write_coords("model_2.pdb", P)
 
             # apply this rotation to the model
             #  - complexes are now aligned by the interfaces
             P = np.dot(P, U_int)
 
-            # write_coords('ref_i.pdb', Q)
-            # write_coords('model_i.pdb', P)
+            # write_coords("ref_i.pdb", Q)
+            # write_coords("model_i.pdb", P)
 
             # Calculate the rmsd of the ligand
             Q_l = Q[l_start: l_end - 1]
             P_l = P[l_start: l_end - 1]
 
-            # write_coords('ref_l.pdb', Q_l)
-            # write_coords('model_l.pdb', P_l)
+            # write_coords("ref_l.pdb", Q_l)
+            # write_coords("model_l.pdb", P_l)
 
             # this will be the interface-ligand-rmsd
             i_l_rmsd = self.calc_rmsd(P_l, Q_l)
@@ -398,7 +399,7 @@ class CAPRI:
         output_l = []
         for model in self.model_list:
             data = {}
-            # keep always 'model' the first key
+            # keep always "model" the first key
             data["model"] = model
             # create the empty rank here so that it will appear
             #  as the second column
@@ -457,47 +458,52 @@ class CAPRI:
             number_of_models_in_cluster = len(clt_data[element])
             # TODO: Refactor these ugly try/excepts
             try:
-                mean_score = (
-                    sum(v.score for v in clt_data[element][:clt_threshold])
-                    / clt_threshold
-                    )
+                score_array = [v.score
+                               for v in clt_data[element][: clt_threshold]]
+                score_mean, score_stdev = self._calc_stats(
+                    score_array, clt_threshold)
             except KeyError:
-                mean_score = float('nan')
+                score_mean = float("nan")
+                score_stdev = float("nan")
 
             try:
-                mean_irmsd = (
-                    sum(
-                        self.irmsd_dic[v]
-                        for v in clt_data[element]
-                        [: clt_threshold]) / clt_threshold)
+                irmsd_array = [
+                    self.irmsd_dic[v]
+                    for v in clt_data[element]
+                    [: clt_threshold]]
+                irmsd_mean, irmsd_stdev = self._calc_stats(
+                    irmsd_array, clt_threshold)
             except KeyError:
-                mean_irmsd = float('nan')
+                irmsd_mean = float("nan")
+                irmsd_stdev = float("nan")
 
             try:
-                mean_fnat = (
-                    sum(self.fnat_dic[v] for v in
-                        clt_data[element][:clt_threshold])
-                    / clt_threshold
-                    )
+                fnat_array = [self.fnat_dic[v]
+                              for v in clt_data[element][:clt_threshold]]
+                fnat_mean, fnat_stdev = self._calc_stats(
+                    fnat_array, clt_threshold)
             except KeyError:
-                mean_fnat = float('nan')
+                fnat_mean = float("nan")
+                fnat_stdev = float("nan")
 
             try:
-                mean_lrmsd = (
-                    sum(
-                        self.lrmsd_dic[v]
-                        for v in clt_data[element]
-                        [: clt_threshold]) / clt_threshold)
+                lrmsd_array = [self.lrmsd_dic[v]
+                               for v in clt_data[element]
+                               [: clt_threshold]]
+                lrmsd_mean, lrmsd_stdev = self._calc_stats(
+                    lrmsd_array, clt_threshold)
             except KeyError:
-                mean_lrmsd = float('nan')
+                lrmsd_mean = float("nan")
+                lrmsd_stdev = float("nan")
             try:
-                mean_dockq = (
-                    sum(
-                        self.dockq_dic[v]
-                        for v in clt_data[element]
-                        [: clt_threshold]) / clt_threshold)
+                dockq_array = [self.dockq_dic[v]
+                               for v in clt_data[element]
+                               [: clt_threshold]]
+                dockq_mean, dockq_stdev = self._calc_stats(
+                    dockq_array, clt_threshold)
             except KeyError:
-                mean_dockq = float('nan')
+                dockq_mean = float("nan")
+                dockq_stdev = float("nan")
 
             data["caprieval_rank"] = None
             data["cluster_rank"] = element[0]
@@ -509,11 +515,17 @@ class CAPRI:
                 data["under_eval"] = "yes"
             else:
                 data["under_eval"] = "-"
-            data["score"] = mean_score
-            data["irmsd"] = mean_irmsd
-            data["fnat"] = mean_fnat
-            data["lrmsd"] = mean_lrmsd
-            data["dockq"] = mean_dockq
+
+            data["score"] = score_mean
+            data["score_std"] = score_stdev
+            data["irmsd"] = irmsd_mean
+            data["irmsd_std"] = irmsd_stdev
+            data["fnat"] = fnat_mean
+            data["fnat_std"] = fnat_stdev
+            data["lrmsd"] = lrmsd_mean
+            data["lrmsd_std"] = lrmsd_stdev
+            data["dockqn"] = dockq_mean
+            data["dockq_std"] = dockq_stdev
 
             output_l.append(data)
 
@@ -615,6 +627,14 @@ class CAPRI:
             idx, _ = k
             container[idx]["caprieval_rank"] = i
         return container
+
+    @staticmethod
+    def _calc_stats(data, n):
+        """Calculate the mean and stdev."""
+        mean = sum(data) / n
+        var = sum((x - mean) ** 2 for x in data) / n
+        stdev = sqrt(var)
+        return mean, stdev
 
     @staticmethod
     def identify_interface(pdb_f, cutoff=5.0):
@@ -720,12 +740,12 @@ class CAPRI:
                             # this residue is not matched, and so it should
                             #  not be considered
                             # self.log(
-                            #     f'WARNING: {chain}.{resnum}.{atom_name}'
-                            #     ' was not matched!'
+                            #     f"WARNING: {chain}.{resnum}.{atom_name}"
+                            #     " was not matched!"
                             #     )
                             continue
 
-                    # identifier = f'{chain}.{resnum}.{atom_name}'
+                    # identifier = f"{chain}.{resnum}.{atom_name}"
                     identifier = (chain, resnum, atom_name)
 
                     if atom_name not in self.atoms[resname]:
@@ -897,7 +917,7 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
     for chain in protein_a_dic.keys():
         pa_seqdic = pdb2fastadic(protein_a_dic[chain])
         pb_seqdic = pdb2fastadic(protein_b_dic[chain])
-        # logging.debug(f'Structurally aligning chain {chain}')
+        # logging.debug(f"Structurally aligning chain {chain}")
         numbering_dic[chain] = {}
         cmd = (
             f"{lovoalign_exec} -p1 {protein_a_dic[chain]} "
@@ -905,11 +925,11 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
             f"-c1 {chain} -c2 {chain}"
             )
 
-        # logging.debug(f'Command is: {cmd}')
+        # logging.debug(f"Command is: {cmd}")
         p = subprocess.run(shlex.split(cmd), capture_output=True, text=True)
         lovoalign_out = p.stdout.split(os.linesep)
 
-        # we don't need the splitted proteins anymore
+        # we don"t need the splitted proteins anymore
         protein_a_dic[chain].unlink()
         protein_b_dic[chain].unlink()
 
@@ -962,15 +982,15 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
 
         if identity <= 40.0:
             log.warning(
-                f'"Structural" identity of chain {chain} is {identity:.2f}%,'
+                f"\"Structural\" identity of chain {chain} is {identity:.2f}%,"
                 " please check the results carefully"
                 )
         else:
             log.info(
-                f'"Structural" identity of chain {chain} is {identity:.2f}%'
+                f"\"Structural\" identity of chain {chain} is {identity:.2f}%"
                 )
 
-        # logging.debug('Reading alignment and matching numbering')
+        # logging.debug("Reading alignment and matching numbering")
         for element in alignment:
             line_a, line_b = element
 
@@ -1052,7 +1072,8 @@ def align_seq(reference, model, output_path):
                     f"Sequence identity of chain {a} is {identity:.2f}%,"
                     " please check the results carefully"
                     )
-                log.warning('Please use alignment_method = "structure" instead')
+                log.warning(
+                    "Please use alignment_method = \"structure\" instead")
             else:
                 log.info(f"Sequence identity of chain {a} is {identity:.2f}%")
             for seg_a, seg_b in zip(aligned_seg_a, aligned_seg_b):

@@ -51,18 +51,18 @@ ligand_param_fname:
   type: file
   title: Custom ligand parameter file
   short: Ligand parameter file in CNS format
-  long: Ligand parameter file in CNS format containing all force field parameters 
+  long: Ligand parameter file in CNS format containing all force field parameters
     (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
-  group: 'force field'
+  group: force field
   explevel: expert
 ligand_top_fname:
   default: ''
   type: file
   title: Custom ligand topology file
   short: Ligand topology file in CNS format
-  long: Ligand topology file in CNS format containing the ligand topologies 
+  long: Ligand topology file in CNS format containing the ligand topologies
     (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
-  group: 'force field'
+  group: force field
   explevel: expert
 limit:
   default: true
@@ -81,7 +81,7 @@ tolerance:
   title: Failure tolerance percentage
   short: Percentage of allowed failures for a module to successfully complete
   long: Percentage of allowed failures for a module to successfully complete
-  group: 'module'
+  group: module
   explevel: expert
 mol1:
   prot_segid:
@@ -92,16 +92,16 @@ mol1:
     title: Segment ID
     short: Segment ID assigned to this molecule
     long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
-    group: 'molecule'
+    group: molecule
     explevel: easy
   cyclicpept:
     default: false
     type: boolean
     title: Cyclic peptide
     short: Defines the molecule as a cyclic peptide
-    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A. 
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A.
           This cutoff can be changed in the generate-topology.cns script.
-    group: 'molecule'
+    group: molecule
     explevel: easy
   nhisd:
     default: 0
@@ -110,10 +110,10 @@ mol1:
     max: 9999
     title: Number of HISD residue
     short: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues when autohis=false
-    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues. 
+    long: Defines the number of HISD residues (neutral HIS with the proton on the ND atom) residues.
           The corresponding residue numbers must be defined in the following parameter (hisd_1, hisd_2, ...). Add as many as needed.
           Note that HIS is interpreted as a charged Histidine)
-    group: 'molecule'
+    group: molecule
     explevel: expert
   hisd_1:
     default: .nan
@@ -122,8 +122,8 @@ mol1:
     max: 9999
     title: HISD residue number
     short: Residue number of the Histidine to be defined as HISD
-    long: Residue number of the Histidine to be defined as HISD 
-    group: 'molecule'
+    long: Residue number of the Histidine to be defined as HISD
+    group: molecule
     explevel: expert
   nhise:
     default: 0
@@ -132,10 +132,10 @@ mol1:
     max: 9999
     title: Number of HISE residue
     short: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues when autohis=false
-    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues. 
+    long: Defines the number of HISE residues (neutral HIS with the proton on the NE atom) residues.
           The corresponding residue numbers must be defined in the following parameter (hise_1, hise_2, ...). Add as many as needed.
           Note that HIS is interpreted as a charged Histidine)
-    group: 'molecule'
+    group: molecule
     explevel: expert
   hise_1:
     default: .nan
@@ -144,7 +144,12 @@ mol1:
     max: 9999
     title: HISE residue number
     short: Residue number of the Histidine to be defined as HISE
-    long: Residue number of the Histidine to be defined as HISE 
-    group: 'molecule'
+    long: Residue number of the Histidine to be defined as HISE
+    group: molecule
     explevel: expert
   explevel: easy
+  tile: Input molecule configuration
+  short: Specific molecule configuration
+  long: You can expand this parameter to the other input molecules. For example,
+        if you input three molecules, you can define mol1, mol2, and mol3
+        subparameters. Those not defined will be populated with the defaults.

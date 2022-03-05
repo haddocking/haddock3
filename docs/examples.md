@@ -53,5 +53,17 @@ The `docking-protein-homotrimer-full.cfg` workflows consists of the generation o
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
+## docking-protein-ligand
+
+A protein-ligand docking example making use of the knowledge of the binding site on the protein to guide the docking.
+
+As explained in our [protein-ligand HADDOCK2.4 tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-binding-sites/), in the rigidbody docking phase all residues of the binding site are defined as active to draw the ligand into it (the corresponding AIRs are defined in the `ambig-active-rigidbody.tbl` file in the `data` directory). For the flexible refinement only the ligand is defined as active and the binding site as passive to allow the ligand to explore the binding site (the corresponding AIRs are defined in the `ambig-passive.tbl` file in the `data` directory).
+
+The `docking-protein-ligand-full.cfg` workflows consists of the generation of 1000 rigidbody docking models, selection of top200 and flexible refinement of those. Note the modified weight of the van der Waals energy term for the scoring of the rigidbody docking models (`w_vdw = 1.0`) and the skipping of the high temperature first two stages of the simulated annealing protocol during the flexible refinement (`mdsteps_rigid = 0` and `mdsteps_cool1 = 0`).
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
+
+
+
 
 

@@ -1,4 +1,4 @@
-## HADDOCK3 examples
+# HADDOCK3 examples
 
 
 The HADDOCK3 examples directory contains various directories and config files
@@ -12,7 +12,7 @@ Each directory contains both:
 The following examples are currently provided:
 
 
-### docking-antibogy-antigen
+## docking-antibogy-antigen
 
 An antibody-antigen docking example making use only of the knowledge of the hypervarialbles (HV) loops on the antibody to guide the docking. Two different ways of using the knowledge of the HV loop residues are illustrated:
 
@@ -29,7 +29,7 @@ Two different protocols/workflows are illustrated:
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
-### docking-protein-DNA
+## docking-protein-DNA
 
 A protein-DNA docking example making use of rather specific protein-DNA distance restraints defined in the `ambig.tbl` file in the `data` directory.
 
@@ -43,6 +43,14 @@ The `caprieval` module is called at various stages during the workflow to assess
 
 Note the modified electrostatic treatment for DNA (`cdie` and `epsilon=78`) and the automatic definition of DNA restraints to maintain the double helix (`dnarest_on=true`).
 
+
+## docking-protein-homotrimer
+
+A protein homotrimer with C3 symmetry docking example making use of bioinformatics interface predictions from our [Whiscy webserver](https://wenmr.science.uu.nl/whiscy/) defined in the `1qu9_whiscy_air.tbl` file in the `data` directory. Note that this is a bound docking example since the protein monomers used for docking are taken from the crystal structure of the homotrimer. The workflow does however performs a flexible refinement of the models which might lead to deviations from the bound conformation.
+
+The `docking-protein-homotrimer-full.cfg` workflows consists of the generation of 2000 rigidbody docking models, selection of top200 and flexible refinement + EM of those. C3 and non-crystallographic (NCS) symmetry restraints are defined to guide the docking.
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
 

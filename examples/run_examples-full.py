@@ -43,14 +43,21 @@ except Exception:
 # spacings are anti-pythonic but facilitate reading :-)
 examples = (
     ("docking-protein-DNA"         , "docking-protein-DNA-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-DNA"         , "docking-protein-DNA-cltsel-full.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-full.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-full.cfg"),  # noqa: E203, E501
-    ("docking-protein-ligand-shape", "docking-protein-ligand-shape-full.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand"      , "docking-protein-ligand-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-ligand-shape", "docking-protein-ligand-shape-full.cfg"),  # noqa: E203, E501
     ("docking-protein-peptide"     , "docking-protein-peptide-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-peptide"     , "docking-protein-peptide-cltsel-full.cfg"),  # noqa: E203, E501
     ("docking-protein-peptide"     , "docking-protein-peptide-mdref-full.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-full.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-protein-protein-cltsel-full.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-full.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-full"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-full.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-full.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-full.cfg"),  # noqa: E203, E501
     )
 
 

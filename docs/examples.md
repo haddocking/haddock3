@@ -11,6 +11,7 @@ Each directory contains both:
 
 The following examples are currently provided:
 
+
 ### docking-antibogy-antigen
 
 An antibody-antigen docking example making use only of the knowledge of the hypervarialbles (HV) loops on the antibody to guide the docking. Two different ways of using the knowledge of the HV loop residues are illustrated:
@@ -22,10 +23,26 @@ Since antibodies consists of two separate chains, a few additional unambiguous r
 
 Two different protocols/workflows are illustrated:
 
-1) 10000 rigidbody docking models, selection of top500 and flexible refinement + EM of those
-2) 10000 rigidbody docking modles, FCC clustering and selection of max 20 models per cluster followed by flexible refinement and EM (config files with `ctl` in their name).
+1) 10000 rigidbody docking models, selection of top500 and flexible refinement + EM of those (`docking-antibody-antigen-CDR-accessible-full.cfg` and `docking-antibody-antigen-ranairCDR-full.cfg`)
+2) 10000 rigidbody docking models, FCC clustering and selection of max 20 models per cluster followed by flexible refinement and EM (`docking-antibody-antigen-CDR-accessible-clt-full.cfg` and `docking-antibody-antigen-ranairCDR-clt-full.cfg`).
 
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
+
+
+### docking-protein-DNA
+
+A protein-DNA docking example making use of rather specific protein-DNA distance restraints defined in the `ambig.tbl` file in the `data` directory.
+
+Three different protocols/workflows are illustrated:
+
+1) 1000 rigidbody docking models, selection of top200 and flexible refinement + EM of those (`docking-protein-DNA-full.cfg`)
+2) 1000 rigidbody docking models, selection of top200 and flexible refinement + final refinement in explict solvent (water) of those (`docking-protein-DNA-mdref-full.cfg`)
+3) 1000 rigidbody docking models, FCC clustering and selection of max 20 models per cluster followed by flexible refinement and EM (`docking-protein-DNA-cltsel-full.cfg`).
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
+
+Note the modified electrostatic treatment for DNA (`cdie` and `epsilon=78`) and the automatic definition of DNA restraints to maintain the double helix (`dnarest_on=true`).
+
 
 
 

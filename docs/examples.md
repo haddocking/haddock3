@@ -1,8 +1,17 @@
 # HADDOCK3 examples
 
-
-The HADDOCK3 examples directory contains various directories and config files
+The HADDOCK3 `examples/` directory contains various subdirectories and config files
 corresponding to different types of complexes, scenarios and data.
+
+1. [docking-antibody-antigen](#docking-antibogy-antigen)
+1. [docking-protein-DNA](#docking-protein-DNA)
+1. [docking-protein-homotrimer](#docking-protein-homotrimer)
+1. [docking-protein-ligand](#docking-protein-ligand)
+1. [docking-protein-ligand-shape](#docking-protein-ligand-shape)
+1. [docking-protein-peptide](#docking-protein-peptide)
+1. [docking-protein-protein](#docking-protein-protein)
+1. [refine-complex](#refine-complex)
+1. [scoring](#scoring)
 
 Each directory contains both:
 

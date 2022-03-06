@@ -85,7 +85,7 @@ The `caprieval` module is called at various stages during the workflow to assess
 
 ## docking-protein-peptide
 
-A protein-peptide docking example making use of the knowledge of the binding site on the protein to guide the docking. The active site residues are defined as active and the peptide as passive (the corresponding AIRs are defined in the `ambig.tbl` file in the `data` directory. This example is following the protocol described in our protein-peptide docking article ([Trellet et. al. PLoS ONE 8, e58769 (2013)](https://dx.plos.org/10.1371/journal.pone.0058769)). For the peptide, an ensemble of three conformations (alpha-helix, polyproline-II and extended) is provided as starting point for the docking. Those were build using PyMol (instructions on how to do that can be found [here](https://www.bonvinlab.org/education/molmod_online/simulation/#preparing-the-system)).
+A protein-peptide docking example making use of the knowledge of the binding site on the protein to guide the docking. The active site residues are defined as active and the peptide as passive (the corresponding AIRs are defined in the `ambig.tbl` file in the `data` directory). This example is following the protocol described in our protein-peptide docking article ([Trellet et. al. PLoS ONE 8, e58769 (2013)](https://dx.plos.org/10.1371/journal.pone.0058769)). For the peptide, an ensemble of three conformations (alpha-helix, polyproline-II and extended) is provided as starting point for the docking. Those were build using PyMol (instructions on how to do that can be found [here](https://www.bonvinlab.org/education/molmod_online/simulation/#preparing-the-system)).
 
 Three different workflows are illustrated:
 
@@ -98,3 +98,16 @@ __Note__ how the peptide is defined as fully flexible for the refinement phase (
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
+## docking-protein-protein
+
+A protein-protein docking example making use of the NMR chemical shift perturbation data providing information on the residues of binding site to guide the docking. The NMR-identified residues are defined as active and with their surface neighbors as passive (the corresponding AIRs are defined in the `e2a-hpr_air.tbl` file in the `data` directory). This system is the same described in our [HADDOCK2.4 basic protein-protein docking tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-protein-protein-basic/). For the second molecule (HPR), an ensemble of 10 conformations (taken from the NMR solution structure of this protein) is used as starting point for the docking. Refer to above tutorial for more details about the system and restraints.
+
+Three different workflows are illustrated:
+
+1) 1000 rigidbody docking models, selection of top200 and flexible refinement + EM of those (`docking-protein-protein-full.cfg`)
+2) 1000 rigidbody docking models, selection of top200 and flexible refinement + final refinement in explict solvent (water) of those (`docking-protein-protein-mdref-full.cfg`)
+3) 1000 rigidbody docking models, FCC clustering and selection of max 20 models per cluster followed by flexible refinement and EM (`docking-protein-protein-cltsel-full.cfg`).
+
+In this example all parameters are left to their default settings, except for manually defining the histidines protonation states.
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.

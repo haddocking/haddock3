@@ -115,8 +115,26 @@ The `caprieval` module is called at various stages during the workflow to assess
 
 ## refine-complex
 
-This example illustrate refinement of a complex. In that case the molecules are kept in their original positions and the complex is subjected to a short flexible refinement in explicit solvent with the `mdref` module. The same complex as for the `docking-protein-protein` example is used. The molecules are defined separately in the config file (and could consist each of an ensemble provided the two ensembles have exactly the same number of models).
+This example illustrates the refinement of a complex. In that case the molecules are kept in their original positions and the complex is subjected to a short flexible refinement in explicit solvent with the `mdref` module. The same complex as for the `docking-protein-protein` example is used. The molecules are defined separately in the config file (and could consist each of an ensemble provided the two ensembles have exactly the same number of models).
 
 In this example all parameters are left to their default settings, except for manually defining the histidines protonation states and setting the `sampling_factor` to 10, which means that from each starting complex 10 models will be generated with different random seeds for initiating the molecular dynamics phase.
 
 The `caprieval` module is called at the end to assess the quality of the models with respect to the known reference structure.
+
+
+## scoring
+
+This example illustrates the use of HADDOCK3 for scoring purpose. In contrast to HADDOCK2.4, HADDOCK3 can score within one run/workflow an heterogenous set of complexes. In this example, four different types of complexes are scored within the same workflow:
+
+- an ensemble of 5 models taken from CAPRI Target161
+- a protein-DNA complex (model taken from our protein-DNA docking example)
+- two models of a protein-protein complex (taken from our protein-protein docking example)
+- a homotrimer model taken (taken from our protein-homotrimer docking examples)
+
+Two scoring workflows are illustrated:
+
+1) Only a short energy minimisation is performed on each model (`emscoring-test.cfg`).
+2) A short molecular dynamics simulation in explicit solvent (water) is performed on each model. In that case contact AIRs (`contactairs = true`), dihedral angle restraints on secondary structure element (`ssdihed = alphabeta`) and DNA restraints (`dnarest_on = true`) are automatically defined (`mdscoring-test.cfg`).
+
+The model listing with their associated HADDOCK score can be found in a `.tsv` file in the stage 01 directory of the respective runs.
+

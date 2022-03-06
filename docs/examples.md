@@ -111,3 +111,12 @@ Three different workflows are illustrated:
 In this example all parameters are left to their default settings, except for manually defining the histidines protonation states.
 
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
+
+
+## refine-complex
+
+This example illustrate refinement of a complex. In that case the molecules are kept in their original positions and the complex is subjected to a short flexible refinement in explicit solvent with the `mdref` module. The same complex as for the `docking-protein-protein` example is used. The molecules are defined separately in the config file (and could consist each of an ensemble provided the two ensembles have exactly the same number of models).
+
+In this example all parameters are left to their default settings, except for manually defining the histidines protonation states and setting the `sampling_factor` to 10, which means that from each starting complex 10 models will be generated with different random seeds for initiating the molecular dynamics phase.
+
+The `caprieval` module is called at the end to assess the quality of the models with respect to the known reference structure.

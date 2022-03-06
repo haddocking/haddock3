@@ -79,4 +79,18 @@ The `docking-protein-ligand-shape-full.cfg` workflows consists of the generation
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
+## docking-protein-peptide
+
+A protein-peptide docking example making use of the knowledge of the binding site on the protein to guide the docking. The active site residues are defined as active and the peptide as passive (the corresponding AIRs are defined in the `ambig.tbl` file in the `data` directory. This example is following the protocol described in our protein-peptide docking article ([Trellet et. al. PLoS ONE 8, e58769 (2013)](https://dx.plos.org/10.1371/journal.pone.0058769)). For the peptide, an ensemble of three conformations (alpha-helix, polyproline-II and extended) is provided as starting point for the docking. Those were build using PyMol (instructions on how to do that can be found [here](https://www.bonvinlab.org/education/molmod_online/simulation/#preparing-the-system)).
+
+Three different workflows are illustrated:
+
+1) 3000 rigidbody docking models, selection of top400 and flexible refinement + EM of those (`docking-protein-peptide-full.cfg`)
+2) 3000 rigidbody docking models, selection of top400 and flexible refinement + final refinement in explict solvent (water) of those (`docking-protein-peptide-mdref-full.cfg`)
+3) 3000 rigidbody docking models, FCC clustering and selection of max 20 models per cluster followed by flexible refinement and EM (`docking-protein-peptide-cltsel-full.cfg`).
+
+Note how the peptide is defined as fully flexible for the refinement phase (`nfle2 = 1` and associated parameters) and dihedral angle restraints are automatically defined to maintain secondary structure elements (`ssdihed = "alphabeta"`)
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
+
 

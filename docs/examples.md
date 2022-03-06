@@ -59,11 +59,24 @@ A protein-ligand docking example making use of the knowledge of the binding site
 
 As explained in our [protein-ligand HADDOCK2.4 tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-binding-sites/), in the rigidbody docking phase all residues of the binding site are defined as active to draw the ligand into it (the corresponding AIRs are defined in the `ambig-active-rigidbody.tbl` file in the `data` directory). For the flexible refinement only the ligand is defined as active and the binding site as passive to allow the ligand to explore the binding site (the corresponding AIRs are defined in the `ambig-passive.tbl` file in the `data` directory).
 
-The `docking-protein-ligand-full.cfg` workflows consists of the generation of 1000 rigidbody docking models, selection of top200 and flexible refinement of those. Note the modified weight of the van der Waals energy term for the scoring of the rigidbody docking models (`w_vdw = 1.0`) and the skipping of the high temperature first two stages of the simulated annealing protocol during the flexible refinement (`mdsteps_rigid = 0` and `mdsteps_cool1 = 0`).
+The `docking-protein-ligand-full.cfg` workflows consists of the generation of 1000 rigidbody docking models, selection of top200 and flexible refinement of those. Note the modified weight of the van der Waals energy term for the scoring of the rigidbody docking models (`w_vdw = 1.0`) and the skipping of the high temperature first two stages of the simulated annealing protocol during the flexible refinement (`mdsteps_rigid = 0` and `mdsteps_cool1 = 0`). Parameter and topology files must be provided for the ligand (`ligand_param_fname = "data/ligand.param"` and `ligand_top_fname = "data/ligand.top"`). Those were obtained with a local version of PRODRG ([Schüttelkopf and van Aalten Acta Crystallogr. D 60, 1355−1363 (2004)](http://scripts.iucr.org/cgi-bin/paper?S0907444904011679)).
 
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
+
+
+## docking-protein-ligand-shape
+
+A protein-ligand docking example making use of the knowledge of a template ligand (a ligand similar to the ligand we want to dock and bound to the same receptor). The template ligand information is used in the form of shape consisting of dummy beads and positioned within the binding site to which distance restraints are defined. More details about the method and the performance of the protocol when benchmarked on a fully unbound dataset
+can be seen in our freely-available [paper on JCIM](https://pubs.acs.org/doi/full/10.1021/acs.jcim.1c00796). 
+
+As explained in our [shape small molecule HADDOCK2.4 tutorial](https://www.bonvinlab.org/education/HADDOCK24/shape-small-molecule/), durign the docking and refinement the protein and the shape are kept in their original positions (see the `mol_fix_origin_X` parameters in the config file) and ambiguous distance restraints between the ligand and the shape beads are defined. (the corresponding AIRs are defined in the `shape-restraints-from-shape-1.tbl` file in the `data` directory). This is effectively a three body docking. For the ligand an ensemble of 10 different conformations is provided as starting point for the docking (`ligand-ensemble.pdb` in the `data` directory). For how to generate such an ensemble refer to our [shape small molecule tutorial](https://www.bonvinlab.org/education/HADDOCK24/shape-small-molecule/).
+
+The `docking-protein-ligand-shape-full.cfg` workflows consists of the generation of 1000 rigidbody docking models with the protein and shape kept in their origin position, selection of top200 and flexible refinement of those. Note the changed electrostatic treatment (`dielec = "cdie"` and `epsilon = 10.0`) and the modified weight of the van der Waals energy term for the scoring of the rigidbody docking models (`w_vdw = 1.0`). To allow the ligand to penetrate better into the binding site the intermolecular energy components are scaled down during the rigidbody docking phase (`inter_rigid = 0.001`). As for the protein-ligand example, parameter and topology files must be provided for the ligand (`ligand_param_fname = "data/ligand.param"` and `ligand_top_fname = "data/ligand.top"`). Those were obtained with a local version of PRODRG ([Schüttelkopf and van Aalten Acta Crystallogr. D 60, 1355−1363 (2004)](http://scripts.iucr.org/cgi-bin/paper?S0907444904011679)).
+
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
 

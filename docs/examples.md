@@ -14,7 +14,7 @@ The following examples are currently provided:
 
 ## docking-antibogy-antigen
 
-An antibody-antigen docking example making use only of the knowledge of the hypervarialbles (HV) loops on the antibody to guide the docking. Two different ways of using the knowledge of the HV loop residues are illustrated:
+An antibody-antigen docking example making use only of the knowledge of the hypervarialbles (HV) loops on the antibody to guide the docking. This is the same complex used in our [HADDOCK2.4 webserver tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-antibody-antigen/); refer to it for more details. Two different ways of using the knowledge of the HV loop residues are illustrated:
 
 - __CDR-accessible__: using ambiguous distance restraints (AIRs) between the HV loop residues and the solvent-accesible residues of the antigen. Those are defined in the `ambig.tbl` file provided in the `data` directory
 - __ranairCDR__: using random AIRs sampled from the HV loops on the antibody and the solvent-accessible residues on the antigen. The random AIRs are used during the rigidbody docking sampling phase and replaced by contact AIRs during refinement.

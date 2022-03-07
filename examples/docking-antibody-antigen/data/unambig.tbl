@@ -1,0 +1,4 @@
+! Molecule #1 gap(s) restraint(s)
+assign (resid 22 and name CA and segid A) (resid 155 and name CA and segid A) 22.565 0.00 0.00
+assign (resid 149 and name CA and segid A) (resid 35 and name CA and segid A) 20.918 0.00 0.00
+

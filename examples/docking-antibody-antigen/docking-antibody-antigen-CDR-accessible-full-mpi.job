@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --nodes=2
-#SBATCH --tasks-per-node=96
+#SBATCH --nodes=5
+#SBATCH --tasks-per-node=50
 #SBATCH -J haddock3mpi
 
 # make sure anaconda is activated
@@ -8,7 +8,7 @@ source $HOME/miniconda3/bin/activate
 conda activate haddock3
 
 # go to the example directory
-cd $HOME/haddock3/examples/docking-protein-protein
+cd $HOME/haddock3/examples/docking-antibody-antigen
 
 # execute
-haddock3 docking-protein-protein-mpi.cfg
+haddock3 docking-antibody-antigen-CDR-accessible-clt-full-mpi.cfg

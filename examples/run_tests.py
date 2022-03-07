@@ -42,6 +42,7 @@ except Exception:
 # keys are the examples folder, and values are the configuration files
 # the whitespaces below are anti-pythonic but facilitate reading :-)
 examples = (
+    ("docking-antibogy-antigen"    , "docking-antibody-antigen-ranairCDR-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501

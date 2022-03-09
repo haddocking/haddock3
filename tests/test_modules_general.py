@@ -42,16 +42,18 @@ def ignore(*args, **kwargs):
     return
 
 
+DOC_KEYS = (
+    'title',
+    'short',
+    'long',
+    'group',
+    'explevel',
+    )
+
+
 def inspect_commons(*args):
     """Inspect keys that are common to all parameters."""
-    keys = (
-        'title',
-        'short',
-        'long',
-        'group',
-        'explevel',
-        )
-    keys_inspect(keys, *args)
+    keys_inspect(DOC_KEYS, *args)
 
 
 def inspect_int(*args):
@@ -169,10 +171,10 @@ def inspect_types(d, module):
             inspect_commons(value, param, module)
             inspect_types(value, f'{module}_{param}')
 
-        else:
-            assert False, (  # noqa: B011
-                "If you reach here something changed in the defaults.yaml "
-                "structure. Adapt the tests accordingly."
+        elif param not in DOC_KEYS + ("type",):
+            raise Exception(
+                f"parameter {param!r} is not expected for {module!r}. "
+                "If this is a new parameter, update tests."
                 )
 
     return

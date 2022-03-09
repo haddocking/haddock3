@@ -150,14 +150,13 @@ def test_yaml_keys(module_yaml_pure):
 
 def inspect_types(d, module):
     """Recursively inspect parameter keys according to their types."""
-    # this dictionary also asserts that all types are controlled
-    # it there's a type in the yaml that is not in this dict, a KeyError
-    # raises
-
     for param, value in d.items():
         if isinstance(value, dict) and "default" in value:
             inspect_commons(value, param, module)
-            _type = value["type"]
+            try:
+                _type = value["type"]
+            except KeyError:
+                raise KeyError(f"`type` is expected in {param} from {module}") from None  # noqa: E501
             inspect_default_type(
                 yaml_params_types[_type],
                 value["default"],
@@ -168,6 +167,7 @@ def inspect_types(d, module):
 
         elif isinstance(value, dict):
             inspect_commons(value, param, module)
+            inspect_types(value, f'{module}_{param}')
 
         else:
             assert False, (  # noqa: B011

@@ -42,16 +42,18 @@ def ignore(*args, **kwargs):
     return
 
 
+DOC_KEYS = (
+    'title',
+    'short',
+    'long',
+    'group',
+    'explevel',
+    )
+
+
 def inspect_commons(*args):
     """Inspect keys that are common to all parameters."""
-    keys = (
-        'title',
-        'short',
-        'long',
-        'group',
-        'explevel',
-        )
-    keys_inspect(keys, *args)
+    keys_inspect(DOC_KEYS, *args)
 
 
 def inspect_int(*args):
@@ -150,14 +152,13 @@ def test_yaml_keys(module_yaml_pure):
 
 def inspect_types(d, module):
     """Recursively inspect parameter keys according to their types."""
-    # this dictionary also asserts that all types are controlled
-    # it there's a type in the yaml that is not in this dict, a KeyError
-    # raises
-
     for param, value in d.items():
         if isinstance(value, dict) and "default" in value:
             inspect_commons(value, param, module)
-            _type = value["type"]
+            try:
+                _type = value["type"]
+            except KeyError:
+                raise KeyError(f"`type` is expected in {param} from {module}") from None  # noqa: E501
             inspect_default_type(
                 yaml_params_types[_type],
                 value["default"],
@@ -167,10 +168,14 @@ def inspect_types(d, module):
             yaml_types_to_keys[_type](value, param, module)
 
         elif isinstance(value, dict):
+            inspect_commons(value, param, module)
             inspect_types(value, f'{module}_{param}')
 
-        else:
-            return
+        elif param not in DOC_KEYS + ("type",):
+            raise Exception(
+                f"parameter {param!r} is not expected for {module!r}. "
+                "If this is a new parameter, update tests."
+                )
 
     return
 

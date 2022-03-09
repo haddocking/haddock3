@@ -167,10 +167,13 @@ def inspect_types(d, module):
             yaml_types_to_keys[_type](value, param, module)
 
         elif isinstance(value, dict):
-            inspect_types(value, f'{module}_{param}')
+            inspect_commons(value, param, module)
 
         else:
-            return
+            assert False, (  # noqa: B011
+                "If you reach here something changed in the defaults.yaml "
+                "structure. Adapt the tests accordingly."
+                )
 
     return
 

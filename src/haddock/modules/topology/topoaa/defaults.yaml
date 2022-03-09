@@ -148,7 +148,7 @@ mol1:
     group: molecule
     explevel: expert
   explevel: easy
-  tile: Input molecule configuration
+  title: Input molecule configuration
   short: Specific molecule configuration
   long: You can expand this parameter and associated sub-parameters to the other input molecules. For example,
         if you input three molecules, you can define mol1, mol2, and mol3

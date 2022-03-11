@@ -31,6 +31,6 @@ If you want to contribute to HADDOCK3's development, read the
 
 ## 4. Support us
 
-HADDOCK3 is an academic-funded project. However, contrary to HADDOCK2, version 3 is fully open-source and free to download. If you clone this repository, please support us by signing the form below. Showing HADDOCK3 is important for your research is the best way to justify our future funding and keep HADDOCK3 running.
+HADDOCK3 is an academic and BioExcel-funded project. However, contrary to HADDOCK2, version 3 is fully open-source and free to download. If you clone this repository and use HADDOCK3 for your research, please support us by signing [this Goole form][googleform], and citing HADDOCK3 in your publications.
 
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScDcd0rWtuzJ_4nftkDAHoLVwr1IAVwNJGhbaZdTYZ4vWu25w/viewform?embedded=true" width="640" height="1252" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+[googleform]: https://docs.google.com/forms/d/e/1FAIpQLScDcd0rWtuzJ_4nftkDAHoLVwr1IAVwNJGhbaZdTYZ4vWu25w/viewform

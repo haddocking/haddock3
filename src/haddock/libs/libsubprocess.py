@@ -6,7 +6,7 @@ from pathlib import Path
 
 from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
-from haddock import log
+
 
 class BaseJob:
     """Base class for a subprocess job."""
@@ -54,60 +54,6 @@ def Job(BaseJob):
             ])
         return
 
-class CapriJob():
-    """
-    A Job dedicated to the caprieval module
-    """
-    def __init__(
-        self,
-        output,
-        params,
-        capri_obj):
-        self.output = output
-        self.params = params
-        self.capri_obj = capri_obj
-
-    def run(self):
-        # adding models (could be forwarded directly to capri.py)
-        for struct in self.capri_obj.model_list:
-            _ = self.capri_obj.add_chain_from_segid(struct.rel_path)
-        
-        # running calculations
-        if self.params["fnat"]:
-            log.info(f"core {self.capri_obj.core}, calculating FNAT")
-            fnat_cutoff = self.params["fnat_cutoff"]
-            log.info(f" cutoff: {fnat_cutoff}A")
-            self.capri_obj.fnat(cutoff=fnat_cutoff)
-
-        if self.params["irmsd"]:
-            log.info(f"core {self.capri_obj.core}, calculating I-RMSD")
-            irmsd_cutoff = self.params["irmsd_cutoff"]
-            log.info(f" cutoff: {irmsd_cutoff}A")
-            self.capri_obj.irmsd(cutoff=irmsd_cutoff)
-
-        if self.params["lrmsd"]:
-            log.info(f"core {self.capri_obj.core}, calculating L-RMSD")
-            self.capri_obj.lrmsd()
-
-        if self.params["ilrmsd"]:
-            log.info(f"core {self.capri_obj.core}, calculating I-L-RMSD")
-            ilrmsd_cutoff = self.params["irmsd_cutoff"]
-            log.info(f" cutoff: {ilrmsd_cutoff}A")
-
-            self.capri_obj.ilrmsd(
-                cutoff=ilrmsd_cutoff,
-                )
-
-        if self.params["dockq"]:
-            log.info(f"core {self.capri_obj.core}, calculating DockQ metric")
-            self.capri_obj.dockq()
-        
-        self.capri_obj.output(
-            self.params["clt_threshold"],
-            sortby_key=self.params["sortby"],
-            sort_ascending=self.params["sort_ascending"],
-            )
-        return
 
 class JobInputFirst(BaseJob):
     """
@@ -126,6 +72,7 @@ class JobInputFirst(BaseJob):
             ''.join(map(str, self.args)),  # empty string if no args
             ])
         return
+
 
 class CNSJob:
     """A CNS job script."""

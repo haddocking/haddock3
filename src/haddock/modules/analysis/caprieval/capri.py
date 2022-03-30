@@ -81,8 +81,6 @@ class CAPRI:
             ligand_chain,
             aln_method,
             path,
-            core = None,
-            core_model_idx = 0,
             **params,
             ):
         self.reference = reference
@@ -96,9 +94,6 @@ class CAPRI:
         self.r_chain = receptor_chain
         self.l_chain = ligand_chain
         self.path = path
-        # for parallelisation
-        self.core = core
-        self.core_model_idx = core_model_idx
 
         # TODO: For scoring we might need to get one alignment per model
         reference = str(reference)
@@ -109,10 +104,8 @@ class CAPRI:
             raise CAPRIError("Could not align reference and model")
 
         # Load the models in the class
-        # log.info(f"adding chain from segid")
-        # for struct in model_list:
-        #     _ = self.add_chain_from_segid(struct.rel_path)
-        # log.info(f"adding chain from segid completed")
+        for struct in model_list:
+            _ = self.add_chain_from_segid(struct.rel_path)
 
     def irmsd(self, cutoff=5.0):
         """Calculate the I-RMSD."""
@@ -419,10 +412,7 @@ class CAPRI:
             # list of dictionaries
             output_l.append(data)
 
-        if self.core == None:
-            output_fname = Path(self.path, "capri_ss.tsv")
-        else:
-            output_fname = Path(self.path, "capri_ss_" + str(self.core) + ".tsv")
+        output_fname = Path(self.path, "capri_ss.tsv")
         self._dump_file(
             output_l,
             output_fname,
@@ -523,11 +513,8 @@ class CAPRI:
             data["dockq_std"] = dockq_stdev
 
             output_l.append(data)
-        if self.core == None:
-            output_fname = Path(self.path, "capri_clt.tsv")
-        else:
-            output_fname = Path(self.path, "capri_clt_" + str(self.core) + ".tsv")
-        #output_fname = Path(self.path, "capri_clt.tsv")
+
+        output_fname = Path(self.path, "capri_clt.tsv")
         info_header = "#" * 40 + os.linesep
         info_header += "# `caprieval` cluster-based analysis" + os.linesep
         info_header += "#" + os.linesep
@@ -572,7 +559,8 @@ class CAPRI:
 
         # rank
         ranked_output_l = self._rank(
-            container, key='score', ascending=True, core_model_idx = self.core_model_idx)
+            container, key='score', ascending=True
+            )
 
         # sort
         sorted_keys = self._sort(
@@ -611,12 +599,12 @@ class CAPRI:
         return key_values
 
     @staticmethod
-    def _rank(container, key, ascending, core_model_idx):
+    def _rank(container, key, ascending):
         rankkey_values = [(i, k[key]) for i, k in enumerate(container)]
         rankkey_values.sort(key=lambda x: x[1], reverse=not ascending)
         for i, k in enumerate(rankkey_values, start=1):
             idx, _ = k
-            container[idx]["caprieval_rank"] = core_model_idx + i
+            container[idx]["caprieval_rank"] = i
         return container
 
     @staticmethod
@@ -1108,7 +1096,8 @@ def dump_as_izone(fname, numbering_dic):
                     f"{os.linesep}"
                     )
                 fh.write(izone_str)
-    
+
+
 # # debug only
 # def write_coord_dic(output_name, coord_dic):
 #     """Add a dummy atom to a PDB file according to a list of coordinates."""

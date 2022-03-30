@@ -308,7 +308,7 @@ def test_output(protprot_caprimodule):
 
     ss_fname = Path(protprot_caprimodule.path, "capri_ss.tsv")
     clt_fname = Path(protprot_caprimodule.path, "capri_clt.tsv")
-
+    print("protprot_caprimodule.path", protprot_caprimodule.path)
     assert ss_fname.stat().st_size != 0
     assert clt_fname.stat().st_size != 0
 

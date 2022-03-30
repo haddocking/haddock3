@@ -57,7 +57,6 @@ class HaddockModule(BaseHaddockModule):
                 self.params['contact_distance_cutoff'],
                 )
             contact_jobs.append(job)
-
         contact_engine = Scheduler(contact_jobs, ncores=self.params['ncores'])
         contact_engine.run()
 

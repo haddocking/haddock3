@@ -4,9 +4,10 @@ import shlex
 import subprocess
 from pathlib import Path
 
+from haddock import log
 from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
-from haddock import log
+
 
 class BaseJob:
     """Base class for a subprocess job."""
@@ -54,20 +55,22 @@ def Job(BaseJob):
             ])
         return
 
-class CapriJob():
-    """
-    A Job dedicated to the caprieval module
-    """
+
+class CapriJob:
+    """A Job dedicated to the caprieval module."""
+
     def __init__(
-        self,
-        output,
-        params,
-        capri_obj):
+            self,
+            output,
+            params,
+            capri_obj):
+    
         self.output = output
         self.params = params
         self.capri_obj = capri_obj
 
     def run(self):
+        """Run this CapriJob."""
         # adding models (could be forwarded directly to capri.py)
         for struct in self.capri_obj.model_list:
             _ = self.capri_obj.add_chain_from_segid(struct.rel_path)
@@ -109,6 +112,7 @@ class CapriJob():
             )
         return
 
+
 class JobInputFirst(BaseJob):
     """
     Instantiate a subprocess job with inverted args and input.
@@ -126,6 +130,7 @@ class JobInputFirst(BaseJob):
             ''.join(map(str, self.args)),  # empty string if no args
             ])
         return
+
 
 class CNSJob:
     """A CNS job script."""

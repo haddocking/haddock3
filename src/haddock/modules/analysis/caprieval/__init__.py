@@ -1,16 +1,17 @@
 """Calculate CAPRI metrics."""
 from pathlib import Path
 
+from haddock import log
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import CapriJob
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import CAPRI
-# for parallelisation
-from haddock.libs.libsubprocess import CapriJob
-from haddock.libs.libparallel import Scheduler
-from haddock import log
+
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+
 
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module to calculate the CAPRI metrics."""
@@ -26,25 +27,30 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if contact executable is compiled."""
         return
 
-    def rearrange_output_files(self, output_name, capri_path):
-        """function to combine different capri outputs in a single file"""
-        output_fname = Path(capri_path,output_name)
+    def _rearrange_output(self, output_name, path):
+        """Combine different capri outputs in a single file."""
+        output_fname = Path(path, output_name)
         self.log(f"rearranging output files into {output_fname}")
         keyword = output_name.split(".")[0]
-        split_dict = {"capri_ss" : "model-cluster-ranking", "capri_clt" : "caprieval_rank"}
+        split_dict = {
+            "capri_ss": "model-cluster-ranking",
+            "capri_clt": "caprieval_rank"
+            }
         if keyword not in split_dict.keys():
             raise Exception(f'Keyword {keyword} does not exist.')
         # Combine files
         with open(output_fname, 'w') as out_file:
             for core in range(self.params['ncores']):
-                tmp_file = Path(capri_path, keyword + "_" + str(core) + ".tsv")
+                tmp_file = Path(path, keyword + "_" + str(core) + ".tsv")
                 with open(tmp_file) as infile:
                     if core == 0:
                         out_file.write(infile.read().rstrip("\n"))
                     else:
-                        out_file.write(infile.read().split(split_dict[keyword])[1].rstrip("\n"))
+                        kw = split_dict[keyword]
+                        out_file.write(infile.read().split(kw)[1].rstrip("\n"))
                 self.log(f"File number {core} written")
-        self.log(f"Completed reconstruction of caprieval files. {output_fname} created")
+        self.log("Completed reconstruction of caprieval files.")
+        self.log(f"{output_fname} created.")
 
     def _run(self):
         """Execute module."""
@@ -68,31 +74,31 @@ class HaddockModule(BaseHaddockModule):
 
         # Parallelisation : optimal dispatching of models
         nmodels = len(models_to_calc)
-        base_models = nmodels//self.params['ncores']
-        modulo = nmodels%self.params['ncores']
+        base_models = nmodels // self.params['ncores']
+        modulo = nmodels % self.params['ncores']
         chain_of_idx = [0]
         for core in range(self.params['ncores']):
             if core < modulo:
-                chain_of_idx.append(chain_of_idx[core]+base_models+1)
+                chain_of_idx.append(chain_of_idx[core] + base_models + 1)
             else:
-                chain_of_idx.append(chain_of_idx[core]+base_models)
-        # Starting jobs
+                chain_of_idx.append(chain_of_idx[core] + base_models)
+        # starting jobs
         capri_jobs = []
         cluster_info = []
-        self.log(f"running Capri Jobs in parallel with {self.params['ncores']} cores")
+        self.log(f"running Capri Jobs with {self.params['ncores']} cores")
         for core in range(self.params['ncores']):
             # init Capri
             capri_obj = CAPRI(
-            reference,
-            models_to_calc[chain_of_idx[core]:chain_of_idx[core+1]],
-            receptor_chain=self.params["receptor_chain"],
-            ligand_chain=self.params["ligand_chain"],
-            aln_method=self.params["alignment_method"],
-            path=Path("."),
-            lovoalign_exec=self.params["lovoalign_exec"],
-            core=core,
-            core_model_idx = chain_of_idx[core]
-            )
+                reference,
+                models_to_calc[chain_of_idx[core]:chain_of_idx[core + 1]],
+                receptor_chain=self.params["receptor_chain"],
+                ligand_chain=self.params["ligand_chain"],
+                aln_method=self.params["alignment_method"],
+                path=Path("."),
+                lovoalign_exec=self.params["lovoalign_exec"],
+                core=core,
+                core_model_idx=chain_of_idx[core]
+                )
             # Name job
             job_f = Path("capri_ss_" + str(core) + ".tsv")
             # Get cluster info
@@ -112,8 +118,9 @@ class HaddockModule(BaseHaddockModule):
         not_found = []
         for job in capri_jobs:
             if not job.output.exists():
-                not_found.append(job.input.name)
-                log.warning(f'Capri results were not calculated for {job.input.name}')
+                jobn = job.input.name
+                not_found.append(jobn)
+                log.warning(f'Capri results were not calculated for {jobn}')
             else:
                 capri_file_l.append(str(job.output))
         if not_found:
@@ -121,13 +128,13 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error("Several capri files were not generated:"
                                    f" {not_found}")
         # Post-processing : single structure
-        self.rearrange_output_files(output_name="capri_ss.tsv", capri_path=capri_obj.path)
+        self._rearrange_output("capri_ss.tsv", path=capri_obj.path)
         # Post-processing : clusters
         has_cluster_info = any(cluster_info)
         if not has_cluster_info:
             self.log("No cluster information")
         else:
-            self.rearrange_output_files(output_name="capri_clt.tsv", capri_path=capri_obj.path)
+            self._rearrange_output("capri_clt.tsv", path=capri_obj.path)
         # Sending models to the next step of the workflow
         selected_models = models_to_calc
         io = ModuleIO()

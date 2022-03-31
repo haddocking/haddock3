@@ -121,6 +121,7 @@ def protprot_caprimodule(protprot_input_list):
 
     remove_aln_files(capri)
 
+
 @pytest.fixture
 def protprot_caprimodule_parallel(protprot_input_list):
     """Protein-Protein CAPRI module."""
@@ -359,6 +360,7 @@ def test_output(protprot_caprimodule):
     os.unlink(ss_fname)
     os.unlink(clt_fname)
 
+
 def test_output_parallel(protprot_caprimodule_parallel):
     """Test the writing of capri.tsv file."""
     factor = 1
@@ -414,6 +416,7 @@ def test_output_parallel(protprot_caprimodule_parallel):
 
     os.unlink(ss_fname_0)
     os.unlink(clt_fname_0)
+
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
     """Test the interface identification."""

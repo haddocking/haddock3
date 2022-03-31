@@ -81,8 +81,8 @@ class CAPRI:
             ligand_chain,
             aln_method,
             path,
-            core = None,
-            core_model_idx = 0,
+            core=None,
+            core_model_idx=0,
             **params,
             ):
         self.reference = reference
@@ -419,10 +419,12 @@ class CAPRI:
             # list of dictionaries
             output_l.append(data)
 
-        if self.core == None:
-            output_fname = Path(self.path, "capri_ss.tsv")
+        if self.core is None:
+            capri_name = "capri_ss.tsv"
         else:
-            output_fname = Path(self.path, "capri_ss_" + str(self.core) + ".tsv")
+            capri_name = "capri_ss_" + str(self.core) + ".tsv"
+        output_fname = Path(self.path, capri_name)
+
         self._dump_file(
             output_l,
             output_fname,
@@ -523,11 +525,12 @@ class CAPRI:
             data["dockq_std"] = dockq_stdev
 
             output_l.append(data)
-        if self.core == None:
-            output_fname = Path(self.path, "capri_clt.tsv")
+        if self.core is None:
+            capri_name = "capri_clt.tsv"
         else:
-            output_fname = Path(self.path, "capri_clt_" + str(self.core) + ".tsv")
-        #output_fname = Path(self.path, "capri_clt.tsv")
+            capri_name = "capri_clt_" + str(self.core) + ".tsv"
+        output_fname = Path(self.path, capri_name)
+
         info_header = "#" * 40 + os.linesep
         info_header += "# `caprieval` cluster-based analysis" + os.linesep
         info_header += "#" + os.linesep
@@ -572,7 +575,9 @@ class CAPRI:
 
         # rank
         ranked_output_l = self._rank(
-            container, key='score', ascending=True, core_model_idx = self.core_model_idx)
+            container, key='score',
+            ascending=True, core_model_idx=self.core_model_idx
+            )
 
         # sort
         sorted_keys = self._sort(

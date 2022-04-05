@@ -20,7 +20,6 @@ class BaseJob:
     def run(self):
         """Execute job in subprocess."""
         self.make_cmd()
-        print(self.cmd)
 
         with open(self.output, 'w') as outf:
             p = subprocess.Popen(

@@ -10,7 +10,7 @@ from haddock.libs.libcns import (
     prepare_output,
     prepare_single_input,
     )
-from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
+from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
@@ -193,15 +193,5 @@ class HaddockModule(BaseCNSModule):
                 expected[i][j] = pdb
 
         # Save module information
-        io = ModuleIO()
-        for i in expected:
-            io.add(expected[i], "o")
-
-        faulty = io.check_faulty()
-        tolerance = self.params["tolerance"]
-        if faulty > tolerance:
-            _msg = (
-                f"{faulty:.2f}% of output was not generated for this module "
-                f"and tolerance was set to {tolerance:.2f}%.")
-            self.finish_with_error(_msg)
-        io.save()
+        self.output_models = list(expected.values())
+        self.export_ouput_models(faulty_tolerance=self.params["tolerance"])

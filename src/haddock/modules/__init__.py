@@ -178,6 +178,18 @@ class BaseHaddockModule(ABC):
         """
         return
 
+    def export_ouput_models(self, faulty_tolerance=0):
+        """Export output to the ModuleIO interface."""
+        io = ModuleIO()
+        io.add(self.output_models, "o")
+        faulty = io.check_faulty()
+        if faulty > faulty_tolerance:
+            _msg = (
+                f"{faulty:.2f}% of output was not generated for this module "
+                f"and tolerance was set to {faulty_tolerance:.2f}%.")
+            self.finish_with_error(_msg)
+        io.save()
+
     def finish_with_error(self, reason="Module has failed."):
         """Finish with error message."""
         if isinstance(reason, Exception):

@@ -3,7 +3,6 @@ from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
-from haddock.libs.libontology import ModuleIO
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -38,7 +37,7 @@ class HaddockModule(BaseCNSModule):
         except Exception as e:
             self.finish_with_error(e)
 
-        refined_structure_list = []
+        self.output_models = []
         idx = 1
         sampling_factor = self.params["sampling_factor"]
         if sampling_factor > 1:
@@ -68,7 +67,7 @@ class HaddockModule(BaseCNSModule):
                 expected_pdb = prepare_expected_pdb(
                     model, idx, ".", "flexref"
                     )
-                refined_structure_list.append(expected_pdb)
+                self.output_models.append(expected_pdb)
 
                 job = CNSJob(inp_file, out_file, envvars=self.envvars)
 
@@ -87,7 +86,7 @@ class HaddockModule(BaseCNSModule):
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
 
-        for pdb in refined_structure_list:
+        for pdb in self.output_models:
             if pdb.is_present():
                 haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
                     **weights
@@ -96,13 +95,4 @@ class HaddockModule(BaseCNSModule):
                 pdb.score = haddock_score
 
         # Save module information
-        io = ModuleIO()
-        io.add(refined_structure_list, "o")
-        faulty = io.check_faulty()
-        tolerance = self.params["tolerance"]
-        if faulty > tolerance:
-            _msg = (
-                f"{faulty:.2f}% of output was not generated for this module "
-                f"and tolerance was set to {tolerance:.2f}%.")
-            self.finish_with_error(_msg)
-        io.save()
+        self.export_ouput_models(faulty_tolerance=self.params["tolerance"])

@@ -6,7 +6,7 @@ from pathlib import Path
 from haddock import log
 from haddock.libs import libpdb
 from haddock.libs.libio import working_directory
-from haddock.libs.libontology import Format, ModuleIO, PDBFile
+from haddock.libs.libontology import Format, PDBFile
 from haddock.libs.libutil import check_subprocess
 from haddock.modules import BaseHaddockModule
 
@@ -38,18 +38,18 @@ class HaddockModule(BaseHaddockModule):
     def _run(self):
         """Execute module."""
         # Get the models generated in previous step
-        models_to_score = [
+        self.output_models = [
             p
             for p in self.previous_io.output
             if p.file_type == Format.PDB
             ]
 
         # Check if multiple models are provided
-        if len(models_to_score) > 1:
+        if len(self.output_models) > 1:
             _msg = "Only one model allowed in LightDock sampling module"
             self.finish_with_error(_msg)
 
-        model = models_to_score[0]
+        model = self.output_models[0]
         # Check if chain IDs are present
         _path = Path(model.path, model.file_name)
         segids, chains = libpdb.identify_chainseg(_path)
@@ -154,8 +154,4 @@ class HaddockModule(BaseHaddockModule):
                                     topology=model.topology,
                                     path=self.path))
 
-        # Save module information
-        io = ModuleIO()
-        io.add(models_to_score)
-        io.add(expected, "o")
-        io.save()
+        self.export_ouput_models()

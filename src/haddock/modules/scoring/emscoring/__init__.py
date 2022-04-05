@@ -95,4 +95,4 @@ class HaddockModule(BaseCNSModule):
                     f"{pdb.file_name}\t{original_name}\t{pdb.score}{linesep}"
                     )
 
-        self.export_ouput_models(faulty_tolerance=self.params["tolerance"])
+        self.export_output_models(faulty_tolerance=self.params["tolerance"])

@@ -53,4 +53,4 @@ class HaddockModule(BaseHaddockModule):
 
         # select the models based on the parameter
         self.output_models = models_to_select[:self.params['select']]
-        self.export_ouput_models()
+        self.export_output_models()

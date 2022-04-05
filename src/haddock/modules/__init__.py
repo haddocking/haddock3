@@ -178,7 +178,7 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def export_ouput_models(self, faulty_tolerance=0):
+    def export_output_models(self, faulty_tolerance=0):
         """Export output to the ModuleIO interface."""
         io = ModuleIO()
         io.add(self.output_models, "o")

@@ -90,4 +90,4 @@ class HaddockModule(BaseHaddockModule):
             sort_ascending=self.params["sort_ascending"],
             )
 
-        self.export_ouput_models()
+        self.export_output_models()

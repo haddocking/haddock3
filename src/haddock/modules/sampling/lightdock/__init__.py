@@ -154,4 +154,4 @@ class HaddockModule(BaseHaddockModule):
                                     topology=model.topology,
                                     path=self.path))
 
-        self.export_ouput_models()
+        self.export_output_models()

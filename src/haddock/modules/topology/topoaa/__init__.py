@@ -194,4 +194,4 @@ class HaddockModule(BaseCNSModule):
 
         # Save module information
         self.output_models = list(expected.values())
-        self.export_ouput_models(faulty_tolerance=self.params["tolerance"])
+        self.export_output_models(faulty_tolerance=self.params["tolerance"])

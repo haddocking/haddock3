@@ -195,6 +195,7 @@ class BaseHaddockModule(ABC):
             raises an error if 20% of the expected output is missing (not
             saved to disk).
         """
+        assert self.output_models, "`self.output_models` cannot be empty."
         io = ModuleIO()
         io.add(self.output_models, "o")
         faulty = io.check_faulty()

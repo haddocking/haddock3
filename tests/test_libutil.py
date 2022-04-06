@@ -174,6 +174,8 @@ def test_extract_keys_recursive(inp, expected):
         (0, 1),
         (1, 1),
         (22, 2),
+        (99, 2),
+        (100, 3),
         (335, 3),
         ]
     )

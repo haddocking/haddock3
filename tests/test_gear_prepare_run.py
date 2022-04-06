@@ -1,6 +1,5 @@
 """Test prepare run module."""
 from math import isnan
-from multiprocessing.sharedctypes import Value
 from pathlib import Path
 
 import pytest
@@ -155,6 +154,7 @@ def test_fuzzy_match():
         [("loong-format", "long-format"), ("verboese", "verbose")]
     assert fuzzy_match("long-fromat", possibilities) == \
         [("long-fromat", "long-format")]
+
 
 @pytest.mark.parametrize(
     "a,b,expected",

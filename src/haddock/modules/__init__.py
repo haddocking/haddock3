@@ -198,7 +198,7 @@ class BaseHaddockModule(ABC):
 
     def previous_path(self):
         """Give the path from the previous calculation."""
-        # https://regex101.com/r/4qRTjn/1
+        # [0-9]* below is not a regex, is a bash wildkey
         previous = sorted(list(self.path.resolve().parent.glob('[0-9]*/')))
         try:
             return previous[self.order - 1]

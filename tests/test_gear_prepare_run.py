@@ -1,10 +1,15 @@
 """Test prepare run module."""
 from math import isnan
+from multiprocessing.sharedctypes import Value
+from pathlib import Path
 
 import pytest
 
 from haddock.gear.prepare_run import (
+    check_if_path_exists,
+    fuzzy_match,
     get_expandable_parameters,
+    levenshtein_distance,
     populate_mol_parameters,
     populate_topology_molecule_params,
     )
@@ -126,3 +131,39 @@ def test_populate_mol_params():
     assert "mol_shape_3" in params["flexref"]
     assert not ("mol_shape_4" in params["flexref"])
     assert not params["caprieval"]
+
+
+def test_check_if_path_exists():
+    Path("file_01.txt").write_text("a")
+    Path("file_02.txt").write_text("a")
+    check_if_path_exists("file_01.txt")
+    check_if_path_exists("file_02.txt")
+
+    with pytest.raises(ValueError) as err:
+        check_if_path_exists("file-01.txt")
+        end = ("the following \'file_01.txt\' is the closest match to the "
+               "supplied \'file-01.txt\', did you mean to open this?")
+        assert str(err).endswith(end)
+
+    Path("file_01.txt").unlink()
+    Path("file_02.txt").unlink()
+
+
+def test_fuzzy_match():
+    possibilities = ["long-format", "short-format", "verbose", "output-dir"]
+    assert fuzzy_match(["loong-format", "verboese"], possibilities) == \
+        [("loong-format", "long-format"), ("verboese", "verbose")]
+    assert fuzzy_match("long-fromat", possibilities) == \
+        [("long-fromat", "long-format")]
+
+@pytest.mark.parametrize(
+    "a,b,expected",
+    [
+        ("", "", 0),
+        ("hello", "hello", 0),
+        ("kitten", "sitting", 3),
+        ("Saturday", "Sunday", 3),
+        ]
+    )
+def test_levenshtein_distance(a, b, expected):
+    assert levenshtein_distance(a, b) == expected

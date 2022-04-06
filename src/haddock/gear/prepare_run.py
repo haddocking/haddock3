@@ -35,6 +35,7 @@ from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
     remove_dict_keys,
+    transform_to_list,
     zero_fill,
     )
 from haddock.modules import (
@@ -213,23 +214,23 @@ def validate_modules_params(modules_params):
             max_mols,
             )
 
-        diff = set(extract_keys_recursive(args)) \
-            - set(extract_keys_recursive(defaults)) \
-            - set(config_mandatory_general_parameters) \
-            - set(non_mandatory_general_parameters_defaults.keys()) \
-            - expandable_params
+        all_parameters = set(extract_keys_recursive(defaults)) \
+            + set(config_mandatory_general_parameters) \
+            + set(non_mandatory_general_parameters_defaults.keys()) \
+            + expandable_params
+
+        diff = set(extract_keys_recursive(args)) - all_parameters
 
         if diff:
-            matched = fuzzy_match(diff, defaults.keys())
+            matched = fuzzy_match(diff, all_parameters)
 
             def pretty_print(match):
                 return f" * \'{match[0]}\' did you mean \'{match[1]}\'?"
 
-            eol = '\n'
             _msg = (
                 'The following parameters do not match any expected '
                 f'parameters for module {module_name!r}: '
-                f'{eol.join(map(pretty_print, matched))}.'
+                f'{os.linesep.join(map(pretty_print, matched))}.'
                 )
             raise ConfigurationError(_msg)
 
@@ -558,13 +559,12 @@ def check_if_path_exists(path):
     if os.path.exists(path):
         return None
 
-    split = os.path.split(path)
-    elements = split[0].split(os.sep) + split[1]
     reconstituted_path = ""
     error = ("", "", "")
+    elements = Path(path).parts
     for part in elements:
-        next_folder = reconstituted_path + os.sep + part
-        if not os.path.exists(next_folder):
+        next_folder = Path(reconstituted_path, part)
+        if not next_folder.exists():
             error = (reconstituted_path, fuzzy_match([part],
                      os.listdir(reconstituted_path))[0][1], part)
             break
@@ -597,7 +597,7 @@ def fuzzy_match(user_input, possibilities):
     """
     results = list()
 
-    for user_word in user_input:
+    for user_word in transform_to_list(user_input):
         best = (2**63 - 1, "")
         for possibility in possibilities:
             distance = levenshtein_distance(user_input, possibility)

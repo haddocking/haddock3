@@ -148,12 +148,18 @@ def test_check_if_path_exists():
     Path("file_02.txt").unlink()
 
 
-def test_fuzzy_match():
+@pytest.mark.parametrize(
+    "user_input,expected",
+    [
+        ("long-fromat", [("long-fromat", "long-format")]),
+        (["loong-format", "verboese"], [("loong-format", "long-format"), ("verboese", "verbose")]),
+        ("middle-format", [("middle-format", "long-format")]),
+        ("out", [("out", "output-dir")]),
+        ]
+    )
+def test_fuzzy_match(user_input, expected):
     possibilities = ["long-format", "short-format", "verbose", "output-dir"]
-    assert fuzzy_match(["loong-format", "verboese"], possibilities) == \
-        [("loong-format", "long-format"), ("verboese", "verbose")]
-    assert fuzzy_match("long-fromat", possibilities) == \
-        [("long-fromat", "long-format")]
+    assert fuzzy_match(user_input, possibilities) == expected
 
 
 @pytest.mark.parametrize(

@@ -3,7 +3,9 @@ import string
 import sys
 from pathlib import Path
 
-from haddock import haddock3_repository_path, log
+import yaml
+
+from haddock import core_path, haddock3_repository_path, log
 
 
 # Locate the CNS binary
@@ -30,4 +32,7 @@ valid_run_dir_chars = string.ascii_letters + string.digits + "._-/\\"
 
 RUNDIR = "run_dir"
 
-max_molecules_allowed = 20
+with open(Path(core_path, "mandatory.yaml"), 'r') as fin:
+    _ycfg = yaml.safe_load(fin)
+max_molecules_allowed = _ycfg["molecules"]["maxitems"]
+del _ycfg

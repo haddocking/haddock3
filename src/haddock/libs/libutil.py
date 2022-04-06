@@ -44,9 +44,24 @@ def make_list_if_string(item):
 
 
 def transform_to_list(item):
-    """Put `item` into a list if not a list already."""
-    if not isinstance(item, (list, tuple)):
+    """
+    Put `item` into a list if not a list already.
+
+    If it is set, transforms the set into a list.
+
+    If it is a dict, returns a list of the keys.
+
+    If it is tuple, returns the tuple.
+    """
+    if isinstance(item, (str, int, float, Path, type(None))):
         return [item]
+
+    if isinstance(item, set):
+        return list(item)
+
+    if isinstance(item, dict):
+        return list(item.keys())
+
     return item
 
 

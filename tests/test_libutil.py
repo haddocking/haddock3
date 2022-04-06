@@ -9,6 +9,7 @@ from haddock.libs.libutil import (
     file_exists,
     get_number_from_path_stem,
     get_number_of_digits,
+    get_zerofill_for_modules,
     non_negative_int,
     recursive_dict_update,
     sort_numbered_paths,
@@ -181,3 +182,23 @@ def test_extract_keys_recursive(inp, expected):
     )
 def test_get_number_of_digits(num, expected):
     assert get_number_of_digits(num) == expected
+
+
+@pytest.mark.parametrize(
+    "mods,expected",
+    [
+        [[f"mod{i}" for i in range(1)], 1],
+        [[f"mod{i}" for i in range(5)], 1],
+        [[f"mod{i}" for i in range(10)], 1],
+        [[f"mod{i}" for i in range(11)], 2],
+        [[f"mod{i}" for i in range(100)], 2],
+        [[f"mod{i}" for i in range(101)], 3],
+        ]
+    )
+def test_get_zerofill_for_modules(mods, expected):
+    """
+    Test zerofill for modules.
+
+    Here "mod#" strings represent modules. The number prefix means nothing.
+    """
+    assert get_zerofill_for_modules(mods) == expected

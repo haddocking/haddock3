@@ -9,7 +9,7 @@ from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
 from haddock.libs.libutil import (
     convert_seconds_to_min_sec,
-    get_number_of_digits,
+    get_zerofill_for_modules,
     recursive_dict_update,
     zero_fill,
     )
@@ -47,7 +47,7 @@ class Workflow:
 
         # Create the list of steps contained in this workflow
         self.steps = []
-        num_of_modules = get_number_of_digits(len(modules_parameters))
+        mod_zerofill = get_zerofill_for_modules(modules_parameters)
         _items = enumerate(modules_parameters.items())
         for num_stage, (stage_name, params) in _items:
             log.info(f"Reading instructions of [{stage_name}] step")
@@ -61,7 +61,7 @@ class Workflow:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
-                    digits=num_of_modules,
+                    digits=mod_zerofill,
                     **params_up,
                     )
                 self.steps.append(_)

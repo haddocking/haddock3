@@ -293,6 +293,21 @@ def get_number_of_digits(num):
     return max(ceil(log10(num + 1)), 1)
 
 
+def get_zerofill_for_modules(modules):
+    """
+    Get a the prefix zerofill for modules.
+
+    If there are 5 modules, zerofill digits is 1.
+    If there are 10 modules, zerofill digits is 1 because counting
+    starts at 0 (for topoaa).
+    If there are 100 modules, zerofill digits is 2 because counting
+    starts at 0 (for topoaa).
+
+    This function is used in combination with `zero_fill`.
+    """
+    return max(1, get_number_of_digits(len(modules) - 1))
+
+
 def sort_numbered_paths(*paths):
     """
     Sort input paths to tail number.

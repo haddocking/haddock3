@@ -221,11 +221,13 @@ def validate_modules_params(modules_params):
 
         if diff:
             matched = fuzzy_match(diff, defaults.keys())
-            pretty_print = lambda set: f" * \'{set[0]}\' did you mean \'{set[1]}\'?"
+            def pretty_print(match): 
+                return f" * \'{match[0]}\' did you mean \'{match[1]}\'?"
             eol = '\n'
             _msg = (
                 'The following parameters do not match any expected '
-                f'parameters for module {module_name!r}: {eol.join(map(pretty_print, matched))}.'
+                f'parameters for module {module_name!r}: '
+                f'{eol.join(map(pretty_print, matched))}.'
                 )
             raise ConfigurationError(_msg)
 
@@ -394,7 +396,8 @@ def validate_module_names_are_not_mispelled(params):
             if module_name not in module_names:
                 matched = fuzzy_match([module_name], module_names)
                 emsg = (
-                    f"Module {param_name!r} is not a valid module name, did you mean {matched[0][1]}?. "
+                    f"Module {param_name!r} is not a valid module name,"
+                    f" did you mean {matched[0][1]}?. "
                     f"Valid modules are: {', '.join(module_names)}."
                     )
                 raise ValueError(emsg)
@@ -530,8 +533,9 @@ def populate_mol_parameters(modules_params):
 def check_if_path_exists(path):
     """
     Check if a path exists and raises an error if it does not exist.
-    For example given this path "../config/project_01/file.txt" it would return
-    the following path ("../config", "project-01", "project_01").
+
+    For example given this path "../config/project_01/file.txt" it would find
+    the following path "../config/project-01".
 
     Parameters
     ----------
@@ -539,7 +543,7 @@ def check_if_path_exists(path):
         The path to check.
 
     Returns
-    ----------
+    -------
     None
         If the path does exist.
 
@@ -559,35 +563,40 @@ def check_if_path_exists(path):
     for part in elements:
         next_folder = reconstituted_path + os.sep + part
         if not os.path.exists(next_folder):
-            error = (reconstituted_path, fuzzy_match([part], os.listdir(reconstituted_path))[0][1], part)
+            error = (reconstituted_path, fuzzy_match([part], 
+                os.listdir(reconstituted_path))[0][1], part)
             break
 
     msg = (f"The following file could not be found: \'{path}\'."
-           f"In the folder \'{error[0]}\' the following \'{error[1]}\' is the closest match to the supplied \'{error[2]}\', did you mean to open this?")
+           f"In the folder \'{error[0]}\' the following \'{error[1]}\' "
+           f"is the closest match to the supplied \'{error[2]}\', did "
+           "you mean to open this?")
     raise ValueError(msg)
 
 
 def fuzzy_match(user_input, possibilities):
     """
-    Fuzzy match the given user input to the given possibilities to find the closest possibility.
+    Find the closest possibility to the user supplied input.
 
     Parameters
     ----------
     user_input : list(string)
         List of strings with the faulty input given by the user.
     possibilities : list(string)
-        List of strings with all possible options that would be valid in this context.
+        List of strings with all possible options that would be
+        valid in this context.
 
     Returns
-    ----------
+    -------
     list(string, string)
-        The closest string from the possibilities to each string of the user_input. With as first 
-        element of the tuple the user_input string, and as second element the matched possibility.
+        The closest string from the possibilities to each string of the
+        `user_input`. With as first element of the tuple the user_input
+        string, and as second element the matched possibility.
     """
     results = list()
 
     for user_word in user_input:
-        best = (2^63 - 1, "")
+        best = (2**63 - 1, "")
         for possibility in possibilities:
             distance = levenshtein_distance(user_input, possibility)
             if distance < best[0]:
@@ -600,7 +609,9 @@ def fuzzy_match(user_input, possibilities):
 def levenshtein_distance(left, right):
     """
     Get the Levenshtein distance between two strings.
-    For the definitions see Wikipedia: https://en.wikipedia.org/wiki/Levenshtein_distance.
+
+    For the definitions see Wikipedia:
+    https://en.wikipedia.org/wiki/Levenshtein_distance.
 
     Parameters
     ----------
@@ -610,7 +621,7 @@ def levenshtein_distance(left, right):
         The second string.
 
     Returns
-    ----------
+    -------
     int
         The Levenshtein distance between the two strings.
     """

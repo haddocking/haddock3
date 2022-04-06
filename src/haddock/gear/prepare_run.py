@@ -217,8 +217,8 @@ def validate_modules_params(modules_params):
 
         all_parameters = set(extract_keys_recursive(defaults)) \
             .union(set(config_mandatory_general_parameters),
-                  set(non_mandatory_general_parameters_defaults.keys()),
-                  expandable_params)
+                   set(non_mandatory_general_parameters_defaults.keys()),
+                   expandable_params)
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 
@@ -603,7 +603,7 @@ def fuzzy_match(user_input, possibilities):
     for user_word in transform_to_list(user_input):
         best = (-1, "")
         for possibility in possibilities:
-            distance = difflib.SequenceMatcher(a=user_word, b=possibility).ratio()
+            distance = difflib.SequenceMatcher(a=user_word, b=possibility).ratio()  # noqa: E501
             if distance > best[0]:
                 best = (distance, possibility)
         results += [(user_word, best[1])]

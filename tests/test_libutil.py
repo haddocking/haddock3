@@ -191,6 +191,7 @@ def test_get_number_of_digits(num, expected):
         [[f"mod{i}" for i in range(5)], 1],
         [[f"mod{i}" for i in range(10)], 1],
         [[f"mod{i}" for i in range(11)], 2],
+        [[f"mod{i}" for i in range(99)], 2],
         [[f"mod{i}" for i in range(100)], 2],
         [[f"mod{i}" for i in range(101)], 3],
         ]

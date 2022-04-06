@@ -1,6 +1,7 @@
 """Logic pertraining to preparing the run files and folders."""
 import importlib
 import itertools as it
+import os
 import shutil
 import string
 import sys
@@ -8,7 +9,6 @@ from contextlib import contextmanager, suppress
 from copy import deepcopy
 from functools import lru_cache, wraps
 from pathlib import Path
-import os
 
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed

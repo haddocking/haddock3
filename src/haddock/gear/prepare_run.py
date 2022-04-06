@@ -231,7 +231,7 @@ def validate_modules_params(modules_params):
 
             _msg = (
                 'The following parameters do not match any expected '
-                f'parameters for module {module_name!r}: '
+                f'parameters for module {module_name!r}: {os.linesep}'
                 f'{os.linesep.join(map(pretty_print, matched))}.'
                 )
             raise ConfigurationError(_msg)

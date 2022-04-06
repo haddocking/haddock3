@@ -7,6 +7,7 @@ import subprocess
 import sys
 from copy import deepcopy
 from functools import partial
+from math import log10, ceil
 from os import cpu_count
 from pathlib import Path
 
@@ -288,7 +289,8 @@ def get_number_of_digits(num):
     10 has two digits.
     100 has three digits.
     """
-    return len(str(num))
+    # also: return len(str(num)) :-)
+    return max(ceil(log10(num + 1)), 1)
 
 
 def sort_numbered_paths(*paths):

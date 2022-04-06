@@ -610,37 +610,3 @@ def fuzzy_match(user_input, possibilities):
         results += [(user_word, best[1])]
 
     return results
-
-
-def levenshtein_distance(left, right):
-    """
-    Get the Levenshtein distance between two strings.
-
-    For the definitions see Wikipedia:
-    https://en.wikipedia.org/wiki/Levenshtein_distance.
-
-    Parameters
-    ----------
-    left : string
-        The first string.
-    right : string
-        The second string.
-
-    Returns
-    -------
-    int
-        The Levenshtein distance between the two strings.
-    """
-    def lev(a, b):
-        if len(b) == 0:
-            return len(a)
-        if len(a) == 0:
-            return len(b)
-        if a[0] == b[0]:
-            return lev(a[1:], b[1:])
-        return 1 + min(
-            lev(a[1:], b),
-            lev(a, b[1:]),
-            lev(a[1:], b[1:]))
-
-    return lev(left, right)

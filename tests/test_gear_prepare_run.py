@@ -161,16 +161,3 @@ def test_check_if_path_exists():
 def test_fuzzy_match(user_input, expected):
     possibilities = ["long-format", "short-format", "verbose", "output-dir"]
     assert fuzzy_match(user_input, possibilities) == expected
-
-
-@pytest.mark.parametrize(
-    "a,b,expected",
-    [
-        ("", "", 0),
-        ("hello", "hello", 0),
-        ("kitten", "sitting", 3),
-        ("Saturday", "Sunday", 3),
-        ]
-    )
-def test_levenshtein_distance(a, b, expected):
-    assert levenshtein_distance(a, b) == expected

@@ -4,7 +4,6 @@ from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
-from haddock.libs.libontology import ModuleIO
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -40,7 +39,7 @@ class HaddockModule(BaseCNSModule):
         except Exception as e:
             self.finish_with_error(e)
 
-        scored_structure_list = []
+        self.output_models = []
         for model_num, model in enumerate(models_to_score, start=1):
             scoring_inp = prepare_cns_input(
                 model_num,
@@ -57,7 +56,7 @@ class HaddockModule(BaseCNSModule):
             expected_pdb = prepare_expected_pdb(
                 model, model_num, ".", "mdscoring"
                 )
-            scored_structure_list.append(expected_pdb)
+            self.output_models.append(expected_pdb)
 
             job = CNSJob(scoring_inp, scoring_out, envvars=self.envvars)
 
@@ -75,7 +74,7 @@ class HaddockModule(BaseCNSModule):
         weights = {e: self.params[e] for e in _weight_keys}
 
         # Check for generated output, fail it not all expected files are found
-        for pdb in scored_structure_list:
+        for pdb in self.output_models:
             if pdb.is_present():
                 haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
                     **weights
@@ -87,7 +86,7 @@ class HaddockModule(BaseCNSModule):
         self.log(f"Saving output to {output_fname}")
         with open(output_fname, "w") as fh:
             fh.write(f"structure\toriginal_name\tscore{linesep}")
-            for pdb in scored_structure_list:
+            for pdb in self.output_models:
                 # temporary solution to get the original name
                 #  here one .pdb = one .psf and the .psf is not changed by
                 #  the module so use its name as the original one
@@ -96,14 +95,4 @@ class HaddockModule(BaseCNSModule):
                     f"{pdb.file_name}\t{original_name}\t{pdb.score}{linesep}"
                     )
 
-        # Save module information
-        io = ModuleIO()
-        io.add(scored_structure_list, "o")
-        faulty = io.check_faulty()
-        tolerance = self.params["tolerance"]
-        if faulty > tolerance:
-            _msg = (
-                f"{faulty:.2f}% of output was not generated for this module "
-                f"and tolerance was set to {tolerance:.2f}%.")
-            self.finish_with_error(_msg)
-        io.save()
+        self.export_output_models(faulty_tolerance=self.params["tolerance"])

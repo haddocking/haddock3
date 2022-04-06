@@ -1,7 +1,6 @@
 """Calculate CAPRI metrics."""
 from pathlib import Path
 
-from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import CAPRI
 
@@ -31,11 +30,11 @@ class HaddockModule(BaseHaddockModule):
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
 
-        models_to_calc = self.previous_io.retrieve_models()
+        models = self.previous_io.retrieve_models()
 
         #  Sort by score
-        models_to_calc.sort()
-        best_model_fname = Path(models_to_calc[0].rel_path)
+        models.sort()
+        best_model_fname = Path(models[0].rel_path)
 
         if self.params["reference_fname"]:
             reference = Path(self.params["reference_fname"])
@@ -47,7 +46,7 @@ class HaddockModule(BaseHaddockModule):
 
         capri = CAPRI(
             reference,
-            models_to_calc,
+            models,
             receptor_chain=self.params["receptor_chain"],
             ligand_chain=self.params["ligand_chain"],
             aln_method=self.params["alignment_method"],
@@ -91,7 +90,5 @@ class HaddockModule(BaseHaddockModule):
             sort_ascending=self.params["sort_ascending"],
             )
 
-        selected_models = models_to_calc
-        io = ModuleIO()
-        io.add(selected_models, "o")
-        io.save()
+        self.output_models = models
+        self.export_output_models()

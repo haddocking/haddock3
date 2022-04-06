@@ -603,8 +603,7 @@ def fuzzy_match(user_input, possibilities):
     for user_word in transform_to_list(user_input):
         best = (-1, "")
         for possibility in possibilities:
-            sm = difflib.SequenceMatcher(a=user_input, b=possibility)
-            distance = sm.quick_ratio()
+            distance = difflib.SequenceMatcher(a=user_word, b=possibility).ratio()
             if distance > best[0]:
                 best = (distance, possibility)
         results += [(user_word, best[1])]

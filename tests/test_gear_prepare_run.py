@@ -152,7 +152,8 @@ def test_check_if_path_exists():
     "user_input,expected",
     [
         ("long-fromat", [("long-fromat", "long-format")]),
-        (["loong-format", "verboese"], [("loong-format", "long-format"), ("verboese", "verbose")]),
+        (["loong-format", "verboese"], 
+            [("loong-format", "long-format"), ("verboese", "verbose")]),
         ("middle-format", [("middle-format", "long-format")]),
         ("out", [("out", "output-dir")]),
         ]

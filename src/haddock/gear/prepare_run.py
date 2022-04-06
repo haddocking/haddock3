@@ -559,9 +559,11 @@ def check_if_path_exists(path):
     if os.path.exists(path):
         return None
 
-    reconstituted_path = ""
+    reconstituted_path = "./"
     error = ("", "", "")
     elements = Path(path).parts
+    if elements[0] == ".":
+        elements = elements[1:]
     for part in elements:
         next_folder = Path(reconstituted_path, part)
         if not next_folder.exists():
@@ -603,7 +605,7 @@ def fuzzy_match(user_input, possibilities):
             distance = levenshtein_distance(user_input, possibility)
             if distance < best[0]:
                 best = (distance, possibility)
-        results += (user_word, best[1])
+        results += [(user_word, best[1])]
 
     return results
 
@@ -635,7 +637,7 @@ def levenshtein_distance(left, right):
         if a[0] == b[0]:
             return lev(a[1:], b[1:])
         return 1 + min(
-            lev(a[1:0], b),
+            lev(a[1:], b),
             lev(a, b[1:]),
             lev(a[1:], b[1:]))
 

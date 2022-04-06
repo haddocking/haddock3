@@ -221,8 +221,10 @@ def validate_modules_params(modules_params):
 
         if diff:
             matched = fuzzy_match(diff, defaults.keys())
-            def pretty_print(match): 
+
+            def pretty_print(match):
                 return f" * \'{match[0]}\' did you mean \'{match[1]}\'?"
+
             eol = '\n'
             _msg = (
                 'The following parameters do not match any expected '
@@ -563,8 +565,8 @@ def check_if_path_exists(path):
     for part in elements:
         next_folder = reconstituted_path + os.sep + part
         if not os.path.exists(next_folder):
-            error = (reconstituted_path, fuzzy_match([part], 
-                os.listdir(reconstituted_path))[0][1], part)
+            error = (reconstituted_path, fuzzy_match([part],
+                     os.listdir(reconstituted_path))[0][1], part)
             break
 
     msg = (f"The following file could not be found: \'{path}\'."

@@ -7,6 +7,7 @@ import subprocess
 import sys
 from copy import deepcopy
 from functools import partial
+from math import ceil, log10
 from os import cpu_count
 from pathlib import Path
 
@@ -294,6 +295,17 @@ def get_number_from_path_stem(path):
     stem = Path(path).stem
     number = re.findall(r'\d+', stem)[-1]
     return int(number)
+
+
+def get_number_of_digits(num):
+    """
+    Get the number of digits of a number.
+
+    10 has two digits.
+    100 has three digits.
+    """
+    # also: return len(str(num)) :-)
+    return max(ceil(log10(num + 1)), 1)
 
 
 def sort_numbered_paths(*paths):

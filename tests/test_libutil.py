@@ -8,6 +8,7 @@ from haddock.libs.libutil import (
     extract_keys_recursive,
     file_exists,
     get_number_from_path_stem,
+    get_number_of_digits,
     non_negative_int,
     recursive_dict_update,
     sort_numbered_paths,
@@ -184,3 +185,20 @@ def test_extract_keys_recursive(inp, expected):
 def test_transform_to_list(value, expected):
     result = transform_to_list(value)
     assert result == expected
+
+    
+@pytest.mark.parametrize(
+    "num,expected",
+    [
+        (0, 1),
+        (1, 1),
+        (9, 1),
+        (10, 2),
+        (22, 2),
+        (99, 2),
+        (100, 3),
+        (335, 3),
+        ]
+    )
+def test_get_number_of_digits(num, expected):
+    assert get_number_of_digits(num) == expected

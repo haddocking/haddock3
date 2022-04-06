@@ -5,7 +5,6 @@ from pathlib import Path
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
-from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
@@ -161,7 +160,7 @@ class HaddockModule(BaseHaddockModule):
             sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
 
             # Add this info to the models
-            clustered_models = []
+            self.output_models = []
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
                 # sort the models by score
@@ -172,7 +171,7 @@ class HaddockModule(BaseHaddockModule):
                     pdb.clt_id = cluster_id
                     pdb.clt_rank = cluster_rank
                     pdb.clt_model_rank = model_ranking
-                    clustered_models.append(pdb)
+                    self.output_models.append(pdb)
 
             # Prepare clustfcc.txt
             output_fname = Path('clustfcc.txt')
@@ -236,9 +235,6 @@ class HaddockModule(BaseHaddockModule):
                 out_fh.write(output_str)
         else:
             log.warning('No clusters were found')
-            clustered_models = models_to_cluster
+            self.output_models = models_to_cluster
 
-        # Save module information
-        io = ModuleIO()
-        io.add(clustered_models, "o")
-        io.save()
+        self.export_output_models()

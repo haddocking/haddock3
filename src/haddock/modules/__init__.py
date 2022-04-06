@@ -198,7 +198,8 @@ class BaseHaddockModule(ABC):
 
     def previous_path(self):
         """Give the path from the previous calculation."""
-        previous = sorted(list(self.path.resolve().parent.glob('[0-9][0-9]*/')))
+        # https://regex101.com/r/4qRTjn/1
+        previous = sorted(list(self.path.resolve().parent.glob('[0-9]*/')))
         try:
             return previous[self.order - 1]
         except IndexError:

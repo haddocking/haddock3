@@ -46,6 +46,7 @@ class Workflow:
 
         # Create the list of steps contained in this workflow
         self.steps = []
+        num_of_modules = len(str(len(modules_parameters)))
         _items = enumerate(modules_parameters.items())
         for num_stage, (stage_name, params) in _items:
             log.info(f"Reading instructions of [{stage_name}] step")
@@ -59,6 +60,7 @@ class Workflow:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
+                    digits=num_of_modules,
                     **params_up,
                     )
                 self.steps.append(_)
@@ -75,14 +77,15 @@ class Step:
             self,
             module_name,
             order=None,
+            digits=2,
             **config_params,
             ):
         self.config = config_params
         self.module_name = module_name
         self.order = order
 
-        self.working_path = \
-            Path(zero_fill(self.order, digits=2) + "_" + self.module_name)
+        folder_number = zero_fill(self.order, digits=digits)
+        self.working_path = Path(folder_number + "_" + self.module_name)
 
     def execute(self):
         """Execute simulation step."""

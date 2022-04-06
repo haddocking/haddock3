@@ -7,7 +7,7 @@ import subprocess
 import sys
 from copy import deepcopy
 from functools import partial
-from math import log10, ceil
+from math import ceil, log10
 from os import cpu_count
 from pathlib import Path
 

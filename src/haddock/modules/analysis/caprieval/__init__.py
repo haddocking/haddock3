@@ -30,11 +30,11 @@ class HaddockModule(BaseHaddockModule):
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
 
-        self.output_models = self.previous_io.retrieve_models()
+        models = self.previous_io.retrieve_models()
 
         #  Sort by score
-        self.output_models.sort()
-        best_model_fname = Path(self.output_models[0].rel_path)
+        models.sort()
+        best_model_fname = Path(models[0].rel_path)
 
         if self.params["reference_fname"]:
             reference = Path(self.params["reference_fname"])
@@ -46,7 +46,7 @@ class HaddockModule(BaseHaddockModule):
 
         capri = CAPRI(
             reference,
-            self.output_models,
+            models,
             receptor_chain=self.params["receptor_chain"],
             ligand_chain=self.params["ligand_chain"],
             aln_method=self.params["alignment_method"],
@@ -90,4 +90,5 @@ class HaddockModule(BaseHaddockModule):
             sort_ascending=self.params["sort_ascending"],
             )
 
+        self.output_models = models
         self.export_output_models()

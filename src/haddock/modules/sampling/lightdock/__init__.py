@@ -38,18 +38,18 @@ class HaddockModule(BaseHaddockModule):
     def _run(self):
         """Execute module."""
         # Get the models generated in previous step
-        self.output_models = [
+        models = [
             p
             for p in self.previous_io.output
             if p.file_type == Format.PDB
             ]
 
         # Check if multiple models are provided
-        if len(self.output_models) > 1:
+        if len(models) > 1:
             _msg = "Only one model allowed in LightDock sampling module"
             self.finish_with_error(_msg)
 
-        model = self.output_models[0]
+        model = models[0]
         # Check if chain IDs are present
         _path = Path(model.path, model.file_name)
         segids, chains = libpdb.identify_chainseg(_path)
@@ -154,4 +154,5 @@ class HaddockModule(BaseHaddockModule):
                                     topology=model.topology,
                                     path=self.path))
 
+        self.output_models = models
         self.export_output_models()

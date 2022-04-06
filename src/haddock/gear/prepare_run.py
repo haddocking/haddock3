@@ -216,9 +216,9 @@ def validate_modules_params(modules_params):
             )
 
         all_parameters = set(extract_keys_recursive(defaults)) \
-            .union(set(config_mandatory_general_parameters) \
-            ,set(non_mandatory_general_parameters_defaults.keys()) \
-            ,expandable_params)
+            .union(set(config_mandatory_general_parameters),
+                  set(non_mandatory_general_parameters_defaults.keys()),
+                  expandable_params)
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 

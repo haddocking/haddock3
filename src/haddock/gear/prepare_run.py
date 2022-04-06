@@ -219,9 +219,12 @@ def validate_modules_params(modules_params):
             - expandable_params
 
         if diff:
+            matched = fuzzy_match(diff, defaults.keys())
+            pretty_print = lambda set: f" * \'{set[0]}\' did you mean \'{set[1]}\'?"
+            eol = '\n'
             _msg = (
                 'The following parameters do not match any expected '
-                f'parameters for module {module_name!r}: {", ".join(diff)}.'
+                f'parameters for module {module_name!r}: {eol.join(map(pretty_print, matched))}.'
                 )
             raise ConfigurationError(_msg)
 
@@ -359,7 +362,7 @@ def clean_rundir_according_to_restart(run_dir, restart_from=None):
 
 
 def identify_modules(params):
-    """Identify keys (headings) belogging to HADDOCK3 modules."""
+    """Identify keys (headings) belonging to HADDOCK3 modules."""
     modules_keys = [
         k
         for k in params.keys()
@@ -380,13 +383,15 @@ def inject_in_modules(modules_params, key, value):
 
 
 def validate_module_names_are_not_mispelled(params):
-    """Validate headers are not mispelled."""
+    """Validate headers are not misspelled."""
     module_names = sorted(modules_category.keys())
     for param_name, value in params.items():
         if isinstance(value, dict):
-            if get_module_name(param_name) not in module_names:
+            module_name = get_module_name(param_name)
+            if module_name not in module_names:
+                matched = fuzzy_match([module_name], module_names)
                 emsg = (
-                    f"Module {param_name!r} is not a valid module name. "
+                    f"Module {param_name!r} is not a valid module name, did you mean {matched[0][1]}?. "
                     f"Valid modules are: {', '.join(module_names)}."
                     )
                 raise ValueError(emsg)
@@ -517,3 +522,65 @@ def populate_mol_parameters(modules_params):
                 defaults[param],
                 )
     return
+
+
+def fuzzy_match(user_input, possibilities):
+    """
+    Fuzzy match the given user input to the given possibilities to find the closest possibility.
+
+    Parameters
+    ----------
+    user_input : list(string)
+        List of strings with the faulty input given by the user.
+    possibilities : list(string)
+        List of strings with all possible options that would be valid in this context.
+
+    Returns
+    ----------
+    list(string, string)
+        The closest string from the possibilities to each string of the user_input. With as first 
+        element of the tuple the user_input string, and as second element the matched possibility.
+    """
+    results = list()
+
+    for user_word in user_input:
+        best = (2^63 - 1, "")
+        for possibility in possibilities:
+            distance = levenshtein_distance(user_input, possibility)
+            if distance < best[0]:
+                best = (distance, possibility)
+        results += (user_word, best[1])
+
+    return results
+
+
+def levenshtein_distance(left, right):
+    """
+    Get the Levenshtein distance between two strings.
+    For the definitions see Wikipedia: https://en.wikipedia.org/wiki/Levenshtein_distance.
+
+    Parameters
+    ----------
+    left : string
+        The first string.
+    right : string
+        The second string.
+
+    Returns
+    ----------
+    int
+        The Levenshtein distance between the two strings.
+    """
+    def lev(a, b):
+        if len(b) == 0:
+            return len(a)
+        if len(a) == 0:
+            return len(b)
+        if a[0] == b[0]:
+            return lev(a[1:], b[1:])
+        return 1 + min(
+            lev(a[1:0], b),
+            lev(a, b[1:]),
+            lev(a[1:], b[1:]))
+
+    return lev(left, right)

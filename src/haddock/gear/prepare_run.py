@@ -8,6 +8,7 @@ from contextlib import contextmanager, suppress
 from copy import deepcopy
 from functools import lru_cache, wraps
 from pathlib import Path
+import os
 
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
@@ -313,6 +314,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         end_path = Path(data_dir, '00_topoaa')
         end_path.mkdir(parents=True, exist_ok=True)
         name = Path(molecule).name
+        check_if_path_exists(molecule)
         shutil.copy(molecule, Path(end_path, name))
         new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
 
@@ -327,6 +329,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
                     # for those modules without '_fname' parameters
                     pf = Path(data_dir, end_path)
                     pf.mkdir(exist_ok=True)
+                    check_if_path_exists(value)
                     shutil.copy(value, Path(pf, name))
                     _p = Path(rel_data_dir, end_path, name)
                     new_mp[module][parameter] = _p
@@ -522,6 +525,46 @@ def populate_mol_parameters(modules_params):
                 defaults[param],
                 )
     return
+
+
+def check_if_path_exists(path):
+    """
+    Check if a path exists and raises an error if it does not exist.
+    For example given this path "../config/project_01/file.txt" it would return
+    the following path ("../config", "project-01", "project_01").
+
+    Parameters
+    ----------
+    path : AnyStr | PathLike
+        The path to check.
+
+    Returns
+    ----------
+    None
+        If the path does exist.
+
+    Raises
+    ------
+    ValueError
+        If the path does not exist.
+    """
+    path = os.path.normpath(path)
+    if os.path.exists(path):
+        return None
+
+    split = os.path.split(path)
+    elements = split[0].split(os.sep) + split[1]
+    reconstituted_path = ""
+    error = ("", "", "")
+    for part in elements:
+        next_folder = reconstituted_path + os.sep + part
+        if not os.path.exists(next_folder):
+            error = (reconstituted_path, fuzzy_match([part], os.listdir(reconstituted_path))[0][1], part)
+            break
+
+    msg = (f"The following file could not be found: \'{path}\'."
+           f"In the folder \'{error[0]}\' the following \'{error[1]}\' is the closest match to the supplied \'{error[2]}\', did you mean to open this?")
+    raise ValueError(msg)
 
 
 def fuzzy_match(user_input, possibilities):

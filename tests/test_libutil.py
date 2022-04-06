@@ -180,6 +180,7 @@ def test_extract_keys_recursive(inp, expected):
         ["a", ["a"]],
         [set([1, 2, 3]), [1, 2, 3]],
         [{"a": 1}, ["a"]],
+        [None, [None]],
         ]
     )
 def test_transform_to_list(value, expected):

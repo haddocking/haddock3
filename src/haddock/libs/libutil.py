@@ -53,17 +53,21 @@ def transform_to_list(item):
     If it is a dict, returns a list of the keys.
 
     If it is tuple, returns the tuple.
-    """
-    if isinstance(item, (str, int, float, Path, type(None))):
-        return [item]
 
+    If a list, returns the same.
+
+    Everything else returns `item` inside a one element list.
+    """
     if isinstance(item, set):
         return list(item)
 
     if isinstance(item, dict):
         return list(item.keys())
 
-    return item
+    if isinstance(item, (list, tuple)):
+        return item
+
+    return [item]
 
 
 def copy_files_to_dir(paths, directory):

@@ -281,6 +281,16 @@ def get_number_from_path_stem(path):
     return int(number)
 
 
+def get_number_of_digits(num):
+    """
+    Get the number of digits of a number.
+
+    10 has two digits.
+    100 has three digits.
+    """
+    return len(str(num))
+
+
 def sort_numbered_paths(*paths):
     """
     Sort input paths to tail number.

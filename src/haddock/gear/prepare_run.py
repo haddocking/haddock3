@@ -572,8 +572,9 @@ def check_if_path_exists(path):
             error = (reconstituted_path, fuzzy_match([part],
                      os.listdir(reconstituted_path))[0][1], part)
             break
+        reconstituted_path = next_folder
 
-    msg = (f"The following file could not be found: \'{path}\'."
+    msg = (f"The following file could not be found: \'{path}\'. "
            f"In the folder \'{error[0]}\' the following \'{error[1]}\' "
            f"is the closest match to the supplied \'{error[2]}\', did "
            "you mean to open this?")

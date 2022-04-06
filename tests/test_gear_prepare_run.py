@@ -8,7 +8,6 @@ from haddock.gear.prepare_run import (
     check_if_path_exists,
     fuzzy_match,
     get_expandable_parameters,
-    levenshtein_distance,
     populate_mol_parameters,
     populate_topology_molecule_params,
     )

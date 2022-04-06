@@ -1,4 +1,5 @@
 """Logic pertraining to preparing the run files and folders."""
+import difflib
 import importlib
 import itertools as it
 import os
@@ -215,9 +216,9 @@ def validate_modules_params(modules_params):
             )
 
         all_parameters = set(extract_keys_recursive(defaults)) \
-            + set(config_mandatory_general_parameters) \
-            + set(non_mandatory_general_parameters_defaults.keys()) \
-            + expandable_params
+            .union(set(config_mandatory_general_parameters) \
+            ,set(non_mandatory_general_parameters_defaults.keys()) \
+            ,expandable_params)
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 
@@ -602,7 +603,8 @@ def fuzzy_match(user_input, possibilities):
     for user_word in transform_to_list(user_input):
         best = (2**63 - 1, "")
         for possibility in possibilities:
-            distance = levenshtein_distance(user_input, possibility)
+            sm = difflib.SequenceMatcher(a=user_input, b=possibility)
+            distance = sm.quick_ratio()
             if distance < best[0]:
                 best = (distance, possibility)
         results += [(user_word, best[1])]

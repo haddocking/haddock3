@@ -75,7 +75,7 @@ class CapriJob:
 
     def run(self):
         """Run this CapriJob."""
-        # adding models (could be forwarded directly to capri.py)
+        # adding models
         for struct in self.capri_obj.model_list:
             _ = self.capri_obj.add_chain_from_segid(struct.rel_path)
         

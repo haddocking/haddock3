@@ -10,7 +10,7 @@ from pdbtools import pdb_tidy
 
 from haddock import log
 from haddock.libs import libpdb
-from haddock.libs.libontology import ModuleIO, PDBFile
+from haddock.libs.libontology import PDBFile
 from haddock.modules import BaseHaddockModule
 
 
@@ -126,7 +126,7 @@ class HaddockModule(BaseHaddockModule):
         subprocess.call(cmd, shell=True)
 
         # retrieve the structures
-        output_structures = []
+        self.output_models = []
         structure_folder = Path('gdock-integration/structures')
         for model in structure_folder.glob('*pdb'):
             # Make sure the output is tidy, this should be handled
@@ -142,8 +142,6 @@ class HaddockModule(BaseHaddockModule):
             pdb = PDBFile(model)
             pdb.score = .0
             pdb.topology = topologies
-            output_structures.append(pdb)
+            self.output_models.append(pdb)
 
-        io = ModuleIO()
-        io.add(output_structures, "o")
-        io.save()
+        self.export_output_models()

@@ -13,6 +13,7 @@ add_syserr_handler(log)
 
 haddock3_source_path = Path(__file__).resolve().parent
 haddock3_repository_path = haddock3_source_path.parents[1]
+core_path = Path(haddock3_source_path, "core")
 toppar_path = Path(haddock3_source_path, "cns", "toppar")
 modules_defaults_path = Path(haddock3_source_path, "modules", "defaults.yaml")
 

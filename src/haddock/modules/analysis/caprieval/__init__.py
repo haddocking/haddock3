@@ -2,7 +2,6 @@
 from pathlib import Path
 
 from haddock import log
-from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CapriJob
 from haddock.modules import BaseHaddockModule
@@ -59,11 +58,12 @@ class HaddockModule(BaseHaddockModule):
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
 
-        models_to_calc = self.previous_io.retrieve_models()
+        models = self.previous_io.retrieve_models()
 
         #  Sort by score
-        models_to_calc.sort()
-        best_model_fname = Path(models_to_calc[0].rel_path)
+        models.sort()
+        best_model_fname = Path(models[0].rel_path)
+
         if self.params["reference_fname"]:
             reference = Path(self.params["reference_fname"])
         else:
@@ -73,7 +73,7 @@ class HaddockModule(BaseHaddockModule):
             reference = best_model_fname
 
         # Parallelisation : optimal dispatching of models
-        nmodels = len(models_to_calc)
+        nmodels = len(models)
         base_models = nmodels // self.params['ncores']
         modulo = nmodels % self.params['ncores']
         chain_of_idx = [0]
@@ -90,7 +90,7 @@ class HaddockModule(BaseHaddockModule):
             # init Capri
             capri_obj = CAPRI(
                 reference,
-                models_to_calc[chain_of_idx[core]:chain_of_idx[core + 1]],
+                models[chain_of_idx[core]:chain_of_idx[core + 1]],
                 receptor_chain=self.params["receptor_chain"],
                 ligand_chain=self.params["ligand_chain"],
                 aln_method=self.params["alignment_method"],
@@ -135,8 +135,7 @@ class HaddockModule(BaseHaddockModule):
             self.log("No cluster information")
         else:
             self._rearrange_output("capri_clt.tsv", path=capri_obj.path)
+        
         # Sending models to the next step of the workflow
-        selected_models = models_to_calc
-        io = ModuleIO()
-        io.add(selected_models, "o")
-        io.save()
+        self.output_models = models
+        self.export_output_models()

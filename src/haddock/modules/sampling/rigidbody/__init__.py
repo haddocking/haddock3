@@ -3,7 +3,7 @@ from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
-from haddock.libs.libontology import ModuleIO, PDBFile
+from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -55,7 +55,7 @@ class HaddockModule(BaseCNSModule):
 
         # Prepare the jobs
         idx = 1
-        structure_list = []
+        self.output_models = []
         self.log("Preparing jobs...")
         for combination in models_to_dock:
 
@@ -77,7 +77,7 @@ class HaddockModule(BaseCNSModule):
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=self.path)
                 model.topology = [e.topology for e in combination]
-                structure_list.append(model)
+                self.output_models.append(model)
 
                 job = CNSJob(inp_file, log_fname, envvars=self.envvars)
                 jobs.append(job)
@@ -95,7 +95,7 @@ class HaddockModule(BaseCNSModule):
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
 
-        for model in structure_list:
+        for model in self.output_models:
             if model.is_present():
                 # Score the model
                 haddock_score = HaddockModel(
@@ -105,14 +105,4 @@ class HaddockModule(BaseCNSModule):
 
                 model.score = haddock_score
 
-        # Save module information
-        io = ModuleIO()
-        io.add(structure_list, "o")
-        faulty = io.check_faulty()
-        tolerance = self.params["tolerance"]
-        if faulty > tolerance:
-            _msg = (
-                f"{faulty:.2f}% of output was not generated for this module "
-                f"and tolerance was set to {tolerance:.2f}%.")
-            self.finish_with_error(_msg)
-        io.save()
+        self.export_output_models(faulty_tolerance=self.params["tolerance"])

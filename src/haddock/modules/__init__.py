@@ -178,6 +178,34 @@ class BaseHaddockModule(ABC):
         """
         return
 
+    def export_output_models(self, faulty_tolerance=0):
+        """
+        Export output to the ModuleIO interface.
+
+        Modules that generate PDBs that other models should take as input,
+        should export those PDBs registries through the ModuleIO interface.
+
+        This function implements a common interface for all modules requiring
+        this feature.
+
+        Parameters
+        ----------
+        faulty_tolerance : int, default 0
+            The percentage of missing output allowed. If 20 is given,
+            raises an error if 20% of the expected output is missing (not
+            saved to disk).
+        """
+        assert self.output_models, "`self.output_models` cannot be empty."
+        io = ModuleIO()
+        io.add(self.output_models, "o")
+        faulty = io.check_faulty()
+        if faulty > faulty_tolerance:
+            _msg = (
+                f"{faulty:.2f}% of output was not generated for this module "
+                f"and tolerance was set to {faulty_tolerance:.2f}%.")
+            self.finish_with_error(_msg)
+        io.save()
+
     def finish_with_error(self, reason="Module has failed."):
         """Finish with error message."""
         if isinstance(reason, Exception):
@@ -198,7 +226,8 @@ class BaseHaddockModule(ABC):
 
     def previous_path(self):
         """Give the path from the previous calculation."""
-        previous = sorted(list(self.path.resolve().parent.glob('[0-9][0-9]*/')))
+        # [0-9]* below is not a regex, is a bash wildkey
+        previous = sorted(list(self.path.resolve().parent.glob('[0-9]*/')))
         try:
             return previous[self.order - 1]
         except IndexError:

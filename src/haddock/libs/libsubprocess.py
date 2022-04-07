@@ -64,10 +64,14 @@ class CapriJob:
             output,
             params,
             capri_obj):
-    
+
+        core = capri_obj.core
+        log.info(f"core {core}, initialising CAPRI...")
+        log.info(f"core {core}, # of models : {len(capri_obj.model_list)}")
         self.output = output
         self.params = params
         self.capri_obj = capri_obj
+        log.info(f"core {core}, CAPRI initialised")
 
     def run(self):
         """Run this CapriJob."""

@@ -118,7 +118,7 @@ class HaddockModule(BaseHaddockModule):
         not_found = []
         for job in capri_jobs:
             if not job.output.exists():
-                jobn = job.input.name
+                jobn = job.output.name
                 not_found.append(jobn)
                 log.warning(f'Capri results were not calculated for {jobn}')
             else:

@@ -305,7 +305,7 @@ def get_zerofill_for_modules(modules):
 
     This function is used in combination with `zero_fill`.
     """
-    return max(1, get_number_of_digits(len(modules) - 1))
+    return get_number_of_digits(len(modules) - 1)
 
 
 def sort_numbered_paths(*paths):

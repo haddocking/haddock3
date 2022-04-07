@@ -194,6 +194,8 @@ def test_get_number_of_digits(num, expected):
         [[f"mod{i}" for i in range(99)], 2],
         [[f"mod{i}" for i in range(100)], 2],
         [[f"mod{i}" for i in range(101)], 3],
+        [[f"mod{i}" for i in range(1000)], 3],
+        [[f"mod{i}" for i in range(1001)], 4],
         ]
     )
 def test_get_zerofill_for_modules(mods, expected):

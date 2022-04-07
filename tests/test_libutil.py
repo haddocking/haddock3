@@ -12,6 +12,7 @@ from haddock.libs.libutil import (
     non_negative_int,
     recursive_dict_update,
     sort_numbered_paths,
+    transform_to_list,
     )
 
 
@@ -169,10 +170,31 @@ def test_extract_keys_recursive(inp, expected):
 
 
 @pytest.mark.parametrize(
+    "value,expected",
+    [
+        [1, [1]],
+        [Path("a"), [Path("a")]],
+        [list(range(10)), list(range(10))],
+        [tuple(range(10)), tuple(range(10))],
+        [1.1, [1.1]],
+        ["a", ["a"]],
+        [set([1, 2, 3]), [1, 2, 3]],
+        [{"a": 1}, ["a"]],
+        [None, [None]],
+        ]
+    )
+def test_transform_to_list(value, expected):
+    result = transform_to_list(value)
+    assert result == expected
+
+    
+@pytest.mark.parametrize(
     "num,expected",
     [
         (0, 1),
         (1, 1),
+        (9, 1),
+        (10, 2),
         (22, 2),
         (99, 2),
         (100, 3),

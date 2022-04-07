@@ -45,10 +45,29 @@ def make_list_if_string(item):
 
 
 def transform_to_list(item):
-    """Put `item` into a list if not a list already."""
-    if not isinstance(item, (list, tuple)):
-        return [item]
-    return item
+    """
+    Put `item` into a list if not a list already.
+
+    If it is set, transforms the set into a list.
+
+    If it is a dict, returns a list of the keys.
+
+    If it is tuple, returns the tuple.
+
+    If a list, returns the same.
+
+    Everything else returns `item` inside a one element list.
+    """
+    if isinstance(item, set):
+        return list(item)
+
+    if isinstance(item, dict):
+        return list(item.keys())
+
+    if isinstance(item, (list, tuple)):
+        return item
+
+    return [item]
 
 
 def copy_files_to_dir(paths, directory):

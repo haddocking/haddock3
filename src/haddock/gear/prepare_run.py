@@ -1,6 +1,8 @@
 """Logic pertraining to preparing the run files and folders."""
+import difflib
 import importlib
 import itertools as it
+import os
 import shutil
 import string
 import sys
@@ -34,6 +36,7 @@ from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
     remove_dict_keys,
+    transform_to_list,
     zero_fill,
     )
 from haddock.modules import (
@@ -212,16 +215,24 @@ def validate_modules_params(modules_params):
             max_mols,
             )
 
-        diff = set(extract_keys_recursive(args)) \
-            - set(extract_keys_recursive(defaults)) \
-            - set(config_mandatory_general_parameters) \
-            - set(non_mandatory_general_parameters_defaults.keys()) \
-            - expandable_params
+        all_parameters = \
+            set.union(set(extract_keys_recursive(defaults)),
+                      set(config_mandatory_general_parameters),
+                      set(non_mandatory_general_parameters_defaults.keys()),
+                      expandable_params)
+
+        diff = set(extract_keys_recursive(args)) - all_parameters
 
         if diff:
+            matched = fuzzy_match(diff, all_parameters)
+
+            def pretty_print(match):
+                return f" * \'{match[0]}\' did you mean \'{match[1]}\'?"
+
             _msg = (
                 'The following parameters do not match any expected '
-                f'parameters for module {module_name!r}: {", ".join(diff)}.'
+                f'parameters for module {module_name!r}: {os.linesep}'
+                f'{os.linesep.join(map(pretty_print, matched))}.'
                 )
             raise ConfigurationError(_msg)
 
@@ -310,6 +321,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
         end_path = Path(data_dir, '00_topoaa')
         end_path.mkdir(parents=True, exist_ok=True)
         name = Path(molecule).name
+        check_if_path_exists(molecule)
         shutil.copy(molecule, Path(end_path, name))
         new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
 
@@ -324,6 +336,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
                     # for those modules without '_fname' parameters
                     pf = Path(data_dir, end_path)
                     pf.mkdir(exist_ok=True)
+                    check_if_path_exists(value)
                     shutil.copy(value, Path(pf, name))
                     _p = Path(rel_data_dir, end_path, name)
                     new_mp[module][parameter] = _p
@@ -359,7 +372,7 @@ def clean_rundir_according_to_restart(run_dir, restart_from=None):
 
 
 def identify_modules(params):
-    """Identify keys (headings) belogging to HADDOCK3 modules."""
+    """Identify keys (headings) belonging to HADDOCK3 modules."""
     modules_keys = [
         k
         for k in params.keys()
@@ -380,13 +393,16 @@ def inject_in_modules(modules_params, key, value):
 
 
 def validate_module_names_are_not_mispelled(params):
-    """Validate headers are not mispelled."""
+    """Validate headers are not misspelled."""
     module_names = sorted(modules_category.keys())
     for param_name, value in params.items():
         if isinstance(value, dict):
-            if get_module_name(param_name) not in module_names:
+            module_name = get_module_name(param_name)
+            if module_name not in module_names:
+                matched = fuzzy_match([module_name], module_names)
                 emsg = (
-                    f"Module {param_name!r} is not a valid module name. "
+                    f"Module {param_name!r} is not a valid module name,"
+                    f" did you mean {matched[0][1]}?. "
                     f"Valid modules are: {', '.join(module_names)}."
                     )
                 raise ValueError(emsg)
@@ -517,3 +533,81 @@ def populate_mol_parameters(modules_params):
                 defaults[param],
                 )
     return
+
+
+def check_if_path_exists(path):
+    """
+    Check if a path exists and raises an error if it does not exist.
+
+    For example given this path "../config/project_01/file.txt" it would find
+    the following path "../config/project-01".
+
+    Parameters
+    ----------
+    path : AnyStr | PathLike
+        The path to check.
+
+    Returns
+    -------
+    None
+        If the path does exist.
+
+    Raises
+    ------
+    ValueError
+        If the path does not exist.
+    """
+    path = os.path.normpath(path)
+    if os.path.exists(path):
+        return None
+
+    reconstituted_path = "./"
+    error = ("", "", "")
+    elements = Path(path).parts
+    if elements[0] == ".":
+        elements = elements[1:]
+    for part in elements:
+        next_folder = Path(reconstituted_path, part)
+        if not next_folder.exists():
+            error = (reconstituted_path, fuzzy_match([part],
+                     os.listdir(reconstituted_path))[0][1], part)
+            break
+        reconstituted_path = next_folder
+
+    msg = (f"The following file could not be found: \'{path}\'. "
+           f"In the folder \'{error[0]}\' the following \'{error[1]}\' "
+           f"is the closest match to the supplied \'{error[2]}\', did "
+           "you mean to open this?")
+    raise ValueError(msg)
+
+
+def fuzzy_match(user_input, possibilities):
+    """
+    Find the closest possibility to the user supplied input.
+
+    Parameters
+    ----------
+    user_input : list(string)
+        List of strings with the faulty input given by the user.
+    possibilities : list(string)
+        List of strings with all possible options that would be
+        valid in this context.
+
+    Returns
+    -------
+    list(string, string)
+        The closest string from the possibilities to each string of the
+        `user_input`. With as first element of the tuple the user_input
+        string, and as second element the matched possibility.
+    """
+    results = list()
+
+    for user_word in transform_to_list(user_input):
+        best = (-1, "")
+        for possibility in possibilities:
+            distance = difflib.SequenceMatcher(a=user_word, b=possibility).ratio()  # noqa: E501
+            if distance > best[0]:
+                best = (distance, possibility)
+        results += [(user_word, best[1])]
+
+    return results

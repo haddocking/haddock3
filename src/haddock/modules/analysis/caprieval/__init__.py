@@ -49,6 +49,7 @@ class HaddockModule(BaseHaddockModule):
                         kw = split_dict[keyword]
                         out_file.write(infile.read().split(kw)[1].rstrip("\n"))
                 log.debug(f"File number {core} written")
+                tmp_file.unlink()
         log.info("Completed reconstruction of caprieval files.")
         log.info(f"{output_fname} created.")
 

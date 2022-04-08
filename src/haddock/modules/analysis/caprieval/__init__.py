@@ -104,7 +104,8 @@ class HaddockModule(BaseHaddockModule):
             # Name job
             job_f = Path("capri_ss_" + str(core) + ".tsv")
             # Get cluster info
-            cluster_info.append(any(m.clt_id for m in capri_obj.model_list))
+            has_cluster = any(m.clt_id for m in capri_obj.model_list)
+            cluster_info.append(has_cluster)
             # init CapriJob
             job = CapriJob(
                 job_f,

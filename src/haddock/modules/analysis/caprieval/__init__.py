@@ -3,10 +3,10 @@ from pathlib import Path
 
 from haddock import log
 from haddock.libs.libparallel import Scheduler
-from haddock.libs.libsubprocess import CapriJob
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import CAPRI
+from haddock.modules.analysis.caprieval.caprijob import CapriJob
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -30,7 +30,7 @@ class HaddockModule(BaseHaddockModule):
     def _rearrange_output(self, output_name, path, ncores):
         """Combine different capri outputs in a single file."""
         output_fname = Path(path, output_name)
-        self.log(f"rearranging output files into {output_fname}")
+        log.info(f"rearranging output files into {output_fname}")
         keyword = output_name.split(".")[0]
         split_dict = {
             "capri_ss": "model-cluster-ranking",
@@ -48,9 +48,9 @@ class HaddockModule(BaseHaddockModule):
                     else:
                         kw = split_dict[keyword]
                         out_file.write(infile.read().split(kw)[1].rstrip("\n"))
-                self.log(f"File number {core} written")
-        self.log("Completed reconstruction of caprieval files.")
-        self.log(f"{output_fname} created.")
+                log.debug(f"File number {core} written")
+        log.info("Completed reconstruction of caprieval files.")
+        log.info(f"{output_fname} created.")
 
     def _run(self):
         """Execute module."""
@@ -87,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
         # starting jobs
         capri_jobs = []
         cluster_info = []
-        self.log(f"running Capri Jobs with {ncores} cores")
+        log.info(f"running Capri Jobs with {ncores} cores")
         for core in range(ncores):
             # init Capri
             capri_obj = CAPRI(

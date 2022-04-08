@@ -4,6 +4,7 @@ from pathlib import Path
 from haddock import log
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import CapriJob
+from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import CAPRI
 
@@ -26,7 +27,7 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if contact executable is compiled."""
         return
 
-    def _rearrange_output(self, output_name, path):
+    def _rearrange_output(self, output_name, path, ncores):
         """Combine different capri outputs in a single file."""
         output_fname = Path(path, output_name)
         self.log(f"rearranging output files into {output_fname}")
@@ -39,7 +40,7 @@ class HaddockModule(BaseHaddockModule):
             raise Exception(f'Keyword {keyword} does not exist.')
         # Combine files
         with open(output_fname, 'w') as out_file:
-            for core in range(self.params['ncores']):
+            for core in range(ncores):
                 tmp_file = Path(path, keyword + "_" + str(core) + ".tsv")
                 with open(tmp_file) as infile:
                     if core == 0:
@@ -74,10 +75,11 @@ class HaddockModule(BaseHaddockModule):
 
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)
-        base_models = nmodels // self.params['ncores']
-        modulo = nmodels % self.params['ncores']
+        ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
+        base_models = nmodels // ncores
+        modulo = nmodels % ncores
         chain_of_idx = [0]
-        for core in range(self.params['ncores']):
+        for core in range(ncores):
             if core < modulo:
                 chain_of_idx.append(chain_of_idx[core] + base_models + 1)
             else:
@@ -85,8 +87,8 @@ class HaddockModule(BaseHaddockModule):
         # starting jobs
         capri_jobs = []
         cluster_info = []
-        self.log(f"running Capri Jobs with {self.params['ncores']} cores")
-        for core in range(self.params['ncores']):
+        self.log(f"running Capri Jobs with {ncores} cores")
+        for core in range(ncores):
             # init Capri
             capri_obj = CAPRI(
                 reference,
@@ -111,7 +113,7 @@ class HaddockModule(BaseHaddockModule):
                 )
             capri_jobs.append(job)
         # Running parallel Capri Jobs
-        capri_engine = Scheduler(capri_jobs, ncores=self.params['ncores'])
+        capri_engine = Scheduler(capri_jobs, ncores=ncores)
         capri_engine.run()
         # Check correct execution of parallel Capri Jobs
         capri_file_l = []
@@ -128,13 +130,21 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error("Several capri files were not generated:"
                                    f" {not_found}")
         # Post-processing : single structure
-        self._rearrange_output("capri_ss.tsv", path=capri_obj.path)
+        self._rearrange_output(
+            "capri_ss.tsv",
+            path=capri_obj.path,
+            ncores=ncores
+            )
         # Post-processing : clusters
         has_cluster_info = any(cluster_info)
         if not has_cluster_info:
             self.log("No cluster information")
         else:
-            self._rearrange_output("capri_clt.tsv", path=capri_obj.path)
+            self._rearrange_output(
+                "capri_clt.tsv",
+                path=capri_obj.path,
+                ncores=ncores
+                )
         
         # Sending models to the next step of the workflow
         self.output_models = models

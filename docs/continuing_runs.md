@@ -22,7 +22,7 @@ to rerun all successful steps.
 Let's imagine you execute a run with six steps (modules).
 
 ```
-haddock3  my-haddock3-config-file.cfg
+haddock3 my-haddock3-config-file.cfg
 ```
 
 If the run completes successfully, the run directory shows as follows:
@@ -38,12 +38,12 @@ data
 log
 ```
 
-You noticed you introduced the wrong values for the `4_flexref` module.
+Now, you noticed you introduced the wrong values for the `4_flexref` module.
 Therefore, you want to repeat the run only for `4_flexref` onwards without
 repeating the previous successful steps. For that, you should do the following:
 
 ```
-haddock3  my-haddock3-config-file.cfg --restart 4
+haddock3 my-haddock3-config-file.cfg --restart 4
 ```
 
 This operation will delete modules' folders `4_` onwards and repeat those steps
@@ -58,11 +58,13 @@ We will see here how to expand a previous run with additional modules.
 Run 1 completed successfully, but now we want to complement our run with a
 `mdref` step and perform a final CAPRI score evaluation. For that, add the
 parameters for the new modules to the end of the original configuration file.
-You keep the rest of the configuration file the same.
+You must keep the rest of the configuration file the same.
 
 Navigate back to the same folder you executed the previous runs and:
 
-``` haddock3 expanded-configuration-file.cfg --restart 6 ```
+```
+haddock3 expanded-configuration-file.cfg --restart 6
+```
 
 In this case, the `--restart` option takes the value `6` because we want to
 continue the run from step 6, the new `mdref` step.
@@ -94,7 +96,7 @@ data
 log
 ```
 
-As you can see, we have reused the first four modules - up to `3_seletop` and
+As you can see, we have reused the first four modules, up to `3_seletop`, and
 replaced the `4_flexref` and `5_caprieval` with a `4_mdref` module. You could
 execute as many modules as you wish after `4_mdref`.
 
@@ -105,10 +107,10 @@ original run. There is no need to rewrite the initial run if you wish to keep
 it. For that, copy the original run to a new folder:
 
 ```
-cp -r run1-test run2-test
+cp -r run1 run2
 ```
 
-In the configuration file, edit the `run_dir` parameter to `run2-test` so it
+In the configuration file, edit the `run_dir` parameter to `run2` so it
 matches with the newly created folder. Then, proceed by editing the
 configuration file as discussed in the previous examples. Finally,
 
@@ -124,8 +126,8 @@ folder.
 # Extend an unknown run
 
 HADDOCK3 allows you to extend a run without previous knowledge of the run
-configuration. For example, you have several runs for which you want to perform
-a CAPRI evaluation to the last step. How to do this?
+configuration. For example, you have several runs for which you **now** want to
+perform a CAPRI evaluation at the last step. How to do this?
 
 Create a new configuration file containing just the `caprieval` module, or
 whatever and many modules you desire. For example:
@@ -143,7 +145,8 @@ haddock3 caprieval.cfg --restart <previous-run-directory>
 ```
 
 In this case, the configuration file does not need to contain any information
-about the molecules used as input or the previous modules.
+about the molecules used as input or the previous modules. HADDOCK3 will just
+execute the new modules on top of the previous run.
 
 # Use a module as a seed for a new run
 
@@ -169,12 +172,14 @@ modules you want to run and execute:
 haddock3 new-config.cfg --restart <run_dir>
 ```
 
+where the `run_dir` is the new directory containing the seeding modules.
+
 # Final considerations
 
 When extending or continuing a run from a new configuration file, all the
 modules' folders and their content will be updated to the corresponding position
-and leading zeros. For example, if the new run takes as initial input from a run
-with more than 10 modules:
+and leading zeros. For example, the new takes steps 0 and 4 from a run with more
+than 10 modules (note the leading double digit numbers):
 
 ```
 00_topoaa/
@@ -182,8 +187,8 @@ with more than 10 modules:
 data/
 ```
 
-When you want to extend it with  `caprieval`, `emref`, `caprieval`, and
-`clustfcc`. The final output will be:
+If you extend this run with a series of `caprieval`, `emref`, `caprieval`, and
+`clustfcc`, the final output will be:
 
 ```
 0_topoaa/
@@ -196,4 +201,4 @@ When you want to extend it with  `caprieval`, `emref`, `caprieval`, and
 
 Where `0_topoaa` and `1_flexref` are the original folders renamed. The files
 within these folders were also edited to ensure paths compatibility and the
-consistency of the whole run.
+consistency of paths and the run as a whole.

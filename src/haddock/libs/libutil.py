@@ -86,11 +86,6 @@ def copy_files_to_dir(paths, directory):
         shutil.copy(path, directory)
 
 
-def zero_fill(number, digits=2):
-    """Make a number string zero filled to the left."""
-    return str(number).zfill(digits)
-
-
 def remove_folder(folder):
     """Remove a folder if it exists."""
     if folder.exists():
@@ -299,32 +294,6 @@ def get_number_from_path_stem(path):
     stem = Path(path).stem
     number = re.findall(r'\d+', stem)[-1]
     return int(number)
-
-
-def get_number_of_digits(num):
-    """
-    Get the number of digits of a number.
-
-    10 has two digits.
-    100 has three digits.
-    """
-    # also: return len(str(num)) :-)
-    return max(ceil(log10(num + 1)), 1)
-
-
-def get_zerofill_for_modules(modules):
-    """
-    Get a the prefix zerofill for modules.
-
-    If there are 5 modules, zerofill digits is 1.
-    If there are 10 modules, zerofill digits is 1 because counting
-    starts at 0 (for topoaa).
-    If there are 100 modules, zerofill digits is 2 because counting
-    starts at 0 (for topoaa).
-
-    This function is used in combination with `zero_fill`.
-    """
-    return get_number_of_digits(len(modules) - 1)
 
 
 def sort_numbered_paths(*paths):

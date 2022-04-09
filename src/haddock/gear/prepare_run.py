@@ -12,7 +12,7 @@ from functools import lru_cache, wraps
 from pathlib import Path
 
 from haddock import contact_us, haddock3_source_path, log
-from haddock.core.defaults import RUNDIR, max_molecules_allowed
+from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
@@ -30,7 +30,7 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.validations import v_rundir
+from haddock.gear.validations import v_maxmolecules, v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libutil import (
     extract_keys_recursive,
@@ -79,7 +79,7 @@ def _read_defaults(module_name):
     return read_from_yaml_config(pdef)
 
 
-def setup_run(workflow_path, restart_from=None):
+def setup_run(user_config, restart_from=None):
     """
     Set up HADDOCK3 run.
 
@@ -95,7 +95,7 @@ def setup_run(workflow_path, restart_from=None):
 
     Parameters
     ----------
-    workflow_path : str or pathlib.Path
+    user_config : str or pathlib.Path
         The path to the configuration file.
 
     erase_previous : bool
@@ -108,19 +108,74 @@ def setup_run(workflow_path, restart_from=None):
         A dictionary with the parameters for the haddock3 modules.
         A dictionary with the general run parameters.
     """
-    # read config
-    params = read_config(workflow_path)
+    # read user configuration
+    params = read_config(user_config)
+
+    # TODO: do I need to have the `params` here?
+    params, general_params, modules_params = basic_setup_operations(params)
 
     # Different values or types for the restart point will determine
     # the steps needed to configure the run.
     restart_point = evalute_restart(restart_from)
 
+    # setup operation performed when the run starts from scratch
+    if restart_point is None:
+
+        v_rundir_exists(general_params[RUNDIR])
+
+        check_mandatory_argments_are_present(general_params)
+
+        check_specific_validations(general_params)
+
+        # copy molecules parameter to topology module
+        copy_molecules_to_topology(modules_params, general_params["molecules"])
+
+        # create datadir
+        data_dir = create_data_dir(general_params[RUNDIR])
+        modules_params = copy_input_files_to_data_dir(data_dir, modules_params)
+
+        # populate topology molecules
+        populate_topology_molecule_params(modules_params["topoaa"])
+
+    elif isinstance(restart_point, int):
+        remove_folders_after_number(general_params[RUNDIR], restart_point)
+        data_dir = create_data_dir(general_params[RUNDIR])
+
+        modules_ = list(modules_params.keys())[restart_point:]
+        new_mp = copy_restraint_files_to_data_dir(data_dir, modules_params)
+
+    elif isinstance(restart_point, Path):
+        pass # do something
+
+    else:
+        assert False, "Code shouldn't arrive here."
+
+
+    populate_mol_parameters(modules_params) ################################# tendre que poner esto en otro lado tambien
+    # return the modules' parameters and general parameters separately
+    return new_mp, general_params
+
+
+def basic_setup_operations(params):
+    """
+    Perform basic setup operations comon to every run.
+
+    These operations are independent form the `--restart` option, and
+    should be performed always.
+
+    Parameters
+    ----------
+    params : dict
+        The dictionary from the user configuration file WITHOUT any post
+        processing.
+    """
     validate_module_names_are_not_misspelled(params)
 
     # add non-mandatory default parameters to the user configuration
-    params = recursive_dict_update(non_mandatory_general_parameters_defaults, params)
+    params = \
+        recursive_dict_update(non_mandatory_general_parameters_defaults, params)
 
-    # separate general from modules parameters
+    # separate general paramters from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
@@ -129,32 +184,7 @@ def setup_run(workflow_path, restart_from=None):
     validate_modules_params(modules_params)
     check_if_modules_are_installed(modules_params)
 
-    if restart_point is None:
-        check_mandatory_argments_are_present(params)
-        check_specific_validations(params)
-        # copy molecules parameter to topology module
-        copy_molecules_to_topology(params)
-        if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
-            raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
-        # create datadir
-        data_dir = create_data_dir(general_params[RUNDIR])
-        new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
-        # populate topology molecules
-        populate_topology_molecule_params(modules_params["topoaa"])
-
-    elif isinstance(restart_point, int):
-        clean_rundir_according_to_restart(params[RUNDIR], restart_from)
-
-    elif isinstance(restart_point, Path):
-        pass # do something
-
-    else:
-        assert False, "Code shouldn't arrive here."
-
-    populate_mol_parameters(modules_params)
-
-    # return the modules' parameters and general parameters separately
-    return new_mp, general_params
+    return params, general_params, modules_params
 
 
 def validate_params(params):
@@ -315,25 +345,49 @@ def create_data_dir(run_dir):
 
 
 @with_config_error
-def copy_molecules_to_topology(params):
+def copy_molecules_to_topology(params, molecules):
     """Copy molecules to mandatory topology module."""
-    params['topoaa']['molecules'] = list(map(Path, params['molecules']))
+    params['topoaa']['molecules'] = list(map(Path, molecules))
 
 
 def copy_input_files_to_data_dir(data_dir, modules_params):
-    """Copy files to data directory."""
+    """
+    Copy files to data directory.
+
+    """
     new_mp = deepcopy(modules_params)
+
     # this line must be synchronized with create_data_dir()
     rel_data_dir = data_dir.name
 
-    for i, molecule in enumerate(modules_params['topoaa']['molecules']):
-        end_path = Path(data_dir, '00_topoaa')
+
+    new_mp["topoaa"]["molecules"] = copy_molecules_to_data_dir(
+        modules_params["topoaa"]["molecules"],
+        "data",
+        "",
+        )
+
+
+def copy_molecules_to_data_dir(molecules, dirname="data", subdir="topoaa"):
+    """Copy molecules PDB files to the `data` directory."""
+    new_paths = []
+    #for i, molecule in enumerate(modules_params['topoaa']['molecules']):
+    for i, molecule in enumerate(molecules):
+
+        end_path = Path(dirname, subdir)
         end_path.mkdir(parents=True, exist_ok=True)
+
         name = Path(molecule).name
         check_if_path_exists(molecule)
-        shutil.copy(molecule, Path(end_path, name))
-        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
 
+        shutil.copy(molecule, Path(end_path, name))
+        #new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, subdir, name)
+        new_paths.append(Path(rel_data_dir, subdir, name))
+
+    return new_paths
+
+
+def copy_restraint_files_to_data_dir(modules_params):
     # topology always starts with 0
     for i, (module, params) in enumerate(modules_params.items(), start=0):
         end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
@@ -351,33 +405,6 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
                     new_mp[module][parameter] = _p
 
     return new_mp
-
-
-def clean_rundir_according_to_restart(run_dir, restart_from=None):
-    """
-    Clean run directory according to restart parameter.
-
-    Parameters
-    ----------
-    restart_from : None or int
-        The module on which to restart the run. Discards all modules
-        after this one (inclusive).
-    """
-    if restart_from is None:
-        # prepares the run folders
-        _p = Path(run_dir)
-        if _p.exists() and len(list(_p.iterdir())) > 0:
-            log.info(
-                f"The {RUNDIR!r} {str(_p)!r} exists and is not empty. "
-                "We can't work on it unless you provide the `--restart` "
-                "option. If you want to start a run from scratch, "
-                "indicate a new folder, or manually delete this one first, "
-                "or use `--restart 0`."
-                )
-            sys.exit(get_goodbye_help())
-
-    else:
-        remove_folders_after_number(run_dir, restart_from)
 
 
 def identify_modules(params):
@@ -432,6 +459,7 @@ def check_specific_validations(params):
     """Make specific validations."""
     # double check though this is confirmed already in the config reader
     v_rundir(params[RUNDIR])
+    v_maxmolecules(params["molecules"])
 
 
 def get_expandable_parameters(user_config, defaults, module_name, max_mols):

@@ -79,5 +79,6 @@ def test_zerofill_class(modules, exp_num, exp_folder):
     fresult = zf.fill("module", 5)
     assert fresult == exp_folder
 
+
 def test_zerofill_singleton():
     assert isinstance(zero_fill, _ZeroFill)

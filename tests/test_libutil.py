@@ -8,8 +8,6 @@ from haddock.libs.libutil import (
     extract_keys_recursive,
     file_exists,
     get_number_from_path_stem,
-    get_number_of_digits,
-    get_zerofill_for_modules,
     non_negative_int,
     recursive_dict_update,
     sort_numbered_paths,

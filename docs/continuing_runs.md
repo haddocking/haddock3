@@ -5,9 +5,13 @@ starting points for new runs using different configuration files. There are
 several ways users can continue or expand previous runs. The index below lists
 those possibilities:
 
-1. Restart a previous run from a given step 1. Extend the original run by
-extending the configuration file with additional modules 1. Take a specific step
-and continue the run onwards, giving a new configuration file
+1. Restart a previous run from a given step
+1. Expanding a previous run from a given step
+1. Editing and expanding a previous run from a given step
+1. Copy a run to a new folder
+1. Extend an unknown run
+1. Use a module as a seed for a new run
+1. Final considerations
 
 # Restart a previous run from a given step
 

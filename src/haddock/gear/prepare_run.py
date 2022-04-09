@@ -111,38 +111,47 @@ def setup_run(workflow_path, restart_from=None):
     # read config
     params = read_config(workflow_path)
 
-    check_mandatory_argments_are_present(params)
-    validate_module_names_are_not_mispelled(params)
-    check_specific_validations(params)
+    # Different values or types for the restart point will determine
+    # the steps needed to configure the run.
+    restart_point = evalute_restart(restart_from)
 
-    # update default non-mandatory parameters with user params
-    params = recursive_dict_update(
-        non_mandatory_general_parameters_defaults,
-        params)
+    validate_module_names_are_not_misspelled(params)
 
-    clean_rundir_according_to_restart(params[RUNDIR], restart_from)
-
-    # copy molecules parameter to topology module
-    copy_molecules_to_topology(params)
-    if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
-        raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
+    # add non-mandatory default parameters to the user configuration
+    params = recursive_dict_update(non_mandatory_general_parameters_defaults, params)
 
     # separate general from modules parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
-    # populate topology molecules
-    populate_topology_molecule_params(modules_params["topoaa"])
-    populate_mol_parameters(modules_params)
-
     # validations
     validate_modules_params(modules_params)
     check_if_modules_are_installed(modules_params)
 
-    # create datadir
-    data_dir = create_data_dir(general_params[RUNDIR])
-    new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
+    if restart_point is None:
+        check_mandatory_argments_are_present(params)
+        check_specific_validations(params)
+        # copy molecules parameter to topology module
+        copy_molecules_to_topology(params)
+        if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
+            raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
+        # create datadir
+        data_dir = create_data_dir(general_params[RUNDIR])
+        new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
+        # populate topology molecules
+        populate_topology_molecule_params(modules_params["topoaa"])
+
+    elif isinstance(restart_point, int):
+        clean_rundir_according_to_restart(params[RUNDIR], restart_from)
+
+    elif isinstance(restart_point, Path):
+        pass # do something
+
+    else:
+        assert False, "Code shouldn't arrive here."
+
+    populate_mol_parameters(modules_params)
 
     # return the modules' parameters and general parameters separately
     return new_mp, general_params
@@ -392,8 +401,18 @@ def inject_in_modules(modules_params, key, value):
         params[key] = value
 
 
-def validate_module_names_are_not_mispelled(params):
-    """Validate headers are not misspelled."""
+def validate_module_names_are_not_misspelled(params):
+    """
+    Validate modules' name are correctly spelled in the user config.
+
+    Inspects all config headers, that is, keys in the `params` dictionary
+    that point to modules (keys with dict values).
+
+    Parameters
+    ----------
+    params : dict
+        A dictionary resulting from reading the user configuration file.
+    """
     module_names = sorted(modules_category.keys())
     for param_name, value in params.items():
         if isinstance(value, dict):

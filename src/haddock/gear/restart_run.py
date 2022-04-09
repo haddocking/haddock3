@@ -2,6 +2,7 @@
 from argparse import ArgumentTypeError
 from functools import partial
 
+from haddock.core.defaults import modules_folder_prefix
 from haddock.libs.libutil import non_negative_int, remove_folder
 
 
@@ -53,7 +54,7 @@ def remove_folders_after_number(run_dir, num):
         representation.
     """
     num = _arg_non_neg_int(num)
-    previous = sorted(list(run_dir.resolve().glob('[0-9][0-9]*/')))
+    previous = sorted(list(run_dir.resolve().glob(modules_folder_prefix)))
     for folder in previous[num:]:
         remove_folder(folder)
     return

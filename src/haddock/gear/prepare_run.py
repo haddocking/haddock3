@@ -527,26 +527,46 @@ def populate_topology_molecule_params(topoaa):
 
 def populate_mol_parameters(modules_params):
     """
-    Populate modules parameters.
+    Populate modules subdictionaries with the needed molecule `mol_` parameters.
+
+    The `mol_` prefixed parameters is a subclass of the expandable parameters.
+
+    See `gear.expandable_parameters`.
+
+    Modules require these parameters to be repeated for the number of input
+    molecules.
+
+    This function adds `mol_` parameters to the user input parameters,
+    one per each `molecule`.
 
     Parameters
     ----------
     modules_params : dict
-        A dictionary containing the parameters for all modules.
+        A dictionary containing only modules' keys:subdictionaries
+        parameters. That is, without the general parameters.
 
     Returns
     -------
     None
         Alter the dictionary in place.
     """
+    # the starting number of the `mol_` parameters is 1 by CNS definition.
+    num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
     for module_name, _ in modules_params.items():
+
+        # read the modules default parameters
         defaults = _read_defaults(module_name)
 
+        # if there are no `mol_` parameters in the modules default values,
+        # the `mol_params` generator will be empty and the for-loop below
+        # won't run.
         mol_params = (p for p in list(defaults.keys()) if is_mol_parameter(p))
-        num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
 
         for param, i in it.product(mol_params, num_mols):
             param_name = remove_trail_idx(param)
+
+            # the `setdefault` grants that the value is only added if
+            # the parameter is not present.
             modules_params[module_name].setdefault(
                 f"{param_name}_{i}",
                 defaults[param],

@@ -396,8 +396,31 @@ def read_mol_parameters(
 
 
 def remove_trail_idx(param):
-    """Remove the trailing integer from a parameter."""
-    return "_".join(param.split("_")[:-1])
+    """
+    Remove the trailing integer from a parameter.
+
+    If trail is defined by an underscore "_".
+
+    Examples
+    --------
+    remove_trail_idx('some_parameter_1')
+    >>> 'some_parameter'
+
+    remove_trail_idx('some_parameter')
+    >>> 'some_parameter'
+
+    remove_trail_idx('parameter')
+    >>> 'parameter'
+
+    Parameters
+    ----------
+    param : str
+        A parameter name.
+    """
+    under_parts = param.split("_")
+    if under_parts[-1].isdigit():
+        return "_".join(param.split("_")[:-1])
+    return param
 
 
 def make_param_name_single_index(param_parts):

@@ -9,7 +9,7 @@ those possibilities:
 1. Expanding a previous run from a given step
 1. Editing and expanding a previous run from a given step
 1. Copy a run to a new folder
-1. Extend an unknown run
+1. Extend a run with a partial config
 1. Use a module as a seed for a new run
 1. Final considerations
 
@@ -123,10 +123,11 @@ you do not need to copy the whole folder when copying the original run. Instead,
 you can copy only the modules folders you wish to maintain plus the `data`
 folder.
 
-# Extend an unknown run
+# Extend a run with a partial config
 
 HADDOCK3 allows you to extend a run without previous knowledge of the run
-configuration. For example, you have several runs for which you **now** want to
+configuration and using just a partial configuration file.
+For example, you have several runs for which you **now** want to
 perform a CAPRI evaluation at the last step. How to do this?
 
 Create a new configuration file containing just the `caprieval` module, or

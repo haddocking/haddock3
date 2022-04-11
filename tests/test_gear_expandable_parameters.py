@@ -653,6 +653,7 @@ def test_read_mol_params(inp, default, expected):
         ("some_parameter_1", "some_parameter"),
         ("some_parameter_0", "some_parameter"),
         ("some_parameter_99", "some_parameter"),
+        ("some_parameter_0_2", "some_parameter_0"),
         ("parameter_99", "parameter"),
         ("parameter99", "parameter99"),
         ("some_parameter", "some_parameter"),

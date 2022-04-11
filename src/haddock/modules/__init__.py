@@ -5,7 +5,7 @@ from functools import partial
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
-from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.defaults import MODULE_IO_FILE, modules_folder_prefix
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
 from haddock.gear.yaml2cfg import read_from_yaml_config
@@ -226,8 +226,8 @@ class BaseHaddockModule(ABC):
 
     def previous_path(self):
         """Give the path from the previous calculation."""
-        # [0-9]* below is not a regex, is a bash wildkey
-        previous = sorted(list(self.path.resolve().parent.glob('[0-9]*/')))
+        previous = list(self.path.resolve().parent.glob(modules_folder_prefix))
+        previous.sort()
         try:
             return previous[self.order - 1]
         except IndexError:

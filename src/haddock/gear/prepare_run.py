@@ -32,12 +32,12 @@ from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_maxmolecules, v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.gear.zerofill import zero_fill
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
     remove_dict_keys,
     transform_to_list,
-    zero_fill,
     )
 from haddock.modules import (
     modules_category,
@@ -179,6 +179,7 @@ def basic_setup_operations(params):
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+    zero_fill.read(modules_params)
 
     # validations
     validate_modules_params(modules_params)
@@ -357,21 +358,21 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
     """
     new_mp = deepcopy(modules_params)
 
-    # this line must be synchronized with create_data_dir()
-    rel_data_dir = data_dir.name
-
-
     new_mp["topoaa"]["molecules"] = copy_molecules_to_data_dir(
         modules_params["topoaa"]["molecules"],
         "data",
         "",
         )
 
+    copy_restraint_files_to_data_dir(data_dir, modules_params, new_mp)
+
+    return new_mp
+
 
 def copy_molecules_to_data_dir(molecules, dirname="data", subdir="topoaa"):
     """Copy molecules PDB files to the `data` directory."""
+    rel_data_dir = data_dir.name
     new_paths = []
-    #for i, molecule in enumerate(modules_params['topoaa']['molecules']):
     for i, molecule in enumerate(molecules):
 
         end_path = Path(dirname, subdir)
@@ -387,10 +388,11 @@ def copy_molecules_to_data_dir(molecules, dirname="data", subdir="topoaa"):
     return new_paths
 
 
-def copy_restraint_files_to_data_dir(modules_params):
+def copy_restraint_files_to_data_dir(data_dir, modules_params, new_mp):
     # topology always starts with 0
+    rel_data_dir = data_dir.name
     for i, (module, params) in enumerate(modules_params.items(), start=0):
-        end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
+        end_path = Path(zero_fill.fill(get_module_name(module), i))
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
                 if value:
@@ -403,8 +405,7 @@ def copy_restraint_files_to_data_dir(modules_params):
                     shutil.copy(value, Path(pf, name))
                     _p = Path(rel_data_dir, end_path, name)
                     new_mp[module][parameter] = _p
-
-    return new_mp
+    return
 
 
 def identify_modules(params):

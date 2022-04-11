@@ -417,9 +417,9 @@ def remove_trail_idx(param):
     param : str
         A parameter name.
     """
-    under_parts = param.split("_")
-    if under_parts[-1].isdigit():
-        return "_".join(param.split("_")[:-1])
+    under_parts = param.rpartition("_")
+    if under_parts[2].isdigit():
+        return under_parts[0]
     return param
 
 

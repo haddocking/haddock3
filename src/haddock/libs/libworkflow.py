@@ -7,11 +7,10 @@ from time import time
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
+from haddock.gear.zerofill import zero_fill
 from haddock.libs.libutil import (
     convert_seconds_to_min_sec,
-    get_zerofill_for_modules,
     recursive_dict_update,
-    zero_fill,
     )
 from haddock.modules import (
     modules_category,
@@ -47,7 +46,6 @@ class Workflow:
 
         # Create the list of steps contained in this workflow
         self.steps = []
-        mod_zerofill = get_zerofill_for_modules(modules_parameters)
         _items = enumerate(modules_parameters.items())
         for num_stage, (stage_name, params) in _items:
             log.info(f"Reading instructions of [{stage_name}] step")
@@ -61,7 +59,6 @@ class Workflow:
                 _ = Step(
                     get_module_name(stage_name),
                     order=num_stage,
-                    digits=mod_zerofill,
                     **params_up,
                     )
                 self.steps.append(_)
@@ -78,15 +75,12 @@ class Step:
             self,
             module_name,
             order=None,
-            digits=2,
             **config_params,
             ):
         self.config = config_params
         self.module_name = module_name
         self.order = order
-
-        folder_number = zero_fill(self.order, digits=digits)
-        self.working_path = Path(folder_number + "_" + self.module_name)
+        self.working_path = Path(zero_fill.fill(self.module_name, self.order))
 
     def execute(self):
         """Execute simulation step."""

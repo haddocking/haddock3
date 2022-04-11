@@ -1,4 +1,5 @@
 """Calculate CAPRI metrics."""
+import os
 from pathlib import Path
 
 from haddock import log
@@ -44,12 +45,15 @@ class HaddockModule(BaseHaddockModule):
                 tmp_file = Path(path, keyword + "_" + str(core) + ".tsv")
                 with open(tmp_file) as infile:
                     if core == 0:
-                        out_file.write(infile.read().rstrip("\n"))
+                        content = infile.read().rstrip(os.linesep)
                     else:
                         kw = split_dict[keyword]
-                        out_file.write(infile.read().split(kw)[1].rstrip("\n"))
+                        content = infile.read().split(kw)[1].rstrip(os.linesep)
+                    out_file.write(content)
                 log.debug(f"File number {core} written")
                 tmp_file.unlink()
+            # adding linesep to output file
+            out_file.write(os.linesep)
         log.info("Completed reconstruction of caprieval files.")
         log.info(f"{output_fname} created.")
 

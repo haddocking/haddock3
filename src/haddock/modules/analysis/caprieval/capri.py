@@ -108,12 +108,6 @@ class CAPRI:
         if not self.numbering_dic:
             raise CAPRIError("Could not align reference and model")
 
-        # Load the models in the class
-        # log.info(f"adding chain from segid")
-        # for struct in model_list:
-        #     _ = self.add_chain_from_segid(struct.rel_path)
-        # log.info(f"adding chain from segid completed")
-
     def irmsd(self, cutoff=5.0):
         """Calculate the I-RMSD."""
         # Identify reference interface

@@ -92,9 +92,8 @@ class HaddockModule(BaseCNSModule):
             fh.write(f"structure\toriginal_name\tscore{linesep}")
             for pdb in self.output_models:
                 # retrieve the original name
-                original_name = io_table[pdb.file_name]
                 fh.write(
-                    f"{pdb.file_name}\t{original_name}\t{pdb.score}{linesep}"
+                    f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.score}{linesep}"
                     )
 
         self.export_output_models(faulty_tolerance=self.params["tolerance"])

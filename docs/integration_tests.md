@@ -88,3 +88,7 @@ Inside the `examples/` folder for your development branch, run:
 This will tell you if there are any differences in the CAPRI scores. If
 there are, likely something went wrong, unless you are developing code
 that specifically affects the CAPRI scores.
+
+**Note:** You can configure the relative paths between the two haddock
+installations in case you installed `haddock main` in a different
+path from the specified here.

@@ -58,6 +58,7 @@ stop imminently if any of the tests break. For help, see `python
 run_tests.py -h`.
 
 If you are on a Slurm supported system, you can use the `test.job` file.
+You might need to edit it to match the paths and environment names.
 
 ## 4. Running the tests on your branch
 

@@ -58,7 +58,7 @@ class HaddockModule(BaseCNSModule):
                 model, model_num, ".", "emscoring"
                 )
             # fill the input.pdb - output.pdb dictionary
-            io_table[expected_pdb.file_name] = model.file_name
+            expected_pdb.ori_name = model.file_name
 
             self.output_models.append(expected_pdb)
 

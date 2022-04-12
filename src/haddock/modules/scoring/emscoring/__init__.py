@@ -40,7 +40,6 @@ class HaddockModule(BaseCNSModule):
             self.finish_with_error(e)
 
         self.output_models = []
-        io_table = {}
         for model_num, model in enumerate(models_to_score, start=1):
             scoring_inp = prepare_cns_input(
                 model_num,
@@ -57,7 +56,7 @@ class HaddockModule(BaseCNSModule):
             expected_pdb = prepare_expected_pdb(
                 model, model_num, ".", "emscoring"
                 )
-            # fill the input.pdb - output.pdb dictionary
+            # fill the ori_name field of expected_pdb
             expected_pdb.ori_name = model.file_name
 
             self.output_models.append(expected_pdb)
@@ -91,7 +90,7 @@ class HaddockModule(BaseCNSModule):
         with open(output_fname, "w") as fh:
             fh.write(f"structure\toriginal_name\tscore{linesep}")
             for pdb in self.output_models:
-                # retrieve the original name
+                # with pdb.ori_name we keep track of the original pdb
                 fh.write(
                     f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.score}{linesep}"
                     )

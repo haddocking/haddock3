@@ -25,7 +25,7 @@ some-folder/
 ## 2. Install HADDOCK3 main branch in a separate folder and python environment
 
 ```bash
-git clone https://github.com/haddocking/haddock3 haddock3main
+git clone --recursive https://github.com/haddocking/haddock3 haddock3main
 cd haddock3main
 
 # rename the conda env name in requirements.yml file

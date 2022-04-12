@@ -40,6 +40,7 @@ class HaddockModule(BaseCNSModule):
             self.finish_with_error(e)
 
         self.output_models = []
+        io_table = {}
         for model_num, model in enumerate(models_to_score, start=1):
             scoring_inp = prepare_cns_input(
                 model_num,
@@ -56,6 +57,9 @@ class HaddockModule(BaseCNSModule):
             expected_pdb = prepare_expected_pdb(
                 model, model_num, ".", "emscoring"
                 )
+            # fill the input.pdb - output.pdb dictionary
+            io_table[expected_pdb.file_name] = model.file_name
+
             self.output_models.append(expected_pdb)
 
             job = CNSJob(scoring_inp, scoring_out, envvars=self.envvars)
@@ -87,10 +91,8 @@ class HaddockModule(BaseCNSModule):
         with open(output_fname, "w") as fh:
             fh.write(f"structure\toriginal_name\tscore{linesep}")
             for pdb in self.output_models:
-                # temporary solution to get the original name
-                #  here one .pdb = one .psf and the .psf is not changed by
-                #  the module so use its name as the original one
-                original_name = pdb.topology.file_name.replace('.psf', '.pdb')
+                # retrieve the original name
+                original_name = io_table[pdb.file_name]
                 fh.write(
                     f"{pdb.file_name}\t{original_name}\t{pdb.score}{linesep}"
                     )

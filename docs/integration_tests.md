@@ -1,9 +1,13 @@
 # Running integration tests manually
 
-Meanwhile we implemented automate integration tests, you can run them
-manually using our helper scripts.
+The integration tests ensure HADDOCK3 workflows work properly by
+performing short docking simulations on benchmark systems. With these
+tests, we evaluate if the final scoring values in the developing branch
+are equal to those obtained in the `main` branch.
 
-The integration tests ensure HADDOCK3 workflows are working properly.
+You can run the integration tests manually using our helper scripts and
+following the guidelines here.
+
 You should run the integration tests every time you propose a new pull
 request.
 
@@ -32,7 +36,9 @@ cd haddock3main
 sed -i 's/haddock3/haddock3main/g' requirements.yml
 ```
 
-Proceed installing the HADDOCK3 main as usual.
+Proceed installing the HADDOCK3 main following the installation
+instructions in the repository.
+
 This repository and environment will be the one you will use to run the
 test examples from the main branch.
 
@@ -73,7 +79,9 @@ Navigate to the `examples/` folder and execute the tests:
 python run_tests.py -b
 ```
 
-If you are on a Slurm supported system, you can use the `test.job` file.
+If you are on a Slurm supported system, you can use the `run-tests.job`
+file.  You might need to edit the file according to your system
+specifications and to update paths and environment names.
 
 ## 5. Comparing both runs
 
@@ -90,6 +98,6 @@ This will tell you if there are any differences in the CAPRI scores. If
 there are, likely something went wrong, unless you are developing code
 that specifically affects the CAPRI scores.
 
-**Note:** You can configure the relative paths between the two haddock
-installations in case you installed `haddock main` in a different
-path from the specified here.
+**Note:** Edit the `diff_capri.sh` script to configure the relative
+paths between the two haddock installations in case you installed
+`haddock main` in a different path from the specified here.

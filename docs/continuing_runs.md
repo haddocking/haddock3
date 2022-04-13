@@ -109,26 +109,35 @@ With this strategy, you can execute as many modules as desired after
 
 # Copy a run to a new folder
 
-Importantly to know, you can execute all previous examples on copies of the
-original run. There is no need to rewrite the initial run if you wish to keep
-it. For that, copy the original run to a new folder:
+You can execute all previous examples on copies of the original run.
+There is no need to rewrite the initial run if you wish to keep it. For
+that, copy the original run to a new folder:
 
 ```
 cp -r run1 run2
 ```
 
-In the configuration file, edit the `run_dir` parameter to `run2` so it
-matches with the newly created folder. Then, proceed by editing the
-configuration file as discussed in the previous examples. Finally,
+In the configuration file, edit the `run_dir` parameter to `run2` to
+match the newly created folder. `run1` and `run2` are arbitrary names.
+Then, proceed by editing the configuration file as discussed in the
+previous examples. Finally, run:
 
 ```
 haddock3 new-config-file-run2.cfg --restart N
 ```
 
-where `N` is the step you wish to start from, as explained previously. Notably,
-you do not need to copy the whole folder when copying the original run. Instead,
-you can copy only the modules folders you wish to maintain plus the `data`
-folder.
+where `N` is the step you wish to start from, as explained previously.
+
+Notably, you do not need to copy the whole folder when copying the
+original run. Instead, you can copy only the modules folders you wish to
+maintain plus the `data` folder. For example, if the original run has
+ten modules, but you wish to keep only the first three, you can copy
+only those first three modules to the new run folder.
+
+You can also copy the run to different systems because HADDOCK3 treats
+internal paths as relative paths. Therefore, modules can communicate
+with each other regardless of the absolute location of the run
+directory.
 
 # Extend a run with a partial config
 

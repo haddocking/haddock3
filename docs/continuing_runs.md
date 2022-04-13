@@ -6,9 +6,9 @@ several ways users can continue or expand previous runs. The index below
 lists those possibilities:
 
 1. Restart, editing, and extending a previous run from a given step
-1. Copy a run to a new folder
+1. Copy a run to a new folder, and continue from there
+    1. Use a single step as a starting point for a new run
 1. Extend a run with new modules
-1. Use a single step as a starting point for a new run
 1. Final considerations
 
 # Restart, editing, and extending a previous run from a given step
@@ -92,7 +92,7 @@ log
 As you can see, you can use `--restart` to edit and rerun modules, to
 add new modules, **or do both at the same time**.
 
-# Copy a run to a new folder
+# Copy a run to a new folder, and continue from there
 
 You can execute all previous examples on copies of the original run.
 There is no need to rewrite the initial run if you wish to keep it. For
@@ -102,8 +102,20 @@ that, copy the original run to a new folder:
 cp -r run1 run2
 ```
 
+You can also copy the run to different folders because HADDOCK3 treats
+internal paths as relative paths. Therefore, modules can communicate
+with each other regardless of the absolute location of the run
+directory. The same applies to the installation requirements. Provided
+the installation process was the same, you can copy HADDOCK3 run over
+different machines. 
+
 In the configuration file, edit the `run_dir` parameter to `run2` to
 match the newly created folder. `run1` and `run2` are arbitrary names.
+
+**Important:** The `run_dir` path must point to the new run directoy
+**relatively** from where you will run the configuration file.
+Otherwise, use an absolute path.
+
 Then, proceed by editing the configuration file as discussed in the
 previous examples. Finally, run:
 
@@ -114,15 +126,39 @@ haddock3 new-config-file-run2.cfg --restart N
 where `N` is the step you wish to start from, as explained previously.
 
 Notably, you do not need to copy the whole folder when copying the
-original run. Instead, you can copy only the modules folders you wish to
+original run. Instead, you can copy only the steps' folders you wish to
 maintain plus the `data` folder. For example, if the original run has
 ten modules, but you wish to keep only the first three, you can copy
 only those first three modules to the new run folder.
 
-You can also copy the run to different systems because HADDOCK3 treats
-internal paths as relative paths. Therefore, modules can communicate
-with each other regardless of the absolute location of the run
-directory.
+## Use a single step as a starting point for a new run
+
+Following the example above, you can copy a single step and use it as a
+starting point for a new run. For example, taking the result of an
+extensive rigid body sampling and exploring different refinement
+strategies separately.
+
+To use a single successful step (module) as a starting point for a new
+run, copy the `data`, the `topoaa`, and the desired step folder to a new
+run directory folder. The selected step does **not** need to be
+consecutive to the topology module. It can be any step.  You can also
+use the `topoaa` as the initial module. For example,
+
+```bash
+mkdir run2
+cp -r run/data run1/0_topoaa run1/4_flexref/ run2
+```
+
+At this point, you can start the new run by editing the original
+configuration file. You must keep the information for the modules you
+want to use as starting points for the new run and edit the `run_dir`
+parameter to match the new run directory name. Finally, execute:
+
+```
+haddock3 new-config.cfg --restart 2
+```
+
+If your starting step was the `topoaa` module, use `--restart 1`.
 
 # Extend a run with new modules
 
@@ -158,46 +194,6 @@ In this case, the configuration file does not need to contain any
 information about the molecules used as input or the previous modules.
 Instead, HADDOCK3 will execute the new modules following the run's last
 module.
-
-# Use a single step as a starting point for a new run
-
-Imagine you want to take a specific module of a successful run as the
-starting point of a new run. For example, taking the result of an
-extensive rigid body sampling and exploring different refinement
-strategies.
-
-To use a single successful step (module) as a starting point for a new
-run, copy the `data`, the `topoaa`, and the desired step folder to a new
-run directory folder. You can also use the `topoaa` as the initial
-module. For example,
-
-```bash
-mkdir run2
-cp -r run/data run1/0_topoaa run1/1_rigidbody run2
-```
-
-At this point, you can start the new run using both strategies we have
-detailed so far:
-
-1) by editing the original configuration file. You must keep the
-information for the modules you want to use as starting points for the
-new run and edit the `run_dir` parameter to match the new run directory
-name. Finally, execute:
-
-```
-haddock3 new-config.cfg --restart 2
-```
-
-If your starting step was the `topoaa` module, use `--restart 1`.
-
-2) Create a new configuration file containing only the parameters for
-the modules you want to run and execute:
-
-```
-haddock3 new-config.cfg --restart <run_dir>
-```
-
-Where the `run_dir` is the new run directory, `run2`.
 
 # Final considerations
 

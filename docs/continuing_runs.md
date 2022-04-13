@@ -38,9 +38,7 @@ data
 log
 ```
 
-Now, you noticed you introduced the wrong values for the `4_flexref` module.
-Therefore, you want to repeat the run only for `4_flexref` onwards without
-repeating the previous successful steps. For that, you should do the following:
+Now, imagine that later in your analysis, you notice that you used wrong parameters for the flexible refinement (`4_flexref`) stage, setting `randremoval=true` instead of `randremoval=false`. Therefore, you want to repeat the run only for `4_flexref` onwards without repeating the previous successful steps. For that, you should do the following:
 
 ```
 haddock3 my-haddock3-config-file.cfg --restart 4

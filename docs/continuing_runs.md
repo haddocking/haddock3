@@ -9,7 +9,7 @@ lists those possibilities:
 1. Expanding a previous run from a given step
 1. Editing and extending a previous run from a given step
 1. Copy a run to a new folder
-1. Extend a run with a partial config
+1. Extend a run with new modules
 1. Use a single step as a starting point for a new run
 1. Final considerations
 
@@ -139,31 +139,40 @@ internal paths as relative paths. Therefore, modules can communicate
 with each other regardless of the absolute location of the run
 directory.
 
-# Extend a run with a partial config
+# Extend a run with new modules
 
-HADDOCK3 allows you to extend a run without previous knowledge of the run
-configuration and using just a partial configuration file.
-For example, you have several runs for which you **now** want to
-perform a CAPRI evaluation at the last step. How to do this?
+On top of the previous examples using the  `--restart N` option, where
+`N` is an integer, and variations of the original configuration file,
+HADDOCK3 allows you to extend a run from a configuration file defining
+only the **new** modules.
 
-Create a new configuration file containing just the `caprieval` module, or
-whatever and many modules you desire. For example:
+For example, imagine you have several completed runs for which you
+**now** want to perform a CAPRI evaluation at the last step, or apply a
+new scoring or clustering module recently released or a different new
+minimization protocol.
+
+How can you execute new modules on top of successful runs without
+referring to their original configuration file?
+
+Create a new configuration file containing **only** the `caprieval`
+module, or whatever new and many modules you desire. For example:
 
 ```toml
 [caprieval]
 reference_fname = "reference-structure.pdb"
 ```
 
-Now, run the configuration file by giving the `--restart` flag the path of the
-previous run directory:
+Now, run the configuration file by giving the `--restart` flag the path
+of the previous run directory, instead of an integer `N`:
 
 ```
 haddock3 caprieval.cfg --restart <previous-run-directory>
 ```
 
-In this case, the configuration file does not need to contain any information
-about the molecules used as input or the previous modules. HADDOCK3 will just
-execute the new modules on top of the previous run.
+In this case, the configuration file does not need to contain any
+information about the molecules used as input or the previous modules.
+Instead, HADDOCK3 will execute the new modules following the run's last
+module.
 
 # Use a single step as a starting point for a new run
 

@@ -7,7 +7,7 @@ lists those possibilities:
 
 1. Restart a previous run from a given step
 1. Expanding a previous run from a given step
-1. Editing and expanding a previous run from a given step
+1. Editing and extending a previous run from a given step
 1. Copy a run to a new folder
 1. Extend a run with a partial config
 1. Use a module as a seed for a new run
@@ -67,22 +67,28 @@ haddock3 expanded-configuration-file.cfg --restart 6
 In this case, the `--restart` option takes the value `6` because we want to
 continue the run from step 6, the new `mdref` step.
 
-# Editing and expanding a previous run from a given step
+# Editing and extending a previous run from a given step
 
-Following the same rationale from the previous example, we can edit and expand a
-previous run. For that, edit the original configuration file by altering
-(add/edit/remove) the information for the new modules you want to execute. For
-example, delete steps `4_` onwards and perform a `mdref` only. You should delete
-the parameters for those modules in the original configuration file and replace
-them by the parameters for a `mdref` execution. In the newly edited
-configuration file, the`mdref` is now the `4_` module, so you should restart
-from four.
+Following the same rationale from the previous example, we can edit
+and/or extend a completed run using the `--restart` flag. This
+functionality is helpful to add simulations, scoring, clustering, or
+analysis not initially considered but that are now required on top of
+already finished runs.
+
+To extend or edit a run, you must edit the original configuration file
+(or a copy of it) by altering (add/edit/remove) the information for the
+original and new modules you want to execute. Taking the original
+example in this documentation page, delete steps `4_` onwards and
+replace them with a single `mdref` step. The `mdref` is now the `4_`
+module in the newly edited configuration file, so the `haddock3` command
+should have the `--restart` flag starting at `4`.  Remember, HADDOCK3's
+module order numbering is 0-indexed.
 
 ```
-haddock3 edit-config-file.cfg --restart 4
+haddock3 edited-config-file.cfg --restart 4
 ```
 
-This setup would result in:
+With this setup, once the run completes, the run directory will show as follows:
 
 ```
 0_topoaa/
@@ -94,9 +100,12 @@ data
 log
 ```
 
-As you can see, we have reused the first four modules, up to `3_seletop`, and
-replaced the `4_flexref` and `5_caprieval` with a `4_mdref` module. You could
-execute as many modules as you wish after `4_mdref`.
+As you can see, HADDOCK3 reuses the first four modules, from `0_topoaa`
+to `3_seletop`, and replaces the original `4_flexref` and `5_caprieval`
+with a new `4_mdref` module.
+
+With this strategy, you can execute as many modules as desired after
+`4_mdref`, simply add them to the configuration file.
 
 # Copy a run to a new folder
 

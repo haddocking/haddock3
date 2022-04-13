@@ -10,7 +10,7 @@ lists those possibilities:
 1. Editing and extending a previous run from a given step
 1. Copy a run to a new folder
 1. Extend a run with a partial config
-1. Use a module as a seed for a new run
+1. Use a single step as a starting point for a new run
 1. Final considerations
 
 # Restart a previous run from a given step
@@ -165,31 +165,45 @@ In this case, the configuration file does not need to contain any information
 about the molecules used as input or the previous modules. HADDOCK3 will just
 execute the new modules on top of the previous run.
 
-# Use a module as a seed for a new run
+# Use a single step as a starting point for a new run
 
-Imagine you want to take a specific module of a successful run as the starting
-point of a new run. Copy the `data`, the `topoaa`, and the desired module to a
-new folder. You can also use the `topoaa` as the initial module. At this point,
-you can start the new run using both strategies we have detailed so far:
+Imagine you want to take a specific module of a successful run as the
+starting point of a new run. For example, taking the result of an
+extensive rigid body sampling and exploring different refinement
+strategies.
 
-1) edit the original configuration file keeping only the information for the
-modules you used as seed and editing the `run_dir` parameter to the new folder,
-and execute:
+To use a single successful step (module) as a starting point for a new
+run, copy the `data`, the `topoaa`, and the desired step folder to a new
+run directory folder. You can also use the `topoaa` as the initial
+module. For example,
+
+```bash
+mkdir run2
+cp -r run/data run1/0_topoaa run1/1_rigidbody run2
+```
+
+At this point, you can start the new run using both strategies we have
+detailed so far:
+
+1) by editing the original configuration file. You must keep the
+information for the modules you want to use as starting points for the
+new run and edit the `run_dir` parameter to match the new run directory
+name. Finally, execute:
 
 ```
 haddock3 new-config.cfg --restart 2
 ```
 
-If your seed module is directly the `topoaa` module, use `--restart 1`.
+If your starting step was the `topoaa` module, use `--restart 1`.
 
-2) Create a new configuration file containing only the parameters for the
-modules you want to run and execute:
+2) Create a new configuration file containing only the parameters for
+the modules you want to run and execute:
 
 ```
 haddock3 new-config.cfg --restart <run_dir>
 ```
 
-where the `run_dir` is the new directory containing the seeding modules.
+Where the `run_dir` is the new run directory, `run2`.
 
 # Final considerations
 

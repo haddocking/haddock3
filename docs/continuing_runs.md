@@ -5,19 +5,17 @@ The modularity of HADDOCK3 allows users to take successful steps
 several ways users can continue or expand previous runs. The index below
 lists those possibilities:
 
-1. Restart a previous run from a given step
-1. Expanding a previous run from a given step
-1. Editing and extending a previous run from a given step
+1. Restart, editing, and extending a previous run from a given step
 1. Copy a run to a new folder
 1. Extend a run with new modules
 1. Use a single step as a starting point for a new run
 1. Final considerations
 
-# Restart a previous run from a given step
+# Restart, editing, and extending a previous run from a given step
 
-This option allows you to restart a run from a specific step. It is useful when
-you want to repeat part of the run or to continue a broken run without needing
-to rerun all successful steps.
+This option allows you to restart a run from a specific step. It is
+useful when you want to repeat part of the run or to continue a broken
+run without needing to rerun all successful steps.
 
 Let's imagine you execute a run with six steps (modules).
 
@@ -38,25 +36,35 @@ data
 log
 ```
 
-Now, imagine that later in your analysis, you notice that you used wrong parameters for the flexible refinement (`4_flexref`) stage, setting `randremoval=true` instead of `randremoval=false`. Therefore, you want to repeat the run only for `4_flexref` onwards without repeating the previous successful steps. For that, you should do the following:
+Now, imagine that later in your analysis, you notice that you used the
+wrong parameters for the flexible refinement (`4_flexref`) stage,
+setting `randremoval=true` instead of `randremoval=false`. Therefore,
+you want to repeat the run only for `4_flexref` onwards without
+repeating the previous successful steps. For that, edit the
+configuration file according to your new preferences, and run:
 
 ```
 haddock3 my-haddock3-config-file.cfg --restart 4
 ```
 
-This operation will delete modules' folders `4_` onwards and repeat those steps
-following the information in the configuration file. You must run the `haddock3`
-command from within the same directory as you did for the original run.
+This operation will delete modules' folders `4_` onwards and repeat
+those steps following the configurations in the (new) configuration
+file. You must run the `haddock3` command from within the same directory
+as you did for the original run.
 
-# Expanding a previous run from a given step
+As you can see, this option allows you to **restart** or **repeat** a
+run from a specific step using the **original** configuration file or to
+**modify** a run by updating the parameters for the steps you want to
+rerun.
 
-The `--restart` functionality explained above allows some exciting variations.
-We will see here how to expand a previous run with additional modules.
-
-Run 1 completed successfully, but now we want to complement our run with a
-`mdref` step and perform a final CAPRI score evaluation. For that, add the
-parameters for the new modules to the end of the original configuration file.
-You must keep the rest of the configuration file the same.
+Likewise, we can use the `--restart` functionality to **extend** a run
+with additional steps. For example, Imagine `run 1` completed
+successfully. Still, you now want to complement it with an `emref` step,
+perform a final CAPRI score evaluation, and finalize the run by
+clustering with FCC (`clustfcc` module). For that, add the parameters
+for the new modules to the end of the original configuration file. The
+original steps' order in the configuration file must be kept the same
+for HADDOCK3 to understand *the previous* with the *new* modules.
 
 Navigate back to the same folder you executed the previous runs and:
 
@@ -65,47 +73,24 @@ haddock3 expanded-configuration-file.cfg --restart 6
 ```
 
 In this case, the `--restart` option takes the value `6` because we want to
-continue the run from step 6, the new `mdref` step.
-
-# Editing and extending a previous run from a given step
-
-Following the same rationale from the previous example, we can edit
-and/or extend a completed run using the `--restart` flag. This
-functionality is helpful to add simulations, scoring, clustering, or
-analysis not initially considered but that are now required on top of
-already finished runs.
-
-To extend or edit a run, you must edit the original configuration file
-(or a copy of it) by altering (add/edit/remove) the information for the
-original and new modules you want to execute. Taking the original
-example in this documentation page, delete steps `4_` onwards and
-replace them with a single `mdref` step. The `mdref` is now the `4_`
-module in the newly edited configuration file, so the `haddock3` command
-should have the `--restart` flag starting at `4`.  Remember, HADDOCK3's
-module order numbering is 0-indexed.
-
-```
-haddock3 edited-config-file.cfg --restart 4
-```
-
-With this setup, once the run completes, the run directory will show as follows:
+continue the run from step 6, the new `emref` step. This would result in:
 
 ```
 0_topoaa/
 1_rigidbody/
 2_caprieval/
 3_seletop/
-4_mdref
+4_flexref/
+5_caprieval/
+6_emref/
+7_caprieval/
+8_clustfcc/
 data
 log
 ```
 
-As you can see, HADDOCK3 reuses the first four modules, from `0_topoaa`
-to `3_seletop`, and replaces the original `4_flexref` and `5_caprieval`
-with a new `4_mdref` module.
-
-With this strategy, you can execute as many modules as desired after
-`4_mdref`, simply add them to the configuration file.
+As you can see, you can use `--restart` to edit and rerun modules, to
+add new modules, **or do both at the same time**.
 
 # Copy a run to a new folder
 

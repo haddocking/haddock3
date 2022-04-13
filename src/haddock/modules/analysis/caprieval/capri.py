@@ -21,7 +21,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libpdb import split_by_chain
 
 
-RES_TO_BE_IGNORED = ["SHA"]
+RES_TO_BE_IGNORED = ["SHA", "WAT"]
 
 PROT_RES = [
     "ALA",
@@ -1107,7 +1107,7 @@ def dump_as_izone(fname, numbering_dic):
                     f"{os.linesep}"
                     )
                 fh.write(izone_str)
-    
+
 # # debug only
 # def write_coord_dic(output_name, coord_dic):
 #     """Add a dummy atom to a PDB file according to a list of coordinates."""

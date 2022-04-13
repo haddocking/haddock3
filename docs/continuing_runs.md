@@ -1,9 +1,9 @@
 # Continuing and editing runs
 
-The modularity of HADDOCK3 allows users to take parts of a run and use them as
-starting points for new runs using different configuration files. There are
-several ways users can continue or expand previous runs. The index below lists
-those possibilities:
+The modularity of HADDOCK3 allows users to take successful steps
+(modules) of a workflow as starting points for new runs. There are
+several ways users can continue or expand previous runs. The index below
+lists those possibilities:
 
 1. Restart a previous run from a given step
 1. Expanding a previous run from a given step

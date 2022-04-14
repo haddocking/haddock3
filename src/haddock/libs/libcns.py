@@ -357,4 +357,8 @@ def prepare_expected_pdb(model_obj, model_nb, path, identifier):
         pdb.topology = [p.topology for p in model_obj]
     else:
         pdb.topology = model_obj.topology
+
+    if model_obj.ori_name is not None:
+        pdb.ori_name = model_obj.ori_name
+
     return pdb

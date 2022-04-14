@@ -151,6 +151,8 @@ def main(
         # Main loop of execution
         workflow.run()
 
+        workflow.traceback()
+
     # Finish
     end = time()
     elapsed = convert_seconds_to_min_sec(end - start)

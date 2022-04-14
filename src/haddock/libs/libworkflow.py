@@ -7,7 +7,9 @@ from time import time
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
+from haddock.gear.traceback import Traceback
 from haddock.gear.zerofill import zero_fill
+from haddock.libs.libontology import ModuleIO
 from haddock.libs.libutil import (
     convert_seconds_to_min_sec,
     recursive_dict_update,
@@ -30,6 +32,18 @@ class WorkflowManager:
         """High level workflow composer."""
         for step in self.recipe.steps[self.start:]:
             step.execute()
+
+    def traceback(self):
+        """Produce a human-readable traceback of the PDBs."""
+        io_dic = {}
+        for step_number, step in enumerate(self.recipe.steps):
+            io = ModuleIO()
+            step_io_file = Path(step.working_path, 'io.json')
+            io.load(step_io_file)
+            io_dic[f'{step_number}_{step.module_name}'] = io
+
+        trace = Traceback(io_dic)
+        trace.dump(output_f='traceback.tsv')
 
 
 class Workflow:

@@ -77,6 +77,8 @@ class HaddockModule(BaseCNSModule):
                 # Create a model for the expected output
                 model = PDBFile(output_pdb_fname, path=self.path)
                 model.topology = [e.topology for e in combination]
+                model.ori_name = '+'.join([m.ori_name for m in combination])
+                model.ori_name += f'_{_i}'
                 self.output_models.append(model)
 
                 job = CNSJob(inp_file, log_fname, envvars=self.envvars)

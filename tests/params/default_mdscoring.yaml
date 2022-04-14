@@ -1,0 +1,447 @@
+#
+# Group scoring
+#
+w_air:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the distance restraint energy
+  short: Weight of the distance restraints energy in the scoring function
+  long: Weight of the distance restraints energy in the scoring function.
+    Note that this is different from the force constants used during the calculations.
+  group: 'scoring'
+  explevel: hidden
+w_bsa:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the buried surface area term
+  short: Weight of the buried surface area term in the scoring function
+  long: Weight of the buried surface area (BSA) term in the scoring function.
+    Note that the BSA is only used for scoring.
+  group: 'scoring'
+  explevel: expert
+w_cdih:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the dihedral angle restraint energy
+  short: Weight of the dihedral angle restraints energy in the scoring function
+  long: Weight of the dihedral angle restraints energy in the scoring function.
+    Note that this is different from the force constant used during the calculations.
+  group: 'scoring'
+  explevel: expert
+w_dani:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the relaxation anisotropy (DANI) restraint energy
+  short: Weight of the relaxation anisotropy (DANI) restraint energy
+  long: Weight of the relaxation anisotropy (DANI) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_deint:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the interaction energy term
+  short: Weight of the interaction energy term
+  long: Weight of the interaction energy term calculated as the difference in total energy of the complex and of the separate components
+  group: 'scoring'
+  explevel: hidden
+w_desolv:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the desolvation energy term
+  short: Weight of the desolvation energy term in the scoring function
+  long: Weight of the desolvation energy term in the scoring function.
+    Note that the desolvation energy is only used for scoring.
+  group: 'scoring'
+  explevel: expert
+w_elec:
+  default: 0.2
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the intermolecular electrostatic energy
+  short: Weight of the intermolecular electrostatic energy in the scoring function
+  long: Weight of the intermolecular electrostatic energy in the scoring function.
+    Note that this does not affect the electostatic energy during the EM minimization.
+  group: 'scoring'
+  explevel: expert
+w_lcc:
+  default: -10000.0
+  type: float
+  min: -9999
+  max: 0
+  precision: 3
+  title: Weight of the EM local correlation coefficient
+  short: Weight of the EM local correlation coefficient
+  long: Weight of the EM local correlation coefficient
+  group: 'scoring'
+  explevel: hidden
+w_rg:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the radius of gyration restraint energy
+  short: Weight of the radius of gyration restraint energy
+  long: Weight of the radius of gyration restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_sani:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (SANI) restraint energy
+  short: Weight of the residual dipolar coupling (SANI) restraint energy
+  long: Weight of the residual dipolar coupling (SANI) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_sym:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the symmetry restraint energy
+  short: Weight of the symmetry restraints energy in the scoring function
+  long: Weight of the symmetry restraints energy in the scoring function.
+    Note that this is different from the force constant used during the calculations.
+  group: 'scoring'
+  explevel: hidden
+w_vdw:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the intermolecular van der Waals energy
+  short: Weight of the intermolecular van der Waals energy in the scoring function
+  long: Weight of the intermolecular van der Waals energy in the scoring function.
+    Note that this does not affect the van der Waals energy during the EM minimization.
+  group: 'scoring'
+  explevel: expert
+w_vean:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (VEAN) restraint energy
+  short: Weight of the residual dipolar coupling (VEAN) restraint energy
+  long: Weight of the residual dipolar coupling (VEAN) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_xpcs:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the pseudo contact shifts (XPCS) restraint energy
+  short: Weight of the pseudo contact shifts (XPCS) restraint energy
+  long: Weight of the pseudo contact shifts (XPCS) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_xrdc:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (XRDC) restraint energy
+  short: Weight of the residual dipolar coupling (XRDC) restraint energy
+  long: Weight of the residual dipolar coupling (XRDC) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_zres:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the Z-restraining potential energy
+  short: Weight of the Z-restraining potential energy
+  long: Weight of the Z-restraining potential energy
+  group: 'scoring'
+  explevel: hidden
+#
+# Group distance restraints
+#
+contactairs:
+  default: false
+  type: boolean
+  title: Contact restraints
+  short: Contact restraints between molecules
+  long: Contact restraints between molecules. These are defined as ambiguous distance restraint
+    between each residue of a molecule and all residues of the other molecules with 5A from that residue.
+    This can be used to restraint the contacts between the interfaces. Note that this can generate a large number of ambiguous restraints
+    and slow down the computations
+  group: 'distance restraints'
+  explevel: expert
+kcont:
+  default: 1.0
+  type: float
+  min: 0
+  max: 1000
+  precision: 1
+  title: Contact restraints force constant
+  short: Force constant applied to the contact restraints.
+  long: Force constant applied to the contact restraints.
+  group: 'distance restraints'
+  explevel: expert
+#
+# Group dihedral restraints
+#
+ssdihed:
+  default: none
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - none
+    - all
+    - alpha
+    - alphabeta
+  title: Define automatically backbone dihedral angle restraints
+  short: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.
+  long: This option allows to utomatically defined backbone dihedral angle restraints for the selected regions.
+    The restraints will be defined for the phi and psi backbone dihedral angles of amino acids, with the target value taken from
+    the measured angle in the input structure, and the error bound defined by the error_dih parameter.
+    Those restraints can be applied to the entire structure (all), the alpha/beta secondary structure elements (alphabeta) or
+    only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations.
+  group: 'dihedral restraints'
+  explevel: easy
+error_dih:
+  default: 10
+  type: integer
+  min: 0
+  max: 1000
+  title: Force constant for backbone dihedral angle restraints
+  short: Force constant for backbone dihedral angle restraints (ssdihed option)
+  long: Force constant for backbone dihedral angle restraints (ssdihed option)
+  group: 'dihedral restraints'
+  explevel: easy
+#
+# Group other restraints
+#
+dnarest_on:
+  default: false
+  type: boolean
+  title: Restrain the DNA conformation
+  short: Automatically creates restraints to maintain the conformation of DNA/RNA
+  long: "This option allows to restraint the conformation of nucleic acids based on the values from the input structures.
+    The following restraints will be automatically defined:
+    - single base planarity
+    - sugar pucker
+    - phosphate backbone diherdral angle restraints
+    - Watson-Crick base pairing"
+  group: 'other restraints'
+  explevel: easy
+#
+# Group force field
+#
+ligand_param_fname:
+  default: ''
+  type: file
+  title: Custom ligand parameter file
+  short: Ligand parameter file in CNS format
+  long: Ligand parameter file in CNS format containing all force field parameters 
+    (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: expert
+ligand_top_fname:
+  default: ''
+  type: file
+  title: Custom ligand topology file
+  short: Ligand topology file in CNS format
+  long: Ligand topology file in CNS format containing the ligand topologies 
+    (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: expert
+elecflag:
+  default: true
+  type: boolean
+  title: Include electrostatics energy
+  short: Include electrostatics energy during the calculations.
+  long: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.
+  group: 'force field'
+  explevel: easy
+dielec:
+  default: cdie
+  type: string
+  minchars: 0
+  maxchars: 4
+  choices:
+    - cdie
+    - rdie
+  title: Constant (cdie) or distance-dependent dielectric (rdie) constant.
+  short: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+  long: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+    A distance dependent dielectric constant will effectively scale down the electrostatic energy 
+    by having a 1/r**2 dependency instead of 1/r
+  group: 'force field'
+  explevel: expert
+epsilon:
+  default: 1.0
+  type: float
+  min: 1
+  max: 78
+  precision: 1
+  title: Dielectric constant
+  short: Dielectric constant for the electrostatic Coulomb energy term.
+  long: Dielectric constant for the electrostatic Coulomb energy term.
+  group: 'force field'
+  explevel: expert
+dihedflag:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: 'force field'
+  explevel: expert
+#
+# Group sampling
+#
+individualize:
+  default: true
+  type: boolean
+  title: Individualise models
+  short: Treat each model in the PDB ensemble as a separate entity.
+  long: Treat each model in the PDB ensemble as a separate entity. This means that for each a separate topology file will be generated. The models in the ensemble can thus correspond to different molecules.
+  group: 'sampling'
+  explevel: expert
+solvent:
+  default: water
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - water
+    - dmso
+  title: Solvent
+  short: Solvent to use during the short MD refinement
+  long: Solvent to use during the short MD refinement. Water and DMSO are supported.
+    A solvent shelll is generated by shifting pre-equilibrated boxes around the complex.
+    For water an 8A water shell is generated and for DMSO a 12.5A shell.
+    For DMSO, 
+  group: ''
+  explevel: easy
+nemsteps:
+  default: 200
+  type: integer
+  min: 1
+  max: 10000
+  title: Number of EM steps
+  short: Number of energy minimisation steps to perform.
+  long: Number of energy minimisation steps to perform in the various EM stages of this refinement protocol.
+    Note that the effective number might be smaller if the minimisation converges earlier.
+  group: 'sampling'
+  explevel: expert
+timestep:
+  default: 0.002
+  type: float
+  min: 0.0005
+  max: 0.004
+  precision: 4
+  title: MD integrating time step
+  short: Integration time step for the molecular dynamics.
+  long: Integration time step for the molecular dynamics.
+  group: 'sampling'
+  explevel: guru
+waterheatsteps:
+  default: 100
+  type: integer
+  min: 0
+  max: 10000
+  title: Number of MD steps for the heating
+  short: Number of MD steps for the heating phase.
+  long: Number of MD steps for the heating phase. The heating consists of three successive
+    short molecular dynamics simluations at 100, 200 and 300 Kelvin. 
+  group: 'sampling'
+  explevel: expert
+watersteps:
+  default: 1250
+  type: integer
+  min: 0
+  max: 100000
+  title: Number of MD steps at 300K.
+  short: Number of MD steps for 300K simulation.
+  long: Number of MD steps for 300K simulation. This is the sampling state of the refinement.
+  group: 'sampling'
+  explevel: expert
+watercoolsteps:
+  default: 500
+  type: integer
+  min: 0
+  max: 10000
+  title: Number of MD steps for the cooling
+  short: Number of MD steps for the cooling phase.
+  long: Number of MD steps for the cooling phase. The cooling consists of three successive
+    short molecular dynamics simluations at 300, 200 and 100 Kelvin. 
+  group: 'sampling'
+  explevel: expert
+iniseed:
+  default: 917
+  type: integer
+  min: 0
+  max: 9999999999999999
+  title: Random seed
+  short: Random seed used in CNS to initialize the random seed function
+  long: Random seed used in CNS to initialize the random seed function
+  group: 'sampling'
+  explevel: guru
+keepwater:
+  default: false
+  type: boolean
+  title: Write water molecules to output file
+  short: Write water molecules if present to the output file.
+  long: Write water molecules if present to the output file.
+  group: 'sampling'
+  explevel: guru
+tolerance:
+  default: 0
+  type: integer
+  min: 0
+  max: 99
+  precision: 3
+  title: Failure tolerance percentage
+  short: Percentage of allowed failures for a module to successfully complete
+  long: Percentage of allowed failures for a module to successfully complete
+  group: 'module'
+  explevel: expert
+log_level:
+  default: quiet
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - verbose
+    - normal
+    - quiet
+  title: Log level verbosity for CNS
+  short: Set the log level verbosity for CNS
+  long: CNS, the computational engine used by HADDOCK can generate a lot of output
+    messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
+  group: module
+  explevel: guru

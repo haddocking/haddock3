@@ -104,8 +104,8 @@ class CAPRI:
         reference = str(reference)
         model = model_list[0].rel_path
         align_func = get_align(aln_method, **params)
-        self.numbering_dic = align_func(reference, model, path)
-        if not self.numbering_dic:
+        self.model2ref_numbering = align_func(reference, model, path)
+        if not self.model2ref_numbering:
             raise CAPRIError("Could not align reference and model")
 
     def irmsd(self, cutoff=5.0):
@@ -724,18 +724,16 @@ class CAPRI:
                     coords = np.asarray([x, y, z])
 
                     if match:
+                        # This will match the number of the MODEL with the
+                        #  number of the REFERENCE
                         try:
-                            resnum = self.numbering_dic[chain][resnum]
+                            resnum = self.model2ref_numbering[chain][resnum]
                         except KeyError:
-                            # this residue is not matched, and so it should
-                            #  not be considered
-                            # self.log(
-                            #     f"WARNING: {chain}.{resnum}.{atom_name}"
-                            #     " was not matched!"
-                            #     )
+                            # this residue is not matched, it exists in
+                            #  the MODEL but not in the REFERENCE so it
+                            #  should not be considered
                             continue
 
-                    # identifier = f"{chain}.{resnum}.{atom_name}"
                     identifier = (chain, resnum, atom_name)
 
                     if atom_name not in self.atoms[resname]:
@@ -1009,73 +1007,86 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
 
 def align_seq(reference, model, output_path):
     """Sequence align and get the numbering relationship."""
-    seqdic_a = pdb2fastadic(reference)
-    seqdic_b = pdb2fastadic(model)
+    seqdic_ref = pdb2fastadic(reference)
+    seqdic_model = pdb2fastadic(model)
 
-    if seqdic_a.keys() != seqdic_b.keys():
+    if seqdic_ref.keys() != seqdic_model.keys():
         # TODO: Implement chain-matching here
         return False
 
     align_dic = {}
-    for a, b in zip(seqdic_a, seqdic_b):
+    for ref_chain, model_chain in zip(seqdic_ref, seqdic_model):
 
-        align_dic[a] = {}
+        assert ref_chain == model_chain
 
-        seq_a = Seq("".join(seqdic_a[a].values()))
-        seq_b = Seq("".join(seqdic_b[b].values()))
+        align_dic[ref_chain] = {}
+
+        seq_ref = Seq("".join(seqdic_ref[ref_chain].values()))
+        seq_model = Seq("".join(seqdic_model[model_chain].values()))
 
         aligner = Align.PairwiseAligner()
         aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
-        alns = aligner.align(seq_a, seq_b)
+        alns = aligner.align(seq_ref, seq_model)
         top_aln = alns[0]
 
-        aln_fname = Path(output_path, f"blosum62_{a}.aln")
+        aln_fname = Path(output_path, f"blosum62_{ref_chain}.aln")
         log.debug(f"Writing alignment to {aln_fname.name}")
         with open(aln_fname, "w") as fh:
             fh.write(str(top_aln))
-        aligned_seg_a, aligned_seg_b = top_aln.aligned
+        aligned_ref_segment, aligned_model_segment = top_aln.aligned
 
         # this should always be true
-        assert len(aligned_seg_a) == len(aligned_seg_b)
+        assert len(aligned_ref_segment) == len(aligned_model_segment)
 
         identity = (
-            str(top_aln).count("|") / float(min(len(seq_a), len(seq_b)))
+            str(top_aln).count("|") / float(min(len(seq_ref), len(seq_model)))
             ) * 100
 
         if not any(e for e in top_aln.aligned):
             # No alignment!
             log.warning(
-                f"No alignment for chain {a} is it protein/dna? "
+                f"No alignment for chain {ref_chain} is it protein/dna? "
                 "Matching sequentially"
                 )
-            if all("X" in s for s in seq_a) and all("X" in s for s in seq_b):
+            if all(
+                    "X" in s for s in seq_ref) and all(
+                    "X" in s for s in seq_model):
                 # this sequence contains only ligands, do it manually
-                if len(seq_a) != len(seq_b):
+                if len(seq_ref) != len(seq_model):
                     # we cannot handle this
-                    raise f"Cannot align chain {b}"
-                for res_a, res_b in zip(seqdic_a[a], seqdic_b[b]):
-                    align_dic[a].update({res_a: res_b})
+                    raise f"Cannot align chain {model_chain}"
+                for ref_res, model_res in zip(
+                        seqdic_ref[ref_chain],
+                        seqdic_model[model_chain]):
+
+                    align_dic[ref_chain].update({model_res: ref_res})
         else:
             if identity <= 40.0:
                 # Identity is very low
                 log.warning(
-                    f"Sequence identity of chain {a} is {identity:.2f}%,"
-                    " please check the results carefully"
-                    )
+                    f"Sequence identity of chain {ref_chain} is "
+                    f"{identity:.2f}%, please check the results carefully")
                 log.warning(
                     "Please use alignment_method = \"structure\" instead")
             else:
-                log.info(f"Sequence identity of chain {a} is {identity:.2f}%")
-            for seg_a, seg_b in zip(aligned_seg_a, aligned_seg_b):
-                start_a, end_a = seg_a
-                start_b, end_b = seg_b
+                log.info(
+                    f"Sequence identity of chain {ref_chain} is "
+                    f"{identity:.2f}%")
+            for ref_segment, model_segment in zip(
+                    aligned_ref_segment, aligned_model_segment):
 
-                reslist_a = list(seqdic_a[a].keys())[start_a:end_a]
-                reslist_b = list(seqdic_b[b].keys())[start_b:end_b]
+                start_ref_segment, end_ref_segment = ref_segment
+                start_model_segment, end_model_segment = model_segment
 
-                align_dic[a].update(
-                    dict((i, j) for i, j in zip(reslist_a, reslist_b))
-                    )
+                reslist_ref = list(seqdic_ref[ref_chain].keys())[
+                    start_ref_segment:end_ref_segment]
+
+                reslist_model = list(seqdic_model[model_chain].keys())[
+                    start_model_segment:end_model_segment]
+
+                for _ref_res, _model_res in zip(reslist_ref, reslist_model):
+                    align_dic[ref_chain].update({_model_res: _ref_res})
+
     izone_fname = Path(output_path, "blosum62.izone")
     log.debug(f"Saving .izone to {izone_fname.name}")
     dump_as_izone(izone_fname, align_dic)

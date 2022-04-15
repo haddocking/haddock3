@@ -1,5 +1,7 @@
 """
-Compare CAPRI tables in two example/ folders.
+Compare CAPRI tables in two `example/` folders.
+
+For each test case, prints errors if they are found.
 
 For more information read 'docs/integration_tests.md'.
 
@@ -78,16 +80,30 @@ def load_args():
     return ap.parse_args()
 
 
+def print_path_list(pathl):
+    """Make printy print for list of paths."""
+    _ = (str(Path(*p.parts[-2:])) for p in pathl)
+    return "    - " + f"{os.linesep}    - ".join(_)
+
+
+def print_list(llist):
+    """Make nice list."""
+    return ", ".join(llist)
+
+
 def compare_capris(dev_run_dir, ref_run_dir, run_name):
     """Compare CAPRI files in run directory."""
+    found_errors = False
     dev_capri_folders = sorted(dev_run_dir.glob("*_caprieval"))
     ref_capri_folders = sorted(ref_run_dir.glob("*_caprieval"))
 
-    if dev_capri_folders != ref_capri_folders:
+    if [p.name for p in dev_capri_folders] \
+            != [p.name for p in ref_capri_folders]:
         msg = (
+            "ERROR FOUND: "
             f"caprieval folders differ for {run_name}:{os.linesep}"
-            f"development: {dev_capri_folders}{os.linesep}"
-            f"reference: {ref_capri_folders}{os.linesep}"
+            f"    development:{os.linesep}{print_path_list(dev_capri_folders)}{os.linesep}"  # noqa: E501
+            f"    reference:{os.linesep}{print_path_list(ref_capri_folders)}{os.linesep}"  # noqa: E501
             )
 
         printf(msg)
@@ -97,12 +113,14 @@ def compare_capris(dev_run_dir, ref_run_dir, run_name):
         dev_capri_files = sorted(dcp.glob("*.tsv"))
         ref_capri_files = sorted(rcp.glob("*.tsv"))
 
-        if dev_capri_files != ref_capri_files:
+        if [p.name for p in dev_capri_files] \
+                != [p.name for p in ref_capri_files]:
             msg = (
+                "ERROR FOUND: "
                 f"caprieval files differ for {run_name} "
                 f"folder {dcp.name}:{os.linesep}"
-                f"development: {dev_capri_files}{os.linesep}"
-                f"reference: {ref_capri_files}{os.linesep}"
+                f"    development:{os.linesep}{print_path_list(dev_capri_files)}{os.linesep}"  # noqa: E501
+                f"    reference:{os.linesep}{print_path_list(ref_capri_files)}{os.linesep}"  # noqa: E501
                 )
 
             printf(msg)
@@ -110,17 +128,21 @@ def compare_capris(dev_run_dir, ref_run_dir, run_name):
 
         for dcf, rcf in zip(dev_capri_files, ref_capri_files):
 
-            with open(dcf) as fin:
-                devel_tsv = csv.reader(fin, delimiter="\t")
+            with (open(dcf) as fin1, open(rcf) as fin2):
+                devel_tsv = csv.reader(fin1, delimiter="\t")
+                ref_tsv = csv.reader(fin2, delimiter="\t")
 
-            with open(rcf) as fin:
-                ref_tsv = csv.reader(fin, delimiter="\t")
+                devel_table = read_tsv(devel_tsv)
+                ref_table = read_tsv(ref_tsv)
 
-            devel_table = read_tsv(devel_tsv)
-            ref_table = read_tsv(ref_tsv)
+                error = compare_tables(devel_table, ref_table)
+                if error[0]:
+                    printf(f"ERROR FOUND comparing: {str(Path(*dcf.parts[-2:]))}")  # noqa: E501
+                    found_errors = True
+                print_error[error[0]](*error[1:])
 
-            error = compare_tables(devel_table, ref_table)
-            print_error[error[0]](error[1:])
+    if not found_errors:
+        printf("No errors found - OKAY!")
 
 
 def read_tsv(tsv):
@@ -135,7 +157,7 @@ def read_tsv(tsv):
 def try_float(v):
     """Try converting string to float."""
     try:
-        return float(v)
+        return round(float(v), 3)
     except ValueError:
         return v
 
@@ -152,7 +174,10 @@ def compare_tables(t1, t2):
             return (2, k, t1[k], t2[k])
 
     # compare value by value, per row
-    headers = list(t1["model"].values())
+    try:
+        headers = t1["model"]
+    except KeyError:
+        headers = t1["cluster_rank"]
     key_values = list(t1.keys())[1:]
     for k in key_values:
         for h, v1, v2 in zip(headers, t1[k], t2[k]):
@@ -160,7 +185,7 @@ def compare_tables(t1, t2):
                 if v1 != v2:
                     return (3, k, h, v1, v2)
             elif isinstance(v1, float):
-                if not isclose(v1, v2, abs_tol=0.001):
+                if not isclose(v1, v2, abs_tol=0.0011):
                     return (3, k, h, v1, v2)
 
     return (0, )
@@ -169,9 +194,9 @@ def compare_tables(t1, t2):
 def error_1(l1, l2):
     """Print error message for row names."""
     msg = (
-        "Keys in both capri files differ:{os.linesep}"
-        f"Development: {l1}{os.linesep}"
-        f"Reference: {l2}{os.linesep}"
+        f"Keys in both capri files differ:{os.linesep}"
+        f"Development: {print_list(l1)}{os.linesep}"
+        f"Reference: {print_list(l2)}{os.linesep}"
         )
     printf(msg, flush=True)
 
@@ -179,7 +204,7 @@ def error_1(l1, l2):
 def error_2(k, l1, l2):
     """Print error message for different number of values."""
     msg = (
-        f"The number of values for {k} differ:{os.linesep}"
+        f"The number of values for {k!r} differ:{os.linesep}"
         f"Development: {len(l1)}{os.linesep}"
         f"Reference: {len(l2)}{os.linesep}"
         )
@@ -189,7 +214,7 @@ def error_2(k, l1, l2):
 def error_3(k, h, v1, v2):
     """Print error message for different values."""
     msg = (
-        f"These values differ for {h} in model {k}:{os.linesep}"
+        f"These values differ for {h!r} in model {k!r}:{os.linesep}"
         f"Development: {v1}{os.linesep}"
         f"Reference: {v2}{os.linesep}"
         )
@@ -213,7 +238,9 @@ def main(examples, devel, reference):
     """Run all the examples."""
     for folder, file_ in examples:
 
-        run_name = str(Path(folder, file_))
+        params = read_config(Path(devel, folder, file_))
+        run_dir = params["run_dir"]
+        run_name = str(Path(folder, run_dir))
 
         print(  # noqa: T001
             os.linesep,
@@ -222,9 +249,8 @@ def main(examples, devel, reference):
             flush=True,
             )  # noqa: T001
 
-        params = read_config(Path(devel, folder, file_))
-        dev_run_dir = Path(devel, folder, params["run_dir"])
-        ref_run_dir = Path(reference, folder, params["run_dir"])
+        dev_run_dir = Path(devel, folder, run_dir)
+        ref_run_dir = Path(reference, folder, run_dir)
 
         compare_capris(dev_run_dir, ref_run_dir, run_name)
 

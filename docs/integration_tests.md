@@ -8,7 +8,13 @@ branch are equal to those obtained in the `main` branch.
 You can run the integration tests manually using our helper scripts and
 following the guidelines here.
 
-For a pull request to be accepted, it must pass these integration tests. So we kindly ask you to run them before submitting a pull request. We are currently working on incorporating these tests into our automatic CI pipelines.
+For a pull request to be accepted, it must pass these integration tests. So we
+kindly ask you to run them before submitting a pull request. We are currently
+working on incorporating these tests into our automatic CI pipelines.
+
+Running the integration tests for a single branch takes about 1 hour using 8 CPU
+cores in a AMD EPYC 7451 24-Core Processor. In case you do not have the computer
+power to run these tests, ask us and we will run them for you.
 
 **How to correctly set up and run the integration tests?**
 
@@ -37,11 +43,13 @@ instructions in the repository.
 This repository and environment will be the ones you will use to run the
 test examples from the *main* branch.
 
-Once installed, you don't need to install this "main" repository again. You can keep using it to test all your developments.
+Once installed, you don't need to install this "main" repository again. You can
+keep using it to test all your developments.
 
 ## 3. Running the tests in the "main"
 
-Before running the integration tests, ensure the reference repository (that in the "main" branch) is up-to-date.
+Before running the integration tests, ensure the reference repository (that in
+the "main" branch) is up-to-date.
 
 ```bash
 git pull
@@ -72,8 +80,8 @@ python run_tests.py -b
 
 ## 5. Comparing both runs
 
-Once tests in the "main" and your development branch complete, that is, all `*-test.cfg` files were executed,
-you can compare their CAPRI scores.
+Once tests in the "main" and your development branch complete, that is, all
+`*-test.cfg` files were executed, you can compare their CAPRI scores.
 
 Inside the `examples/` folder of your development branch, run:
 
@@ -81,9 +89,11 @@ Inside the `examples/` folder of your development branch, run:
 python compare-runs.py -r <path-to-haddock-main-examples-folder>
 ```
 
-This command will tell you if there are any differences in the CAPRI scores. Scores are evaluated with 0.001 tolerance.
+This command will tell you if there are any differences in the CAPRI scores.
+Scores are evaluated with 0.001 tolerance.
 
-If there are differences, likely something went wrong unless you are
-developing code that explicitly affects the CAPRI scores. If that is the case, explain it in the pull request description.
+If there are differences, likely something went wrong unless you are developing
+code that explicitly affects the CAPRI scores. If that is the case, explain it
+in the pull request description.
 
 *Thanks, and enjoy developing and using HADDOCK3 :-)*

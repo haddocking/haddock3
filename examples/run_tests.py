@@ -87,9 +87,12 @@ def main(examples, break_on_errors=True):
     """Run all the examples."""
     for folder, file_ in examples:
 
-        print()  # noqa: T001
-        print(f" {file_.upper()} ".center(80, "*"))  # noqa: T001
-        print()  # noqa: T001
+        print(  # noqa: T001
+            os.linesep,
+            f" {file_.upper()} ".center(80, "*"),
+            os.linesep,
+            flush=True,
+            )  # noqa: T001
 
         with working_directory(folder):
 

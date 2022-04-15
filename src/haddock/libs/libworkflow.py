@@ -7,6 +7,7 @@ from time import time
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
+from haddock.gear.config_writer import save_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libutil import (
     convert_seconds_to_min_sec,
@@ -103,8 +104,8 @@ class Step:
         try:
             module.update_params(**self.config)
 
-            with open(Path(self.working_path, "params.cfg"), "w") as fout:
-                fout.write(module.print_cfg_parameters())
+            print(module.params)
+            save_config(module.params, Path(self.working_path, "params.cfg"))
 
             module.run()
         except KeyboardInterrupt:

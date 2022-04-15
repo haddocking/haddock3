@@ -8,7 +8,7 @@ from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE, modules_folder_prefix
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
-from haddock.gear.yaml2cfg import read_from_yaml_config, yaml2cfg_text
+from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
 from haddock.libs.libmpi import MPIScheduler
@@ -147,10 +147,6 @@ class BaseHaddockModule(ABC):
         self._fill_emptypaths()
         self._confirm_fnames_exist()
 
-    def print_cfg_parameters(self):
-        """Generate HADDOCK3 cfg text from module's current parameters."""
-        return yaml2cfg(self.params, self.name)
-
     def add_parent_to_paths(self):
         """Add parent path to paths."""
         # convert paths to relative by appending parent
@@ -159,8 +155,6 @@ class BaseHaddockModule(ABC):
                 if not Path(value).is_absolute():
                     self.params[key] = Path('..', value)
         return
-
-    def prepare_params_for_run(self, **params):
 
     def run(self, **params):
         """Execute the module."""

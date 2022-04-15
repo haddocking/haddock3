@@ -1,5 +1,7 @@
 # Running integration tests manually
 
+*This documentation is for developers.*
+
 The integration tests ensure HADDOCK3 workflows work correctly by
 performing short docking or analysis workflows on testing systems. With
 these tests, we evaluate if the final scoring values in the developing
@@ -53,6 +55,18 @@ the "main" branch) is up-to-date.
 
 ```bash
 git pull
+```
+
+Remember to activate the corresponding python environment.
+
+```bash
+conda activate haddock3main
+```
+
+Or, if you used `venv`:
+
+```bash
+source venv/bin/activate
 ```
 
 Navigate to the `examples/` folder and execute the tests:

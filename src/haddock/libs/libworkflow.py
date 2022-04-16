@@ -104,7 +104,6 @@ class Step:
         try:
             module.update_params(**self.config)
 
-            print(module.params)
             save_config(module.params, Path(self.working_path, "params.cfg"))
 
             module.run()

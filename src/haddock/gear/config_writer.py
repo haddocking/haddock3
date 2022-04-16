@@ -13,21 +13,68 @@ def write_config(d):
     for key, value in d.items():
         if get_module_name(key) in modules_category:
             yield f"[{get_module_name}]"
+            continue
 
         elif isinstance(d[key], collections.abc.Mapping):
             yield f"[{key}]"
             yield from write_config(d[key])
+            continue
 
         # TODO: this has to be recursive in multiline
         # and consider paths, emptypaths, strings, and numbers
         elif isinstance(value, (list, tuple)):
-            yield f"{key} = {list(map(str, value))!r}"
-
-        elif isinstance(value, (EmptyPath, Path)):
-            yield f"{key} = {str(value)!r}"
+            yield f"{key} = ["
+            yield from _list_by_value(value)
+            yield "]"
+            # multiline lists in haddock3 configuration files
+            # need to be followed by an empty line.
+            yield os.linesep
+            continue
 
         else:
-            yield f"{key} = {value!r}"
+            yield _convert_value_to_config_string(value, key + " = {}")
+            continue
+
+        emsg = (
+            f"Can't convert {key!r} and value {value} "
+            "to HADDOCK3 config parameter. "
+            "Code shouldn't reach this state."
+            )
+        raise AssertionError(emsg)
+
+
+def _list_by_value(values):
+    for value in values[:-1]:
+        yield _convert_value_to_config_string(value, fmt="    {},")
+
+    yield _convert_value_to_config_string(values[-1], fmt="    {}")
+
+
+def _convert_value_to_config_string(value, fmt):
+    """Convert a value to its string representation for HADDOCK3 config file."""
+    if isinstance(value, bool):
+        value = str(value).lower()
+        return fmt.format(value)
+
+    elif isinstance(value, str):
+        value = '"' + value + '"'
+        return fmt.format(value)
+
+    elif isinstance(value, Path):
+        value = '"' + str(value) + '"'
+        return fmt.format(value)
+
+    elif isinstance(value, EmptyPath):
+        return fmt.format('""')
+
+    elif isinstance(value, (int, float)):
+        return fmt.format(value)
+
+    else:
+        raise AssertionError(
+            "There should be no values of this type: "
+            f"{type(value)}"
+            )
 
 
 def save_config(params, path):

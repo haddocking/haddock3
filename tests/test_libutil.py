@@ -127,6 +127,14 @@ def test_recursive_dict_update():
     assert c == {"a": 2, "b": {"c": 2, "d": {"e": 4}}, "z": {"z1": _list}}
 
 
+def test_recursive_dict_update_empty():
+    """Test recursive dict update."""
+    a = {"a": 1, "b": {"c": 2, "d": {"e": 3}}}
+    c = recursive_dict_update(a, {})
+    assert a is not c
+    assert a == c
+
+
 @pytest.mark.parametrize(
     "seconds,expected",
     [

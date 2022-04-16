@@ -25,7 +25,7 @@ def write_config(d):
         elif isinstance(value, (list, tuple)):
             yield f"{key} = ["
             yield from _list_by_value(value)
-            yield "]"
+            yield "    ]"
             # multiline lists in haddock3 configuration files
             # need to be followed by an empty line.
             yield os.linesep
@@ -61,7 +61,7 @@ def _convert_value_to_config_string(value, fmt):
         return fmt.format(value)
 
     elif isinstance(value, Path):
-        value = '"' + str(value) + '"'
+        value = '"' + str(value.resolve()) + '"'
         return fmt.format(value)
 
     elif isinstance(value, EmptyPath):

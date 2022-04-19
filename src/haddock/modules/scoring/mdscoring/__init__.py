@@ -27,12 +27,11 @@ class HaddockModule(BaseCNSModule):
         """Confirm module is installed."""
         return
 
-    @classmethod
-    def output(self, output_models, output_fname):
+    def output(self, output_fname):
         """Organize output."""
         with open(output_fname, "w") as fh:
             fh.write(f"structure\toriginal_name\tscore{linesep}")
-            for pdb in output_models:
+            for pdb in self.output_models:
                 # with pdb.ori_name we keep track of the original pdb
                 fh.write(
                     f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.score}{linesep}"
@@ -99,6 +98,6 @@ class HaddockModule(BaseCNSModule):
 
         output_fname = "mdscoring.tsv"
         self.log(f"Saving output to {output_fname}")
-        self.output(self.output_models, output_fname)
+        self.output(output_fname)
         
         self.export_output_models(faulty_tolerance=self.params["tolerance"])

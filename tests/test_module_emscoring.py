@@ -7,7 +7,8 @@ import pytest
 from haddock.libs.libontology import PDBFile
 from haddock.modules.scoring.emscoring import HaddockModule
 
-from . import emscoring_default_params, golden_data
+from . import golden_data
+from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as emscoring_pars
 
 
 @pytest.fixture
@@ -31,14 +32,16 @@ def test_emscoring_output(output_models):
     ems_module = HaddockModule(
         order=1,
         path=Path("1_emscoring"),
-        initial_params=emscoring_default_params
+        initial_params=emscoring_pars
         )
     # original names
+    ems_module.output_models = output_models
     for mod in range(len(output_models)):
-        output_models[mod].ori_name = "original_name_" + str(mod) + ".pdb"
+        ori_name = "original_name_" + str(mod) + ".pdb"
+        ems_module.output_models[mod].ori_name = ori_name
     # creating output
     output_fname = Path("emscoring.tsv")
-    ems_module.output(output_models, output_fname)
+    ems_module.output(output_fname)
     observed_outf_l = [e.split() for e in open(
         output_fname).readlines() if not e.startswith('#')]
     # expected output

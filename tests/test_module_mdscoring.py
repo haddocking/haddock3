@@ -7,7 +7,8 @@ import pytest
 from haddock.libs.libontology import PDBFile
 from haddock.modules.scoring.mdscoring import HaddockModule
 
-from . import golden_data, mdscoring_default_params
+from . import golden_data
+from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as mdscoring_pars
 
 
 @pytest.fixture
@@ -23,8 +24,7 @@ def output_models():
             Path(golden_data, "protprot_complex_2.pdb"),
             path=golden_data,
             score=28.0
-            )
-        ]
+            )]
 
 
 def test_mdscoring_output(output_models):
@@ -32,14 +32,16 @@ def test_mdscoring_output(output_models):
     mds_module = HaddockModule(
         order=1,
         path=Path("1_emscoring"),
-        initial_params=mdscoring_default_params
+        initial_params=mdscoring_pars
         )
     # original names
+    mds_module.output_models = output_models
     for mod in range(len(output_models)):
-        output_models[mod].ori_name = "original_name_" + str(mod) + ".pdb"
+        ori_name = "original_name_" + str(mod) + ".pdb"
+        mds_module.output_models[mod].ori_name = ori_name
     # creating output
     output_fname = Path("mdscoring.tsv")
-    mds_module.output(output_models, output_fname)
+    mds_module.output(output_fname)
     observed_outf_l = [e.split() for e in open(
         output_fname).readlines() if not e.startswith('#')]
     # expected output

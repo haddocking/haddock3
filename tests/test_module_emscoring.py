@@ -5,10 +5,10 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import PDBFile
+from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as emscoring_pars
 from haddock.modules.scoring.emscoring import HaddockModule
 
 from . import golden_data
-from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as emscoring_pars
 
 
 @pytest.fixture

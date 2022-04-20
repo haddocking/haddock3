@@ -23,6 +23,10 @@ the step you which to restart from. **Remember**, haddock steps are 0-indexed
 haddock3 my-run-config.cfg --restart 3
 ```
 
+As soon you run the above command, The `--restart` option will **delete** step
+folders from `3` onwards (inclusive), that is, `3_`, `4_`, `...`, will be
+deleted.
+
 ## Restarting a run with modified parameters
 
 You can profit from the `--restart` option described above to (re)run modules
@@ -38,14 +42,15 @@ haddock3 my-edited-config.cfg --restart 3
 
 ## Restarting a run with additional steps
 
-You can profit from the `--restart` option to add steps to a run.  For example,
+You can profit from the `--restart` option to add steps to a run. For example,
 a run has **five** steps and is completed successfully. You now realize you want
 to perform an additional refinement (`mdref`) followed by CAPRI evaluation
 (`caprieval`) and FCC clustering (`clustfcc`). Add the parameters for those
-modules to the configuration file and run haddock:
+modules to the **original** configuration file, keeping all the original
+parameters unchanged, and run haddock:
 
 ```
-haddock3 my-edited-config.cfg --restart 5
+haddock3 config-with-additional-step.cfg --restart 5
 ```
 
 We use `--restart 5` because the first new step is the sixth in the new
@@ -54,22 +59,36 @@ workflow: the five initial steps and three new steps. Remember `--restart` is
 
 ## Starting new runs from previous modules
 
-You can also start a new independent run from a successful step of a previous
-run. First, create a new run directory and copy the desired step folder from the
-successful run, for example, `4_flexref`. **Note:** If the new run uses
-CNS-dependent modules, you **also** need to copy the folder corresponding to the
-initial topology creation (the `topoaa` module).
+You can also start an independent run from a successful step of a previous run.
 
-Create a configuration file for the new run. **Note:** In this case, you
-**don't** need to define the `run_dir` and `molecules` parameters because these
-will be taken from the initial step folder. You should not define the parameters
-for the module you took as the starting point.
+First, manually create a **new** folder (this will be the new run directory) and
+**copy** the desired step folder from the successful run to this new folder, for
+example, `4_flexref`.
+
+**Note:** If the new run uses CNS-dependent modules, you **also need** to copy
+the folder corresponding to the initial topology creation (the `topoaa` module).
+
+Example:
+
+```
+mkdir run2
+cp -r run1/0_topoaa run1/4_flexref run2
+```
+
+Create a configuration file for the new run containing **only** the parameters
+of the new modules you wish to execute after the `flexref`. You **don't** need
+to define the `run_dir` and `molecules` parameters in this new configuration
+file. You **can** define the other general parameters like `ncores`, `mode`,
+etc.
 
 To start the new run:
 
 ```
-haddock3 my-new-config.cfg --restart-from-run <path-to-run-dir>
+haddock3 my-new-config.cfg --restart-from-dir <path-to-new-run-dir>
 ```
+
+HADDOCK will rename `4_flexref` to `1_flexref` (and edit its files accordingly),
+such that steps in the new run directory will have correct sequential indexes.
 
 ## Additional considerations
 

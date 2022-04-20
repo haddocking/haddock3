@@ -1,19 +1,18 @@
 """HADDOCK3 scoring module."""
-from os import linesep
 from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
-from haddock.modules.base_cns_module import BaseCNSModule
+from haddock.modules.scoring import ScoringModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
-class HaddockModule(BaseCNSModule):
+class HaddockModule(ScoringModule):
     """HADDOCK3 module to perform energy minimization scoring."""
 
     name = RECIPE_PATH.name
@@ -25,17 +24,6 @@ class HaddockModule(BaseCNSModule):
     @classmethod
     def confirm_installation(cls):
         """Confirm module is installed."""
-        return
-
-    def output(self, output_fname):
-        """Organize output."""
-        with open(output_fname, "w") as fh:
-            fh.write(f"structure\toriginal_name\tscore{linesep}")
-            for pdb in self.output_models:
-                # with pdb.ori_name we keep track of the original pdb
-                fh.write(
-                    f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.score}{linesep}"
-                    )
         return
 
     def _run(self):

@@ -21,7 +21,7 @@ power to run these tests, ask us and we will run them for you.
 **How to correctly set up and run the integration tests?**
 
 The easiest way is to have two installations of haddock3:
-one fixed at the `main` branch and other with your developments.
+one fixed at the `main` branch and another with your developments.
 
 ## 1. Install HADDOCK3 main branch separately
 

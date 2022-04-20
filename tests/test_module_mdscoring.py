@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as mdscoring_pars
+from haddock.modules.scoring.mdscoring import DEFAULT_CONFIG as mdscoring_pars
 from haddock.modules.scoring.mdscoring import HaddockModule
 
 from . import golden_data

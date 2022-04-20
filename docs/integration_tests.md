@@ -110,4 +110,21 @@ If there are differences, likely something went wrong unless you are developing
 code that explicitly affects the CAPRI scores. If that is the case, explain it
 in the pull request description.
 
+## Additional considerations
+
+### Running on a cluster
+
+Following the instructions here, the test cases will run locally. But if you
+have access to a job scheduling system in a cluster, you can prepare a `job`
+script and launch the job as you would to for any other related process.
+
+### Running individual test cases
+
+If you want to compare a particular test case only, for example, two different
+runs for the `docking-protein-protein/docking-protein-protein-test.cfg`, run:
+
+```bash
+python compare_runs.py -r1 <PATH-TO-RUN1> -r2 <PATH-TO-RUN2>
+```
+
 *Thanks, and enjoy developing and using HADDOCK3 :-)*

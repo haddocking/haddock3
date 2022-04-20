@@ -1,13 +1,40 @@
 """
-Compare CAPRI tables in two `example/` folders.
+Compare CAPRI tables between run folders.
 
-For each test case, prints errors if they are found.
+Compare the values in the CAPRI tables looking for missing columns,
+missing rows, and different values.
+
+The main function of the script is to compare the integration tests
+between two `examples/` folders.
+
+However, this script can also be used to compare two run folders directly.
 
 For more information read 'docs/integration_tests.md'.
 
-USAGE:
-    $ python compare_runs.py -h
-    $ python compare_runs.py -r <path-to-reference-examples-folder>
+## USAGE
+
+To obtain help:
+
+`python compare_runs.py -h`
+
+To compare two `examples/` folders:
+
+`python compare_runs.py -d <PATH-TO-TESTS> -r <PATH-TO-REFERENCE>`
+
+For example, if you are inside the development repository's examples folder,
+you need to give `-d` the current path:
+
+`python compare_runs.py -d . -r /home/user/haddock3main/examples`
+
+To compare two specific run folders:
+
+`python compare_runs.py -r1 <PATH-TO-RUN1> -r2 <PATH-TO-RUN2>`
+
+For example:
+
+`python compare_runs.py -r1 scoring/run1-test -r2 scoring/run2-test`
+
+Paramters `-d` and `-r` and mutually exclusive from `-r1` and `r2`.
 """
 import argparse
 import csv
@@ -55,29 +82,66 @@ examples = (
 
 ap = argparse.ArgumentParser(
     description=__doc__,
+    usage="compare_runs.py [-h] [[-d DEVEL] [-r REFERENCE]] OR [[-r1 RUN1] [-r2 RUN2]]",  # noqa: E501
     formatter_class=argparse.RawDescriptionHelpFormatter,
+    epilog=(
+        "Note: parameters `d` and `-r` are mutually exclusive with "
+        "`-r1` and `r2`. You can run either the first case or the "
+        "second."
+        ),
     )
 
-ap.add_argument(
+examples_group = ap.add_argument_group(
+    title="Case 1: Compare integration tests in two `examples/` folders",
+    )
+
+examples_group.add_argument(
     '-d',
     '--devel',
     type=Path,
     help='Path to the development \'examples/\' folder.',
-    default=Path.cwd(),
+    default=False,
     )
 
-ap.add_argument(
+examples_group.add_argument(
     '-r',
     '--reference',
     type=Path,
     help='Path to the reference \'examples/\' folder.',
-    required=True,
+    default=False,
+    )
+
+specific_run = ap.add_argument_group(
+    title="Case 2: Compare two specific run directories",
+    )
+
+specific_run.add_argument(
+    '-r1',
+    '--run1',
+    type=Path,
+    help='Path to the target run directory.',
+    default=False,
+    )
+
+specific_run.add_argument(
+    '-r2',
+    '--run2',
+    type=Path,
+    help='Path to the reference run directory.',
+    default=False,
     )
 
 
 def load_args():
     """Load argparse arguments."""
-    return ap.parse_args()
+    args = ap.parse_args()
+    if (args.devel or args.reference) \
+            and (args.run1 or args.run2):
+        raise ap.error(
+            "Case 1 and Case 2 are mutually exclusive. "
+            "Give `-d` and `-r` OR `-r1` and `-r2`."
+            )
+    return args
 
 
 def print_path_list(pathl):
@@ -234,7 +298,7 @@ print_error = {
     }
 
 
-def main(examples, devel, reference):
+def compare_examples(examples, devel, reference):
     """Run all the examples."""
     for folder, file_ in examples:
 
@@ -257,6 +321,27 @@ def main(examples, devel, reference):
     return
 
 
+def compare_runs(run1, run2):
+    """Compare specific runs."""
+    run1 = Path(run1).resolve()
+    run2 = Path(run2).resolve()
+    run_name = run1.name + " vs. " + run2.name
+    compare_capris(run1, run2, run_name)
+
+
+def main(devel=False, reference=False, run1=False, run2=False):
+    """Execute script logic."""
+    if devel and reference:
+        compare_examples(examples, devel, reference)
+    elif run1 and run2:
+        compare_runs(run1, run2)
+    else:
+        raise ValueError(
+            "Parameters are incorrect. "
+            "Provide `devel` AND `reference` OR `run1` AND `run2`."
+            )
+
+
 if __name__ == "__main__":
     cmd = load_args()
-    main(examples, **vars(cmd))
+    main(**vars(cmd))

@@ -5,11 +5,12 @@ from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
-from haddock import EmptyPath, log
+from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE, modules_folder_prefix
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
-from haddock.gear.config_writer import convert_config
+from haddock.gear.config_writer import convert_config as _convert_config
+from haddock.gear.config_writer import save_config as _save_config
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
@@ -17,10 +18,27 @@ from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
-from haddock.modules.definitions import modules_category  # noqa: F401
-from haddock.modules.definitions import \
-    non_mandatory_general_parameters_defaults  # noqa: F401
 
+
+modules_folder = Path(__file__).resolve().parent
+
+_folder_match_regex = '[a-zA-Z]*/'
+modules_category = {
+    module.name: category.name
+    for category in modules_folder.glob(_folder_match_regex)
+    for module in category.glob(_folder_match_regex)
+    }
+"""Indexes each module in its specific category. Keys are Paths to the module,
+values are their categories. Categories are the modules parent folders."""
+
+# this dictionary defines non-mandatory general parameters that can be defined
+# as global parameters thus affect all modules, or, instead, can be defined per
+# module where the module definition overwrites global definition. Not all
+# modules will use these parameters. It is the responsibility of the module to
+# extract the parameters it needs.
+# the config file is in modules/defaults.cfg
+non_mandatory_general_parameters_defaults = \
+    read_from_yaml_config(modules_defaults_path)
 
 category_hierarchy = [
     "topology",
@@ -139,14 +157,7 @@ class BaseHaddockModule(ABC):
         #
         # [topoaa]
         # ...
-        text = convert_config(
-            {self.name: self.params},
-            ignore_params=non_mandatory_general_parameters_defaults,
-            )
-
-        ostr = os.linesep.join(text)
-        with open(path, "w") as fout:
-            fout.write(ostr)
+        save_config({self.name: self.params}, path)
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""
@@ -302,3 +313,20 @@ def get_engine(mode, params):
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"
             )
+
+
+convert_config = partial(
+    _convert_config,
+    ignore_params=non_mandatory_general_parameters_defaults,
+    module_names=set(modules_category.keys()),
+    )
+convert_config.__doc__ = \
+    """Convert a module's parameters to a HADDOCK3 user config file text."""
+
+save_config = partial(
+    _save_config,
+    ignore_params=non_mandatory_general_parameters_defaults,
+    module_names=set(modules_category.keys()),
+    )
+save_config.__doc__ = \
+    """Save HADDOCK3 configuration dictionary to user config file."""

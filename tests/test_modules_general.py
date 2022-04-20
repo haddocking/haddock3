@@ -4,6 +4,7 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 import importlib
+from pathlib import Path
 
 import pytest
 
@@ -16,6 +17,7 @@ from haddock.modules import (
     category_hierarchy,
     config_readers,
     modules_category,
+    save_config,
     )
 
 
@@ -204,3 +206,41 @@ def test_category_hierarchy():
 
     categories_2 = set(modules_category.values())
     assert categories_1 == categories_2
+
+
+# dummy parameters but with correct modules names
+case_1 = {
+    "topoaa": {
+        "param1": 1,
+        "param2": 1.0,
+        "param3": False,
+        "param4": ["a", "b", "c"],
+        "sub1": {"param5": 50},
+        "param6": float('nan'),
+        "param7": "string",
+        },
+    }
+
+case_1_text = '''[topoaa]
+param1 = 1
+param2 = 1.0
+param3 = false
+param4 = [
+    "a",
+    "b",
+    "c"
+    ]
+
+param6 = nan
+param7 = "string"
+
+[topoaa.sub1]
+param5 = 50'''
+
+
+def test_save_config():
+    fpath = Path("save_config_test.cfg")
+    save_config(case_1, fpath)
+    result = fpath.read_text()
+    assert result == case_1_text
+    fpath.unlink()

@@ -211,7 +211,6 @@ def save_config(params, path, module_name=None, **kwargs):
         mn = kwargs.setdefault("module_names", [])
         kwargs["module_names"] = list(mn) + [module_name]
 
-
     ostr = os.linesep.join(convert_config(params, **kwargs))
     with open(path, "w") as fout:
         fout.write(ostr)

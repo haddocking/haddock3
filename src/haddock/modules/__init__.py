@@ -1,5 +1,4 @@
 """HADDOCK3 modules."""
-import os
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from functools import partial

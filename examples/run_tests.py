@@ -62,6 +62,7 @@ examples = (
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
+    ("scoring"                     , "emscoring-mdscoring-test.cfg")  # noqa: E203, E501
     )
 
 

@@ -87,9 +87,8 @@ files) and stop if any of the tests break. For help, see `python run_tests.py
 Navigate to your development repository and activate the haddock3 environment -
 you are likely on a different terminal window.
 
-Run the tests the same way:
-
-Navigate to the `examples/` folder and execute the tests:
+Run the tests the same way as before by navigating to the `examples/` folder and
+executing the tests:
 
 ```bash
 cd examples/

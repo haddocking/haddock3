@@ -1,13 +1,15 @@
 """HADDOCK3 modules."""
+import os
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
-from haddock import EmptyPath, log, modules_defaults_path
+from haddock import EmptyPath, log
 from haddock.core.defaults import MODULE_IO_FILE, modules_folder_prefix
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
+from haddock.gear.config_writer import convert_config
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
@@ -15,18 +17,10 @@ from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import recursive_dict_update
+from haddock.modules.definitions import modules_category  # noqa: F401
+from haddock.modules.definitions import \
+    non_mandatory_general_parameters_defaults  # noqa: F401
 
-
-modules_folder = Path(__file__).resolve().parent
-
-_folder_match_regex = '[a-zA-Z]*/'
-modules_category = {
-    module.name: category.name
-    for category in modules_folder.glob(_folder_match_regex)
-    for module in category.glob(_folder_match_regex)
-    }
-"""Indexes each module in its specific category. Keys are Paths to the module,
-values are their categories. Categories are the modules parent folders."""
 
 category_hierarchy = [
     "topology",
@@ -35,15 +29,6 @@ category_hierarchy = [
     "scoring",
     "analysis",
     ]
-
-# this dictionary defines non-mandatory general parameters that can be defined
-# as global parameters thus affect all modules, or, instead, can be defined per
-# module where the module definition overwrites global definition. Not all
-# modules will use these parameters. It is the responsibility of the module to
-# extract the parameters it needs.
-# the config file is in modules/defaults.cfg
-non_mandatory_general_parameters_defaults = \
-    read_from_yaml_config(modules_defaults_path)
 
 config_readers = {
     ".yaml": read_from_yaml_config,
@@ -146,6 +131,22 @@ class BaseHaddockModule(ABC):
         self._params = recursive_dict_update(_n, params)
         self._fill_emptypaths()
         self._confirm_fnames_exist()
+
+    def save_config(self, path):
+        """Save current parameters to a HADDOCK3 config file."""
+        # creates this dictionary for the config to have the module name
+        # key in brackets, for example:
+        #
+        # [topoaa]
+        # ...
+        text = convert_config(
+            {self.name: self.params},
+            ignore_params=non_mandatory_general_parameters_defaults,
+            )
+
+        ostr = os.linesep.join(text)
+        with open(path, "w") as fout:
+            fout.write(ostr)
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""

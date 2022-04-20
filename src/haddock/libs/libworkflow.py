@@ -7,7 +7,6 @@ from time import time
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
-from haddock.gear.config_writer import save_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libutil import (
     convert_seconds_to_min_sec,
@@ -103,9 +102,7 @@ class Step:
         start = time()
         try:
             module.update_params(**self.config)
-
-            save_config(module.params, Path(self.working_path, "params.cfg"))
-
+            module.save_config(Path(self.working_path, "params.cfg"))
             module.run()
         except KeyboardInterrupt:
             log.info("You have halted subprocess execution by hitting Ctrl+c")

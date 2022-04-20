@@ -41,7 +41,7 @@ class BaseCNSModule(BaseHaddockModule):
         self.add_parent_to_paths()
         self.envvars = self.default_envvars()
 
-        if params['self_contained']:
+        if self.params['self_contained']:
             self.make_self_contained()
 
         with working_directory(self.path):

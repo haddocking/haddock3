@@ -6,7 +6,7 @@ starting points for new runs. Let's see some examples.
 
 ## Restarting a run
 
-Use the'- restart' flag to restart a HADDOCK3 run. For example, imagine you
+Use the'--restart' flag to restart a HADDOCK3 run. For example, imagine you
 start a run:
 
 ```

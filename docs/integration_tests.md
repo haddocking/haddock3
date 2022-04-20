@@ -2,12 +2,12 @@
 
 *This documentation is for developers.*
 
-The integration tests ensure HADDOCK3 workflows work correctly by
-performing short docking or analysis workflows on testing systems. With
-these tests, we evaluate if the final scoring values in the developing
-branch are equal to those obtained in the `main` branch.
+The integration tests ensure HADDOCK3 workflows work correctly by performing
+short docking or analysis on testing systems. With these tests, we evaluate if
+the final scoring values in the developing branch are equal to those obtained in
+the `main` branch.
 
-You can run the integration tests manually using our helper scripts and
+You can run the integration tests locally using our helper scripts and
 following the guidelines here.
 
 For a pull request to be accepted, it must pass these integration tests. So we
@@ -43,17 +43,19 @@ Proceed to install the HADDOCK3 main following the installation
 instructions in the repository.
 
 This repository and environment will be the ones you will use to run the
-test examples from the *main* branch.
+test examples from the `main` branch.
 
-Once installed, you don't need to install this "main" repository again. You can
-keep using it to test all your developments.
+Once installed, you don't need to install this "main" repository again for
+future occasions. You can keep using it to test all your developments.
 
-## 3. Running the tests in the "main"
+## 3. Running the tests in the `main`
 
-Before running the integration tests, ensure the reference repository (that in
-the "main" branch) is up-to-date.
+Before running the integration tests, ensure the reference repository `main`
+branch is up-to-date.
 
 ```bash
+cd haddock3main
+git checkout main
 git pull
 ```
 
@@ -72,29 +74,31 @@ source venv/bin/activate
 Navigate to the `examples/` folder and execute the tests:
 
 ```bash
+cd examples/
 python run_tests.py -b
 ```
 
-This script will run all the test cases in the `examples/` directory and
-stop if any of the tests break. For help, see `python
-run_tests.py -h`.
+This script will run all the test cases in the `examples/` folder (`*-test.cfg`
+files) and stop if any of the tests break. For help, see `python run_tests.py
+-h`.
 
 ## 4. Running the tests on your branch
 
-Navigate to your development repository and haddock3 environment - you
-are likely on a different terminal window.
+Navigate to your development repository and activate the haddock3 environment -
+you are likely on a different terminal window.
 
 Run the tests the same way:
 
 Navigate to the `examples/` folder and execute the tests:
 
 ```bash
+cd examples/
 python run_tests.py -b
 ```
 
 ## 5. Comparing both runs
 
-Once tests in the "main" and your development branch complete, that is, all
+Once tests in the `main` and your development branch complete, that is, all
 `*-test.cfg` files were executed, you can compare their CAPRI scores.
 
 Inside the `examples/` folder of your development branch, run:
@@ -103,8 +107,9 @@ Inside the `examples/` folder of your development branch, run:
 python compare-runs.py -r <path-to-haddock-main-examples-folder>
 ```
 
-This command will tell you if there are any differences in the CAPRI scores.
-Scores are evaluated with 0.001 tolerance.
+This command will tell you if there are any differences in the CAPRI tables:
+missing rows or columns and different values. Numeric scores are evaluated with
+0.001 tolerance.
 
 If there are differences, likely something went wrong unless you are developing
 code that explicitly affects the CAPRI scores. If that is the case, explain it
@@ -112,11 +117,18 @@ in the pull request description.
 
 ## Additional considerations
 
+### Tests breaking with `run_tests.py`
+
+Tests break during the `run_test.py` step if the new code breaks the core
+HADDOCK3 workflow. You should work towards correcting those errors first. Once
+the workflows execute completely, you can then compare the CAPRI tables.
+
 ### Running on a cluster
 
-Following the instructions here, the test cases will run locally. But if you
-have access to a job scheduling system in a cluster, you can prepare a `job`
-script and launch the job as you would to for any other related process.
+Following the instructions here, the test cases will run locally on your
+computer. But if you have access to a job scheduling system in a cluster, you
+can prepare a `job` script and launch the job as you would to for any other
+related process.
 
 ### Running individual test cases
 

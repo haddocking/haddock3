@@ -1,4 +1,19 @@
-"""Writes to HADDOCK3 config files."""
+"""
+Convert HADDOCK3 config dictionaries to user configuration files.
+
+The functions implemented here have a general character.  For them to be
+functional within the HADDOCK3 scope you need to provide additional
+input arguments.  All the details are explained in the function's
+docstrings (help).
+
+If you look for equal functions but already pre-prepared for HADDOCK3
+modules, see the functions with the same names under `haddock.modules`.
+
+FUNCTIONS:
+
+- convert_config
+- save_config
+"""
 import collections.abc
 import os
 from copy import deepcopy

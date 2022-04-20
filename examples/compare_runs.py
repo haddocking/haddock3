@@ -257,11 +257,30 @@ def compare_tables(t1, t2):
 
 def error_1(l1, l2):
     """Print error message for row names."""
-    msg = (
-        f"Keys in both capri files differ:{os.linesep}"
-        f"Development: {print_list(l1)}{os.linesep}"
-        f"Reference: {print_list(l2)}{os.linesep}"
-        )
+    is_in_l1 = set(l1).difference(set(l2))
+    is_in_l2 = set(l2).difference(set(l1))
+
+    if not(is_in_l1) and not(is_in_l2):
+        raise AssertionError(
+            "BUG FOUND: at least one of these sets should have values"
+            )
+
+    printf("Keys in capri files differ:")
+
+    if is_in_l1:
+
+        msg = (
+            "These keys are only in the development branch: "
+            f"{print_list(is_in_l1)}{os.linesep}"
+            )
+
+    if is_in_l2:
+
+        msg = (
+            "These keys are only in the reference branch: "
+            f"{print_list(is_in_l1)}{os.linesep}"
+            )
+
     printf(msg, flush=True)
 
 
@@ -326,6 +345,13 @@ def compare_runs(run1, run2):
     run1 = Path(run1).resolve()
     run2 = Path(run2).resolve()
     run_name = run1.name + " vs. " + run2.name
+
+    printf()
+    printf("** Comparing HADDOCK3 runs: ")
+    printf(f"Target: {str(run1)}")
+    printf(f"Reference: {str(run2)}")
+    printf()
+
     compare_capris(run1, run2, run_name)
 
 

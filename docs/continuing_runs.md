@@ -33,7 +33,7 @@ parameters for the modules you want to (re)run, in this case, from the fourth
 module onwards.
 
 ```
-haddock3 my-run-config.cfg --restart 3
+haddock3 my-edited-config.cfg --restart 3
 ```
 
 ## Restarting a run with additional steps

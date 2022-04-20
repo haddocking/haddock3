@@ -31,6 +31,14 @@ modules_category = {
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
 
+category_hierarchy = [
+    "topology",
+    "sampling",
+    "refinement",
+    "scoring",
+    "analysis",
+    ]
+
 # this dictionary defines non-mandatory general parameters that can be defined
 # as global parameters thus affect all modules, or, instead, can be defined per
 # module where the module definition overwrites global definition. Not all
@@ -39,14 +47,6 @@ values are their categories. Categories are the modules parent folders."""
 # the config file is in modules/defaults.cfg
 non_mandatory_general_parameters_defaults = \
     read_from_yaml_config(modules_defaults_path)
-
-category_hierarchy = [
-    "topology",
-    "sampling",
-    "refinement",
-    "scoring",
-    "analysis",
-    ]
 
 config_readers = {
     ".yaml": read_from_yaml_config,

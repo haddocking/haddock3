@@ -127,12 +127,15 @@ def convert_config(
             continue
 
         elif isinstance(value, (list, tuple)):
-            yield f"{key} = ["
-            yield from _list_by_value(value)
-            yield "    ]"
-            # multiline lists in haddock3 configuration files
-            # need to be followed by an empty line.
-            yield ""
+            if not value:
+                yield f"{key} = []"
+            else:
+                yield f"{key} = ["
+                yield from _list_by_value(value)
+                yield "    ]"
+                # multiline lists in haddock3 configuration files
+                # need to be followed by an empty line.
+                yield ""
             continue
 
         yield _convert_value_to_config_string(value, key + " = {}")
@@ -152,6 +155,10 @@ def _is_dict(t):
 
 def _list_by_value(values):
     """Convert values in a list."""
+    if not values:
+        # empty lists are address at convert_config
+        raise AssertionError("Empty lists should enter this function.")
+
     for value in values[:-1]:
         yield _convert_value_to_config_string(value, fmt="    {},")
 

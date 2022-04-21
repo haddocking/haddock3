@@ -20,9 +20,8 @@ from haddock.modules import (
     save_config,
     )
 
+from . import working_modules
 
-# defines which modules are already working
-working_modules = [t for t in modules_category.items() if t[0] != 'topocg']
 
 # errors message for missing params keys
 ekmsg = '{!r} not in {!r} for {!r}'

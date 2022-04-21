@@ -1,10 +1,15 @@
 """Test config writer gear."""
+import collections.abc
+import importlib
 import os
+from math import isnan
 from pathlib import Path
 
 import pytest
+import toml
 
 from haddock import EmptyPath
+# from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import (
     _convert_value_to_config_string,
     _is_dict,
@@ -12,6 +17,9 @@ from haddock.gear.config_writer import (
     convert_config,
     save_config,
     )
+from haddock.gear.yaml2cfg import read_from_yaml_config
+
+from . import working_modules
 
 
 @pytest.mark.parametrize(
@@ -72,6 +80,8 @@ case_1 = {
     "sub1": {"param5": 50},
     "param6": float('nan'),
     "param7": "string",
+    "param8": [],
+    "param9": tuple([]),
     }
 
 case_1_text = '''param1 = 1
@@ -85,6 +95,8 @@ param4 = [
 
 param6 = nan
 param7 = "string"
+param8 = []
+param9 = []
 
 [sub1]
 param5 = 50'''
@@ -105,7 +117,9 @@ param4 = [
     ]
 
 param6 = nan
-param7 = "string"'''
+param7 = "string"
+param8 = []
+param9 = []'''
 
 
 def test_convert_config_1_ignore():
@@ -124,6 +138,8 @@ case_2 = {
         "sub1": {"param5": 50},
         "param6": float('nan'),
         "param7": "string",
+        "param8": [],
+        "param9": tuple([]),
         },
     }
 
@@ -139,6 +155,8 @@ param4 = [
 
 param6 = nan
 param7 = "string"
+param8 = []
+param9 = []
 
 [module.sub1]
 param5 = 50'''
@@ -157,6 +175,11 @@ values_str = ['    "a",', "    10,", "    " + f'"{str(Path.cwd().resolve())}"']
 def test_list_by_value_1():
     result = list(_list_by_value(values_1))
     assert result == values_str
+
+
+def test_list_by_value_AssertionError():
+    with pytest.raises(AssertionError):
+        list(_list_by_value([]))
 
 
 @pytest.mark.parametrize(
@@ -185,3 +208,76 @@ def test_save_config_module_name():
 def test_save_config_TypeError():
     with pytest.raises(TypeError):
         save_config(case_1, "file.cfg", module_name=10)
+
+
+@pytest.fixture(params=working_modules)
+def modules(request):
+    """Give imported HADDOCK3 modules."""
+    module_name, category = request.param
+    mod = ".".join(['haddock', 'modules', category, module_name])
+    module = importlib.import_module(mod)
+    return module
+
+
+@pytest.fixture()
+def module_yaml_dict(modules):
+    """Give flatted yaml config dictionaries."""
+    cfg = read_from_yaml_config(modules.DEFAULT_CONFIG)
+    return cfg
+
+
+def test_load_save_configs(module_yaml_dict):
+    """
+    Test reading, writing, and reloading a config.
+
+    Test compatibility between read_yaml_config on the defaults
+    and saving config.
+
+    Step 1: reads the default configs from the modules using
+        read_from_yaml_config function. This gives a dictionary with
+        built-in python types.
+
+    Step 2: save the step 1 config dictionary to a haddock3 user config
+        file using the save_config function
+
+    Step 3: reads the config file from step 2 using `toml` library.
+
+    Step 4: compares dictionaries from step 1 and step 3 recursively
+
+    Notes: Why do we use `toml` to read the config file and not our
+        gear.config_reader.read_config function? Because the latter converts
+        strings that point to paths to Path and EmptyPath objects.
+
+        TODO: maybe the read_from_yaml_config function should convert
+        those also? Like not because of the interactions of haddock with
+        third-party software. Or yes with options.
+        @joaomcteixeira Apr 21, 2022.
+
+        Hence, we use tolm so we can directly compare python types.
+    """
+    pcfg = Path('module_test.cfg')
+    save_config(module_yaml_dict, pcfg)
+    # rcfg = read_config(pcfg)
+    rcfg = toml.load(pcfg)
+    _assert_dict(rcfg, module_yaml_dict)
+    pcfg.unlink()
+
+
+def _assert_dict(d1, d2):
+    """Compare dicts recursively."""
+    d1keys = set(d1.keys())
+    d2keys = set(d2.keys())
+
+    assert not d1keys.difference(d2keys), "keys in configs differ"
+
+    for key, value in d1.items():
+        if isinstance(value, collections.abc.Mapping):
+            _assert_dict(value, d2[key])
+            continue
+
+        _assert_dict_with_nan(d1[key], d2[key])
+
+
+def _assert_dict_with_nan(d1v, d2v):
+    # nan cannot be compared with "=="
+    assert d1v == d2v or (isnan(d1v) and isnan(d2v))

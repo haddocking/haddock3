@@ -10,6 +10,7 @@ from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
 from haddock.gear.config_writer import save_config as _save_config
+from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
@@ -156,7 +157,7 @@ class BaseHaddockModule(ABC):
         #
         # [topoaa]
         # ...
-        save_config({self.name: self.params}, path)
+        save_config_ignored({self.name: self.params}, path)
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""
@@ -340,12 +341,39 @@ convert_config.__doc__ = \
 
 save_config = partial(
     _save_config,
-    ignore_params=non_mandatory_general_parameters_defaults,
     module_names=set(modules_category.keys()),
     )
 save_config.__doc__ = \
     """
     Save HADDOCK3 configuration dictionary to user config file.
+
+    Saves all parameters, even the `non_mandatory_general_parameters_defaults`
+    which can be repeated between the module parameters and the general
+    parameters.
+
+    Parameters
+    ----------
+    params : dict
+        The dictionary containing the parameters.
+
+    path : str or pathlib.Path
+        File name where to save the configuration file.
+    """
+
+
+_to_ignore = config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults)  # noqa: 501
+save_config_ignored = partial(
+    _save_config,
+    ignore_params=_to_ignore,
+    module_names=set(modules_category.keys()),
+    )
+save_config_ignored.__doc__ = \
+    """
+    Save HADDOCK3 configuration dictionary to user config file.
+
+    Ignores the `non_mandatory_general_parameters_defaults` parameters.
+
+    Useful to keep clean versions of the modules' specific parameters.
 
     Parameters
     ----------

@@ -18,6 +18,7 @@ from haddock.modules import (
     config_readers,
     modules_category,
     save_config,
+    save_config_ignored,
     )
 
 from . import working_modules
@@ -209,6 +210,10 @@ def test_category_hierarchy():
 
 # dummy parameters but with correct modules names
 case_1 = {
+    "run_dir": "folder1",
+    "molecules": ["mol1", "mol2"],
+    "cns_exec": "path1",
+    "ncores": 8,
     "topoaa": {
         "param1": 1,
         "param2": 1.0,
@@ -220,7 +225,15 @@ case_1 = {
         },
     }
 
-case_1_text = '''[topoaa]
+case_1_text = '''run_dir = "folder1"
+molecules = [
+    "mol1",
+    "mol2"
+    ]
+
+cns_exec = "path1"
+ncores = 8
+[topoaa]
 param1 = 1
 param2 = 1.0
 param3 = false
@@ -242,4 +255,46 @@ def test_save_config():
     save_config(case_1, fpath)
     result = fpath.read_text()
     assert result == case_1_text
+    fpath.unlink()
+
+
+# dummy parameters but with correct modules names
+case_2 = {
+    "run_dir": "folder1",
+    "molecules": ["mol1", "mol2"],
+    "cns_exec": "path1",
+    "ncores": 8,
+    "topoaa": {
+        "param1": 1,
+        "param2": 1.0,
+        "param3": False,
+        "param4": ["a", "b", "c"],
+        "sub1": {"param5": 50},
+        "param6": float('nan'),
+        "param7": "string",
+        },
+    }
+
+case_2_text = '''[topoaa]
+param1 = 1
+param2 = 1.0
+param3 = false
+param4 = [
+    "a",
+    "b",
+    "c"
+    ]
+
+param6 = nan
+param7 = "string"
+
+[topoaa.sub1]
+param5 = 50'''
+
+
+def test_save_config_ingored():
+    fpath = Path("save_config_test.cfg")
+    save_config_ignored(case_2, fpath)
+    result = fpath.read_text()
+    assert result == case_2_text
     fpath.unlink()

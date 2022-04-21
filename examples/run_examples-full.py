@@ -3,22 +3,25 @@ Run all examples in a row.
 
 This script should be executed from inside the haddock3/examples/ folder.
 
-Inside this script, we have listed only the examples that are supposed to run
-locally, meaning examples referring to HPC, or other special cases,  won't be
-executed. In other words, examples are not fetch automatically from the folders,
-and new examples must be added (or deleted) manually from inside the script.
+This script runs the `*-test.cfg` files. These test cases are not fetched
+automatically. If you want to add/remove cases you need to edit this script.
+The HADDOCK3 team has defined here only those test cases that are part of the
+integration tests.
 
-Run folders that overlap with the `run_dir` parameter in the configuration files
-will be deleted.
+This script will delete existing run directories which names overlap with those
+defined in the test configuration files.
 
 If you see errors related to python import statements, make sure you have
-the haddock3 environment activated.
+the HADDOCK3 environment activated.
+
+A breaking example means something is wrong in the HADDOCK3 core workflow.
+You should work towards solving that problem or contact the HADDOCK3 team.
 
 USAGE:
 
-    $ python run_examples.py -h
-    $ python run_examples.py     # runs all examples regardless of errors
-    $ python run_examples.py -b  # stops asap an error is found
+    $ python run_examples-full.py -h
+    $ python run_examples-full.py     # runs all examples regardless of errors
+    $ python run_examples-full.py -b  # stops asap an error is found
 """
 import argparse
 import subprocess

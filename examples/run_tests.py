@@ -1,18 +1,21 @@
 """
-Run all examples in a row.
+Run all test examples in a row.
 
-This script should be executed from inside the haddock3/examples/ folder.
+This script should be executed from inside the `examples/` folder.
 
-Inside this script, we have listed only the examples that are supposed to run
-locally, meaning examples referring to HPC, or other special cases,  won't be
-executed. In other words, examples are not fetch automatically from the folders,
-and new examples must be added (or deleted) manually from inside the script.
+This script runs the `*-test.cfg` files. These test cases are not fetched
+automatically. If you want to add/remove cases you need to edit this script.
+The HADDOCK3 team has defined here only those test cases that are part of the
+integration tests.
 
-Run folders that overlap with the `run_dir` parameter in the configuration files
-will be deleted.
+This script will delete existing run directories which names overlap with those
+defined in the test configuration files.
 
 If you see errors related to python import statements, make sure you have
-the haddock3 environment activated.
+the HADDOCK3 environment activated.
+
+A breaking example means something is wrong in the HADDOCK3 core workflow.
+You should work towards solving that problem or contact the HADDOCK3 team.
 
 USAGE:
 
@@ -21,14 +24,15 @@ USAGE:
     $ python run_examples.py -b  # stops asap an error is found
 """
 import argparse
+import os
 import subprocess
 import sys
 from shutil import rmtree
 
 
 try:
-    from haddock.libs.libio import working_directory
     from haddock.gear.config_reader import read_config
+    from haddock.libs.libio import working_directory
 except Exception:
     print(  # noqa: T001
         "Haddock3 could not be imported. "
@@ -43,6 +47,9 @@ except Exception:
 # the whitespaces below are anti-pythonic but facilitate reading :-)
 examples = (
     ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
@@ -56,6 +63,7 @@ examples = (
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
+    ("scoring"                     , "emscoring-mdscoring-test.cfg")  # noqa: E203, E501
     )
 
 
@@ -84,9 +92,12 @@ def main(examples, break_on_errors=True):
     """Run all the examples."""
     for folder, file_ in examples:
 
-        print()  # noqa: T001
-        print(f" {file_.upper()} ".center(80, "*"))  # noqa: T001
-        print()  # noqa: T001
+        print(  # noqa: T001
+            os.linesep,
+            f" {file_.upper()} ".center(80, "*"),
+            os.linesep,
+            flush=True,
+            )  # noqa: T001
 
         with working_directory(folder):
 

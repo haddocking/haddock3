@@ -24,6 +24,7 @@ USAGE:
     $ python run_examples.py -b  # stops asap an error is found
 """
 import argparse
+import os
 import subprocess
 import sys
 from shutil import rmtree

@@ -320,7 +320,23 @@ convert_config = partial(
     module_names=set(modules_category.keys()),
     )
 convert_config.__doc__ = \
-    """Convert a module's parameters to a HADDOCK3 user config file text."""
+    """
+    Convert a module's parameters to a HADDOCK3 user config file text.
+
+    This function is a generator.
+
+    Examples
+    --------
+    >>> gen = convert_config(parameters_dict)
+    >>> text = os.linesep.join(gen)
+    >>> with open("params.cfg", "w") as fout:
+    >>>     fout.write(text)
+
+    Yields
+    ------
+    str
+        Line by line for the HADDOCK3 user configuration file.
+    """
 
 save_config = partial(
     _save_config,
@@ -328,4 +344,14 @@ save_config = partial(
     module_names=set(modules_category.keys()),
     )
 save_config.__doc__ = \
-    """Save HADDOCK3 configuration dictionary to user config file."""
+    """
+    Save HADDOCK3 configuration dictionary to user config file.
+
+    Parameters
+    ----------
+    params : dict
+        The dictionary containing the parameters.
+
+    path : str or pathlib.Path
+        File name where to save the configuration file.
+    """

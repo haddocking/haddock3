@@ -31,8 +31,8 @@ from shutil import rmtree
 
 
 try:
-    from haddock.libs.libio import working_directory
     from haddock.gear.config_reader import read_config
+    from haddock.libs.libio import working_directory
 except Exception:
     print(  # noqa: T001
         "Haddock3 could not be imported. "

@@ -27,6 +27,12 @@ _hidden_level = "hidden"
 class EmptyPath:
     """Define the type EmptyPath."""
 
+    def __str__(self):
+        return ""
+
+    def __repr__(self):
+        return ""
+
     def __bool__(self):
         return False
 

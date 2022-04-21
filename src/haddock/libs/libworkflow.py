@@ -101,7 +101,9 @@ class Step:
         # Run module
         start = time()
         try:
-            module.run(**self.config)
+            module.update_params(**self.config)
+            module.save_config(Path(self.working_path, "params.cfg"))
+            module.run()
         except KeyboardInterrupt:
             log.info("You have halted subprocess execution by hitting Ctrl+c")
             log.info("Exiting...")

@@ -1,4 +1,4 @@
-# HADDOCK3 examples
+# Examples
 
 The HADDOCK3 `examples/` directory contains various subdirectories and config files
 corresponding to different types of complexes, scenarios and data.

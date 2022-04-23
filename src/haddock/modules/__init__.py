@@ -340,12 +340,7 @@ convert_config.__doc__ = \
     """
 
 
-
-def save_config(
-        *args,
-        module_names=set(modules_category.keys()),
-        **kwargs,
-        ):
+def save_config(*args, **kwargs):
     """
     Save HADDOCK3 configuration dictionary to user config file.
 
@@ -361,16 +356,11 @@ def save_config(
     path : str or pathlib.Path
         File name where to save the configuration file.
     """
-    return _save_config(*args, module_names=modules_names, **kwargs)
+    kwargs.setdefault("module_names", set(modules_category.keys()))
+    return _save_config(*args, **kwargs)
 
 
-_to_ignore = config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults)  # noqa: 501
-def save_config_ignored(
-        *args,
-        ignore_params=_to_ignore,
-        module_names=set(modules_category.keys()),
-        **kwargs,
-        ):
+def save_config_ignored(*args, **kwargs):
     """
     Save HADDOCK3 configuration dictionary to user config file.
 
@@ -386,8 +376,9 @@ def save_config_ignored(
     path : str or pathlib.Path
         File name where to save the configuration file.
     """
-    return _save_config(
-        *args,
-        module_names=modules_names,
-        ignore_params=ignore_params,
-        **kwargs)
+    kwargs.setdefault("module_names", set(modules_category.keys()))
+    kwargs.setdefault(
+        "ignore_params",
+        config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults),  # noqa: 501
+        )
+    return _save_config(*args, **kwargs)

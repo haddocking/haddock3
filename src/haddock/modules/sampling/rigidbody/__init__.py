@@ -1,4 +1,7 @@
-"""HADDOCK3 rigid-body docking module."""
+"""
+Rigid-body docking module
+=========================
+"""
 from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel

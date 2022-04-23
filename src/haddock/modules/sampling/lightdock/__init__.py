@@ -1,4 +1,7 @@
-"""Run Lightdock as a HADDOCK3 module."""
+"""
+LightDock integration sampling module
+=====================================
+"""
 import shutil
 import subprocess
 from pathlib import Path

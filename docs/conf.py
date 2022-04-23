@@ -17,6 +17,11 @@ mock_modules = [
     'pdbtools.pdb_splitmodel',
     'pdbtools.pdb_tidy',
     'pyyaml',
+    'Bio',
+    'Bio.Align',
+    'Bio.Seq',
+    'fccpy',
+    'fccpy.contacts',
     ]
 
 for modulename in mock_modules:

@@ -1,4 +1,9 @@
-"""Calculate CAPRI metrics."""
+"""
+CAPRI eval module
+=================
+
+Calculate CAPRI metrics.
+"""
 import os
 from pathlib import Path
 

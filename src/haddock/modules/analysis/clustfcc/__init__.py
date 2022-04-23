@@ -1,4 +1,7 @@
-"""HADDOCK3 FCC clustering module."""
+"""
+FCC clustering module
+=====================
+"""
 import os
 from pathlib import Path
 

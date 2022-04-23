@@ -1,4 +1,7 @@
-"""HADDOCK3 module to select a top cluster/model."""
+"""
+Select a top models
+===================
+"""
 from pathlib import Path
 
 from haddock.libs.libontology import Format

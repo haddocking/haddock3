@@ -1,4 +1,7 @@
-"""HADDOCK3 module to select a top cluster/model."""
+"""
+Select a top cluster module
+===========================
+"""
 import math
 from pathlib import Path
 

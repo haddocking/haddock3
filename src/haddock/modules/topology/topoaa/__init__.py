@@ -1,4 +1,10 @@
-"""Create and manage CNS all-atom topology."""
+"""
+Topoaa module
+=============
+
+Create and manage CNS all-atom topology.
+"""
+
 import operator
 from functools import partial
 from pathlib import Path

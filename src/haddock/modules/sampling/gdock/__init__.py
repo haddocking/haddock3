@@ -1,7 +1,4 @@
-"""
-gdock integration sampling module
-=================================
-"""
+"""gdock integration sampling module."""
 import os
 import re
 import shlex

@@ -1,7 +1,4 @@
-"""
-LightDock integration sampling module
-=====================================
-"""
+"""LightDock integration sampling module."""
 import shutil
 import subprocess
 from pathlib import Path

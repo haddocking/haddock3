@@ -13,7 +13,7 @@ Cheers!
 
 ## 1. Installation
 
-To install HADDOCK3 follow the instructions in the [INSTALL](INSTALL.md) file.
+To install HADDOCK3 follow the instructions in the [INSTALL](docs/INSTALL.md) file.
 
 ## 2. Examples
 

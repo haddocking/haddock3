@@ -1,0 +1,6 @@
+sphinx>=2
+sphinx-rtd-theme
+sphinx-argparse
+CommonMark
+mock
+myst-parser

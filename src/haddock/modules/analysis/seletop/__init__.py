@@ -1,7 +1,4 @@
-"""
-Select a top models
-===================
-"""
+"""Select a top models."""
 from pathlib import Path
 
 from haddock.libs.libontology import Format

@@ -1,7 +1,4 @@
-"""
-FCC clustering module
-=====================
-"""
+"""Cluster modules with FCC."""
 import os
 from pathlib import Path
 

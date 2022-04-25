@@ -1,4 +1,4 @@
-"""HADDOCK3 module for water refinement."""
+"""Water refinement with CNS."""
 from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel

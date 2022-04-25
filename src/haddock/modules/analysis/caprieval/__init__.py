@@ -1,7 +1,4 @@
 """
-CAPRI eval module
-=================
-
 Calculate CAPRI metrics.
 """
 import os

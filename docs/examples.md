@@ -4,7 +4,7 @@ The HADDOCK3 `examples/` directory contains various subdirectories and config fi
 corresponding to different types of complexes, scenarios and data.
 
 1. [docking-antibody-antigen](#docking-antibogy-antigen)
-1. [docking-protein-DNA](#docking-protein-DNA)
+1. [docking-protein-DNA](#docking-protein-dna)
 1. [docking-protein-homotrimer](#docking-protein-homotrimer)
 1. [docking-protein-ligand](#docking-protein-ligand)
 1. [docking-protein-ligand-shape](#docking-protein-ligand-shape)
@@ -38,7 +38,7 @@ Two different protocols/workflows are illustrated:
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 
 
-## docking-protein-DNA
+## docking-protein-dna
 
 A protein-DNA docking example making use of rather specific protein-DNA distance restraints defined in the `ambig.tbl` file in the `data` directory.
 

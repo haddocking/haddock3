@@ -8,8 +8,14 @@ import sys
 
 
 mock_modules = [
+    'Bio',
+    'Bio.Align',
+    'Bio.Seq',
     'biopython',
+    'fccpy',
+    'fccpy.contacts',
     'jsonpickle',
+    'mpi4py',
     'numpy',
     'pdbtools',
     'pdbtools.pdb_segxchain',
@@ -17,11 +23,6 @@ mock_modules = [
     'pdbtools.pdb_splitmodel',
     'pdbtools.pdb_tidy',
     'pyyaml',
-    'Bio',
-    'Bio.Align',
-    'Bio.Seq',
-    'fccpy',
-    'fccpy.contacts',
     ]
 
 for modulename in mock_modules:
@@ -82,3 +83,6 @@ html_short_title = '%s-%s' % (project, version)
 napoleon_use_ivar = True
 napoleon_use_rtype = False
 napoleon_use_param = False
+
+# myst options
+myst_heading_anchors = 3

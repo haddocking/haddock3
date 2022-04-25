@@ -14,12 +14,13 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   installation
-   usage
+   INSTALL
+   USAGE
    examples
    tutorials/index
+   clients/index
    modules/index
-   reference/clients
+   testing/index
    contributing
    citing
    reference/index

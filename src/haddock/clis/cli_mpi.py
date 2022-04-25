@@ -6,7 +6,8 @@ This was developed for use of lbimpi but it might be useful in some specific
 
 For more information please refer to the README.md in the examples folder.
 
-Usage:
+Usage::
+
     haddock3-mpitask -h
     haddock3-mpitask tasks.pkl
 """
@@ -45,6 +46,10 @@ ap.add_argument(
     "pickled_tasks",
     help="The input pickled tasks path",
     )
+
+
+def _ap():
+    return ap
 
 
 def load_args(ap):

@@ -1,10 +1,10 @@
-# 1. Installation
+# Installation
 
 Open a `terminal` window and navigate to the folder where you want to
 install HADDOCK3; for example: `software`. The current installation
 instructions are local and will affect only your user.
 
-## 1.1 Clone this repository:
+## 1 Clone this repository:
 
 Mind the `--recursive` flag when cloning!
 
@@ -20,7 +20,7 @@ cd -
 By the end of the above commands, you should be back to the `haddock3`
 main folder.
 
-## 1.2 Create a virtual environment with Python 3.9+ and install dependencies:
+## 2 Create a virtual environment with Python 3.9+ and install dependencies:
 
 You can use Python's `venv` or Anaconda depending on your choice.
 Commands are provided below:
@@ -40,13 +40,13 @@ conda env create -f requirements.yml
 conda activate haddock3
 ```
 
-## 1.3 Install the HADDOCK3 package and command line clients
+## 3 Install the HADDOCK3 package and command line clients
 
 ```bash
 python setup.py develop --no-deps
 ```
 
-## 1.4 Make a CNS binary shortcut to the expected path:
+## 4 Make a CNS binary shortcut to the expected path:
 
 ```bash
 mkdir -p bin/
@@ -64,7 +64,7 @@ HADDOCK3 from anywhere. To run HADDOCK3, follow the [usage
 guidelines](USAGE.md).
 
 
-## 1.5 Keep your installation up to date
+## 5 Keep your installation up to date
 
 Navigate to the `haddock3` installation folder (the one you cloned from
 GitHub). Ensure you have the `haddock3` python environment activated.

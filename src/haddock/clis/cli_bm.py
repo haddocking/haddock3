@@ -15,7 +15,7 @@ The state of the jobs is identified by a file tag:
 
 At start, all jobs have the AVAILABLE tag, and this tag is upgraded as
 the job completes. To know which jobs are in each state, navigate to the
-<output dir> and search for the tags, for example:
+<output dir> and search for the tags, for example::
 
     find . -name AVAILABLE
     find . -name RUNNING
@@ -27,13 +27,13 @@ Jobs are identified as FAIL if there are messages in the stderr file.
 Finally, a daemon job file is created to facilitate the usage of the
 daemon without directly using the `haddock3-dmn` client.
 
-USAGE:
+Usage::
+
     haddock3-bm -h
     haddock3-bm <BM dir> <output dir> [OPTIONS]
     haddock3-bm <BM dir> <output dir> --workload-manager <option>
     haddock3-bm <BM dir> <output dir> --workload-manager <option> -n <num cores>
-    haddock3-bm <BM dir> <output dir> --workload-manager <option> -n <num cores>
-     -td
+    haddock3-bm <BM dir> <output dir> --workload-manager <option> -n <num cores> -td
 
 A `BM folder` is a folder with the characteristics of:
     https://github.com/haddocking/BM5-clean
@@ -555,6 +555,10 @@ ap.add_argument(
     default='BM5',
     type=str,
     )
+
+
+def _ap():
+    return ap
 
 
 # client helper functions

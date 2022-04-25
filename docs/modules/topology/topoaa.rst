@@ -1,3 +1,6 @@
+All-atom topology module
+========================
+
 .. automodule:: haddock.modules.topology.topoaa
    :members:
    :show-inheritance:

@@ -27,7 +27,6 @@ class HaddockModule(BaseHaddockModule):
         super().__init__(order, path, initial_params)
 
         self.matrix_json = self._load_previous_io("rmsd_matrix.json")
-        self.log(f"self.matrix_json = {self.matrix_json}")
 
     @classmethod
     def confirm_installation(cls):
@@ -47,7 +46,7 @@ class HaddockModule(BaseHaddockModule):
         dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
         crit = self.params["criterion"]
         if "tolerance" not in self.params.keys():
-            if linkage_type == "maxclust":
+            if crit == "maxclust":
                 tol = len(models) // 2 + 1
             else:
                 tol = np.mean(dendrogram[:, 2])
@@ -80,7 +79,6 @@ class HaddockModule(BaseHaddockModule):
             score_l = [p.score for p in clt_dic[clt_id]]
             score_l.sort()
             denom = float(min(threshold, len(score_l)))
-            self.log(f"denominator = {denom}")
             top4_score = sum(score_l[:threshold]) / denom
             score_dic[clt_id] = top4_score
         

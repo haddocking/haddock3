@@ -51,9 +51,11 @@ class HaddockModule(BaseHaddockModule):
         if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
+
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models()
-
+        log.info(f"models {models}")
+        
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)
         if nmodels > self.params["max_models"]:

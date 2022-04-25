@@ -18,13 +18,12 @@ class RMSDJob:
             params,
             rmsd_obj):
 
-        core = rmsd_obj.core
-        log.info(f"core {core}, initialising RMSD...")
-        log.info(f"core {core}, # of pairs : {rmsd_obj.npairs}")
+        log.info(f"core {rmsd_obj.core}, initialising RMSD...")
+        log.info(f"core {rmsd_obj.core}, # of pairs : {rmsd_obj.npairs}")
         self.output = output
         self.params = params
         self.rmsd_obj = rmsd_obj
-        log.info(f"core {core}, RMSD initialised")
+        log.info(f"core {rmsd_obj.core}, RMSD initialised")
 
     def run(self):
         """Run this RMSDJob."""
@@ -54,11 +53,14 @@ class RMSD:
         self.start_ref = start_ref
         self.start_mod = start_mod
         # choice of atoms
-        self.filter_resdic = {
-            key[-1]: value for key, value
-            in params["params"].items()
-            if key.startswith("resdic")
-            }
+        if "params" in params.keys():
+            self.filter_resdic = {
+                key[-1]: value for key, value
+                in params["params"].items()
+                if key.startswith("resdic")
+                }
+        else:
+            self.filter_resdic = {}
         if self.filter_resdic:
             log.info(f"Using filtering dictionary {self.filter_resdic}")
         else:
@@ -213,19 +215,23 @@ class RMSD:
             self,
             ):
         """Write down the RMSD matrix."""
-        rmsd_name = "rmsd_" + str(self.core) + ".matrix"
-        output_fname = Path(self.path, rmsd_name)
+        output_fname = Path(self.path, self.output_name)
         # TODO: do some kind of output validation:
         # is the length of the lists ok? everything? are there zeros?
         with open(output_fname, "w") as out_fh:
             for data in list(self.data):
-                data_str = f"{data[0]:.0f} {data[1]:.0f} {data[2]:.2f}"
+                data_str = f"{data[0]:.0f} {data[1]:.0f} {data[2]:.3f}"
                 data_str += os.linesep
                 out_fh.write(data_str)
                 
 
 def get_pair(nmodels, idx):
     """Get the pair of structures given the 1D matrix index."""
+    if (nmodels < 0 or idx < 0):
+        err = "get_pair cannot accept negative numbers"
+        err += f"Input is {nmodels} , {idx}"
+        raise Exception(err)
+    # solve the second degree equation
     b = 1 - (2 * nmodels)
     i = (-b - np.sqrt(b ** 2 - 8 * idx)) // 2
     j = idx + i * (b + i + 2) // 2 + 1

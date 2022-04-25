@@ -1,4 +1,4 @@
-"""EM scoring module."""
+"""MD scoring module."""
 from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel

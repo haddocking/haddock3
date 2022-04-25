@@ -1,5 +1,5 @@
-HADDOCK3 Modules
-================
+Modules
+=======
 
 HADDOCK3 allows users to compose modular simulation workflows. Workflows are
 composed in *steps*, and each step is a HADDOCK3 module. There are modules for

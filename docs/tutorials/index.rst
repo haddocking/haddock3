@@ -7,3 +7,4 @@ Below, a list of the HADDOCK3 tutorials:
    :maxdepth: 1
 
    benchmark
+   mpi

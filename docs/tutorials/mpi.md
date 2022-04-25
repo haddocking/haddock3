@@ -1,6 +1,7 @@
 # Running HADDOCK3 with MPI
 
-To run this example you must have `mpi4py` installed in the haddock3 python environment, and `OpenMPI` in the host system.
+To run this example you must have `mpi4py` installed in the haddock3 python
+environment, and `OpenMPI` in the host system.
 
 ```bash
 $ pip install mpi4py
@@ -8,7 +9,8 @@ $ pip install mpi4py
 $ conda install -c conda-forge mpi4py
 ```
 
-**Do not run it as: `mpirun -np haddock3 run.cfg`**, this logic is handled internally.
+**Do not run it as: `mpirun -np haddock3 run.cfg`**, this logic is handled
+internally.
 
 Edit the `.cfg` according to the `.job` parameters you have set
 
@@ -25,7 +27,10 @@ In the `.cfg` params
 ncores = 480
 ```
 
-Then prepare the rest of the `.job` file according to your cluster, a SLURM example is provided at `haddock3/examples/docking-protein-protein/docking-protein-protein-mpi.job` and below:
+Then prepare the rest of the `.job` file according to your cluster, a SLURM
+example is provided at
+`haddock3/examples/docking-protein-protein/docking-protein-protein-mpi.job` and
+below:
 
 ```bash
 #!/bin/bash

@@ -10,16 +10,16 @@ version: 2
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
-  configuration: docs/conf.py
+  configuration: devtools/docs-conf.py
 
 # Optionally build your docs in additional formats such as PDF and ePub
 formats: all
 
 # Optionally set the version of Python and requirements required to build your docs
 python:
-   version: 3.7
+   version: 3.9
    install:
-      - requirements: docs/requirements.txt
+      - requirements: devtools/docs-requirements.txt
       - method: pip
         path: .
         extra_requirements:

@@ -4,9 +4,10 @@ Extract the default configuration file for each module.
 By default presents the parameters from the three expertise levels:
     `basic`, `intermediate`, and `guru`.
 
-USAGE:
-    $ haddock3-cfg -m MODULE
-    $ haddock3-cfg -m MODULE -l LEVEL
+Usage::
+
+    haddock3-cfg -m MODULE
+    haddock3-cfg -m MODULE -l LEVEL
 """
 import argparse
 import importlib
@@ -40,6 +41,10 @@ ap.add_argument(
     default="all",
     choices=config_expert_levels + ("all",),
     )
+
+
+def _ap():
+    return ap
 
 
 # command-line client helper functions

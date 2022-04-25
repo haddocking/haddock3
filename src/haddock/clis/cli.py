@@ -7,9 +7,10 @@ simulations. To prepare a simulation, setup configuration file defining
 a HADDOCK3 workflow and use this command-line client to execute that
 workflow.
 
-USAGE:
-    $ haddock3 -h
-    $ haddock3 <CONFIG FILE>
+Usage::
+
+    haddock3 -h
+    haddock3 <CONFIG FILE>
 """
 import argparse
 import sys
@@ -42,6 +43,10 @@ ap.add_argument(
 
 add_loglevel_arg(ap)
 add_version_arg(ap)
+
+
+def _ap():
+    return ap
 
 
 def load_args(ap):

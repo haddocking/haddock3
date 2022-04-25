@@ -1,7 +1,4 @@
-"""
-Select a top cluster module
-===========================
-"""
+"""Select a top cluster module."""
 import math
 from pathlib import Path
 

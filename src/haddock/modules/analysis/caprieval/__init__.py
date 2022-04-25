@@ -1,6 +1,4 @@
-"""
-Calculate CAPRI metrics.
-"""
+"""Calculate CAPRI metrics."""
 import os
 from pathlib import Path
 

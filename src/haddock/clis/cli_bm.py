@@ -40,7 +40,7 @@ A `BM folder` is a folder with the characteristics of:
 
 For more information read our benchmark tutorial at `docs/benchmark.tut`
 in HADDOCK3 repository site: https://github.com/haddocking/haddock3
-"""
+"""  # noqa: E501
 import argparse
 import shutil
 import string

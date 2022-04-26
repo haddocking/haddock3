@@ -1,16 +1,22 @@
-"""Test the rmsdmatrix module."""
+"""Test the clustrmsd module."""
 import os
 from pathlib import Path
 
 import numpy as np
 import pytest
 
-from haddock.libs.libontology import ModuleIO, RMSDFile
+from haddock.libs.libontology import ModuleIO, PDBFile, RMSDFile
+from haddock.modules.analysis.clustrmsd import DEFAULT_CONFIG as clustrmsd_pars
+from haddock.modules.analysis.clustrmsd import HaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
     get_dendrogram,
     read_matrix,
     )
+from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
+from haddock.modules.analysis.rmsdmatrix import HaddockModule as HaddockRMSD
+
+from . import golden_data
 
 
 def write_rmsd_matrix(output_name, rmsd_vec):
@@ -82,6 +88,22 @@ def malformed_rmsd_vec():
 def correct_rmsd_array():
     """Correct RMSD array."""
     return np.array([1.0, 2.0, 2.5, 2.0, 3.0, 0.5])
+
+
+@pytest.fixture
+def input_protdna_models():
+    """Prot-DNA models using for emscoring output."""
+    return [
+        PDBFile(
+            Path(golden_data, "protdna_complex_1.pdb"),
+            path=golden_data,
+            score=42.0
+            ),
+        PDBFile(
+            Path(golden_data, "protdna_complex_2.pdb"),
+            path=golden_data,
+            score=28.0
+            )]
 
 
 def test_read_rmsd_matrix(correct_rmsd_vec):
@@ -214,3 +236,47 @@ def test_correct_clusters(correct_rmsd_array):
     assert (observed_clusters == expected_clusters).all()
 
 # TODO: add tests for the other categories of clustering
+
+
+def test_correct_output(input_protdna_models):
+    """Test correct clustrmsd output."""
+    rmsd_module = HaddockRMSD(
+        order=2,
+        path=Path(""),
+        initial_params=rmsd_pars
+        )
+    rmsd_module.previous_io.output = input_protdna_models
+    rmsd_module._run()
+
+    clustrmsd_module = HaddockModule(
+        order=3,
+        path=Path(""),
+        initial_params=clustrmsd_pars
+        )
+    clustrmsd_module._run()
+
+    ls = os.listdir()
+
+    expected_out_filename = "cluster.out"
+    expected_txt_filename = "clustrmsd.txt"
+
+    assert expected_out_filename in ls
+
+    assert expected_txt_filename in ls
+
+    expected_out_content = "Cluster 1 -> 1"
+    expected_out_content += os.linesep
+    expected_out_content += "Cluster 2 -> 2"
+    expected_out_content += os.linesep
+
+    observed_out_content = open(expected_out_filename).read()
+
+    assert observed_out_content == expected_out_content
+
+    # TODO: check the content of clustrmsd.txt
+
+    os.unlink("io.json")
+    os.unlink("rmsd.matrix")
+    os.unlink("rmsd_matrix.json")
+    os.unlink(expected_out_filename)
+    os.unlink(expected_txt_filename)

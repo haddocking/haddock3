@@ -13,7 +13,6 @@ def read_matrix(rmsd_matrix):
     if not isinstance(rmsd_matrix, RMSDFile):
         err = f"{type(rmsd_matrix)} is not a RMSDFile object."
         raise Exception(err)
-    log.info("dealing with RMSDFile object")
     filename = Path(rmsd_matrix.path, rmsd_matrix.file_name)
     # count lines
     nlines = sum(1 for line in open(filename))

@@ -212,3 +212,5 @@ def test_correct_clusters(correct_rmsd_array):
     expected_clusters = np.array([2, 2, 1, 1])
 
     assert (observed_clusters == expected_clusters).all()
+
+# TODO: add tests for the other categories of clustering

@@ -216,8 +216,14 @@ class RMSD:
             ):
         """Write down the RMSD matrix."""
         output_fname = Path(self.path, self.output_name)
-        # TODO: do some kind of output validation:
-        # is the length of the lists ok? everything? are there zeros?
+        # check if there are very low values in the RMSD vector
+        check_low_values = np.isclose(
+                    self.data[:, 2],
+                    np.zeros(self.npairs),
+                    atol=0.1
+                    ).any()
+        if check_low_values:
+            log.warning(f"core {self.core}: low values of RMSD detected.")
         with open(output_fname, "w") as out_fh:
             for data in list(self.data):
                 data_str = f"{data[0]:.0f} {data[1]:.0f} {data[2]:.3f}"

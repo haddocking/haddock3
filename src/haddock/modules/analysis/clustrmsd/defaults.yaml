@@ -7,7 +7,7 @@ criterion:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: "easy"
+  explevel: expert
   choices:
   - distance
   - maxclust
@@ -20,7 +20,7 @@ linkage:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: "easy"
+  explevel: expert
   choices:
     - average
     - centroid

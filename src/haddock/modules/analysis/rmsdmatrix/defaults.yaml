@@ -3,7 +3,7 @@ max_models:
   type: integer
   min: 1
   max: 20000
-  title: Maximum of models for rmsd matrix calculation
+  title: Maximum number of models to calculate RMSD matrix
   short: No short description yet
   long: No long description yet
   group: ''

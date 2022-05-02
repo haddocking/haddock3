@@ -4,8 +4,8 @@ criterion:
   minchars: 0
   maxchars: 100
   title: Criterion for fcluster
-  short: No short description yet
-  long: No long description yet
+  short: Criterion to be used to cut the dendrogram
+  long: if criterion is maxclust, the dendrogram is cut when a certain number of clusters is formed. If criterion is distance, the dendrogram will be cut based on the value of the cophenetic distance
   group: ''
   explevel: expert
   choices:
@@ -17,8 +17,8 @@ linkage:
   minchars: 0
   maxchars: 100
   title: Linkage type
-  short: No short description yet
-  long: No long description yet
+  short: How to lump together clusters in hierarchical clustering
+  long: check out the full description at https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html
   group: ''
   explevel: expert
   choices:

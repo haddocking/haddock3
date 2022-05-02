@@ -34,8 +34,19 @@ threshold:
   type: integer
   min: 1
   max: 9999
-  title: Clustering threshold
+  title: Clustering population threshold
   short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+tolerance:
+  default: .nan
+  type: float
+  min: 1
+  max: 9999
+  precision: 3
+  title: Numeric value for clustering
+  short: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cophenetic distance
   long: No long description yet
   group: ''
   explevel: easy

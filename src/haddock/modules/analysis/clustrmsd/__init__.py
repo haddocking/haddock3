@@ -45,15 +45,17 @@ class HaddockModule(BaseHaddockModule):
         linkage_type = self.params["linkage"]
         dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
         crit = self.params["criterion"]
-        if "tolerance" not in self.params.keys():
+        if np.isnan(self.params["tolerance"]):
+            log.info("tolerance is not defined")
             if crit == "maxclust":
                 tol = len(models) // 2 + 1
             else:
                 tol = np.mean(dendrogram[:, 2])
             self.log(f"Setting tolerance to {tol:.2f} for criterion {crit}")
         else:
-            tol = self.params["tolerance"]
-        
+            if crit == "maxclust":
+                tol = int(self.params["tolerance"])
+        log.info(f"tolerance {tol}")
         cluster_list = get_clusters(dendrogram, tol, crit)
         clusters = np.unique(cluster_list)
         log.info(f"clusters = {clusters}")

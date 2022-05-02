@@ -48,7 +48,7 @@ from pathlib import Path
 try:
     from haddock.gear.config_reader import read_config
 except Exception:
-    print(  # noqa: T001
+    print(  # noqa: T201
         "Haddock3 could not be imported. "
         "Please activate the haddock3 python environment.",
         file=sys.stderr,
@@ -56,7 +56,7 @@ except Exception:
     sys.exit(1)
 
 
-printf = partial(print, flush=True)  # noqa: T002
+printf = partial(print, flush=True)  # noqa: T202
 
 
 examples = (
@@ -326,12 +326,12 @@ def compare_examples(examples, devel, reference):
         run_dir = params["run_dir"]
         run_name = str(Path(folder, run_dir))
 
-        print(  # noqa: T001
+        print(  # noqa: T201
             os.linesep,
             f" {run_name} ".center(80, "*"),
             os.linesep,
             flush=True,
-            )  # noqa: T001
+            )  # noqa: T201
 
         dev_run_dir = Path(devel, folder, run_dir)
         ref_run_dir = Path(reference, folder, run_dir)

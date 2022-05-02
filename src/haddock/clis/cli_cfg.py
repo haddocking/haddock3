@@ -80,7 +80,7 @@ def main(module, explevel):
     ycfg = read_from_yaml(cfg)
 
     new_config = yaml2cfg_text(ycfg, module, explevel)
-    print(new_config, file=sys.stdout, flush=True)  # noqa: T001
+    print(new_config, file=sys.stdout, flush=True)  # noqa: T201
 
     return 0
 

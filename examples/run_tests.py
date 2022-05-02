@@ -34,7 +34,7 @@ try:
     from haddock.gear.config_reader import read_config
     from haddock.libs.libio import working_directory
 except Exception:
-    print(  # noqa: T001
+    print(  # noqa: T201
         "Haddock3 could not be imported. "
         "Please activate the haddock3 python environment.",
         file=sys.stderr,
@@ -92,12 +92,12 @@ def main(examples, break_on_errors=True):
     """Run all the examples."""
     for folder, file_ in examples:
 
-        print(  # noqa: T001
+        print(  # noqa: T201
             os.linesep,
             f" {file_.upper()} ".center(80, "*"),
             os.linesep,
             flush=True,
-            )  # noqa: T001
+            )  # noqa: T201
 
         with working_directory(folder):
 

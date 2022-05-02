@@ -48,7 +48,7 @@ class HaddockModule(BaseHaddockModule):
         if np.isnan(self.params["tolerance"]):
             log.info("tolerance is not defined")
             if crit == "maxclust":
-                tol = len(models) // 2 + 1
+                tol = len(models) // 4 + 1
             else:
                 tol = np.mean(dendrogram[:, 2])
             self.log(f"Setting tolerance to {tol:.2f} for criterion {crit}")

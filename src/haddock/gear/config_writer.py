@@ -104,10 +104,16 @@ def convert_config(
     # `mol*` start with `mol`
     sorted_keys = sorted(valid_keys, key=_is_dict)
 
-    for key, value in sorted_keys:
+    for i, (key, value) in enumerate(sorted_keys):
 
         module_key = get_module_name(key)
         if module_key in module_names:
+
+            # used to get an extra line when writing the second module
+            # header
+            if i > 0:
+                yield ""
+
             yield f"[{module_key}]"
             yield from convert_config(
                 value,
@@ -118,10 +124,12 @@ def convert_config(
             continue
 
         elif isinstance(value, collections.abc.Mapping):
-            yield ""
             if _module_key is None:
+                yield ""
                 yield f"[{key}]"
             else:
+                # module's subkeys should follow without an extra
+                # newline
                 yield f"[{_module_key}.{key}]"
             yield from convert_config(value)
             continue

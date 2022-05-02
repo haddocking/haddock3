@@ -54,7 +54,6 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models()
-        log.info(f"models {models}")
         
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)

@@ -143,7 +143,6 @@ class RMSD:
                 mod = ref + 1
             else:
                 mod += 1
-        log.info(f"core {self.core} calculations done.")
 
     def load_coords(self, pdb_f, filter_resdic=None, match=False):
         """Load coordinates from PDB."""

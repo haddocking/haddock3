@@ -46,6 +46,7 @@ class HaddockModule(BaseHaddockModule):
         log.info(f"{output_fname} created.")
 
     def update_params(self, *args, **kwargs):
+        """Update parameters."""
         super().update_params(*args, **kwargs)
         self.params.pop("resdic_")
 

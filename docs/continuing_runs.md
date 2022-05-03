@@ -23,9 +23,9 @@ the step you which to restart from. **Remember**, haddock steps are 0-indexed
 haddock3 my-run-config.cfg --restart 3
 ```
 
-As soon you run the above command, The `--restart` option will **delete** step
-folders from `3` onwards (inclusive), that is, `3_`, `4_`, `...`, will be
-deleted.
+**Important:** As soon you run the above command, The `--restart` option will
+**delete** step folders from `3` onward (inclusive), that is, `3_`, `4_`,
+`...`, will be deleted.
 
 ## Restarting a run with modified parameters
 
@@ -34,11 +34,15 @@ with modified parameters. For example, if you noticed a parameter was set to
 `true` when you wanted it to `false`, or if you wish to increase the sampling
 for a given refinement module. Simply edit the configuration file modifying the
 parameters for the modules you want to (re)run, in this case, from the fourth
-module onwards.
+module onward.
 
 ```
 haddock3 my-edited-config.cfg --restart 3
 ```
+
+**Important:** As soon you run the above command, The `--restart` option will
+**delete** step folders from `3` onward (inclusive), that is, `3_`, `4_`,
+`...`, will be deleted.
 
 ## Restarting a run with additional steps
 
@@ -56,6 +60,10 @@ haddock3 config-with-additional-step.cfg --restart 5
 We use `--restart 5` because the first new step is the sixth in the new
 workflow: the five initial steps and three new steps. Remember `--restart` is
 0-indexed.
+
+**Important:** As soon you run the above command, The `--restart` option will
+**delete** step folders from `3` onward (inclusive), that is, `3_`, `4_`,
+`...`, will be deleted.
 
 ## Starting new runs from previous modules
 

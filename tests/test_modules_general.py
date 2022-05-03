@@ -333,7 +333,7 @@ param7 = "string"
 param5 = 50'''
 
 
-def test_save_config_ingored():
+def test_save_config_ignored():
     fpath = Path("save_config_test.cfg")
     save_config_ignored(case_2, fpath)
     result = fpath.read_text()

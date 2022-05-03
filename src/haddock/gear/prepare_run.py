@@ -30,9 +30,11 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
+from haddock.gear.restart_from_dir import read_num_molecules_from_folder
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
+from haddock.libs.libfunc import not_none
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
@@ -79,7 +81,11 @@ def _read_defaults(module_name):
     return read_from_yaml_config(pdef)
 
 
-def setup_run(workflow_path, restart_from=None):
+def setup_run(
+        workflow_path,
+        restart_from=None,
+        restart_from_dir=None,
+        ):
     """
     Set up HADDOCK3 run.
 
@@ -111,7 +117,12 @@ def setup_run(workflow_path, restart_from=None):
     # read config
     params = read_config(workflow_path)
 
-    check_mandatory_argments_are_present(params)
+    if not_none(restart_from_dir):
+        params[RUNDIR] = restart_from_dir
+
+    if restart_from_dir is None:
+        check_mandatory_argments_are_present(params)
+
     validate_module_names_are_not_mispelled(params)
     check_specific_validations(params)
 
@@ -120,12 +131,14 @@ def setup_run(workflow_path, restart_from=None):
         non_mandatory_general_parameters_defaults,
         params)
 
-    clean_rundir_according_to_restart(params[RUNDIR], restart_from)
+    if restart_from_dir is None:
+        clean_rundir_according_to_restart(params[RUNDIR], restart_from)
 
     # copy molecules parameter to topology module
-    copy_molecules_to_topology(params)
-    if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
-        raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
+    if restart_from_dir is None:
+        copy_molecules_to_topology(params)
+        if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
+            raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
     # separate general from modules parameters
     _modules_keys = identify_modules(params)
@@ -134,20 +147,29 @@ def setup_run(workflow_path, restart_from=None):
     zero_fill.read(modules_params)
 
     # populate topology molecules
-    populate_topology_molecule_params(modules_params["topoaa"])
-
-    populate_mol_parameters(modules_params)
+    if restart_from_dir is None:
+        populate_topology_molecule_params(modules_params["topoaa"])
+        populate_mol_parameters(modules_params)
 
     # validations
-    validate_modules_params(modules_params)
+    if restart_from_dir is None:
+        max_mols = len(modules_params["topoaa"]["molecules"])
+    else:
+        max_mols = read_num_molecules_from_folder(restart_from_dir)
+
+    validate_modules_params(modules_params, max_mols)
     check_if_modules_are_installed(modules_params)
 
     # create datadir
     data_dir = create_data_dir(general_params[RUNDIR])
-    new_mp = copy_input_files_to_data_dir(data_dir, modules_params)
+
+    if restart_from_dir is None:
+        copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
+
+    copy_input_files_to_data_dir(data_dir, modules_params)
 
     # return the modules' parameters and general parameters separately
-    return new_mp, general_params
+    return modules_params, general_params
 
 
 def validate_params(params):
@@ -192,7 +214,7 @@ def validate_modules_names(params):
 
 
 @with_config_error
-def validate_modules_params(modules_params):
+def validate_modules_params(modules_params, max_mols):
     """
     Validate individual parameters for each module.
 
@@ -203,7 +225,7 @@ def validate_modules_params(modules_params):
         in the defaults.cfg of the module.
     """
     # needed definition before starting the loop
-    max_mols = len(modules_params["topoaa"]["molecules"])
+    #max_mols = len(modules_params["topoaa"]["molecules"])
 
     for module_name, args in modules_params.items():
         defaults = _read_defaults(module_name)
@@ -313,22 +335,25 @@ def copy_molecules_to_topology(params):
     params['topoaa']['molecules'] = list(map(Path, params['molecules']))
 
 
-def copy_input_files_to_data_dir(data_dir, modules_params):
+def copy_molecules_to_data_dir(data_dir, topoaa_params):
     """Copy files to data directory."""
-    new_mp = deepcopy(modules_params)
+    #new_mp = deepcopy(modules_params)
     # this line must be synchronized with create_data_dir()
     rel_data_dir = data_dir.name
 
     topoaa_dir = zero_fill.fill('topoaa', 0)
-    for i, molecule in enumerate(modules_params['topoaa']['molecules']):
+    for i, molecule in enumerate(topoaa_params['molecules']):
         end_path = Path(data_dir, topoaa_dir)
         end_path.mkdir(parents=True, exist_ok=True)
         name = Path(molecule).name
         check_if_path_exists(molecule)
         shutil.copy(molecule, Path(end_path, name))
-        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, topoaa_dir, name)
+        topoaa_params['molecules'][i] = Path(rel_data_dir, topoaa_dir, name)
 
+
+def copy_input_files_to_data_dir(data_dir, modules_params):
     # topology always starts with 0
+    rel_data_dir = data_dir.name
     for i, (module, params) in enumerate(modules_params.items(), start=0):
         end_path = Path(zero_fill.fill(get_module_name(module), i))
         for parameter, value in params.items():
@@ -342,9 +367,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
                     check_if_path_exists(value)
                     shutil.copy(value, Path(pf, name))
                     _p = Path(rel_data_dir, end_path, name)
-                    new_mp[module][parameter] = _p
-
-    return new_mp
+                    modules_params[module][parameter] = _p
 
 
 def clean_rundir_according_to_restart(run_dir, restart_from=None):

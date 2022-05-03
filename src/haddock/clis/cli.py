@@ -18,6 +18,10 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import RUNDIR
+from haddock.gear.restart_from_dir import (
+    RESTART_FROM_DIR_DEFAULT,
+    add_restart_from_dir,
+    )
 from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.libcli import add_version_arg, arg_file_exist
 from haddock.libs.liblog import add_loglevel_arg
@@ -33,6 +37,7 @@ ap.add_argument(
     )
 
 add_restart_arg(ap)
+add_restart_from_dir(ap)
 
 ap.add_argument(
     "--setup",
@@ -68,6 +73,7 @@ def maincli():
 def main(
         recipe,
         restart=None,
+        restart_from_dir=RESTART_FROM_DIR_DEFAULT,
         setup_only=False,
         log_level="INFO",
         ):
@@ -123,7 +129,11 @@ def main(
     log.info(get_initial_greeting())
 
     with log_error_and_exit():
-        params, other_params = setup_run(recipe, restart_from=restart)
+        params, other_params = setup_run(
+            recipe,
+            restart_from=restart,
+            restart_from_dir=Path(restart_from_dir),
+            )
 
     # here we the io.StringIO handler log information, and reset the log
     # handlers to fit the CLI and HADDOCK3 specifications.

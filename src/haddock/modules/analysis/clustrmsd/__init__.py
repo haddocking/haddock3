@@ -32,7 +32,7 @@ workflow through the `rmsd_matrix.json` file, thus allowing to execute several
 matrix.
 
 .. _scipy routines: https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
-"""
+"""  # noqa: E501
 import os
 from pathlib import Path
 

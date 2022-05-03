@@ -1,4 +1,31 @@
-"""HADDOCK3 RMSD matrix module."""
+"""
+HADDOCK3 rmsdmatrix module.
+
+This module handles the calculation of the RMSD matrix between all the models
+generated in the previous step.
+
+As all the pairwise RMSD calculations are independent, the module distributes
+them over all the available cores in an optimal way.
+
+Once created, the RMSD matrix is saved in text form in the current `rmsdmatrix`
+folder. The path to this file is then shared with the following step of the
+workflow by means of the json file `rmsd_matrix.json`.
+
+The module accepts two parameters in input, namely:
+
+- `max_models` (default = 10000): 
+- `resdic_` : an expandable parameters to specify which residues must be
+considered for the alignment and the RMSD calculation.
+
+If there are two proteins denoted by chain IDs A and B, then the user can
+operate such selection in the following way inside the configuration file
+
+resdic_A = [1,2,3,4]
+resdic_B = [2,3,4]
+
+thus telling the module to consider residues from 1 to 4 of chain A and from 2
+to 4 of chain B for the alignment and RMSD calculation.
+"""
 import contextlib
 from pathlib import Path
 

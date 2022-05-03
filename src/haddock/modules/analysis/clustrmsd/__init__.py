@@ -1,4 +1,32 @@
-"""HADDOCK3 RMSD clustering module."""
+"""
+HADDOCK3 RMSD clustering module.
+
+This module takes in input the RMSD matrix calculated in the previous step and
+performs a hierarchical clustering procedure on it, leveraging scipy routines
+(https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html) for this
+purpose.
+
+Essentially, the procedure amounts at lumping the input models in a
+progressively coarser hierarchy of clusters, called the dendrogram.
+
+Four parameters can be defined in this context:
+- `linkage` : governs the way clusters are merged together in the creation of the
+dendrogram;
+- `criterion` : defines the prescription to cut the dendrogram and obtain the
+desired clusters;
+- `tolerance` : if `criterion` is `maxclust`, this is the number of desired
+clusters. Instead, if `criterion` is `distance`, it must be the value of distance
+that separates distinct clusters. If such value is not specified, the default is
+calculated either as the total number of models divided by four (`maxclust`) or
+as the average of the dendrogram height (`distance`);
+- `threshold` : analogously to the `clustfcc` module, it is the minimum number
+of models that should be present in a cluster to consider it
+
+In the latest stage of this module's execution, the path to the RMSD matrix is
+passed to the next step of the workflow through the `rmsd_matrix.json` file,
+thus allowing to execute several `clustrmsd` modules (with different parameters)
+on the same RMSD matrix.
+"""
 import os
 from pathlib import Path
 

@@ -6,7 +6,7 @@ starting points for new runs. Let's see some examples.
 
 ## Restarting a run
 
-Use the'--restart' flag to restart a HADDOCK3 run. For example, imagine you
+Use the `--restart` flag to restart a HADDOCK3 run. For example, imagine you
 start a run:
 
 ```
@@ -75,8 +75,7 @@ example, `4_flexref`.
 
 **Note:** If the new run uses CNS-dependent modules, you **also need** to copy
 the folder corresponding to the initial topology creation (the `topoaa` module).
-
-Example:
+For example:
 
 ```
 mkdir run2

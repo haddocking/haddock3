@@ -13,7 +13,7 @@ workflow by means of the json file `rmsd_matrix.json`.
 
 The module accepts two parameters in input, namely:
 
-- `max_models` (default = 10000): 
+- `max_models` (default = 10000):
 - `resdic_` : an expandable parameters to specify which residues must be
 considered for the alignment and the RMSD calculation.
 

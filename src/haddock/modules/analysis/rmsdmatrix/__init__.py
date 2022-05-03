@@ -1,4 +1,5 @@
 """HADDOCK3 RMSD matrix module."""
+import contextlib
 from pathlib import Path
 
 from haddock import log
@@ -6,6 +7,7 @@ from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
+from haddock.modules.analysis import confirm_resdic_chainid_length
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSD,
     RMSDJob,
@@ -48,7 +50,10 @@ class HaddockModule(BaseHaddockModule):
     def update_params(self, *args, **kwargs):
         """Update parameters."""
         super().update_params(*args, **kwargs)
-        self.params.pop("resdic_")
+        with contextlib.suppress(KeyError):
+            self.params.pop("resdic_")
+
+        confirm_resdic_chainid_length(self._params)
 
     def _run(self):
         """Execute module."""

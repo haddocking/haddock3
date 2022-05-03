@@ -8,3 +8,15 @@ max_models:
   long: No long description yet
   group: ''
   explevel: easy
+resdic_:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: No title yet
+  short: No short description yet
+  long: resdic_* is an expandable parameter. You can provide resdic_A,
+    resdic_B, resdic_C, etc, where the last capital letter is the chain
+    identifier.
+  group: ''
+  explevel: easy

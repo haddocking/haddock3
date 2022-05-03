@@ -45,6 +45,10 @@ class HaddockModule(BaseHaddockModule):
         log.info("Completed reconstruction of rmsd files.")
         log.info(f"{output_fname} created.")
 
+    def update_params(self, *args, **kwargs):
+        super().update_params(*args, **kwargs)
+        self.params.pop("resdic_")
+
     def _run(self):
         """Execute module."""
         # Get the models generated in previous step

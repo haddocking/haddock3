@@ -32,12 +32,12 @@ from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.gear.zerofill import zero_fill
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
     remove_dict_keys,
     transform_to_list,
-    zero_fill,
     )
 from haddock.modules import (
     modules_category,
@@ -131,9 +131,11 @@ def setup_run(workflow_path, restart_from=None):
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+    zero_fill.read(modules_params)
 
     # populate topology molecules
     populate_topology_molecule_params(modules_params["topoaa"])
+
     populate_mol_parameters(modules_params)
 
     # validations
@@ -317,17 +319,18 @@ def copy_input_files_to_data_dir(data_dir, modules_params):
     # this line must be synchronized with create_data_dir()
     rel_data_dir = data_dir.name
 
+    topoaa_dir = zero_fill.fill('topoaa', 0)
     for i, molecule in enumerate(modules_params['topoaa']['molecules']):
-        end_path = Path(data_dir, '00_topoaa')
+        end_path = Path(data_dir, topoaa_dir)
         end_path.mkdir(parents=True, exist_ok=True)
         name = Path(molecule).name
         check_if_path_exists(molecule)
         shutil.copy(molecule, Path(end_path, name))
-        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, '00_topoaa', name)
+        new_mp['topoaa']['molecules'][i] = Path(rel_data_dir, topoaa_dir, name)
 
     # topology always starts with 0
     for i, (module, params) in enumerate(modules_params.items(), start=0):
-        end_path = Path(f'{zero_fill(i)}_{get_module_name(module)}')
+        end_path = Path(zero_fill.fill(get_module_name(module), i))
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
                 if value:
@@ -508,26 +511,46 @@ def populate_topology_molecule_params(topoaa):
 
 def populate_mol_parameters(modules_params):
     """
-    Populate modules parameters.
+    Populate modules subdictionaries with the needed molecule `mol_` parameters.
+
+    The `mol_` prefixed parameters is a subclass of the expandable parameters.
+
+    See `gear.expandable_parameters`.
+
+    Modules require these parameters to be repeated for the number of input
+    molecules.
+
+    This function adds `mol_` parameters to the user input parameters,
+    one per each `molecule`.
 
     Parameters
     ----------
     modules_params : dict
-        A dictionary containing the parameters for all modules.
+        A dictionary containing only modules' keys:subdictionaries
+        parameters. That is, without the general parameters.
 
     Returns
     -------
     None
         Alter the dictionary in place.
     """
+    # the starting number of the `mol_` parameters is 1 by CNS definition.
+    num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
     for module_name, _ in modules_params.items():
+
+        # read the modules default parameters
         defaults = _read_defaults(module_name)
 
+        # if there are no `mol_` parameters in the modules default values,
+        # the `mol_params` generator will be empty and the for-loop below
+        # won't run.
         mol_params = (p for p in list(defaults.keys()) if is_mol_parameter(p))
-        num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
 
         for param, i in it.product(mol_params, num_mols):
             param_name = remove_trail_idx(param)
+
+            # the `setdefault` grants that the value is only added if
+            # the parameter is not present.
             modules_params[module_name].setdefault(
                 f"{param_name}_{i}",
                 defaults[param],

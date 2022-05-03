@@ -1,4 +1,4 @@
-"""HADDOCK3 FCC clustering module."""
+"""Cluster modules with FCC."""
 import os
 from pathlib import Path
 
@@ -154,7 +154,8 @@ class HaddockModule(BaseHaddockModule):
             for clt_id in clt_dic:
                 score_l = [p.score for p in clt_dic[clt_id]]
                 score_l.sort()
-                top4_score = sum(score_l[:threshold]) / float(threshold)
+                denom = float(min(threshold, len(score_l)))
+                top4_score = sum(score_l[:threshold]) / denom
                 score_dic[clt_id] = top4_score
 
             sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])

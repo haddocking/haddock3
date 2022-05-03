@@ -1,4 +1,4 @@
-"""HADDOCK3 gdock integration module."""
+"""gdock integration sampling module."""
 import os
 import re
 import shlex

@@ -5,9 +5,12 @@ from functools import partial
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
-from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.defaults import MODULE_IO_FILE, modules_folder_prefix
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
+from haddock.gear.config_writer import convert_config as _convert_config
+from haddock.gear.config_writer import save_config as _save_config
+from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import working_directory
@@ -147,6 +150,15 @@ class BaseHaddockModule(ABC):
         self._fill_emptypaths()
         self._confirm_fnames_exist()
 
+    def save_config(self, path):
+        """Save current parameters to a HADDOCK3 config file."""
+        # creates this dictionary for the config to have the module name
+        # key in brackets, for example:
+        #
+        # [topoaa]
+        # ...
+        save_config_ignored({self.name: self.params}, path)
+
     def add_parent_to_paths(self):
         """Add parent path to paths."""
         # convert paths to relative by appending parent
@@ -226,8 +238,8 @@ class BaseHaddockModule(ABC):
 
     def previous_path(self):
         """Give the path from the previous calculation."""
-        # [0-9]* below is not a regex, is a bash wildkey
-        previous = sorted(list(self.path.resolve().parent.glob('[0-9]*/')))
+        previous = list(self.path.resolve().parent.glob(modules_folder_prefix))
+        previous.sort()
         try:
             return previous[self.order - 1]
         except IndexError:
@@ -301,3 +313,72 @@ def get_engine(mode, params):
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"
             )
+
+
+convert_config = partial(
+    _convert_config,
+    ignore_params=non_mandatory_general_parameters_defaults,
+    module_names=set(modules_category.keys()),
+    )
+convert_config.__doc__ = \
+    """
+    Convert a module's parameters to a HADDOCK3 user config file text.
+
+    This function is a generator.
+
+    Examples
+    --------
+    >>> gen = convert_config(parameters_dict)
+    >>> text = os.linesep.join(gen)
+    >>> with open("params.cfg", "w") as fout:
+    >>>     fout.write(text)
+
+    Yields
+    ------
+    str
+        Line by line for the HADDOCK3 user configuration file.
+    """
+
+
+def save_config(*args, **kwargs):
+    """
+    Save HADDOCK3 configuration dictionary to user config file.
+
+    Saves all parameters, even the `non_mandatory_general_parameters_defaults`
+    which can be repeated between the module parameters and the general
+    parameters.
+
+    Parameters
+    ----------
+    params : dict
+        The dictionary containing the parameters.
+
+    path : str or pathlib.Path
+        File name where to save the configuration file.
+    """
+    kwargs.setdefault("module_names", set(modules_category.keys()))
+    return _save_config(*args, **kwargs)
+
+
+def save_config_ignored(*args, **kwargs):
+    """
+    Save HADDOCK3 configuration dictionary to user config file.
+
+    Ignores the `non_mandatory_general_parameters_defaults` parameters.
+
+    Useful to keep clean versions of the modules' specific parameters.
+
+    Parameters
+    ----------
+    params : dict
+        The dictionary containing the parameters.
+
+    path : str or pathlib.Path
+        File name where to save the configuration file.
+    """
+    kwargs.setdefault("module_names", set(modules_category.keys()))
+    kwargs.setdefault(
+        "ignore_params",
+        config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults),  # noqa: 501
+        )
+    return _save_config(*args, **kwargs)

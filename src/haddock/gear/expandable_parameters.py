@@ -396,8 +396,31 @@ def read_mol_parameters(
 
 
 def remove_trail_idx(param):
-    """Remove the trailing integer from a parameter."""
-    return "_".join(param.split("_")[:-1])
+    """
+    Remove the trailing integer from a parameter.
+
+    If trail is defined by an underscore "_".
+
+    Examples
+    --------
+    remove_trail_idx('some_parameter_1')
+    >>> 'some_parameter'
+
+    remove_trail_idx('some_parameter')
+    >>> 'some_parameter'
+
+    remove_trail_idx('parameter')
+    >>> 'parameter'
+
+    Parameters
+    ----------
+    param : str
+        A parameter name.
+    """
+    under_parts = param.rpartition("_")
+    if under_parts[2].isdigit():
+        return under_parts[0]
+    return param
 
 
 def make_param_name_single_index(param_parts):
@@ -422,8 +445,8 @@ def belongs_to_single_index(param_parts):
     """
     Assert param belong to single index group.
 
-    Parameter
-    ---------
+    Parameters
+    ----------
     param_parts : list of str
         The parameter name parts after `str.split("_")`.
 
@@ -449,8 +472,8 @@ def belongs_to_multiple_index(param_parts):
     """
     Assert param belong to multiple index group.
 
-    Parameter
-    ---------
+    Parameters
+    ----------
     param_parts : list of str
         The parameter name parts after `str.split("_")`.
 
@@ -652,6 +675,16 @@ When we execute this function, we want to know:
 - how many parameters exist of the block (`something1`, `something2`, ...)
 - _1, defines the number of the block
 
+Returns a dictionary in the form of::
+
+    {
+        ("param", "1"): {
+            "something1", "something2",
+            "something_else", "something4"
+            },
+        ("otherparam", "1"): {"somename", "othername"},
+        }
+
 Parameters
 ----------
 config : dictionary
@@ -668,15 +701,7 @@ reference : bool
 
 Returns
 -------
-dictionary
-    In the form of:
-    {
-        ("param", "1"): {
-            "something1", "something2",
-            "something_else", "something4"
-            },
-        ("otherparam", "1"): {"somename", "othername"},
-        }
+dictionary - {tuple: dict}
 """
 
 get_multiple_index_groups = partial(
@@ -705,12 +730,14 @@ underscores.
 expand.
 
 These belong to the same parameter (`param1`) of the group `1`:
+
 - param_something_1_1
 - param_something2_1_1
 - param_something_else_1_1
 - param_something4_1
 
 You could expand these with:
+
 - param_something_1_2
 - param_something2_1_2
 - param_something_else_1_2
@@ -720,9 +747,14 @@ When used to read the modules' default configuration we expect the
 <digit> to be only "_1". But having <digit> allows to identify
 blocks from the user configuration.
 
+Returns a dictionary in the form of::
+
+    {("param1", "1"): {
+        "something1", "something2", "something_else", "something4"}
+
 Parameters
 ----------
-config : dictionary
+config : dict
     Where keys are the parameter names. The values are not important.
 
 minimum : int
@@ -736,10 +768,7 @@ reference : bool
 
 Returns
 -------
-dictionary
-    In the form of:
-    {("param1", "1"): {
-        "something1", "something2", "something_else", "something4"}
+dictionary : {(tuple): dict}
 """
 
 read_single_idx_groups_user_config = partial(

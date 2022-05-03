@@ -21,6 +21,7 @@ from haddock.gear.expandable_parameters import (
     rejoin_parts_multiple_index,
     rejoin_parts_single_index,
     remove_ghost_groups,
+    remove_trail_idx,
     type_simplest_ep,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
@@ -644,3 +645,22 @@ def test_read_mol_params(inp, default, expected):
     result = read_mol_parameters(inp, default, max_mols=10)
     assert result == expected
     assert isinstance(result, set)
+
+
+@pytest.mark.parametrize(
+    "param, expected",
+    [
+        ("some_parameter_1", "some_parameter"),
+        ("some_parameter_0", "some_parameter"),
+        ("some_parameter_99", "some_parameter"),
+        ("some_parameter_0_2", "some_parameter_0"),
+        ("parameter_99", "parameter"),
+        ("parameter99", "parameter99"),
+        ("some_parameter", "some_parameter"),
+        ("parameter", "parameter"),
+        ]
+    )
+def test_remove_trail_idx(param, expected):
+    """Test remove trail index from parameter."""
+    result = remove_trail_idx(param)
+    assert result == expected

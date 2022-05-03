@@ -4,9 +4,10 @@ Extract the default configuration file for each module.
 By default presents the parameters from the three expertise levels:
     `basic`, `intermediate`, and `guru`.
 
-USAGE:
-    $ haddock3-cfg -m MODULE
-    $ haddock3-cfg -m MODULE -l LEVEL
+Usage::
+
+    haddock3-cfg -m MODULE
+    haddock3-cfg -m MODULE -l LEVEL
 """
 import argparse
 import importlib
@@ -42,6 +43,10 @@ ap.add_argument(
     )
 
 
+def _ap():
+    return ap
+
+
 # command-line client helper functions
 # load_args, cli, maincli
 def load_args(ap):
@@ -75,7 +80,7 @@ def main(module, explevel):
     ycfg = read_from_yaml(cfg)
 
     new_config = yaml2cfg_text(ycfg, module, explevel)
-    print(new_config, file=sys.stdout, flush=True)  # noqa: T001
+    print(new_config, file=sys.stdout, flush=True)  # noqa: T201
 
     return 0
 

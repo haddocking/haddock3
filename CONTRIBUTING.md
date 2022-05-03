@@ -38,7 +38,9 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
     (should) use our `tox` environments to test your code. Use the
     following commands from the main repository folder:
 
-    1.  `tox -e py39` runs tests in Python 3.9 environment.
+    1.  `tox -e py39` runs tests in Python 3.9 environment. If you tox
+    to report test names and status for every single test (high verbosity) use
+    `tox -e py39 -- -vv`.
     2.  `tox -e lint` shows you errors in the code style.
     3.  `tox -e build` simulates building the HADDOCK3 package.
     4.  Run the above altogether with the simple `tox` command

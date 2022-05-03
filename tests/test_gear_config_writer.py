@@ -157,7 +157,6 @@ param6 = nan
 param7 = "string"
 param8 = []
 param9 = []
-
 [module.sub1]
 param5 = 50'''
 

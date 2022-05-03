@@ -459,7 +459,6 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
 
     elif module_name in ("caprieval", "rmsdmatrix"):
         ep = _get_expandable(user_config, defaults, module_name, max_mols)
-        ep.remove("resdic_")
         for _param in user_config.keys():
             if _param.startswith("resdic_"):
                 ep.add(_param)

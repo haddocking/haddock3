@@ -23,6 +23,9 @@ mock_modules = [
     'pdbtools.pdb_splitmodel',
     'pdbtools.pdb_tidy',
     'pyyaml',
+    'scipy',
+    'scipy.cluster',
+    'scipy.cluster.hierarchy',
     ]
 
 for modulename in mock_modules:

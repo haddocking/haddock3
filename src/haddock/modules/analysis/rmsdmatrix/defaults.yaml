@@ -15,9 +15,9 @@ resdic_:
   type: list
   minitems: 0
   maxitems: 100
-  title: Dictionary of residues
-  short: The residues IDs that should be used in the alignment and RMSD
-    calculation
+  title: List of residues
+  short: The residue numbers that should be used in the alignment and in the
+    RMSD calculation.
   long: resdic_* is an expandable parameter. You can provide resdic_A,
     resdic_B, resdic_C, etc, where the last capital letter is the chain
     identifier.

@@ -21,6 +21,7 @@ class Format(Enum):
     CNS_INPUT = "inp"
     CNS_OUTPUT = "out"
     TOPOLOGY = "psf"
+    MATRIX = "matrix"
 
     def __str__(self):
         return str(self.value)
@@ -68,6 +69,17 @@ class PDBFile(Persistent):
 
     def __eq__(self, other):
         return self.score == other.score
+
+    def __hash__(self):
+        return id(self)
+
+
+class RMSDFile(Persistent):
+    """Represents a RMSD matrix file."""
+
+    def __init__(self, file_name, npairs, path='.'):
+        super().__init__(file_name, Format.MATRIX, path)
+        self.npairs = npairs
 
     def __hash__(self):
         return id(self)

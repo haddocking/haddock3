@@ -1,0 +1,25 @@
+max_models:
+  default: 10000
+  type: integer
+  min: 1
+  max: 20000
+  title: Maximum number of models to calculate RMSD matrix
+  short: If the number of models exceeds max_models the execution is blocked
+  long: If the number of models exceeds the few thousands, the calculation of
+    the RMSD matrix is computationally demanding, especially in terms of CPU
+    and disk space.
+  group: ''
+  explevel: easy
+resdic_:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: List of residues
+  short: The residue numbers that should be used in the alignment and in the
+    RMSD calculation.
+  long: resdic_* is an expandable parameter. You can provide resdic_A,
+    resdic_B, resdic_C, etc, where the last capital letter is the chain
+    identifier.
+  group: ''
+  explevel: easy

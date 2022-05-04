@@ -180,6 +180,10 @@ def setup_run(
     else:
         copy_input_files_to_data_dir(data_dir, modules_params)
 
+    if not_none(restart_from_dir):
+        rename_step_folders(restart_from_dir)
+        rename_step_contents(restart_from_dir)
+
     # return the modules' parameters and general parameters separately
     return modules_params, general_params
 

@@ -53,6 +53,20 @@ config_readers = {
     ".cfg": read_config,
     }
 
+_folder_regex = tuple(
+    r"[0-9]+_" + mod_name
+    for mod_name in modules_category.keys()
+    )
+step_folder_regex = "(" + "|".join(_folder_regex) + ")"
+"""
+Regular expression to match module folders in a run directory.
+
+It will match folders with a numeric prefix followed by underscore ("_")
+followed by the name of a module.
+
+Example: https://regex101.com/r/roHls9/1
+"""
+
 
 @contextmanager
 def _not_valid_config():

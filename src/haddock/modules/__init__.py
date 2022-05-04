@@ -255,7 +255,7 @@ class BaseHaddockModule(ABC):
         if self.order == 0:
             return ModuleIO()
         io = ModuleIO()
-        previous_io = self.previous_path() / filename
+        previous_io = Path(self.previous_path(), filename)
         if previous_io.is_file():
             io.load(previous_io)
         return io
@@ -265,7 +265,7 @@ class BaseHaddockModule(ABC):
         previous = get_module_steps_folders(self.path.resolve().parent)
 
         try:
-            return previous[self.order - 1]
+            return Path(previous[self.order - 1])
         except IndexError:
             return self.path
 

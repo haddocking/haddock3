@@ -226,12 +226,11 @@ class BaseHaddockModule(ABC):
         else:
             raise RuntimeError(reason)
 
-    def _load_previous_io(self):
+    def _load_previous_io(self, filename=MODULE_IO_FILE):
         if self.order == 0:
             return ModuleIO()
-
         io = ModuleIO()
-        previous_io = self.previous_path() / MODULE_IO_FILE
+        previous_io = self.previous_path() / filename
         if previous_io.is_file():
             io.load(previous_io)
         return io

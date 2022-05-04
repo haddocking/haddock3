@@ -11,5 +11,5 @@ dependencies:
   - pyyaml==6.0
   - tox==3.24.5
   - pip:
-      - pdb-tools==2.4.3
+      - pdb-tools==2.4.5
       - git+https://github.com/joaorodrigues/fcc@fcc2

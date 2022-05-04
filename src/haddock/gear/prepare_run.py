@@ -30,19 +30,19 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.restart_from_dir import read_num_molecules_from_folder
+from haddock.gear.restart_from_dir import read_num_molecules_from_folder, renum_step_folders, rename_step_contents
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
 from haddock.libs.libutil import (
-    glob_step_folders,
     extract_keys_recursive,
     recursive_dict_update,
     remove_dict_keys,
     transform_to_list,
     )
 from haddock.modules import (
+    get_module_steps_folders,
     modules_category,
     non_mandatory_general_parameters_defaults,
     )
@@ -151,7 +151,7 @@ def setup_run(
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
     if not_none(restart_from_dir):
-        num_steps = len(glob_step_folders(restart_from_dir))
+        num_steps = len(get_module_steps_folders(restart_from_dir))
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
@@ -185,8 +185,8 @@ def setup_run(
         copy_input_files_to_data_dir(data_dir, modules_params)
 
     if not_none(restart_from_dir):
-        rename_step_folders(restart_from_dir)
-        rename_step_contents(restart_from_dir)
+        previous_folders = renum_step_folders(restart_from_dir)
+        rename_step_contents(restart_from_dir, previous_folders)
 
     # return the modules' parameters and general parameters separately
     return modules_params, general_params

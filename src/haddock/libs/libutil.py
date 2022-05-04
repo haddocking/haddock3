@@ -11,7 +11,6 @@ from os import cpu_count
 from pathlib import Path
 
 from haddock import log
-from haddock.core.defaults import modules_folder_prefix
 from haddock.core.exceptions import SetupError
 from haddock.gear.greetings import get_goodbye_help
 
@@ -389,36 +388,3 @@ def extract_keys_recursive(config):
             yield from extract_keys_recursive(value)
         else:
             yield param_name
-
-
-def glob_step_folders(run_dir):
-    """
-    Return a list of the step folders in a running directory.
-
-    Example
-    -------
-    Consider the folder structure:
-
-    run_dir/
-        0_topoaa/
-        1_rigidbody/
-        2_caprieval/
-        data/
-
-    >>> glob_step_folders("run_dir")
-    >>> ["0_topoaa", "1_rigidbody", "2_caprieval"]
-
-    Parameters
-    ----------
-    run_dir : str or Path
-        Path to the run directory, or to the folder containing the step
-        folders.
-
-    Returns
-    -------
-    list of str
-        List containing strings with the names of the step folders.
-    """
-    step_folders = list(Path(run_dir).resolve().glob(modules_folder_prefix))
-    step_folders.sort()
-    return step_folders

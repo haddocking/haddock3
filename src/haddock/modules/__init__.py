@@ -60,7 +60,17 @@ _step_folder_regex = tuple(
     )
 step_folder_regex = "(" + "|".join(_step_folder_regex) + ")"
 """
-Regular expression to match module folders in a run directory.
+String for regular expression to match module folders in a run directory.
+
+It will match folders with a numeric prefix followed by underscore ("_")
+followed by the name of a module.
+
+Example: https://regex101.com/r/roHls9/1
+"""
+
+step_folder_regex_re = re.compile(step_folder_regex)
+"""
+Compiled regular expression from :py:const:`step_folder_regex`.
 
 It will match folders with a numeric prefix followed by underscore ("_")
 followed by the name of a module.
@@ -427,7 +437,9 @@ def get_module_steps_folders(folder):
     list of str
         List containing strings with the names of the step folders.
     """
-    folders = [p for p in Path(folder).iterdir() if p.is_dir()]
-    fr = re.compile(step_folder_regex)
-    steps = sorted(f for f in folders if fr.search(str(f)))
+    folders = [p.name for p in Path(folder).iterdir() if p.is_dir()]
+    steps = sorted(
+        (f for f in folders if step_folder_regex_re.search(f)),
+        key=lambda x: int(x.split("_")[0]),
+        )
     return steps

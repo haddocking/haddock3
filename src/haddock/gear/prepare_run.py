@@ -46,6 +46,10 @@ from haddock.modules import (
     modules_category,
     non_mandatory_general_parameters_defaults,
     )
+from haddock.modules.analysis import (
+    confirm_resdic_chainid_length,
+    modules_using_resdic,
+    )
 
 
 @contextmanager
@@ -247,6 +251,9 @@ def validate_modules_params(modules_params, max_mols):
         defaults = _read_defaults(module_name)
         if not defaults:
             return
+
+        if module_name in modules_using_resdic:
+            confirm_resdic_chainid_length(args)
 
         expandable_params = get_expandable_parameters(
             args,
@@ -495,6 +502,13 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
                     )
 
         return ap
+
+    elif module_name in modules_using_resdic:
+        ep = _get_expandable(user_config, defaults, module_name, max_mols)
+        for _param in user_config.keys():
+            if _param.startswith("resdic_"):
+                ep.add(_param)
+        return ep
 
     else:
         return _get_expandable(user_config, defaults, module_name, max_mols)

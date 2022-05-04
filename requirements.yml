@@ -9,7 +9,8 @@ dependencies:
   - numpy==1.22.2
   - pip
   - pyyaml==6.0
+  - scipy=1.8.0
   - tox==3.24.5
   - pip:
-      - pdb-tools==2.4.3
+      - pdb-tools==2.4.5
       - git+https://github.com/joaorodrigues/fcc@fcc2

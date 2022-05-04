@@ -6,5 +6,7 @@ Analysis Modules
 
    caprieval
    clustfcc
+   clustrmsd
+   rmsdmatrix
    seletop
    seletopclusts

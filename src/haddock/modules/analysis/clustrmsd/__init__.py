@@ -14,15 +14,15 @@ Four parameters can be defined in this context:
   the dendrogram
 * `criterion`: defines the prescription to cut the dendrogram and obtain the
   desired clusters
-* `tolerance`: if not specified, the default is calculated either as the total number of
-  models divided by four (`maxclust`) or as the average of the dendrogram height
-  (`distance`)
-
+* `tolerance`:
     * if `criterion` is ``maxclust``, this is the number of desired
       clusters.
     * if `criterion` is ``distance``, it must be the value of
       distance that separates distinct clusters.
-
+      
+  If not specified, the default is calculated either as the total number of
+  models divided by four (`maxclust`) or as the average of the dendrogram height
+  (`distance`)
 * `threshold` : analogously to the `clustfcc` module, it is the minimum number
   of models that should be present in a cluster to consider it
 

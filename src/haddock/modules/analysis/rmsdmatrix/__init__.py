@@ -19,8 +19,6 @@ The module accepts two parameters in input, namely:
   two proteins denoted by chain IDs A and B, then the user can operate
   such selection in the following way inside the configuration file
 
-.. code-block:: toml
-
 >>> resdic_A = [1,2,3,4]
 >>> resdic_B = [2,3,4]
 

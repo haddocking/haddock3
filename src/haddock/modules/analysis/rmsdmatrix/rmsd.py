@@ -47,6 +47,37 @@ class RMSD:
             path,
             **params,
             ):
+        """
+        Initialise RMSD class.
+        
+        Parameters
+        ----------
+
+        model_list : list
+            List of models
+        
+        core : int
+            index of the current core
+        
+        npairs : int
+            the number of pairs of structures
+
+        start_ref : int
+            the index of the first reference structure
+
+        start_mod : int
+            the index of the first mobile structure. The class performs npairs
+            RMSD calculations starting from the pair (start_ref, start_mod)
+        
+        output_name : str
+            name of the core-specific output file
+
+        path : pathlib.Path
+            path to the current directory
+
+        **params : dict
+            additional parameters
+        """
         self.model_list = model_list
         self.core = core
         self.npairs = npairs

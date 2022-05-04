@@ -15,13 +15,13 @@ The module accepts two parameters in input, namely:
 
 - `max_models` (default = 10000):
 - `resdic_` : an expandable parameters to specify which residues must be
-considered for the alignment and the RMSD calculation.
+    considered for the alignment and the RMSD calculation.
 
 If there are two proteins denoted by chain IDs A and B, then the user can
 operate such selection in the following way inside the configuration file
 
-resdic_A = [1,2,3,4]
-resdic_B = [2,3,4]
+>>> resdic_A = [1,2,3,4]
+>>> resdic_B = [2,3,4]
 
 thus telling the module to consider residues from 1 to 4 of chain A and from 2
 to 4 of chain B for the alignment and RMSD calculation.

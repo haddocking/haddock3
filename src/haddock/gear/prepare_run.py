@@ -36,6 +36,7 @@ from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
 from haddock.libs.libutil import (
+    glob_step_folders,
     extract_keys_recursive,
     recursive_dict_update,
     remove_dict_keys,
@@ -144,7 +145,15 @@ def setup_run(
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
-    zero_fill.read(modules_params)
+
+    if not_none(restart_from_dir):
+        num_steps = len(glob_step_folders(restart_from_dir))
+        _num_modules = len(modules_params)
+        # has to consider the folders already present, plus the new folders
+        # in the configuration file
+        zero_fill.set_zerofill_number(num_steps + _num_modules)
+    else:
+        zero_fill.read(modules_params)
 
     # populate topology molecules
     if restart_from_dir is None:
@@ -166,7 +175,10 @@ def setup_run(
     if restart_from_dir is None:
         copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
 
-    copy_input_files_to_data_dir(data_dir, modules_params)
+    if not_none(restart_from_dir):
+        copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
+    else:
+        copy_input_files_to_data_dir(data_dir, modules_params)
 
     # return the modules' parameters and general parameters separately
     return modules_params, general_params
@@ -351,10 +363,10 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params):
         topoaa_params['molecules'][i] = Path(rel_data_dir, topoaa_dir, name)
 
 
-def copy_input_files_to_data_dir(data_dir, modules_params):
+def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
     # topology always starts with 0
     rel_data_dir = data_dir.name
-    for i, (module, params) in enumerate(modules_params.items(), start=0):
+    for i, (module, params) in enumerate(modules_params.items(), start=start):
         end_path = Path(zero_fill.fill(get_module_name(module), i))
         for parameter, value in params.items():
             if parameter.endswith('_fname'):

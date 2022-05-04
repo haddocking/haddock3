@@ -34,13 +34,37 @@ class _ZeroFill:
     >>> zerofill.read(modules)  # a dictionary containing five modules
     >>> zerofill.zfnum
     1
+
     >>> zerofill.fill("topoaa", 0)
     "0_topoaa"
+
+    >>> zerofill.fill("rigidbody", 2)
+    "2_rigidbody"
     """
 
     def __init__(self, zfnum=None):
-        self.zfnum = zfnum
+        self._zfnum = zfnum
         return
+
+    @property
+    def zfnum(self):
+        """
+        The zerofill number.
+
+        That is, the number of digits that the numeric prefix has.
+        """
+        return self._zfnum
+
+    def set_zerofill_number(self, num_steps):
+        """
+        Register the zerofill number given a certain number of steps.
+
+        Parameters
+        ----------
+        num_steps : int
+            The number of steps in the run.
+        """
+        self._zfnum = get_zerofill_for_modules(list(range(num_steps)))
 
     def read(self, modules):
         """
@@ -54,7 +78,7 @@ class _ZeroFill:
             Usually a dictionary or a list of the modules names.
             Any object implementing `len`.
         """
-        self.zfnum = get_zerofill_for_modules(modules)
+        self._zfnum = get_zerofill_for_modules(modules)
 
     def fill(self, name, num):
         """

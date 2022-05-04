@@ -3,6 +3,7 @@ from pathlib import Path
 
 from haddock.core.defaults import MODULE_IO_FILE, modules_folder_prefix
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libutil import glob_step_folders
 
 
 RESTART_FROM_DIR_DEFAULT = None
@@ -37,8 +38,7 @@ def read_num_molecules_from_folder(folder):
     int
         The number of molecules found.
     """
-    previous = list(Path(folder).resolve().glob(modules_folder_prefix))
-    previous.sort()
+    previous = glob_step_folders(folder)
 
     io = ModuleIO()
     previous_io = Path(previous[0], MODULE_IO_FILE)

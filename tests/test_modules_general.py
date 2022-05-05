@@ -4,6 +4,7 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 import importlib
+import shutil
 from pathlib import Path
 
 import pytest
@@ -16,6 +17,7 @@ from haddock.modules import (
     _not_valid_config,
     category_hierarchy,
     config_readers,
+    get_module_steps_folders,
     modules_category,
     save_config,
     save_config_ignored,
@@ -339,3 +341,16 @@ def test_save_config_ignored():
     result = fpath.read_text()
     assert result == case_2_text
     fpath.unlink()
+
+
+def test_get_module_steps_folders():
+    rd = Path("run_dir_test")
+    rd.mkdir()
+    Path(rd, '0_topoaa').mkdir()
+    Path(rd, '150_flexref').mkdir()
+    Path(rd, '1_rigidbody').mkdir()
+    Path(rd, '2_nothing').mkdir()
+    Path(rd, 'data').mkdir()
+    result = get_module_steps_folders(rd)
+    shutil.rmtree(rd)
+    assert result == ['0_topoaa', '1_rigidbody', '150_flexref']

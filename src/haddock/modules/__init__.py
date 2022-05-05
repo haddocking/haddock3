@@ -1,11 +1,12 @@
 """HADDOCK3 modules."""
+import re
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
-from haddock.core.defaults import MODULE_IO_FILE, modules_folder_prefix
+from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
@@ -52,6 +53,30 @@ config_readers = {
     ".yaml": read_from_yaml_config,
     ".cfg": read_config,
     }
+
+_step_folder_regex = tuple(
+    r"[0-9]+_" + mod_name
+    for mod_name in modules_category.keys()
+    )
+step_folder_regex = "(" + "|".join(_step_folder_regex) + ")"
+"""
+String for regular expression to match module folders in a run directory.
+
+It will match folders with a numeric prefix followed by underscore ("_")
+followed by the name of a module.
+
+Example: https://regex101.com/r/roHls9/1
+"""
+
+step_folder_regex_re = re.compile(step_folder_regex)
+"""
+Compiled regular expression from :py:const:`step_folder_regex`.
+
+It will match folders with a numeric prefix followed by underscore ("_")
+followed by the name of a module.
+
+Example: https://regex101.com/r/roHls9/1
+"""
 
 
 @contextmanager
@@ -230,17 +255,17 @@ class BaseHaddockModule(ABC):
         if self.order == 0:
             return ModuleIO()
         io = ModuleIO()
-        previous_io = self.previous_path() / filename
+        previous_io = Path(self.previous_path(), filename)
         if previous_io.is_file():
             io.load(previous_io)
         return io
 
     def previous_path(self):
         """Give the path from the previous calculation."""
-        previous = list(self.path.resolve().parent.glob(modules_folder_prefix))
-        previous.sort()
+        previous = get_module_steps_folders(self.path.resolve().parent)
+
         try:
-            return previous[self.order - 1]
+            return Path(previous[self.order - 1])
         except IndexError:
             return self.path
 
@@ -381,3 +406,40 @@ def save_config_ignored(*args, **kwargs):
         config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults),  # noqa: 501
         )
     return _save_config(*args, **kwargs)
+
+
+def get_module_steps_folders(folder):
+    """
+    Return a sorted list of the step folders in a running directory.
+
+    Example
+    -------
+    Consider the folder structure:
+
+    run_dir/
+        0_topoaa/
+        1_rigidbody/
+        2_caprieval/
+        3_bad_module_name/
+        data/
+
+    >>> get_module_steps_folders("run_dir")
+    >>> ["0_topoaa", "1_rigidbody", "2_caprieval"]
+
+    Parameters
+    ----------
+    folder : str or Path
+        Path to the run directory, or to the folder containing the step
+        folders.
+
+    Returns
+    -------
+    list of str
+        List containing strings with the names of the step folders.
+    """
+    folders = (p.name for p in Path(folder).iterdir() if p.is_dir())
+    steps = sorted(
+        (f for f in folders if step_folder_regex_re.search(f)),
+        key=lambda x: int(x.split("_")[0]),
+        )
+    return steps

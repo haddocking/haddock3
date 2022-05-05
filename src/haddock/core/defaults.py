@@ -36,8 +36,3 @@ with open(Path(core_path, "mandatory.yaml"), 'r') as fin:
     _ycfg = yaml.safe_load(fin)
 max_molecules_allowed = _ycfg["molecules"]["maxitems"]
 del _ycfg
-
-# Different parts of the code need to glob the run directory to search
-# for modules folders. The bash search prefix for module folders is
-# defined below.
-modules_folder_prefix = "[0-9]*/"

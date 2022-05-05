@@ -83,12 +83,27 @@ def renum_step_folders(folder):
     return step_folders
 
 
-def rename_step_contents(folder, previous_step_folders):
+def rename_step_reference(folder, previous_step_folders):
     """Rename the contents of the step to be up to date with the new folder name."""
     step_folders = get_module_steps_folders(folder)
     for psf, sf in zip(previous_step_folders, step_folders):
         sfp = Path(folder, sf).resolve()
         for file_ in sfp.iterdir():
             text = file_.read_text()
-            text.replace(psf, sf)
-            file_.write_text(text)
+            new_text = text.replace(psf, sf)
+            file_.write_text(new_text)
+
+
+def rename_rundir_reference(folder):
+    """
+    Rename the references to the previous run directory.
+
+    Searchs all step files for references of the previous run directory
+    and renames them to the new run directory.
+
+    Parameters
+    ----------
+    folder : str or Path
+        Path to the new run dir.
+    """
+    return

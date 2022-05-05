@@ -132,7 +132,7 @@ def main(
         params, other_params = setup_run(
             recipe,
             restart_from=restart,
-            restart_from_dir=Path(restart_from_dir),
+            restart_from_dir=restart_from_dir,
             )
 
     # here we the io.StringIO handler log information, and reset the log

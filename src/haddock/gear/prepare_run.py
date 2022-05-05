@@ -30,7 +30,11 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.restart_from_dir import read_num_molecules_from_folder, renum_step_folders, rename_step_contents
+from haddock.gear.restart_from_dir import (
+    read_num_molecules_from_folder,
+    renum_step_folders,
+    rename_step_reference,
+    )
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
@@ -122,6 +126,9 @@ def setup_run(
     # read config
     params = read_config(workflow_path)
 
+    with suppress(TypeError):
+        restart_from_dir = Path(restart_from_dir)
+
     if not_none(restart_from_dir):
         params[RUNDIR] = restart_from_dir
 
@@ -186,7 +193,7 @@ def setup_run(
 
     if not_none(restart_from_dir):
         previous_folders = renum_step_folders(restart_from_dir)
-        rename_step_contents(restart_from_dir, previous_folders)
+        rename_step_reference(restart_from_dir, previous_folders)
 
     # return the modules' parameters and general parameters separately
     return modules_params, general_params

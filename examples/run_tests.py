@@ -111,6 +111,16 @@ def main(examples, break_on_errors=True):
                 stderr=sys.stderr,
                 )
 
+            # perform a restart step
+            if file_ == "docking-protein-protein-test.cfg":
+                subprocess.run(
+                    f"haddock3 {file_} --restart 5",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
     return
 
 

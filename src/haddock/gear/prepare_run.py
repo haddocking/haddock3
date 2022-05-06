@@ -191,10 +191,6 @@ def setup_run(
     else:
         copy_input_files_to_data_dir(data_dir, modules_params)
 
-    if not_none(restart_from_dir):
-        previous_folders = renum_step_folders(restart_from_dir)
-        rename_step_reference(restart_from_dir, previous_folders)
-
     # return the modules' parameters and general parameters separately
     return modules_params, general_params
 

@@ -1,7 +1,8 @@
 """Restart from directory gear."""
-import shutil
 from pathlib import Path
+from shutil import copytree
 
+from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
@@ -50,60 +51,83 @@ def read_num_molecules_from_folder(folder):
     return len(io.output)
 
 
-def renum_step_folders(folder):
+def copy_renum_step_folders(indir, destdir, steps):
     """
-    Renumber the step folders sequentially in the run directory.
+    Copy step folders renumbering them sequentially in the run directory.
 
     The content of the files is not modified.
     See :py:func:`rename_step_contents`.
 
+    py:`gear.zerofill.zero_fill`: must be previously calibrated.
+
     Example
     -------
+    >>> steps = ['0_topoaa', '4_flexref']
+    >>> zero_fill.set_zerofill_number(len(steps))
+    >>> copy_renum_step_folders('run1', 'newrun', steps)
+
     The initial structure::
 
-        folder/
-            0_topoaa/
+        run1/
+            1_rigidbody/
+            2_caprieval/
+            3_seletop/
             4_flexref/
+            (etc...)
 
     Results in::
 
-        folder/
+        newrun/
             0_topoaa/
             1_flexref/
-    """
-    # these come sorted already
-    step_folders = get_module_steps_folders(folder)
-
-    # move folders
-    for i, sf in enumerate(step_folders):
-        mod_name = sf.split("_")[-1]
-        new_name = zero_fill.fill(mod_name, i)
-        shutil.move(Path(folder, sf), Path(folder, new_name))
-
-    return step_folders
-
-
-def rename_step_reference(folder, previous_step_folders):
-    """Rename the contents of the step to be up to date with the new folder name."""
-    step_folders = get_module_steps_folders(folder)
-    for psf, sf in zip(previous_step_folders, step_folders):
-        sfp = Path(folder, sf).resolve()
-        for file_ in sfp.iterdir():
-            text = file_.read_text()
-            new_text = text.replace(psf, sf)
-            file_.write_text(new_text)
-
-
-def rename_rundir_reference(folder):
-    """
-    Rename the references to the previous run directory.
-
-    Searchs all step files for references of the previous run directory
-    and renames them to the new run directory.
 
     Parameters
     ----------
-    folder : str or Path
-        Path to the new run dir.
+    indir : str or Path
+        The input directory where the original steps reside.
+
+    destdir : str or Path
+        The output directory where to copy the steps to.
+
+    steps : list of (str or Path)
+        The list of the folder names in `indir` to copy.
     """
-    return
+    step_names = (Path(step).name for step in steps)
+    for i, step in enumerate(step_names):
+        ori = Path(indir, step)
+        _modname = step.split("_")[-1]
+        dest = Path(destdir, zero_fill.fill(_modname, i))
+        copytree(ori, dest)
+        log.info(f"Copied {str(ori)} -> {str(dest)}")
+
+
+def update_contents_of_new_steps(selected_steps, olddir, newdir):
+    """
+    Find-replace run directory and step name in step folders.
+
+    Parameters
+    ----------
+    selected_steps : list of str
+        The names of the original steps.
+
+    olddir : str or Path
+        The original run directory to be replaced by `newdir`.
+
+    newdir : str or Path
+        The new run directory.
+
+    Returns
+    -------
+    None
+        Save files in place.
+    """
+    new_steps = get_module_steps_folders(newdir)
+    for psf, ns in zip(selected_steps, new_steps):
+        new_step = Path(newdir, ns)
+        for file_ in new_step.iterdir():
+            text = file_.read_text()
+            new_text = text.replace(psf, ns)
+            new_text = new_text.replace(olddir, newdir)
+            file_.write_text(new_text)
+
+    log.info("File references updated correctly.")

@@ -104,8 +104,11 @@ def maincli():
 def main(run_dir, modules, output):
     """."""
     from pathlib import Path
-    from shutil import copytree
 
+    from haddock.gear.restart_from_copy import (
+        copy_renum_step_folders,
+        update_contents_of_new_steps,
+        )
     from haddock.gear.zerofill import zero_fill
     from haddock.modules import get_module_steps_folders
 
@@ -126,33 +129,18 @@ def main(run_dir, modules, output):
 
     # copy folders over
     zero_fill.set_zerofill_number(len(selected_steps))
-    for i, step in enumerate(selected_steps):
-        ori = Path(run_dir, step)
-        _modname = step.split("_")[-1]
-        dest = Path(outdir, zero_fill.fill(_modname, i))
-        copytree(ori, dest)
-        log.info(f"Copied {str(ori)} -> {str(dest)}")
+    copy_renum_step_folders(run_dir, outdir, selected_steps)
 
     # copy data folders
-    for i, step in enumerate(selected_steps):
-        ori = Path(run_dir, "data", step)
-        _modname = step.split("_")[-1]
-        dest = Path(outdir, "data", zero_fill.fill(_modname, i))
-        copytree(ori, dest)
-        log.info(f"Copied {str(ori)} -> {str(dest)}")
+    copy_renum_step_folders(
+        Path(run_dir, "data"),
+        Path(outdir, "data"),
+        selected_steps,
+        )
 
     # update step names in files
     # update run dir names in files
-    new_steps = get_module_steps_folders(outdir)
-    for psf, ns in zip(selected_steps, new_steps):
-        new_step = Path(outdir, ns)
-        for file_ in new_step.iterdir():
-            text = file_.read_text()
-            new_text = text.replace(psf, ns)
-            new_text = new_text.replace(run_dir, output)
-            file_.write_text(new_text)
-
-    log.info("File references updated correctly.")
+    update_contents_of_new_steps(selected_steps, run_dir, outdir)
 
     return
 

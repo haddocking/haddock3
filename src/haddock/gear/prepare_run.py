@@ -122,34 +122,15 @@ def setup_run(
         A dictionary with the parameters for the haddock3 modules.
         A dictionary with the general run parameters.
     """
+    from_scratch = restart_from is None and start_from_copy is None
+
     # read config
     params = read_config(workflow_path)
-
-    with suppress(TypeError):
-        start_from_copy = Path(start_from_copy)
-
-    if not_none(start_from_copy):
-        params[RUNDIR] = start_from_copy
-
-    if start_from_copy is None:
-        check_mandatory_argments_are_present(params)
-
-    validate_module_names_are_not_mispelled(params)
-    check_specific_validations(params)
 
     # update default non-mandatory parameters with user params
     params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
         params)
-
-    if start_from_copy is None:
-        clean_rundir_according_to_restart(params[RUNDIR], restart_from)
-
-    # copy molecules parameter to topology module
-    if start_from_copy is None:
-        copy_molecules_to_topology(params)
-        if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
-            raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
     # separate general from modules parameters
     _modules_keys = identify_modules(params)
@@ -157,36 +138,52 @@ def setup_run(
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
     if not_none(start_from_copy):
+        with suppress(TypeError):
+            start_from_copy = Path(start_from_copy)
+
+        general_params[RUNDIR] = start_from_copy
+
+    validate_module_names_are_not_mispelled(modules_params)
+    check_if_modules_are_installed(modules_params)
+    check_specific_validations(general_params)
+
+    if from_scratch:
+        check_mandatory_argments_are_present(general_params)
+
+    if start_from_copy is None:
+        clean_rundir_according_to_restart(general_params[RUNDIR], restart_from)
+
+        copy_molecules_to_topology(modules_params)
+        if len(modules_params["topoaa"]["molecules"]) > max_molecules_allowed:
+            raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
+
+        zero_fill.read(modules_params)
+
+        populate_topology_molecule_params(modules_params["topoaa"])
+        populate_mol_parameters(modules_params)
+
+        max_mols = len(modules_params["topoaa"]["molecules"])
+
+    else:  # start_from_copy is not None
         num_steps = len(get_module_steps_folders(start_from_copy))
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
         zero_fill.set_zerofill_number(num_steps + _num_modules)
-    else:
-        zero_fill.read(modules_params)
 
-    # populate topology molecules
-    if start_from_copy is None:
-        populate_topology_molecule_params(modules_params["topoaa"])
-        populate_mol_parameters(modules_params)
-
-    # validations
-    if start_from_copy is None:
-        max_mols = len(modules_params["topoaa"]["molecules"])
-    else:
         max_mols = read_num_molecules_from_folder(start_from_copy)
 
     validate_modules_params(modules_params, max_mols)
-    check_if_modules_are_installed(modules_params)
 
     # create datadir
     data_dir = create_data_dir(general_params[RUNDIR])
 
-    if start_from_copy is None:
+    if from_scratch:
         copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
 
     if not_none(start_from_copy):
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
+
     else:
         copy_input_files_to_data_dir(data_dir, modules_params)
 

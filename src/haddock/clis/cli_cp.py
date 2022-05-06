@@ -102,7 +102,22 @@ def maincli():
 
 
 def main(run_dir, modules, output):
-    """."""
+    """
+    Copy steps from a run directory to a new run directory.
+
+    Also updates paths references in step files accordingly.
+
+    Parameters
+    ----------
+    run_dir : str or Path
+        Path to the original run directory.
+
+    modules : list of ints
+        List of the integer prefix of the modules to copy.
+
+    output : str or Path
+        The new run directory to create and where to copy the steps.
+    """
     from pathlib import Path
 
     from haddock.gear.start_from_copy import (

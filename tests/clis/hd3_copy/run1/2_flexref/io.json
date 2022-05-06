@@ -1,0 +1,6 @@
+# this is a dummy io.json
+# used to test haddock3-copy CLI
+# aim is to check the renaming of paths is correct
+
+path/to/somewhere/run1/2_flexref
+some other stuff 2_flexref

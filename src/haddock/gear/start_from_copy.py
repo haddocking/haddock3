@@ -130,6 +130,8 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     None
         Save files in place.
     """
+    olddir = str(olddir)
+    newdir = str(newdir)
     new_steps = get_module_steps_folders(newdir)
     for psf, ns in zip(selected_steps, new_steps):
         new_step = Path(newdir, ns)

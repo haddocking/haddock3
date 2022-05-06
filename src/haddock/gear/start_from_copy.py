@@ -130,15 +130,15 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     None
         Save files in place.
     """
-    olddir = str(olddir)
-    newdir = str(newdir)
+    olddir = Path(olddir)
+    newdir = Path(newdir)
     new_steps = get_module_steps_folders(newdir)
     for psf, ns in zip(selected_steps, new_steps):
         new_step = Path(newdir, ns)
         for file_ in new_step.iterdir():
             text = file_.read_text()
             new_text = text.replace(psf, ns)
-            new_text = new_text.replace(olddir, newdir)
+            new_text = new_text.replace(olddir.name, newdir.name)
             file_.write_text(new_text)
 
     log.info("File references updated correctly.")

@@ -18,9 +18,9 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import RUNDIR
-from haddock.gear.restart_from_copy import (
+from haddock.gear.start_from_copy import (
     RESTART_FROM_DIR_DEFAULT,
-    add_restart_from_copy,
+    add_start_from_copy,
     )
 from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.libcli import add_version_arg, arg_file_exist
@@ -37,7 +37,7 @@ ap.add_argument(
     )
 
 add_restart_arg(ap)
-add_restart_from_copy(ap)
+add_start_from_copy(ap)
 
 ap.add_argument(
     "--setup",
@@ -73,7 +73,7 @@ def maincli():
 def main(
         recipe,
         restart=None,
-        restart_from_copy=RESTART_FROM_DIR_DEFAULT,
+        start_from_copy=START_FROM_COPY_DEFAULT,
         setup_only=False,
         log_level="INFO",
         ):
@@ -132,7 +132,7 @@ def main(
         params, other_params = setup_run(
             recipe,
             restart_from=restart,
-            restart_from_copy=restart_from_copy,
+            start_from_copy=start_from_copy,
             )
 
     # here we the io.StringIO handler log information, and reset the log

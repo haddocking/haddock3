@@ -1,4 +1,9 @@
-"""Restart from directory gear."""
+"""
+Copy and start run from copy gear.
+
+Contains the functionalities used in `haddock3-copy` CLI and in
+`--start-from-copy` flag for `haddock3` CLI.
+"""
 from pathlib import Path
 from shutil import copytree
 
@@ -9,15 +14,19 @@ from haddock.libs.libontology import ModuleIO
 from haddock.modules import get_module_steps_folders
 
 
-RESTART_FROM_DIR_DEFAULT = None
+START_FROM_DIR_DEFAULT = None
 
 
-def add_restart_from_copy(parser):
-    """Add option to restart-from-dir."""
+def add_start_from_copy(parser):
+    """Add option to start-from-dir."""
     parser.add_argument(
-        '--restart-from-copy',
-        help="The run directory to restart from.",
-        default=RESTART_FROM_DIR_DEFAULT,
+        '--start-from-copy',
+        help=(
+            "Start a run from a run directory previously prepared with "
+            "the `haddock3-copy` CLI. Provide the run directory created "
+            "with `haddock3-copy` CLI."
+            ),
+        default=START_FROM_DIR_DEFAULT,
         type=Path,
         )
 

@@ -30,7 +30,7 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.restart_from_dir import (
+from haddock.gear.restart_from_copy import (
     read_num_molecules_from_folder,
     renum_step_folders,
     rename_step_reference,
@@ -93,7 +93,7 @@ def _read_defaults(module_name):
 def setup_run(
         workflow_path,
         restart_from=None,
-        restart_from_dir=None,
+        restart_from_copy=None,
         ):
     """
     Set up HADDOCK3 run.
@@ -127,12 +127,12 @@ def setup_run(
     params = read_config(workflow_path)
 
     with suppress(TypeError):
-        restart_from_dir = Path(restart_from_dir)
+        restart_from_copy = Path(restart_from_copy)
 
-    if not_none(restart_from_dir):
-        params[RUNDIR] = restart_from_dir
+    if not_none(restart_from_copy):
+        params[RUNDIR] = restart_from_copy
 
-    if restart_from_dir is None:
+    if restart_from_copy is None:
         check_mandatory_argments_are_present(params)
 
     validate_module_names_are_not_mispelled(params)
@@ -143,11 +143,11 @@ def setup_run(
         non_mandatory_general_parameters_defaults,
         params)
 
-    if restart_from_dir is None:
+    if restart_from_copy is None:
         clean_rundir_according_to_restart(params[RUNDIR], restart_from)
 
     # copy molecules parameter to topology module
-    if restart_from_dir is None:
+    if restart_from_copy is None:
         copy_molecules_to_topology(params)
         if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
             raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
@@ -157,8 +157,8 @@ def setup_run(
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
-    if not_none(restart_from_dir):
-        num_steps = len(get_module_steps_folders(restart_from_dir))
+    if not_none(restart_from_copy):
+        num_steps = len(get_module_steps_folders(restart_from_copy))
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
@@ -167,15 +167,15 @@ def setup_run(
         zero_fill.read(modules_params)
 
     # populate topology molecules
-    if restart_from_dir is None:
+    if restart_from_copy is None:
         populate_topology_molecule_params(modules_params["topoaa"])
         populate_mol_parameters(modules_params)
 
     # validations
-    if restart_from_dir is None:
+    if restart_from_copy is None:
         max_mols = len(modules_params["topoaa"]["molecules"])
     else:
-        max_mols = read_num_molecules_from_folder(restart_from_dir)
+        max_mols = read_num_molecules_from_folder(restart_from_copy)
 
     validate_modules_params(modules_params, max_mols)
     check_if_modules_are_installed(modules_params)
@@ -183,10 +183,10 @@ def setup_run(
     # create datadir
     data_dir = create_data_dir(general_params[RUNDIR])
 
-    if restart_from_dir is None:
+    if restart_from_copy is None:
         copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
 
-    if not_none(restart_from_dir):
+    if not_none(restart_from_copy):
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
     else:
         copy_input_files_to_data_dir(data_dir, modules_params)

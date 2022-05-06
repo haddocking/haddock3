@@ -12,7 +12,7 @@ from haddock.modules import get_module_steps_folders
 RESTART_FROM_DIR_DEFAULT = None
 
 
-def add_restart_from_dir(parser):
+def add_restart_from_copy(parser):
     """Add option to restart-from-dir."""
     parser.add_argument(
         '--restart-from-dir',

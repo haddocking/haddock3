@@ -68,34 +68,66 @@ workflow: the five initial steps and three new steps. Remember `--restart` is
 ## Starting new runs from previous modules
 
 You can also start an independent run from a successful step of a previous run.
+Consider the following successful run:
 
-First, manually create a **new** folder (this will be the new run directory) and
-**copy** the desired step folder from the successful run to this new folder, for
-example, `4_flexref`.
+```
+run1/
+￼    0_topoaa/
+￼    1_rigidbody/
+￼    2_caprieval/
+￼    3_seletop/
+￼    4_flexref/
+￼    (etc...)
+    data/
+```
+
+And you want to start a new independent run from the `4_flexref` step. First,
+you need to copy the step to a new run folder using our `haddock3-copy` CLI.
+
+```
+haddock3-copy -r run1 -m 0 4 -o run2
+```
+
+The above command copies steps `0_topoaa` and `4_flexref` to a new `run2`
+directory. It also updates the path references in the step folders. Resulting in:
+
+```
+run2/
+￼    0_topoaa/
+￼    1_flexref/
+    data/
+    ￼    0_topoaa/
+￼        1_flexref/
+```
+
+Do **not** use the bash `cp` command to emulate this operation because there
+several internal aspects treated by `haddock-copy`.
 
 **Note:** If the new run uses CNS-dependent modules, you **also need** to copy
 the folder corresponding to the initial topology creation (the `topoaa` module).
-For example:
+
+Second, create a configuration file for the new run containing **only** the
+parameters of the new modules you wish to execute after the `flexref`. You
+**don't** need to define the `run_dir` and `molecules` parameters in this new
+configuration file. You **can** define the other general parameters like
+`ncores`, `mode`, etc. For example:
+
+```toml
+ncores = 40
+
+[emref]
+tolerance = 20
+ambig_fname = "path/to/air.tbl"
+
+[caprieval]
+reference_fname = "path/to/reference.pdb"
+```
+
+Following the example, to start the new run:
 
 ```
-mkdir run2
-cp -r run1/0_topoaa run1/4_flexref run2
+haddock3 my-new-config.cfg --start-from-copy run2
 ```
-
-Create a configuration file for the new run containing **only** the parameters
-of the new modules you wish to execute after the `flexref`. You **don't** need
-to define the `run_dir` and `molecules` parameters in this new configuration
-file. You **can** define the other general parameters like `ncores`, `mode`,
-etc.
-
-To start the new run:
-
-```
-haddock3 my-new-config.cfg --restart-from-dir <path-to-new-run-dir>
-```
-
-HADDOCK will rename `4_flexref` to `1_flexref` (and edit its files accordingly),
-such that steps in the new run directory will have correct sequential indexes.
 
 ## Additional considerations
 

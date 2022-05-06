@@ -15,7 +15,7 @@ RESTART_FROM_DIR_DEFAULT = None
 def add_restart_from_copy(parser):
     """Add option to restart-from-dir."""
     parser.add_argument(
-        '--restart-from-dir',
+        '--restart-from-copy',
         help="The run directory to restart from.",
         default=RESTART_FROM_DIR_DEFAULT,
         type=Path,

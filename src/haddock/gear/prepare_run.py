@@ -29,7 +29,10 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.start_from_copy import read_num_molecules_from_folder
+from haddock.gear.start_from_copy import (
+    read_num_molecules_from_folder,
+    renum_step_folders,
+    )
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
@@ -152,6 +155,11 @@ def setup_run(
 
     if start_from_copy is None:
         clean_rundir_according_to_restart(general_params[RUNDIR], restart_from)
+        if restart_from is not None:
+            remove_folders_after_number(
+                Path(general_params[RUNDIR], "data"),
+                restart_from,
+                )
 
         copy_molecules_to_topology(
             general_params['molecules'],
@@ -175,6 +183,15 @@ def setup_run(
         zero_fill.set_zerofill_number(num_steps + _num_modules)
 
         max_mols = read_num_molecules_from_folder(start_from_copy)
+
+    if not from_scratch:
+        _prev, _new = renum_step_folders(general_params[RUNDIR])
+        renum_step_folders(Path(general_params[RUNDIR], "data"))
+        update_step_contents_to_step_names(
+            _prev,
+            _new,
+            general_params[RUNDIR],
+            )
 
     validate_modules_params(modules_params, max_mols)
 
@@ -712,3 +729,34 @@ def fuzzy_match(user_input, possibilities):
         results += [(user_word, best[1])]
 
     return results
+
+
+def update_step_contents_to_step_names(prev_names, new_names, folder):
+    """
+    Find-replace run directory and step name in step folders.
+
+    Parameters
+    ----------
+    prev_names : list
+        List of step names to find in file contents.
+
+    new_names : list
+        List of new step names to place `prev_names`. Both lists need
+        to be synchronized.
+
+    folder : str or Path
+        Folder where the step folders are. Usually run directory or
+        data directory.
+
+    Returns
+    -------
+    None
+        Save files in place.
+    """
+    for new_step in new_names:
+        new_step_p = Path(folder, new_step)
+        for file_ in new_step_p.iterdir():
+            text = file_.read_text()
+            for s1, s2 in zip(prev_names, new_names):
+                text = text.replace(s1, s2)
+            file_.write_text(text)

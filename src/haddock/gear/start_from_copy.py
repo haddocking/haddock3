@@ -4,8 +4,8 @@ Copy and start run from copy gear.
 Contains the functionalities used in `haddock3-copy` CLI and in
 `--start-from-copy` flag for `haddock3` CLI.
 """
+import shutil
 from pathlib import Path
-from shutil import copytree
 
 from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
@@ -120,8 +120,50 @@ def copy_renum_step_folders(indir, destdir, steps):
         ori = Path(indir, step)
         _modname = step.split("_")[-1]
         dest = Path(destdir, zero_fill.fill(_modname, i))
-        copytree(ori, dest)
+        shutil.copytree(ori, dest)
         log.info(f"Copied {str(ori)} -> {str(dest)}")
+
+
+def renum_step_folders(folder):
+    """
+    Renumber the step folders sequentially in the run directory.
+
+    The content of the files is not modified.
+
+    See :py:func:`rename_step_contents`.
+
+    Example
+    -------
+    The initial structure::
+        folder/
+            0_topoaa/
+            4_flexref/
+
+    Results in::
+        folder/
+            0_topoaa/
+            1_flexref/
+
+    Returns
+    -------
+    list
+        The list of the original step folder names.
+
+    list
+        The list of the new step folder names.
+    """
+    # these come sorted already
+    step_folders = get_module_steps_folders(folder)
+    new_names = []
+
+    # move folders
+    for i, sf in enumerate(step_folders):
+        mod_name = sf.split("_")[-1]
+        new_name = zero_fill.fill(mod_name, i)
+        new_names.append(new_name)
+        shutil.move(Path(folder, sf), Path(folder, new_name))
+
+    return step_folders, new_names
 
 
 def update_contents_of_new_steps(selected_steps, olddir, newdir):
@@ -147,12 +189,13 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     olddir = Path(olddir)
     newdir = Path(newdir)
     new_steps = get_module_steps_folders(newdir)
-    for psf, ns in zip(selected_steps, new_steps):
+    for ns in new_steps:
         new_step = Path(newdir, ns)
         for file_ in new_step.iterdir():
             text = file_.read_text()
-            new_text = text.replace(psf, ns)
-            new_text = new_text.replace(olddir.name, newdir.name)
-            file_.write_text(new_text)
+            for s1, s2 in zip(selected_steps, new_steps):
+                text = text.replace(s1, s2)
+            text = text.replace(olddir.name, newdir.name)
+            file_.write_text(text)
 
     log.info("File references updated correctly.")

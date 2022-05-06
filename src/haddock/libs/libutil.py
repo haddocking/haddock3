@@ -86,8 +86,15 @@ def copy_files_to_dir(paths, directory):
 
 
 def remove_folder(folder):
-    """Remove a folder if it exists."""
-    if folder.exists():
+    """
+    Remove a folder if it exists.
+
+    Parameters
+    ----------
+    folder : str or Path
+        Path to folder to remove.
+    """
+    if Path(folder).exists():
         log.warning(f'{folder} exists and it will be REMOVED!')
         shutil.rmtree(folder)
 

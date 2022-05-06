@@ -4,9 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from haddock.gear.start_from_copy import (
-    add_start_from_copy,
-    )
+from haddock.gear.start_from_copy import add_start_from_copy
 
 
 @pytest.mark.parametrize(

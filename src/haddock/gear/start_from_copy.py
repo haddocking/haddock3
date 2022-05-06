@@ -11,10 +11,24 @@ from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libworkflow import Workflow
 from haddock.modules import get_module_steps_folders
 
 
 START_FROM_COPY_DEFAULT = None
+
+
+class WorkflowManagerCopy:
+    """Read and execute workflows from copy."""
+
+    def __init__(self, workflow_params, start=0, **other_params):
+        self.start = start
+        self.recipe = Workflow(workflow_params, start=start, **other_params)
+
+    def run(self):
+        """High level workflow composer."""
+        for step in self.recipe.steps:
+            step.execute()
 
 
 def add_start_from_copy(parser):

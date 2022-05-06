@@ -23,8 +23,7 @@ class WorkflowManager:
 
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start
-        # Create a workflow from a TOML file
-        self.recipe = Workflow(workflow_params, **other_params)
+        self.recipe = Workflow(workflow_params, start=0, **other_params)
 
     def run(self):
         """High level workflow composer."""
@@ -35,7 +34,7 @@ class WorkflowManager:
 class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
 
-    def __init__(self, modules_parameters, **other_params):
+    def __init__(self, modules_parameters, start=0, **other_params):
 
         # filter out those parameters not belonging to the modules
         general_modules = {
@@ -46,7 +45,7 @@ class Workflow:
 
         # Create the list of steps contained in this workflow
         self.steps = []
-        _items = enumerate(modules_parameters.items())
+        _items = enumerate(modules_parameters.items(), start=start)
         for num_stage, (stage_name, params) in _items:
             log.info(f"Reading instructions of [{stage_name}] step")
 

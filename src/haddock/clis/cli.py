@@ -99,6 +99,7 @@ def main(
 
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
+    from haddock.gear.start_from_copy import WorkflowManagerCopy
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
         add_log_for_CLI,
@@ -111,6 +112,7 @@ def main(
         log_error_and_exit,
         )
     from haddock.libs.libworkflow import WorkflowManager
+    from haddock.modules import get_module_steps_folders
 
     start = time()
     # the io.StringIO handler is a trick to save the log while run_dir
@@ -152,14 +154,21 @@ def main(
         log.info(get_adieu())
         return
 
+    if start_from_copy:
+        restart_step = len(get_module_steps_folders(start_from_copy))
+        WorkflowManager_ = WorkflowManagerCopy
+    else:
+        restart_step = restart
+        WorkflowManager_ = WorkflowManager
+
     with (
             working_directory(other_params[RUNDIR]),
             log_error_and_exit(),
             ):
 
-        workflow = WorkflowManager(
+        workflow = WorkflowManager_(
             workflow_params=params,
-            start=restart,
+            start=restart_step,
             **other_params,
             )
 

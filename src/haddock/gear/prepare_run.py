@@ -153,7 +153,10 @@ def setup_run(
     if start_from_copy is None:
         clean_rundir_according_to_restart(general_params[RUNDIR], restart_from)
 
-        copy_molecules_to_topology(modules_params)
+        copy_molecules_to_topology(
+            general_params['molecules'],
+            modules_params['topoaa'],
+            )
         if len(modules_params["topoaa"]["molecules"]) > max_molecules_allowed:
             raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
@@ -349,9 +352,9 @@ def create_data_dir(run_dir):
 
 
 @with_config_error
-def copy_molecules_to_topology(params):
+def copy_molecules_to_topology(molecules, topoaa_params):
     """Copy molecules to mandatory topology module."""
-    params['topoaa']['molecules'] = list(map(Path, params['molecules']))
+    topoaa_params['molecules'] = list(map(Path, molecules))
 
 
 def copy_molecules_to_data_dir(data_dir, topoaa_params):

@@ -7,7 +7,6 @@ import shutil
 import string
 import sys
 from contextlib import contextmanager, suppress
-from copy import deepcopy
 from functools import lru_cache, wraps
 from pathlib import Path
 
@@ -30,11 +29,7 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.restart_from_copy import (
-    read_num_molecules_from_folder,
-    renum_step_folders,
-    rename_step_reference,
-    )
+from haddock.gear.restart_from_copy import read_num_molecules_from_folder
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
@@ -247,9 +242,6 @@ def validate_modules_params(modules_params, max_mols):
         If there is any parameter given by the user that is not defined
         in the defaults.cfg of the module.
     """
-    # needed definition before starting the loop
-    #max_mols = len(modules_params["topoaa"]["molecules"])
-
     for module_name, args in modules_params.items():
         defaults = _read_defaults(module_name)
         if not defaults:
@@ -363,7 +355,6 @@ def copy_molecules_to_topology(params):
 
 def copy_molecules_to_data_dir(data_dir, topoaa_params):
     """Copy files to data directory."""
-    #new_mp = deepcopy(modules_params)
     # this line must be synchronized with create_data_dir()
     rel_data_dir = data_dir.name
 

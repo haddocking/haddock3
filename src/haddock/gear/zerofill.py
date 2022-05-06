@@ -52,7 +52,7 @@ class _ZeroFill:
         The zerofill number.
 
         That is, the number of digits that the numeric prefix has.
-        """
+        """  # noqa: D401
         return self._zfnum
 
     def set_zerofill_number(self, num_steps):

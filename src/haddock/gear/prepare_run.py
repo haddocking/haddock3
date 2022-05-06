@@ -88,7 +88,7 @@ def _read_defaults(module_name):
 def setup_run(
         workflow_path,
         restart_from=None,
-        restart_from_copy=None,
+        start_from_copy=None,
         ):
     """
     Set up HADDOCK3 run.
@@ -112,6 +112,10 @@ def setup_run(
         Whether to erase the previous run folder and reprare from
         scratch. Defaults to `True`.
 
+    start_from_copy : str or Path
+        The path created with `haddock3-copy` to start the run from.
+        Defaults to None, do not use this option.
+
     Returns
     -------
     tuple of two dicts
@@ -122,12 +126,12 @@ def setup_run(
     params = read_config(workflow_path)
 
     with suppress(TypeError):
-        restart_from_copy = Path(restart_from_copy)
+        start_from_copy = Path(start_from_copy)
 
-    if not_none(restart_from_copy):
-        params[RUNDIR] = restart_from_copy
+    if not_none(start_from_copy):
+        params[RUNDIR] = start_from_copy
 
-    if restart_from_copy is None:
+    if start_from_copy is None:
         check_mandatory_argments_are_present(params)
 
     validate_module_names_are_not_mispelled(params)
@@ -138,11 +142,11 @@ def setup_run(
         non_mandatory_general_parameters_defaults,
         params)
 
-    if restart_from_copy is None:
+    if start_from_copy is None:
         clean_rundir_according_to_restart(params[RUNDIR], restart_from)
 
     # copy molecules parameter to topology module
-    if restart_from_copy is None:
+    if start_from_copy is None:
         copy_molecules_to_topology(params)
         if len(params["topoaa"]["molecules"]) > max_molecules_allowed:
             raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
@@ -152,8 +156,8 @@ def setup_run(
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
-    if not_none(restart_from_copy):
-        num_steps = len(get_module_steps_folders(restart_from_copy))
+    if not_none(start_from_copy):
+        num_steps = len(get_module_steps_folders(start_from_copy))
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
@@ -162,15 +166,15 @@ def setup_run(
         zero_fill.read(modules_params)
 
     # populate topology molecules
-    if restart_from_copy is None:
+    if start_from_copy is None:
         populate_topology_molecule_params(modules_params["topoaa"])
         populate_mol_parameters(modules_params)
 
     # validations
-    if restart_from_copy is None:
+    if start_from_copy is None:
         max_mols = len(modules_params["topoaa"]["molecules"])
     else:
-        max_mols = read_num_molecules_from_folder(restart_from_copy)
+        max_mols = read_num_molecules_from_folder(start_from_copy)
 
     validate_modules_params(modules_params, max_mols)
     check_if_modules_are_installed(modules_params)
@@ -178,10 +182,10 @@ def setup_run(
     # create datadir
     data_dir = create_data_dir(general_params[RUNDIR])
 
-    if restart_from_copy is None:
+    if start_from_copy is None:
         copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
 
-    if not_none(restart_from_copy):
+    if not_none(start_from_copy):
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
     else:
         copy_input_files_to_data_dir(data_dir, modules_params)
@@ -354,7 +358,18 @@ def copy_molecules_to_topology(params):
 
 
 def copy_molecules_to_data_dir(data_dir, topoaa_params):
-    """Copy files to data directory."""
+    """
+    Copy molecules to data directory and topoaa parameters.
+
+    Parameters
+    ----------
+    data_dir : Path
+        The data/ directory inside the run directory. Must contain
+        reference to the run directory.
+
+    topoaa_params : dict
+        A dictionary containing the topoaa parameters.
+    """
     # this line must be synchronized with create_data_dir()
     rel_data_dir = data_dir.name
 
@@ -369,7 +384,23 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params):
 
 
 def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
-    # topology always starts with 0
+    """
+    Copy input files to data directory.
+
+    Parameters
+    ----------
+    data_dir : Path
+        The data/ directory inside the run directory. Must contain
+        reference to the run directory.
+
+    modules_params : dict
+        A dictionary with the parameters of the modules. The paths to
+        data in the dictionary are updated to the new paths copied
+        to the data/ folder.
+
+    start : int, default to 0
+        The starting number of the step folders prefix.
+    """
     rel_data_dir = data_dir.name
     for i, (module, params) in enumerate(modules_params.items(), start=start):
         end_path = Path(zero_fill.fill(get_module_name(module), i))

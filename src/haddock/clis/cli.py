@@ -18,11 +18,11 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import RUNDIR
+from haddock.gear.restart_run import add_restart_arg
 from haddock.gear.start_from_copy import (
     START_FROM_COPY_DEFAULT,
     add_start_from_copy,
     )
-from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.libcli import add_version_arg, arg_file_exist
 from haddock.libs.liblog import add_loglevel_arg
 

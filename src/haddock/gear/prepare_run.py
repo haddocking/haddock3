@@ -29,7 +29,7 @@ from haddock.gear.expandable_parameters import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.restart_from_copy import read_num_molecules_from_folder
+from haddock.gear.start_from_copy import read_num_molecules_from_folder
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill

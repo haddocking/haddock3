@@ -14,7 +14,7 @@ from haddock.libs.libontology import ModuleIO
 from haddock.modules import get_module_steps_folders
 
 
-START_FROM_DIR_DEFAULT = None
+START_FROM_COPY_DEFAULT = None
 
 
 def add_start_from_copy(parser):
@@ -26,7 +26,7 @@ def add_start_from_copy(parser):
             "the `haddock3-copy` CLI. Provide the run directory created "
             "with `haddock3-copy` CLI."
             ),
-        default=START_FROM_DIR_DEFAULT,
+        default=START_FROM_COPY_DEFAULT,
         type=Path,
         )
 

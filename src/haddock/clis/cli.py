@@ -19,7 +19,7 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import RUNDIR
 from haddock.gear.start_from_copy import (
-    RESTART_FROM_DIR_DEFAULT,
+    START_FROM_COPY_DEFAULT,
     add_start_from_copy,
     )
 from haddock.gear.restart_run import add_restart_arg

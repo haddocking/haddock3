@@ -97,7 +97,7 @@ def setup_run(
     Set up an HADDOCK3 run.
 
     This function sets up a HADDOCK3 considering the options `--restart`
-    and `--start-from-copy`. The list of actions presented below does
+    and `--extend-run`. The list of actions presented below does
     not necessary represents the exact order in which it happens.
 
     Always performed:
@@ -119,7 +119,7 @@ def setup_run(
     #. remove also folders from `data/` dir after the ``--restart`` num
     #. renumber step folders according to the number of modules
 
-    Performed when ``--start-from-copy``:
+    Performed when ``--extend-run``:
 
     #. renumber step folders according to the number of modules
 
@@ -164,7 +164,7 @@ def setup_run(
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
-    # --start-from-copy configs do not define the run directory
+    # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
     if not_none(start_from_copy):
         with suppress(TypeError):

@@ -1,4 +1,4 @@
-"""Gear for ``haddock3-copy`` CLI and `--start-from-copy`` flag."""
+"""Gear for ``haddock3-copy`` CLI and `--extend-run`` flag."""
 import shutil
 from pathlib import Path
 
@@ -27,9 +27,9 @@ class WorkflowManagerCopy:
 
 
 def add_start_from_copy(parser):
-    """Add option to ``--start-from-copy``."""
+    """Add option to ``--extend-run``."""
     parser.add_argument(
-        '--start-from-copy',
+        '--extend-run',
         help=(
             "Start a run from a run directory previously prepared with "
             "the `haddock3-copy` CLI. Provide the run directory created "

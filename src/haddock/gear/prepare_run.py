@@ -26,13 +26,13 @@ from haddock.gear.expandable_parameters import (
     remove_trail_idx,
     type_simplest_ep,
     )
-from haddock.gear.greetings import get_goodbye_help
-from haddock.gear.parameters import config_mandatory_general_parameters
-from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.extend_run import (
     read_num_molecules_from_folder,
     renum_step_folders,
     )
+from haddock.gear.greetings import get_goodbye_help
+from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill

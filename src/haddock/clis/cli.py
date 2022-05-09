@@ -18,11 +18,8 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import RUNDIR
+from haddock.gear.extend_run import EXTEND_RUN_DEFAULT, add_extend_run
 from haddock.gear.restart_run import add_restart_arg
-from haddock.gear.extend_run import (
-    EXTEND_RUN_DEFAULT,
-    add_extend_run,
-    )
 from haddock.libs.libcli import add_version_arg, arg_file_exist
 from haddock.libs.liblog import add_loglevel_arg
 
@@ -103,9 +100,9 @@ def main(
     # anti-pattern to speed up CLI initiation
     from time import time
 
+    from haddock.gear.extend_run import WorkflowManagerExtend
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
-    from haddock.gear.extend_run import WorkflowManagerExtend
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
         add_log_for_CLI,

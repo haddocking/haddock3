@@ -78,18 +78,24 @@ def main(
         log_level="INFO",
         ):
     """
-    Run HADDOCK3 docking simulation.
+    Run an HADDOCK3 workflow.
 
     Parameters
     ----------
     recipe : str or pathlib.Path
         The path to the recipe (config file).
 
-    restart : int, optional
-        At which step to restart haddock3 run.
+    restart : int
+        The step to restart the run from (inclusive).
+        Defaults to None, which ignores this option.
+
+    start_from_copy : str or Path
+        The path created with `haddock3-copy` to start the run from.
+        Defaults to None, which ignores this option.
 
     setup_only : bool, optional
         Whether to setup the run without running it.
+        Defaults to False.
 
     log_level : str, optional
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.

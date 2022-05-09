@@ -94,30 +94,50 @@ def setup_run(
         start_from_copy=None,
         ):
     """
-    Set up HADDOCK3 run.
+    Set up an HADDOCK3 run.
 
-    This function performs several actions in a pipeline.
+    This function sets up a HADDOCK3 considering the options `--restart`
+    and `--start-from-copy`. The list of actions presented below does
+    not necessary represents the exact order in which it happens.
 
-    #1 : validate the parameter TOML file
-    #2 : convert strings to paths where it should
-    #3 : copy molecules to topology key
-    #4 : validate haddock3 modules params names against defaults
-    #5 : remove folder from previous runs if run folder name overlaps
-    #6 : create the needed folders/files to start the run
-    #7 : copy additional files to run folder
+    # Always performed:
+    #1 : read the user configuration file
+    #2 : completes the user configuration file with the default values
+         for the non-specified parameters
+    #3 : validate the config file
+         1) confirm modules' names are correctly spelled
+         2) check if requested modules are installed
+         3) check additional validations
+    #4 : validate modules' parameters
+    #5 : copy input files to data/ directory
+
+    # Performed when `--restart`:
+    #1 : remove folders after --restart number
+    #2 : remove also folders from `data/` dir
+    #3 : renumber step folders according to the number of modules
+
+    # Performed when `--start-from-copy`:
+    #3 : renumber step folders according to the number of modules
+
+    # Performed when start from scratch:
+    #1 : check mandatory arguments are present in the config file
+    #2 : check run-dir exists
+    #3 : copy molecules to topology key (also in `--restart`)
+    #4 : populate topology parameters (also in `--restar`)
+    #5 : copy molecules to data dir
 
     Parameters
     ----------
     workflow_path : str or pathlib.Path
         The path to the configuration file.
 
-    erase_previous : bool
-        Whether to erase the previous run folder and reprare from
-        scratch. Defaults to `True`.
+    restart_from : int
+        The step to restart the run from (inclusive).
+        Defaults to None, which ignores this option.
 
     start_from_copy : str or Path
         The path created with `haddock3-copy` to start the run from.
-        Defaults to None, do not use this option.
+        Defaults to None, which ignores this option.
 
     Returns
     -------
@@ -125,46 +145,67 @@ def setup_run(
         A dictionary with the parameters for the haddock3 modules.
         A dictionary with the general run parameters.
     """
-    from_scratch = restart_from is None and start_from_copy is None
-
-    # read config
+    # read the user config file from path
     params = read_config(workflow_path)
 
     # update default non-mandatory parameters with user params
     params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
-        params)
+        params,
+        )
 
-    # separate general from modules parameters
+    # separate general from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
+    # --start-from-copy configs do not define the run directory
+    # in the config file. So we take it from the argument.
     if not_none(start_from_copy):
         with suppress(TypeError):
             start_from_copy = Path(start_from_copy)
 
         general_params[RUNDIR] = start_from_copy
 
-    validate_module_names_are_not_mispelled(modules_params)
+    validate_module_names_are_not_misspelled(modules_params)
     check_if_modules_are_installed(modules_params)
     check_specific_validations(general_params)
 
+    from_scratch = restart_from is None and start_from_copy is None
+    scratch_rest0 = from_scratch or restart_from == 0
+    restarting_from = not_none(restart_from)
+    starting_from_copy = not_none(start_from_copy)
+
     if from_scratch:
+        check_run_dir_exists(general_params[RUNDIR])
+
+    if scratch_rest0:
+        # mandatory arguments are only necessary when starting from
+        # scratch
         check_mandatory_argments_are_present(general_params)
 
-    if start_from_copy is None:
-        clean_rundir_according_to_restart(general_params[RUNDIR], restart_from)
-        if restart_from is not None:
-            remove_folders_after_number(
-                Path(general_params[RUNDIR], "data"),
-                restart_from,
-                )
+    if restart_from is not None:
+        remove_folders_after_number(general_params[RUNDIR], restart_from)
+        remove_folders_after_number(
+            Path(general_params[RUNDIR], "data"),
+            restart_from,
+            )
 
+    if starting_from_copy:
+        num_steps = len(get_module_steps_folders(start_from_copy))
+        _num_modules = len(modules_params)
+        # has to consider the folders already present, plus the new folders
+        # in the configuration file
+        zero_fill.set_zerofill_number(num_steps + _num_modules)
+
+        max_mols = read_num_molecules_from_folder(start_from_copy)
+
+    else:
         copy_molecules_to_topology(
             general_params['molecules'],
             modules_params['topoaa'],
             )
+
         if len(modules_params["topoaa"]["molecules"]) > max_molecules_allowed:
             raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
@@ -174,15 +215,6 @@ def setup_run(
         populate_mol_parameters(modules_params)
 
         max_mols = len(modules_params["topoaa"]["molecules"])
-
-    else:  # start_from_copy is not None
-        num_steps = len(get_module_steps_folders(start_from_copy))
-        _num_modules = len(modules_params)
-        # has to consider the folders already present, plus the new folders
-        # in the configuration file
-        zero_fill.set_zerofill_number(num_steps + _num_modules)
-
-        max_mols = read_num_molecules_from_folder(start_from_copy)
 
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
@@ -198,11 +230,16 @@ def setup_run(
     # create datadir
     data_dir = create_data_dir(general_params[RUNDIR])
 
-    if from_scratch:
+    if scratch_rest0:
         copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
 
-    if not_none(start_from_copy):
+    if starting_from_copy:
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
+
+    elif restarting_from:
+        _keys = list(modules_params.keys())
+        _partial_params = {k:modules_params[k] for k in _keys}
+        copy_input_files_to_data_dir(data_dir, _partial_params, start=restart_from)
 
     else:
         copy_input_files_to_data_dir(data_dir, modules_params)
@@ -435,32 +472,36 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
                     modules_params[module][parameter] = _p
 
 
-def clean_rundir_according_to_restart(run_dir, restart_from=None):
-    """
-    Clean run directory according to restart parameter.
+def check_run_dir_exists(run_dir):
+    """Check whether the run directory exists."""
+    _p = Path(run_dir)
+    if _p.exists() and len(list(_p.iterdir())) > 0:
+        log.info(
+            f"The {RUNDIR!r} {str(_p)!r} exists and is not empty. "
+            "We can't work on it unless you provide the `--restart` "
+            "option. If you want to start a run from scratch, "
+            "indicate a new folder, or manually delete this one first, "
+            "or use `--restart 0`."
+            )
+        sys.exit(get_goodbye_help())
 
-    Parameters
-    ----------
-    restart_from : None or int
-        The module on which to restart the run. Discards all modules
-        after this one (inclusive).
-    """
-    if restart_from is None:
-        # prepares the run folders
-        _p = Path(run_dir)
-        if _p.exists() and len(list(_p.iterdir())) > 0:
-            log.info(
-                f"The {RUNDIR!r} {str(_p)!r} exists and is not empty. "
-                "We can't work on it unless you provide the `--restart` "
-                "option. If you want to start a run from scratch, "
-                "indicate a new folder, or manually delete this one first, "
-                "or use `--restart 0`."
-                )
-            sys.exit(get_goodbye_help())
 
-    else:
-        remove_folders_after_number(run_dir, restart_from)
-
+#def clean_rundir_according_to_restart(run_dir, restart_from=None):
+#    """
+#    Clean run directory according to restart parameter.
+#
+#    Parameters
+#    ----------
+#    restart_from : None or int
+#        The module on which to restart the run. Discards all modules
+#        after this one (inclusive).
+#    """
+#    if restart_from is None:
+#        # prepares the run folders
+#
+#    else:
+#        remove_folders_after_number(run_dir, restart_from)
+#
 
 def identify_modules(params):
     """Identify keys (headings) belonging to HADDOCK3 modules."""
@@ -483,7 +524,7 @@ def inject_in_modules(modules_params, key, value):
         params[key] = value
 
 
-def validate_module_names_are_not_mispelled(params):
+def validate_module_names_are_not_misspelled(params):
     """Validate headers are not misspelled."""
     module_names = sorted(modules_category.keys())
     for param_name, value in params.items():

@@ -123,7 +123,7 @@ reference_fname = "path/to/reference.pdb"
 Following the example, to start the new run:
 
 ```
-haddock3 my-new-config.cfg --start-from-copy run2
+haddock3 my-new-config.cfg --extend-run run2
 ```
 
 ## Additional considerations
@@ -142,7 +142,7 @@ Yes. HADDOCK3 uses relative paths inside the run directory.
 Yes, provided you have installed HADDOCK3 following the [INSTALL](INSTALL.md)
 instructions in the two systems. You can copy a run directory (or some of its
 steps) to a different computer/system and (re)run it using the `--restart` and
-`--start-from-copy` options.
+`--extend-run` options.
 
 3. Modules are 0-indexed. Is this related to Python being 0-indexed also?
 

@@ -105,7 +105,7 @@ def main(
 
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
-    from haddock.gear.extend_run import WorkflowManagerCopy
+    from haddock.gear.extend_run import WorkflowManagerExtend
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
         add_log_for_CLI,
@@ -162,7 +162,8 @@ def main(
 
     if extend_run:
         restart_step = len(get_module_steps_folders(extend_run))
-        WorkflowManager_ = WorkflowManagerCopy
+        WorkflowManager_ = WorkflowManagerExtend
+
     else:
         restart_step = restart
         WorkflowManager_ = WorkflowManager

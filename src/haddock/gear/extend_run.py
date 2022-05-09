@@ -13,8 +13,8 @@ from haddock.modules import get_module_steps_folders
 EXTEND_RUN_DEFAULT = None
 
 
-class WorkflowManagerCopy:
-    """Read and execute workflows from copy."""
+class WorkflowManagerExtend:
+    """Workflow to extend a run."""
 
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start

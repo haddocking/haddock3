@@ -92,6 +92,7 @@ def copy_renum_step_folders(indir, destdir, steps):
     The initial structure::
 
         run1/
+            0_topoaa/
             1_rigidbody/
             2_caprieval/
             3_seletop/

@@ -110,10 +110,11 @@ def setup_run(
          3) check additional validations
     #4 : validate modules' parameters
     #5 : copy input files to data/ directory
+         1) for `--restart` copies only after the restart number
 
     # Performed when `--restart`:
     #1 : remove folders after --restart number
-    #2 : remove also folders from `data/` dir
+    #2 : remove also folders from `data/` dir after the `--restart` num
     #3 : renumber step folders according to the number of modules
 
     # Performed when `--start-from-copy`:
@@ -123,7 +124,7 @@ def setup_run(
     #1 : check mandatory arguments are present in the config file
     #2 : check run-dir exists
     #3 : copy molecules to topology key (also in `--restart`)
-    #4 : populate topology parameters (also in `--restar`)
+    #4 : populate topology parameters (also in `--restart`)
     #5 : copy molecules to data dir
 
     Parameters
@@ -171,6 +172,9 @@ def setup_run(
     check_if_modules_are_installed(modules_params)
     check_specific_validations(general_params)
 
+    # define starting conditions
+    # consider a deeper refactor if additional conditions are implemented
+    # @joaomcteixeira, 09 May 2022
     from_scratch = restart_from is None and start_from_copy is None
     scratch_rest0 = from_scratch or restart_from == 0
     restarting_from = not_none(restart_from)
@@ -180,16 +184,12 @@ def setup_run(
         check_run_dir_exists(general_params[RUNDIR])
 
     if scratch_rest0:
-        # mandatory arguments are only necessary when starting from
-        # scratch
         check_mandatory_argments_are_present(general_params)
 
-    if restart_from is not None:
+    if restarting_from:
         remove_folders_after_number(general_params[RUNDIR], restart_from)
-        remove_folders_after_number(
-            Path(general_params[RUNDIR], "data"),
-            restart_from,
-            )
+        _data_dir = Path(general_params[RUNDIR], "data")
+        remove_folders_after_number(_data_dir, restart_from)
 
     if starting_from_copy:
         num_steps = len(get_module_steps_folders(start_from_copy))
@@ -237,11 +237,17 @@ def setup_run(
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
 
     elif restarting_from:
+        # copies only the input molecules needed
         _keys = list(modules_params.keys())
-        _partial_params = {k:modules_params[k] for k in _keys}
-        copy_input_files_to_data_dir(data_dir, _partial_params, start=restart_from)
+        _partial_params = {k: modules_params[k] for k in _keys}
+        copy_input_files_to_data_dir(
+            data_dir,
+            _partial_params,
+            start=restart_from,
+            )
 
     else:
+        # copies everything
         copy_input_files_to_data_dir(data_dir, modules_params)
 
     # return the modules' parameters and general parameters separately
@@ -485,23 +491,6 @@ def check_run_dir_exists(run_dir):
             )
         sys.exit(get_goodbye_help())
 
-
-#def clean_rundir_according_to_restart(run_dir, restart_from=None):
-#    """
-#    Clean run directory according to restart parameter.
-#
-#    Parameters
-#    ----------
-#    restart_from : None or int
-#        The module on which to restart the run. Discards all modules
-#        after this one (inclusive).
-#    """
-#    if restart_from is None:
-#        # prepares the run folders
-#
-#    else:
-#        remove_folders_after_number(run_dir, restart_from)
-#
 
 def identify_modules(params):
     """Identify keys (headings) belonging to HADDOCK3 modules."""

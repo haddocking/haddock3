@@ -28,5 +28,5 @@ def nan(*ignore, **everything):
 
 
 def not_none(value):
-    """Give True if value is None, or False otherwise."""
+    """Give True if value is not None, or False otherwise."""
     return is_not(value, None)

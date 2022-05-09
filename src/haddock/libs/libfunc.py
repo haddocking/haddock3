@@ -1,4 +1,5 @@
 """Tools for functional programming."""
+from operator import is_not
 
 
 def give_same(value):
@@ -24,3 +25,8 @@ def none(*ignore, **everything):
 def nan(*ignore, **everything):
     """Give False regardless of the input."""
     return float('nan')
+
+
+def not_none(value):
+    """Give True if value is not None, or False otherwise."""
+    return is_not(value, None)

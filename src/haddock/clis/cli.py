@@ -19,6 +19,10 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import RUNDIR
 from haddock.gear.restart_run import add_restart_arg
+from haddock.gear.start_from_copy import (
+    START_FROM_COPY_DEFAULT,
+    add_start_from_copy,
+    )
 from haddock.libs.libcli import add_version_arg, arg_file_exist
 from haddock.libs.liblog import add_loglevel_arg
 
@@ -33,6 +37,7 @@ ap.add_argument(
     )
 
 add_restart_arg(ap)
+add_start_from_copy(ap)
 
 ap.add_argument(
     "--setup",
@@ -68,22 +73,29 @@ def maincli():
 def main(
         recipe,
         restart=None,
+        start_from_copy=START_FROM_COPY_DEFAULT,
         setup_only=False,
         log_level="INFO",
         ):
     """
-    Run HADDOCK3 docking simulation.
+    Run an HADDOCK3 workflow.
 
     Parameters
     ----------
     recipe : str or pathlib.Path
         The path to the recipe (config file).
 
-    restart : int, optional
-        At which step to restart haddock3 run.
+    restart : int
+        The step to restart the run from (inclusive).
+        Defaults to None, which ignores this option.
+
+    start_from_copy : str or Path
+        The path created with `haddock3-copy` to start the run from.
+        Defaults to None, which ignores this option.
 
     setup_only : bool, optional
         Whether to setup the run without running it.
+        Defaults to False.
 
     log_level : str, optional
         The logging level: INFO, DEBUG, ERROR, WARNING, CRITICAL.
@@ -93,6 +105,7 @@ def main(
 
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
+    from haddock.gear.start_from_copy import WorkflowManagerCopy
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
         add_log_for_CLI,
@@ -105,6 +118,7 @@ def main(
         log_error_and_exit,
         )
     from haddock.libs.libworkflow import WorkflowManager
+    from haddock.modules import get_module_steps_folders
 
     start = time()
     # the io.StringIO handler is a trick to save the log while run_dir
@@ -123,7 +137,11 @@ def main(
     log.info(get_initial_greeting())
 
     with log_error_and_exit():
-        params, other_params = setup_run(recipe, restart_from=restart)
+        params, other_params = setup_run(
+            recipe,
+            restart_from=restart,
+            start_from_copy=start_from_copy,
+            )
 
     # here we the io.StringIO handler log information, and reset the log
     # handlers to fit the CLI and HADDOCK3 specifications.
@@ -142,14 +160,21 @@ def main(
         log.info(get_adieu())
         return
 
+    if start_from_copy:
+        restart_step = len(get_module_steps_folders(start_from_copy))
+        WorkflowManager_ = WorkflowManagerCopy
+    else:
+        restart_step = restart
+        WorkflowManager_ = WorkflowManager
+
     with (
             working_directory(other_params[RUNDIR]),
             log_error_and_exit(),
             ):
 
-        workflow = WorkflowManager(
+        workflow = WorkflowManager_(
             workflow_params=params,
-            start=restart,
+            start=restart_step,
             **other_params,
             )
 

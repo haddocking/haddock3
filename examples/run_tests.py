@@ -34,7 +34,7 @@ try:
     from haddock.gear.config_reader import read_config
     from haddock.libs.libio import working_directory
 except Exception:
-    print(  # noqa: T001
+    print(  # noqa: T201
         "Haddock3 could not be imported. "
         "Please activate the haddock3 python environment.",
         file=sys.stderr,
@@ -92,12 +92,12 @@ def main(examples, break_on_errors=True):
     """Run all the examples."""
     for folder, file_ in examples:
 
-        print(  # noqa: T001
+        print(  # noqa: T201
             os.linesep,
             f" {file_.upper()} ".center(80, "*"),
             os.linesep,
             flush=True,
-            )  # noqa: T001
+            )  # noqa: T201
 
         with working_directory(folder):
 
@@ -110,6 +110,41 @@ def main(examples, break_on_errors=True):
                 stdout=sys.stdout,
                 stderr=sys.stderr,
                 )
+
+            # perform a restart step
+            if file_ == "docking-protein-protein-test.cfg":
+                subprocess.run(
+                    f"haddock3 {file_} --restart 5",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+            # perform a restart step from 0
+                subprocess.run(
+                    f"haddock3 {file_} --restart 0",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                subprocess.run(
+                    "haddock3-copy -r run1-test -m 0 4 -r run2",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                subprocess.run(
+                    "haddock3 docking-protein-protein-test-start-from-cp.cfg --start-from-copy run2",  # noqa: E501
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
 
     return
 

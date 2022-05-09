@@ -1,0 +1,6 @@
+# this is a dummy io.json
+# used to test haddock3-copy CLI
+# aim is to check the renaming of paths is correct
+
+path/to/somewhere/run2/0_topoaa
+some other stuff 0_topoaa

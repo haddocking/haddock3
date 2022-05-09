@@ -4,6 +4,7 @@ Test general implementation in haddock3 modules.
 Ensures all modules follow the same compatible architecture.
 """
 import importlib
+import shutil
 from pathlib import Path
 
 import pytest
@@ -16,6 +17,7 @@ from haddock.modules import (
     _not_valid_config,
     category_hierarchy,
     config_readers,
+    get_module_steps_folders,
     modules_category,
     save_config,
     save_config_ignored,
@@ -233,6 +235,7 @@ molecules = [
 
 cns_exec = "path1"
 ncores = 8
+
 [topoaa]
 param1 = 1
 param2 = 1.0
@@ -245,16 +248,57 @@ param4 = [
 
 param6 = nan
 param7 = "string"
-
 [topoaa.sub1]
 param5 = 50'''
 
 
 def test_save_config():
-    fpath = Path("save_config_test.cfg")
+    fpath = Path("save_config_test_case1.cfg")
     save_config(case_1, fpath)
     result = fpath.read_text()
     assert result == case_1_text
+    fpath.unlink()
+
+
+case_topoaa = {
+    "topoaa": {
+        "param1": 1,
+        "param2": 1.0,
+        "param3": False,
+        "param4": ["a", "b", "c"],
+        "sub1": {"param5": 50},
+        "param6": float('nan'),
+        "param7": "string",
+        },
+    "rigidbody": {
+        "param1": 10,
+        },
+    }
+
+case_topoaa_txt = '''[topoaa]
+param1 = 1
+param2 = 1.0
+param3 = false
+param4 = [
+    "a",
+    "b",
+    "c"
+    ]
+
+param6 = nan
+param7 = "string"
+[topoaa.sub1]
+param5 = 50
+
+[rigidbody]
+param1 = 10'''
+
+
+def test_save_config_header():
+    fpath = Path("save_config_test_header.cfg")
+    save_config(case_topoaa, fpath)
+    result = fpath.read_text()
+    assert result == case_topoaa_txt
     fpath.unlink()
 
 
@@ -287,14 +331,26 @@ param4 = [
 
 param6 = nan
 param7 = "string"
-
 [topoaa.sub1]
 param5 = 50'''
 
 
-def test_save_config_ingored():
+def test_save_config_ignored():
     fpath = Path("save_config_test.cfg")
     save_config_ignored(case_2, fpath)
     result = fpath.read_text()
     assert result == case_2_text
     fpath.unlink()
+
+
+def test_get_module_steps_folders():
+    rd = Path("run_dir_test")
+    rd.mkdir()
+    Path(rd, '0_topoaa').mkdir()
+    Path(rd, '150_flexref').mkdir()
+    Path(rd, '1_rigidbody').mkdir()
+    Path(rd, '2_nothing').mkdir()
+    Path(rd, 'data').mkdir()
+    result = get_module_steps_folders(rd)
+    shutil.rmtree(rd)
+    assert result == ['0_topoaa', '1_rigidbody', '150_flexref']

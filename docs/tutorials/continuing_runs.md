@@ -61,10 +61,6 @@ We use `--restart 5` because the first new step is the sixth in the new
 workflow: the five initial steps and three new steps. Remember `--restart` is
 0-indexed.
 
-**Important:** As soon you run the above command, The `--restart` option will
-**delete** step folders from `3` onward (inclusive), that is, `3_`, `4_`,
-`...`, will be deleted.
-
 ## Starting new runs from previous modules
 
 You can also start an independent run from a successful step of a previous run.
@@ -72,13 +68,13 @@ Consider the following successful run:
 
 ```
 run1/
-￼    0_topoaa/
-￼    1_rigidbody/
-￼    2_caprieval/
-￼    3_seletop/
-￼    4_flexref/
-￼    (etc...)
-    data/
+|--- 0_topoaa/
+|--- 1_rigidbody/
+|--- 2_caprieval/
+|--- 3_seletop/
+|--- 4_flexref/
+|--- (etc...)
+|--- data/
 ```
 
 And you want to start a new independent run from the `4_flexref` step. First,
@@ -93,15 +89,16 @@ directory. It also updates the path references in the step folders. Resulting in
 
 ```
 run2/
-￼    0_topoaa/
-￼    1_flexref/
-    data/
-    ￼    0_topoaa/
-￼        1_flexref/
+|--- 0_topoaa/
+|--- 1_flexref/
+|--- data/
+     |--- 0_topoaa/
+     |--- 1_flexref/
 ```
 
 Do **not** use the bash `cp` command to emulate this operation because there
-several internal aspects treated by `haddock-copy`.
+several internal aspects treated by `haddock3-copy` that wouldn't be treated
+by `cp`.
 
 **Note:** If the new run uses CNS-dependent modules, you **also need** to copy
 the folder corresponding to the initial topology creation (the `topoaa` module).
@@ -145,7 +142,7 @@ Yes. HADDOCK3 uses relative paths inside the run directory.
 Yes, provided you have installed HADDOCK3 following the [INSTALL](INSTALL.md)
 instructions in the two systems. You can copy a run directory (or some of its
 steps) to a different computer/system and (re)run it using the `--restart` and
-``--restart-from-run`` options.
+`--start-from-copy` options.
 
 3. Modules are 0-indexed. Is this related to Python being 0-indexed also?
 

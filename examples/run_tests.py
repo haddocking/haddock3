@@ -121,6 +121,31 @@ def main(examples, break_on_errors=True):
                     stderr=sys.stderr,
                     )
 
+            # perform a restart step from 0
+                subprocess.run(
+                    f"haddock3 {file_} --restart 0",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                subprocess.run(
+                    "haddock3-copy -r run1-test -m 0 4 -r run2",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                subprocess.run(
+                    "haddock3 docking-protein-protein-test-start-from-cp.cfg --start-from-copy run2",  # noqa: E501
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
     return
 
 

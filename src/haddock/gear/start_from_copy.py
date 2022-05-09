@@ -201,7 +201,7 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     None
         Save files in place.
 
-    See also
+    See Also
     --------
     :py:func:`haddock.gear.prepare_run.update_step_contents_to_step_names`
     """

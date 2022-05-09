@@ -136,7 +136,7 @@ def main(run_dir, modules, output):
     # make new run dir
     outdir = Path(output)
     try:
-        outdir.mkdir(parents=True)
+        outdir.mkdir(parents=True, exist_ok=False)
     except FileExistsError:
         log.error(f"Directory {str(outdir.resolve())} already exists.")
         sys.exit(1)

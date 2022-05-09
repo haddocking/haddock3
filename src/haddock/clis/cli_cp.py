@@ -120,7 +120,7 @@ def main(run_dir, modules, output):
     """
     from pathlib import Path
 
-    from haddock.gear.start_from_copy import (
+    from haddock.gear.extend_run import (
         copy_renum_step_folders,
         update_contents_of_new_steps,
         )

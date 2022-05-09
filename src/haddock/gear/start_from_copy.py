@@ -10,7 +10,7 @@ from haddock.libs.libworkflow import Workflow
 from haddock.modules import get_module_steps_folders
 
 
-START_FROM_COPY_DEFAULT = None
+EXTEND_RUN_DEFAULT = None
 
 
 class WorkflowManagerCopy:
@@ -26,7 +26,7 @@ class WorkflowManagerCopy:
             step.execute()
 
 
-def add_start_from_copy(parser):
+def add_extend_run(parser):
     """Add option to ``--extend-run``."""
     parser.add_argument(
         '--extend-run',
@@ -35,7 +35,7 @@ def add_start_from_copy(parser):
             "the `haddock3-copy` CLI. Provide the run directory created "
             "with `haddock3-copy` CLI."
             ),
-        default=START_FROM_COPY_DEFAULT,
+        default=EXTEND_RUN_DEFAULT,
         type=Path,
         )
 

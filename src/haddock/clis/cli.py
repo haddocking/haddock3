@@ -19,9 +19,9 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import RUNDIR
 from haddock.gear.restart_run import add_restart_arg
-from haddock.gear.start_from_copy import (
-    START_FROM_COPY_DEFAULT,
-    add_start_from_copy,
+from haddock.gear.extend_run import (
+    EXTEND_RUN_DEFAULT,
+    add_extend_run,
     )
 from haddock.libs.libcli import add_version_arg, arg_file_exist
 from haddock.libs.liblog import add_loglevel_arg
@@ -37,7 +37,7 @@ ap.add_argument(
     )
 
 add_restart_arg(ap)
-add_start_from_copy(ap)
+add_extend_run(ap)
 
 ap.add_argument(
     "--setup",
@@ -73,7 +73,7 @@ def maincli():
 def main(
         recipe,
         restart=None,
-        start_from_copy=START_FROM_COPY_DEFAULT,
+        extend_run=EXTEND_RUN_DEFAULT,
         setup_only=False,
         log_level="INFO",
         ):
@@ -89,7 +89,7 @@ def main(
         The step to restart the run from (inclusive).
         Defaults to None, which ignores this option.
 
-    start_from_copy : str or Path
+    extend_run : str or Path
         The path created with `haddock3-copy` to start the run from.
         Defaults to None, which ignores this option.
 
@@ -105,7 +105,7 @@ def main(
 
     from haddock.gear.greetings import get_adieu, get_initial_greeting
     from haddock.gear.prepare_run import setup_run
-    from haddock.gear.start_from_copy import WorkflowManagerCopy
+    from haddock.gear.extend_run import WorkflowManagerCopy
     from haddock.libs.libio import working_directory
     from haddock.libs.liblog import (
         add_log_for_CLI,
@@ -140,7 +140,7 @@ def main(
         params, other_params = setup_run(
             recipe,
             restart_from=restart,
-            start_from_copy=start_from_copy,
+            extend_run=extend_run,
             )
 
     # here we the io.StringIO handler log information, and reset the log
@@ -160,8 +160,8 @@ def main(
         log.info(get_adieu())
         return
 
-    if start_from_copy:
-        restart_step = len(get_module_steps_folders(start_from_copy))
+    if extend_run:
+        restart_step = len(get_module_steps_folders(extend_run))
         WorkflowManager_ = WorkflowManagerCopy
     else:
         restart_step = restart

@@ -1,9 +1,4 @@
-"""
-Copy and start run from copy gear.
-
-Contains the functionalities used in `haddock3-copy` CLI and in
-`--start-from-copy` flag for `haddock3` CLI.
-"""
+"""Gear for ``haddock3-copy`` CLI and `--start-from-copy`` flag."""
 import shutil
 from pathlib import Path
 
@@ -32,7 +27,7 @@ class WorkflowManagerCopy:
 
 
 def add_start_from_copy(parser):
-    """Add option to start-from-dir."""
+    """Add option to ``--start-from-copy``."""
     parser.add_argument(
         '--start-from-copy',
         help=(
@@ -135,12 +130,15 @@ def renum_step_folders(folder):
 
     Example
     -------
+
     The initial structure::
+
         folder/
             0_topoaa/
             4_flexref/
 
     Results in::
+
         folder/
             0_topoaa/
             1_flexref/
@@ -169,12 +167,28 @@ def renum_step_folders(folder):
 
 def update_contents_of_new_steps(selected_steps, olddir, newdir):
     """
-    Find-replace run directory and step name in step folders.
+    Find-replace run references in step folders files.
+
+    Find and replaces (updates) all references to step folders and to
+    the old run directory in all files of selected step folders.
+
+    Example
+    -------
+    >>> update_contents_of_new_steps(
+        ['0_topoaa', '1_rigidbody'],
+        'run1',
+        'run2',
+        )
 
     Parameters
     ----------
     selected_steps : list of str
-        The names of the original steps.
+        The names of the original step folder names that to find in the
+        new step folders. This function uses
+        :py:func:`haddock.modules.get_module_steps_folders` to find
+        the new step folders. ``selected_steps`` must be synchronized
+        with the new folders; that is, the names in ``selected_steps``
+        must be the old names of the new step folders.
 
     olddir : str or Path
         The original run directory to be replaced by `newdir`.
@@ -186,6 +200,10 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     -------
     None
         Save files in place.
+
+    See also
+    --------
+    :py:func:`haddock.gear.prepare_run.update_step_contents_to_step_names`
     """
     olddir = Path(olddir)
     newdir = Path(newdir)

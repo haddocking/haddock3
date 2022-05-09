@@ -100,32 +100,36 @@ def setup_run(
     and `--start-from-copy`. The list of actions presented below does
     not necessary represents the exact order in which it happens.
 
-    # Always performed:
-    #1 : read the user configuration file
-    #2 : completes the user configuration file with the default values
-         for the non-specified parameters
-    #3 : validate the config file
-         1) confirm modules' names are correctly spelled
-         2) check if requested modules are installed
-         3) check additional validations
-    #4 : validate modules' parameters
-    #5 : copy input files to data/ directory
-         1) for `--restart` copies only after the restart number
+    Always performed:
 
-    # Performed when `--restart`:
-    #1 : remove folders after --restart number
-    #2 : remove also folders from `data/` dir after the `--restart` num
-    #3 : renumber step folders according to the number of modules
+    #. read the user configuration file
+    #. completes the user configuration file with the default values
+       for the non-specified parameters
+    #. validate the config file
+       * confirm modules' names are correctly spelled
+       * check if requested modules are installed
+       * check additional validations
+    #. validate modules' parameters
+    #. copy input files to data/ directory
+       * for ``--restart`` copies only after the restart number
 
-    # Performed when `--start-from-copy`:
-    #3 : renumber step folders according to the number of modules
+    Performed when ``--restart``:
 
-    # Performed when start from scratch:
-    #1 : check mandatory arguments are present in the config file
-    #2 : check run-dir exists
-    #3 : copy molecules to topology key (also in `--restart`)
-    #4 : populate topology parameters (also in `--restart`)
-    #5 : copy molecules to data dir
+    #. remove folders after --restart number
+    #. remove also folders from `data/` dir after the ``--restart`` num
+    #. renumber step folders according to the number of modules
+
+    Performed when ``--start-from-copy``:
+
+    #. renumber step folders according to the number of modules
+
+    Performed when start from scratch:
+
+    #. check mandatory arguments are present in the config file
+    #. check run-dir exists
+    #. copy molecules to topology key (also in ``--restart``)
+    #. populate topology parameters (also in ``--restart``)
+    #. copy molecules to data dir
 
     Parameters
     ----------
@@ -419,7 +423,7 @@ def copy_molecules_to_topology(molecules, topoaa_params):
 
 def copy_molecules_to_data_dir(data_dir, topoaa_params):
     """
-    Copy molecules to data directory and topoaa parameters.
+    Copy molecules to data directory and to topoaa parameters.
 
     Parameters
     ----------

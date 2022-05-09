@@ -5,15 +5,15 @@ Copy steps to a new run.
 In HADDOCK3 you can copy successful steps from a run directory to a new
 directory and use them as starting points for a new run.
 
-Considering the example:
+Considering the example::
 
-run1/
-    0_topoaa/
-    1_rigidbody/
-    2_caprieval/
-    3_seletop/
-    4_flexref/
-    (etc...)
+    run1/
+        0_topoaa/
+        1_rigidbody/
+        2_caprieval/
+        3_seletop/
+        4_flexref/
+        (etc...)
 
 You can use `4_flexref` step folder as a starting point for a new run.
 
@@ -22,7 +22,7 @@ USAGE::
     haddock3-copy -r <run_dir> -m <num_modules> -o <new_run_dir>
     haddock3-copy -r run1 -m 0 4 -o run2
 
-Where, `-m 0 4` will copy `0_topoaa` and `4_flexref` to <new_run_dir>.
+Where, ``-m 0 4`` will copy ``0_topoaa`` and ``4_flexref`` to <new_run_dir>.
 
 **Note:** If the new run uses CNS-dependent modules, you **also need**
 to copy the folder corresponding to the initial topology creation (the
@@ -31,11 +31,11 @@ to copy the folder corresponding to the initial topology creation (the
 `haddock3-copy` will also copy the corresponding files in the `data`
 directory and update the file contents in the copied folder such that
 the information on the run directory and the new step folder names match.
-The output result of the above commands is:
+The output result of the above commands is::
 
-run2/
-    0_topoaa/
-    1_flexref/
+    run2/
+        0_topoaa/
+        1_flexref/
 
 Following, you can use the `haddock3` command with the `--start-from-copy`
 option to continue a new run::

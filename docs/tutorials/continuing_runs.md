@@ -61,6 +61,20 @@ We use `--restart 5` because the first new step is the sixth in the new
 workflow: the five initial steps and three new steps. Remember `--restart` is
 0-indexed.
 
+
+## Extend a run
+
+You can extend a successful run with additional steps. For that, prepare a
+configurtation file containing only the new steps you wish to execute on top of
+a previously successful run. In these cases, you **don't** need to define the
+`run_dir` and `molecules` parameters in this new configuration file. You **can**
+define the other general parameters like `ncores`, `mode`, etc. To extend a run
+with additional modules:
+
+```
+haddock3 new-steps.cfg --extend-run <run_dir>
+```
+
 ## Starting new runs from previous modules
 
 You can also start an independent run from a successful step of a previous run.

@@ -60,9 +60,9 @@ def test_matrix_output():
 
     assert observed_output == expected_output
 
+
 def test_contacts():
     """Check .con files."""
-
     expected_output_length = [100, 119]
 
     observed_output_lengths = []

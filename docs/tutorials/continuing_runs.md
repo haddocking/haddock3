@@ -66,16 +66,16 @@ workflow: the five initial steps and three new steps. Remember `--restart` is
 
 You can extend a successful run with additional steps. For that, prepare a
 configurtation file containing only the new steps you wish to execute on top of
-a previously successful run. In these cases, you **don't** need to define the
-`run_dir` and `molecules` parameters in this new configuration file. You **can**
-define the other general parameters like `ncores`, `mode`, etc. To extend a run
-with additional modules:
+the previously successful run. In these cases, you **don't** need to define the
+`run_dir` and `molecules` parameters in this new configuration file because
+they will be ignored. You **can** define the other general parameters like
+`ncores`, `mode`, etc. To extend a run with additional modules:
 
 ```
 haddock3 new-steps.cfg --extend-run <run_dir>
 ```
 
-## Starting new runs from previous modules
+## Starting new runs from successful steps
 
 You can also start an independent run from a successful step of a previous run.
 Consider the following successful run:
@@ -91,8 +91,9 @@ run1/
 |--- data/
 ```
 
-And you want to start a new independent run from the `4_flexref` step. First,
-you need to copy the step to a new run folder using our `haddock3-copy` CLI.
+Now, you want to start a new independent run from the `4_flexref` step.
+
+First, you need to copy the step to a new run folder using our `haddock3-copy` CLI.
 
 ```
 haddock3-copy -r run1 -m 0 4 -o run2
@@ -120,8 +121,8 @@ the folder corresponding to the initial topology creation (the `topoaa` module).
 Second, create a configuration file for the new run containing **only** the
 parameters of the new modules you wish to execute after the `flexref`. You
 **don't** need to define the `run_dir` and `molecules` parameters in this new
-configuration file. You **can** define the other general parameters like
-`ncores`, `mode`, etc. For example:
+configuration file because they will be ignored. You **can** define the other
+general parameters like `ncores`, `mode`, etc. For example:
 
 ```toml
 ncores = 40

@@ -1,6 +1,4 @@
 """Test mandatory parameters."""
-import pytest
-
 from haddock.core.defaults import RUNDIR
 # this import is also a test
 from haddock.gear.parameters import (  # noqa: F401
@@ -11,7 +9,6 @@ from haddock.gear.parameters import (  # noqa: F401
     config_mandatory_general_parameters,
     config_optional_general_parameters,
     )
-from haddock.gear.yaml2cfg import read_from_yaml_config
 
 
 def test_mandatory_config_set():

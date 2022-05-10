@@ -27,7 +27,6 @@ import io
 import itertools as it
 import string
 from collections import namedtuple
-from copy import deepcopy
 from functools import partial, wraps
 from os import linesep
 from pathlib import Path
@@ -47,6 +46,7 @@ from pdbtools import (
     )
 
 from haddock import log
+from haddock.core.exceptions import HaddockError
 from haddock.core.supported_molecules import (
     read_residues_from_top_file,
     supported_ATOM,
@@ -66,6 +66,12 @@ from haddock.libs.libpdb import (
 
 _upper_case = list(string.ascii_uppercase + string.ascii_lowercase)[::-1]
 _CHAINS = it.cycle(_upper_case)
+
+
+class ModelsDifferError(HaddockError):
+    """MODELS of the PDB differ in atom labels."""
+
+    pass
 
 
 def _report(log_msg):
@@ -563,28 +569,59 @@ def correct_equal_chain_segids(structures):
 def models_should_have_the_same_labels(lines):
     """
     Confirm models have the same labels.
+
+    In an ensemble of structures, where the PDB file has multiple MODELS,
+    all models should have the same labels; hence the same number and
+    typ of atoms.
+
+    Parameters
+    ----------
+    lines : list of strings.
+        List containing the lines of the PDB file. Must NOT be a generator.
+
+    Returns
+    -------
+    list
+        The original ``lines`` in case no errors are found.
+
+    Raises
+    ------
+    ModelsDifferError
+        In case MODELS differ. Reports on which models differ.
     """
-    # if MODEL in lines.
-    ## split models.
+    # searchers for the first MODEL line. If found, break the loop
+    # and continue to the rest of the function.
+    #
+    # if not found, return the same input lines.
     for line in lines:
         if line.startswith("MODEL"):
             break
     else:
         return lines
 
-    models = []
+    # captures all the models
+    models = {}
     new_model = []
+    new_model_id = None
     for line in lines:
-        if line.startswith("MODEL") and new_model:
-            models.append(deepcopy(new_model))
-            new_model.clear()
+        if line.startswith("MODEL"):
+            if new_model_id is not None:
+                models[new_model_id] = set(new_model)
+                new_model.clear()
+            new_model_id = int(line[10:14])
 
         elif line.startswith(("ATOM", "HETATM")):
             new_model.append(line[12:27])
 
-    for model in models[1:]:
-        if model != models[0]:
-            raise ValueError("Models differ.")
+    # check if all MODELS are equal, performing all vs all comparison
+    keys = list(models.keys())
 
-    # check if all labels are the same.
+    for model_num in keys:
+        other_keys = set(keys)
+        other_keys.remove(model_num)
+        for other_key in other_keys:
+            if models[model_num] != models[other_key]:
+                emsg = f"MODEL {model_num} differs from MODEL {other_key}"
+                raise ModelsDifferError(emsg)
+
     return lines

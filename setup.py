@@ -71,8 +71,11 @@ setup(
     entry_points={
         'console_scripts': [
             'haddock3 = haddock.clis.cli:maincli',
+            "haddock3-mpitask = haddock.clis.cli_mpi:maincli",
             'haddock3-bm = haddock.clis.cli_bm:maincli',
             'haddock3-dmn = haddock.clis.cli_dmn:maincli',
+            'haddock3-cfg = haddock.clis.cli_cfg:maincli',
+            'haddock3-copy = haddock.clis.cli_cp:maincli',
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

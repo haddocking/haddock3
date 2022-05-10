@@ -10,7 +10,7 @@ from haddock.libs.libcns import (
     prepare_output,
     prepare_single_input,
     )
-from haddock.libs.libontology import Format, ModuleIO, PDBFile, TopologyFile
+from haddock.libs.libontology import Format, PDBFile, TopologyFile
 from haddock.libs.libstructure import make_molecules
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
@@ -18,7 +18,7 @@ from haddock.modules.base_cns_module import BaseCNSModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
 def generate_topology(
@@ -86,7 +86,11 @@ class HaddockModule(BaseCNSModule):
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
-        mol_params = self.params.pop('input')
+        mol_params = {}
+        for k in list(self.params.keys()):
+            if k.startswith("mol") and k[3:].isdigit():
+                mol_params[k] = self.params.pop(k)
+
         # to facilite the for loop down the line, we create a list with the keys
         # of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
@@ -189,15 +193,5 @@ class HaddockModule(BaseCNSModule):
                 expected[i][j] = pdb
 
         # Save module information
-        io = ModuleIO()
-        for i in expected:
-            io.add(expected[i], "o")
-
-        faulty = io.check_faulty()
-        tolerance = self.params["tolerance"]
-        if faulty > tolerance:
-            _msg = (
-                f"{faulty:.2f}% of output was not generated for this module "
-                f"and tolerance was set to {tolerance:.2f}%.")
-            self.finish_with_error(_msg)
-        io.save()
+        self.output_models = list(expected.values())
+        self.export_output_models(faulty_tolerance=self.params["tolerance"])

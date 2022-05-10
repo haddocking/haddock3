@@ -1,19 +1,17 @@
-"""HADDOCK3 FCC clustering module."""
+"""Cluster modules with FCC."""
 import os
 from pathlib import Path
 
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
-from haddock.gear.config_reader import read_config
-from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, read_from_yaml_config
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
 class HaddockModule(BaseHaddockModule):
@@ -27,7 +25,7 @@ class HaddockModule(BaseHaddockModule):
     @classmethod
     def confirm_installation(cls):
         """Confirm if FCC is installed and available."""
-        dcfg = read_config(DEFAULT_CONFIG)
+        dcfg = read_from_yaml_config(DEFAULT_CONFIG)
         exec_path = Path(FCC_path, dcfg['executable'])
 
         if not os.access(exec_path, mode=os.F_OK):
@@ -138,27 +136,32 @@ class HaddockModule(BaseHaddockModule):
             clt_centers = {}
             for clt in clusters:
                 cluster_id = clt.name
+                cluster_center_id = clt.center.name - 1
+                cluster_center_pdb = models_to_cluster[cluster_center_id]
+
                 clt_dic[cluster_id] = []
-                clt_centers[cluster_id] = models_to_cluster[clt.center.name - 1]
+                clt_centers[cluster_id] = cluster_center_pdb
+                clt_dic[cluster_id].append(cluster_center_pdb)
+
                 for model in clt.members:
                     model_id = model.name
-                    pdb = models_to_cluster[model_id - 1]
-                    clt_dic[cluster_id].append(pdb)
+                    model_pdb = models_to_cluster[model_id - 1]
+                    clt_dic[cluster_id].append(model_pdb)
 
             # Rank the clusters
-            #  they are sorted by the top4 models in each cluster
-            top_n = 4
+            #  they are sorted by the topX (threshold) models in each cluster
             score_dic = {}
             for clt_id in clt_dic:
                 score_l = [p.score for p in clt_dic[clt_id]]
                 score_l.sort()
-                top4_score = sum(score_l[:top_n]) / float(top_n)
+                denom = float(min(threshold, len(score_l)))
+                top4_score = sum(score_l[:threshold]) / denom
                 score_dic[clt_id] = top4_score
 
             sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
 
             # Add this info to the models
-            clustered_models = []
+            self.output_models = []
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
                 # sort the models by score
@@ -169,7 +172,7 @@ class HaddockModule(BaseHaddockModule):
                     pdb.clt_id = cluster_id
                     pdb.clt_rank = cluster_rank
                     pdb.clt_model_rank = model_ranking
-                    clustered_models.append(pdb)
+                    self.output_models.append(pdb)
 
             # Prepare clustfcc.txt
             output_fname = Path('clustfcc.txt')
@@ -202,15 +205,15 @@ class HaddockModule(BaseHaddockModule):
                 model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
                 model_score_l.sort()
                 top_score = sum(
-                    [e[0] for e in model_score_l][:top_n]
-                    ) / top_n
+                    [e[0] for e in model_score_l][:threshold]
+                    ) / threshold
                 output_str += (
                     f"{os.linesep}"
                     "-----------------------------------------------"
                     f"{os.linesep}"
                     f"Cluster {cluster_rank} (#{cluster_id}, "
                     f"n={len(model_score_l)}, "
-                    f"top{top_n}_avg_score = {top_score:.2f})"
+                    f"top{threshold}_avg_score = {top_score:.2f})"
                     f"{os.linesep}")
                 output_str += os.linesep
                 output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
@@ -233,9 +236,6 @@ class HaddockModule(BaseHaddockModule):
                 out_fh.write(output_str)
         else:
             log.warning('No clusters were found')
-            clustered_models = models_to_cluster
+            self.output_models = models_to_cluster
 
-        # Save module information
-        io = ModuleIO()
-        io.add(clustered_models, "o")
-        io.save()
+        self.export_output_models()

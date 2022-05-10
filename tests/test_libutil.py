@@ -4,11 +4,14 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libutil import (
+    convert_seconds_to_min_sec,
+    extract_keys_recursive,
     file_exists,
     get_number_from_path_stem,
     non_negative_int,
     recursive_dict_update,
     sort_numbered_paths,
+    transform_to_list,
     )
 
 
@@ -122,3 +125,71 @@ def test_recursive_dict_update():
     assert a["b"]["d"] is not c["b"]["d"]
     assert b["z"]["z1"] is not c["z"]["z1"]
     assert c == {"a": 2, "b": {"c": 2, "d": {"e": 4}}, "z": {"z1": _list}}
+
+
+def test_recursive_dict_update_empty():
+    """Test recursive dict update."""
+    a = {"a": 1, "b": {"c": 2, "d": {"e": 3}}}
+    c = recursive_dict_update(a, {})
+    assert a is not c
+    assert a == c
+
+
+@pytest.mark.parametrize(
+    "seconds,expected",
+    [
+        (60, "1 minute and 0 seconds"),
+        (120, "2 minutes and 0 seconds"),
+        (40, "40 seconds"),
+        (179, "2 minutes and 59 seconds"),
+        (3600, "1h0m0s"),
+        (3601, "1h0m1s"),
+        (3600 + 120, "1h2m0s"),
+        (3600 + 125, "1h2m5s"),
+        (3600 * 2 + 125, "2h2m5s"),
+        (3600 * 2 + 179, "2h2m59s"),
+        (3600 * 2 + 180, "2h3m0s"),
+        ]
+    )
+def test_convert_seconds(seconds, expected):
+    """Convert seconds to min&sec."""
+    result = convert_seconds_to_min_sec(seconds)
+    assert result == expected
+
+
+a = {
+    "param1": 1,
+    "param2": {"param3": 4, "param4": {"param5": {"param6": 7, "param7": 8}}},
+    }
+b = {"param1", "param3", "param6", "param7"}
+
+
+@pytest.mark.parametrize(
+    "inp,expected",
+    [
+        (a, b),
+        ]
+    )
+def test_extract_keys_recursive(inp, expected):
+    """Test extract keys recursive."""
+    result = set(extract_keys_recursive(inp))
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "value,expected",
+    [
+        [1, [1]],
+        [Path("a"), [Path("a")]],
+        [list(range(10)), list(range(10))],
+        [tuple(range(10)), tuple(range(10))],
+        [1.1, [1.1]],
+        ["a", ["a"]],
+        [set([1, 2, 3]), [1, 2, 3]],
+        [{"a": 1}, ["a"]],
+        [None, [None]],
+        ]
+    )
+def test_transform_to_list(value, expected):
+    result = transform_to_list(value)
+    assert result == expected

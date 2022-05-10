@@ -21,6 +21,7 @@ class Format(Enum):
     CNS_INPUT = "inp"
     CNS_OUTPUT = "out"
     TOPOLOGY = "psf"
+    MATRIX = "matrix"
 
     def __str__(self):
         return str(self.value)
@@ -68,6 +69,20 @@ class PDBFile(Persistent):
 
     def __eq__(self, other):
         return self.score == other.score
+
+    def __hash__(self):
+        return id(self)
+
+
+class RMSDFile(Persistent):
+    """Represents a RMSD matrix file."""
+
+    def __init__(self, file_name, npairs, path='.'):
+        super().__init__(file_name, Format.MATRIX, path)
+        self.npairs = npairs
+
+    def __hash__(self):
+        return id(self)
 
 
 class TopologyFile(Persistent):
@@ -156,15 +171,43 @@ class ModuleIO:
         for element in self.output:
             if isinstance(element, dict):
                 total += len(element.values())
-                present += sum([j.is_present() for j in element.values()])
+                present += sum(j.is_present() for j in element.values())
             else:
                 total += 1
                 if element.is_present():
                     present += 1
 
+        if total == 0:
+            _msg = ("No expected output was passed to ModuleIO")
+            raise Exception(_msg)
+
         faulty_per = (1 - (present / total)) * 100
 
+        # added this method here to avoid modifying all calls in the
+        # modules' run method. We can think about restructure this part
+        # in the future.
+        self.remove_missing()
+
         return faulty_per
+
+    def remove_missing(self):
+        """Remove missing structure from `output`."""
+        # can't modify a list/dictionary within a loop
+        idxs = []
+        for idx, element in enumerate(self.output):
+            if isinstance(element, dict):
+                for key2 in list(element.keys()):
+                    if not element[key2].is_present():
+                        element.pop(key2)
+            else:
+                if not element.is_present():
+                    idxs.append(idx)
+
+        self.output = [
+            value
+            for i, value in enumerate(self.output)
+            if i not in idxs
+            ]
 
     def __repr__(self):
         return f"Input: {self.input}{linesep}Output: {self.output}"

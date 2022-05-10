@@ -13,9 +13,9 @@
 eval ($kinter = 1.0)
 @MODULE:scale_inter_mini.cns
 
-evaluate ($unamb_scale = $Data.unamb_cool3)
-evaluate ($ambig_scale = $Data.amb_cool3)
-evaluate ($hbond_scale = $Data.hbond_cool3)
+evaluate ($unamb_scale = $Data.unamb_scale)
+evaluate ($ambig_scale = $Data.amb_scale)
+evaluate ($hbond_scale = $Data.hbond_scale)
 
 noe 
     scale dist $unamb_scale 
@@ -24,21 +24,21 @@ noe
     scale symm 0.0
 end
 
-evaluate ($ener = 0)
-evaluate ($vdw  = 0)
-evaluate ($elec = 0)
-evaluate ($noe  = 0)
-evaluate ($coll = 0)
-evaluate ($eair = 0)
-evaluate ($cdih = 0)
-evaluate ($vean = 0)
-evaluate ($sani = 0)
-evaluate ($xrdc = 0)
-evaluate ($xpcs = 0)
-evaluate ($dani = 0)
-evaluate ($esym = 0)
-evaluate ($zhar = 0)
-evaluate ($bsa  = 0)
+evaluate ($ener = 0.0)
+evaluate ($vdw  = 0.0)
+evaluate ($elec = 0.0)
+evaluate ($noe  = 0.0)
+evaluate ($coll = 0.0)
+evaluate ($eair = 0.0)
+evaluate ($cdih = 0.0)
+evaluate ($vean = 0.0)
+evaluate ($sani = 0.0)
+evaluate ($xrdc = 0.0)
+evaluate ($xpcs = 0.0)
+evaluate ($dani = 0.0)
+evaluate ($esym = 0.0)
+evaluate ($zhar = 0.0)
+evaluate ($bsa  = 0.0)
 evaluate ($desolv = 0.0)
 evaluate ($lcc = 0.0)
 
@@ -60,8 +60,8 @@ end if
 
 evaluate ($etot = $w_vdw  * $vdw)
 evaluate ($etot = $etot + $w_elec * $elec)
-evaluate ($etot = $etot + $w_dist * $eair)
-evaluate ($etot = $etot + $w_rg *   $coll)
+evaluate ($etot = $etot + $w_air  * $eair)
+evaluate ($etot = $etot + $w_rg   * $coll)
 evaluate ($etot = $etot + $w_cdih * $cdih)
 evaluate ($etot = $etot + $w_sani * $sani)
 evaluate ($etot = $etot + $w_xrdc * $xrdc)

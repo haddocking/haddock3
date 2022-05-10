@@ -1,0 +1,10 @@
+select:
+  default: 200
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy

@@ -31,12 +31,22 @@ def round_two_dec(dic):
     return dict((k, round(dic[k], 2)) for k in dic)
 
 
+def remove_aln_files(class_name):
+    """Remove intermediary alignment files."""
+    file_l = [Path(class_name.path, 'blosum62.izone'),
+              Path(class_name.path, 'blosum62_A.aln'),
+              Path(class_name.path, 'blosum62_B.aln')]
+    for f in file_l:
+        if f.exists():
+            os.unlink(f)
+
+
 @pytest.fixture
 def protprot_input_list():
     """Prot-prot input."""
     return [
-        Path(golden_data, "protprot_complex_1.pdb"),
-        Path(golden_data, "protprot_complex_2.pdb"),
+        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data)
         ]
 
 
@@ -44,8 +54,8 @@ def protprot_input_list():
 def protdna_input_list():
     """Prot-DNA input."""
     return [
-        Path(golden_data, "protdna_complex_1.pdb"),
-        Path(golden_data, "protdna_complex_2.pdb"),
+        PDBFile(Path(golden_data, "protdna_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protdna_complex_2.pdb"), path=golden_data)
         ]
 
 
@@ -53,66 +63,83 @@ def protdna_input_list():
 def protlig_input_list():
     """Protein-Ligand input."""
     return [
-        Path(golden_data, "protlig_complex_1.pdb"),
-        Path(golden_data, "protlig_complex_2.pdb"),
+        PDBFile(Path(golden_data, "protlig_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protlig_complex_2.pdb"), path=golden_data),
         ]
 
 
 @pytest.fixture
 def protdna_caprimodule(protdna_input_list):
     """Protein-DNA CAPRI module."""
-    ref = protdna_input_list[0]
-    mod_l = [
-        PDBFile(protdna_input_list[0], path=golden_data),
-        PDBFile(protdna_input_list[1], path=golden_data),
-        ]
+    ref = protdna_input_list[0].rel_path
     capri = CAPRI(
         reference=ref,
-        model_list=mod_l,
+        model_list=protdna_input_list,
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
         path=golden_data,
         )
-    return capri
+
+    yield capri
+
+    remove_aln_files(capri)
 
 
 @pytest.fixture
 def protlig_caprimodule(protlig_input_list):
     """Protein-Ligand CAPRI module."""
-    ref = protlig_input_list[0]
-    mod_l = [
-        PDBFile(protlig_input_list[0], path=golden_data),
-        PDBFile(protlig_input_list[1], path=golden_data),
-        ]
+    ref = protlig_input_list[0].rel_path
     capri = CAPRI(
         reference=ref,
-        model_list=mod_l,
+        model_list=protlig_input_list,
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
         path=golden_data,
         )
-    return capri
+
+    yield capri
+
+    remove_aln_files(capri)
 
 
 @pytest.fixture
 def protprot_caprimodule(protprot_input_list):
     """Protein-Protein CAPRI module."""
-    ref = protprot_input_list[0]
-    mod_l = [
-        PDBFile(protprot_input_list[0], path=golden_data),
-        PDBFile(protprot_input_list[1], path=golden_data),
-        ]
+    ref = protprot_input_list[0].rel_path
     capri = CAPRI(
         reference=ref,
-        model_list=mod_l,
+        model_list=protprot_input_list,
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
         path=golden_data,
         )
-    return capri
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture
+def protprot_caprimodule_parallel(protprot_input_list):
+    """Protein-Protein CAPRI module."""
+    ref = protprot_input_list[0].rel_path
+    capri = CAPRI(
+        reference=ref,
+        model_list=protprot_input_list,
+        receptor_chain="A",
+        ligand_chain="B",
+        aln_method="sequence",
+        path=golden_data,
+        core=0,
+        core_model_idx=0
+        )
+
+    yield capri
+
+    remove_aln_files(capri)
 
 
 def test_protprot_irmsd(protprot_caprimodule, protprot_input_list):
@@ -280,38 +307,115 @@ def test_protdna_fnat(protdna_caprimodule, protdna_input_list):
 def test_output(protprot_caprimodule):
     """Test the writing of capri.tsv file."""
     factor = 1
+    clt_id = 1
     for m in protprot_caprimodule.model_list:
-        protprot_caprimodule.score_dic[m] = -42.0 * factor
         protprot_caprimodule.irmsd_dic[m] = 0.111 * factor
         protprot_caprimodule.fnat_dic[m] = 0.333 * factor
         protprot_caprimodule.lrmsd_dic[m] = 0.444 * factor
         protprot_caprimodule.ilrmsd_dic[m] = 0.555 * factor
+        m.clt_id = clt_id
+        clt_id += 1
         factor += 1.5
 
-    output_f = tempfile.NamedTemporaryFile(delete=False)
-    sortby_key = "score"
+    sortby_key = "fnat"
     sort_ascending = True
-    rankby_key = "irmsd"
-    rank_ascending = True
+    clt_threshold = 1
     protprot_caprimodule.output(
-        output_f=output_f.name,
+        clt_threshold,
         sortby_key=sortby_key,
         sort_ascending=sort_ascending,
-        rankby_key=rankby_key,
-        rank_ascending=rank_ascending,
         )
 
-    assert Path(output_f.name).stat().st_size != 0
+    ss_fname = Path(protprot_caprimodule.path, "capri_ss.tsv")
+    clt_fname = Path(protprot_caprimodule.path, "capri_clt.tsv")
+
+    assert ss_fname.stat().st_size != 0
+    assert clt_fname.stat().st_size != 0
+
     # remove the model column since its name will depend on where we are running
     #  the test
-    observed_outf_l = [e.split()[1:] for e in open(output_f.name).readlines()]
+    observed_outf_l = [e.split()[1:] for e in open(
+        ss_fname).readlines() if not e.startswith('#')]
     expected_outf_l = [
-        ['rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd'],
-        ['2', '-105.000', '0.278', '0.833', '1.110', '1.388'],
-        ['1', '-42.000', '0.111', '0.333', '0.444', '0.555']
-        ]
+        ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
+         'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+        ['1', 'nan', '0.111', '0.333', '0.444', '0.555', '1', '-', '-'],
+        ['2', 'nan', '0.278', '0.833', '1.110', '1.388', '2', '-', '-']]
 
     assert observed_outf_l == expected_outf_l
+
+    observed_outf_l = [e.split() for e in open(
+        clt_fname).readlines() if not e.startswith('#')]
+    expected_outf_l = [
+        ['cluster_rank', 'cluster_id', 'n', 'under_eval', 'score', 'score_std',
+         'irmsd', 'irmsd_std', 'fnat', 'fnat_std', 'lrmsd', 'lrmsd_std',
+         'dockqn', 'dockq_std', 'caprieval_rank'],
+        ['-', '1', '1', '-', 'nan', 'nan', '0.111', '0.000', '0.333', '0.000',
+         '0.444', '0.000', 'nan', 'nan', '1'],
+        ['-', '2', '1', '-', 'nan', 'nan', '0.278', '0.000', '0.833', '0.000',
+         '1.110', '0.000', 'nan', 'nan', '2']]
+
+    assert observed_outf_l == expected_outf_l
+
+    os.unlink(ss_fname)
+    os.unlink(clt_fname)
+
+
+def test_output_parallel(protprot_caprimodule_parallel):
+    """Test the writing of capri.tsv file."""
+    factor = 1
+    clt_id = 1
+    for m in protprot_caprimodule_parallel.model_list:
+        protprot_caprimodule_parallel.irmsd_dic[m] = 0.111 * factor
+        protprot_caprimodule_parallel.fnat_dic[m] = 0.333 * factor
+        protprot_caprimodule_parallel.lrmsd_dic[m] = 0.444 * factor
+        protprot_caprimodule_parallel.ilrmsd_dic[m] = 0.555 * factor
+        m.clt_id = clt_id
+        clt_id += 1
+        factor += 1.5
+
+    sortby_key = "fnat"
+    sort_ascending = True
+    clt_threshold = 1
+    protprot_caprimodule_parallel.output(
+        clt_threshold,
+        sortby_key=sortby_key,
+        sort_ascending=sort_ascending,
+        )
+
+    # check that the parallel files are present
+    ss_fname_0 = Path(protprot_caprimodule_parallel.path, "capri_ss_0.tsv")
+    clt_fname_0 = Path(protprot_caprimodule_parallel.path, "capri_clt_0.tsv")
+
+    assert ss_fname_0.stat().st_size != 0
+    assert clt_fname_0.stat().st_size != 0
+
+    # replicate the previous task, on files *_0.tsv, to ensure consistency
+    observed_outf_l = [e.split()[1:] for e in open(
+        ss_fname_0).readlines() if not e.startswith('#')]
+    expected_outf_l = [
+        ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
+         'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+        ['1', 'nan', '0.111', '0.333', '0.444', '0.555', '1', '-', '-'],
+        ['2', 'nan', '0.278', '0.833', '1.110', '1.388', '2', '-', '-']]
+
+    assert observed_outf_l == expected_outf_l
+
+    observed_outf_l = [e.split() for e in open(
+        clt_fname_0).readlines() if not e.startswith('#')]
+    expected_outf_l = [
+        ['cluster_rank', 'cluster_id', 'n', 'under_eval', 'score', 'score_std',
+         'irmsd', 'irmsd_std', 'fnat', 'fnat_std', 'lrmsd', 'lrmsd_std',
+         'dockqn', 'dockq_std', 'caprieval_rank'],
+        ['-', '1', '1', '-', 'nan', 'nan', '0.111', '0.000', '0.333', '0.000',
+         '0.444', '0.000', 'nan', 'nan', '1'],
+        ['-', '2', '1', '-', 'nan', 'nan', '0.278', '0.000', '0.833', '0.000',
+         '1.110', '0.000', 'nan', 'nan', '2']]
+
+    assert observed_outf_l == expected_outf_l
+
+    os.unlink(ss_fname_0)
+    os.unlink(clt_fname_0)
 
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
@@ -763,7 +867,7 @@ def test_align_seq():
     with tempfile.TemporaryDirectory() as tmpdirname:
 
         observed_numb_dic = align_seq(ref, mod, tmpdirname)
-        expected_numb_dic = {"B": {1: 101, 2: 102, 3: 110, 5: 112}}
+        expected_numb_dic = {"B": {101: 1, 102: 2, 110: 3, 112: 5}}
 
         assert observed_numb_dic == expected_numb_dic
 

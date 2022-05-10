@@ -140,7 +140,7 @@ class CNSJob:
 
     @cns_exec.setter
     def cns_exec(self, cns_exec_path):
-        if cns_exec_path is None:
+        if not cns_exec_path:
             cns_exec_path = global_cns_exec  # global cns_exec
 
         if not os.access(cns_exec_path, mode=os.X_OK):

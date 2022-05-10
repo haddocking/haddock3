@@ -1,0 +1,440 @@
+! mdref.cns
+!    Perform an explitic solvent (water or dmso) refinement
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
+!==================================================================!
+! Initialisation of variables
+!==================================================================!
+
+evaluate ($ini_count    =1)
+
+evaluate ($Data.flags.ncs  = false)
+evaluate ($Data.flags.sym  = false)
+evaluate ($Data.flags.cdih = false)
+evaluate ($Data.flags.plan = false)
+evaluate ($Data.flags.noe  = false)
+evaluate ($Data.flags.dihed = $dihedflag)
+evaluate ($Data.flags.elec = $elecflag)
+evaluate ($Data.flags.em   = false)
+evaluate ($Data.flags.rg   = false)
+evaluate ($Data.flags.zres = false)
+evaluate ($Data.flags.sani = false)
+evaluate ($Data.flags.xrdc = false)
+evaluate ($Data.flags.xpcs = false)
+evaluate ($Data.flags.dani = false)
+evaluate ($Data.flags.vean = false)
+
+evaluate ($Data.noecv = false)
+evaluate ($refine.keepwater = false)
+
+evaluate ($data.ncomponents=$ncomponents)
+
+evaluate ($nmol=1)
+while ($nmol <= $data.ncomponents) loop mol
+    evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
+    evaluate ($mol_shape_$nmol = false)
+    evaluate ($nmol = $nmol + 1)
+end loop mol
+
+
+! non-bonded parameter set to use
+evaluate ($toppar.par_nonbonded = "OPLSX")
+
+!Electrostatics:
+evaluate ($Data.flags.dihed =$dihedflag)
+evaluate ($Data.flags.elec =$elecflag)
+evaluate ($Data.epsilon =$epsilon)
+evaluate ($Data.dielec  =$dielec)
+
+
+! dihedrals, DNA and distance restraints
+evaluate ($Data.dnarest =$dnarest_on)
+evaluate ($Data.flags.cdih = false)
+evaluate ($Data.ssdihed =$ssdihed)
+evaluate ($Data.error_dih =$error_dih)
+
+! planarity restraints
+evaluate ($Data.flags.plan =  false)
+
+! distance restraints
+evaluate ($Data.flags.noe  =  false)
+evaluate ($data.randremoval = false)
+evaluate ($data.npart=1)
+evaluate ($data.contactairs=$contactairs)
+evaluate ($data.kcont=$kcont)
+
+
+! Other parameters
+evaluate ($refine.keepwater = false)
+evaluate ($refine.keepwater=$keepwater)
+evaluate ($refine.solvent=$solvent)
+evaluate ($refine.heatsteps=$waterheatsteps)
+evaluate ($refine.steps=$watersteps)
+evaluate ($refine.coolsteps=$watercoolsteps)
+evaluate ($refine.iniseed=$iniseed)
+evaluate ($refine.timestep=$timestep)
+evaluate ($refine.fbeta=100)
+evaluate ($refine.mass=100)
+
+
+!==================================================================!
+
+{* Read paramters and set various force field related variables *}
+
+@MODULE:read_param.cns
+
+parameter
+    bond  (resn WAT ) (resn WAT ) 1000 TOKEN
+    angle (resn WAT ) (resn WAT ) (resn WAT ) 500 TOKEN
+    bond  (resn HOH ) (resn HOH ) 1000 TOKEN
+    angle (resn HOH ) (resn HOH ) (resn HOH ) 500 TOKEN
+    bond  (resn TIP*) (resn TIP*) 1000 TOKEN
+    angle (resn TIP*) (resn TIP*) (resn TIP*) 500 TOKEN
+end
+
+igroup
+    interaction  (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA))
+                 (not (resn ANI or resn DAN or resn XAN or resn DUM or resn SHA)) weight * 1 end
+    interaction  (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM)
+                 (resn ANI or resn DAN or resn XAN or resn DUM or resn DUM) weight * 1 vdw 0.0 elec 0.0 end
+    interaction  (resn SHA) (not resn SHA) weight * 0 end
+end
+
+flag include bond angle impr vdw end
+
+if ($Data.flags.dihed eq true) then
+  flag include dihed end
+end if
+
+if ($Data.flags.elec eq true) then
+    flag include elec end
+    if ($Data.dielec eq "rdie") then
+        parameter nbonds eps=$Data.epsilon rdie shift switch end end
+        ! shift statement needed first to activate switch (CNS bug?)
+    else
+        parameter nbonds eps=$Data.epsilon cdie end end
+    end if
+    parameter nbonds ? end end
+else
+    evaluate ($elec=0.0)
+    flag exclude elec end
+end if
+
+coor copy end
+
+topology @@TOPPAR:solvent-allhdg5-4.top end
+
+if ($refine.solvent = "water") then
+    do (segid = "PROT") (segid "    ")
+    @MODULE:generate_water.cns
+    do (segid = "    ") (segid "PROT")
+elseif ($refine.solvent = "dmso") then
+    do (segid = "PROT") (segid "    ")
+    @MODULE:generate_dmso.cns
+    do (segid = "    ") (segid "PROT")
+end if
+
+evaluate ($seed = $count*$refine.iniseed)
+set seed $seed end
+
+
+if ( $log_level = "verbose" ) then
+    set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
+else
+    set message=off echo=off end
+end if
+
+
+{* Check for other restraints ================================================== *}
+
+if ($Data.contactairs eq true ) then
+    evaluate ($Data.flags.noe  =  true)
+    noe
+        reset
+        nrestraints = 12000000     ! allocate space for contactairs
+        ceiling 1000
+        averaging  * sum
+        potential  * soft
+        scale      * $kcont 
+        sqconstant * 1.0
+        sqexponent * 2
+        soexponent * 1
+        rswitch    * 0.5
+        sqoffset   * 0.0
+        asymptote  * 0.1
+        msoexponent * 1
+        masymptote  * -0.1
+        mrswitch    * 0.5
+        avexpo hbond 20
+    end
+    @MODULE:contactairs.cns
+end if
+
+if ($Data.dnarest eq true ) then
+    @MODULE:dna-rna_restraints.cns
+end if
+
+if ($Data.ssdihed eq "all" ) then
+    inline @MODULE:protein-ss-restraints-all.cns
+end if
+if ($Data.ssdihed eq "alpha" ) then
+    inline @MODULE:protein-ss-restraints-alpha.cns
+end if
+if ($Data.ssdihed eq "alphabeta" ) then
+    inline @MODULE:protein-ss-restraints-alpha-beta.cns
+end if
+
+
+{* Check for the presence of ions and add distance restraints / covalent bond == *}
+
+@MODULE:restrain-ions.cns
+
+
+{* set the energy flags ======================================================== *}
+
+inline @MODULE:setflags.cns
+
+
+{* Energy minimisation of solvent first ============================================= *}
+
+! fix everything except the solvent for initial minimization
+fix sele = (not (resn WAT or resn HOH or resn TIP* or resn DMS)) end
+
+minimize powell nstep=$nemsteps drop=100 end
+
+
+{* Energy minimisation with harmonic restraints on the molecules ==================== *}
+
+fix sele = (not all) end
+
+! fix the shape
+fix sele = (resn SHA) end
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+! Define harmonic restraints on heavy atoms of molecules
+restraints harmonic 
+    exponent = 2
+end
+do (harm = 0)  (all)
+do (harm = 5) (not name h* and not (resn WAT or resn HOH or resn TIP* or resn DMS))
+
+igroup
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA)) (not (resn ANI or resn DAN or resn XAN or resn SHA)) weight * 1 end
+    interaction (resn ANI or resn DAN or resn XAN)
+                (resn ANI or resn DAN or resn XAN) weight * 1 vdw 0.0 elec 0.0 end
+end
+
+minimize powell nstep=$nemsteps drop=10 end
+
+
+{* MD refinement with harmonic restraints on the molecules ==================== *}
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+! Define harmonic restraints on heavy atoms of molecules
+do (harm = 0)  (all)
+do (harm = 5)  (not name h* and not resn ANI and not resn DAN and not resn XAN and not (resn WAT or resn HOH or resn TIP3))
+do (harm = 20) (resn ANI and name OO)
+do (harm = 20) (resn DAN and name OO)
+
+! Remove harmonic restraints on interface side-chains
+@MODULE:flex_segment_side.cns
+eval ($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    eval ($nchain1=$nchain1+1)
+    do (harm = 0)  (attribute store5 = $nchain1 and 
+                    not ( name CA or name BB or name C or name N or name P or name C# or name C## ))
+end loop nloop1
+
+
+! Start MD refinement
+
+do (mass =$refine.mass) (all)
+do (mass=1000) (resn ANI or resn DAN or resn XAN)
+do (fbeta = 0) (all)
+do (fbeta = $refine.fbeta {1/ps} ) ( all )                
+
+! heat to 300 K
+for $bath in (100 200 300) loop heat
+
+    do (vx=maxwell($bath)) (all)
+    do (vy=maxwell($bath)) (all)
+    do (vz=maxwell($bath)) (all)  
+
+    dynamics cartesian
+        nstep=$refine.heatsteps timest=0.002{ps}       
+        temperature=$bath  tcoupling = true
+        nprint=50 
+    end
+
+end loop heat
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+!define weaker harmonic restraints on heavy atoms of molecules
+do (harm = 0)  (all)
+do (harm = 1)  (not name h* and not resn ANI and not resn DAN and not resn XAN and not (resn WAT or resn HOH or resn TIP3))
+
+!define flexible segments and remove harmonic restraints on backbone + side-chains of interface
+@MODULE:flex_segment_back.cns
+eval ($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    eval ($nchain1=$nchain1+1)
+    do (harm = 0)  (attribute store5 = $nchain1) 
+end loop nloop1
+do (harm = 20) (resn ANI and name OO)
+do (harm = 20) (resn DAN and name OO)
+
+! MD refinement
+dynamics cartesian
+   nstep=$refine.steps timest=0.002{ps}      
+   temperature=$bath  tcoupling = true
+   nprint=50 
+end 
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+! Define weak harmonic restraints on backbone only of molecules
+do (harm = 0)  (all)
+do (harm = 1)  (name CA or name BB or name C or name N or name P or name C# or name C##)
+! Remove harmonic restraints on interface side-chains
+@MODULE:flex_segment_side.cns
+eval ($nchain1 = 0)
+while ($nchain1 < $data.ncomponents) loop nloop1
+    eval ($nchain1=$nchain1+1)
+    do (harm = 0)  (attribute store5 = $nchain1) 
+end loop nloop1
+do (harm = 20) (resn ANI and name OO)
+do (harm = 20) (resn DAN and name OO)
+
+
+! cooling phase 
+for $bath in (300 200 100) loop cool
+
+    dynamics cartesian
+       nstep=$refine.coolsteps timest=0.002{ps}      
+       temperature=$bath  tcoupling = true                       
+       nprint=50 
+    end
+    
+end loop cool
+
+
+! final minimization without harmonic restraints
+
+flag excl harm end
+mini powell nstep $nemsteps drop=10 end
+
+
+{* ======================= calculate free molecules internal energy *}
+
+igroup
+    interaction (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) 
+                (not (resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DUM)) weight * 1 end
+end
+
+do (refx=x) (all)
+do (refy=y) (all)
+do (refz=z) (all)
+
+fix sele=(resn ANI or resn DAN or resn XAN or resn SHA or resn WAT or resn HOH or resn TIP* or resn DMS) end
+
+inline @MODULE:calc_free-ene.cns
+
+fix sele=(not all) end
+
+do (x = refx) (all)
+do (y = refy) (all)
+do (z = refz) (all)
+
+
+
+{* ===================== calculate complex internal energy *}
+
+evaluate ($kinter = 1.0)
+
+@MODULE:scale_intra_only.cns
+
+evaluate ($elec = 0.0)
+evaluate ($eintcplx = 0.0)
+
+energy end
+
+evaluate ($eintcplx = $bond + $angl + $impr + $dihe + $vdw + $elec)
+
+
+{* ===================== calculate final energies and write structure *}
+evaluate ($cdih=0.0)
+evaluate ($noe=0.0)
+if ($Data.ncomponents > 1) then
+    evaluate ($kinter = 1.0)
+    @MODULE:scale_inter_final.cns
+else
+    @MODULE:scale_intra_only.cns
+end if
+
+evaluate ($coll = 0.0)
+evaluate ($eair = 0.0)
+evaluate ($esym = 0.0)
+evaluate ($ncs = 0.0)
+evaluate ($zhar = 0.0)
+evaluate ($dani = 0.0)
+evaluate ($sani = 0.0)
+evaluate ($vean = 0.0)
+evaluate ($xrdc = 0.0)
+evaluate ($xpcs = 0.0)
+evaluate ($rms_noe=0.0)
+evaluate ($violations_noe=0)
+evaluate ($rms_test_noe=0.0)
+evaluate ($violations_test_noe=0)
+
+energy end
+evaluate ($etot = $ener - $noe)
+evaluate ($noe = $eair)
+evaluate ($etot = $etot + $noe)
+
+inline @MODULE:print_coorheader.cns
+
+coor sele= (not name H* and not resn ANI and not resn XAN and not resn DAN) orient end
+
+write coordinates sele=(not (resn WA* or resn HOH or resn TIP* or resn DMS)) format=pdbo output=$output_pdb_filename end
+
+set message=normal echo=on end
+
+display OUTPUT: $output_pdb_filename
+
+if ($refine.keepwater eq true) then
+    evaluate ($filename= $output_pdb_filename - ".pdb" + "_solvent.pdb")
+    write coordinates sele=(all) format=pdbo output=$filename end
+end if
+
+display OUTPUT: $output_pdb_filename
+
+stop
+

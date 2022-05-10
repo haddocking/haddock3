@@ -2,7 +2,7 @@ r"""
 HADDOCK3 benchmark submission daemon.
 
 For more information read our benchmark tutorial at `docs/benchmark.tut`
-in HADDOCK3 repository site: https://github.com/haddocking/haddock3
+in HADDOCK3 repository site: https://github.com/haddocking/haddock3::
 
    (_) L|J
    (")  |
@@ -10,7 +10,8 @@ in HADDOCK3 repository site: https://github.com/haddocking/haddock3
  _/\ /  |
    _W_  |
 
-Usage:
+Usage::
+
     haddock3-dmn -h
     haddock3-dmn <benchmark folder>  --job-limit <num> [OPTIONS]
 """
@@ -73,6 +74,10 @@ ap.add_argument(
         ),
     action='store_true',
     )
+
+
+def _ap():
+    return ap
 
 
 class Job:

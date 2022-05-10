@@ -1,0 +1,21 @@
+top_cluster:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+top_models:
+  default: .nan
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy

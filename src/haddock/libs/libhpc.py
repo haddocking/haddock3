@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 
 from haddock import log, modules_defaults_path
-from haddock.gear.config_reader import read_config
+from haddock.gear.yaml2cfg import read_from_yaml_config
 
 
 STATE_REGEX = r"JobState=(\w*)"
@@ -23,10 +23,10 @@ JOB_STATUS_DIC = {
 
 # if you change these defaults, chage also the values in the
 # modules/defaults.cfg file
-_tmpcfg = read_config(modules_defaults_path)
+_tmpcfg = read_from_yaml_config(modules_defaults_path)
 HPCScheduler_CONCAT_DEFAULT = _tmpcfg["concat"]  # original value 1
-HPCWorker_QUEUE_LIMIT_DEFAULT = _tmpcfg["queue"]  # original value 100
-HPCWorker_QUEUE_DEFAULT = _tmpcfg["queue_limit"]  # original value None
+HPCWorker_QUEUE_LIMIT_DEFAULT = _tmpcfg["queue_limit"]  # original value 100
+HPCWorker_QUEUE_DEFAULT = _tmpcfg["queue"]  # original value ""
 del _tmpcfg
 
 
@@ -164,22 +164,22 @@ class HPCScheduler:
         """Run tasks in the Queue."""
         # split by maximum number of submission so we do it in batches
         adaptive_l = []
-        total_completed = 0
         batch = [
             self.worker_list[i:i + self.queue_limit]
             for i in range(0, len(self.worker_list), self.queue_limit)
             ]
+        total_batches = len(batch)
         try:
-            for batch_num, job_list in enumerate(batch, start=1):
-                log.info(f"> Running batch {batch_num}/{len(batch)}")
+            for batch_num, worker_list in enumerate(batch, start=1):
+                log.info(f"> Running batch {batch_num}/{total_batches}")
                 start = time.time()
-                for worker in job_list:
+                for worker in worker_list:
                     worker.run()
 
                 # check if those finished
                 completed = False
                 while not completed:
-                    for worker in job_list:
+                    for worker in worker_list:
                         worker.update_status()
                         if worker.job_status != "finished":
                             log.info(
@@ -188,29 +188,24 @@ class HPCScheduler:
                                 )
 
                     completed_count = sum(
-                        w.job_status == "finished" for w in job_list
+                        w.job_status == "finished" for w in worker_list
                         )
+
                     failed_count = sum(
-                        w.job_status == "failed" for w in job_list
+                        w.job_status == "failed" for w in worker_list
                         )
 
-                    total_completed += completed_count + failed_count
-
-                    per = float(total_completed) / len(self.worker_list) * 100
-
-                    log.info(f">> {per:.2f}% done")
-                    if completed_count + failed_count == len(job_list):
+                    if completed_count + failed_count == len(worker_list):
                         completed = True
                         end = time.time()
                         elapsed = end - start
-                        log.info(f'>> Took {elapsed:.2f}s')
                         adaptive_l.append(elapsed)
                     else:
                         if not adaptive_l:
                             # This is the first run, use pre-defined waits
-                            if len(job_list) < 10:
+                            if len(worker_list) < 10:
                                 sleep_timer = 10
-                            elif len(job_list) < 50:
+                            elif len(worker_list) < 50:
                                 sleep_timer = 30
                             else:
                                 sleep_timer = 60
@@ -221,7 +216,11 @@ class HPCScheduler:
                                 )
                         log.info(f">> Waiting... ({sleep_timer:.2f}s)")
                         time.sleep(sleep_timer)
-                log.info(f"> Batch {batch_num}/{len(batch)} done")
+
+                per = (float(batch_num) / float(total_batches)) * 100
+                log.info(
+                    f">> Batch {batch_num}/{total_batches} took "
+                    f"{elapsed:.2f}s to finish, {per:.2f}% complete")
 
         except KeyboardInterrupt as err:
             self.terminate()

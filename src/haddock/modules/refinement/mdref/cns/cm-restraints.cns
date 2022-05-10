@@ -1,0 +1,144 @@
+! cm-restraints.cns
+!    Define center-of-mass restraints between molecules
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+!define center of mass restraints between all molecules
+!using distance restraints between CA, BB or N1 atoms with center averaging
+
+evaluate ($ncount = 0)
+   
+! store original coordinates 
+do (refx = x) (all)
+do (refy = y) (all)
+do (refz = z) (all)
+
+while ($ncount < $data.ncomponents) loop nloop1
+    evaluate ($ncount = $ncount +1)
+    evaluate ($dim_$ncount = 0.0)
+
+    !orient molecule
+    coor orient sele=(segid $prot_segid_$ncount) end
+
+    ! find dimensions
+    show max (x) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    evaluate ($xdim = $result)
+    show max (y) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    evaluate ($ydim = $result)
+    show max (z) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    evaluate ($zdim = $result)
+    show min (x) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    evaluate ($xdim = $xdim - $result)
+    show min (y) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    evaluate ($ydim = $ydim - $result)
+    show min (z) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    evaluate ($zdim = $zdim - $result)
+
+    evaluate ($corr = max($xdim,$ydim))
+    evaluate ($corr = max($corr,$zdim))
+
+    if  ($data.cmtight eq false) then
+        ! use average of all three dimensions
+        evaluate ($dim_$ncount = ($xdim + $ydim + $zdim)/6.0)
+    else
+        ! use only the average of the smallest two dimensions
+        evaluate ($dim_$ncount = ($xdim + $ydim + $zdim - $corr)/4.0)
+    end if
+
+    ! check if the molecule is a DNA
+    do (store6 = 0) (all)
+    do (store6 = 1) (segid $prot_segid_$ncount and tag)
+    show sum (store6) (all)
+    evaluate ($nresmol = $result)
+    do (store6 = 0) (all)
+    do (store6 = 1) (segid $prot_segid_$ncount and (resn DA or resn DC or resn DG or resn DT) and tag)
+    show sum (store6) (all)
+    if ($result eq $nresmol) then
+        ! we are dealing with DNA set dimension to 0
+        evaluate ($dim_$ncount = 0.0)
+    end if
+
+    ! check if the molecule is a small ligand
+    do (store6 = 0) (all)
+    do (store6 = 1) (segid $prot_segid_$ncount and (name CA or name BB or name N1))
+    show sum (store6) (all)
+    if ($result eq 0) then
+        ! we are dealing with a ligand set dimension to 0
+        evaluate ($dim_$ncount = 0.0)
+    end if
+    
+end loop nloop1
+
+! restore original coordinates
+do (x = refx) (all)
+do (y = refy) (all)
+do (z = refz) (all)
+
+eval($nchain = 0)
+do (store9 = 0) (all)
+do (store9 = 1) (name CA or name BB or name N1)
+while ($nchain < $data.ncomponents) loop nloop0
+    eval($nchain = $nchain + 1)
+    show sum (store9) (segid $prot_segid_$nchain)
+    if ($result < 3) then
+        evaluate ($selat$nchain = 0 )
+    else
+        evaluate ($selat$nchain = 1 )
+    end if
+end loop nloop0
+  
+eval($nchain1 = 0)
+noe
+    class contact
+    while ($nchain1 < $data.ncomponents) loop nloop1
+        eval($nchain1 = $nchain1 + 1)
+        eval($nchain2 = $nchain1 )
+        if ($mol_shape_$nchain1 eq false) then
+            while ($nchain2 < $data.ncomponents) loop nloop2
+                eval($nchain2 = $nchain2 + 1)
+                if ($mol_shape_$nchain2 eq false) then
+                    if  ($data.cmtight eq false) then
+                        eval($cm_dist = $dim_$nchain1 + $dim_$nchain2)
+                    else
+                        eval($cm_dist = ($dim_$nchain1 + $dim_$nchain2)/2 )
+                    end if
+                    if ($selat$nchain1 = 1) then
+                        if ($selat$nchain2 = 1) then
+                            assign (segid $prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
+                                   (segid $prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $cm_dist $cm_dist 1.0
+                        else
+                            assign (segid $prot_segid_$nchain1 and ( name CA or name BB or name N1 ))
+                                   (segid $prot_segid_$nchain2) $cm_dist $cm_dist 1.0
+                        end if
+                    else
+                        if ($selat$nchain2 = 1) then
+                            assign (segid $prot_segid_$nchain1)
+                                   (segid $prot_segid_$nchain2 and ( name CA or name BB or name N1 )) $cm_dist $cm_dist 1.0
+                        else
+                            assign (segid $prot_segid_$nchain1)
+                                   (segid $prot_segid_$nchain2) $cm_dist $cm_dist 1.0
+                        end if
+                    end if
+                end if
+            end loop nloop2
+        end if
+    end loop nloop1
+
+    averaging  contact center
+    scale      contact $Data.kcm
+    sqconstant contact 1.0
+    sqexponent contact 2
+    soexponent contact 1
+    rswitch    contact 1.0
+    sqoffset   contact 0.0
+    asymptote  contact 2.0
+    msoexponent contact 1
+    masymptote  contact -0.1
+    mrswitch    contact 1.0
+end

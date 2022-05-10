@@ -1,10 +1,11 @@
 """CNS scripts util functions."""
 import itertools
+import math
 from functools import partial
 from os import linesep
 from pathlib import Path
 
-from haddock import log
+from haddock import EmptyPath, log
 from haddock.core import cns_paths
 from haddock.libs import libpdb
 from haddock.libs.libfunc import false, true
@@ -44,6 +45,14 @@ def generate_default_header(path=None):
         )
 
 
+def _is_nan(x):
+    """Inspect if is nan."""
+    try:
+        return math.isnan(x)
+    except (ValueError, TypeError):
+        return False
+
+
 def filter_empty_vars(v):
     """
     Filter empty variables.
@@ -63,9 +72,11 @@ def filter_empty_vars(v):
         If the type of `value` is not supported by CNS.
     """
     cases = (
-        (lambda x: isinstance(x, str), true),
+        (lambda x: _is_nan(x), false),
+        (lambda x: isinstance(x, str) and bool(x), true),
+        (lambda x: isinstance(x, str) and not bool(x), false),
         (lambda x: isinstance(x, bool), true),  # it should return True
-        (lambda x: isinstance(x, Path), true),
+        (lambda x: isinstance(x, (EmptyPath, Path)), true),
         (lambda x: type(x) in (int, float), true),
         (lambda x: x is None, false),
         )
@@ -128,6 +139,9 @@ def write_eval_line(param, value, eval_line="eval (${}={})"):
         value = '"' + str(value) + '"'
         return eval_line.format(param, value)
 
+    elif isinstance(value, EmptyPath):
+        return eval_line.format(param, '""')
+
     elif isinstance(value, (int, float)):
         return eval_line.format(param, value)
 
@@ -182,10 +196,7 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
     ncount = 1
     for pdb in pdb_input_list:
         input_str += f"coor @@{pdb}{linesep}"
-        input_str += (
-            f"eval ($input_pdb_filename_{ncount}="
-            f' "{pdb}"){linesep}'
-            )
+        input_str += write_eval_line(f'input_pdb_filename_{ncount}', pdb)
         ncount += 1
 
     # check how many chains there are across all the PDBs
@@ -194,10 +205,10 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
         for element in libpdb.identify_chainseg(pdb):
             chain_l.append(element)
     ncomponents = len(set(itertools.chain(*chain_l)))
-    input_str += f"eval ($ncomponents={ncomponents}){linesep}"
+    input_str += write_eval_line('ncomponents', ncomponents)
 
     seed = RND.randint(100, 999)
-    input_str += f"eval ($seed={seed}){linesep}"
+    input_str += write_eval_line('seed', seed)
 
     return input_str
 
@@ -231,8 +242,8 @@ def prepare_single_input(pdb_input, psf_input=None):
     ncomponents = len(chainsegs)
     input_str += write_eval_line("ncomponents", ncomponents)
 
-    for i, segid in enumerate(chainsegs):
-        input_str += write_eval_line(f"prot_segid_{i + 1}", segid)
+    for i, segid in enumerate(chainsegs, start=1):
+        input_str += write_eval_line(f"prot_segid_{i}", segid)
 
     seed = RND.randint(100, 99999)
     input_str += write_eval_line('seed', seed)
@@ -250,7 +261,16 @@ def prepare_cns_input(
         native_segid=False,
         default_params_path=None,
         ):
-    """Generate the .inp file needed by the CNS engine."""
+    """
+    Generate the .inp file needed by the CNS engine.
+
+    Parameters
+    ----------
+    model_number : int
+        The number of the model. Will be used as file name suffix.
+
+    input_element : `libs.libontology.Persisten`, list of those
+    """
     # read the default parameters
     default_params = load_workflow_params(**defaults)
 
@@ -271,6 +291,7 @@ def prepare_cns_input(
             else:
                 psf_fname = pdb.topology.rel_path
                 psf_list.append(psf_fname)
+
     elif isinstance(input_element.topology, (list, tuple)):
         pdb = input_element  # for clarity
         for psf in pdb.topology:
@@ -284,32 +305,36 @@ def prepare_cns_input(
     input_str = prepare_multiple_input(pdb_list, psf_list)
 
     output_pdb_filename = f"{identifier}_{model_number}.pdb"
+
     output = f"{linesep}! Output structure{linesep}"
     output += write_eval_line('output_pdb_filename', output_pdb_filename)
 
+    # prepare chain/seg IDs
     segid_str = ""
     if native_segid:
-        pdb_list = []
+        chainid_list = []
         if isinstance(input_element, (list, tuple)):
-            id_counter = 0
             for pdb in input_element:
-                segids, chains = libpdb.identify_chainseg(
-                    pdb.rel_path, sort=False
-                    )
-                chainsegs = sorted(list(set(segids) | set(chains)))
-                for i, _ in enumerate(chainsegs, start=1):
-                    segid_str += (f"eval ($prot_segid_{i}=\"{id_counter}\")"
-                                  f"{linesep}")
-                    id_counter += 1
-        else:
-            segids, chains = libpdb.identify_chainseg(
-                input_element.rel_path, sort=False
-                )
-            chainsegs = sorted(list(set(segids) | set(chains)))
-            for i, id in enumerate(chainsegs, start=1):
-                segid_str += f"eval ($prot_segid_{i}=\"{id}\"){linesep}"
 
-    output += f"eval ($count=" f" {model_number}){linesep}"
+                segids, chains = \
+                    libpdb.identify_chainseg(pdb.rel_path, sort=False)
+
+                chainsegs = sorted(list(set(segids) | set(chains)))
+                chainid_list.extend(chainsegs)
+
+            for i, _chainseg in enumerate(chainid_list, start=1):
+                segid_str += write_eval_line(f'prot_segid_{i}', _chainseg)
+
+        else:
+            segids, chains = \
+                libpdb.identify_chainseg(input_element.rel_path, sort=False)
+
+            chainsegs = sorted(list(set(segids) | set(chains)))
+
+            for i, _chainseg in enumerate(chainsegs, start=1):
+                segid_str += write_eval_line(f'prot_segid_{i}', _chainseg)
+
+    output += write_eval_line('count', model_number)
 
     inp = (
         default_params

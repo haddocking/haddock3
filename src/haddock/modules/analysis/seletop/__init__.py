@@ -1,12 +1,12 @@
-"""HADDOCK3 module to select a top cluster/model."""
+"""Select a top models."""
 from pathlib import Path
 
-from haddock.libs.libontology import Format, ModuleIO
+from haddock.libs.libontology import Format
 from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
-DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.cfg")
+DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
 class HaddockModule(BaseHaddockModule):
@@ -52,8 +52,5 @@ class HaddockModule(BaseHaddockModule):
                 )
 
         # select the models based on the parameter
-        selected_models = models_to_select[:self.params['select']]
-
-        io = ModuleIO()
-        io.add(selected_models, "o")
-        io.save()
+        self.output_models = models_to_select[:self.params['select']]
+        self.export_output_models()

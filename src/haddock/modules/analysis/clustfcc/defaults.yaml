@@ -1,0 +1,51 @@
+executable:
+  default: src/contact_fcc
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+contact_distance_cutoff:
+  default: 5.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+fraction_cutoff:
+  default: 0.6
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+threshold:
+  default: 4
+  type: integer
+  min: -9999
+  max: 9999
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+strictness:
+  default: 0.75
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy

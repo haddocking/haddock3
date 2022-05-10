@@ -3,25 +3,7 @@ Tools for Functional-Programming in Python.
 
 From: https://github.com/joaomcteixeira/libfuncpy
 """
-from functools import partial, reduce
-
-
-def reduce_helper(value, f, *a, **k):
-    """
-    Help in `reduce`.
-
-    Helper function when applying `reduce` to a list of functions.
-
-    Parameters
-    ----------
-    value : anything
-    f : callable
-        The function to call. This function receives `value` as first
-        positional argument.
-    *a, **k
-        Args and kwargs passed to `f`.
-    """
-    return f(value, *a, **k)
+from operator import is_not
 
 
 def chainf(init, *funcs, **common):
@@ -30,14 +12,29 @@ def chainf(init, *funcs, **common):
 
     Example
     -------
-    >>> chainf(2, [str, int, float])
+    >>> chainf(2, *[str, int, float])
     2.0
+
+    Parameters
+    ----------
+    init : anything
+        The initial value.
+
+    **common : keyword arguments
+        Common key word arguments to all functions.
+
+    Returns
+    -------
+    anything
+        The result of the chain of functions; this is, the return value
+        of the last function.
     """
-    rh = partial(reduce_helper, **common)
-    return reduce(rh, funcs, init)
+    for func in funcs:
+        init = func(init, **common)
+    return init
 
 
-def chainfs(*funcs):
+def chainfs(*funcs, **common):
     """
     Store functions be executed on a value.
 
@@ -46,10 +43,20 @@ def chainfs(*funcs):
     >>> do = chainfs(str, int, float)
     >>> do(2)
     2.0
+
+    See Also
+    --------
+    :py:func:`chainf`
     """
     def execute(value):
-        return chainf(value, *funcs)
-    return
+        return chainf(value, *funcs, **common)
+
+    return execute
+
+
+def give_same(value):
+    """Return what is given."""
+    return value
 
 
 def true(*ignore, **everything):
@@ -60,3 +67,18 @@ def true(*ignore, **everything):
 def false(*ignore, **everything):
     """Give False regardless of the input."""
     return False
+
+
+def none(*ignore, **everything):
+    """Give False regardless of the input."""
+    return None
+
+
+def nan(*ignore, **everything):
+    """Give False regardless of the input."""
+    return float('nan')
+
+
+def not_none(value):
+    """Give True if value is not None, or False otherwise."""
+    return is_not(value, None)

@@ -770,7 +770,7 @@ else
     do (b=$result) (store9 and (attr b < 0.01))
 end if
 
-if ($randorien eq true) then
+if (&set_occupancy=true) then
     if (&set_occupancy=true) then
         do (q=&occupancy) ( all )
     end if

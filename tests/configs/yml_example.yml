@@ -1,0 +1,279 @@
+autohis:
+  default: true
+  type: boolean
+  title: Automatic HIS protonation state
+  short:
+    "The protonation state of histidine (+1: HIS or 0: HISD/HISE)
+    will be automatically set by HADDOCK"
+  long:
+    "If set to true, HADDOCK will automatically define the protonation
+    state of histidines ((+1: HIS or 0: HISD/HISE) by selecting the
+    state leading to the lowest electrostatic energy"
+  group: 'molecule'
+  explevel: easy
+delenph:
+  default: true
+  type: boolean
+  title: Keep or remove non-polar hydrogen atoms
+  short:
+    If set to true, non-polar hydrogen atoms will be discarded to save
+    computing time
+  long:
+    Since HADDOCK uses a united atom force field, the non-polar hydrogen
+    atoms can be in principle discarded. This saves computing time.
+    However this should not be done if you are defining distance
+    restraints to specific hydrogen atoms (e.g. when using NMR distance
+    restraints).
+  group: 'molecule'
+  explevel: easy
+log_level:
+  default: verbose
+  type: string
+  minchars: 0
+  maxchars: 100
+  title: Log level verbosity for CNS
+  short: Set the log level verbosity for CNS (minimal or verbose)
+  long:
+    CNS, the computational engine used by HADDOCK can generate a lot of
+    output messages. This parameter controls the verbosity of CNS
+    (minimal or verbose)
+  group: 'module'
+  explevel: expert
+iniseed:
+  default: 917
+  type: integer
+  min: 0
+  max: 9999999999999999
+  precision: 3
+  title: Random seed
+  short: Random seed used in CNS to initialize the random seed function
+  long: Random seed used in CNS to initialize the random seed function
+  group: 'molecule'
+  explevel: expert
+ligand_param_fname:
+  default: ''
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+ligand_top_fname:
+  default: ''
+  type: file
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+limit:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+tolerance:
+  default: 0
+  type: integer
+  min: -9999
+  max: 9999
+  precision: 3
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: ''
+  explevel: easy
+mol1:
+  prot_segid:
+    default: A
+    type: string
+    minchars: 0
+    maxchars: 100
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  fix_origin:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  dna:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  shape:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  cg:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  cyclicpept:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  nhisd:
+    default: 0
+    type: integer
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  hisd_1:
+    default: .nan
+    type: float
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  nhise:
+    default: 0
+    type: integer
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  hise_1:
+    default: .nan
+    type: float
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  explevel: easy
+mol2:
+  prot_segid:
+    default: B
+    type: string
+    minchars: 0
+    maxchars: 100
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  fix_origin:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  dna:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  shape:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  cg:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  cyclicpept:
+    default: false
+    type: boolean
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  nhisd:
+    default: 0
+    type: integer
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  hisd_1:
+    default: .nan
+    type: float
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  nhise:
+    default: 0
+    type: integer
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  hise_1:
+    default: .nan
+    type: float
+    min: -9999
+    max: 9999
+    precision: 3
+    title: No title yet
+    short: No short description yet
+    long: No long description yet
+    group: ''
+    explevel: easy
+  explevel: easy

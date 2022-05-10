@@ -1,8 +1,10 @@
 """Features to allow run restart from a given step."""
 from argparse import ArgumentTypeError
 from functools import partial
+from pathlib import Path
 
 from haddock.libs.libutil import non_negative_int, remove_folder
+from haddock.modules import get_module_steps_folders
 
 
 _help_cli = """Restart the run from a given step. Previous folders from
@@ -53,7 +55,7 @@ def remove_folders_after_number(run_dir, num):
         representation.
     """
     num = _arg_non_neg_int(num)
-    previous = sorted(list(run_dir.resolve().glob('[0-9][0-9]*/')))
+    previous = get_module_steps_folders(run_dir.resolve())
     for folder in previous[num:]:
-        remove_folder(folder)
+        remove_folder(Path(run_dir, folder))
     return

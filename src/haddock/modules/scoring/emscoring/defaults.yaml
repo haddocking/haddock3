@@ -1,0 +1,297 @@
+#
+# Group scoring
+#
+w_air:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the distance restraint energy
+  short: Weight of the distance restraints energy in the scoring function
+  long: Weight of the distance restraints energy in the scoring function.
+    Note that this is different from the force constants used during the calculations.
+  group: 'scoring'
+  explevel: hidden
+w_bsa:
+  default: 0.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the buried surface area term
+  short: Weight of the buried surface area term in the scoring function
+  long: Weight of the buried surface area (BSA) term in the scoring function.
+    Note that the BSA is only used for scoring.
+  group: 'scoring'
+  explevel: expert
+w_cdih:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the dihedral angle restraint energy
+  short: Weight of the dihedral angle restraints energy in the scoring function
+  long: Weight of the dihedral angle restraints energy in the scoring function.
+    Note that this is different from the force constant used during the calculations.
+  group: 'scoring'
+  explevel: expert
+w_dani:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the relaxation anisotropy (DANI) restraint energy
+  short: Weight of the relaxation anisotropy (DANI) restraint energy
+  long: Weight of the relaxation anisotropy (DANI) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_deint:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the interaction energy term
+  short: Weight of the interaction energy term
+  long: Weight of the interaction energy term calculated as the difference in total energy of the complex and of the separate components
+  group: 'scoring'
+  explevel: hidden
+w_desolv:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the desolvation energy term
+  short: Weight of the desolvation energy term in the scoring function
+  long: Weight of the desolvation energy term in the scoring function.
+    Note that the desolvation energy is only used for scoring.
+  group: 'scoring'
+  explevel: expert
+w_elec:
+  default: 0.2
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the intermolecular electrostatic energy
+  short: Weight of the intermolecular electrostatic energy in the scoring function
+  long: Weight of the intermolecular electrostatic energy in the scoring function.
+    Note that this does not affect the electostatic energy during the EM minimization.
+  group: 'scoring'
+  explevel: expert
+w_lcc:
+  default: -10000.0
+  type: float
+  min: -9999
+  max: 0
+  precision: 3
+  title: Weight of the EM local correlation coefficient
+  short: Weight of the EM local correlation coefficient
+  long: Weight of the EM local correlation coefficient
+  group: 'scoring'
+  explevel: hidden
+w_rg:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the radius of gyration restraint energy
+  short: Weight of the radius of gyration restraint energy
+  long: Weight of the radius of gyration restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_sani:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (SANI) restraint energy
+  short: Weight of the residual dipolar coupling (SANI) restraint energy
+  long: Weight of the residual dipolar coupling (SANI) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_sym:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the symmetry restraint energy
+  short: Weight of the symmetry restraints energy in the scoring function
+  long: Weight of the symmetry restraints energy in the scoring function.
+    Note that this is different from the force constant used during the calculations.
+  group: 'scoring'
+  explevel: hidden
+w_vdw:
+  default: 1.0
+  type: float
+  min: -9999
+  max: 9999
+  precision: 3
+  title: Weight of the intermolecular van der Waals energy
+  short: Weight of the intermolecular van der Waals energy in the scoring function
+  long: Weight of the intermolecular van der Waals energy in the scoring function.
+    Note that this does not affect the van der Waals energy during the EM minimization.
+  group: 'scoring'
+  explevel: expert
+w_vean:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (VEAN) restraint energy
+  short: Weight of the residual dipolar coupling (VEAN) restraint energy
+  long: Weight of the residual dipolar coupling (VEAN) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_xpcs:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the pseudo contact shifts (XPCS) restraint energy
+  short: Weight of the pseudo contact shifts (XPCS) restraint energy
+  long: Weight of the pseudo contact shifts (XPCS) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_xrdc:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the residual dipolar coupling (XRDC) restraint energy
+  short: Weight of the residual dipolar coupling (XRDC) restraint energy
+  long: Weight of the residual dipolar coupling (XRDC) restraint energy
+  group: 'scoring'
+  explevel: hidden
+w_zres:
+  default: 0.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the Z-restraining potential energy
+  short: Weight of the Z-restraining potential energy
+  long: Weight of the Z-restraining potential energy
+  group: 'scoring'
+  explevel: hidden
+#
+# Group force field
+#
+ligand_param_fname:
+  default: ''
+  type: file
+  title: Custom ligand parameter file
+  short: Ligand parameter file in CNS format
+  long: Ligand parameter file in CNS format containing all force field parameters 
+    (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: expert
+ligand_top_fname:
+  default: ''
+  type: file
+  title: Custom ligand topology file
+  short: Ligand topology file in CNS format
+  long: Ligand topology file in CNS format containing the ligand topologies 
+    (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+  group: 'force field'
+  explevel: expert
+elecflag:
+  default: true
+  type: boolean
+  title: Include electrostatics energy
+  short: Include electrostatics energy during the calculations.
+  long: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.
+  group: 'force field'
+  explevel: easy
+dielec:
+  default: cdie
+  type: string
+  minchars: 0
+  maxchars: 4
+  choices:
+    - cdie
+    - rdie
+  title: Constant (cdie) or distance-dependent dielectric (rdie) constant.
+  short: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+  long: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+    A distance dependent dielectric constant will effectively scale down the electrostatic energy 
+    by having a 1/r**2 dependency instead of 1/r
+  group: 'force field'
+  explevel: expert
+epsilon:
+  default: 1.0
+  type: float
+  min: 1
+  max: 78
+  precision: 1
+  title: Dielectric constant
+  short: Dielectric constant for the electrostatic Coulomb energy term.
+  long: Dielectric constant for the electrostatic Coulomb energy term.
+  group: 'force field'
+  explevel: expert
+dihedflag:
+  default: true
+  type: boolean
+  title: No title yet
+  short: No short description yet
+  long: No long description yet
+  group: 'force field'
+  explevel: expert
+#
+# Group sampling
+#
+individualize:
+  default: true
+  type: boolean
+  title: Individualise models
+  short: Treat each model in the PDB ensemble as a separate entity.
+  long: Treat each model in the PDB ensemble as a separate entity. This means that for each a separate topology file will be generated. The models in the ensemble can thus correspond to different molecules.
+  group: 'sampling'
+  explevel: expert
+nemsteps:
+  default: 50
+  type: integer
+  min: 1
+  max: 10000
+  title: Number of EM steps
+  short: Number of energy minimisation steps to perform.
+  long: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.
+  group: 'sampling'
+  explevel: expert
+tolerance:
+  default: 0
+  type: integer
+  min: 0
+  max: 99
+  precision: 3
+  title: Failure tolerance percentage
+  short: Percentage of allowed failures for a module to successfully complete
+  long: Percentage of allowed failures for a module to successfully complete
+  group: 'module'
+  explevel: expert
+log_level:
+  default: quiet
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - verbose
+    - normal
+    - quiet
+  title: Log level verbosity for CNS
+  short: Set the log level verbosity for CNS
+  long: CNS, the computational engine used by HADDOCK can generate a lot of output
+    messages. This parameter controls the verbosity of CNS (verbose, normal or quiet)
+  group: module
+  explevel: guru
+

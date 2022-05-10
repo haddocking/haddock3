@@ -2,11 +2,16 @@
 import importlib
 import sys
 from pathlib import Path
+from time import time
 
 from haddock import log
 from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.config_reader import get_module_name
-from haddock.libs.libutil import recursive_dict_update, zero_fill
+from haddock.gear.zerofill import zero_fill
+from haddock.libs.libutil import (
+    convert_seconds_to_min_sec,
+    recursive_dict_update,
+    )
 from haddock.modules import (
     modules_category,
     non_mandatory_general_parameters_defaults,
@@ -18,8 +23,7 @@ class WorkflowManager:
 
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start
-        # Create a workflow from a TOML file
-        self.recipe = Workflow(workflow_params, **other_params)
+        self.recipe = Workflow(workflow_params, start=0, **other_params)
 
     def run(self):
         """High level workflow composer."""
@@ -30,7 +34,7 @@ class WorkflowManager:
 class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
 
-    def __init__(self, modules_parameters, **other_params):
+    def __init__(self, modules_parameters, start=0, **other_params):
 
         # filter out those parameters not belonging to the modules
         general_modules = {
@@ -41,7 +45,7 @@ class Workflow:
 
         # Create the list of steps contained in this workflow
         self.steps = []
-        _items = enumerate(modules_parameters.items())
+        _items = enumerate(modules_parameters.items(), start=start)
         for num_stage, (stage_name, params) in _items:
             log.info(f"Reading instructions of [{stage_name}] step")
 
@@ -75,9 +79,7 @@ class Step:
         self.config = config_params
         self.module_name = module_name
         self.order = order
-
-        self.working_path = \
-            Path(zero_fill(self.order, digits=2) + "_" + self.module_name)
+        self.working_path = Path(zero_fill.fill(self.module_name, self.order))
 
     def execute(self):
         """Execute simulation step."""
@@ -96,9 +98,16 @@ class Step:
             path=self.working_path)
 
         # Run module
+        start = time()
         try:
-            module.run(**self.config)
+            module.update_params(**self.config)
+            module.save_config(Path(self.working_path, "params.cfg"))
+            module.run()
         except KeyboardInterrupt:
             log.info("You have halted subprocess execution by hitting Ctrl+c")
             log.info("Exiting...")
             sys.exit(1)
+
+        end = time()
+        elapsed = convert_seconds_to_min_sec(end - start)
+        module.log(f"took {elapsed}")

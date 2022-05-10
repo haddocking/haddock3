@@ -44,10 +44,29 @@ def make_list_if_string(item):
 
 
 def transform_to_list(item):
-    """Put `item` into a list if not a list already."""
-    if not isinstance(item, (list, tuple)):
-        return [item]
-    return item
+    """
+    Put `item` into a list if not a list already.
+
+    If it is set, transforms the set into a list.
+
+    If it is a dict, returns a list of the keys.
+
+    If it is tuple, returns the tuple.
+
+    If a list, returns the same.
+
+    Everything else returns `item` inside a one element list.
+    """
+    if isinstance(item, set):
+        return list(item)
+
+    if isinstance(item, dict):
+        return list(item.keys())
+
+    if isinstance(item, (list, tuple)):
+        return item
+
+    return [item]
 
 
 def copy_files_to_dir(paths, directory):
@@ -66,14 +85,16 @@ def copy_files_to_dir(paths, directory):
         shutil.copy(path, directory)
 
 
-def zero_fill(number, digits=2):
-    """Make a number string zero filled to the left."""
-    return str(number).zfill(digits)
-
-
 def remove_folder(folder):
-    """Remove a folder if it exists."""
-    if folder.exists():
+    """
+    Remove a folder if it exists.
+
+    Parameters
+    ----------
+    folder : str or Path
+        Path to folder to remove.
+    """
+    if Path(folder).exists():
         log.warning(f'{folder} exists and it will be REMOVED!')
         shutil.rmtree(folder)
 
@@ -219,7 +240,7 @@ def file_exists(
 
 def recursive_dict_update(d, u):
     """
-    Update dictionary recursively.
+    Update dictionary `d` according to `u` recursively.
 
     https://stackoverflow.com/questions/3232943
 
@@ -327,3 +348,50 @@ def log_error_and_exit():
             )
         log.info(get_goodbye_help())
         sys.exit(1)
+
+
+def convert_seconds_to_min_sec(seconds):
+    """
+    Convert seconds to min&sec.
+
+    Examples
+    --------
+    >>> convert_seconds_to_min_sec(60)
+    1 minute
+    >>> convert_seconds_to_min_sec(120)
+    2 minutes and 0 seconds
+    >>> convert_seconds_to_min_sec(179)
+    2 minutes and 59 seconds
+
+    Parameters
+    ----------
+    seconds : int
+        The elapsed time in seconds. Seconds are round to integers.
+
+    Returns
+    -------
+    str
+    """
+    seconds = int(round(seconds, 0))
+    hours = seconds // 3600
+    minutes = (seconds) // 60 % 60
+    seconds = (seconds) % 60
+
+    if hours:
+        return f"{hours}h{minutes}m{seconds}s"
+
+    if minutes:
+        s = "" if minutes == 1 else "s"
+        return f"{minutes} minute{s} and {seconds} seconds"
+
+    s = "" if seconds == 1 else "s"
+    return f"{seconds} seconds"
+
+
+def extract_keys_recursive(config):
+    """Extract keys recursively for the needed modules."""
+    for param_name, value in config.items():
+        if isinstance(value, collections.abc.Mapping):
+            yield from extract_keys_recursive(value)
+        else:
+            yield param_name

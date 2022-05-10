@@ -1,0 +1,14 @@
+#!/bin/bash
+#SBATCH --nodes=5
+#SBATCH --tasks-per-node=50
+#SBATCH -J haddock3mpi
+
+# make sure anaconda is activated
+source $HOME/miniconda3/bin/activate
+conda activate haddock3
+
+# go to the example directory
+cd $HOME/haddock3/examples/docking-antibody-antigen
+
+# execute
+haddock3 docking-antibody-antigen-ranairCDR-full-mpi.cfg

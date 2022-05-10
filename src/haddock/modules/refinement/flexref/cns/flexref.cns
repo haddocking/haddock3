@@ -12,6 +12,8 @@
 
 if ( $log_level = "verbose" ) then
     set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
 else
     set message=off echo=off end
 end if
@@ -21,212 +23,36 @@ end if
 !==================================================================!
 
 evaluate ($saprotocol.iniseed=$iniseed)
-evaluate ($saprotocol.tadhigh_t=$tadhigh_t)
-evaluate ($saprotocol.t1_init=$tadinit1_t)
-evaluate ($saprotocol.t2_init=$tadinit2_t)
-evaluate ($saprotocol.t3_init=$tadinit3_t)
-evaluate ($saprotocol.t1_final=$tadfinal1_t)
-evaluate ($saprotocol.t2_final=$tadfinal2_t)
-evaluate ($saprotocol.t3_final=$tadfinal3_t)
-evaluate ($saprotocol.inter_rigid=$inter_rigid)
-evaluate ($saprotocol.inter_init_rigid=$init_rigid)
-evaluate ($saprotocol.inter_fin_rigid=$fin_rigid)
-evaluate ($saprotocol.inter_init_cool2=$init_cool2)
-evaluate ($saprotocol.inter_fin_cool2=$fin_cool2)
-evaluate ($saprotocol.inter_init_cool3=$init_cool3)
-evaluate ($saprotocol.inter_fin_cool3=$fin_cool3)
+evaluate ($saprotocol.tadhigh_t=$temp_high)
+evaluate ($saprotocol.t1_init=$temp_cool1_init)
+evaluate ($saprotocol.t2_init=$temp_cool2_init)
+evaluate ($saprotocol.t3_init=$temp_cool3_init)
+evaluate ($saprotocol.t1_final=$temp_cool1_final)
+evaluate ($saprotocol.t2_final=$temp_cool2_final)
+evaluate ($saprotocol.t3_final=$temp_cool3_final)
+evaluate ($saprotocol.inter_init_rigid=$sinter_rigid_init)
+evaluate ($saprotocol.inter_fin_rigid=$sinter_rigid_final)
+evaluate ($saprotocol.inter_init_cool2=$sinter_cool2_init)
+evaluate ($saprotocol.inter_fin_cool2=$sinter_cool2_final)
+evaluate ($saprotocol.inter_init_cool3=$sinter_cool3_init)
+evaluate ($saprotocol.inter_fin_cool3=$sinter_cool3_final)
 evaluate ($saprotocol.tempstep=50)
 evaluate ($saprotocol.timestep=$timestep)
 evaluate ($saprotocol.tadfactor=$tadfactor)
-evaluate ($saprotocol.initiosteps=$initiosteps)
-evaluate ($saprotocol.cool1_steps=$cool1_steps)
-evaluate ($saprotocol.cool2_steps=$cool2_steps)
-evaluate ($saprotocol.cool3_steps=$cool3_steps)
+evaluate ($saprotocol.initiosteps=$mdsteps_rigid)
+evaluate ($saprotocol.cool1_steps=$mdsteps_cool1)
+evaluate ($saprotocol.cool2_steps=$mdsteps_cool2)
+evaluate ($saprotocol.cool3_steps=$mdsteps_cool3)
 evaluate ($saprotocol.fbeta=100)
 evaluate ($saprotocol.mass=100)
 
-evaluate ($ini_count    =1)
-evaluate ($w_vdw        =$w_vdw )
-evaluate ($w_elec       =$w_elec )
-evaluate ($w_dist       =$w_dist )
-evaluate ($w_rg         =$w_rg )
-evaluate ($w_sani       =$w_sani )
-evaluate ($w_xrdc       =$w_xrdc )
-evaluate ($w_xpcs       =$w_xpcs )
-evaluate ($w_dani       =$w_dani )
-evaluate ($w_vean       =$w_vean )
-evaluate ($w_cdih       =$w_cdih )
-evaluate ($w_sym        =$w_sym )
-evaluate ($w_zres       =$w_zres )
-evaluate ($w_bsa        =$w_bsa )
-evaluate ($w_deint      =$w_deint )
-evaluate ($w_desolv     =$w_desolv )
-
-
 evaluate ($data.ncomponents=$ncomponents)
-
-evaluate ($nmol=1)
-while ($nmol <= $data.ncomponents) loop mol
-    evaluate ($toppar.fix_origin_$nmol=$fix_origin_$nmol)
-    evaluate ($toppar.shape_$nmol = $shape_$nmol)
-    evaluate ($toppar.cg_$nmol = $cg_$nmol)
-    evaluate ($toppar.prot_segid_$nmol = $prot_segid_$nmol)
-    evaluate ($nmol = $nmol + 1)
-end loop mol
-
-evaluate ($nmol=1)
-while ($nmol <= $data.ncomponents) loop mol
-
-    !semi flexible segments
-    evaluate ($toppar.nseg_$nmol = $nseg_$nmol)
-    evaluate ($nseg = 1)
-    while ($nseg <=$toppar.nseg_$nmol) loop seg
-        evaluate ($toppar.start_seg_$nmol_$nseg = $start_seg_$nmol_$nseg)
-        evaluate ($toppar.end_seg_$nmol_$nseg = $end_seg_$nmol_$nseg)
-        evaluate ($nseg = $nseg + 1)
-    end loop seg
-
-    !fully flexible segments
-    evaluate ($toppar.nfle_$nmol = $nfle_$nmol)
-    evaluate ($nfle = 1)
-    while ($nfle <=$toppar.nfle_$nmol) loop fle
-        evaluate ($toppar.start_fle_$nmol_$nfle = $start_fle_$nmol_$nfle)
-        evaluate ($toppar.end_fle_$nmol_$nfle = $end_fle_$nmol_$nfle)
-        evaluate ($nfle = $nfle + 1)
-    end loop fle
-    evaluate ($nmol = $nmol + 1)
-end loop mol
 
 
 ! non-bonded parameter set to use
-evaluate ($toppar.par_nonbonded = $par_nonbonded)
+evaluate ($toppar.par_nonbonded = "OPLSX")
 
-
-! NCS restraints
-evaluate ($data.kncs = $kncs)
-evaluate ($Data.flags.ncs = $ncs_on)
-evaluate ($data.numncs = $numncs)
-evaluate ($ncc=1)
-while ($ncc <= $numncs) loop ncs
-    evaluate ($toppar.ncs_sta1_$ncc = $ncs_sta1_$ncc)
-    evaluate ($toppar.ncs_end1_$ncc = $ncs_end1_$ncc)
-    evaluate ($toppar.ncs_seg1_$ncc = $ncs_seg1_$ncc)
-    evaluate ($toppar.ncs_sta2_$ncc = $ncs_sta2_$ncc)
-    evaluate ($toppar.ncs_end2_$ncc = $ncs_end2_$ncc)
-    evaluate ($toppar.ncs_seg2_$ncc = $ncs_seg2_$ncc)
-    evaluate ($ncc = $ncc + 1)
-end loop ncs
-
-! Symmetry restraints
-evaluate ($data.ksym = $ksym)
-evaluate ($Data.flags.sym = $sym_on)
-evaluate ($data.numc2sym = $numc2sym)
-evaluate ($nsym=1)
-while ($nsym <= $numc2sym) loop sym
-    evaluate ($toppar.c2sym_sta1_$nsym = $c2sym_sta1_$nsym)
-    evaluate ($toppar.c2sym_end1_$nsym = $c2sym_end1_$nsym)
-    evaluate ($toppar.c2sym_seg1_$nsym = $c2sym_seg1_$nsym)
-    evaluate ($toppar.c2sym_sta2_$nsym = $c2sym_sta2_$nsym)
-    evaluate ($toppar.c2sym_end2_$nsym = $c2sym_end2_$nsym)
-    evaluate ($toppar.c2sym_seg2_$nsym = $c2sym_seg2_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc3sym = $numc3sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc3sym) loop sym
-    evaluate ($toppar.c3sym_sta1_$nsym = $c3sym_sta1_$nsym)
-    evaluate ($toppar.c3sym_end1_$nsym = $c3sym_end1_$nsym)
-    evaluate ($toppar.c3sym_seg1_$nsym = $c3sym_seg1_$nsym)
-    evaluate ($toppar.c3sym_sta2_$nsym = $c3sym_sta2_$nsym)
-    evaluate ($toppar.c3sym_end2_$nsym = $c3sym_end2_$nsym)
-    evaluate ($toppar.c3sym_seg2_$nsym = $c3sym_seg2_$nsym)
-    evaluate ($toppar.c3sym_sta3_$nsym = $c3sym_sta3_$nsym)
-    evaluate ($toppar.c3sym_end3_$nsym = $c3sym_end3_$nsym)
-    evaluate ($toppar.c3sym_seg3_$nsym = $c3sym_seg3_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.nums3sym=$nums3sym)
-evaluate ($nsym=1)
-while ($nsym <=$nums3sym) loop sym
-    evaluate ($toppar.s3sym_sta1_$nsym = $s3sym_sta1_$nsym)
-    evaluate ($toppar.s3sym_end1_$nsym = $s3sym_end1_$nsym)
-    evaluate ($toppar.s3sym_seg1_$nsym = $s3sym_seg1_$nsym)
-    evaluate ($toppar.s3sym_sta2_$nsym = $s3sym_sta2_$nsym)
-    evaluate ($toppar.s3sym_end2_$nsym = $s3sym_end2_$nsym)
-    evaluate ($toppar.s3sym_seg2_$nsym = $s3sym_seg2_$nsym)
-    evaluate ($toppar.s3sym_sta3_$nsym = $s3sym_sta3_$nsym)
-    evaluate ($toppar.s3sym_end3_$nsym = $s3sym_end3_$nsym)
-    evaluate ($toppar.s3sym_seg3_$nsym = $s3sym_seg3_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc4sym=$numc4sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc4sym) loop sym
-    evaluate ($toppar.c4sym_sta1_$nsym = $c4sym_sta1_$nsym)
-    evaluate ($toppar.c4sym_end1_$nsym = $c4sym_end1_$nsym)
-    evaluate ($toppar.c4sym_seg1_$nsym = $c4sym_seg1_$nsym)
-    evaluate ($toppar.c4sym_sta2_$nsym = $c4sym_sta2_$nsym)
-    evaluate ($toppar.c4sym_end2_$nsym = $c4sym_end2_$nsym)
-    evaluate ($toppar.c4sym_seg2_$nsym = $c4sym_seg2_$nsym)
-    evaluate ($toppar.c4sym_sta3_$nsym = $c4sym_sta3_$nsym)
-    evaluate ($toppar.c4sym_end3_$nsym = $c4sym_end3_$nsym)
-    evaluate ($toppar.c4sym_seg3_$nsym = $c4sym_seg3_$nsym)
-    evaluate ($toppar.c4sym_sta4_$nsym = $c4sym_sta4_$nsym)
-    evaluate ($toppar.c4sym_end4_$nsym = $c4sym_end4_$nsym)
-    evaluate ($toppar.c4sym_seg4_$nsym = $c4sym_seg4_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc5sym=$numc5sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc5sym) loop sym
-    evaluate ($toppar.c5sym_sta1_$nsym = $c5sym_sta1_$nsym)
-    evaluate ($toppar.c5sym_end1_$nsym = $c5sym_end1_$nsym)
-    evaluate ($toppar.c5sym_seg1_$nsym = $c5sym_seg1_$nsym)
-    evaluate ($toppar.c5sym_sta2_$nsym = $c5sym_sta2_$nsym)
-    evaluate ($toppar.c5sym_end2_$nsym = $c5sym_end2_$nsym)
-    evaluate ($toppar.c5sym_seg2_$nsym = $c5sym_seg2_$nsym)
-    evaluate ($toppar.c5sym_sta3_$nsym = $c5sym_sta3_$nsym)
-    evaluate ($toppar.c5sym_end3_$nsym = $c5sym_end3_$nsym)
-    evaluate ($toppar.c5sym_seg3_$nsym = $c5sym_seg3_$nsym)
-    evaluate ($toppar.c5sym_sta4_$nsym = $c5sym_sta4_$nsym)
-    evaluate ($toppar.c5sym_end4_$nsym = $c5sym_end4_$nsym)
-    evaluate ($toppar.c5sym_seg4_$nsym = $c5sym_seg4_$nsym)
-    evaluate ($toppar.c5sym_sta5_$nsym = $c5sym_sta5_$nsym)
-    evaluate ($toppar.c5sym_end5_$nsym = $c5sym_end5_$nsym)
-    evaluate ($toppar.c5sym_seg5_$nsym = $c5sym_seg5_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-evaluate ($data.numc6sym=$numc6sym)
-evaluate ($nsym=1)
-while ($nsym <=$numc6sym) loop sym
-    evaluate ($toppar.c6sym_sta1_$nsym = $c6sym_sta1_$nsym)
-    evaluate ($toppar.c6sym_end1_$nsym = $c6sym_end1_$nsym)
-    evaluate ($toppar.c6sym_seg1_$nsym = $c6sym_seg1_$nsym)
-    evaluate ($toppar.c6sym_sta2_$nsym = $c6sym_sta2_$nsym)
-    evaluate ($toppar.c6sym_end2_$nsym = $c6sym_end2_$nsym)
-    evaluate ($toppar.c6sym_seg2_$nsym = $c6sym_seg2_$nsym)
-    evaluate ($toppar.c6sym_sta3_$nsym = $c6sym_sta3_$nsym)
-    evaluate ($toppar.c6sym_end3_$nsym = $c6sym_end3_$nsym)
-    evaluate ($toppar.c6sym_seg3_$nsym = $c6sym_seg3_$nsym)
-    evaluate ($toppar.c6sym_sta4_$nsym = $c6sym_sta4_$nsym)
-    evaluate ($toppar.c6sym_end4_$nsym = $c6sym_end4_$nsym)
-    evaluate ($toppar.c6sym_seg4_$nsym = $c6sym_seg4_$nsym)
-    evaluate ($toppar.c6sym_sta5_$nsym = $c6sym_sta5_$nsym)
-    evaluate ($toppar.c6sym_end5_$nsym = $c6sym_end5_$nsym)
-    evaluate ($toppar.c6sym_seg5_$nsym = $c6sym_seg5_$nsym)
-    evaluate ($toppar.c6sym_sta6_$nsym = $c6sym_sta6_$nsym)
-    evaluate ($toppar.c6sym_end6_$nsym = $c6sym_end6_$nsym)
-    evaluate ($toppar.c6sym_seg6_$nsym = $c6sym_seg6_$nsym)
-    evaluate ($nsym = $nsym + 1)
-end loop sym
-
-
-!Dihedrals, DNA and distance restraints
+! dihedrals, DNA and distance restraints
 evaluate ($Data.dnarest =$dnarest_on)
 evaluate ($Data.flags.cdih =$dihedrals_on)
 evaluate ($Data.cdih.on =$dihedrals_on)
@@ -237,8 +63,6 @@ evaluate ($data.dihedrals_hot=$dihedrals_hot)
 evaluate ($data.dihedrals_cool1=$dihedrals_cool1)
 evaluate ($data.dihedrals_cool2=$dihedrals_cool2)
 evaluate ($data.dihedrals_cool3=$dihedrals_cool3)
-evaluate ($data.hbonds_on=$hbonds_on)
-
 
 ! planarity restraints
 evaluate ($Data.flags.plan =  false)
@@ -249,8 +73,8 @@ evaluate ($data.unamb_hot=$unamb_hot)
 evaluate ($data.unamb_cool1=$unamb_cool1)
 evaluate ($data.unamb_cool2=$unamb_cool2)
 evaluate ($data.unamb_cool3=$unamb_cool3)
-evaluate ($data.noecv=$noecv)
-evaluate ($data.ncvpart=$ncvpart)
+evaluate ($data.randremoval=$randremoval)
+evaluate ($data.npart=$npart)
 
 evaluate ($data.amb_hot=$amb_hot)
 evaluate ($data.amb_cool1=$amb_cool1)
@@ -282,15 +106,28 @@ evaluate ($data.asy_cool1=$asy_cool1)
 evaluate ($data.asy_cool2=$asy_cool2)
 evaluate ($data.asy_cool3=$asy_cool3)
 
-evaluate ($data.ranair=$ranair)
-if ($data.ranair eq true) then
-    evaluate ($data.noecv = false)
-end if
 evaluate ($data.cmrest=$cmrest)
 evaluate ($data.cmtight=$cmtight)
 evaluate ($data.kcont=$kcont)
-evaluate ($data.surfrest=$surfrest)
-evaluate ($data.ksurf=$ksurf)
+evaluate ($data.contactairs=$contactairs)
+if ($data.contactairs eq true) then
+    evaluate ($data.randremoval = false)
+end if
+
+! NCS restraints
+evaluate ($data.kncs = $kncs)
+evaluate ($Data.flags.ncs = $ncs_on)
+evaluate ($data.numncs = $numncs)
+
+! Symmetry restraints
+evaluate ($data.ksym = $ksym)
+evaluate ($Data.flags.sym = $sym_on)
+evaluate ($data.numc2sym = $numc2sym)
+evaluate ($data.numc3sym = $numc3sym)
+evaluate ($data.nums3sym = $nums3sym)
+evaluate ($data.numc4sym = $numc4sym)
+evaluate ($data.numc5sym = $numc5sym)
+evaluate ($data.numc6sym = $numc6sym)
 
 !Electrostatics:
 evaluate ($Data.flags.dihed =$dihedflag)
@@ -302,18 +139,14 @@ evaluate ($Data.dielec  =$dielec)
 evaluate ($nmol1=1)
 while ($nmol1 <=$data.ncomponents) loop mol1
     evaluate ($nmol2=$nmol1 + 1)
-    evaluate ($toppar.int_$nmol1_$nmol1 =$int_$nmol1_$nmol1)
+    evaluate ($scale.int_$nmol1_$nmol1 =$int_$nmol1_$nmol1)
     while ($nmol2 <=$data.ncomponents) loop mol2
-        evaluate ($toppar.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
-        evaluate ($toppar.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
+        evaluate ($scale.int_$nmol1_$nmol2 =$int_$nmol1_$nmol2)
+        evaluate ($scale.int_$nmol2_$nmol1 =$int_$nmol1_$nmol2)
         evaluate ($nmol2=$nmol2 + 1)
     end loop mol2
     evaluate ($nmol1 = $nmol1 + 1)
 end loop mol1
-
-
-! Restraints
-evaluate ($npart = $ncvpart)
 
 
 ! Unsupported restraints
@@ -386,9 +219,9 @@ if ($select gt 0) then
 end if
 
 
-{* Read and write random seed in case noecv=true ===============*}
+{* Read and write random seed in case randremoval=true ===============*}
 
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     evaluate ($fileseed= $input_pdb_filename_1 - ".pdb" + ".seed")
     fileexist $fileseed end
     if ($result eq true) then
@@ -417,7 +250,7 @@ set message=normal echo=on end
 inline @MODULE:read_data.cns
 
 ! random removal of restaints
-if ($Data.noecv eq true) then
+if ($Data.randremoval eq true) then
     noe cv $npart ? end
 else
     evaluate ($npart = 0)
@@ -425,6 +258,8 @@ end if
 
 if ( $log_level = "verbose" ) then
     set message=normal echo=on end
+elseif ( $log_level = "normal" ) then
+    set message=normal echo=off end
 else
     set message=off echo=off end
 end if
@@ -438,76 +273,27 @@ evaluate ($numnoe = 999)
 noe ? end
 if ($NUMNOE = 0) then
     if ($Data.ncomponents > 1) then
-        if ($Data.surfrest eq FALSE) then
+        if ($Data.contactairs eq FALSE) then
             if ($Data.cmrest eq FALSE) then
-                if ($Data.ranair eq FALSE) then
-                    evaluate ($errfile = "MODDIR:WARNING")
-                    fileexist $errfile end
-                    if ($result eq false) then
-                        set display=$errfile end
-                        display TOTAL NUMBER OF DISTANCE RESTRAINTS FOR FLEXIBLE REFINEMENT IS ZERO!
-                        display CONTROL YOUR PARAMETER SETTINGS AND RESTRAINT DEFINITIONS
-                        close $errfile end
-                    end if
+                evaluate ($errfile = "MODDIR:WARNING")
+                fileexist $errfile end
+                if ($result eq false) then
+                    set display=$errfile end
+                    display TOTAL NUMBER OF DISTANCE RESTRAINTS FOR FLEXIBLE REFINEMENT IS ZERO!
+                    display CONTROL YOUR PARAMETER SETTINGS AND RESTRAINT DEFINITIONS
+                    close $errfile end
                 end if
             end if
         end if
     end if
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
-if ($NUMNOE lt $Data.ncvpart) then
+if ($NUMNOE lt $Data.npart) then
     noe part=1 end
-    evaluate ($Data.ncvpart = 1)
-    evaluate ($Data.noecv = FALSE)
-end if
-
-
-{* In ranair=true define contact restraint ===================================== *}
-if ($Data.ranair eq true) then
-    if ($Data.ncomponents > 2) then
-        evaluate ($errfile = "FAILED")
-        fileexist $errfile end
-        if ($result eq false) then
-            set display=$errfile end
-            display ========= Unsupported option ===========
-            display Random definition of AIRs with more than
-            display two molecules currently unsupported
-            display ========================================
-            close $errfile end
-        end if
-        stop
-    end if
-    evaluate ($Data.noecv = false)
-    noe
-        reset
-        nrestraints = 100000     ! allocate space for NOEs
-        ceiling 1000
-    end
-    @MODULE:contactairs.cns
-
-    !Read back in hbond data
-    fileexist $hbond_fname end
-    if ($result eq true) then
-        noe @@$hbond_fname end
-    end if
-
-    noe
-        averaging  * sum
-        potential  * soft
-        scale      * 1.0
-        sqconstant * 1.0
-        sqexponent * 2
-        soexponent * 1
-        rswitch    * 1.0
-        sqoffset   * 0.0
-        asymptote  * 2.0
-        msoexponent * 1
-        masymptote  * -0.1
-        mrswitch    * 1.0
-        avexpo hbond 20
-    end
+    evaluate ($Data.npart = 1)
+    evaluate ($Data.randremoval = FALSE)
 end if
 
 
@@ -524,8 +310,7 @@ if ($Data.cmrest eq true ) then
     @MODULE:cm-restraints.cns
 end if
 
-! use contact airs rather than surface restraints at it1
-if ($Data.surfrest eq true ) then
+if ($Data.contactairs eq true ) then
     @MODULE:contactairs.cns
 end if
 
@@ -581,7 +366,7 @@ fix sele=(resn SHA) end
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP*)) end
 
 ! energy minimization
-minimize powell nstep=200 drop=10.0 nprint=25 end
+minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
 fix sele=(not all) end
 
 ! get initial energy
@@ -659,7 +444,7 @@ end if
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP* or resn XAN)) end
 
 ! energy minimization
-minimize powell nstep=200 drop=10.0 nprint=25 end
+minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
 
 ! final energy
 fix sele=(not all) end
@@ -734,7 +519,7 @@ end if
 noe
     scale dist $Data.unamb_cool3
     scale ambi $Data.amb_cool3
-    scale hbon 0.0
+    scale hbon $Data.hbond_cool3
     scale symm 0.0
     scale cont 0.0
 end
@@ -744,7 +529,9 @@ evaluate ($eair= $noe)
 evaluate ($esym = 0.0)
 evaluate ($ncs = 0.0)
 evaluate ($zhar = 0.0)
-if ($Data.flags.sym  eq true) then
+evaluate ($rms_test_noe = 0.0)
+evaluate ($violations_test_noe = 0)
+if ($Data.flags.sym eq true) then
     ! calculatee first the symmetry energy
     noe reset nres= 1200000 end
     @MODULE:symmultimer.cns
@@ -753,7 +540,7 @@ if ($Data.flags.sym  eq true) then
     end
     energy end
     evaluate ($esym = $noe)
-    if ($Data.noecv eq true) then
+    if ($Data.randremoval eq true) then
         evaluate ($violations_test_noe=0)
         evaluate ($rms_test_noe=0.0)
         display Print out of cross-validated violations and rms not
@@ -761,22 +548,25 @@ if ($Data.flags.sym  eq true) then
         display CV values set therefore to 0
     end if
     noe reset end
+    set message=normal echo=on end
     !read back all the distance restraints:
     @@MODULE:read_noes.cns
-end if
-
-print threshold=0.3 noe
-evaluate ($rms_noe=$result)
-evaluate ($violations_noe=$violations)
-if ($Data.noecv eq true) then
-    evaluate ($rms_test_noe=$test_rms)
-    evaluate ($violations_test_noe=$test_violations)
+    noe
+        scale dist $Data.unamb_cool3
+        scale ambi $Data.amb_cool3
+        scale hbon $Data.hbond_cool3
+    end
 else
-    evaluate ($rms_test_noe=0.0)
-    evaluate ($violations_test_noe=0)
-end if
+    print threshold=0.3 noe
+    evaluate ($rms_noe=$result)
+    evaluate ($violations_noe=$violations)
+    if ($Data.randremoval eq true) then
+        evaluate ($rms_test_noe=$test_rms)
+        evaluate ($violations_test_noe=$test_violations)
+    end if
+end if 
 
-if ($Data.dnarest eq true) then
+if ($Data.dnarest eq true ) then
     @MODULE:dna-rna_restraints.cns
 end if
 
@@ -795,7 +585,7 @@ evaluate ($ncount = 0)
 while ($ncount < $data.ncomponents) loop orientmol
     evaluate ($ncount = $ncount + 1)
     eval($watersegname_$ncount="WA" + encode($ncount))
-    if ($Toppar.fix_origin_$ncount eq true) then
+    if ($mol_fix_origin_$ncount eq true) then
         eval($reorient = false)
     end if
 end loop orientmol

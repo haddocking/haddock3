@@ -1,0 +1,18 @@
+run_dir:
+  type: dir
+  title: Run directory
+  short: Folder to store the HADDOCK3 run
+  long: The new folder that will be created to save the HADDOCK3 run
+  explevel: easy
+molecules:
+  type: list
+  accept:
+    - ".pdb"
+  minitems: 1
+  maxitems: 20
+  title: Input Molecules
+  short: The input molecules that will be used for docking.
+  long:
+    Molecules must be provided in PDB format. These PDB files can be
+    single molecules or ensembles using the MODEL/ENDMDL statements.
+  explevel: easy

@@ -114,7 +114,7 @@ def _report(log_msg):
     return decorator
 
 
-def _open_or_give(inputdata):
+def _open_or_give(*inputdata):
     """
     Adapt input to the functions.
 

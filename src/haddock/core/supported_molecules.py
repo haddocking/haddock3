@@ -343,3 +343,5 @@ supported_HETATM = set(it.chain(
     supported_multiatom_ions_resnames,
     supported_solvents_resnames,
     ))
+
+supported_residues = supported_ATOM.union(supported_HETATM)

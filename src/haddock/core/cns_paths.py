@@ -21,15 +21,11 @@ from haddock import toppar_path
 
 
 # exact file names as present in the cns/ scripts folder
-PARAMETERS_FILE = "haddock.param"
-TOPOLOGY_FILE = "haddock.top"
 LINK_FILE = "protein-allhdg5-4-noter.link"
 SCATTER_LIB = "scatter.lib"
 INITIAL_POSITIONS_DIR = "initial_positions"
 
 # default prepared paths
-parameters_file = Path(toppar_path, PARAMETERS_FILE)
-topology_file = Path(toppar_path, TOPOLOGY_FILE)
 link_file = Path(toppar_path, LINK_FILE)
 scatter_lib = Path(toppar_path, SCATTER_LIB)
 

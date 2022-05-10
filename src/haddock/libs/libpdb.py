@@ -3,12 +3,12 @@ import os
 from functools import partial
 from pathlib import Path
 
-from pdbtools.pdb_segxchain import place_seg_on_chain
-from pdbtools.pdb_splitchain import split_chain
-from pdbtools.pdb_splitmodel import split_model
-from pdbtools.pdb_tidy import tidy_pdbfile
+from pdbtools.pdb_segxchain import run as place_seg_on_chain
+from pdbtools.pdb_splitchain import run as split_chain
+from pdbtools.pdb_splitmodel import run as split_model
+from pdbtools.pdb_tidy import run as tidy_pdbfile
 
-from haddock.core.cns_paths import topology_file
+from haddock.core.supported_molecules import supported_residues
 from haddock.libs.libio import working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
 
@@ -53,7 +53,7 @@ _to_rename = {
     " 0.00969": " 0.00   ",
     }
 
-_to_keep = get_supported_residues(topology_file)
+_to_keep = list(supported_residues)
 
 
 def split_ensemble(pdb_file_path, dest=None):

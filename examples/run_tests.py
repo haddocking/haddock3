@@ -130,8 +130,9 @@ def main(examples, break_on_errors=True):
                     stderr=sys.stderr,
                     )
 
+                rmtree("run2", ignore_errors=True)
                 subprocess.run(
-                    "haddock3-copy -r run1-test -m 0 4 -r run2",
+                    "haddock3-copy -r run1-test -m 0 4 -o run2",
                     shell=True,
                     check=break_on_errors,
                     stdout=sys.stdout,

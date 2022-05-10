@@ -360,6 +360,10 @@ def main(devel=False, reference=False, run1=False, run2=False):
     """Execute script logic."""
     if devel and reference:
         compare_examples(examples, devel, reference)
+        compare_runs(
+            Path(devel, "docking-protein-protein", "run2"),
+            Path(reference, "docking-protein-protein", "run2"),
+            )
     elif run1 and run2:
         compare_runs(run1, run2)
     else:

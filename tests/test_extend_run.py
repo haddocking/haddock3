@@ -1,10 +1,10 @@
-"""Test start from copy gear."""
+"""Test extend run gear."""
 import argparse
 from pathlib import Path
 
 import pytest
 
-from haddock.gear.start_from_copy import add_start_from_copy
+from haddock.gear.extend_run import add_extend_run
 
 
 @pytest.mark.parametrize(
@@ -16,13 +16,13 @@ from haddock.gear.start_from_copy import add_start_from_copy
     )
 def test_add_argument_copy_args(path, expected):
     ap = argparse.ArgumentParser()
-    add_start_from_copy(ap)
-    cmd = ap.parse_args(f'--start-from-copy {path}'.split())
-    assert cmd.start_from_copy == expected
+    add_extend_run(ap)
+    cmd = ap.parse_args(f'--extend-run {path}'.split())
+    assert cmd.extend_run == expected
 
 
 def test_add_argument_copy_none():
     ap = argparse.ArgumentParser()
-    add_start_from_copy(ap)
+    add_extend_run(ap)
     cmd = ap.parse_args([])
-    assert cmd.start_from_copy is None
+    assert cmd.extend_run is None

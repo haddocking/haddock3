@@ -130,7 +130,7 @@ def _report(log_msg):
     return decorator
 
 
-def _open_or_give(*inputdata):
+def _open_or_give(inputdata):
     """
     Adapt input to the functions.
 
@@ -221,6 +221,7 @@ def process_pdbs(
     # modify the input PDB and return the corrected lines
     # in the likes of pdb-tools, these functions yield line-by-line
     line_by_line_processing_steps = [
+        partial(wrep_pdb_tidy, strict=True),
         wrep_pdb_keepcoord,  # also discards ANISOU
         wrep_pdb_selaltloc,
         partial(wrep_pdb_occ, occupancy=1.00),
@@ -238,7 +239,7 @@ def process_pdbs(
                 ),
             ),
         convert_HETATM_to_ATOM,
-        partial(pdb_fixinsert.run, option_list=[]),
+        partial(wrep_pdb_fixinsert, option_list=[]),
         ###
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
         partial(remove_unsupported_atom),
@@ -612,16 +613,16 @@ def models_should_have_the_same_labels(lines):
 
         elif line.startswith(("ATOM", "HETATM")):
             new_model.append(line[12:27])
+    else:
+        models[new_model_id] = set(new_model)
+        new_model.clear()
 
     # check if all MODELS are equal, performing all vs all comparison
     keys = list(models.keys())
-
-    for model_num in keys:
-        other_keys = set(keys)
-        other_keys.remove(model_num)
-        for other_key in other_keys:
-            if models[model_num] != models[other_key]:
-                emsg = f"MODEL {model_num} differs from MODEL {other_key}"
-                raise ModelsDifferError(emsg)
+    first_key = keys[0]
+    for model_num in keys[1:]:
+        if models[model_num] != models[first_key]:
+            emsg = f"MODEL {model_num} differs from MODEL {first_key}."
+            raise ModelsDifferError(emsg)
 
     return lines

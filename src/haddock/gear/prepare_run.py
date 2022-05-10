@@ -26,6 +26,10 @@ from haddock.gear.expandable_parameters import (
     remove_trail_idx,
     type_simplest_ep,
     )
+from haddock.gear.extend_run import (
+    read_num_molecules_from_folder,
+    renum_step_folders,
+    )
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import (
     config_mandatory_general_parameters,
@@ -33,10 +37,6 @@ from haddock.gear.parameters import (
     )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
-from haddock.gear.start_from_copy import (
-    read_num_molecules_from_folder,
-    renum_step_folders,
-    )
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
@@ -95,13 +95,13 @@ def _read_defaults(module_name):
 def setup_run(
         workflow_path,
         restart_from=None,
-        start_from_copy=None,
+        extend_run=None,
         ):
     """
     Set up an HADDOCK3 run.
 
     This function sets up a HADDOCK3 considering the options `--restart`
-    and `--start-from-copy`. The list of actions presented below does
+    and `--extend-run`. The list of actions presented below does
     not necessary represents the exact order in which it happens.
 
     Always performed:
@@ -123,7 +123,7 @@ def setup_run(
     #. remove also folders from `data/` dir after the ``--restart`` num
     #. renumber step folders according to the number of modules
 
-    Performed when ``--start-from-copy``:
+    Performed when ``--extend-run``:
 
     #. renumber step folders according to the number of modules
 
@@ -144,7 +144,7 @@ def setup_run(
         The step to restart the run from (inclusive).
         Defaults to None, which ignores this option.
 
-    start_from_copy : str or Path
+    extend_run : str or Path
         The path created with `haddock3-copy` to start the run from.
         Defaults to None, which ignores this option.
 
@@ -170,13 +170,13 @@ def setup_run(
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
 
-    # --start-from-copy configs do not define the run directory
+    # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
-    if not_none(start_from_copy):
+    if not_none(extend_run):
         with suppress(TypeError):
-            start_from_copy = Path(start_from_copy)
+            extend_run = Path(extend_run)
 
-        general_params[RUNDIR] = start_from_copy
+        general_params[RUNDIR] = extend_run
 
     validate_module_names_are_not_misspelled(modules_params)
     check_if_modules_are_installed(modules_params)
@@ -185,10 +185,10 @@ def setup_run(
     # define starting conditions
     # consider a deeper refactor if additional conditions are implemented
     # @joaomcteixeira, 09 May 2022
-    from_scratch = restart_from is None and start_from_copy is None
+    from_scratch = restart_from is None and extend_run is None
     scratch_rest0 = from_scratch or restart_from == 0
     restarting_from = not_none(restart_from)
-    starting_from_copy = not_none(start_from_copy)
+    starting_from_copy = not_none(extend_run)
 
     if from_scratch:
         check_run_dir_exists(general_params[RUNDIR])
@@ -202,13 +202,13 @@ def setup_run(
         remove_folders_after_number(_data_dir, restart_from)
 
     if starting_from_copy:
-        num_steps = len(get_module_steps_folders(start_from_copy))
+        num_steps = len(get_module_steps_folders(extend_run))
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
         zero_fill.set_zerofill_number(num_steps + _num_modules)
 
-        max_mols = read_num_molecules_from_folder(start_from_copy)
+        max_mols = read_num_molecules_from_folder(extend_run)
 
     else:
         copy_molecules_to_topology(

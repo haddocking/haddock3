@@ -1,4 +1,4 @@
-"""Gear for ``haddock3-copy`` CLI and `--start-from-copy`` flag."""
+"""Gear for ``haddock3-copy`` CLI and `--extend-run`` flag."""
 import shutil
 from pathlib import Path
 
@@ -10,11 +10,11 @@ from haddock.libs.libworkflow import Workflow
 from haddock.modules import get_module_steps_folders
 
 
-START_FROM_COPY_DEFAULT = None
+EXTEND_RUN_DEFAULT = None
 
 
-class WorkflowManagerCopy:
-    """Read and execute workflows from copy."""
+class WorkflowManagerExtend:
+    """Workflow to extend a run."""
 
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start
@@ -26,16 +26,16 @@ class WorkflowManagerCopy:
             step.execute()
 
 
-def add_start_from_copy(parser):
-    """Add option to ``--start-from-copy``."""
+def add_extend_run(parser):
+    """Add option to ``--extend-run``."""
     parser.add_argument(
-        '--start-from-copy',
+        '--extend-run',
         help=(
             "Start a run from a run directory previously prepared with "
             "the `haddock3-copy` CLI. Provide the run directory created "
             "with `haddock3-copy` CLI."
             ),
-        default=START_FROM_COPY_DEFAULT,
+        default=EXTEND_RUN_DEFAULT,
         type=Path,
         )
 

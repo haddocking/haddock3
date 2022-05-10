@@ -14,7 +14,7 @@ Here, you will find documentation to use HADDOCK3 Gears as a library.
    parameters
    prepare_run
    restart_run
-   start_from_copy
+   extend_run
    validations
    yaml2cfg
    zerofill

@@ -37,10 +37,10 @@ The output result of the above commands is::
         0_topoaa/
         1_flexref/
 
-Following, you can use the `haddock3` command with the `--start-from-copy`
+Following, you can use the `haddock3` command with the `--extend-run`
 option to continue a new run::
 
-    haddock3 new-config.cfg --start-from-copy run2
+    haddock3 new-config.cfg --extend-run run2
 """
 import argparse
 import sys
@@ -120,7 +120,7 @@ def main(run_dir, modules, output):
     """
     from pathlib import Path
 
-    from haddock.gear.start_from_copy import (
+    from haddock.gear.extend_run import (
         copy_renum_step_folders,
         update_contents_of_new_steps,
         )

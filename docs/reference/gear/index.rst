@@ -9,6 +9,7 @@ Here, you will find documentation to use HADDOCK3 Gears as a library.
    config_reader
    config_writer
    expandable_parameters
+   preprocessing
    greetings
    haddockmodel
    parameters

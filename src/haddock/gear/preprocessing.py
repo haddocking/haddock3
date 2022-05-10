@@ -1,10 +1,21 @@
 """
 Process input PDB files to ensure compatibility with HADDOCK3.
 
-Availabe functions:
+This module check and modifies PDB files for compatibility with
+HADDOCK3.  Several processing steps are applied in tanden to each PDB
+files. Also, PDB files are compared with each other to ensure joint
+compatiblity. The list of actions performed is documented in a live
+issue:
 
-- process_pdbs
-- read_additional_residues
+https://github.com/haddocking/haddock3/issues/143
+
+The PDB processing step is performed by default when reading the input
+molecules and copying them to the `data/` folder inside the run
+directory. When PDBs are processed, a copy of the original input PDBs is
+also stored in the `data/` folder.
+
+To deactivate this initial PDB processing, set ``skip_preprocess =
+False`` boolean parameter.
 """
 # search for ABSTRACT to reach the section where abstractions are defined
 # search for CHECKING to reach the section where checking functions are defined
@@ -53,7 +64,6 @@ from haddock.libs.libpdb import (
     )
 
 
-_OSUFFIX = '_processed'
 _upper_case = list(string.ascii_uppercase + string.ascii_lowercase)[::-1]
 _CHAINS = it.cycle(_upper_case)
 
@@ -172,14 +182,12 @@ def read_additional_residues(top_fname):
 
 
 def process_pdbs(
-        inputdata,
-        save_output=False,
-        osuffix=_OSUFFIX,
+        *inputdata,
         dry=False,
         user_supported_residues=None,
-        **param):
+        ):
     """
-    Process PDB file contents for HADDOCK3 compatibility.
+    Process PDB file contents for compatibility with HADDOCK3.
 
     Parameters
     ----------
@@ -187,10 +195,6 @@ def process_pdbs(
         The list can contain file objects, list of strings, or paths
         or strings pointing to files. If paths and file objects are read
         to list of strings. Right `new line` chars are striped.
-
-    save_output : bool
-        Whether to directly save the output to files. If False, returns
-        a list of lists with the altered contents.
 
     dry : bool
         Perform a dry run. That is, does not change anything, and just
@@ -201,18 +205,18 @@ def process_pdbs(
 
     Returns
     -------
-    list of list
-        The same data structure as `structures` but with the corrected
-        (processed) content.
+    list of (list of str)
+        The corrected (processed) PDB content in the same order as
+        `inputdata`.
     """
     structures = _open_or_give(inputdata)
 
     # these are the processing or checking functions that should (if needed)
     # modify the input PDB and return the corrected lines
-    # in the likes of pdb-tools these functions yield line-by-line
+    # in the likes of pdb-tools, these functions yield line-by-line
     line_by_line_processing_steps = [
         wrep_pdb_keepcoord,  # also discards ANISOU
-        # wrep_pdb_selaltloc,
+        wrep_pdb_selaltloc,
         partial(wrep_pdb_occ, occupancy=1.00),
         replace_MSE_to_MET,
         replace_HSD_to_HIS,
@@ -228,13 +232,13 @@ def process_pdbs(
                 ),
             ),
         convert_HETATM_to_ATOM,
-        # partial(pdb_fixinsert.run, option_list=[]),
+        partial(pdb_fixinsert.run, option_list=[]),
         ###
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
         partial(remove_unsupported_atom),
         ##
+        partial(wrep_pdb_reres, starting_resid=1),
         partial(wrep_pdb_reatom, starting_value=1),
-        #partial(wrep_pdb_reres, starting_resid=1),
         partial(wrep_pdb_tidy, strict=True),
         ##
         wrep_rstrip,

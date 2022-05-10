@@ -462,7 +462,7 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
                 read_additional_residues(top_fname) if top_fname else None
 
             new_pdbs = \
-                process_pdbs([molecule], user_supported_residues=new_residues)
+                process_pdbs(molecule, user_supported_residues=new_residues)
 
             # copy the original molecule
             original_mol_dir.mkdir(parents=True, exist_ok=True)

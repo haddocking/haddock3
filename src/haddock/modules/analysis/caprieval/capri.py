@@ -17,6 +17,12 @@ from fccpy.contacts import get_intermolecular_contacts
 from pdbtools import pdb_segxchain
 
 from haddock import log
+from haddock.libs.libgeometry import (
+    calc_rmsd,
+    centroid,
+    kabsch,
+    load_coords
+)
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libpdb import split_by_chain
 
@@ -114,14 +120,14 @@ class CAPRI:
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
-        ref_coord_dic, _ = self.load_coords(
-            self.reference, ref_interface_resdic, match=False
+        ref_coord_dic, _ = load_coords(
+            self.reference, self.atoms, ref_interface_resdic
             )
 
         for model in self.model_list:
 
-            mod_coord_dic, _ = self.load_coords(
-                model, ref_interface_resdic, match=True
+            mod_coord_dic, _ = load_coords(
+                model, self.atoms, ref_interface_resdic, numbering_dic=self.model2ref_numbering
                 )
 
             # Here _coord_dic keys are matched
@@ -141,11 +147,11 @@ class CAPRI:
             # write_coords("model.pdb", P)
             # write_coords("ref.pdb", Q)
 
-            Q = Q - self.centroid(Q)
-            P = P - self.centroid(P)
-            U = self.kabsch(P, Q)
+            Q = Q - centroid(Q)
+            P = P - centroid(P)
+            U = kabsch(P, Q)
             P = np.dot(P, U)
-            i_rmsd = self.calc_rmsd(P, Q)
+            i_rmsd = calc_rmsd(P, Q)
             # write_coords("model_aln.pdb", P)
             # write_coords("ref_aln.pdb", Q)
 
@@ -155,11 +161,11 @@ class CAPRI:
 
     def lrmsd(self):
         """Calculate the L-RMSD."""
-        ref_coord_dic, _ = self.load_coords(self.reference)
+        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
 
         for model in self.model_list:
 
-            mod_coord_dic, _ = self.load_coords(model, match=True)
+            mod_coord_dic, _ = load_coords(model, self.atoms, numbering_dic=self.model2ref_numbering)
 
             Q = []
             P = []
@@ -195,22 +201,22 @@ class CAPRI:
             # write_coords("model.pdb", P)
 
             # # move to the origin
-            Q = Q - self.centroid(Q)
-            P = P - self.centroid(P)
+            Q = Q - centroid(Q)
+            P = P - centroid(P)
 
             # get receptor coordinates
             Q_r = Q[r_start: r_end - 1]
             P_r = P[r_start: r_end - 1]
 
             # Center receptors and get rotation matrix
-            # Q_r = Q_r - self.centroid(Q_r)
-            # P_r = P_r - self.centroid(P_r)
+            # Q_r = Q_r - centroid(Q_r)
+            # P_r = P_r - centroid(P_r)
 
-            U_r = self.kabsch(P_r, Q_r)
+            U_r = kabsch(P_r, Q_r)
 
             # Center complexes at receptor centroids
-            Q = Q - self.centroid(Q_r)
-            P = P - self.centroid(P_r)
+            Q = Q - centroid(Q_r)
+            P = P - centroid(P_r)
 
             # Apply rotation to complex
             #  - complex are now aligned by the receptor
@@ -227,7 +233,7 @@ class CAPRI:
             # write_coords("model_l.pdb", P_l)
 
             # Calculate the RMSD of the ligands
-            l_rmsd = self.calc_rmsd(P_l, Q_l)
+            l_rmsd = calc_rmsd(P_l, Q_l)
 
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
@@ -242,18 +248,18 @@ class CAPRI:
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
-        ref_coord_dic, _ = self.load_coords(self.reference, match=False)
+        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
 
-        ref_int_coord_dic, _ = self.load_coords(
-            self.reference, ref_interface_resdic, match=False
+        ref_int_coord_dic, _ = load_coords(
+            self.reference, self.atoms, ref_interface_resdic
             )
 
         for model in self.model_list:
 
-            mod_coord_dic, _ = self.load_coords(model, match=True)
+            mod_coord_dic, _ = load_coords(model, self.atoms, numbering_dic=self.model2ref_numbering)
 
-            mod_int_coord_dic, _ = self.load_coords(
-                model, ref_interface_resdic, match=True
+            mod_int_coord_dic, _ = load_coords(
+                model, self.atoms, ref_interface_resdic, numbering_dic=self.model2ref_numbering
                 )
 
             # write_coord_dic("ref.pdb", ref_int_coord_dic)
@@ -304,29 +310,29 @@ class CAPRI:
             # write_coords("model.pdb", P)
 
             # put system at origin
-            Q_int = Q_int - self.centroid(Q_int)
-            P_int = P_int - self.centroid(P_int)
+            Q_int = Q_int - centroid(Q_int)
+            P_int = P_int - centroid(P_int)
 
             # # put interfaces at the origin
-            # Q_int = Q_int - self.centroid(Q_int)
-            # P_int = P_int - self.centroid(P_int)
+            # Q_int = Q_int - centroid(Q_int)
+            # P_int = P_int - centroid(P_int)
 
             # find the rotation that minimizes the interface rmsd
-            U_int = self.kabsch(P_int, Q_int)
+            U_int = kabsch(P_int, Q_int)
             P_int = np.dot(P_int, U_int)
 
             # write_coords("ref.pdb", Q_int)
             # write_coords("model.pdb", P_int)
 
             # # move the system to the centroid of the interfaces
-            Q = Q - self.centroid(Q)
-            P = P - self.centroid(P)
+            Q = Q - centroid(Q)
+            P = P - centroid(P)
 
             # write_coords("ref_1.pdb", Q)
             # write_coords("model_1.pdb", P)
 
-            Q = Q - self.centroid(Q_int)
-            P = P - self.centroid(P_int)
+            Q = Q - centroid(Q_int)
+            P = P - centroid(P_int)
 
             # write_coords("ref_2.pdb", Q)
             # write_coords("model_2.pdb", P)
@@ -346,7 +352,7 @@ class CAPRI:
             # write_coords("model_l.pdb", P_l)
 
             # this will be the interface-ligand-rmsd
-            i_l_rmsd = self.calc_rmsd(P_l, Q_l)
+            i_l_rmsd = calc_rmsd(P_l, Q_l)
             self.ilrmsd_dic[model] = i_l_rmsd
 
         return self.ilrmsd_dic
@@ -661,36 +667,6 @@ class CAPRI:
         return set(con_list)
 
     @staticmethod
-    def calc_rmsd(V, W):
-        """Calculate the RMSD from two vectors."""
-        diff = np.array(V) - np.array(W)
-        N = len(V)
-        return np.sqrt((diff * diff).sum() / N)
-
-    @staticmethod
-    def kabsch(P, Q):
-        """Find the rotation matrix using Kabsch algorithm."""
-        # Covariance matrix
-        P = np.array(P)
-        Q = np.array(Q)
-        C = np.dot(np.transpose(P), Q)
-        # use SVD
-        V, S, W = np.linalg.svd(C)
-        d = (np.linalg.det(V) * np.linalg.det(W)) < 0.0
-        if d:
-            S[-1] = -S[-1]
-            V[:, -1] = -V[:, -1]
-        # Create Rotation matrix U
-        U = np.dot(V, W)
-        return U
-
-    @staticmethod
-    def centroid(X):
-        """Get the centroid."""
-        X = np.array(X)
-        return X.mean(axis=0)
-
-    @staticmethod
     def add_chain_from_segid(pdb_path):
         """Replace the chainID with the segID."""
         temp_f = tempfile.NamedTemporaryFile(delete=False, mode="w+t")
@@ -701,70 +677,6 @@ class CAPRI:
         # REPLACE!
         new_pdb_path = shutil.move(temp_f.name, pdb_path)
         return new_pdb_path
-
-    def load_coords(self, pdb_f, filter_resdic=None, match=False):
-        """Load coordinates from PDB."""
-        coord_dic = {}
-        chain_dic = {}
-        idx = 0
-        if isinstance(pdb_f, PDBFile):
-            pdb_f = pdb_f.rel_path
-        with open(pdb_f, "r") as fh:
-            for line in fh.readlines():
-                if line.startswith("ATOM"):
-
-                    atom_name = line[12:16].strip()
-                    resname = line[17:20].strip()
-                    chain = line[21]
-                    resnum = int(line[22:26])
-
-                    x = float(line[30:38])
-                    y = float(line[38:46])
-                    z = float(line[46:54])
-                    coords = np.asarray([x, y, z])
-
-                    if match:
-                        # This will match the number of the MODEL with the
-                        #  number of the REFERENCE
-                        try:
-                            resnum = self.model2ref_numbering[chain][resnum]
-                        except KeyError:
-                            # this residue is not matched, it exists in
-                            #  the MODEL but not in the REFERENCE so it
-                            #  should not be considered
-                            continue
-
-                    identifier = (chain, resnum, atom_name)
-
-                    if atom_name not in self.atoms[resname]:
-                        continue
-
-                    if chain not in chain_dic:
-                        chain_dic[chain] = []
-
-                    if filter_resdic:
-                        # Only retrieve coordinates from the filter_resdic
-                        if (
-                                chain in filter_resdic
-                                and resnum in filter_resdic[chain]
-                                ):
-                            coord_dic[identifier] = coords
-                            chain_dic[chain].append(idx)
-                            idx += 1
-
-                    else:
-                        # retrieve everything
-                        coord_dic[identifier] = coords
-                        chain_dic[chain].append(idx)
-                        idx += 1
-
-        chain_ranges = {}
-        for chain in chain_dic:
-            min_idx = min(chain_dic[chain])
-            max_idx = max(chain_dic[chain])
-            chain_ranges[chain] = (min_idx, max_idx)
-
-        return coord_dic, chain_ranges
 
 
 class CAPRIError(Exception):

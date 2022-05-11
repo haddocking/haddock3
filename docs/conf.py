@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.extlinks',
     'sphinx.ext.ifconfig',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
@@ -65,6 +66,10 @@ templates_path = ['.']
 extlinks = {
     'issue': ('https://github.com/haddocking/haddock3/issues/%s', '#'),
     'pr': ('https://github.com/haddocking/haddock3/pull/%s', 'PR #'),
+    }
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
     }
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'

@@ -1,13 +1,63 @@
 """
 Process input PDB files to ensure compatibility with HADDOCK3.
 
-This module check and modifies PDB files for compatibility with
-HADDOCK3.  Several processing steps are applied in tanden to each PDB
-files. Also, PDB files are compared with each other to ensure joint
-compatiblity. The list of actions performed is documented in a live
-issue:
+This module checks and modifies PDB files for compatibility with
+HADDOCK3. There are three types of checks/modifications:
 
-https://github.com/haddocking/haddock3/issues/143
+1. Performed to each PDB line-by-line, in the likes of ``pdb-tools``.
+2. Performed on each PDB as a whole.
+3. Performed on all PDBs together.
+
+Main functions
+--------------
+
+* :py:func:`process_pdbs`
+* :py:func:`read_additional_residues`
+
+Corrections performed on 1)
+---------------------------
+The following actions are perfomed sequentially over all PDBs:
+
+* from ``pdb-tools``: ``pdb_keepcoord``
+* from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
+* from ``pdb-tools``: ``pdb_selaltloc``
+* from ``pdb-tools``: ``pdb_pdb_occ`` with ``occupancy=1.00``
+* replace ``MSE`` to ``MET``
+* replace ``HSD`` to ``HIS``
+* replace ``HSE`` to ``HIS``
+* replace ``HID`` to ``HIS``
+* replace ``HIE`` to ``HIS``
+* add charges to ions
+* add_charges_to_ions, see :py:func:`add_charges_to_ions`
+* convert ``ATOM`` to ``HETATM`` for those atoms that should be ``HETATM``.
+  Considers the additional residues provided by the user.
+  See :py:func:`convert_ATOM_to_HETATM`.
+* convert ``HETATM`` to ``ATOM`` for those atoms that should be ``ATOM``,
+* from ``pdb-toos``: ``pdb_fixinsert``, with ``option_list=[]``.
+* remove unsupported ``HETATM``. Considers residues provided by the user.
+* remove unsupported ``ATOM``. Considers residues provided by the user.
+* from ``pdb-tools``: ``pdb_reres``, start from ``1``.
+* from ``pdb-tools``: ``pdb_reatom``, start from ``1``.
+* from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
+
+Corrections performed on 2)
+---------------------------
+
+The following actions are performed sequentially for each PDB:
+
+* :py:func:`models_should_have_the_same_labels`
+* :py:func:`solve_no_chainID_no_segID`
+* :py:func:`homogenize_chains`
+
+Corrections performed on 3)
+---------------------------
+
+The following actions are performed to all PDBs together:
+
+* :py:func:`correct_equal_chain_segids`
+
+When it happens
+---------------
 
 The PDB processing step is performed by default when reading the input
 molecules and copying them to the `data/` folder inside the run
@@ -16,6 +66,14 @@ also stored in the `data/` folder.
 
 To deactivate this initial PDB processing, set ``skip_preprocess =
 False`` boolean parameter.
+
+Additional information
+----------------------
+
+If you are a developer and want to read more about the history of this
+preprocessing module, visit:
+
+https://github.com/haddocking/haddock3/projects/16
 """
 # search for ABSTRACT to reach the section where abstractions are defined
 # search for CHECKING to reach the section where checking functions are defined
@@ -218,10 +276,19 @@ def process_pdbs(
 
     Parameters
     ----------
-    inputdata : list of (str, path, list of str, file handler)
-        The list can contain file objects, list of strings, or paths
-        or strings pointing to files. If paths and file objects are read
-        to list of strings. Right `new line` chars are striped.
+    inputdata : list of (str, path, list of str [lines], file handler)
+
+        The list is a FLAT list and in each index it can contain:
+
+        * file objects
+        * paths to files
+        * strings representing paths
+        * lists or tuples of lines
+
+        Files are read to lines in a list. Newline chars are stripped.
+
+        Do not provide nested lists with lists containing paths inside
+        lists.
 
     dry : bool
         Perform a dry run. That is, does not change anything, and just
@@ -234,7 +301,7 @@ def process_pdbs(
     -------
     list of (list of str)
         The corrected (processed) PDB content in the same order as
-        `inputdata`.
+        ``inputdata``.
     """
     structures = _open_or_give(inputdata)
 
@@ -326,7 +393,24 @@ wrep_rstrip = _report("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  
 
 @_report("Replacing HETATM to ATOM for residue {!r}")
 def replace_HETATM_to_ATOM(fhandler, res):
-    """."""
+    """
+    Replace record `HETATM` to `ATOM` for `res`.
+
+    Do not alter other lines.
+
+    Parameters
+    ----------
+    fhanlder : file handler or list of lines
+        List-like of file lines. Consumes over a ``for`` loop.
+
+    res : str
+        Residue name to match for the substitution.
+
+    Yields
+    ------
+    str
+        Yield line-by-line.
+    """
     for line in fhandler:
         if line.startswith('HETATM') and line[slc_resname].strip() == res:
             yield 'ATOM  ' + line[6:]
@@ -336,16 +420,81 @@ def replace_HETATM_to_ATOM(fhandler, res):
 
 @_report("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
 def replace_residue(fhandler, resin, resout):
-    """Replace residue by another and changes HETATM to ATOM if needed."""
+    """
+    Replace residue by another and changes ``HETATM`` to ``ATOM`` if needed.
+
+    Do not alter other lines.
+
+    Parameters
+    ----------
+    fhanlder : file handler or list of lines
+        List-like of file lines. Consumes over a ``for`` loop.
+
+    resin : str
+        Residue name to match for the substitution.
+
+    resout : str
+        Name of the new residue. Renames ``resin`` to ``resout``.
+
+    Yields
+    ------
+    str
+        Yield line-by-line.
+
+    See Also
+    --------
+
+    * :py:func:`replace_HETATM_to_ATOM`
+    * ``pdb_rplresname`` from ``pdb-tools``
+    """
     _ = replace_HETATM_to_ATOM(fhandler, res=resin)
     yield from pdb_rplresname.run(_, name_from=resin, name_to=resout)
 
 
 replace_MSE_to_MET = partial(replace_residue, resin='MSE', resout='MET')
+"""
+Replace ``MSE`` to ``MET``.
+
+See Also
+--------
+* :py:func:`replace_residue`
+"""
+
 replace_HSD_to_HIS = partial(replace_residue, resin='HSD', resout='HIS')
+"""
+Replace ``HSD`` to ``HIS``.
+
+See Also
+--------
+* :py:func:`replace_residue`
+"""
+
 replace_HSE_to_HIS = partial(replace_residue, resin='HSE', resout='HIS')
+"""
+Replace ``HSE`` to ``HIS``.
+
+See Also
+--------
+* :py:func:`replace_residue`
+"""
+
 replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
+"""
+Replace ``HID`` to ``HIS``.
+
+See Also
+--------
+* :py:func:`replace_residue`
+"""
+
 replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')
+"""
+Replace ``HIE`` to ``HIS``.
+
+See Also
+--------
+* :py:func:`replace_residue`
+"""
 
 
 @_report("Remove unsupported molecules")
@@ -355,7 +504,47 @@ def remove_unsupported_molecules(
         user_defined=None,
         line_startswith=('ATOM', 'HETATM'),
         ):
-    """."""
+    """
+    Remove HADDOCK3 unsupported molecules.
+
+    This function is abstract and you need to provide the set of
+    residues supported by HADDOCK3. See parameters.
+
+    Residues not provided in ``haddock3_defined`` and ``user_defined``
+    are removed from the PDB lines.
+
+    Other lines are yieled unmodified.
+
+    Parameters
+    ----------
+    lines : list or list-like
+        Lines of the PDB file. This function will consumes lines over a
+        ``for`` loop; mind it if you use a generator.
+
+    haddock3_defined : set
+        Set of residues supported by HADDOCK3.
+        Defaults to ``None``.
+
+    user_defined : set
+        An additional set of allowed residues given by the user.
+        Defaults to ``None``.
+
+    line_startswith : tuple
+        The lines to consider. Defaults to ``("ATOM", "HETATM")``.
+
+    Yields
+    ------
+    line : str
+        Line-by-line.
+        Lines for residues not supported are *not* yielded.
+
+    See Also
+    --------
+    Other functions use this function to create context.
+
+    * :py:func:`remove_unsupported_atom`
+    * :py:func:`remove_unsupported_hetatm`
+    """
     user_defined = user_defined or set()
     haddock3_defined = haddock3_defined or set()
     allowed = set.union(haddock3_defined, user_defined)
@@ -382,41 +571,81 @@ remove_unsupported_hetatm = partial(
     haddock3_defined=supported_HETATM,
     line_startswith='HETATM',
     )
+"""
+Remove unsupported molecules in ``HETATM`` lines.
+
+Uses :py:func:`remove_unsupported_molecules` by populating its
+``haddock3_define`` and ``line_startswith`` parameters.
+
+See Also
+--------
+* :py:func:`remove_unsupported_atom`
+"""
 
 remove_unsupported_atom = partial(
     remove_unsupported_molecules,
     haddock3_defined=supported_ATOM,
     line_startswith='ATOM',
     )
+"""
+Remove unsupported molecules in ``ATOM`` lines.
+
+Uses :py:func:`remove_unsupported_molecules` by populating its
+``haddock3_define`` and ``line_startswith`` parameters.
+
+See Also
+--------
+* :py:func:`remove_unsupported_hetatm`
+"""
 
 
 @_report("Add charges to ions.")
 def add_charges_to_ions(fhandler):
-    """Add charges to ions."""
+    """
+    Add charges to ions according to HADDOCK3 specifications.
+
+    1. Check if charge is correctly defined in residue name.
+       If so, yield the line with correct residue name and charge at the
+       end.
+    2. Check if charge is correctly defined in atom name.
+    3. Create charge from element. This might need manual edit in case
+       the atom as an unconventional charge.
+
+    Parameters
+    ----------
+    fhandler : file-hanlder, list, or list-like
+        Lines of the PDB file. This function will consumes lines over a
+        ``for`` loop; mind it if you use a generator.
+
+    Yields
+    ------
+    line : str
+        Line-by-line: modified ion lines and any other line.
+    """
     for line in fhandler:
         if line.startswith(("ATOM", "ANISOU", "HETATM")):
 
-            # first case
+            # get values
             atom = line[slc_name].strip()
             resname = line[slc_resname].strip()
 
-            # charge is properly defined in resname
-            # ignore other fields and write them properly, even if they are
-            # already correct
+            # case 1: charge is correctly defined in resname
+            # ignore other fields and write them from scratch
+            # even if they are already correct
             if resname in supported_single_ions_resnames:
                 new_atom = supported_single_ions_resnames[resname].atom
                 yield line[:12] + new_atom + line[16:76] + new_atom
                 continue
 
-            # charge is properly defined in atom name
-            # ignore other fields and write them properly, even if they are
-            # already correct
+            # case 2: charge is correctly defined in atom name
+            # ignore other fields and write them from scratch
+            # even if they are already correct
             if atom in supported_single_ions_atoms:
                 new_resname = supported_single_ions_atoms[atom].resname
                 yield line[:17] + new_resname + line[20:76] + atom
                 continue
 
-            # charge is not defined but atom element is defined
+            # case 3: charge is not defined but atom element is defined
             if atom in supported_single_ions_elements and atom == resname:
                 new_atom = supported_single_ions_elements[atom].atom
                 new_resname = supported_single_ions_elements[atom].resname
@@ -435,6 +664,7 @@ def add_charges_to_ions(fhandler):
                     ])
                 continue
 
+        # yield any other lines unmodified
         yield line
 
 

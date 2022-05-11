@@ -1,25 +1,27 @@
 """
 HADDOCK 3 supported residues.
 
-The HADDOCK3 supported residues are defined by the different `.top`
-files in the `cns/toppar` source folder. This module will automatically
-retrieve any new residue added to the `.top` defined in the folder and
-selected here. If a new `.top` file is added in the folder, that must be
-added here inside the `read_supported_residues` function, because file
-retrieve is not done automatically on purpose.
+The HADDOCK3 supported residues are defined by the different ``.top``
+files in the ``cns/toppar`` source folder. This module will automatically
+retrieve any new residue added to the ``.top`` defined in the folder and
+add it to the variables here.
 
-Considered `.top` files.
+If a new ``.top`` file is added in the folder, that must be added here
+inside the :py:func:`read_supported_residues` function, because file retrieve is
+not done automatically on purpose.
 
-- carbohydrate.top
-- dna-rna-CG-MARTINI-2-1p.top
-- dna-rna-allatom-hj-opls-1.3.top
-- fragment_probes.top
-- hemes-allhdg.top
-- ion.top
-- protein-CG-Martini-2-2.top
-- protein-CG-Martini.top
-- protein-allhdg5-4.top
-- solvent-allhdg5-4.top
+``.top`` files considered here:
+
+* ``carbohydrate.top``
+* ``dna-rna-CG-MARTINI-2-1p.top``
+* ``dna-rna-allatom-hj-opls-1.3.top``
+* ``fragment_probes.top``
+* ``hemes-allhdg.top``
+* ``ion.top``
+* ``protein-CG-Martini-2-2.top``
+* ``protein-CG-Martini.top``
+* ``protein-allhdg5-4.top``
+* ``solvent-allhdg5-4.top``
 
 DNA-related files are all concatenated into a single DNA-supported
 residues datastructure. The same occurs for protein residues (natural or
@@ -28,19 +30,19 @@ modified).
 You can import from this module the different sets containing the
 supported residue names:
 
-- supported_aminoacids_resnames
-- supported_carbo_resnames
-- supported_fragments_resnames
-- supported_hemes_resnames
-- supported_single_ions_resnames
-- supported_single_ions_elements
-- supported_single_ions_atoms
-- supported_multiatom_ions_resnames
-- supported_nucleic_resnames
-- supported_solvents_resnames
+* :py:data:`supported_aminoacids_resnames`
+* :py:data:`supported_carbo_resnames`
+* :py:data:`supported_fragments_resnames`
+* :py:data:`supported_hemes_resnames`
+* :py:data:`supported_single_ions_resnames`
+* :py:data:`supported_single_ions_elements`
+* :py:data:`supported_single_ions_atoms`
+* :py:data:`supported_multiatom_ions_resnames`
+* :py:data:`supported_nucleic_resnames`
+* :py:data:`supported_solvents_resnames`
 
-- supported_ATOM (contains residues and nucleic acids)
-- supported_HETATM (everything not contained in ATOM)
+* :py:data:`supported_ATOM` (contains residues and nucleic acids)
+* :py:data:`supported_HETATM` (everything not contained in ATOM)
 """
 import itertools as it
 import re
@@ -58,12 +60,12 @@ class CNSTopologyResidue:
         """
         CNS topology residue.
 
-        This is not an actual topology. Is a namespace storing the
+        This is not an actual topology. It is a namespace storing the
         basic parameters defined in CNS residue topologies.
 
-        So far, this is used by the `preprocessing` step (see
-        `gear.preprocessing`; but this class can be extended with
-        additional parameters if needed.
+        So far, this is used by the
+        :py:module:`haddock.gear.preprocessing` step; but this class can
+        be extended with additional parameters if needed.
 
         Parameters
         ----------
@@ -130,17 +132,17 @@ def read_residues_from_top_file(topfile):
     """
     Read the residues defined in CNS topology file.
 
-    This is a general implementatio to read the basic information from
-    the CNS topology files. The basic information is the information
-    needed to help the implementation of the `preprocessing` step in
-    identifying the supported residues and correctly format their PDB
+    This is a general implementation to read the basic information from
+    the CNS topology files. This basic information is the information
+    needed to help the the :py:mod:`haddock.gear.preprocessing` step
+    in identifying the supported residues and correctly format their PDB
     lines.
 
     This function can be further extended if needed.
 
     Parameters
     ----------
-    topfile : str or pathlib.Path
+    topfile : str or :external:py:class:`pathlib.Path`
         Path to the topology file.
 
     Returns
@@ -149,6 +151,10 @@ def read_residues_from_top_file(topfile):
         List of :class:`CNSTopologyResidue` objects.
         Each object has information on the residue name, the atoms,
         and the total charge of the residue.
+
+    See Also
+    --------
+    * :py:func:`haddock.gear.preprocessing.read_additional_residues`
     """
     # regular expression to parse information from atom lines
     atom_regex = (
@@ -213,6 +219,15 @@ def get_resnames(group):
     Make a set of residue names.
 
     Elements of the group must have a `resname` attribute.
+
+    Parameters
+    ----------
+    group : list of :py:class:`CNSTopologyResidue`
+
+    Returns
+    -------
+    set
+        Set of residue names.
     """
     return {i.resname: i for i in group}
 
@@ -222,11 +237,28 @@ def get_resnames(group):
 # the run folder
 def read_supported_residues(source_path):
     """
-    Read the supported residues from a source path where `top` files reside.
+    Read supported residues from a folder containing ``.top`` files.
 
-    The function expects the `source_path` to have the required files.
-    If an additional top file is added to the HADDOCK3/cns/toppar folder,
-    add that file to this function.
+    The function expects the ``source_path`` to have the required files.
+
+    Expected files are:
+
+    * ``carbohydrate.top``
+    * ``dna-rna-CG-MARTINI-2-1p.top``
+    * ``dna-rna-allatom-hj-opls-1.3.top``
+    * ``fragment_probes.top``
+    * ``hemes-allhdg.top``
+    * ``ion.top``
+    * ``protein-CG-Martini-2-2.top``
+    * ``protein-CG-Martini.top``
+    * ``protein-allhdg5-4.top``
+    * ``solvent-allhdg5-4.top``
+
+    You need to edit this function to account for any additional
+    ``.top`` file that is added to the ``source_path`` on top of the
+    above ones. Otherwise, read the residues manually using
+    :py:func:`read_residues_from_top_file` and :py:func:`get_resnames`
+    and add them to the relevant set, or have them as a new set.
 
     Returns
     -------
@@ -299,7 +331,7 @@ def read_supported_residues(source_path):
     supported_ions_elements = \
         {ion.elements[0]: ion for ion in supported_single_ions}
 
-    supported_ions_atoms = {ion.atoms: ion for ion in supported_ions}
+    supported_ions_atoms = {ion.atoms[0]: ion for ion in supported_ions}
 
     return (
         supported_carbo_resnames,
@@ -316,16 +348,47 @@ def read_supported_residues(source_path):
 
 
 # reads and assigns the supported molecules variables to this module
-supported_carbo_resnames, \
-    supported_nucleic_resnames, \
-    supported_fragments_resnames, \
-    supported_hemes_resnames, \
-    supported_single_ions_resnames, \
-    supported_single_ions_elements, \
-    supported_single_ions_atoms, \
-    supported_multiatom_ions_resnames, \
-    supported_aminoacids_resnames, \
-    supported_solvents_resnames = read_supported_residues(toppar_path)
+_supported_carbo_resnames, \
+    _supported_nucleic_resnames, \
+    _supported_fragments_resnames, \
+    _supported_hemes_resnames, \
+    _supported_single_ions_resnames, \
+    _supported_single_ions_elements, \
+    _supported_single_ions_atoms, \
+    _supported_multiatom_ions_resnames, \
+    _supported_aminoacids_resnames, \
+    _supported_solvents_resnames = read_supported_residues(toppar_path)
+
+# render docstrings
+supported_carbo_resnames = set(_supported_carbo_resnames)
+"""Supported carbohydrate residues names."""
+
+supported_nucleic_resnames = set(_supported_nucleic_resnames)
+"""Supported nucleic acid residue names."""
+
+supported_fragments_resnames = set(_supported_fragments_resnames)
+"""Supported fragments residue names."""
+
+supported_hemes_resnames = set(_supported_hemes_resnames)
+"""Supported Hemes."""
+
+supported_single_ions_resnames = set(_supported_single_ions_resnames)
+"""Supported single residue names."""
+
+supported_single_ions_elements = set(_supported_single_ions_elements)
+"""Supported single ions elements."""
+
+supported_single_ions_atoms = set(_supported_single_ions_atoms)
+"""Supported single ion atom names."""
+
+supported_multiatom_ions_resnames = set(_supported_multiatom_ions_resnames)
+"""Supported multiatom ions residue names."""
+
+supported_aminoacids_resnames = set(_supported_aminoacids_resnames)
+"""Supported amino acids residue names."""
+
+supported_solvents_resnames = set(_supported_solvents_resnames)
+"""Supported solvents."""
 
 #
 # Residues that must be set as ATOM
@@ -333,6 +396,12 @@ supported_ATOM = set(it.chain(
     supported_nucleic_resnames,
     supported_aminoacids_resnames,
     ))
+"""
+Supported ``ATOM`` residues.
+
+These residues must be defined as ``ATOM`` records
+in PDB files for HADDOCK3.
+"""
 
 # Residues that must be set as HETATM
 supported_HETATM = set(it.chain(
@@ -343,5 +412,12 @@ supported_HETATM = set(it.chain(
     supported_multiatom_ions_resnames,
     supported_solvents_resnames,
     ))
+"""
+Supported ``HETATM`` residues.
+
+These residues must be defined as ``HETATM`` records
+in PDB files for HADDOCK3.
+"""
 
 supported_residues = supported_ATOM.union(supported_HETATM)
+"""All HADDOCK3 supported residues."""

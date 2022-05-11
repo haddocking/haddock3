@@ -1,0 +1,12 @@
+skip_preprocess:
+  default: false
+  type: boolean
+  title: Skip PDB pre-processing steps.
+  short: If true, skips the initial PDB checking and processing steps.
+  long: HADDOCK3 checks and processes the input PDB files to ensure they
+    all comply with HADDOCK3's requirements. These checks concerns, for example,
+    residue numbering, compatibility of chain IDs, and many others. You can see
+    all checks performs in the live issue
+    https://github.com/haddocking/haddock3/issues/143.  If set to false, no
+    checks are performed and HADDOCK3 directly uses the original input PDBs.
+  explevel: easy

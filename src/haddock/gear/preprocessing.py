@@ -322,7 +322,7 @@ def process_pdbs(
         add_charges_to_ions,
         partial(
             convert_ATOM_to_HETATM,
-            must_be=set.union(
+            residues=set.union(
                 supported_HETATM,
                 user_supported_residues or set(),
                 ),
@@ -669,12 +669,30 @@ def add_charges_to_ions(fhandler):
 
 
 @_report("Convert record: {!r} to {!r}.")
-def convert_record(fhandler, record, other_record, must_be):
-    """Convert ATOM lines to HETATM if needed."""
+def convert_record(fhandler, record, other_record, residues):
+    """
+    Convert on record to another for specified residues.
+
+    For example, replace ``ATOM`` by ``HETATM`` for specific residues.
+
+    Parameters
+    ----------
+    fhandler : list-like
+        Contains lines of file.
+
+    record : str
+        The PDB RECORD to match; for example, ``ATOM`` or ``HETATM``.
+
+    other_record : str
+        The PDB RECORD to replace with; for example, ``ATOM`` or ``HETATM``.
+
+    residues : list, tuple, or set
+        List of residues to replace the record.
+    """
     for line in fhandler:
         if line.startswith(record):
             resname = line[slc_resname].strip()
-            if resname in must_be:
+            if resname in residues:
                 yield other_record + line[6:]
                 continue
         yield line
@@ -684,15 +702,29 @@ convert_ATOM_to_HETATM = partial(
     convert_record,
     record="ATOM",
     other_record="HETATM",
-    must_be=supported_HETATM,
+    residues=supported_HETATM,
     )
+"""
+Convert ``ATOM`` to ``HETATM`` for HADDOCK3 supported ``HETATM``.
+
+See Also
+--------
+* :py:data:`haddock.core.supported_molecules.supported_HETATM`
+"""
 
 convert_HETATM_to_ATOM = partial(
     convert_record,
     record="HETATM",
     other_record="ATOM  ",
-    must_be=supported_ATOM,
+    residues=supported_ATOM,
     )
+"""
+Convert ``HETATM`` to ``ATOM`` for HADDOCK3 supported ``ATOM``.
+
+See Also
+--------
+* :py:data:`haddock.core.supported_molecules.supported_ATOM`
+"""
 
 
 # Functions operating in the whole PDB

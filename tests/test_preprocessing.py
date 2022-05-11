@@ -23,7 +23,7 @@ def test_open_or_give_3():
     result = pp._open_or_give(input_)
     assert len(result) == 5
     for r in result:
-        assert len(r) == 240
+        assert len(r) == 241
     in1.close()
 
 

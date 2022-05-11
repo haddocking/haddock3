@@ -1,13 +1,15 @@
+"""Test the libalign library."""
 from pathlib import Path
 
 import numpy as np
 
-from haddock.libs.libgeometry import (
+from haddock.libs.libalign import (
     calc_rmsd,
     centroid,
+    get_atoms,
     kabsch,
-    load_coords
-)
+    load_coords,
+    )
 
 from . import golden_data
 
@@ -111,10 +113,11 @@ def test_load_coords():
     """Test the loading of coordinates."""
     # pdb_f = protprot_input_list[0]
     pdb_f = Path(golden_data, "protein.pdb")
+    atoms = get_atoms([pdb_f])
     (
         observed_coord_dic,
         observed_chain_ranges,
-        ) = load_coords(pdb_f) # correct with atoms
+        ) = load_coords(pdb_f, atoms)
     observed_keys = list(observed_coord_dic.keys())
     expected_keys = [
         ("B", 1, "C"),

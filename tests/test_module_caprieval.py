@@ -4,12 +4,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
-import numpy as np
 import pytest
 
-from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.caprieval.capri import (
-    CAPRI,
+from haddock.libs.libalign import (
     align_seq,
     dump_as_izone,
     get_align,
@@ -17,6 +14,8 @@ from haddock.modules.analysis.caprieval.capri import (
     make_range,
     pdb2fastadic,
     )
+from haddock.libs.libontology import PDBFile
+from haddock.modules.analysis.caprieval.capri import CAPRI
 
 from . import golden_data
 

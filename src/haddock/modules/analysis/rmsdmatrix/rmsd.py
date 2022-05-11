@@ -5,13 +5,13 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
-from haddock.libs.libgeometry import (
+from haddock.libs.libalign import (
     calc_rmsd,
     centroid,
+    get_atoms,
     kabsch,
-    load_coords
-)
-from haddock.modules.analysis.caprieval.capri import get_atoms
+    load_coords,
+    )
 
 
 class RMSDJob:
@@ -107,10 +107,7 @@ class RMSD:
         # data array
         self.data = np.zeros((self.npairs, 3))
     
-
-    def run(
-            self
-            ):
+    def run(self):
         """Run calculations."""
         # initialising the number of pairs
         ref = self.start_ref
@@ -149,7 +146,6 @@ class RMSD:
                 mod = ref + 1
             else:
                 mod += 1
-
 
     def output(
             self,

@@ -70,7 +70,7 @@ def save_lines_to_files(files, lines):
         Must be synched with `files`.
     """
     for file_, content in zip(files, lines):
-        Path(file_).write_text(content)
+        Path(file_).write_text(os.linesep.join(content) + os.linesep)
 
     return
 

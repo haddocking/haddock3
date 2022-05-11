@@ -10,9 +10,21 @@ from haddock.gear import preprocessing as pp
 from . import broken_pdb, data_folder, good_pdb
 
 
-def test_open_or_give():
-    result = pp._open_or_give([broken_pdb])
-    assert len(result[0]) == 241
+def test_open_or_give_3():
+    in1 = open(broken_pdb)
+    input_ = [
+        broken_pdb,  # path inside list
+        str(broken_pdb),  # path inside list
+        in1,
+        broken_pdb.read_text().split(os.linesep),  # list
+        tuple(broken_pdb.read_text().split(os.linesep)),  # tuple
+        ]
+
+    result = pp._open_or_give(input_)
+    assert len(result) == 5
+    for r in result:
+        assert len(r) == 240
+    in1.close()
 
 
 def test_wrep_pdb_tidy():

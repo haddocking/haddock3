@@ -134,33 +134,54 @@ def _open_or_give(inputdata):
     """
     Adapt input to the functions.
 
-    Use in `process_pdbs`.
+    Used in `process_pdbs`.
+
+    Homogenizes input by:
+
+    * removing new line characters at the end of the line
+    * removing empty lines
 
     Parameters
     ----------
     inputdata : list
-        The list can contain file objects, list of strings, or paths
-        or strings pointing to files. If paths and file objects are read
-        to list of strings. Right `new line` chars are striped.
+        The list is a FLAT list and in each index it can contain:
+
+        * file objects
+        * paths to files
+        * strings representing paths
+        * lists or tuples of lines
+
+        Files are read to lines in a list. Line separators are stripped.
+
+        Do not provide nested lists with lists containing paths inside
+        lists.
 
     Returns
     -------
     list of list of strings
-        Each sublist has the contents of the input file.
+        Each sublist has the contents of the input in the same order.
 
     Raises
     ------
     TypeError
         In any other circumstances.
     """
+    def get_line(lines):
+        """Ignore empty lines."""
+        return [line.rstrip(linesep) for line in lines if line]
+
     lines = []
     for idata in inputdata:
+
         if isinstance(idata, (Path, str)):
-            lines.append(Path(idata).read_text().split(linesep))
+            lines.append(get_line(Path(idata).read_text().split(linesep)))
+
         elif isinstance(idata, io.TextIOBase):
-            lines.append([line.rstrip(linesep) for line in idata.readlines()])
+            lines.append(get_line(idata.readlines()))
+
         elif isinstance(idata, (list, tuple)):
-            lines.append([line.rstrip(linesep) for line in idata])
+            lines.append(get_line(idata))
+
         else:
             emsg = f"Unexpected type in `inputdata`: {type(idata)}"
             raise TypeError(emsg)
@@ -174,7 +195,7 @@ def read_additional_residues(top_fname):
 
     Expects new residues to be defined as:
 
-        RESIude XXX
+        RESIdue XXX
 
     where, XXX is the new residue.
     """
@@ -221,8 +242,9 @@ def process_pdbs(
     # modify the input PDB and return the corrected lines
     # in the likes of pdb-tools, these functions yield line-by-line
     line_by_line_processing_steps = [
-        partial(wrep_pdb_tidy, strict=True),
         wrep_pdb_keepcoord,  # also discards ANISOU
+        # tidy is important before some other corrections
+        partial(wrep_pdb_tidy, strict=True),
         wrep_pdb_selaltloc,
         partial(wrep_pdb_occ, occupancy=1.00),
         replace_MSE_to_MET,

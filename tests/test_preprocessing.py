@@ -193,3 +193,99 @@ def test_correct_equal_chain_segids(in_, expected):
     # made for loop to facilitate visualization of errors
     for r, e in zip(result, expected):
         assert r == e
+
+
+multiple_chainIDs_1 = [
+    'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00           C  ',
+    'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  ',
+    'TER',
+    'ATOM      3  CA  ALA C   7      35.081  45.036   1.305  1.00  0.00           C  ',
+    ]
+
+multiple_chainIDs_2 = [
+    'ATOM      3  CA  ARG C   4      37.080  43.455  -3.421  1.00  0.00           C  ',
+    'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  ',
+    'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00           C  ',
+    ]
+
+# mind the added segID
+expected_multiple_chainIDs_1 = [
+    'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00      A    C  ',
+    'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00      A    C  ',
+    'TER                  A                                                           ',  # wtf this extra space?
+    'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00      A    C  ',
+    ]
+
+expected_multiple_chainIDs_2 = [
+    'ATOM      3  CA  ARG C   4      37.080  43.455  -3.421  1.00  0.00      C    C  ',
+    'ATOM      3  CA  GLU C   6      33.861  45.127  -2.233  1.00  0.00      C    C  ',
+    'ATOM      3  CA  ALA C   7      35.081  45.036   1.305  1.00  0.00      C    C  ',
+    ]
+
+@pytest.mark.parametrize(
+    "in_,expected",
+    [
+        (multiple_chainIDs_1, expected_multiple_chainIDs_1),
+        (multiple_chainIDs_2, expected_multiple_chainIDs_2),
+        ]
+    )
+def test_homogenize_chainIDs(in_, expected):
+    result = pp.homogenize_chains(in_)
+    print(result)
+    for r, e in zip(result, expected):
+        assert len(result) == len(expected)
+    for r, e in zip(result, expected):
+        assert result == expected
+
+
+nochain_chainIDs_1 = [
+    'ATOM      3  CA  ARG     4      37.080  43.455  -3.421  1.00  0.00              ',
+    'ATOM      3  CA  GLU     6      33.861  45.127  -2.233  1.00  0.00              ',
+    'ATOM      3  CA  ALA     7      35.081  45.036   1.305  1.00  0.00              ',
+    ]
+
+nochain_chainIDs_2 = [
+    'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00              ',
+    'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00              ',
+    'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00              ',
+    ]
+
+nochain_chainIDs_3 = [
+    'ATOM      3  CA  ARG     4      37.080  43.455  -3.421  1.00  0.00      A       ',
+    'ATOM      3  CA  GLU     6      33.861  45.127  -2.233  1.00  0.00      A       ',
+    'ATOM      3  CA  ALA     7      35.081  45.036   1.305  1.00  0.00      A       ',
+    ]
+
+nochain_chainIDs_4 = [
+    'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      A       ',
+    'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00      A       ',
+    'ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00      A       ',
+    ]
+
+expected_nochain_chainIDs_1 = [
+    'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00      A       ',
+    'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00      A       ',
+    'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00      A       ',
+    ]
+
+expected_nochain_chainIDs_4 = [
+    'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B       ',
+    'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00      B       ',
+    'ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00      B       ',
+    ]
+
+
+@pytest.mark.parametrize(
+    'in_,expected',
+    [
+        (nochain_chainIDs_1, expected_nochain_chainIDs_1),
+        #(nochain_chainIDs_2, expected_nochain_chainIDs_1),
+        #(nochain_chainIDs_3, expected_nochain_chainIDs_1),
+        #(nochain_chainIDs_4, expected_nochain_chainIDs_4),
+        ]
+    )
+def test_solve_nochainID(in_, expected):
+    result = pp.solve_no_chainID_no_segID(in_)
+    print(result)
+    for r, e in zip(result, expected):
+        assert r == e

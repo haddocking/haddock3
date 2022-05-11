@@ -122,8 +122,8 @@ from haddock.libs.libpdb import (
     )
 
 
-_upper_case = list(string.ascii_uppercase + string.ascii_lowercase)[::-1]
-_CHAINS = it.cycle(_upper_case)
+_ascii_letters = list(string.ascii_uppercase + string.ascii_lowercase)
+_CHAINS = it.cycle(_ascii_letters)
 
 
 class ModelsDifferError(HaddockError):
@@ -719,6 +719,8 @@ def solve_no_chainID_no_segID(lines):
     """
     chainids = read_chainids(lines)
     segids = read_segids(lines)
+    print(chainids)
+    print(segids)
 
     if not chainids and segids:
         new_lines = pdb_segxchain.run(lines)
@@ -749,9 +751,9 @@ def solve_no_chainID_no_segID(lines):
 @_report("Homogenizes chains")
 def homogenize_chains(lines):
     """
-    Homogenize chainIDs.
+    Homogenize chainIDs within the same PDB.
 
-    If there are multiple chain identifiers in the structures, make all
+    If there are multiple chain identifiers in the PDB file, make all
     them equal to the first one.
 
     ChainIDs are copied to segIDs afterwards.
@@ -765,7 +767,7 @@ def homogenize_chains(lines):
     if len(chainids) > 1:
         return list(chainf(
             lines,
-            [
+            *[
                 partial(pdb_chain.run, chain_id=chainids[0]),
                 pdb_chainxseg.run,
                 ]
@@ -800,7 +802,7 @@ def correct_equal_chain_segids(structures):
     # the remaining available chain characters are the A-Z minus the
     # `all_chain_ids`
     remaining_chars = \
-        it.cycle(sorted(set(_upper_case).difference(all_chain_ids)))
+        it.cycle(sorted(set(_ascii_letters).difference(all_chain_ids)))
 
     chain_ids = []
     new_structures = []

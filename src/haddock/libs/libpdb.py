@@ -210,7 +210,7 @@ def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
     return list(path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
 
 
-def read_ATOM_section(lines, section_slice):
+def read_ATOM_section(lines, section_slice, func=set):
     """
     Create a set of observations from a section of the ATOM line.
 
@@ -220,13 +220,13 @@ def read_ATOM_section(lines, section_slice):
         A set of the observations.
     """
     # read the chain ID
-    chainids = set(
-        line[section_slice].strip()
+    chainids = func(
+        the_line
         for line in lines
-        if line.startswith(('ATOM', 'HETATM'))
+        if line.startswith(('ATOM', 'HETATM')) and (the_line := line[section_slice].strip())
         )
     return chainids
 
 
-read_chainids = partial(read_ATOM_section, section_slice=slc_chainid)
-read_segids = partial(read_ATOM_section, section_slice=slc_segid)
+read_chainids = partial(read_ATOM_section, section_slice=slc_chainid, func=list)
+read_segids = partial(read_ATOM_section, section_slice=slc_segid, func=list)

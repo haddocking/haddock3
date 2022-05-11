@@ -20,6 +20,7 @@ The following actions are perfomed sequentially over all PDBs:
 
 * from ``pdb-tools``: ``pdb_keepcoord``
 * from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
+* from ``pdb-toos``: ``pdb_element``
 * from ``pdb-tools``: ``pdb_selaltloc``
 * from ``pdb-tools``: ``pdb_pdb_occ`` with ``occupancy=1.00``
 * replace ``MSE`` to ``MET``
@@ -92,6 +93,7 @@ from pathlib import Path
 from pdbtools import (
     pdb_chain,
     pdb_chainxseg,
+    pdb_element,
     pdb_fixinsert,
     pdb_keepcoord,
     pdb_occ,
@@ -115,10 +117,12 @@ from haddock.core.supported_molecules import (
     )
 from haddock.libs.libfunc import chainf
 from haddock.libs.libpdb import (
+    format_atom_name,
     read_chainids,
     read_segids,
     slc_name,
     slc_resname,
+    slc_element,
     )
 
 
@@ -192,7 +196,7 @@ def _open_or_give(inputdata):
     """
     Adapt input to the functions.
 
-    Used in `process_pdbs`.
+    Used in py:func:`process_pdbs`.
 
     Homogenizes input by:
 
@@ -312,6 +316,7 @@ def process_pdbs(
         wrep_pdb_keepcoord,  # also discards ANISOU
         # tidy is important before some other corrections
         partial(wrep_pdb_tidy, strict=True),
+        wrep_pdb_element,
         wrep_pdb_selaltloc,
         partial(wrep_pdb_occ, occupancy=1.00),
         replace_MSE_to_MET,
@@ -320,22 +325,22 @@ def process_pdbs(
         replace_HID_to_HIS,
         replace_HIE_to_HIS,
         add_charges_to_ions,
-        partial(
-            convert_ATOM_to_HETATM,
-            residues=set.union(
-                supported_HETATM,
-                user_supported_residues or set(),
-                ),
-            ),
-        convert_HETATM_to_ATOM,
-        partial(wrep_pdb_fixinsert, option_list=[]),
+        #partial(
+        #    convert_ATOM_to_HETATM,
+        #    residues=set.union(
+        #        supported_HETATM,
+        #        user_supported_residues or set(),
+        #        ),
+        #    ),
+        #convert_HETATM_to_ATOM,
+        #partial(wrep_pdb_fixinsert, option_list=[]),
+        ####
+        #partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
+        #partial(remove_unsupported_atom),
         ###
-        partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
-        partial(remove_unsupported_atom),
-        ##
-        partial(wrep_pdb_reres, starting_resid=1),
-        partial(wrep_pdb_reatom, starting_value=1),
-        partial(wrep_pdb_tidy, strict=True),
+        #partial(wrep_pdb_reres, starting_resid=1),
+        #partial(wrep_pdb_reatom, starting_value=1),
+        #partial(wrep_pdb_tidy, strict=True),
         ##
         wrep_rstrip,
         ]
@@ -377,17 +382,18 @@ def process_pdbs(
 # Functions operating line-by-line
 
 # make pdb-tools reportable
-wrep_pdb_selaltloc = _report('pdb_selaltloc')(pdb_selaltloc.run)
-wrep_pdb_rplresname = _report('pdb_rplresname')(pdb_rplresname.run)
+wrep_pdb_chain = _report('pdb_chain')(pdb_chain.run)
+wrep_pdb_chainxseg = _report('pbd_segxchain')(pdb_chainxseg.run)
+wrep_pdb_element = _report('pdb_element')(pdb_element.run)
 wrep_pdb_fixinsert = _report('pdb_fixinsert')(pdb_fixinsert.run)
 wrep_pdb_keepcoord = _report('pdb_keepcoord')(pdb_keepcoord.run)
 wrep_pdb_occ = _report('pdb_occ')(pdb_occ.run)
-wrep_pdb_tidy = _report('pdb_tidy')(pdb_tidy.run)
-wrep_pdb_segxchain = _report('pdb_segxchain')(pdb_segxchain.run)
-wrep_pdb_chainxseg = _report('pbd_segxchain')(pdb_chainxseg.run)
-wrep_pdb_chain = _report('pdb_chain')(pdb_chain.run)
-wrep_pdb_reres = _report('pdb_reres')(pdb_reres.run)
 wrep_pdb_reatom = _report('pdb_reatom')(pdb_reatom.run)
+wrep_pdb_reres = _report('pdb_reres')(pdb_reres.run)
+wrep_pdb_rplresname = _report('pdb_rplresname')(pdb_rplresname.run)
+wrep_pdb_segxchain = _report('pdb_segxchain')(pdb_segxchain.run)
+wrep_pdb_selaltloc = _report('pdb_selaltloc')(pdb_selaltloc.run)
+wrep_pdb_tidy = _report('pdb_tidy')(pdb_tidy.run)
 wrep_rstrip = _report("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  # noqa: E501
 
 
@@ -628,40 +634,51 @@ def add_charges_to_ions(fhandler):
             # get values
             atom = line[slc_name].strip()
             resname = line[slc_resname].strip()
+            element = line[slc_element].strip()
 
             # case 1: charge is correctly defined in resname
             # ignore other fields and write them from scratch
             # even if they are already correct
             if resname in supported_single_ions_resnames_map:
-                new_atom = supported_single_ions_resnames_map[resname].atom
-                yield line[:12] + new_atom + line[16:76] + new_atom
+                new_atom = supported_single_ions_resnames_map[resname].atoms[0]
+                yield line[:12] \
+                    + format_atom_name(new_atom, element) \
+                    + line[16:76] \
+                    + new_atom.rjust(2, " ") \
+                    + line[78:]
                 continue
 
             # case 2: charge is correctly defined in atom name
             # ignore other fields and write them from scratch
             # even if they are already correct
-            if atom in supported_single_ions_atoms_map:
+            #
+            # Remember calcium is CA like carbon alpha...
+            if atom in supported_single_ions_atoms_map and element != "C":
                 new_resname = supported_single_ions_atoms_map[atom].resname
-                yield line[:17] + new_resname + line[20:76] + atom
+                yield line[:17] \
+                    + new_resname.rjust(3, " ") \
+                    + line[20:76] \
+                    + atom.rjust(2, " ") \
+                    + line[78:]
                 continue
 
             # case 3: charge is not defined but atom element is defined
             if atom in supported_single_ions_elements_map and atom == resname:
-                new_atom = supported_single_ions_elements_map[atom].atom
+                assert False, line
+                new_atom = supported_single_ions_elements_map[atom].atoms[0]
                 new_resname = supported_single_ions_elements_map[atom].resname
                 wmsg = (
                     "Ion {atom!r} automatically set to charge {charge!r}. "
                     "If this is not intended, please edit the PDB manually."
                     )
                 log.warning(wmsg)
-                yield "".join([
-                    line[:12],
-                    new_atom,
-                    line[16],
-                    new_resname,
-                    line[20:76],
-                    new_atom,
-                    ])
+                yield line[:12] \
+                    + format_atom_name(new_atom, element) \
+                    + line[16] \
+                    + new_resname \
+                    + line[20:76] \
+                    + new_atom.rjust(2, " ") \
+                    + line[78:]
                 continue
 
         # yield any other lines unmodified
@@ -751,8 +768,6 @@ def solve_no_chainID_no_segID(lines):
     """
     chainids = read_chainids(lines)
     segids = read_segids(lines)
-    print(chainids)
-    print(segids)
 
     if not chainids and segids:
         new_lines = pdb_segxchain.run(lines)

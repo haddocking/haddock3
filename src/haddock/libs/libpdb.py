@@ -31,6 +31,52 @@ slc_element = slice(76, 78)
 slc_model = slice(78, 80)
 
 
+def format_atom_name(atom, element):
+    """
+    Format PDB atom name.
+
+    Further Reading:
+
+    * https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/tutorials/pdbintro.html
+
+    Parameters
+    ----------
+    atom : str
+        The atom name.
+
+    element : str
+        The atom element code.
+
+    Returns
+    -------
+    str
+        Formatted atom name.
+    """
+    # string formats for atom name
+    _3 = ' {:<3s}'
+    _4 = '{:<4s}'
+    # len of element, atom formatting string
+    # anything outside this is an error
+    _atom_format_dict = {
+        # len of element: {len of atom name}
+        1: {1: _3, 2: _3, 3: _3, 4: _4},
+        2: {1: _4, 2: _4, 3: _4, 4: _4},
+        }
+
+    atm = atom.strip()
+    len_atm = len(atm)
+    len_ele = len(element.strip())
+
+    try:
+        return _atom_format_dict[len_ele][len_atm].format(atm)
+    except KeyError as err:
+        _ = f'Could not format this atom:type -> {atom}:{element}'
+        # raising KeyError assures that no context in IDPConfGen
+        # will handle it. @joaomcteixeira never handles pure Python
+        # exceptions, those are treated as bugs.
+        raise KeyError(_) from err
+
+
 def get_supported_residues(haddock_topology):
     """Read the topology file and identify which data is supported."""
     supported = []

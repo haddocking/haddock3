@@ -241,7 +241,11 @@ def setup_run(
     data_dir = create_data_dir(general_params[RUNDIR])
 
     if scratch_rest0:
-        copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
+        copy_molecules_to_data_dir(
+            data_dir,
+            modules_params["topoaa"],
+            preprocess=not general_params["skip_preprocess"],
+            )
 
     if starting_from_copy:
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
@@ -439,6 +443,10 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
 
     topoaa_params : dict
         A dictionary containing the topoaa parameters.
+
+    preprocess : bool
+        Whether to preprocess input molecules. Defaults to ``True``.
+        See :py:mod:`haddock.gear.preprocessing`.
     """
     topoaa_dir = zero_fill.fill('topoaa', 0)
 

@@ -109,9 +109,9 @@ from haddock.core.supported_molecules import (
     read_residues_from_top_file,
     supported_ATOM,
     supported_HETATM,
-    supported_single_ions_atoms,
-    supported_single_ions_elements,
-    supported_single_ions_resnames,
+    supported_single_ions_atoms_map,
+    supported_single_ions_elements_map,
+    supported_single_ions_resnames_map,
     )
 from haddock.libs.libfunc import chainf
 from haddock.libs.libpdb import (
@@ -632,23 +632,23 @@ def add_charges_to_ions(fhandler):
             # case 1: charge is correctly defined in resname
             # ignore other fields and write them from scratch
             # even if they are already correct
-            if resname in supported_single_ions_resnames:
-                new_atom = supported_single_ions_resnames[resname].atom
+            if resname in supported_single_ions_resnames_map:
+                new_atom = supported_single_ions_resnames_map[resname].atom
                 yield line[:12] + new_atom + line[16:76] + new_atom
                 continue
 
             # case 2: charge is correctly defined in atom name
             # ignore other fields and write them from scratch
             # even if they are already correct
-            if atom in supported_single_ions_atoms:
-                new_resname = supported_single_ions_atoms[atom].resname
+            if atom in supported_single_ions_atoms_map:
+                new_resname = supported_single_ions_atoms_map[atom].resname
                 yield line[:17] + new_resname + line[20:76] + atom
                 continue
 
             # case 3: charge is not defined but atom element is defined
-            if atom in supported_single_ions_elements and atom == resname:
-                new_atom = supported_single_ions_elements[atom].atom
-                new_resname = supported_single_ions_elements[atom].resname
+            if atom in supported_single_ions_elements_map and atom == resname:
+                new_atom = supported_single_ions_elements_map[atom].atom
+                new_resname = supported_single_ions_elements_map[atom].resname
                 wmsg = (
                     "Ion {atom!r} automatically set to charge {charge!r}. "
                     "If this is not intended, please edit the PDB manually."
@@ -780,6 +780,9 @@ def correct_equal_chain_segids(structures):
     """
     Correct for repeated chainID in the input PDB files.
 
+    Repeated chain IDs are replaced by an upper case character (``[A-Z]``)
+    in order.
+
     Parameters
     ----------
     structures : list of lists of str
@@ -791,20 +794,30 @@ def correct_equal_chain_segids(structures):
         The new structures.
     """
     _all_chains = (read_chainids(s) for s in structures)
+    # set of all chain IDs present in the input PDBs
     all_chain_ids = set(it.chain.from_iterable(_all_chains))
-    remaining_chars = it.cycle(set(_upper_case).difference(all_chain_ids))
+
+    # the remaining available chain characters are the A-Z minus the
+    # `all_chain_ids`
+    remaining_chars = \
+        it.cycle(sorted(set(_upper_case).difference(all_chain_ids)))
 
     chain_ids = []
     new_structures = []
     for lines in structures:
         new_lines = None
+
+        # read chain IDs from the structure
         chain_id = read_chainids(lines)
 
+        # if chain_id is repeated
         if chain_id in chain_ids:
             new_lines = list(chainf(
                 lines,
-                [
+                *[
+                    # change the chain ID by a new one
                     partial(pdb_chain.run, chain_id=next(remaining_chars)),
+                    # applies chain ID to seg ID as well
                     pdb_chainxseg.run,
                     ],
                 ))

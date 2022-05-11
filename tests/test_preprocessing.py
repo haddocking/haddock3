@@ -138,3 +138,58 @@ def test_check_models_wrong_3():
     with pytest.raises(pp.ModelsDifferError) as error:
         pp.models_should_have_the_same_labels(_lines)
     assert str(error.value) == "MODEL 3 differs from MODEL 1."
+
+
+rep_chains_1 = [
+    [
+        'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  ',
+        'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  ',
+        'ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  ',
+        ],
+    [
+        'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  ',
+        'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  ',
+        'ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  ',
+        ],
+    ]
+
+expected_rep_chains_1 = [
+    [
+        'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  ',
+        'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  ',
+        'ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  ',
+        ],
+    [
+        'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00      A    C  ',
+        'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00      A    C  ',
+        'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00      A    C  ',
+        ],
+    ]
+
+rep_chains_no_rep = [
+    [
+        'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00           C  ',
+        'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00           C  ',
+        'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00           C  ',
+        ],
+    [
+        'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  ',
+        'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  ',
+        'ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  ',
+        ],
+    ]
+
+
+@pytest.mark.parametrize(
+    'in_, expected',
+    [
+        (rep_chains_1, expected_rep_chains_1),
+        (rep_chains_no_rep, rep_chains_no_rep),
+        ],
+    )
+def test_correct_equal_chain_segids(in_, expected):
+    result = pp.correct_equal_chain_segids(in_)
+
+    # made for loop to facilitate visualization of errors
+    for r, e in zip(result, expected):
+        assert r == e

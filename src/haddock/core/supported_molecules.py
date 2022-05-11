@@ -372,6 +372,15 @@ supported_fragments_resnames = set(_supported_fragments_resnames)
 supported_hemes_resnames = set(_supported_hemes_resnames)
 """Supported Hemes."""
 
+supported_single_ions_resnames_map = _supported_single_ions_resnames
+"""Supported single ion resname mapping."""
+
+supported_single_ions_elements_map = _supported_single_ions_elements
+"""Supported single ions elements mapping."""
+
+supported_single_ions_atoms_map = _supported_single_ions_atoms
+"""Supported single ion atom names mapping."""
+
 supported_single_ions_resnames = set(_supported_single_ions_resnames)
 """Supported single residue names."""
 

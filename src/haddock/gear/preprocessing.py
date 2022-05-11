@@ -325,22 +325,22 @@ def process_pdbs(
         replace_HID_to_HIS,
         replace_HIE_to_HIS,
         add_charges_to_ions,
-        #partial(
-        #    convert_ATOM_to_HETATM,
-        #    residues=set.union(
-        #        supported_HETATM,
-        #        user_supported_residues or set(),
-        #        ),
-        #    ),
-        #convert_HETATM_to_ATOM,
-        #partial(wrep_pdb_fixinsert, option_list=[]),
+        partial(
+            convert_ATOM_to_HETATM,
+            residues=set.union(
+                supported_HETATM,
+                user_supported_residues or set(),
+                ),
+            ),
+        convert_HETATM_to_ATOM,
+        partial(wrep_pdb_fixinsert, option_list=[]),
         ####
-        #partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
-        #partial(remove_unsupported_atom),
+        partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
+        partial(remove_unsupported_atom),
         ###
-        #partial(wrep_pdb_reres, starting_resid=1),
-        #partial(wrep_pdb_reatom, starting_value=1),
-        #partial(wrep_pdb_tidy, strict=True),
+        partial(wrep_pdb_reres, starting_resid=1),
+        partial(wrep_pdb_reatom, starting_value=1),
+        partial(wrep_pdb_tidy, strict=True),
         ##
         wrep_rstrip,
         ]

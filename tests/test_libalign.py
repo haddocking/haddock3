@@ -1,14 +1,21 @@
 """Test the libalign library."""
+import os
+import tempfile
 from pathlib import Path
 
 import numpy as np
 
 from haddock.libs.libalign import (
+    align_seq,
     calc_rmsd,
     centroid,
+    dump_as_izone,
+    get_align,
     get_atoms,
     kabsch,
     load_coords,
+    make_range,
+    pdb2fastadic,
     )
 
 from . import golden_data
@@ -173,3 +180,234 @@ def test_load_coords():
     expected_chain_ranges = {"B": (0, 19)}
 
     assert observed_chain_ranges == expected_chain_ranges
+
+
+def test_get_atoms():
+    """Test the identification of atoms."""
+    pdb_list = [
+        Path(golden_data, "protein.pdb"),
+        Path(golden_data, "dna.pdb"),
+        Path(golden_data, "ligand.pdb"),
+        ]
+    observed_atom_dic = get_atoms(pdb_list)
+    expected_atom_dic = {
+        "ALA": ["C", "N", "CA", "O"],
+        "ARG": ["C", "N", "CA", "O"],
+        "ASN": ["C", "N", "CA", "O"],
+        "ASP": ["C", "N", "CA", "O"],
+        "CYS": ["C", "N", "CA", "O"],
+        "GLN": ["C", "N", "CA", "O"],
+        "GLU": ["C", "N", "CA", "O"],
+        "GLY": ["C", "N", "CA", "O"],
+        "HIS": ["C", "N", "CA", "O"],
+        "ILE": ["C", "N", "CA", "O"],
+        "LEU": ["C", "N", "CA", "O"],
+        "LYS": ["C", "N", "CA", "O"],
+        "MET": ["C", "N", "CA", "O"],
+        "PHE": ["C", "N", "CA", "O"],
+        "PRO": ["C", "N", "CA", "O"],
+        "SER": ["C", "N", "CA", "O"],
+        "THR": ["C", "N", "CA", "O"],
+        "TRP": ["C", "N", "CA", "O"],
+        "TYR": ["C", "N", "CA", "O"],
+        "VAL": ["C", "N", "CA", "O"],
+        "DA": [
+            "C5",
+            "N9",
+            "N2",
+            "C8",
+            "O2",
+            "N4",
+            "N7",
+            "C7",
+            "N1",
+            "N6",
+            "C2",
+            "O4",
+            "C6",
+            "N3",
+            "C4",
+            "O6",
+            ],
+        "DC": [
+            "C5",
+            "N9",
+            "N2",
+            "C8",
+            "O2",
+            "N4",
+            "N7",
+            "C7",
+            "N1",
+            "N6",
+            "C2",
+            "O4",
+            "C6",
+            "N3",
+            "C4",
+            "O6",
+            ],
+        "DT": [
+            "C5",
+            "N9",
+            "N2",
+            "C8",
+            "O2",
+            "N4",
+            "N7",
+            "C7",
+            "N1",
+            "N6",
+            "C2",
+            "O4",
+            "C6",
+            "N3",
+            "C4",
+            "O6",
+            ],
+        "DG": [
+            "C5",
+            "N9",
+            "N2",
+            "C8",
+            "O2",
+            "N4",
+            "N7",
+            "C7",
+            "N1",
+            "N6",
+            "C2",
+            "O4",
+            "C6",
+            "N3",
+            "C4",
+            "O6",
+            ],
+        "G39": [
+            "C1",
+            "O1A",
+            "O1B",
+            "C2",
+            "C3",
+            "C4",
+            "N4",
+            "C5",
+            "N5",
+            "C6",
+            "C7",
+            "O7",
+            "C8",
+            "C9",
+            "C10",
+            "O10",
+            "C11",
+            "C81",
+            "C82",
+            "C91",
+            ],
+        }
+
+    assert observed_atom_dic == expected_atom_dic
+
+
+def test_pdb2fastadic():
+    """Test the generation of the fastadic."""
+    protein_f = Path(golden_data, "protein.pdb")
+    dna_f = Path(golden_data, "dna.pdb")
+    ligand_f = Path(golden_data, "ligand.pdb")
+
+    observed_prot_fastadic = pdb2fastadic(protein_f)
+    expected_prot_fastadic = {"B": {1: "M", 2: "F", 3: "Q", 4: "Q", 5: "E"}}
+
+    assert observed_prot_fastadic == expected_prot_fastadic
+
+    observed_dna_fastadic = pdb2fastadic(dna_f)
+    expected_dna_fastadic = {
+        "B": {
+            1: "A",
+            2: "G",
+            3: "T",
+            4: "A",
+            5: "C",
+            28: "A",
+            29: "A",
+            30: "G",
+            31: "T",
+            32: "T",
+            }
+        }
+
+    assert observed_dna_fastadic == expected_dna_fastadic
+
+    observed_ligand_fastadic = pdb2fastadic(ligand_f)
+    expected_ligand_fastadic = {"B": {500: "X"}}
+
+    assert observed_ligand_fastadic == expected_ligand_fastadic
+
+
+def test_get_align():
+    """Test the selection of the align function."""
+    align_func = get_align(method="sequence")
+    assert callable(align_func)
+
+    align_func = get_align(method="structure", **{"lovoalign_exec": ""})
+    assert callable(align_func)
+
+
+# Need dependency to test this
+# def test_align_strct():
+#     pass
+
+
+def test_align_seq():
+    """Test the sequence alignment."""
+    ref = Path(golden_data, "protein.pdb")
+    mod = Path(golden_data, "protein_renumb.pdb")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+
+        observed_numb_dic = align_seq(ref, mod, tmpdirname)
+        expected_numb_dic = {"B": {101: 1, 102: 2, 110: 3, 112: 5}}
+
+        assert observed_numb_dic == expected_numb_dic
+
+        expected_aln_f = Path(tmpdirname, "blosum62_B.aln")
+
+        assert expected_aln_f.exists()
+
+        observed_aln = open(expected_aln_f).readlines()
+        expected_aln = [
+            f"MFQQE{os.linesep}",
+            f"|||-|{os.linesep}",
+            f"MFQ-E{os.linesep}",
+            ]
+
+        assert observed_aln == expected_aln
+
+
+def test_make_range():
+    """Test the expansion of a chain dic into ranges."""
+    chain_range_dic = {"A": [1, 2, 4], "B": [100, 110, 200]}
+    observed_range_dic = make_range(chain_range_dic)
+    expected_range_dic = {"A": (1, 4), "B": (100, 200)}
+    assert observed_range_dic == expected_range_dic
+
+
+def test_dump_as_izone():
+    """Test the generation of .izone file."""
+    numb_dic = {"B": {1: 101, 2: 102, 3: 110, 5: 112}}
+    with tempfile.NamedTemporaryFile() as fp:
+
+        dump_as_izone(fp.name, numb_dic)
+
+        assert Path(fp.name).stat().st_size != 0
+
+        observed_izone = open(fp.name).readlines()
+        expected_izone = [
+            f"ZONE B1:B101{os.linesep}",
+            f"ZONE B2:B102{os.linesep}",
+            f"ZONE B3:B110{os.linesep}",
+            f"ZONE B5:B112{os.linesep}",
+            ]
+
+        assert observed_izone == expected_izone

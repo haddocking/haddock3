@@ -1,5 +1,22 @@
 
-"""library of functions to perform sequence and structural alignments."""
+"""
+Library of functions to perform sequence and structural alignments.
+
+Main functions
+--------------
+
+* :py:func:`calc_rmsd`
+* :py:func:`centroid`
+* :py:func:`kabsch`
+* :py:func:`load_coords`
+* :py:func:`pdb2fastadic`
+* :py:func:`get_atoms`
+* :py:func:`get_align`
+* :py:func:`align_struct`
+* :py:func:`align_seq`
+* :py:func:`make_range`
+* :py:func:`dump_as_izone`
+"""
 import os
 import shlex
 import subprocess
@@ -74,14 +91,35 @@ class ALIGNError(Exception):
 
 
 def calc_rmsd(V, W):
-    """Calculate the RMSD from two vectors."""
+    """
+    Calculate the RMSD from two vectors.
+    
+    Parameters
+    ----------
+    V : np.array dtype=float, ndims=(n_atoms,3)
+    W : np.array dtype=float, ndims=(n_atoms,3)
+    Returns
+    -------
+    rmsd : float
+    """
     diff = np.array(V) - np.array(W)
     N = len(V)
-    return np.sqrt((diff * diff).sum() / N)
+    rmsd = np.sqrt((diff * diff).sum() / N)
+    return rmsd
 
 
 def kabsch(P, Q):
-    """Find the rotation matrix using Kabsch algorithm."""
+    """
+    Find the rotation matrix using Kabsch algorithm.
+    
+    Parameters
+    ----------
+    P : np.array dtype=float, ndims=(n_atoms,3)
+    Q : np.array dtype=float, ndims=(n_atoms,3)
+    Returns
+    -------
+    U : np.array dtype=float, ndims=(3,3)
+    """
     # Covariance matrix
     P = np.array(P)
     Q = np.array(Q)
@@ -98,13 +136,41 @@ def kabsch(P, Q):
 
 
 def centroid(X):
-    """Get the centroid."""
+    """
+    Get the centroid.
+    
+    Parameters
+    ----------
+    X : np.array dtype=float, ndims=(n_atoms,3)
+    Returns
+    -------
+    C : np.array dtype=float, ndims=(3)
+    """
     X = np.array(X)
-    return X.mean(axis=0)
+    C = X.mean(axis=0)
+    return C
 
 
 def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
-    """Load coordinates from PDB."""
+    """
+    Load coordinates from PDB.
+    
+    Parameters
+    ----------
+    pdb_f : PDBFile
+    atoms : dict
+        dictionary of atoms
+    filter_resdic : dict
+        dictionary of residues to be loaded (one list per chain)
+    numbering_dic : dict
+        dict of numbering dictionaries (one dictionary per chain)
+    Returns
+    -------
+    coord_dic : dict
+        dictionary of coordinates (one per chain)
+    chain_ranges: dict
+        dictionary of chain ranges
+    """
     coord_dic = {}
     chain_dic = {}
     idx = 0
@@ -161,7 +227,18 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
 
 
 def get_atoms(pdb_list):
-    """Identify what is the molecule type of each PDB."""
+    """
+    Identify what is the molecule type of each PDB.
+    
+    Parameters
+    ----------
+    pdb_list : list
+        list of PDBFile objects
+    Returns
+    -------
+    atom_dic : dict
+        dictionary of atoms
+    """
     atom_dic = {}
     atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
@@ -196,7 +273,17 @@ def get_atoms(pdb_list):
 
 
 def pdb2fastadic(pdb_f):
-    """Write the sequence as a fasta."""
+    """
+    Write the sequence as a fasta.
+    
+    Parameters
+    ----------
+    pdb_f : PDBFile
+    Returns
+    -------
+    seq_dic : dict
+        dict of fasta sequences (one per chain)
+    """
     res_codes = dict(
         [
             ("CYS", "C"),
@@ -245,22 +332,52 @@ def pdb2fastadic(pdb_f):
 
 
 def get_align(method, **kwargs):
-    """Get the alignment function."""
+    """
+    Get the alignment function.
+    
+    Parameters
+    ----------
+    method : str
+    **kwargs : dict
+        dictionary of keyword arguments
+    Returns
+    -------
+    align_func : functools.partial
+        desired alignment function
+    """
     log.info(f"Using {method} alignment")
     if method == "structure":
-        return partial(align_strct, lovoalign_exec=kwargs["lovoalign_exec"])
+        align_func = partial(
+            align_strct,
+            lovoalign_exec=kwargs["lovoalign_exec"]
+            )
     elif method == "sequence":
-        return partial(align_seq)
+        align_func = partial(align_seq)
     else:
         available_alns = ("sequence", "structure")
         raise ValueError(
             f"Alignment method {method!r} not recognized. "
             f"Available options are {', '.join(available_alns)}"
             )
+    return align_func
 
 
 def align_strct(reference, model, output_path, lovoalign_exec=None):
-    """Structuraly align and get numbering relationship."""
+    """
+    Structuraly align and get numbering relationship.
+    
+    Parameters
+    ----------
+    reference : PDBFile
+    model : PDBFile
+    output_path : Path
+    lovoalign_exec : Path
+        lovoalign executable
+    Returns
+    ----------
+    numbering_dic : dict
+        dict of numbering dictionaries (one dictionary per chain)
+    """
     if lovoalign_exec is None:
         log.error(
             "Structural alignment needs LovoAlign "
@@ -391,7 +508,19 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
 
 
 def align_seq(reference, model, output_path):
-    """Sequence align and get the numbering relationship."""
+    """
+    Sequence align and get the numbering relationship.
+    
+    Parameters
+    ----------
+    reference : PDBFile
+    model : PDBFile
+    output_path : Path
+    Returns
+    -------
+    align_dic : dict
+        dictionary of sequence alignments (one per chain)
+    """
     seqdic_ref = pdb2fastadic(reference)
     seqdic_model = pdb2fastadic(model)
 
@@ -480,7 +609,18 @@ def align_seq(reference, model, output_path):
 
 
 def make_range(chain_range_dic):
-    """Expand a chain dictionary into ranges."""
+    """
+    Expand a chain dictionary into ranges.
+    
+    Parameters
+    ----------
+    chain_range_dic : dict
+        dictionary of chain indexes (one list per chain)
+    Returns
+    -------
+    chain_ranges : dict
+        dictionary of chain ranges (one tuple per chain)
+    """
     chain_ranges = {}
     for chain in chain_range_dic:
         min_idx = min(chain_range_dic[chain])
@@ -490,7 +630,16 @@ def make_range(chain_range_dic):
 
 
 def dump_as_izone(fname, numbering_dic):
-    """Dump the numbering dictionary as .izone."""
+    """
+    Dump the numbering dictionary as .izone.
+    
+    Parameters
+    ----------
+    fname : str
+        output filename
+    numbering_dic : dict
+        dict of numbering dictionaries (one dictionary per chain)
+    """
     # FIXME: Collapse the izones so its faster to load in profit
     with open(fname, "w") as fh:
         for chain in numbering_dic:

@@ -93,11 +93,12 @@ class ALIGNError(Exception):
 def calc_rmsd(V, W):
     """
     Calculate the RMSD from two vectors.
-    
+
     Parameters
     ----------
-    V : np.array dtype=float, ndims=(n_atoms,3)
-    W : np.array dtype=float, ndims=(n_atoms,3)
+    V : np.array dtype=float, shape=(n_atoms,3)
+    W : np.array dtype=float, shape=(n_atoms,3)
+
     Returns
     -------
     rmsd : float
@@ -111,14 +112,15 @@ def calc_rmsd(V, W):
 def kabsch(P, Q):
     """
     Find the rotation matrix using Kabsch algorithm.
-    
+
     Parameters
     ----------
-    P : np.array dtype=float, ndims=(n_atoms,3)
-    Q : np.array dtype=float, ndims=(n_atoms,3)
+    P : np.array dtype=float, shape=(n_atoms,3)
+    Q : np.array dtype=float, shape=(n_atoms,3)
+
     Returns
     -------
-    U : np.array dtype=float, ndims=(3,3)
+    U : np.array dtype=float, shape=(3,3)
     """
     # Covariance matrix
     P = np.array(P)
@@ -138,13 +140,14 @@ def kabsch(P, Q):
 def centroid(X):
     """
     Get the centroid.
-    
+
     Parameters
     ----------
-    X : np.array dtype=float, ndims=(n_atoms,3)
+    X : np.array dtype=float, shape=(n_atoms,3)
+
     Returns
     -------
-    C : np.array dtype=float, ndims=(3)
+    C : np.array dtype=float, shape=(3,)
     """
     X = np.array(X)
     C = X.mean(axis=0)
@@ -154,20 +157,25 @@ def centroid(X):
 def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
     """
     Load coordinates from PDB.
-    
+
     Parameters
     ----------
     pdb_f : PDBFile
+
     atoms : dict
         dictionary of atoms
+
     filter_resdic : dict
         dictionary of residues to be loaded (one list per chain)
+
     numbering_dic : dict
         dict of numbering dictionaries (one dictionary per chain)
+
     Returns
     -------
     coord_dic : dict
         dictionary of coordinates (one per chain)
+
     chain_ranges: dict
         dictionary of chain ranges
     """
@@ -229,11 +237,12 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
 def get_atoms(pdb_list):
     """
     Identify what is the molecule type of each PDB.
-    
+
     Parameters
     ----------
     pdb_list : list
-        list of PDBFile objects
+        list of PDBFile objects (:py:class:`haddock.libs.libontology.PDBFile`).
+
     Returns
     -------
     atom_dic : dict
@@ -275,10 +284,11 @@ def get_atoms(pdb_list):
 def pdb2fastadic(pdb_f):
     """
     Write the sequence as a fasta.
-    
+
     Parameters
     ----------
-    pdb_f : PDBFile
+    pdb_f : :py:class:`haddock.libs.libontology.PDBFile`
+
     Returns
     -------
     seq_dic : dict
@@ -334,12 +344,15 @@ def pdb2fastadic(pdb_f):
 def get_align(method, **kwargs):
     """
     Get the alignment function.
-    
+
     Parameters
     ----------
     method : str
+        Available options: ``sequence`` and ``structure``.
+
     **kwargs : dict
         dictionary of keyword arguments
+
     Returns
     -------
     align_func : functools.partial
@@ -365,16 +378,20 @@ def get_align(method, **kwargs):
 def align_strct(reference, model, output_path, lovoalign_exec=None):
     """
     Structuraly align and get numbering relationship.
-    
+
     Parameters
     ----------
-    reference : PDBFile
-    model : PDBFile
+    reference : :py:class:`haddock.libs.libontology.PDBFile`
+
+    model : :py:class:`haddock.libs.libontology.PDBFile`
+
     output_path : Path
+
     lovoalign_exec : Path
         lovoalign executable
+
     Returns
-    ----------
+    -------
     numbering_dic : dict
         dict of numbering dictionaries (one dictionary per chain)
     """
@@ -510,12 +527,15 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
 def align_seq(reference, model, output_path):
     """
     Sequence align and get the numbering relationship.
-    
+
     Parameters
     ----------
-    reference : PDBFile
-    model : PDBFile
+    reference : :py:class:`haddock.libs.libontology.PDBFile`
+
+    model : :py:class:`haddock.libs.libontology.PDBFile`
+
     output_path : Path
+
     Returns
     -------
     align_dic : dict
@@ -611,11 +631,12 @@ def align_seq(reference, model, output_path):
 def make_range(chain_range_dic):
     """
     Expand a chain dictionary into ranges.
-    
+
     Parameters
     ----------
     chain_range_dic : dict
         dictionary of chain indexes (one list per chain)
+
     Returns
     -------
     chain_ranges : dict
@@ -632,11 +653,12 @@ def make_range(chain_range_dic):
 def dump_as_izone(fname, numbering_dic):
     """
     Dump the numbering dictionary as .izone.
-    
+
     Parameters
     ----------
     fname : str
         output filename
+
     numbering_dic : dict
         dict of numbering dictionaries (one dictionary per chain)
     """

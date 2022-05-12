@@ -6,6 +6,7 @@ Here, you will find documentation for general haddock3 functionalities.
 .. toctree::
    :maxdepth: 1
 
+   libalign
    libcli
    libcns
    libfunc

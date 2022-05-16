@@ -41,7 +41,9 @@ class HaddockModule(BaseHaddockModule):
         contact_executable = Path(FCC_path, self.params['executable'])
 
         # Get the models generated in previous step
-        models_to_cluster = self.previous_io.retrieve_models()
+        models_to_cluster = self.previous_io.retrieve_models(
+            individualize=self.params["individualize"]
+        )
 
         # Calculate the contacts for each model
         log.info('Calculating contacts')

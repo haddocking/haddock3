@@ -63,9 +63,11 @@ class HaddockModule(BaseHaddockModule):
         if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
-
-        models = self.previous_io.retrieve_models()
-
+        
+        models = self.previous_io.retrieve_models(
+            individualize=self.params["individualize"]
+            )
+        
         #  Sort by score
         models.sort()
         best_model_fname = Path(models[0].rel_path)

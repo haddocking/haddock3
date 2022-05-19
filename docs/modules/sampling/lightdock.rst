@@ -5,3 +5,9 @@ LightDock sampling module
    :members:
    :show-inheritance:
    :inherited-members:
+
+Default parameters
+------------------
+
+.. include:: params/lightdock.md
+   :parser: myst_parser.sphinx_

@@ -5,3 +5,9 @@ RMSD matrix calculation module
    :members:
    :show-inheritance:
    :inherited-members:
+
+Default parameters
+------------------
+
+.. include:: params/rmsdmatrix.md
+   :parser: myst_parser.sphinx_

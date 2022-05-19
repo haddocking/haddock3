@@ -7,6 +7,7 @@ import mock
 import sys
 
 
+
 mock_modules = [
     'Bio',
     'Bio.Align',

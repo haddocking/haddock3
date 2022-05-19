@@ -5,3 +5,9 @@ RMSD clustering module
    :members:
    :show-inheritance:
    :inherited-members:
+
+Default parameters
+------------------
+
+.. include:: params/clustrmsd.md
+   :parser: myst_parser.sphinx_

@@ -9,5 +9,4 @@ Select Top Clusters module
 Default parameters
 ------------------
 
-.. include:: params/seletopclusts.md
-   :parser: myst_parser.sphinx_
+.. include:: params/seletopclusts.rst

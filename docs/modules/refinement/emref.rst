@@ -9,5 +9,4 @@ Energy Minimization Refinement module
 Default parameters
 ------------------
 
-.. include:: params/emref.md
-   :parser: myst_parser.sphinx_
+.. include:: params/emref.rst

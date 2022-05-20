@@ -9,5 +9,4 @@ RMSD clustering module
 Default parameters
 ------------------
 
-.. include:: params/clustrmsd.md
-   :parser: myst_parser.sphinx_
+.. include:: params/clustrmsd.rst

@@ -27,13 +27,16 @@ def prepare_yaml_markdown():
     def do_text(name, param):
         """Create text from parameter dictionary."""
         text = [
-            f'**{name}**: {param["default"]!r}  ',
-            f'*type*: {param["type"]}  ',
-            f'*title*: {param["title"]}  ',
-            f'*short*: {param["short"]}  ',
-            f'*long*: {param["long"]}  ',
-            f'*group*: {param["group"]}  ',
-            f'*explevel*: {param["explevel"]}  ',
+            f'{name}',
+            f'{"`" * len(name)}',
+            '',
+            f'| *default*: {param["default"]!r}',
+            f'| *type*: {param["type"]}',
+            f'| *title*: {param["title"]}',
+            f'| *short*: {param["short"]}',
+            f'| *long*: {param["long"]}',
+            f'| *group*: {param["group"]}',
+            f'| *explevel*: {param["explevel"]}',
             '',
             ]
 
@@ -70,9 +73,9 @@ def prepare_yaml_markdown():
     configs = read_all_default_configs_yaml()
 
     for module, params in configs.items():
-        easy = ['## Easy', '']
-        expert = ["## Expert", '']
-        guru = ['## Guru', '']
+        easy = ['Easy', '----', '']
+        expert = ["Expert", '------', '']
+        guru = ['Guru', '----', '']
 
         loop_params(params)
 
@@ -86,8 +89,12 @@ def prepare_yaml_markdown():
             )
         params_folder.mkdir(exist_ok=True)
 
-        doc = easy + expert + guru
-        with open(Path(params_folder, f'{module}.md'), 'w') as fout:
+        doc = []
+        for list_ in (easy, expert, guru):
+            if len(list_) > 4:
+                doc.extend(list_)
+
+        with open(Path(params_folder, f'{module}.rst'), 'w') as fout:
             fout.write(os.linesep + os.linesep)
             fout.write(os.linesep.join(doc))
 

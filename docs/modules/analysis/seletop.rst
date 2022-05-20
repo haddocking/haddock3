@@ -9,5 +9,4 @@ Select Top Modules module
 Default parameters
 ------------------
 
-.. include:: params/seletop.md
-   :parser: myst_parser.sphinx_
+.. include:: params/seletop.rst

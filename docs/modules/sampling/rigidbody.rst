@@ -1,9 +1,6 @@
 Rigidbody sampling module
 =========================
 
-sometext
-other line
-
 .. automodule:: haddock.modules.sampling.rigidbody
    :members:
    :show-inheritance:
@@ -12,5 +9,4 @@ other line
 Default parameters
 ------------------
 
-.. include:: params/rigidbody.md
-   :parser: myst_parser.sphinx_
+.. include:: params/rigidbody.rst

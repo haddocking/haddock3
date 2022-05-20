@@ -9,5 +9,4 @@ MD Scoring module
 MD Scoring default parameters
 -----------------------------
 
-.. include:: params/mdscoring.md
-   :parser: myst_parser.sphinx_
+.. include:: params/mdscoring.rst

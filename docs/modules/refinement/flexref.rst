@@ -9,5 +9,4 @@ Flexible Refinement module
 Default parameters
 ------------------
 
-.. include:: params/flexref.md
-   :parser: myst_parser.sphinx_
+.. include:: params/flexref.rst

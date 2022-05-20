@@ -9,5 +9,4 @@ LightDock sampling module
 Default parameters
 ------------------
 
-.. include:: params/lightdock.md
-   :parser: myst_parser.sphinx_
+.. include:: params/lightdock.rst

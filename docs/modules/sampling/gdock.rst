@@ -9,5 +9,4 @@ Gdock sampling module
 Default parameters
 ------------------
 
-.. include:: params/gdock.md
-   :parser: myst_parser.sphinx_
+.. include:: params/gdock.rst

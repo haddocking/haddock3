@@ -9,5 +9,4 @@ Water Refinement module
 Default parameters
 ------------------
 
-.. include:: params/mdref.md
-   :parser: myst_parser.sphinx_
+.. include:: params/mdref.rst

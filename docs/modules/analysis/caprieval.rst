@@ -9,5 +9,4 @@ CAPRI evaluation module
 Default parameters
 ------------------
 
-.. include:: params/caprieval.md
-   :parser: myst_parser.sphinx_
+.. include:: params/caprieval.rst

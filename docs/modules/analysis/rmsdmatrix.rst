@@ -9,5 +9,4 @@ RMSD matrix calculation module
 Default parameters
 ------------------
 
-.. include:: params/rmsdmatrix.md
-   :parser: myst_parser.sphinx_
+.. include:: params/rmsdmatrix.rst

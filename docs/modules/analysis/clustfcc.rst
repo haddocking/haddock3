@@ -9,5 +9,4 @@ Cluster FCC Module
 Default parameters
 ------------------
 
-.. include:: params/clistfcc.md
-   :parser: myst_parser.sphinx_
+.. include:: params/clustfcc.rst

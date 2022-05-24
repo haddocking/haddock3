@@ -32,8 +32,8 @@ In the `examples/` folder you find several examples for you to test and
 learn HADDOCK3. Additional information is in the documentation pages.
 
 ```bash
-cd examples/recipes/scoring/
-haddock3 scoring.toml
+cd examples/scoring/
+haddock3 emscoring-test.cfg
 ```
 
 ## 3. Contribute

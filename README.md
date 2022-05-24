@@ -1,4 +1,4 @@
-Welcome HADDPCK3-Beta version
+Welcome to the HADDOCK3-Beta version
 
 The `main` branch represents the latest state of HADDOCK v3. Currently,
 stable beta version.

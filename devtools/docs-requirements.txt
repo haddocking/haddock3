@@ -4,3 +4,4 @@ sphinx-argparse
 CommonMark
 mock
 myst-parser
+jsonpickle

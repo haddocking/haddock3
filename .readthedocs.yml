@@ -19,7 +19,9 @@ formats: all
 python:
    version: 3.9
    install:
-      - requirements: devtools/docs-requirements.txt
+      - requirements:
+            - devtools/docs-requirements.txt
+            - requirements.txt
       - method: pip
         path: .
         extra_requirements:

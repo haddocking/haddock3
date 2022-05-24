@@ -5,7 +5,8 @@ from __future__ import unicode_literals
 import os
 import mock
 import sys
-
+import subprocess
+from pathlib import Path
 
 
 mock_modules = [
@@ -90,3 +91,21 @@ napoleon_use_param = False
 
 # myst options
 myst_heading_anchors = 3
+
+
+# prepare default yaml RST
+# this procedure is not part of the docs configuration for sphinx.
+# it is a quick "hack" to run the script that generates rst files for the
+# default parameters
+
+build_yaml_rst_path = str(Path(
+    Path.cwd().parent,
+    'devtools',
+    'build_defaults_rst.py',
+    ))
+subprocess.run(
+    ['python', build_yaml_rst_path],
+    timeout=60,
+    check=True,
+    capture_output=False,
+    )

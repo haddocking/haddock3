@@ -1,11 +1,7 @@
-# WARNING: The `main` branch is not production-ready
+Welcome HADDPCK3-Beta version
 
-The `main` branch is a prototype of newly refined architecture and it
-does not yet contain the functionalities we have reported previously.
-For a running version of HADDOCK3 please refer to the `alpha1` or the
-release page. However, we won't develop `alpha1` further. Stay tuned for
-new updates on the `main` branch as we are actively working on it.
-Cheers!
+The `main` branch represents the latest state of HADDOCK v3. Currently,
+stable beta version.
 
 * * *
 
@@ -15,9 +11,25 @@ Cheers!
 
 To install HADDOCK3 follow the instructions in the [INSTALL](docs/INSTALL.md) file.
 
+## 2. Documentation
+
+HADDOCK3-beta documentation is not yet hosted online. You need to generate
+it locally. First, install HADDOCK3 and activate the `haddock3` python
+environment. Then, in your terminal window, run:
+
+```bash
+tox -e docs
+```
+
+After, use your favorite browser to open the file
+`dist/docs/index.html`. Navigate around, enjoy, and contribute.
+
 ## 2. Examples
 
 ### 2.1. Basic scoring of an ensemble of 5 structures:
+
+In the `examples/` folder you find several examples for you to test and
+learn HADDOCK3. Additional information is in the documentation pages.
 
 ```bash
 cd examples/recipes/scoring/

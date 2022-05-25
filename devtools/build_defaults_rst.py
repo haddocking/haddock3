@@ -81,7 +81,13 @@ def do_text(name, param, level='`'):
 
 
 def loop_params(config, easy, expert, guru, next_level='`'):
-    """Treat parameters for module."""
+    """
+    Treat parameters for module.
+
+    *Important:* considers that some configuration files can have dictionaries
+    with subparameters. However, there should NOT be more than one level
+    of nesting in the configuration parameter files.
+    """
     # sort parameters by name
     sorted_ = sorted(
         ((k, v) for k, v in config.items()),
@@ -90,8 +96,44 @@ def loop_params(config, easy, expert, guru, next_level='`'):
 
     for name, data in sorted_:
         if isinstance(data, Mapping) and "default" not in data:
-            easy, exertp, guru = loop_params(data, easy, expert, guru)
-            continue
+            explevel = data["explevel"]
+
+            new_title = [name, next_level * len(name), '']
+            if explevel == 'easy':
+                easy.extend(new_title)
+                sublist = easy
+            elif explevel == 'expert':
+                expert.extend(new_title)
+                sublist = explevel
+            elif explevel == 'guru':
+                guru.extend(new_title)
+                sublist = guru
+            elif explevel == 'hidden':
+                continue
+            else:
+                emsg = f'explevel {explevel!r} is not expected'
+                raise AssertionError(emsg)
+
+            data_text = (
+                f'| *title*: {data["title"]}',
+                f'| *short description*: {data["short"]}',
+                f'| *long description*: {data["long"]}',
+                f'| *group*: {data["group"]}',
+                f'| *explevel*: {data["explevel"]}',
+                '',
+                )
+            sublist.append(os.linesep.join(data_text))
+
+            for name2, param2 in data.items():
+                if isinstance(param2, Mapping):
+                    if next_level == '`':
+                        nlevel = '~'
+                    elif next_level == '~':
+                        nlevel = '>'
+
+
+                    text = do_text(name2, param2, level=nlevel)
+                    sublist.append(text)
 
         elif isinstance(data, Mapping):
             explevel = data["explevel"]

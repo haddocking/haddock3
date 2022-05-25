@@ -13,8 +13,6 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from haddock import haddock3_repository_path, haddock3_source_path
-#from haddock.modules import modules_category
-#from haddock.modules.util import read_all_default_configs_yaml
 from haddock.libs.libio import read_from_yaml
 
 
@@ -51,7 +49,7 @@ def main():
 
     general_defaults = Path(haddock3_source_path, 'modules', 'defaults.yaml')
     general_params = read_from_yaml(general_defaults)
-    text = build_rst(general_params)
+    text = build_rst(general_params, level='`')
     params_file = Path(
         haddock3_repository_path,
         'docs',
@@ -63,11 +61,11 @@ def main():
         fout.write(text)
 
 
-def do_text(name, param):
+def do_text(name, param, level='`'):
     """Create text from parameter dictionary."""
     text = [
         f'{name}',
-        f'{"`" * len(name)}',
+        f'{level * len(name)}',
         '',
         f'| *default*: {param["default"]!r}',
         f'| *type*: {param["type"]}',
@@ -82,7 +80,7 @@ def do_text(name, param):
     return os.linesep.join(text)
 
 
-def loop_params(config, easy, expert, guru):
+def loop_params(config, easy, expert, guru, next_level='`'):
     """Treat parameters for module."""
     # sort parameters by name
     sorted_ = sorted(
@@ -98,7 +96,7 @@ def loop_params(config, easy, expert, guru):
         elif isinstance(data, Mapping):
             explevel = data["explevel"]
 
-            text = do_text(name, data)
+            text = do_text(name, data, level=next_level)
 
             if explevel == 'easy':
                 easy.append(text)
@@ -119,13 +117,20 @@ def loop_params(config, easy, expert, guru):
     return easy, expert, guru
 
 
-def build_rst(module_params):
+def build_rst(module_params, level='-'):
     """Build .rst text."""
-    easy = ['Easy', '----', '']
-    expert = ["Expert", '------', '']
-    guru = ['Guru', '----', '']
+    easy = ['Easy', level * 4, '']
+    expert = ["Expert", level * 6, '']
+    guru = ['Guru', level * 4, '']
 
-    easy, expert, guru = loop_params(module_params, easy, expert, guru)
+    # very ugly implementation, but there are no more cases than this.
+    if level == '-':
+        nlevel = '`'
+    elif level == '`':
+        nlevel = '~'
+
+    easy, expert, guru = \
+        loop_params(module_params, easy, expert, guru, next_level=nlevel)
 
     doc = []
     for list_ in (easy, expert, guru):

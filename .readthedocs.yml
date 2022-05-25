@@ -21,7 +21,6 @@ python:
    install:
       - requirements:
             - devtools/docs-requirements.txt
-            - requirements.txt
       - method: pip
         path: .
         extra_requirements:

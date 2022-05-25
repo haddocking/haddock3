@@ -49,7 +49,7 @@ If you want to contribute to HADDOCK3's development, read the
 HADDOCK3 is an academic project supported by various grants, including the EU
 BioExcel Center of Excellence for Computational Biomolecular Research. HADDOCK3
 is fully open-source and free to download. If you clone this repository and use
-HADDOCK3 for your research, please support us by signing [this Goole
+HADDOCK3 for your research, please support us by signing [this Google
 form][googleform] if you have not yet done so. This will allow us contact you
 when needed for HADDOCK3-related issues, and also provide us a mean to
 demonstrate impact when reporting for grants.

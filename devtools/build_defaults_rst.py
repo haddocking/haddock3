@@ -60,6 +60,24 @@ def main():
     with open(params_file, 'w') as fout:
         fout.write(text)
 
+    mandatory_defaults = Path(haddock3_source_path, 'core', 'mandatory.yaml')
+    mandatory_params = read_from_yaml(mandatory_defaults)
+    for param in mandatory_params:
+        mandatory_params[param]["default"] = "No default assigned, this parameter is mandatory"
+    text = build_rst(mandatory_params, level='`')
+    params_file = Path(
+        haddock3_repository_path,
+        'docs',
+        'reference',
+        'core',
+        'mandatory_parameters.rst',
+        )
+
+    with open(params_file, 'w') as fout:
+        fout.write('Mandatory Parameters' + os.linesep)
+        fout.write('====================' + os.linesep)
+        fout.write(text)
+
 
 def do_text(name, param, level='`'):
     """Create text from parameter dictionary."""
@@ -72,7 +90,7 @@ def do_text(name, param, level='`'):
         f'| *title*: {param["title"]}',
         f'| *short description*: {param["short"]}',
         f'| *long description*: {param["long"]}',
-        f'| *group*: {param["group"]}',
+        f'| *group*: {param.get("group", "No group assigned")}',
         f'| *explevel*: {param["explevel"]}',
         '',
         ]

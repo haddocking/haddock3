@@ -27,9 +27,9 @@ tox -e docs
 `haddock3-docs/index.html`. This will open a local webpage with the complete
 HADDOCK3 documentation. Navigate around, enjoy, and contribute.
 
-## 2. Examples
+## 3. Examples
 
-### 2.1. Basic scoring of an ensemble of 5 structures:
+### 3.1. Basic scoring of an ensemble of 5 structures:
 
 In the `examples/` folder you find several examples for you to test and
 learn HADDOCK3. Additional information is in the documentation pages.
@@ -39,12 +39,12 @@ cd examples/scoring/
 haddock3 emscoring-test.cfg
 ```
 
-## 3. Contribute
+## 4. Contribute
 
 If you want to contribute to HADDOCK3's development, read the
 [CONTRIBUTING](CONTRIBUTING.md) file for instructions.
 
-## 4. Keep in contact and support us
+## 5. Keep in contact and support us
 
 HADDOCK3 is an academic project supported by various grants, including the EU
 BioExcel Center of Excellence for Computational Biomolecular Research. HADDOCK3

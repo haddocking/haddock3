@@ -3,7 +3,7 @@ Implementation of a TOML-like configuration file for HADDOCK3.
 
 HADDOCK3 user configuration files follow TOML syntax plus additional
 features required for HADDOCK3. Therefore, we have implemented our own
-TOML-like parser to accommodate the extra featured needed for HADDOCK3.
+TOML-like parser to accommodate the extra features needed for HADDOCK3.
 
 The most relevant features of HADDOCK3 user configuration files are:
 

@@ -55,9 +55,8 @@ parameters.
     file reader`.
 
 
-To configure each workflow step, you need to define only the parameters
-differing from the module's default values. Hence, HADDOCK3 will use the default
-values for those parameters not specified by the user.
+HADDOCK3 will use the default values for those parameters not specified by the
+user.
 
 To obtain the list of all parameters for each module, you can use the
 ``haddock-cfg`` command-line. For example, to list all parameters from the

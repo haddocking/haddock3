@@ -6,7 +6,7 @@ MD Scoring module
    :show-inheritance:
    :inherited-members:
 
-MD Scoring default parameters
------------------------------
+Default parameters
+------------------
 
 .. include:: params/mdscoring.rst

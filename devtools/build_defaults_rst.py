@@ -203,7 +203,6 @@ def loop_params(config, easy, expert, guru):
                 '',
                 )
             sublist.append(os.linesep.join(data_text))
-            sublist.append('---------')
 
             # create subparameters RST sorted by name
             data_sorted = sorted(
@@ -212,10 +211,12 @@ def loop_params(config, easy, expert, guru):
                 )
             for name2, param2 in data_sorted:
                 if isinstance(param2, Mapping):
-                    text = do_text(name2, param2, level=HEADING.next)
+                    text = do_text(
+                        f'{name}.{name2}',
+                        param2,
+                        level=HEADING.next,
+                        )
                     sublist.append(text)
-
-            sublist.append('---------')
 
         # case for normal parameter
         elif isinstance(data, Mapping):

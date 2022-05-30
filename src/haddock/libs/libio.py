@@ -44,7 +44,7 @@ def write_dic_to_file(
         sep="\t",
         ):
     """
-    Write a dictionary to a file.
+    Create a table from a dictionary.
 
     Parameters
     ----------
@@ -55,10 +55,6 @@ def write_dic_to_file(
     info_header : str
         Header to write before the data.
     """
-    with open(output_fname, 'w') as fout:
-        fout.write(info_header)
-        fout.write(str(data_dict))
-
     header = "\t".join(data_dict.keys())
 
     if info_header:
@@ -91,7 +87,7 @@ def write_nested_dic_to_file(
         sep="\t"
         ):
     """
-    Write a dictionary to a file.
+    Create a table from a nested dictionary.
 
     Parameters
     ----------

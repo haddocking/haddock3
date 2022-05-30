@@ -54,16 +54,16 @@ class RMSD:
             ):
         """
         Initialise RMSD class.
-        
+
         Parameters
         ----------
 
         model_list : list
             List of models
-        
+
         core : int
             index of the current core
-        
+
         npairs : int
             the number of pairs of structures
 
@@ -73,7 +73,7 @@ class RMSD:
         start_mod : int
             the index of the first mobile structure. The class performs npairs
             RMSD calculations starting from the pair (start_ref, start_mod)
-        
+
         output_name : str
             name of the core-specific output file
 
@@ -103,10 +103,12 @@ class RMSD:
             log.info("No filtering dictionary, using all residues")
         self.output_name = output_name
         self.path = path
-        self.atoms = get_atoms(model_list)
+        self.atoms = {}
+        for m in model_list:
+            self.atoms.update(get_atoms(m))
         # data array
         self.data = np.zeros((self.npairs, 3))
-    
+
     def run(self):
         """Run calculations."""
         # initialising the number of pairs
@@ -114,7 +116,7 @@ class RMSD:
         mod = self.start_mod
         nmodels = len(self.model_list)
         for n in range(self.npairs):
-            
+
             ref_coord_dic, _ = load_coords(
                 self.model_list[ref], self.atoms, self.filter_resdic
                 )
@@ -165,7 +167,7 @@ class RMSD:
                 data_str = f"{data[0]:.0f} {data[1]:.0f} {data[2]:.3f}"
                 data_str += os.linesep
                 out_fh.write(data_str)
-                
+
 
 def get_pair(nmodels, idx):
     """Get the pair of structures given the 1D matrix index."""

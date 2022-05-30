@@ -120,7 +120,7 @@ def test_load_coords():
     """Test the loading of coordinates."""
     # pdb_f = protprot_input_list[0]
     pdb_f = Path(golden_data, "protein.pdb")
-    atoms = get_atoms([pdb_f])
+    atoms = get_atoms(pdb_f)
     (
         observed_coord_dic,
         observed_chain_ranges,
@@ -189,7 +189,9 @@ def test_get_atoms():
         Path(golden_data, "dna.pdb"),
         Path(golden_data, "ligand.pdb"),
         ]
-    observed_atom_dic = get_atoms(pdb_list)
+    observed_atom_dic = {}
+    for p in pdb_list:
+        observed_atom_dic.update(get_atoms(p))
     expected_atom_dic = {
         "ALA": ["C", "N", "CA", "O"],
         "ARG": ["C", "N", "CA", "O"],
@@ -347,10 +349,10 @@ def test_pdb2fastadic():
 
 def test_get_align():
     """Test the selection of the align function."""
-    align_func = get_align(method="sequence")
+    align_func = get_align(method="sequence", lovoalign_exec="")
     assert callable(align_func)
 
-    align_func = get_align(method="structure", **{"lovoalign_exec": ""})
+    align_func = get_align(method="structure", lovoalign_exec="")
     assert callable(align_func)
 
 

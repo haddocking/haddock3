@@ -53,7 +53,7 @@ class HeadingController:
         self._idx += 1
 
 
-HEADING = HeadingControler()
+HEADING = HeadingController()
 
 
 # prepare YAML markdown files

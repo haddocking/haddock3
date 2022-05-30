@@ -25,7 +25,7 @@ class HeadingController:
     In HADDOCK3 docs we use the order: '=', '-', '`', '~', '*'.
 
     The first heading tags is taken by the main docs. Therefore,
-    `HeadingControler` manages only from the second ('-') onward.
+    `HeadingController` manages only from the second ('-') onward.
 
     Read more at: https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html#headings
     """  # noqa: E501

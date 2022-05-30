@@ -5,3 +5,8 @@ LightDock sampling module
    :members:
    :show-inheritance:
    :inherited-members:
+
+Default parameters
+------------------
+
+.. include:: params/lightdock.rst

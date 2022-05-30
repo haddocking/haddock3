@@ -1,12 +1,15 @@
 """
-In-house implementation of toml-like variation config files for HADDOCK3.
+Implementation of a TOML-like configuration file for HADDOCK3.
 
-(Likely) It does not implement all features of TOML files, but it does
-implement the toml features needed for HADDOCK3 and, especially, needed
-features for HADDOCK3. The config reader:
+HADDOCK3 user configuration files follow TOML syntax plus additional
+features required for HADDOCK3. Therefore, we have implemented our own
+TOML-like parser to accommodate the extra featured needed for HADDOCK3.
 
-* Accepts repeated keys.
-    * Blocks can have repeated names, for example:
+The most relevant features of HADDOCK3 user configuration files are:
+
+**Accepts repeated keys:** blocks can have repeated names, for example:
+
+.. code:: toml
 
         [topoaa]
         # parameters here...
@@ -23,18 +26,28 @@ features for HADDOCK3. The config reader:
         [caprieval]
         # parameters here...
 
-* Allows in-line comments:
-    `parameter = value # some comment`
+**Allows in-line comments:**
 
-* Allowed values:
-    * strings
-    * numbers
-    * null/none
-    * nan
-    * lists defined in one lines
-    * lists defined in multiple lines (require empty line after the list
-      definition)
-    * datetime.fromisoformat
+.. code:: toml
+
+    [module]
+    parameter = value # some comment
+
+**The following types are implemented**:
+
+* strings
+* numbers
+* null/none
+* ``nan``
+* lists defined in one lines
+* lists defined in multiple lines (require empty line after the list
+  definition)
+* `datetime.fromisoformat`
+
+**To efficiently use this module, see functions:**
+
+* :py:func:`haddock.gear.config_reader.read_config`
+* :py:func:`haddock.gear.config_reader.get_module_name`
 """
 import ast
 import re
@@ -275,9 +288,23 @@ class MultilineListDefinitionError(Exception):
 
 
 # main public API
-def read_config(f):
-    """Parse HADDOCK3 config file to a dictionary."""
-    with open(f, 'r') as fin:
+def read_config(fpath):
+    """
+    Read HADDOCK3 configure file to a dictionary.
+
+    Parameters
+    ----------
+    fpath : str or :external:py:class:`pathlib.Path`
+        Path to user configuration file.
+
+    Returns
+    -------
+    dictionary
+        Representing the user configuration file where first level of
+        keys are the module names. Repeated modules will have a numeric
+        suffix, for example: ``module.1``.
+    """
+    with open(fpath, 'r') as fin:
         return _read_config(fin)
 
 
@@ -290,6 +317,13 @@ def _read_config(fin):
     fin : a openned file content generator
         A generator expressing the content of a file in lines. Cannot be
         a list.
+
+    Returns
+    -------
+    dictionary
+        Representing the user configuration file where first level of
+        keys are the module names. Repeated modules will have a numeric
+        suffix, for example: ``module.1``.
     """
     # main dictionary to store the configuration
     d = {}

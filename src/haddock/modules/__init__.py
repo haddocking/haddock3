@@ -401,7 +401,9 @@ def save_config_ignored(*args, **kwargs):
     """
     Save HADDOCK3 configuration dictionary to user config file.
 
-    Ignores the :py:data:`haddock.modules.non_mandatory_general_parameters_defaults` parameters.
+    Ignores the
+    :py:data:`haddock.modules.non_mandatory_general_parameters_defaults`
+    parameters.
 
     Useful to keep clean versions of the modules' specific parameters.
 

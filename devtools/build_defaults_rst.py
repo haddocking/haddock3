@@ -16,7 +16,7 @@ from haddock import haddock3_repository_path, haddock3_source_path
 from haddock.libs.libio import read_from_yaml
 
 
-class HeadingControler:
+class HeadingController:
     """
     Control headings.
 

@@ -16,23 +16,74 @@ from haddock import haddock3_repository_path, haddock3_source_path
 from haddock.libs.libio import read_from_yaml
 
 
+class HeadingControler:
+    """
+    Control headings.
+
+    reStructured text headings are defined by punctuation characters.
+
+    In HADDOCK3 docs we use the order: '=', '-', '`', '~', '*'.
+
+    The first heading tags is taken by the main docs. Therefore,
+    `HeadingControler` manages only from the second ('-') onward.
+
+    Read more at: https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html#headings
+    """  # noqa: E501
+
+    def __init__(self):
+        self.title_headings = ['-', '`', '~', '*']
+        self._idx = 0
+
+    @property
+    def next(self):
+        """Give the next heading char."""
+        return self.title_headings[self._idx + 1]
+
+    @property
+    def current(self):
+        """Give the current heading char."""
+        return self.title_headings[self._idx]
+
+    def reset(self):
+        """Reset to the first heading."""
+        self._idx = 0
+
+    def increase(self):
+        """Increase current heading."""
+        self._idx += 1
+
+
+HEADING = HeadingControler()
+
+
 # prepare YAML markdown files
 def main():
     """
     Prepare restructured text files from YAML default configs in modules.
 
-    These files are written to the docs/ folder but not stagged to github.
-    They are used only by Sphinx to generate the HTML documentation pages.
+    These files are written to the 'docs/' folder but not stagged to
+    github. Instead, they are used only by Sphinx to generate the HTML
+    documentation pages.
     """
+    # uses this pattern instead of importing:
+    # from haddock.modules import modules_category
+    # to avoid importing dependencies of the haddock modules packages
     pattern = Path('modules', '*', '*', '*.yaml')
     configs = list(haddock3_source_path.glob(str(pattern)))
 
+    # create RST pages for all modules' configuration files.
     for config in configs:
 
         module_name = config.parents[0].name
         category = config.parents[1].name
         params = read_from_yaml(config)
 
+        # ignore empty modules - currently topocg for example
+        if len(params) == 0:
+            continue
+
+        HEADING.reset()
+        HEADING.increase()
         text = build_rst(params)
 
         params_folder = Path(
@@ -47,9 +98,12 @@ def main():
         with open(Path(params_folder, f'{module_name}.rst'), 'w') as fout:
             fout.write(text)
 
+    # Generate general default parameters RST page
+    HEADING.reset()
+    HEADING.increase()
     general_defaults = Path(haddock3_source_path, 'modules', 'defaults.yaml')
     general_params = read_from_yaml(general_defaults)
-    text = build_rst(general_params, level='`')
+    text = build_rst(general_params)
     params_file = Path(
         haddock3_repository_path,
         'docs',
@@ -60,11 +114,16 @@ def main():
     with open(params_file, 'w') as fout:
         fout.write(text)
 
+    # Generate mandatory parameters RST page
+    HEADING.reset()
     mandatory_defaults = Path(haddock3_source_path, 'core', 'mandatory.yaml')
     mandatory_params = read_from_yaml(mandatory_defaults)
+
     for param in mandatory_params:
-        mandatory_params[param]["default"] = "No default assigned, this parameter is mandatory"
-    text = build_rst(mandatory_params, level='`')
+        mandatory_params[param]["default"] = \
+            "No default assigned, this parameter is mandatory"
+
+    text = build_rst(mandatory_params)
     params_file = Path(
         haddock3_repository_path,
         'docs',
@@ -79,7 +138,7 @@ def main():
         fout.write(text)
 
 
-def do_text(name, param, level='`'):
+def do_text(name, param, level):
     """Create text from parameter dictionary."""
     text = [
         f'{name}',
@@ -98,13 +157,13 @@ def do_text(name, param, level='`'):
     return os.linesep.join(text)
 
 
-def loop_params(config, easy, expert, guru, next_level='`'):
+def loop_params(config, easy, expert, guru):
     """
     Treat parameters for module.
 
-    *Important:* considers that some configuration files can have dictionaries
-    with subparameters. However, there should NOT be more than one level
-    of nesting in the configuration parameter files.
+    *Important:* considers that some configuration files can have
+    dictionaries with subparameters. However, there should NOT be more
+    than one level of nesting in the configuration parameter files.
     """
     # sort parameters by name
     sorted_ = sorted(
@@ -113,16 +172,19 @@ def loop_params(config, easy, expert, guru, next_level='`'):
         )
 
     for name, data in sorted_:
-        if isinstance(data, Mapping) and "default" not in data:
-            explevel = data["explevel"]
 
-            new_title = [name, next_level * len(name), '']
+        # case for nested parameters like `mol1` in topoaa
+        if isinstance(data, Mapping) and "default" not in data:
+
+            explevel = data["explevel"]
+            new_title = [name, HEADING.current * len(name), '']
+
             if explevel == 'easy':
                 easy.extend(new_title)
                 sublist = easy
             elif explevel == 'expert':
                 expert.extend(new_title)
-                sublist = explevel
+                sublist = expert
             elif explevel == 'guru':
                 guru.extend(new_title)
                 sublist = guru
@@ -137,26 +199,29 @@ def loop_params(config, easy, expert, guru, next_level='`'):
                 f'| *short description*: {data["short"]}',
                 f'| *long description*: {data["long"]}',
                 f'| *group*: {data["group"]}',
-                f'| *explevel*: {data["explevel"]}',
+                f'| *explevel*: {explevel}',
                 '',
                 )
             sublist.append(os.linesep.join(data_text))
+            sublist.append('---------')
 
-            for name2, param2 in data.items():
+            # create subparameters RST sorted by name
+            data_sorted = sorted(
+                ((k, v) for k, v in data.items()),
+                key=lambda x: x[0],
+                )
+            for name2, param2 in data_sorted:
                 if isinstance(param2, Mapping):
-                    if next_level == '`':
-                        nlevel = '~'
-                    elif next_level == '~':
-                        nlevel = '>'
-
-
-                    text = do_text(name2, param2, level=nlevel)
+                    text = do_text(name2, param2, level=HEADING.next)
                     sublist.append(text)
 
-        elif isinstance(data, Mapping):
-            explevel = data["explevel"]
+            sublist.append('---------')
 
-            text = do_text(name, data, level=next_level)
+        # case for normal parameter
+        elif isinstance(data, Mapping):
+
+            explevel = data["explevel"]
+            text = do_text(name, data, level=HEADING.current)
 
             if explevel == 'easy':
                 easy.append(text)
@@ -169,6 +234,9 @@ def loop_params(config, easy, expert, guru, next_level='`'):
             else:
                 emsg = f'explevel {explevel!r} is not expected'
                 raise AssertionError(emsg)
+        else:
+            emsg = f'Unexpected parameter behaviour: {name!r}'
+            raise AssertionError(emsg)
 
     easy.append('')
     expert.append('')
@@ -177,20 +245,14 @@ def loop_params(config, easy, expert, guru, next_level='`'):
     return easy, expert, guru
 
 
-def build_rst(module_params, level='-'):
+def build_rst(module_params):
     """Build .rst text."""
-    easy = ['Easy', level * 4, '']
-    expert = ["Expert", level * 6, '']
-    guru = ['Guru', level * 4, '']
+    easy = ['Easy', HEADING.current * 4, '']
+    expert = ["Expert", HEADING.current * 6, '']
+    guru = ['Guru', HEADING.current * 4, '']
 
-    # very ugly implementation, but there are no more cases than this.
-    if level == '-':
-        nlevel = '`'
-    elif level == '`':
-        nlevel = '~'
-
-    easy, expert, guru = \
-        loop_params(module_params, easy, expert, guru, next_level=nlevel)
+    HEADING.increase()
+    easy, expert, guru = loop_params(module_params, easy, expert, guru)
 
     doc = []
     for list_ in (easy, expert, guru):

@@ -11,7 +11,6 @@ from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
 from haddock.gear.config_writer import save_config as _save_config
-from haddock.gear.expandable_parameters import populate_mol_parameters_in_module
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
@@ -203,14 +202,6 @@ class BaseHaddockModule(ABC):
         log.info(f'Running [{self.name}] module')
 
         self.update_params(**params)
-
-        if self._num_of_input_molecules:
-            populate_mol_parameters_in_module(
-                self._params,
-                self._num_of_input_molecules,
-                self._original_params,
-                )
-
         self.add_parent_to_paths()
 
         with working_directory(self.path):

@@ -40,6 +40,7 @@ class BaseCNSModule(BaseHaddockModule):
 
         self.update_params(**params)
 
+        # the `mol_*` parameters exist only for CNS jobs.
         if self._num_of_input_molecules:
             populate_mol_parameters_in_module(
                 self._params,

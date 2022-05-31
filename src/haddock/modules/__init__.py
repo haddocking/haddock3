@@ -11,6 +11,7 @@ from haddock.core.exceptions import ConfigurationError
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
 from haddock.gear.config_writer import save_config as _save_config
+from haddock.gear.expandable_parameters import populate_mol_parameters_in_module
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
@@ -111,6 +112,10 @@ class BaseHaddockModule(ABC):
 
         # instantiate module's parameters
         self._origignal_config_file = params_fname
+        with _not_valid_config():
+            extension = Path(params_fname).suffix
+            self._original_params = config_readers[extension](params_fname)
+
         self._params = {}
         self.update_params(update_from_cfg_file=params_fname)
 
@@ -122,7 +127,7 @@ class BaseHaddockModule(ABC):
     def reset_params(self):
         """Reset parameters to the ones used to instantiate the class."""
         self._params.clear()
-        self.update_params(update_from_cfg_file=self._original_config_file)
+        self.update_params(**self._original_params)
 
     def update_params(self, update_from_cfg_file=None, **params):
         """
@@ -198,6 +203,14 @@ class BaseHaddockModule(ABC):
         log.info(f'Running [{self.name}] module')
 
         self.update_params(**params)
+
+        if self._num_of_input_molecules:
+            populate_mol_parameters_in_module(
+                self._params,
+                self._num_of_input_molecules,
+                self._original_params,
+                )
+
         self.add_parent_to_paths()
 
         with working_directory(self.path):
@@ -253,11 +266,17 @@ class BaseHaddockModule(ABC):
 
     def _load_previous_io(self, filename=MODULE_IO_FILE):
         if self.order == 0:
+            self._num_of_input_molecules = 0
             return ModuleIO()
+
         io = ModuleIO()
         previous_io = Path(self.previous_path(), filename)
+
         if previous_io.is_file():
             io.load(previous_io)
+
+        self._num_of_input_molecules = len(io.output)
+
         return io
 
     def previous_path(self):

@@ -51,7 +51,7 @@ parameters.
     If you are a developer and wish to indagate further, the HADDOCK3
     configuration files follow the TOML syntax. However they are not TOML files.
     HADDOCK3 implements its own parser with additional features not covered by
-    TOML but that were needed for this project. See :ref:`Workflow Configuration
+    TOML but needed for this project. See :ref:`Workflow Configuration
     file reader`.
 
 

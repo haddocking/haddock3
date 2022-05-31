@@ -92,18 +92,24 @@ described inside a step will affect only that step. For example:
         "data/mol2.pdb"
         ]
 
-    # all steps will use at most 40 CPU threads
-    ncores = 40
+    # each .job will produce 5 (or less) models
+    concat = 5
 
     [topoaa]
     autohis = false
 
     [rigidbody]
-    # while rigidbody is blocked to use only 10 CPU threads
-    ncores = 10
     ambig_fname = "data/mol1.tbl"
     sampling = 20
 
+    [caprieval]
+    reference_fname = "data/mol1-mol2.pdb"
+    
+    [flexref]
+    # flexref jobs are bound to generate one model per job
+    concat = 1
+    ambig_fname = "data/mol1.tbl"
+    
     [caprieval]
     reference_fname = "data/mol1-mol2.pdb"
 

@@ -96,10 +96,6 @@ described inside a step will affect only that step. For example:
     mode = "hpc"
     concat = 5
 
-    # all steps will use at most 24 threads
-    # except if specified in the step's params - see 'flexref'
-    ncores = 24
-
     [topoaa]
     autohis = false
 
@@ -114,8 +110,6 @@ described inside a step will affect only that step. For example:
     # flexref jobs are bound to generate one model per job
     # therefore, we can specify the 'concat' parameter specific for flexref
     concat = 1
-    # here, we allow this step to use up to 48 threads
-    ncores = 48
     ambig_fname = "data/mol1.tbl"
     
     [caprieval]

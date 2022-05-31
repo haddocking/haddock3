@@ -108,7 +108,7 @@ described inside a step will affect only that step. For example:
     
     [flexref]
     # flexref jobs are bound to generate one model per job
-    # therefore, we can specify the 'concat' parameter specific for flexref
+    # therefore, we can specify the 'concat' parameter specifically for flexref
     concat = 1
     ambig_fname = "data/mol1.tbl"
     

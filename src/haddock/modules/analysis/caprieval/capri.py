@@ -23,6 +23,7 @@ from haddock.libs.libalign import (
     )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libutil import create_human_readable_table
 
 
 class CAPRI:
@@ -391,7 +392,8 @@ class CAPRI:
 
         output_fname = Path(self.path, self.output_ss_fname)
 
-        write_dic_to_file(data, output_fname)
+        table = create_human_readable_table(data)
+        output_fname.write_text(table)
 
     def run(self):
         """Get the CAPRI metrics."""

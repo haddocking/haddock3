@@ -5,6 +5,8 @@ import re
 import shutil
 import subprocess
 import sys
+import os
+from copy import copy
 from copy import deepcopy
 from functools import partial
 from os import cpu_count
@@ -395,3 +397,39 @@ def extract_keys_recursive(config):
             yield from extract_keys_recursive(value)
         else:
             yield param_name
+
+
+def create_human_readable_table(data, header=None):
+    """
+    Create a human-readable table.
+
+    Returns
+    -------
+    str
+        Table formatted string.
+    """
+    headers = list(data.keys())
+
+    for i, header in enumerate(copy(headers)):
+
+        longest_ = max(len(str(value)) for value in data[header])
+        longest = max(longest_, len(header))
+
+        headers[i] = header.center(longest, " ")
+
+        data[header] = [
+            value_to_str(value).center(longest, " ")
+            for value in data[header]
+            ]
+
+    header_rows = " ".join(headers) + os.linesep
+    rows = [" ".join(values) for values in data.values()]
+    table = header_rows + os.linesep.join(rows)
+    return table
+
+
+def value_to_str(value):
+    if isinstance(value, float):
+        return f"{value:.3f}"
+    else:
+        return str(value)

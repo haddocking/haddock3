@@ -17,6 +17,24 @@ Creates the following table in text::
       value1        value2        value5
       value3        value4        valut6
 
+
+These tables are space-separated values, where the number of spaces
+varies to make proper alignment of the text. If you are using Python,
+you can parse these tables with, for example:
+
+.. code:: python
+
+    import os
+    with open('table', 'r') as fin:
+        lines = fin.read().strip(os.linesep).split(os.linesep)
+        table = [l.split() for l in lines]
+
+    headers = table[0]
+    values = table[1:]
+
+``values`` is a list of lists where each index is a row.
+
+
 See:
 
 * :py:func:`create_human_readable_table`

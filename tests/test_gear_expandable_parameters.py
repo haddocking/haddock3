@@ -686,8 +686,8 @@ def test_get_trail_index(in_, expected):
 def test_populate_mol_parameters():
     d = {"mol_fix_1": 5, "mol_fix_2": 15}
     populate_mol_parameters_in_module(d, 5, {"mol_fix_1": 10})
-    assert d["mol_fix_1"]== 5
-    assert d["mol_fix_2"]== 15
-    assert d["mol_fix_3"]== 10
-    assert d["mol_fix_4"]== 10
-    assert d["mol_fix_5"]== 10
+    assert d["mol_fix_1"] == 5
+    assert d["mol_fix_2"] == 15
+    assert d["mol_fix_3"] == 10
+    assert d["mol_fix_4"] == 10
+    assert d["mol_fix_5"] == 10

@@ -9,12 +9,13 @@ Here, you will find documentation to use HADDOCK3 Gears as a library.
    config_reader
    config_writer
    expandable_parameters
+   extend_run
    greetings
    haddockmodel
    parameters
    prepare_run
+   pretty_table
    restart_run
-   extend_run
    validations
    yaml2cfg
    zerofill

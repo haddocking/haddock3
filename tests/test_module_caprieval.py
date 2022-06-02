@@ -228,10 +228,14 @@ def test_make_output(protprot_caprimodule):
 
     assert ss_fname.stat().st_size != 0
 
+    # this table as only one row
+    textin = Path(ss_fname).read_text()
+    header, body = textin.strip().split(os.linesep, 1)
     # remove the model column since its name will depend on where we are running
-    #  the test
-    observed_outf_l = [e.split()[1:] for e in open(
-        ss_fname).readlines() if not e.startswith('#')]
+    # the test
+    headers = [h.strip() for h in header.split()[1:]]
+    body = [b.strip() for b in body.split()[1:]]
+    observed_outf_l = [headers, body]
     expected_outf_l = [
         ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd', 'dockq',
          'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
@@ -355,12 +359,12 @@ def test_rearrange_ss_capri_output():
     """Test rearranging the capri output."""
     with open(f"{golden_data}/capri_ss_1.tsv", 'w') as fh:
         fh.write(
-            "model	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	"
-            "dockq	cluster-id	cluster-ranking	"
+            "model caprieval_rank score irmsd fnat lrmsd ilrmsd "
+            "dockq cluster-id cluster-ranking "
             "model-cluster-ranking" + os.linesep)
         fh.write(
-            "../1_emscoring/emscoring_909.pdb	1	-424.751	0.000	"
-            "1.000	0.000	0.000	1.000	-	-	-" + os.linesep)
+            "../1_emscoring/emscoring_909.pdb 1 -424.751 0.000 "
+            "1.000 0.000 0.000 1.000 - - -" + os.linesep)
     rearrange_ss_capri_output(
         'capri_ss.txt',
         output_count=1,

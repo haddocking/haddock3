@@ -11,6 +11,10 @@ from fccpy.contacts import get_intermolecular_contacts
 from pdbtools import pdb_segxchain
 
 from haddock import log
+from haddock.gear.pretty_table import (
+    convert_row_to_column_table,
+    create_human_readable_table,
+    )
 from haddock.libs.libalign import (
     AlignError,
     calc_rmsd,
@@ -21,9 +25,7 @@ from haddock.libs.libalign import (
     load_coords,
     make_range,
     )
-from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libutil import create_human_readable_table
 
 
 class CAPRI:
@@ -388,7 +390,7 @@ class CAPRI:
         else:
             data["cluster-id"] = None
             data["cluster-ranking"] = None
-            data["self.model-cluster-ranking"] = None
+            data["model-cluster-ranking"] = None
 
         output_fname = Path(self.path, self.output_ss_fname)
 
@@ -544,7 +546,7 @@ def merge_data(capri_jobs):
         out_file = Path(f"capri_ss_{ident}.tsv")
         if not out_file.exists():
             continue
-        header, content = out_file.read_text().split(os.linesep, 1)
+        header, content = out_file.read_text().strip().split(os.linesep, 1)
 
         header_data = header.split()
         content_data = content.split()
@@ -613,7 +615,7 @@ def rearrange_ss_capri_output(
             data[ident]['score'] = 99999.9
             continue
 
-        header, content = out_file.read_text().split(os.linesep, 1)
+        header, content = out_file.read_text().strip().split(os.linesep, 1)
 
         header_data = header.split()
         content_data = content.split()
@@ -631,7 +633,6 @@ def rearrange_ss_capri_output(
 
         out_file.unlink()
 
-    print(data)
     rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
     rankkey_values.sort(
         key=lambda x: x[1],
@@ -648,7 +649,9 @@ def rearrange_ss_capri_output(
         # This means there were only "dummy" values
         return
     else:
-        write_nested_dic_to_file(data, output_name)
+        data2 = convert_row_to_column_table(data)
+        table = create_human_readable_table(data2)
+        Path(output_name).write_text(table)
 
 
 def calc_stats(data, n):
@@ -790,10 +793,9 @@ def capri_cluster_analysis(
         # This means there were only "dummy" values
         return
     else:
-        write_nested_dic_to_file(
-            output_dic,
-            output_fname,
-            info_header=info_header)
+        data2 = convert_row_to_column_table(output_dic)
+        table = create_human_readable_table(data2, header=info_header)
+        Path(output_fname).write_text(table)
 
 
 class CAPRIError(Exception):

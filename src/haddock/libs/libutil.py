@@ -5,8 +5,6 @@ import re
 import shutil
 import subprocess
 import sys
-import os
-from copy import copy
 from copy import deepcopy
 from functools import partial
 from os import cpu_count
@@ -15,7 +13,6 @@ from pathlib import Path
 from haddock import log
 from haddock.core.exceptions import SetupError
 from haddock.gear.greetings import get_goodbye_help
-from haddock.libs.libontology import PDBFile
 
 
 check_subprocess = partial(
@@ -398,61 +395,3 @@ def extract_keys_recursive(config):
             yield from extract_keys_recursive(value)
         else:
             yield param_name
-
-
-def create_human_readable_table(
-        data,
-        header=None,
-        column_spacing="    ",
-        ):
-    """
-    Create a human-readable table.
-
-    Returns
-    -------
-    str
-        Table formatted string.
-    """
-    headers = list(data.keys())
-    formatted_headers = [None] * len(headers)
-
-    for i, header in enumerate(copy(headers)):
-
-        longest_ = max(
-            len(value_to_str(value))
-            for value in transform_to_list(data[header])
-            )
-        longest = max(longest_, len(header))
-
-        formatted_headers[i] = header.center(longest, " ")
-
-        data[header] = [
-            value_to_str(value).center(longest, " ")
-            for value in transform_to_list(data[header])
-            ]
-
-    header_rows = column_spacing.join(formatted_headers) + os.linesep
-
-    # all columns should have the same lenght
-    num_rows = len(data[headers[0]])
-    rows = [None] * num_rows
-    for i in range(num_rows):
-        rows[i] = []
-        for header in headers:
-            rows[i].append(data[header][i])
-        rows[i] = column_spacing.join(rows[i])
-    table_data = os.linesep.join(rows)
-
-    table = header_rows + table_data + os.linesep
-    return table
-
-
-def value_to_str(value):
-    if isinstance(value, float):
-        return f"{value:.3f}"
-    elif isinstance(value, PDBFile):
-        return str(value.rel_path)
-    elif isinstance(value, Path):
-        return str(value)
-    else:
-        return str(value)

@@ -1,5 +1,5 @@
-Config Reader
-=============
+Workflow Configuration file reader
+==================================
 
 .. automodule:: haddock.gear.config_reader
    :members:

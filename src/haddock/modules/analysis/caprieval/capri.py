@@ -546,8 +546,8 @@ def merge_data(capri_jobs):
             continue
         header, content = out_file.read_text().split(os.linesep, 1)
 
-        header_data = header.split('\t')
-        content_data = content.split('\t')
+        header_data = header.split()
+        content_data = content.split()
 
         model_name = Path(content_data[header_data.index("model")]).name
         capri_dic[model_name] = {}
@@ -615,8 +615,8 @@ def rearrange_ss_capri_output(
 
         header, content = out_file.read_text().split(os.linesep, 1)
 
-        header_data = header.split('\t')
-        content_data = content.split('\t')
+        header_data = header.split()
+        content_data = content.split()
 
         # find out the data type of each field
         for key, value in zip(header_data, content_data):
@@ -631,6 +631,7 @@ def rearrange_ss_capri_output(
 
         out_file.unlink()
 
+    print(data)
     rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
     rankkey_values.sort(
         key=lambda x: x[1],

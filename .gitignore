@@ -141,6 +141,7 @@ tags
 bin/cns
 # ignore generated data of the examples
 examples/*/run*
+examples/*/capriscoring-test/*
 examples/thirdparty/*/run*
 docs/modules/*/params/*.rst
 docs/modules/general_module_params.rst

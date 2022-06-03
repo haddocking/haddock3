@@ -369,6 +369,7 @@ class CAPRI:
         data = {}
         # keep always "model" the first key
         data["model"] = self.model
+        data["md5"] = self.model.md5
         # create the empty rank here so that it will appear
         #  as the second column
         data["caprieval_rank"] = None

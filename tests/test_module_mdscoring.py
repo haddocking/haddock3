@@ -46,9 +46,9 @@ def test_mdscoring_output(output_models):
         output_fname).readlines() if not e.startswith('#')]
     # expected output
     expected_outf_l = [
-        ["structure", "original_name", "score"],
-        ["protprot_complex_1.pdb", "original_name_0.pdb", "42.0"],
-        ["protprot_complex_2.pdb", "original_name_1.pdb", "28.0"]]
+        ["structure", "original_name", "md5", "score"],
+        ["protprot_complex_1.pdb", "original_name_0.pdb", "None", "42.0"],
+        ["protprot_complex_2.pdb", "original_name_1.pdb", "None", "28.0"]]
 
     assert observed_outf_l == expected_outf_l
 

@@ -10,11 +10,13 @@ class ScoringModule(BaseCNSModule):
     def output(self, output_fname, sep="\t"):
         """Save the output in comprehensive tables."""
         # prepares header
-        header = sep.join(("structure", "original_name", "score")) + linesep
+        header = sep.join(
+            ("structure", "original_name", "md5", "score")
+            ) + linesep
 
         # prepares a text generator
         text_generator = (
-            f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.score}"
+            f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.md5}\t{pdb.score}"
             for pdb in self.output_models
             )
 

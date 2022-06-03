@@ -57,6 +57,7 @@ class HaddockModule(ScoringModule):
                 )
             # fill the ori_name field of expected_pdb
             expected_pdb.ori_name = model.file_name
+            expected_pdb.md5 = model.md5
 
             self.output_models.append(expected_pdb)
 
@@ -87,5 +88,5 @@ class HaddockModule(ScoringModule):
         output_fname = "emscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
-        
+
         self.export_output_models(faulty_tolerance=self.params["tolerance"])

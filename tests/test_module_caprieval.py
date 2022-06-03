@@ -233,9 +233,9 @@ def test_make_output(protprot_caprimodule):
     observed_outf_l = [e.split()[1:] for e in open(
         ss_fname).readlines() if not e.startswith('#')]
     expected_outf_l = [
-        ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd', 'dockq',
-         'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
-        ['-', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', '1', '1', '10'], ]
+        ['md5', 'caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
+         'dockq', 'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+        ['-', '-', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', '1', '1', '10'], ]
 
     assert observed_outf_l == expected_outf_l
 

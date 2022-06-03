@@ -374,7 +374,7 @@ def test_rearrange_ss_capri_output():
 
 def test_calc_stats():
     """Test the calculation of statistics."""
-    observed_mean, observed_std = calc_stats([2, 2, 4, 5], 4)
+    observed_mean, observed_std = calc_stats([2, 2, 4, 5])
     assert round_two_dec(observed_mean) == 3.25
     assert round_two_dec(observed_std) == 1.3
 

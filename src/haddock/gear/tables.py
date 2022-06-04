@@ -9,9 +9,9 @@ from copy import copy
 from pathlib import Path
 
 from haddock.core.exceptions import HaddockError
+from haddock.libs.libfunc import is_str_float, is_str_int, nan, none, true
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import transform_to_list
-from haddock.libs.libfunc import true, is_str_int, is_str_float, nan, none
 
 
 class TableFormatError(HaddockError):
@@ -254,7 +254,6 @@ def parse_table_to_data_dict(table_txt, comment="#", sep=None):
         ]
     table_dict = {}
     headers = table[0]
-    print(headers)
     for col_num, header in enumerate(headers):
         table_dict[header] = [str_to_value(line[col_num]) for line in table[1:]]
     return table_dict
@@ -273,7 +272,7 @@ def str_to_value(value, missing_chars=('-',)):
     conversions = [
         (lambda x: x in ("None", "none"), none),
         (lambda x: x in missing_chars, none),
-        (lambda x: x=="nan", nan),
+        (lambda x: x == "nan", nan),
         (is_str_int, int),
         (is_str_float, float),
         (true, str),
@@ -396,7 +395,13 @@ def convert_row_to_column_table(data):
     return data2
 
 
-def convert_sep_to_sep(fname, fout=None, in_sep=None, out_sep="\t", comment="#"):
+def convert_sep_to_sep(
+        fname,
+        fout=None,
+        in_sep=None,
+        out_sep="\t",
+        comment="#",
+        ):
     """
     Convert a text based table from one sep to another.
 

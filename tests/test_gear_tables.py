@@ -1,5 +1,4 @@
 """Test tables gear."""
-# noqa: W291
 from math import isclose, isnan
 from pathlib import Path
 
@@ -8,13 +7,12 @@ import pytest
 from haddock.gear.tables import (
     TableFormatError,
     convert_row_to_column_table,
-    create_adjusted_col_width_table,
-    convert_sep_to_sep,
-    convert_ssc_tsv,
     convert_ssc_csv,
+    convert_ssc_tsv,
+    create_adjusted_col_width_table,
+    format_value,
     parse_table_to_data_dict,
     read_table_to_data_dict,
-    format_value,
     value_to_str,
     )
 from haddock.libs.libontology import PDBFile
@@ -164,6 +162,7 @@ def test_convert_row_table():
     result = convert_row_to_column_table(r)
     assert result == d
 
+
 tsv = """# some comment
 col_name_1\tcol_name_2\tcol_name_3
 value1\tnone\tvalue5
@@ -179,11 +178,9 @@ value7,-,1.2"""
 
 def test_convert_ssc_tsv():
     result = convert_ssc_tsv(adjusted_col_width_table)
-    print(result)
     assert result == tsv
 
 
 def test_convert_ssc_csv():
     result = convert_ssc_csv(adjusted_col_width_table)
-    print(result)
     assert result == csv

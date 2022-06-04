@@ -223,7 +223,7 @@ def test_make_output(protprot_caprimodule):
 
     ss_fname = Path(
         protprot_caprimodule.path,
-        f"capri_ss_{protprot_caprimodule.identificator}.tsv"
+        f"capri_ss_{protprot_caprimodule.identificator}.txt"
         )
 
     assert ss_fname.stat().st_size != 0
@@ -357,7 +357,7 @@ def test_add_chain_from_segid(protprot_caprimodule):
 
 def test_rearrange_ss_capri_output():
     """Test rearranging the capri output."""
-    with open(f"{golden_data}/capri_ss_1.tsv", 'w') as fh:
+    with open(f"{golden_data}/capri_ss_1.txt", 'w') as fh:
         fh.write(
             "model caprieval_rank score irmsd fnat lrmsd ilrmsd "
             "dockq cluster-id cluster-ranking "

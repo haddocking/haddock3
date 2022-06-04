@@ -77,7 +77,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Each job created one .tsv, unify them:
         rearrange_ss_capri_output(
-            output_name="capri_ss.tsv",
+            output_name="capri_ss.txt",
             output_count=len(capri_jobs),
             sort_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
@@ -87,7 +87,7 @@ class HaddockModule(BaseHaddockModule):
         capri_cluster_analysis(
             capri_list=capri_jobs,
             model_list=models,
-            output_fname="capri_clt.tsv",
+            output_fname="capri_clt.txt",
             clt_threshold=self.params["clt_threshold"],
             # output_count=len(capri_jobs),
             sort_key=self.params["sortby"],

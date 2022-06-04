@@ -68,7 +68,7 @@ class CAPRI:
         self.r_chain = params["receptor_chain"]
         self.l_chain = params["ligand_chain"]
         self.model2ref_numbering = None
-        self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
+        self.output_ss_fname = Path(f"capri_ss_{identificator}.txt")
         self.output_clt_fname = Path(f"capri_clt_{identificator}.tsv")
         # for parallelisation
         self.output = self.output_ss_fname
@@ -543,7 +543,7 @@ def merge_data(capri_jobs):
     """Merge CAPRI data."""
     capri_dic = {}
     for ident in range(1, len(capri_jobs) + 1):
-        out_file = Path(f"capri_ss_{ident}.tsv")
+        out_file = Path(f"capri_ss_{ident}.txt")
         if not out_file.exists():
             continue
         header, content = out_file.read_text().strip().split(os.linesep, 1)
@@ -606,7 +606,7 @@ def rearrange_ss_capri_output(
     # Load the information of each intermediate file
     data = {}
     for ident in range(1, output_count + 1):
-        out_file = Path(path, f"{keyword}_{ident}.tsv")
+        out_file = Path(path, f"{keyword}_{ident}.txt")
         data[ident] = {}
 
         # add this dummy data so we can rank it later

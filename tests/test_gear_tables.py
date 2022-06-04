@@ -1,17 +1,25 @@
-"""Test pretty table module."""
+"""Test tables gear."""
 # noqa: W291
+from math import isclose, isnan
 from pathlib import Path
 
 import pytest
 
-from haddock.gear.pretty_table import (
+from haddock.gear.tables import (
     TableFormatError,
     convert_row_to_column_table,
-    create_human_readable_table,
+    create_adjusted_col_width_table,
+    convert_sep_to_sep,
+    convert_ssc_tsv,
+    convert_ssc_csv,
+    parse_table_to_data_dict,
+    read_table_to_data_dict,
     format_value,
     value_to_str,
     )
 from haddock.libs.libontology import PDBFile
+
+from . import adjusted_col_width_table
 
 
 table1 = """col1      col2       col3 
@@ -37,7 +45,7 @@ def test_create_table_1():
     d["col1"] = list(range(4))
     d["col2"] = ["haddock", "is", "amazing", None]
     d["col3"] = [1.001, 123.543, 654.1, 98.999999]
-    result = create_human_readable_table(d)
+    result = create_adjusted_col_width_table(d)
     assert result == table1
 
 
@@ -46,7 +54,7 @@ def test_create_table_2():
     d["col1"] = list(range(4))
     d["col2"] = ["haddock", "is", "amazing", None]
     d["col3"] = [1.001, 123.543, 654.1, 98.999999]
-    result = create_human_readable_table(d, header="# some header")
+    result = create_adjusted_col_width_table(d, header="# some header")
     assert result == table2
 
 
@@ -56,7 +64,7 @@ def test_create_table_error():
     d["col2"] = ["haddock", "is", "amazing", None]
     d["col3"] = [1.001, 123.543, 654.1, 98.999999]
     with pytest.raises(TableFormatError):
-        create_human_readable_table(d)
+        create_adjusted_col_width_table(d)
 
 
 def test_create_table_error_2():
@@ -65,7 +73,39 @@ def test_create_table_error_2():
     d["col2"] = ["haddock", "is", "amazing"]
     d["col3"] = [1.001, 123.543, 654.1, 98.999999]
     with pytest.raises(TableFormatError):
-        create_human_readable_table(d)
+        create_adjusted_col_width_table(d)
+
+
+@pytest.mark.parametrize('table', [table1, table2])
+def test_parse_table(table):
+    d = {}
+    d["col1"] = list(range(4))
+    d["col2"] = ["haddock", "is", "amazing", None]
+    d["col3"] = [1.001, 123.543, 654.1, 99.000]
+    result = parse_table_to_data_dict(table)
+    assert result.keys() == d.keys()
+    assert result["col1"] == d["col1"]
+    assert result["col2"] == d["col2"]
+    assert all(isinstance(v, float) for v in result["col3"])
+    assert all(str(i) == str(j) for i, j in zip(result["col1"], d["col1"]))
+
+
+def test_read_table():
+    d = {}
+    d["col_name_1"] = ["value1", float('nan'), "value7"]
+    d["col_name_2"] = [None, "value4", None]
+    d["col_name_3"] = ["value5", 6, 1.2]
+    result = read_table_to_data_dict(adjusted_col_width_table)
+    assert result.keys() == d.keys()
+    assert result["col_name_1"][0] == "value1"
+    assert isnan(result["col_name_1"][1])
+    assert result["col_name_1"][2] == "value7"
+    assert result["col_name_2"][0] is None
+    assert result["col_name_2"][1] == "value4"
+    assert result["col_name_2"][2] is None
+    assert result["col_name_3"][0] == "value5"
+    assert result["col_name_3"][1] == 6
+    assert isclose(result["col_name_3"][2], 1.2)
 
 
 @pytest.mark.parametrize(
@@ -123,3 +163,27 @@ def test_convert_row_table():
 
     result = convert_row_to_column_table(r)
     assert result == d
+
+tsv = """# some comment
+col_name_1\tcol_name_2\tcol_name_3
+value1\tnone\tvalue5
+nan\tvalue4\t6
+value7\t-\t1.2"""
+
+csv = """# some comment
+col_name_1,col_name_2,col_name_3
+value1,none,value5
+nan,value4,6
+value7,-,1.2"""
+
+
+def test_convert_ssc_tsv():
+    result = convert_ssc_tsv(adjusted_col_width_table)
+    print(result)
+    assert result == tsv
+
+
+def test_convert_ssc_csv():
+    result = convert_ssc_csv(adjusted_col_width_table)
+    print(result)
+    assert result == csv

@@ -11,6 +11,7 @@ from pathlib import Path
 from haddock.core.exceptions import HaddockError
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import transform_to_list
+from haddock.libs.libfunc import true, is_str_int, is_str_float, nan, none
 
 
 class TableFormatError(HaddockError):
@@ -169,7 +170,41 @@ def create_adjusted_col_width_table(
     return table
 
 
-def read_table_to_data_dict(fname, comment="#", sep=" "):
+def read_table_to_data_dict(fname, **kwargs):
+    """
+    Read a table to a data dictionary.
+
+    Parameters
+    ----------
+    fname : str or :external:py:class:`pathlib.Path`
+        Path to the table file.
+
+    kwargs : named parameters
+        As described in
+        :py:func:`haddock.gear.tables.parse_table_to_data_dict`.
+
+    Returns
+    -------
+    dict
+        The data dictionary in the form of:
+
+    .. code:: python
+
+            {
+                "col_name_1": [value1, value3],
+                "col_name_2": [value2, value4],
+                "col_name_3": [value5, value6],
+                }
+
+    See Also
+    --------
+    :py:func:`haddock.gear.tables.parse_table_to_data_dict`
+    """
+    txt = Path(fname).read_text()
+    return parse_table_to_data_dict(txt)
+
+
+def parse_table_to_data_dict(table_txt, comment="#", sep=None):
     """
     Read a adjusted with table to a data dictionary format.
 
@@ -193,27 +228,56 @@ def read_table_to_data_dict(fname, comment="#", sep=" "):
 
     Parameters
     ----------
-    fname : str or :external:py:class:`pathlib.Path`
-        The path to the table file.
+    table_txt : str
+        The string containing the table.
 
     comment : str
         Ignores line starting with comment character. Deafults to ``#``.
 
     sep : str
-        Value separator. Defaults to empty spaces.
+        Value separator. Defaults to ``None``, empty spaces.
 
     See Also
     --------
     :py:func:`haddock.gear.tables.create_adjusted_col_width_table`
+    :py:func:`haddock.gear.tables.read_table_to_data_dict`
     """
-    table_text = Path(fname).read_text()
-    lines = table_text.read().strip(os.linesep).split(os.linesep)
-    table = [line.split(sep) for line in lines if not line.startwith(comment)]
+    lines = table_txt.strip(os.linesep).split(os.linesep)
+    table = [
+        line.split(sep)
+        for line in lines
+        if line and not line.startswith(comment)
+        ]
     table_dict = {}
     headers = table[0]
+    print(headers)
     for col_num, header in enumerate(headers):
-        table_dict[header] = [line[col_num] for line in table[1:]]
+        table_dict[header] = [str_to_value(line[col_num]) for line in table[1:]]
     return table_dict
+
+
+def str_to_value(value, missing_chars=('-',)):
+    """
+    Convert a string to a value.
+
+    Implemented values:
+        * int
+        * float
+        * None
+        * nan
+    """
+    conversions = [
+        (lambda x: x in ("None", "none"), none),
+        (lambda x: x in missing_chars, none),
+        (lambda x: x=="nan", nan),
+        (is_str_int, int),
+        (is_str_float, float),
+        (true, str),
+        ]
+
+    for validate, func in conversions:
+        if validate(value):
+            return func(value)
 
 
 def format_value(value, spacing, char, float_fmt="{:.3f}"):
@@ -328,7 +392,7 @@ def convert_row_to_column_table(data):
     return data2
 
 
-def convert_sep_to_sep(fname, fout=None, in_sep=" ", out_sep="\t", comment="#"):
+def convert_sep_to_sep(fname, fout=None, in_sep=None, out_sep="\t", comment="#"):
     """
     Convert a text based table from one sep to another.
 
@@ -349,7 +413,8 @@ def convert_sep_to_sep(fname, fout=None, in_sep=" ", out_sep="\t", comment="#"):
         Defaults to ``#``.
 
     in_sep : str
-        The value separator for the input table. Defaults to empty spaces.
+        The value separator for the input table. Defaults to ``None``,
+        empty spaces.
 
     out_sep : str
         The value separator for the output table. Defaults to empty spaces.
@@ -368,14 +433,13 @@ def convert_sep_to_sep(fname, fout=None, in_sep=" ", out_sep="\t", comment="#"):
     :py:func:`haddock.gear.tables.convert_ssc_csv`
     """
     table_text = Path(fname).read_text()
-    lines = table_text.read().strip(os.linesep).split(os.linesep)
-    table = [line.split(in_sep) for line in lines]
+    lines = table_text.strip(os.linesep).split(os.linesep)
     new_text = []
-    for line in table:
-        if line.startswith(comment):
+    for line in lines:
+        if line.startswith('#'):
             new_text.append(line)
         else:
-            new_text.append(out_sep.join(line))
+            new_text.append(out_sep.join(line.split(in_sep)))
 
     return os.linesep.join(new_text)
 
@@ -387,7 +451,7 @@ def convert_ssc_tsv(*args, **kwargs):
     Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=" "``
     and ``out_sep="\t"``. Other parameters are as explained there.
     """
-    return convert_sep_to_sep(*args, in_sep=" ", out_sep="\t")
+    return convert_sep_to_sep(*args, in_sep=None, out_sep="\t", **kwargs)
 
 
 def convert_ssc_csv(*args, **kwargs):
@@ -397,4 +461,4 @@ def convert_ssc_csv(*args, **kwargs):
     Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=" "``
     and ``out_sep=","``. Other parameters are as explained there.
     """
-    return convert_sep_to_sep(*args, in_sep=" ", out_sep=",")
+    return convert_sep_to_sep(*args, in_sep=None, out_sep=",", **kwargs)

@@ -11,9 +11,9 @@ from fccpy.contacts import get_intermolecular_contacts
 from pdbtools import pdb_segxchain
 
 from haddock import log
-from haddock.gear.pretty_table import (
+from haddock.gear.tables import (
     convert_row_to_column_table,
-    create_human_readable_table,
+    create_adjusted_col_width_table,
     )
 from haddock.libs.libalign import (
     AlignError,
@@ -394,7 +394,7 @@ class CAPRI:
 
         output_fname = Path(self.path, self.output_ss_fname)
 
-        table = create_human_readable_table(data)
+        table = create_adjusted_col_width_table(data)
         output_fname.write_text(table)
 
     def run(self):
@@ -650,7 +650,7 @@ def rearrange_ss_capri_output(
         return
     else:
         data2 = convert_row_to_column_table(data)
-        table = create_human_readable_table(data2)
+        table = create_adjusted_col_width_table(data2)
         Path(output_name).write_text(table)
 
 
@@ -794,7 +794,7 @@ def capri_cluster_analysis(
         return
     else:
         data2 = convert_row_to_column_table(output_dic)
-        table = create_human_readable_table(data2, header=info_header)
+        table = create_adjusted_col_width_table(data2, header=info_header)
         Path(output_fname).write_text(table)
 
 

@@ -1,0 +1,5 @@
+# some comment
+col_name_1    col_name_2    col_name_3
+  value1         none        value5
+   nan          value4          6
+  value7          -            1.2

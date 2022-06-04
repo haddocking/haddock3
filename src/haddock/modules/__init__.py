@@ -111,6 +111,10 @@ class BaseHaddockModule(ABC):
 
         # instantiate module's parameters
         self._origignal_config_file = params_fname
+        with _not_valid_config():
+            extension = Path(params_fname).suffix
+            self._original_params = config_readers[extension](params_fname)
+
         self._params = {}
         self.update_params(update_from_cfg_file=params_fname)
 
@@ -122,7 +126,7 @@ class BaseHaddockModule(ABC):
     def reset_params(self):
         """Reset parameters to the ones used to instantiate the class."""
         self._params.clear()
-        self.update_params(update_from_cfg_file=self._original_config_file)
+        self.update_params(**self._original_params)
 
     def update_params(self, update_from_cfg_file=None, **params):
         """
@@ -253,11 +257,17 @@ class BaseHaddockModule(ABC):
 
     def _load_previous_io(self, filename=MODULE_IO_FILE):
         if self.order == 0:
+            self._num_of_input_molecules = 0
             return ModuleIO()
+
         io = ModuleIO()
         previous_io = Path(self.previous_path(), filename)
+
         if previous_io.is_file():
             io.load(previous_io)
+
+        self._num_of_input_molecules = len(io.output)
+
         return io
 
     def previous_path(self):

@@ -71,6 +71,7 @@ Those are the parameters starting with `mol`. For example:
 molecule 1. These parameters are allowed to expand only to the maximum
 of input molecules, and at most to the max number of molecules allowed.
 """
+import itertools as it
 from copy import deepcopy
 from functools import partial
 
@@ -421,6 +422,43 @@ def remove_trail_idx(param):
     if under_parts[2].isdigit():
         return under_parts[0]
     return param
+
+
+def get_trail_index(param):
+    """
+    Get the trail index if underscored.
+
+    Examples
+    --------
+    has_trail_index('some_parameter_1')
+    >>> '1'
+
+    has_trail_index('some_parameter1')
+    >>> None
+
+    has_trail_index('some_parameter_1_1')
+    >>> '1'
+
+    has_trail_index('some_parameter_1-1')
+    >>> None
+
+    has_trail_index('some_parameter')
+    >>> None
+
+    Parameters
+    ----------
+    param : str
+        A parameter name.
+
+    Returns
+    -------
+    str or None
+        The trail index if exist. ``None`` if not found.
+    """
+    under_parts = param.rpartition("_")
+    if under_parts[2].isdigit():
+        return under_parts[2]
+    return None
 
 
 def make_param_name_single_index(param_parts):
@@ -824,3 +862,44 @@ set
     A set with the new parameters in the user configuration file
     that are acceptable according to the expandable rules.
 """
+
+
+def populate_mol_parameters_in_module(params, num_mols, defaults):
+    """
+    Populate parameters dictionary with the needed molecule `mol_` parameters.
+
+    The `mol_` prefixed parameters is a subclass of the expandable parameters.
+
+    See :py:module:`haddock.gear.expandable_parameters`.
+
+    Modules require these parameters to be repeated for the number of input
+    molecules.
+
+    This function adds `mol_` parameters to the user input parameters,
+    one per each `molecule` and for those which a values has not been
+    added yet.
+
+    Parameters
+    ----------
+    modules_params : dict
+        A dictionary of parameters.
+
+    Returns
+    -------
+    None
+        Alter the dictionary in place.
+    """
+    # filter to get only the `mol_` parameters that are defaults
+    # the get_trail_index is needed because defaults only have the '1'
+    # suffixed parameters.
+    mol_params = (
+        p
+        for p in list(params.keys())
+        if is_mol_parameter(p) and get_trail_index(p) == '1'
+        )
+
+    for param, i in it.product(mol_params, range(1, num_mols + 1)):
+        param_name = remove_trail_idx(param)
+        params.setdefault(f"{param_name}_{i}", defaults[param])
+
+    return

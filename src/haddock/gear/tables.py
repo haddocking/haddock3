@@ -68,7 +68,8 @@ def create_adjusted_col_width_table(
         import os
         with open('table', 'r') as fin:
             lines = fin.read().strip(os.linesep).split(os.linesep)
-            table = [l.split() for l in lines]
+            table = [l.split() for l in lines if not l.startswith(comment)]
+            # where `comment` is the char to comment lines in the table
 
         headers = table[0]
         values = table[1:]
@@ -81,6 +82,9 @@ def create_adjusted_col_width_table(
 
         import numpy as np
         np.loadtxt('table.txt', dtype=str)
+
+    Finally, if you want to retrieve the same data dictionary used to
+    create the table, see :py:func:`read_table_to_data_dict`.
 
     Parameters
     ----------
@@ -448,7 +452,7 @@ def convert_ssc_tsv(*args, **kwargs):
     r"""
     Convert a space-separated table to a tab-separated table.
 
-    Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=" "``
+    Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=None``
     and ``out_sep="\t"``. Other parameters are as explained there.
     """
     return convert_sep_to_sep(*args, in_sep=None, out_sep="\t", **kwargs)
@@ -458,7 +462,7 @@ def convert_ssc_csv(*args, **kwargs):
     """
     Convert a space-separated table to a comma-separated table.
 
-    Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=" "``
+    Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=None``
     and ``out_sep=","``. Other parameters are as explained there.
     """
     return convert_sep_to_sep(*args, in_sep=None, out_sep=",", **kwargs)

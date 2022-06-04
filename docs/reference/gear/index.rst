@@ -14,8 +14,8 @@ Here, you will find documentation to use HADDOCK3 Gears as a library.
    haddockmodel
    parameters
    prepare_run
-   pretty_table
    restart_run
+   tables
    validations
    yaml2cfg
    zerofill

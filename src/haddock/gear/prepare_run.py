@@ -418,7 +418,7 @@ def create_data_dir(run_dir):
 @with_config_error
 def copy_molecules_to_topology(molecules, topoaa_params):
     """Copy molecules to mandatory topology module."""
-    topoaa_params['molecules'] = list(map(Path, molecules))
+    topoaa_params['molecules'] = list(map(Path, transform_to_list(molecules)))
 
 
 def copy_molecules_to_data_dir(data_dir, topoaa_params):

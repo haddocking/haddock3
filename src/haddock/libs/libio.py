@@ -1,11 +1,18 @@
 """Lib I/O."""
 import contextlib
+import glob
+import gzip
 import os
+import tarfile
+from functools import partial
+from multiprocessing import Pool
 from pathlib import Path
 
 import yaml
 
+from haddock import log
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libutil import sort_numbered_paths
 
 
 def read_from_yaml(yaml_file):
@@ -138,3 +145,173 @@ def working_directory(path):
         yield
     finally:
         os.chdir(prev_cwd)
+
+
+def compress_files_ext(path, ext, ncores=1, **kwargs):
+    """
+    Compress all files with same extension in folder.
+
+    Parameters
+    ----------
+    path : str or :external:py:class:`pathlib.Path`
+        The folder containing the files.
+
+    ext : str
+        The extension of the files.
+
+    **kwargs : anything
+        Arguments passed to :py:func:`gzip_files`.
+
+    Returns
+    -------
+    bool
+        ``True`` if files with ``ext`` were found and the Zip files created.
+        ``False`` if no files with ``ext`` were found and, hence, the
+        Zip files was not created.
+    """
+    files = glob_folder(path, ext)
+    gzip_ready = partial(gzip_files, **kwargs)
+    if files:
+        with Pool(ncores) as pool:
+            imap = pool.imap_unordered(gzip_ready, files)
+            for _ in imap:
+                pass
+        return True
+    return False
+
+
+def gzip_files(file_, block_size=None, compresslevel=9):
+    """
+    Gzip a file.
+
+    Parameters
+    ----------
+    file_ : str or :external:py:class:`pathlib.Path`
+        The path to the file to zip.
+
+    block_size : int
+        The block size to treat per cycle. Defaults to 200MB (2*10**8
+        (2*10**8).
+
+    compresslevel : int
+        The compress level. Defaults to 9.
+    """
+    if block_size is None:
+        block_size = 2 * 10**8
+
+    gfile = str(file_) + '.gz'
+    with \
+            open(file_, 'rb') as fin, \
+            gzip.open(gfile, mode='wb', compresslevel=compresslevel) as gout:
+
+        content = fin.read(block_size)  # read the first
+        while content:
+            gout.write(content)
+            content = fin.read(block_size)
+
+
+def archive_files_ext(path, ext, compresslevel=9):
+    """
+    Archive all files with same extension in folder.
+
+    Parameters
+    ----------
+    path : str or :external:py:class:`pathlib.Path`
+        The folder containing the files.
+
+    ext : str
+        The extension of the files.
+
+    compresslevel : int
+        The compression level.
+
+    Returns
+    -------
+    bool
+        ``True`` if files with ``ext`` were found and the Zip files created.
+        ``False`` if no files with ``ext`` were found and, hence, the
+        Zip files was not created.
+    """
+    files = glob_folder(path, ext)
+    if files:
+        with tarfile.open(
+                Path(path, f'{ext}.tar'),
+                mode='w:gz',
+                compresslevel=compresslevel,
+                ) as tarout:
+
+            for file_ in files:
+                tarout.add(file_, arcname=file_.name)
+
+        return True
+    return False
+
+
+def glob_folder(folder, ext):
+    """
+    List files with extention `ext` in `folder`.
+
+    Does NOT perform recursive search.
+
+    Parameters
+    ----------
+    folder : str
+        The path to the folder to investigate.
+
+    ext : str
+        The file extention. Can be with or without the dot [.]
+        preffix.
+
+    Returns
+    -------
+    list of Path objects
+        SORTED list of matching results.
+    """
+    ext = f'*{parse_suffix(ext)}'
+    files = glob.glob(str(Path(folder, ext)))
+    return sort_numbered_paths(*list(map(Path, files)))
+
+
+def parse_suffix(ext):
+    """
+    Represent a suffix of a file.
+
+    Examples
+    --------
+    >>> parse_suffix('.pdf')
+    '.pdf'
+
+    >>> parse_suffix('pdf')
+    '.pdf'
+
+    Parameters
+    ----------
+    ext : str
+        String to extract the suffix from.
+
+    Returns
+    -------
+    str
+        File extension with leading period.
+    """
+    return f'.{ext[ext.find(".") + 1:]}'
+
+
+def remove_files_with_ext(folder, ext):
+    """
+    Remove files with ``ext`` in folder.
+
+    Parameters
+    ----------
+    folder : str
+        The path to the folder.
+
+    ext : str
+        The extention of files to delete. Can be with or without the dot ``.``
+        preffix.
+    """
+    files = sort_numbered_paths(*glob_folder(folder, ext))
+    # if there are no files, the for loop  won't run.
+    for file_ in files:
+        log.debug(f'removing: {file_}')
+        file_.unlink()

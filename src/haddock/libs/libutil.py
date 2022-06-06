@@ -306,7 +306,8 @@ def sort_numbered_paths(*paths):
     """
     Sort input paths to tail number.
 
-    If possible, sort criteria is provided by :py:func:`get_number`.
+    If possible, sort criteria is provided by
+    :py:func:`get_number_from_path_stem`.
     If paths do not have a numbered tag, sort paths alphabetically.
 
     Parameters

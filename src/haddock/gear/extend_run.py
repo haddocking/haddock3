@@ -4,16 +4,17 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
+from haddock.gear.clean_steps import UNPACK_FOLDERS, clean_output
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
-from haddock.libs.libworkflow import Workflow
+from haddock.libs.libworkflow import Workflow, WorkflowManager
 from haddock.modules import get_module_steps_folders
 
 
 EXTEND_RUN_DEFAULT = None
 
 
-class WorkflowManagerExtend:
+class WorkflowManagerExtend(WorkflowManager):
     """Workflow to extend a run."""
 
     def __init__(self, workflow_params, start=0, **other_params):
@@ -24,6 +25,27 @@ class WorkflowManagerExtend:
         """High level workflow composer."""
         for step in self.recipe.steps:
             step.execute()
+
+        self.clean()
+
+    def clean(self):
+        """Clean the step output."""
+        # return compression to the original state
+        cwd = Path.cwd().name
+        for folder in UNPACK_FOLDERS:
+            # temporary hack to get the step folder name.
+            # ensures we can work under the CLI working directory
+            # or inside the run dir.
+            folder_ = str(folder).split(cwd)[1][1:]
+
+            log.info(
+                f'Compressing original folder: {folder_!r} because it '
+                'was originally compressed.'
+                )
+            clean_output(folder_)
+
+        # apply compression to the new modules
+        super().clean()
 
 
 def add_extend_run(parser):

@@ -8,6 +8,7 @@ from pathlib import Path
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
+from haddock.gear.clean_steps import clean_output
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
 from haddock.gear.config_writer import save_config as _save_config
@@ -208,6 +209,16 @@ class BaseHaddockModule(ABC):
             self._run()
 
         log.info(f'Module [{self.name}] finished.')
+
+    def clean_output(self):
+        """
+        Clean module output folder.
+
+        See Also
+        --------
+        :py:func:`haddock.gear.clean_steps.clean_output`
+        """
+        clean_output(self.path, self.params["ncores"])
 
     @classmethod
     @abstractmethod

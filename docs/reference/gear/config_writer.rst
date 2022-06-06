@@ -1,5 +1,5 @@
-Config Writer
-=============
+Workflow configuration file writer
+==================================
 
 .. automodule:: haddock.gear.config_writer
    :members:

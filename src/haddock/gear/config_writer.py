@@ -1,18 +1,16 @@
 """
 Convert HADDOCK3 config dictionaries to user configuration files.
 
-The functions implemented here have a general character.  For them to be
+The functions implemented here have a general character. For them to be
 functional within the HADDOCK3 scope you need to provide additional
-input arguments.  All the details are explained in the function's
+input arguments. All the details are explained in the function's
 docstrings (help).
 
 If you look for equal functions but already pre-prepared for HADDOCK3
-modules, see the functions with the same names under `haddock.modules`.
+modules, see the functions:
 
-FUNCTIONS:
-
-- convert_config
-- save_config
+* :py:func:`haddock.modules.convert_config`
+* :py:func:`haddock.modules.save_config`
 """
 import collections.abc
 import os
@@ -72,15 +70,14 @@ def convert_config(
         This function uses itself recursively. `_module_key` is for
         internal usage only.
 
-    See Also
-    --------
-    To use a HADDOCK3's modules specific version of this function, see the
-    `haddock.modules.convert_config` function.
-
     Yields
     ------
     str
         Line by line for the HADDOCK3 user configuration file.
+
+    See Also
+    --------
+    :py:func:`haddock.modules.convert_config`.
     """
     # can't do
     # ignore_params = set() or ignore_params
@@ -230,8 +227,7 @@ def save_config(params, path, module_name=None, **kwargs):
 
     See Also
     --------
-    To use a HADDOCK3's modules specific version of this function, see the
-    `haddock.modules.save_config` function.
+    :py:func:`haddock.modules.save_config`.
     """
     if module_name:
         if not isinstance(module_name, str):

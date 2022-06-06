@@ -237,9 +237,9 @@ def test_make_output(protprot_caprimodule):
     body = [b.strip() for b in body.split()[1:]]
     observed_outf_l = [headers, body]
     expected_outf_l = [
-        ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd', 'dockq',
-         'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
-        ['-', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', '1', '1', '10'], ]
+        ['md5', 'caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
+         'dockq', 'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+        ['-', '-', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', '1', '1', '10'], ]
 
     assert observed_outf_l == expected_outf_l
 
@@ -378,7 +378,7 @@ def test_rearrange_ss_capri_output():
 
 def test_calc_stats():
     """Test the calculation of statistics."""
-    observed_mean, observed_std = calc_stats([2, 2, 4, 5], 4)
+    observed_mean, observed_std = calc_stats([2, 2, 4, 5])
     assert round_two_dec(observed_mean) == 3.25
     assert round_two_dec(observed_std) == 1.3
 

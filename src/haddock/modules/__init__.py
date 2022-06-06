@@ -14,7 +14,11 @@ from haddock.gear.config_writer import save_config as _save_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libio import working_directory
+from haddock.libs.libio import (
+    compress_file_ext,
+    remove_files_with_ext,
+    working_directory,
+    )
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
@@ -206,8 +210,13 @@ class BaseHaddockModule(ABC):
 
         with working_directory(self.path):
             self._run()
+            self.post_run()
 
         log.info(f'Module [{self.name}] finished.')
+
+    def post_run(self):
+        compress_file_ext(self.path, 'seed')
+        remove_files_with_ext(self.path, 'seed')
 
     @classmethod
     @abstractmethod

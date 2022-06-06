@@ -8,6 +8,7 @@ from haddock.libs.libio import (
     read_from_yaml,
     write_dic_to_file,
     write_nested_dic_to_file,
+    parse_suffix,
     )
 
 from . import emptycfg, haddock3_yaml_cfg_examples
@@ -50,3 +51,15 @@ def test_write_dic_to_file():
     assert Path(f.name).stat().st_size != 0
 
     Path(f.name).unlink()
+
+
+@pytest.mark.parametrize(
+    "in_,expected",
+    [
+        (".ext", "ext"),
+        ("ext", "ext"),
+        ]
+    )
+def test_parse_suffix(in_, expected):
+    result = parse_suffix(in_)
+    assert result == expected

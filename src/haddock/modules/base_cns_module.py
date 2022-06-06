@@ -57,6 +57,7 @@ class BaseCNSModule(BaseHaddockModule):
         with working_directory(self.path):
             self._run()
 
+        super().post_run()
         log.info(f'Module [{self.name}] finished.')
 
     def default_envvars(self):

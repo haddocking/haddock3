@@ -1,10 +1,13 @@
 """Lib I/O."""
 import contextlib
+import glob
 import os
 from pathlib import Path
+from zipfile import ZipFile
 
 import yaml
 
+from haddock import log
 from haddock.libs.libontology import PDBFile
 
 
@@ -138,3 +141,94 @@ def working_directory(path):
         yield
     finally:
         os.chdir(prev_cwd)
+
+
+def compress_file_ext(path, ext):
+    """
+    Compress all files with same extension in folder.
+
+    Parameters
+    ----------
+    path : str or :external:py:class:`pathlib.Path`
+        The folder containing the files.
+
+    ext : str
+        The extension of the files.
+    """
+    files = glob_folder(path, ext)
+    if files:
+        with ZipFile(Path(path, f'{ext}.zip'), 'w') as zipout:
+            for file_ in files:
+                zipout.write(file_, arcname=file_.name, compresslevel=9)
+
+    return
+
+
+def glob_folder(folder, ext):
+    """
+    List files with extention `ext` in `folder`.
+
+    Does NOT perform recursive search.
+
+    Parameters
+    ----------
+    folder : str
+        The path to the folder to investigate.
+
+    ext : str
+        The file extention. Can be with or without the dot [.]
+        preffix.
+
+    Returns
+    -------
+    list of Path objects
+        SORTED list of matching results.
+    """
+    ext = f'*{parse_suffix(ext)}'
+    files = glob.glob(str(Path(folder, ext)))
+    return list(map(Path, files))
+
+
+def parse_suffix(ext):
+    """
+    Represent a suffix of a file.
+
+    Example
+    -------
+    parse_suffix('.pdf')
+    '.pdf'
+
+    parse_suffix('pdf')
+    '.pdf'
+
+    Parameters
+    ----------
+    ext : str
+        String to extract the suffix from.
+
+    Returns
+    -------
+    str
+        File extension with leading period.
+    """
+    return f'.{ext[ext.find(".") + 1:]}'
+
+
+def remove_files_with_ext(folder, ext):
+    """
+    Remove files with ``ext`` in folder.
+
+    Parameters
+    ----------
+    folder : str
+        The path to the folder.
+
+    ext : str
+        The extention of files to delete. Can be with or without the dot ``.``
+        preffix.
+    """
+    files = glob_folder(folder, ext)
+    # if there are no files, the for loop  won't run.
+    for file_ in files:
+        log.debug(f'removing: {file_}')
+        file_.unlink()

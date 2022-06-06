@@ -77,6 +77,7 @@ class HaddockModule(BaseHaddockModule):
                 fh.write(
                     f"{model.rel_path}\t"
                     f"{model.ori_name}\t"
+                    f"{name}\t"
                     f"{model.md5}" + os.linesep)
 
         self.export_output_models()

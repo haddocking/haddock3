@@ -1,0 +1,10 @@
+REMARK   9 MODEL        1 MD5 71098743056e0b95fbfafff690703761
+REMARK   9 MODEL        2 MD5 f7ab0b7c751adf44de0f25f53cfee50b
+REMARK   9 MODEL        3 MD5 41e028d8d28b8d97148dc5e548672142
+REMARK   9 MODEL        4 MD5 761cb5da81d83971c2aae2f0b857ca1e
+REMARK   9 MODEL        5 MD5 6c438f941cec7c6dc092c8e48e5b1c10
+REMARK     MODEL 1 FROM T161-hybrid-fit-C2-NCS_complex_100w.pdb
+REMARK     MODEL 2 FROM T161-hybrid-fit-C2-NCS_complex_101w.pdb
+REMARK     MODEL 3 FROM T161-hybrid-fit-C2-NCS_complex_102w.pdb
+REMARK     MODEL 4 FROM T161-hybrid-fit-C2-NCS_complex_103w.pdb
+REMARK     MODEL 5 FROM T161-hybrid-fit-C2-NCS_complex_104w.pdb

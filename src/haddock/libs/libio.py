@@ -202,12 +202,12 @@ def parse_suffix(ext):
     """
     Represent a suffix of a file.
 
-    Example
-    -------
-    parse_suffix('.pdf')
+    Examples
+    --------
+    >>> parse_suffix('.pdf')
     '.pdf'
 
-    parse_suffix('pdf')
+    >>> parse_suffix('pdf')
     '.pdf'
 
     Parameters

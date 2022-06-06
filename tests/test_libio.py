@@ -56,8 +56,8 @@ def test_write_dic_to_file():
 @pytest.mark.parametrize(
     "in_,expected",
     [
-        (".ext", "ext"),
-        ("ext", "ext"),
+        (".ext", ".ext"),
+        ("ext", ".ext"),
         ]
     )
 def test_parse_suffix(in_, expected):

@@ -215,6 +215,7 @@ class BaseHaddockModule(ABC):
         log.info(f'Module [{self.name}] finished.')
 
     def post_run(self):
+        """Perform operations after the run."""
         compress_file_ext(self.path, 'seed')
         remove_files_with_ext(self.path, 'seed')
 

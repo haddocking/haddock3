@@ -30,6 +30,11 @@ class WorkflowManagerExtend(WorkflowManager):
         """Clean the step output."""
         # return compression to the original state
         cwd = Path.cwd().name
+
+        # because this WorkflowManagerExtended has no direct access to the
+        # ncores parameters, it needs to take it from the steps.
+        ncores = max(s.config["ncores"] for s in self.recipe.steps)
+
         for folder in UNPACK_FOLDERS:
             # temporary hack to get the step folder name.
             # ensures we can work under the CLI working directory
@@ -40,7 +45,7 @@ class WorkflowManagerExtend(WorkflowManager):
                 f'Compressing original folder: {folder_!r} because it '
                 'was originally compressed.'
                 )
-            clean_output(folder_)
+            clean_output(folder_, ncores)
 
         # apply compression to the new modules
         super().clean()

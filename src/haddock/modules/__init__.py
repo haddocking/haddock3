@@ -201,7 +201,7 @@ class BaseHaddockModule(ABC):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
-        self.previous_io = self._load_previous_io()
+        self.load_previous_io()
 
         self.update_params(**params)
         self.add_parent_to_paths()
@@ -267,7 +267,7 @@ class BaseHaddockModule(ABC):
         else:
             raise RuntimeError(reason)
 
-    def _load_previous_io(self, filename=MODULE_IO_FILE):
+    def load_previous_io(self, filename=MODULE_IO_FILE):
         if self.order == 0:
             self._num_of_input_molecules = 0
             return ModuleIO()
@@ -280,7 +280,7 @@ class BaseHaddockModule(ABC):
 
         self._num_of_input_molecules = len(io.output)
 
-        return io
+        self.previous_io = io
 
     def previous_path(self):
         """Give the path from the previous calculation."""

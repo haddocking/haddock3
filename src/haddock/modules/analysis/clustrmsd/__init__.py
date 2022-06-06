@@ -59,8 +59,8 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         super().__init__(order, path, initial_params)
+        self.matrix_json = self.load_previous_io("rmsd_matrix.json")
 
-        self.matrix_json = self._load_previous_io("rmsd_matrix.json")
 
     @classmethod
     def confirm_installation(cls):

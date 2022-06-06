@@ -2,8 +2,8 @@
 import gzip
 import shutil
 import tarfile
-from pathlib import Path
 from multiprocessing import Pool
+from pathlib import Path
 
 from haddock.libs.libio import (
     archive_files_ext,
@@ -11,6 +11,9 @@ from haddock.libs.libio import (
     glob_folder,
     remove_files_with_ext,
     )
+
+
+UNPACK_FOLDERS = []
 
 
 def clean_output(path, ncores=1):
@@ -32,15 +35,27 @@ def clean_output(path, ncores=1):
 
 
 def unpack_compressed_and_archived_files(folders, ncores):
+    """Unpack compressed and archived files in a folders."""
+    global UNPACK_FOLDERS
+    UNPACK_FOLDERS.clear()
+
     for folder in folders:
         gz_files = glob_folder(folder, '.gz')
+        tar_files = glob_folder(folder, '.tar')
 
-        with Pool(ncores) as pool:
-            imap = pool.imap_unordered(_unpack_gz, gz_files)
-            for _ in imap:
-                pass
+        if gz_files or tar_files:
+            # register the folders that where unpacked
+            # this is useful for some functionalities of haddock3
+            # namely the `--extend-run` option.
+            UNPACK_FOLDERS.append(folder)
 
-        for tar_file in glob_folder(folder, '.tar'):
+        if gz_files:  # avoids creating the Pool if there are no .gz files
+            with Pool(ncores) as pool:
+                imap = pool.imap_unordered(_unpack_gz, gz_files)
+                for _ in imap:
+                    pass
+
+        for tar_file in tar_files:
             with tarfile.open(tar_file) as fin:
                 fin.extractall(folder)
 
@@ -55,4 +70,3 @@ def _unpack_gz(gz_file):
         shutil.copyfileobj(fin, fout, 2 * 10**8)
 
     gz_file.unlink()
-

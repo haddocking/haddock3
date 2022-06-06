@@ -40,6 +40,7 @@ def test_clustfcc_output_existence(protprot_input_list, output_list):
         path=Path("1_emscoring"),
         initial_params=clustfcc_pars
         )
+    fcc_module.load_previous_io()
     fcc_module.previous_io.output = protprot_input_list
 
     fcc_module._run()

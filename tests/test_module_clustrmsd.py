@@ -245,6 +245,7 @@ def test_correct_output(input_protdna_models):
         path=Path(""),
         initial_params=rmsd_pars
         )
+    rmsd_module.load_previous_io()
     rmsd_module.previous_io.output = input_protdna_models
     rmsd_module._run()
 

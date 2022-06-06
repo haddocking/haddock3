@@ -88,6 +88,7 @@ def test_overall_rmsd(input_protdna_models):
         path=Path("2_rmsdmatrix"),
         initial_params=rmsd_pars
         )
+    rmsd_module.load_previous_io()
     rmsd_module.previous_io.output = input_protdna_models
     rmsd_module._run()
 

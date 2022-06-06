@@ -38,7 +38,7 @@ class BaseCNSModule(BaseHaddockModule):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
-        self.previous_io = self._load_previous_io()
+        self.load_previous_io()
 
         self.update_params(**params)
 

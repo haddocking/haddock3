@@ -210,8 +210,8 @@ class BaseHaddockModule(ABC):
 
         with working_directory(self.path):
             self._run()
-            self.post_run()
 
+        self.post_run()
         log.info(f'Module [{self.name}] finished.')
 
     def post_run(self):

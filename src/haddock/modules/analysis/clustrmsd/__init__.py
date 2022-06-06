@@ -59,7 +59,7 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         super().__init__(order, path, initial_params)
-        self.matrix_json = self.load_previous_io("rmsd_matrix.json")
+        self.matrix_json = None
 
 
     @classmethod
@@ -67,14 +67,25 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if contact executable is compiled."""
         return
 
+    def load_matrix_json(self, fpath=None):
+        if fpath is None:
+            fpath = Path('..', self.previous_path(), "rmsd_matrix.json")
+        #print(fpath)
+        io = ModuleIO()
+        io.load(fpath)
+        self.matrix_json = io
+
     def _run(self):
         """Execute module."""
+        if self.matrix_json is None:
+            self.load_matrix_json()
+
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models()
+
         # Cluster
-        rmsd_matrix = read_matrix(
-            self.matrix_json.input[0]
-            )
+        rmsd_matrix = read_matrix(self.matrix_json.input[0])
+
         # getting clusters_list
         linkage_type = self.params["linkage"]
         dendrogram = get_dendrogram(rmsd_matrix, linkage_type)

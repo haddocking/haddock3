@@ -100,7 +100,6 @@ class Step:
             order=self.order,
             path=self.working_path,
             )
-        self.module.update_params(**self.config)
 
     def execute(self):
         """Execute simulation step."""
@@ -109,6 +108,7 @@ class Step:
         # Run module
         start = time()
         try:
+            self.module.update_params(**self.config)
             self.module.save_config(Path(self.working_path, "params.cfg"))
             self.module.run()
         except KeyboardInterrupt:

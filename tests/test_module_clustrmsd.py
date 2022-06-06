@@ -242,8 +242,7 @@ def test_correct_output(input_protdna_models):
     """Test correct clustrmsd output."""
     rmsd_module = HaddockRMSD(
         order=2,
-        path=Path(""),
-        initial_params=rmsd_pars
+        path=Path.cwd(),
         )
     rmsd_module.load_previous_io()
     rmsd_module.previous_io.output = input_protdna_models
@@ -252,8 +251,9 @@ def test_correct_output(input_protdna_models):
     clustrmsd_module = HaddockModule(
         order=3,
         path=Path(""),
-        initial_params=clustrmsd_pars
         )
+    clustrmsd_module.load_matrix_json("rmsd_matrix.json")
+    clustrmsd_module.load_previous_io()
     clustrmsd_module._run()
 
     ls = os.listdir()

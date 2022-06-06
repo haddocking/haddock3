@@ -108,6 +108,7 @@ class BaseHaddockModule(ABC):
         """
         self.order = order
         self.path = path
+        self._previous_path = None
 
         # instantiate module's parameters
         self._origignal_config_file = params_fname
@@ -177,6 +178,8 @@ class BaseHaddockModule(ABC):
             self._params)
         self._params = recursive_dict_update(_n, params)
         self._fill_emptypaths()
+        print(Path.cwd().resolve())
+        print(self._params)
         self._confirm_fnames_exist()
 
     def save_config(self, path):
@@ -284,12 +287,17 @@ class BaseHaddockModule(ABC):
 
     def previous_path(self):
         """Give the path from the previous calculation."""
-        previous = get_module_steps_folders(self.path.resolve().parent)
+        if self._previous_path is None:
+            previous = get_module_steps_folders(self.path.resolve().parent)
+            #print(self.order, len(previous), previous)
 
-        try:
-            return Path(previous[self.order - 1])
-        except IndexError:
-            return self.path
+            try:
+                self._previous_path = Path(previous[self.order - 1])
+                return self._previous_path
+            except IndexError:
+                return self.path
+        else:
+            return self._previous_path
 
     def log(self, msg, level='info'):
         """
@@ -312,7 +320,9 @@ class BaseHaddockModule(ABC):
         for param, value in self._params.items():
             if param.endswith('_fname') and value:
                 if not Path(value).exists():
-                    raise FileNotFoundError(f'File not found: {str(value)!r}')
+                    raise FileNotFoundError(
+                        f'File not found for param {param!r}: {str(value)!r}'
+                        )
 
     def _fill_emptypaths(self):
         """Fill empty paths."""

@@ -202,7 +202,6 @@ class HaddockModule(BaseHaddockModule):
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
                 center_pdb = clt_centers[cluster_id]
-                clt_dic[cluster_id].append(center_pdb)
                 model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
                 model_score_l.sort()
                 subset_score_l = [e[0] for e in model_score_l][:threshold]

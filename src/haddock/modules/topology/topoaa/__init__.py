@@ -199,11 +199,14 @@ class HaddockModule(BaseCNSModule):
             expected[i] = {}
             md5_dic = ens_dic[i]
             for j, model in enumerate(models_dic[i]):
+                md5_hash = None
                 try:
                     model_id = int(model.stem.split('_')[-1])
+                except ValueError:
+                    model_id = ''
+
+                if model_id in md5_dic:
                     md5_hash = md5_dic[model_id]
-                except Exception:
-                    md5_hash = None
 
                 model_name = model.stem
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")

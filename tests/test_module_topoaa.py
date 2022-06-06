@@ -87,6 +87,7 @@ def test_get_md5(topoaa, ensemble_header_w_md5, protein):
     assert observed_md5_dic == {}
 
 
+@pytest.mark.skip(reason="Cannot test in Github Actions")
 def test__run(topoaa, protein):
     """Test _run method."""
     shutil.copy(protein, topoaa.path)

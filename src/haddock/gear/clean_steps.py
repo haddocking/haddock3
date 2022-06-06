@@ -72,3 +72,16 @@ def _unpack_gz(gz_file):
         shutil.copyfileobj(fin, fout, 2 * 10**8)
 
     gz_file.unlink()
+
+
+def update_unpacked_names(prev, new, original):
+    """Update the unpacked path names."""
+    original_names = [Path(o).name for o in original]
+    for prev_, new_ in zip(prev, new):
+        try:
+            idx = original_names.index(Path(prev_).name)
+        except ValueError:  # not present
+            continue
+        else:
+            _p = original[idx]
+            original[idx] = Path(_p.parent, Path(new_).name)

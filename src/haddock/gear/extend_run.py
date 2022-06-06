@@ -26,8 +26,6 @@ class WorkflowManagerExtend(WorkflowManager):
         for step in self.recipe.steps:
             step.execute()
 
-        self.clean()
-
     def clean(self):
         """Clean the step output."""
         # return compression to the original state

@@ -178,6 +178,7 @@ def main(
 
         # Main loop of execution
         workflow.run()
+        workflow.clean()
 
     # Finish
     end = time()

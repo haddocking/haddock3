@@ -5,6 +5,7 @@ import tarfile
 from multiprocessing import Pool
 from pathlib import Path
 
+from haddock import log
 from haddock.libs.libio import (
     archive_files_ext,
     compress_files_ext,
@@ -18,10 +19,11 @@ UNPACK_FOLDERS = []
 
 def clean_output(path, ncores=1):
     """Perform operations after the run."""
+    log.info(f"Cleaning output for {str(path)!r} using {ncores} cores.")
     # add any formats generated to
     # `unpack_compressed_and_archived_files` so that the
     # uncompressing routines when restarting the run work.
-    files_to_archive = ['seed', 'inp', 'out']
+    files_to_archive = ['seed', 'inp', 'out', 'con']
     for fta in files_to_archive:
         found = archive_files_ext(path, fta)
         if found:

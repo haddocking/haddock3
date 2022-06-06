@@ -122,6 +122,6 @@ class Step:
     def clean(self):
         """Clean step output."""
         if self.module is None and self.config["clean"]:
-            clean_output(self.working_path)
+            clean_output(self.working_path, self.config["ncores"])
         elif self.module is not None and self.module.params["clean"]:
             self.module.clean_output()

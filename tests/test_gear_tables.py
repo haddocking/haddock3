@@ -10,6 +10,7 @@ from haddock.gear.tables import (
     convert_ssc_csv,
     convert_ssc_tsv,
     create_adjusted_col_width_table,
+    create_table,
     format_value,
     parse_table_to_data_dict,
     read_table_to_data_dict,
@@ -183,4 +184,18 @@ def test_convert_ssc_tsv():
 
 def test_convert_ssc_csv():
     result = convert_ssc_csv(adjusted_col_width_table)
+    assert result == csv
+
+
+def test_create_table_csv():
+    d = {}
+    d["col_name_1"] = ["value1", "none", "value5"]
+    d["col_name_2"] = [float('nan'), "value4", 6]
+    d["col_name_3"] = ["value7", None, 1.2]
+    result = create_table(
+        d,
+        sep=",",
+        header="# some comment",
+        float_fmt="{:.1f}",
+        )
     assert result == csv

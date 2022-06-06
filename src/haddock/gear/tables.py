@@ -3,6 +3,11 @@ Tools to create visually appealing tables.
 
 This ``gear`` provide several tools to create pure text tables, from various
 python data structures.
+
+Main functions:
+
+* :py:func:`haddock.gear.tables.create_adjusted_col_width_table`
+* :py:func:`haddock.gear.tables.create_table`
 """
 import os
 from copy import copy
@@ -174,6 +179,89 @@ def create_adjusted_col_width_table(
     return table
 
 
+def create_table(
+        data,
+        sep=",",
+        header=None,
+        **fmt_args,
+        ):
+    """
+    Create a table from a data dictionary.
+
+    Given a table in dictionary format:
+
+    .. code:: python
+
+            {
+                "col_name_1": [value1, value3],
+                "col_name_2": [value2, value4],
+                "col_name_3": [value5, value6],
+                }
+
+    Creates a table where values are separated by ``sep``, for example
+    by comma::
+
+        col_name_1,col_name_2,col_name_3
+        value1,value2,value5
+        value3,value4,valut6
+
+    The returned table can be saved to a file, for example:
+
+    .. code:: python
+
+        from pathlib import Path
+
+        table = create_table_from_data_dict(table_data, sep=',')
+        Path('table.csv').write_text(table)
+
+    Parameters
+    ----------
+    data : dict
+        A dictionary where keys are the column names and values are the
+        column values for each row. ``data`` dictionary values can be in
+        the form of a list if there are multiple rows, or a single value
+        if there is only one row.
+
+    header : None or str, optional
+        The header text to write before the table. Usually this is a commented
+        text consisting of a small report or instructions. Defaults to
+        ``None``, no header is written.
+
+    column_spacing : str, optional
+        The spacing between columns. Defaults to four empty spaces.
+
+    fmt_args : arguments
+        Named arguments to pass to
+        :py:func:`haddock.gear.tables.format_value`.
+
+    Returns
+    -------
+    str
+        Table formatted string.
+
+    See Also
+    --------
+    :py:func:`haddock.gear.tables.create_table_from_data_dict`
+    :py:func:`haddock.gear.tables.read_table_to_data_dict`
+    :py:func:`haddock.gear.tables.convert_adjusted_width_to_tsv`
+    :py:func:`haddock.gear.tables.convert_adjusted_width_to_csv`
+    """
+    header = "" if header is None else header
+    col_names = list(data.keys())
+
+    table = []
+    if header:
+        table.append(header)
+
+    table.append(sep.join(col_names))
+
+    for _col_name, values in data.items():
+        values_processed = [value_to_str(v, **fmt_args) for v in values]
+        table.append(sep.join(values_processed))
+
+    return os.linesep.join(table)
+
+
 def read_table_to_data_dict(fname, **kwargs):
     """
     Read a table to a data dictionary.
@@ -205,7 +293,7 @@ def read_table_to_data_dict(fname, **kwargs):
     :py:func:`haddock.gear.tables.parse_table_to_data_dict`
     """
     txt = Path(fname).read_text()
-    return parse_table_to_data_dict(txt)
+    return parse_table_to_data_dict(txt, **kwargs)
 
 
 def parse_table_to_data_dict(table_txt, comment="#", sep=None):

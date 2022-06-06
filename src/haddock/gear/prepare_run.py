@@ -200,6 +200,10 @@ def setup_run(
         # get run files in folder
         step_folders = get_module_steps_folders(general_params[RUNDIR])
 
+        log.info(
+            'Uncompressing previous output files for folders: '
+            f'{", ".join(step_folders)}'
+            )
         # unpack the possible compressed and archived files
         _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
         unpack_compressed_and_archived_files(

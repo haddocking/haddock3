@@ -154,6 +154,13 @@ def compress_file_ext(path, ext):
 
     ext : str
         The extension of the files.
+
+    Returns
+    -------
+    bool
+        ``True`` if files with ``ext`` were found and the Zip files created.
+        ``False`` if no files with ``ext`` were found and, hence, the
+        Zip files was not created.
     """
     files = glob_folder(path, ext)
     if files:
@@ -161,7 +168,9 @@ def compress_file_ext(path, ext):
             for file_ in files:
                 zipout.write(file_, arcname=file_.name, compresslevel=9)
 
-    return
+        return True
+
+    return False
 
 
 def glob_folder(folder, ext):

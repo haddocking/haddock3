@@ -216,8 +216,10 @@ class BaseHaddockModule(ABC):
 
     def post_run(self):
         """Perform operations after the run."""
-        compress_file_ext(self.path, 'seed')
-        remove_files_with_ext(self.path, 'seed')
+        files_found = compress_file_ext(self.path, 'seed')
+        # avoids accessing the disk too often. Performs action only if needed
+        if files_found:
+            remove_files_with_ext(self.path, 'seed')
 
     @classmethod
     @abstractmethod

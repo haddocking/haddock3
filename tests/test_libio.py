@@ -5,10 +5,10 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libio import (
+    parse_suffix,
     read_from_yaml,
     write_dic_to_file,
     write_nested_dic_to_file,
-    parse_suffix,
     )
 
 from . import emptycfg, haddock3_yaml_cfg_examples

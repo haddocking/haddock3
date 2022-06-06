@@ -202,7 +202,7 @@ class HaddockModule(BaseCNSModule):
                 try:
                     model_id = int(model.stem.split('_')[-1])
                     md5_hash = md5_dic[model_id]
-                except ValueError:
+                except Exception:
                     md5_hash = None
 
                 model_name = model.stem

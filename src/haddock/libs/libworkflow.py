@@ -87,11 +87,6 @@ class Step:
         self.module_name = module_name
         self.order = order
         self.working_path = Path(zero_fill.fill(self.module_name, self.order))
-        self.module = None
-
-    def execute(self):
-        """Execute simulation step."""
-        self.working_path.resolve().mkdir(parents=False, exist_ok=False)
 
         # Import the module given by the mode or default
         module_name = ".".join([
@@ -103,7 +98,12 @@ class Step:
         module_lib = importlib.import_module(module_name)
         self.module = module_lib.HaddockModule(
             order=self.order,
-            path=self.working_path)
+            path=self.working_path,
+            )
+
+    def execute(self):
+        """Execute simulation step."""
+        self.working_path.mkdir(parents=False, exist_ok=False)
 
         # Run module
         start = time()
@@ -123,4 +123,4 @@ class Step:
     def clean(self):
         """Execute the modules' clean method."""
         if self.module.params["clean"]:
-            self.module.clean()
+            self.module.clean_output()

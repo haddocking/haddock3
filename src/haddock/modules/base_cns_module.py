@@ -38,6 +38,8 @@ class BaseCNSModule(BaseHaddockModule):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
+        self.previous_io = self._load_previous_io()
+
         self.update_params(**params)
 
         # the `mol_*` parameters exist only for CNS jobs.

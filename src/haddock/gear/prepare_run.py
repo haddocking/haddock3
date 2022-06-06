@@ -13,6 +13,7 @@ from pathlib import Path
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
+from haddock.gear.clean_steps import unpack_compressed_and_archived_files
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
@@ -195,8 +196,19 @@ def setup_run(
         _data_dir = Path(general_params[RUNDIR], "data")
         remove_folders_after_number(_data_dir, restart_from)
 
+    if restarting_from or starting_from_copy:
+        # get run files in folder
+        step_folders = get_module_steps_folders(general_params[RUNDIR])
+
+        # unpack the possible compressed and archived files
+        _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
+        unpack_compressed_and_archived_files(
+            _step_folders,
+            general_params["ncores"],
+            )
+
     if starting_from_copy:
-        num_steps = len(get_module_steps_folders(extend_run))
+        num_steps = len(step_folders)
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file

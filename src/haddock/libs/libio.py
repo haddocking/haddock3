@@ -3,10 +3,10 @@ import contextlib
 import glob
 import gzip
 import os
+import tarfile
 from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
-from zipfile import ZipFile
 
 import yaml
 
@@ -147,7 +147,7 @@ def working_directory(path):
         os.chdir(prev_cwd)
 
 
-def compress_file_ext(path, ext, ncores=1, **kwargs):
+def compress_files_ext(path, ext, ncores=1, **kwargs):
     """
     Compress all files with same extension in folder.
 
@@ -200,7 +200,6 @@ def gzip_files(file_, block_size=None, compresslevel=9):
         block_size = 2 * 10**8
 
     gfile = str(file_) + '.gz'
-    print(file_)
     with \
             open(file_, 'rb') as fin, \
             gzip.open(gfile, mode='wb', compresslevel=compresslevel) as gout:
@@ -211,7 +210,7 @@ def gzip_files(file_, block_size=None, compresslevel=9):
             content = fin.read(block_size)
 
 
-def archive_file_ext(path, ext, compresslevel=9):
+def archive_files_ext(path, ext, compresslevel=9):
     """
     Archive all files with same extension in folder.
 
@@ -235,13 +234,14 @@ def archive_file_ext(path, ext, compresslevel=9):
     """
     files = glob_folder(path, ext)
     if files:
-        with ZipFile(Path(path, f'{ext}.zip'), 'w') as zipout:
+        with tarfile.open(
+                Path(path, f'{ext}.tar'),
+                mode='w:gz',
+                compresslevel=compresslevel,
+                ) as tarout:
+
             for file_ in files:
-                zipout.write(
-                    file_,
-                    arcname=file_.name,
-                    compresslevel=compresslevel,
-                    )
+                tarout.add(file_, arcname=file_.name)
 
         return True
     return False

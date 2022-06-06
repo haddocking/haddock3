@@ -4,16 +4,17 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
+from haddock.gear.clean_steps import clean_output
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
-from haddock.libs.libworkflow import Workflow, WorkflowManager
+from haddock.libs.libworkflow import Workflow
 from haddock.modules import get_module_steps_folders
 
 
 EXTEND_RUN_DEFAULT = None
 
 
-class WorkflowManagerExtend(WorkflowManager):
+class WorkflowManagerExtend:
     """Workflow to extend a run."""
 
     def __init__(self, workflow_params, start=0, **other_params):
@@ -24,6 +25,10 @@ class WorkflowManagerExtend(WorkflowManager):
         """High level workflow composer."""
         for step in self.recipe.steps:
             step.execute()
+
+    def clean(self):
+        step_folders = get_module_steps_folders(Path.cwd())
+        clean_output(step_folders)
 
 
 def add_extend_run(parser):

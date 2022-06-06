@@ -8,18 +8,14 @@ from pathlib import Path
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
+from haddock.gear.clean_steps import clean_output
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
 from haddock.gear.config_writer import save_config as _save_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libio import (
-    archive_file_ext,
-    compress_file_ext,
-    remove_files_with_ext,
-    working_directory,
-    )
+from haddock.libs.libio import working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
@@ -112,7 +108,6 @@ class BaseHaddockModule(ABC):
         """
         self.order = order
         self.path = path
-        self.previous_io = self._load_previous_io()
 
         # instantiate module's parameters
         self._origignal_config_file = params_fname
@@ -206,6 +201,8 @@ class BaseHaddockModule(ABC):
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
+        self.previous_io = self._load_previous_io()
+
         self.update_params(**params)
         self.add_parent_to_paths()
 
@@ -214,23 +211,15 @@ class BaseHaddockModule(ABC):
 
         log.info(f'Module [{self.name}] finished.')
 
-    def clean(self):
-        """Perform operations after the run."""
-        files_to_archive = ['seed', 'inp', 'out']
-        for fta in files_to_archive:
-            found = archive_file_ext(self.path, fta)
-            if found:
-                remove_files_with_ext(self.path, fta)
+    def clean_output(self):
+        """
+        Clean the step output.
 
-        files_to_compress = ['pdb']
-        for ftc in files_to_compress:
-            found = compress_file_ext(
-                self.path,
-                ftc,
-                ncores=self.params['ncores']
-                )
-            if found:
-                remove_files_with_ext(self.path, ftc)
+        See Also
+        --------
+        :py:func:`haddock.gear.clean_step.clean_output`
+        """
+        clean_output(self.path, self.params["ncores"])
 
     @classmethod
     @abstractmethod

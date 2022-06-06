@@ -30,6 +30,13 @@ class WorkflowManager:
         for step in self.recipe.steps[self.start:]:
             step.execute()
 
+        self.clean()
+
+    def clean(self):
+        """Clean modules."""
+        for step in self.recipe.steps:
+            step.clean()
+
 
 class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
@@ -80,6 +87,7 @@ class Step:
         self.module_name = module_name
         self.order = order
         self.working_path = Path(zero_fill.fill(self.module_name, self.order))
+        self.module = None
 
     def execute(self):
         """Execute simulation step."""
@@ -93,16 +101,16 @@ class Step:
             self.module_name
             ])
         module_lib = importlib.import_module(module_name)
-        module = module_lib.HaddockModule(
+        self.module = module_lib.HaddockModule(
             order=self.order,
             path=self.working_path)
 
         # Run module
         start = time()
         try:
-            module.update_params(**self.config)
-            module.save_config(Path(self.working_path, "params.cfg"))
-            module.run()
+            self.module.update_params(**self.config)
+            self.module.save_config(Path(self.working_path, "params.cfg"))
+            self.module.run()
         except KeyboardInterrupt:
             log.info("You have halted subprocess execution by hitting Ctrl+c")
             log.info("Exiting...")
@@ -110,4 +118,9 @@ class Step:
 
         end = time()
         elapsed = convert_seconds_to_min_sec(end - start)
-        module.log(f"took {elapsed}")
+        self.module.log(f"took {elapsed}")
+
+    def clean(self):
+        """Execute the modules' clean method."""
+        if self.module.params["clean"]:
+            self.module.clean()

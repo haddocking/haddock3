@@ -94,3 +94,14 @@ self_contained:
     main installation.
   group: 'execution'
   explevel: guru
+clean:
+  default: true
+  type: boolean
+  title: Clean the module output files.
+  short: Clean the module if run succeeds by compressing or removing output files.
+  long: When running haddock through the command-line, the 'clean' parameter will
+    instruct the workflow to clean the output files of the module if the whole run
+    succeeds. In this process, PDB files are compressed to gzip. `.seed`, `.inp`, and `.out`
+    files are archived.
+  group: 'clean'
+  explevel: guru

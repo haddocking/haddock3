@@ -15,6 +15,7 @@ from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import (
+    archive_file_ext,
     compress_file_ext,
     remove_files_with_ext,
     working_directory,
@@ -211,15 +212,25 @@ class BaseHaddockModule(ABC):
         with working_directory(self.path):
             self._run()
 
-        self.post_run()
         log.info(f'Module [{self.name}] finished.')
 
-    def post_run(self):
+    def clean(self):
         """Perform operations after the run."""
-        files_found = compress_file_ext(self.path, 'seed')
-        # avoids accessing the disk too often. Performs action only if needed
-        if files_found:
-            remove_files_with_ext(self.path, 'seed')
+        files_to_archive = ['seed', 'inp', 'out']
+        for fta in files_to_archive:
+            found = archive_file_ext(self.path, fta)
+            if found:
+                remove_files_with_ext(self.path, fta)
+
+        files_to_compress = ['pdb']
+        for ftc in files_to_compress:
+            found = compress_file_ext(
+                self.path,
+                ftc,
+                ncores=self.params['ncores']
+                )
+            if found:
+                remove_files_with_ext(self.path, ftc)
 
     @classmethod
     @abstractmethod

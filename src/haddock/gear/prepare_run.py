@@ -243,7 +243,7 @@ def setup_run(
     elif restarting_from:
         # copies only the input molecules needed
         _keys = list(modules_params.keys())
-        _partial_params = {k: modules_params[k] for k in _keys}
+        _partial_params = {k: modules_params[k] for k in _keys[restart_from:]}
         copy_input_files_to_data_dir(
             data_dir,
             _partial_params,

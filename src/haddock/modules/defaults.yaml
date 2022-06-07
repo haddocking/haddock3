@@ -95,7 +95,7 @@ self_contained:
   group: 'execution'
   explevel: guru
 clean:
-  default: true
+  default: false
   type: boolean
   title: Clean the module output files.
   short: Clean the module if run succeeds by compressing or removing output files.

@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 
+import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
@@ -201,19 +202,19 @@ class HaddockModule(BaseHaddockModule):
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
                 center_pdb = clt_centers[cluster_id]
-                clt_dic[cluster_id].append(center_pdb)
                 model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
                 model_score_l.sort()
-                top_score = sum(
-                    [e[0] for e in model_score_l][:threshold]
-                    ) / threshold
+                subset_score_l = [e[0] for e in model_score_l][:threshold]
+                top_mean_score = np.mean(subset_score_l)
+                top_std = np.std(subset_score_l)
                 output_str += (
                     f"{os.linesep}"
                     "-----------------------------------------------"
                     f"{os.linesep}"
                     f"Cluster {cluster_rank} (#{cluster_id}, "
                     f"n={len(model_score_l)}, "
-                    f"top{threshold}_avg_score = {top_score:.2f})"
+                    f"top{threshold}_avg_score = {top_mean_score:.2f} "
+                    f"+-{top_std:.2f})"
                     f"{os.linesep}")
                 output_str += os.linesep
                 output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'

@@ -2,7 +2,6 @@
 import os
 import shutil
 import tempfile
-from math import sqrt
 from pathlib import Path
 
 import numpy as np
@@ -370,6 +369,7 @@ class CAPRI:
         data = {}
         # keep always "model" the first key
         data["model"] = self.model
+        data["md5"] = self.model.md5
         # create the empty rank here so that it will appear
         #  as the second column
         data["caprieval_rank"] = None
@@ -648,7 +648,7 @@ def rearrange_ss_capri_output(
         write_nested_dic_to_file(data, output_name)
 
 
-def calc_stats(data, n):
+def calc_stats(data):
     """
     Calculate the mean and stdev.
 
@@ -656,8 +656,6 @@ def calc_stats(data, n):
     ----------
     data : list
         List of values.
-    n : int
-        Number of values to be used for the calculation.
 
     Returns
     -------
@@ -666,9 +664,8 @@ def calc_stats(data, n):
     stdev : float
         Standard deviation of the values.
     """
-    mean = sum(data) / n
-    var = sum((x - mean) ** 2 for x in data) / n
-    stdev = sqrt(var)
+    mean = np.mean(data)
+    stdev = np.std(data)
     return mean, stdev
 
 
@@ -697,7 +694,7 @@ def capri_cluster_analysis(
         try:
             score_array = [
                 e[1].score for e in clt_data[element][:clt_threshold]]
-            score_mean, score_stdev = calc_stats(score_array, clt_threshold)
+            score_mean, score_stdev = calc_stats(score_array)
         except KeyError:
             score_mean = float("nan")
             score_stdev = float("nan")
@@ -705,14 +702,14 @@ def capri_cluster_analysis(
         try:
             irmsd_array = [
                 e[0].irmsd for e in clt_data[element][:clt_threshold]]
-            irmsd_mean, irmsd_stdev = calc_stats(irmsd_array, clt_threshold)
+            irmsd_mean, irmsd_stdev = calc_stats(irmsd_array)
         except KeyError:
             irmsd_mean = float("nan")
             irmsd_stdev = float("nan")
 
         try:
             fnat_array = [e[0].fnat for e in clt_data[element][:clt_threshold]]
-            fnat_mean, fnat_stdev = calc_stats(fnat_array, clt_threshold)
+            fnat_mean, fnat_stdev = calc_stats(fnat_array)
         except KeyError:
             fnat_mean = float("nan")
             fnat_stdev = float("nan")
@@ -720,7 +717,7 @@ def capri_cluster_analysis(
         try:
             lrmsd_array = [
                 e[0].lrmsd for e in clt_data[element][:clt_threshold]]
-            lrmsd_mean, lrmsd_stdev = calc_stats(lrmsd_array, clt_threshold)
+            lrmsd_mean, lrmsd_stdev = calc_stats(lrmsd_array)
         except KeyError:
             lrmsd_mean = float("nan")
             lrmsd_stdev = float("nan")
@@ -728,7 +725,7 @@ def capri_cluster_analysis(
         try:
             dockq_array = [
                 e[0].dockq for e in clt_data[element][:clt_threshold]]
-            dockq_mean, dockq_stdev = calc_stats(dockq_array, clt_threshold)
+            dockq_mean, dockq_stdev = calc_stats(dockq_array)
         except KeyError:
             dockq_mean = float("nan")
             dockq_stdev = float("nan")

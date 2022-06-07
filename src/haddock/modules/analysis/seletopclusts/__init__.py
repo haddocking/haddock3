@@ -1,5 +1,6 @@
 """Select a top cluster module."""
 import math
+import os
 from pathlib import Path
 
 from haddock.modules import BaseHaddockModule
@@ -59,10 +60,24 @@ class HaddockModule(BaseHaddockModule):
                                 and pdb.clt_model_rank == model_ranking
                                 ):
                             self.log(
-                                f"Selecting {pdb.file_name} "
-                                f"Cluster {target_ranking} "
-                                f"Model {model_ranking}"
+                                f" {pdb.file_name} "
+                                f"> cluster_{target_ranking}_"
+                                f"model_{model_ranking}.pdb"
                                 )
                             self.output_models.append(pdb)
+
+        with open('seletopclusts.txt', 'w') as fh:
+            fh.write("rel_path\tori_name\tmd5" + os.linesep)
+            for model in self.output_models:
+                name = Path(
+                    f"cluster_{model.clt_rank}_model"
+                    f"_{model.clt_model_rank}.pdb")
+                name.write_text(model.rel_path.read_text())
+
+                fh.write(
+                    f"{model.rel_path}\t"
+                    f"{model.ori_name}\t"
+                    f"{name}\t"
+                    f"{model.md5}" + os.linesep)
 
         self.export_output_models()

@@ -6,6 +6,7 @@ from pathlib import Path
 from haddock import log
 from haddock import toppar_path as global_toppar
 from haddock.core.defaults import cns_exec as global_cns_exec
+from haddock.gear.expandable_parameters import populate_mol_parameters_in_module
 from haddock.libs.libio import working_directory
 from haddock.modules import BaseHaddockModule
 
@@ -38,6 +39,15 @@ class BaseCNSModule(BaseHaddockModule):
         log.info(f'Running [{self.name}] module')
 
         self.update_params(**params)
+
+        # the `mol_*` parameters exist only for CNS jobs.
+        if self._num_of_input_molecules:
+            populate_mol_parameters_in_module(
+                self._params,
+                self._num_of_input_molecules,
+                self._original_params,
+                )
+
         self.add_parent_to_paths()
         self.envvars = self.default_envvars()
 

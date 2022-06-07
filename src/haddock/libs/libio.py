@@ -235,7 +235,7 @@ def archive_files_ext(path, ext, compresslevel=9):
     files = glob_folder(path, ext)
     if files:
         with tarfile.open(
-                Path(path, f'{ext}.tar'),
+                Path(path, f'{ext}.tgz'),
                 mode='w:gz',
                 compresslevel=compresslevel,
                 ) as tarout:

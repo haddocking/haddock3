@@ -43,7 +43,7 @@ def unpack_compressed_and_archived_files(folders, ncores):
 
     for folder in folders:
         gz_files = glob_folder(folder, '.gz')
-        tar_files = glob_folder(folder, '.tar')
+        tar_files = glob_folder(folder, '.tgz')
 
         if gz_files or tar_files:
             # register the folders that where unpacked

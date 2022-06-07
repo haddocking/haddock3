@@ -67,7 +67,7 @@ class HaddockModule(BaseHaddockModule):
                             self.output_models.append(pdb)
 
         with open('seletopclusts.txt', 'w') as fh:
-            fh.write("rel_path\tori_name\tmd5" + os.linesep)
+            fh.write("rel_path\tori_name\tcluster_name\tmd5" + os.linesep)
             for model in self.output_models:
                 name = Path(
                     f"cluster_{model.clt_rank}_model"

@@ -5,3 +5,8 @@ Cluster FCC Module
    :members:
    :show-inheritance:
    :inherited-members:
+
+Default parameters
+------------------
+
+.. include:: params/clustfcc.rst

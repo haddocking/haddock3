@@ -253,7 +253,7 @@ def setup_run(
     elif restarting_from:
         # copies only the input molecules needed
         _keys = list(modules_params.keys())
-        _partial_params = {k: modules_params[k] for k in _keys}
+        _partial_params = {k: modules_params[k] for k in _keys[restart_from:]}
         copy_input_files_to_data_dir(
             data_dir,
             _partial_params,
@@ -428,7 +428,7 @@ def create_data_dir(run_dir):
 @with_config_error
 def copy_molecules_to_topology(molecules, topoaa_params):
     """Copy molecules to mandatory topology module."""
-    topoaa_params['molecules'] = list(map(Path, molecules))
+    topoaa_params['molecules'] = list(map(Path, transform_to_list(molecules)))
 
 
 def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):

@@ -5,3 +5,8 @@ Water Refinement module
    :members:
    :show-inheritance:
    :inherited-members:
+
+Default parameters
+------------------
+
+.. include:: params/mdref.rst

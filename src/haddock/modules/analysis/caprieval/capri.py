@@ -1,73 +1,27 @@
 """CAPRI module."""
 import os
-import shlex
 import shutil
-import subprocess
 import tempfile
-from functools import partial
-from math import sqrt
 from pathlib import Path
 
 import numpy as np
-from Bio import Align
-from Bio.Align import substitution_matrices
-from Bio.Seq import Seq
 from fccpy import read_pdb
 from fccpy.contacts import get_intermolecular_contacts
 from pdbtools import pdb_segxchain
 
 from haddock import log
+from haddock.libs.libalign import (
+    AlignError,
+    calc_rmsd,
+    centroid,
+    get_align,
+    get_atoms,
+    kabsch,
+    load_coords,
+    make_range,
+    )
+from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libpdb import split_by_chain
-
-
-RES_TO_BE_IGNORED = ["SHA", "WAT"]
-
-PROT_RES = [
-    "ALA",
-    "ARG",
-    "ASN",
-    "ASP",
-    "CYS",
-    "GLN",
-    "GLU",
-    "GLY",
-    "HIS",
-    "ILE",
-    "LEU",
-    "LYS",
-    "MET",
-    "PHE",
-    "PRO",
-    "SER",
-    "THR",
-    "TRP",
-    "TYR",
-    "VAL",
-    ]
-
-DNA_RES = ["DA", "DC", "DT", "DG"]
-# Backbone
-PROT_ATOMS = ["C", "N", "CA", "O"]
-# Bases
-DNA_ATOMS = [
-    "C5",
-    "N9",
-    "N2",
-    "C8",
-    "O2",
-    "N4",
-    "N7",
-    "C7",
-    "N1",
-    "N6",
-    "C2",
-    "O4",
-    "C6",
-    "N3",
-    "C4",
-    "O6",
-    ]
 
 
 class CAPRI:
@@ -75,560 +29,452 @@ class CAPRI:
 
     def __init__(
             self,
-            reference,
-            model_list,
-            receptor_chain,
-            ligand_chain,
-            aln_method,
+            identificator,
+            model,
             path,
-            core=None,
-            core_model_idx=0,
-            **params,
+            reference,
+            params,
             ):
+        """
+        Initialize the class.
+
+        Parameters
+        ----------
+        identificator : str
+            The identificator of the object.
+        model : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+            The model to be evaluated.
+        path : Path
+            Reference that defines where output should be saved.
+        reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+            The reference structure.
+        params : dict
+            The parameters for the CAPRI evaluation.
+        """
         self.reference = reference
-        self.model_list = model_list
-        self.irmsd_dic = {}
-        self.lrmsd_dic = {}
-        self.ilrmsd_dic = {}
-        self.fnat_dic = {}
-        self.dockq_dic = {}
-        self.atoms = get_atoms(model_list + [reference])
-        self.r_chain = receptor_chain
-        self.l_chain = ligand_chain
+        self.model = model
         self.path = path
+        self.params = params
+        self.irmsd = float('nan')
+        self.lrmsd = float('nan')
+        self.ilrmsd = float('nan')
+        self.fnat = float('nan')
+        self.dockq = float('nan')
+        self.atoms = self._load_atoms(model, reference)
+        self.r_chain = params["receptor_chain"]
+        self.l_chain = params["ligand_chain"]
+        self.model2ref_numbering = None
+        self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
+        self.output_clt_fname = Path(f"capri_clt_{identificator}.tsv")
         # for parallelisation
-        self.core = core
-        self.core_model_idx = core_model_idx
+        self.output = self.output_ss_fname
+        self.identificator = identificator
+        self.core_model_idx = identificator
 
-        # TODO: For scoring we might need to get one alignment per model
-        reference = str(reference)
-        model = model_list[0].rel_path
-        align_func = get_align(aln_method, **params)
-        self.model2ref_numbering = align_func(reference, model, path)
-        if not self.model2ref_numbering:
-            raise CAPRIError("Could not align reference and model")
+    def calc_irmsd(self, cutoff=5.0):
+        """Calculate the I-RMSD.
 
-    def irmsd(self, cutoff=5.0):
-        """Calculate the I-RMSD."""
+        Parameters
+        ----------
+        cutoff : float
+            The cutoff distance for the intermolecular contacts.
+        """
         # Identify reference interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
-        ref_coord_dic, _ = self.load_coords(
-            self.reference, ref_interface_resdic, match=False
+        ref_coord_dic, _ = load_coords(
+            self.reference, self.atoms, ref_interface_resdic
             )
 
-        for model in self.model_list:
+        mod_coord_dic, _ = load_coords(
+            self.model,
+            self.atoms,
+            ref_interface_resdic,
+            numbering_dic=self.model2ref_numbering
+            )
 
-            mod_coord_dic, _ = self.load_coords(
-                model, ref_interface_resdic, match=True
-                )
+        # Here _coord_dic keys are matched
+        #  and formatted as (chain, resnum, atom)
+        #  we will use atoms that are present in both
+        P = []
+        Q = []
+        for k in ref_coord_dic.keys() & mod_coord_dic.keys():
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = mod_coord_dic[k]
 
-            # Here _coord_dic keys are matched
-            #  and formatted as (chain, resnum, atom)
-            #  we will use atoms that are present in both
-            P = []
-            Q = []
-            for k in ref_coord_dic.keys() & mod_coord_dic.keys():
-                ref_xyz = ref_coord_dic[k]
-                mod_xyz = mod_coord_dic[k]
+            Q.append(ref_xyz)
+            P.append(mod_xyz)
 
-                Q.append(ref_xyz)
-                P.append(mod_xyz)
+        Q = np.asarray(Q)
+        P = np.asarray(P)
+        # write_coords("model.pdb", P)
+        # write_coords("ref.pdb", Q)
 
-            Q = np.asarray(Q)
-            P = np.asarray(P)
-            # write_coords("model.pdb", P)
-            # write_coords("ref.pdb", Q)
+        Q = Q - centroid(Q)
+        P = P - centroid(P)
+        U = kabsch(P, Q)
+        P = np.dot(P, U)
 
-            Q = Q - self.centroid(Q)
-            P = P - self.centroid(P)
-            U = self.kabsch(P, Q)
-            P = np.dot(P, U)
-            i_rmsd = self.calc_rmsd(P, Q)
-            # write_coords("model_aln.pdb", P)
-            # write_coords("ref_aln.pdb", Q)
+        self.irmsd = calc_rmsd(P, Q)
+        # write_coords("model_aln.pdb", P)
+        # write_coords("ref_aln.pdb", Q)
 
-            self.irmsd_dic[model] = i_rmsd
-
-        return self.irmsd_dic
-
-    def lrmsd(self):
+    def calc_lrmsd(self):
         """Calculate the L-RMSD."""
-        ref_coord_dic, _ = self.load_coords(self.reference)
+        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
 
-        for model in self.model_list:
+        mod_coord_dic, _ = load_coords(
+            self.model,
+            self.atoms,
+            numbering_dic=self.model2ref_numbering
+            )
 
-            mod_coord_dic, _ = self.load_coords(model, match=True)
+        Q = []
+        P = []
+        # Note: this MUST be sorted since we will use the indexes to
+        #  separate between receptor and ligand coordinates
+        instersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
 
-            Q = []
-            P = []
-            # Note: this MUST be sorted since we will use the indexes to
-            #  separate between receptor and ligand coordinates
-            instersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
+        chain_ranges = {}
+        for i, segment in enumerate(instersection):
+            chain, _, _ = segment
+            if chain not in chain_ranges:
+                chain_ranges[chain] = []
+            chain_ranges[chain].append(i)
 
-            chain_ranges = {}
-            for i, segment in enumerate(instersection):
-                chain, _, _ = segment
-                if chain not in chain_ranges:
-                    chain_ranges[chain] = []
-                chain_ranges[chain].append(i)
+        chain_ranges = make_range(chain_ranges)
+        r_start, r_end = chain_ranges[self.r_chain]
+        l_start, l_end = chain_ranges[self.l_chain]
 
-            chain_ranges = make_range(chain_ranges)
-            r_start, r_end = chain_ranges[self.r_chain]
-            l_start, l_end = chain_ranges[self.l_chain]
+        for k in instersection:
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = mod_coord_dic[k]
 
-            for k in instersection:
-                ref_xyz = ref_coord_dic[k]
-                mod_xyz = mod_coord_dic[k]
+            Q.append(ref_xyz)
+            P.append(mod_xyz)
 
-                Q.append(ref_xyz)
-                P.append(mod_xyz)
+        Q = np.asarray(Q)
+        P = np.asarray(P)
 
-            Q = np.asarray(Q)
-            P = np.asarray(P)
+        # write_coord_dic("ref.pdb", ref_coord_dic)
+        # write_coord_dic("model.pdb", mod_coord_dic)
 
-            # write_coord_dic("ref.pdb", ref_coord_dic)
-            # write_coord_dic("model.pdb", mod_coord_dic)
+        # write_coords("ref.pdb", Q)
+        # write_coords("model.pdb", P)
 
-            # write_coords("ref.pdb", Q)
-            # write_coords("model.pdb", P)
+        # move to the origin
+        Q = Q - centroid(Q)
+        P = P - centroid(P)
 
-            # # move to the origin
-            Q = Q - self.centroid(Q)
-            P = P - self.centroid(P)
+        # get receptor coordinates
+        Q_r = Q[r_start: r_end - 1]
+        P_r = P[r_start: r_end - 1]
 
-            # get receptor coordinates
-            Q_r = Q[r_start: r_end - 1]
-            P_r = P[r_start: r_end - 1]
+        # Center receptors and get rotation matrix
+        # Q_r = Q_r - centroid(Q_r)
+        # P_r = P_r - centroid(P_r)
 
-            # Center receptors and get rotation matrix
-            # Q_r = Q_r - self.centroid(Q_r)
-            # P_r = P_r - self.centroid(P_r)
+        U_r = kabsch(P_r, Q_r)
 
-            U_r = self.kabsch(P_r, Q_r)
+        # Center complexes at receptor centroids
+        Q = Q - centroid(Q_r)
+        P = P - centroid(P_r)
 
-            # Center complexes at receptor centroids
-            Q = Q - self.centroid(Q_r)
-            P = P - self.centroid(P_r)
+        # Apply rotation to complex
+        #  - complex are now aligned by the receptor
+        P = np.dot(P, U_r)
 
-            # Apply rotation to complex
-            #  - complex are now aligned by the receptor
-            P = np.dot(P, U_r)
+        # write_coords("ref.pdb", Q)
+        # write_coords("model.pdb", P)
 
-            # write_coords("ref.pdb", Q)
-            # write_coords("model.pdb", P)
+        # Identify the ligand coordinates
+        Q_l = Q[l_start: l_end - 1]
+        P_l = P[l_start: l_end - 1]
 
-            # Identify the ligand coordinates
-            Q_l = Q[l_start: l_end - 1]
-            P_l = P[l_start: l_end - 1]
+        # write_coords("ref_l.pdb", Q_l)
+        # write_coords("model_l.pdb", P_l)
 
-            # write_coords("ref_l.pdb", Q_l)
-            # write_coords("model_l.pdb", P_l)
+        # Calculate the RMSD of the ligands
+        self.lrmsd = calc_rmsd(P_l, Q_l)
 
-            # Calculate the RMSD of the ligands
-            l_rmsd = self.calc_rmsd(P_l, Q_l)
+        # write_coords("ref.pdb", Q)
+        # write_coords("model.pdb", P)
 
-            # write_coords("ref.pdb", Q)
-            # write_coords("model.pdb", P)
+    def calc_ilrmsd(self, cutoff=10.0):
+        """
+        Calculate the Interface Ligand RMSD.
 
-            self.lrmsd_dic[model] = l_rmsd
-
-        return self.lrmsd_dic
-
-    def ilrmsd(self, cutoff=10.0):
-        """Calculate the Interface Ligand RMSD."""
+        Parameters
+        ----------
+        cutoff : float
+            The cutoff distance for the intermolecular contacts.
+        """
         # Identify interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
 
         # Load interface coordinates
-        ref_coord_dic, _ = self.load_coords(self.reference, match=False)
+        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
 
-        ref_int_coord_dic, _ = self.load_coords(
-            self.reference, ref_interface_resdic, match=False
+        ref_int_coord_dic, _ = load_coords(
+            self.reference, self.atoms, ref_interface_resdic
             )
 
-        for model in self.model_list:
+        mod_coord_dic, _ = load_coords(
+            self.model,
+            self.atoms,
+            numbering_dic=self.model2ref_numbering
+            )
 
-            mod_coord_dic, _ = self.load_coords(model, match=True)
+        mod_int_coord_dic, _ = load_coords(
+            self.model,
+            self.atoms,
+            ref_interface_resdic,
+            numbering_dic=self.model2ref_numbering
+            )
 
-            mod_int_coord_dic, _ = self.load_coords(
-                model, ref_interface_resdic, match=True
-                )
+        # write_coord_dic("ref.pdb", ref_int_coord_dic)
+        # write_coord_dic("model.pdb", mod_int_coord_dic)
 
-            # write_coord_dic("ref.pdb", ref_int_coord_dic)
-            # write_coord_dic("model.pdb", mod_int_coord_dic)
+        # find atoms present in both interfaces
+        Q_int = []
+        P_int = []
+        common_keys = ref_int_coord_dic.keys() & mod_int_coord_dic.keys()
+        for k in sorted(common_keys):
+            ref_xyz = ref_int_coord_dic[k]
+            mod_xyz = mod_int_coord_dic[k]
 
-            # find atoms present in both interfaces
-            Q_int = []
-            P_int = []
-            common_keys = ref_int_coord_dic.keys() & mod_int_coord_dic.keys()
-            for k in sorted(common_keys):
-                ref_xyz = ref_int_coord_dic[k]
-                mod_xyz = mod_int_coord_dic[k]
+            Q_int.append(ref_xyz)
+            P_int.append(mod_xyz)
 
-                Q_int.append(ref_xyz)
-                P_int.append(mod_xyz)
+        Q_int = np.asarray(Q_int)
+        P_int = np.asarray(P_int)
 
-            Q_int = np.asarray(Q_int)
-            P_int = np.asarray(P_int)
+        # write_coords("ref.pdb", Q_int)
+        # write_coords("model.pdb", P_int)
 
-            # write_coords("ref.pdb", Q_int)
-            # write_coords("model.pdb", P_int)
+        # find atoms present in both molecules
+        Q = []
+        P = []
+        intersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
+        chain_ranges = {}
+        for i, segment in enumerate(intersection):
+            chain, _, _ = segment
+            if chain not in chain_ranges:
+                chain_ranges[chain] = []
+            chain_ranges[chain].append(i)
 
-            # find atoms present in both molecules
-            Q = []
-            P = []
-            intersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
-            chain_ranges = {}
-            for i, segment in enumerate(intersection):
-                chain, _, _ = segment
-                if chain not in chain_ranges:
-                    chain_ranges[chain] = []
-                chain_ranges[chain].append(i)
+        chain_ranges = make_range(chain_ranges)
+        l_start, l_end = chain_ranges[self.l_chain]
 
-            chain_ranges = make_range(chain_ranges)
-            l_start, l_end = chain_ranges[self.l_chain]
+        for k in sorted(ref_coord_dic.keys() & mod_coord_dic.keys()):
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = mod_coord_dic[k]
 
-            for k in sorted(ref_coord_dic.keys() & mod_coord_dic.keys()):
-                ref_xyz = ref_coord_dic[k]
-                mod_xyz = mod_coord_dic[k]
+            Q.append(ref_xyz)
+            P.append(mod_xyz)
 
-                Q.append(ref_xyz)
-                P.append(mod_xyz)
+        Q = np.asarray(Q)
+        P = np.asarray(P)
 
-            Q = np.asarray(Q)
-            P = np.asarray(P)
+        # write_coords("ref.pdb", Q)
+        # write_coords("model.pdb", P)
 
-            # write_coords("ref.pdb", Q)
-            # write_coords("model.pdb", P)
+        # put system at origin
+        Q_int = Q_int - centroid(Q_int)
+        P_int = P_int - centroid(P_int)
 
-            # put system at origin
-            Q_int = Q_int - self.centroid(Q_int)
-            P_int = P_int - self.centroid(P_int)
+        # put interfaces at the origin
+        # Q_int = Q_int - centroid(Q_int)
+        # P_int = P_int - centroid(P_int)
 
-            # # put interfaces at the origin
-            # Q_int = Q_int - self.centroid(Q_int)
-            # P_int = P_int - self.centroid(P_int)
+        # find the rotation that minimizes the interface rmsd
+        U_int = kabsch(P_int, Q_int)
+        P_int = np.dot(P_int, U_int)
 
-            # find the rotation that minimizes the interface rmsd
-            U_int = self.kabsch(P_int, Q_int)
-            P_int = np.dot(P_int, U_int)
+        # write_coords("ref.pdb", Q_int)
+        # write_coords("model.pdb", P_int)
 
-            # write_coords("ref.pdb", Q_int)
-            # write_coords("model.pdb", P_int)
+        # # move the system to the centroid of the interfaces
+        Q = Q - centroid(Q)
+        P = P - centroid(P)
 
-            # # move the system to the centroid of the interfaces
-            Q = Q - self.centroid(Q)
-            P = P - self.centroid(P)
+        # write_coords("ref_1.pdb", Q)
+        # write_coords("model_1.pdb", P)
 
-            # write_coords("ref_1.pdb", Q)
-            # write_coords("model_1.pdb", P)
+        Q = Q - centroid(Q_int)
+        P = P - centroid(P_int)
 
-            Q = Q - self.centroid(Q_int)
-            P = P - self.centroid(P_int)
+        # write_coords("ref_2.pdb", Q)
+        # write_coords("model_2.pdb", P)
 
-            # write_coords("ref_2.pdb", Q)
-            # write_coords("model_2.pdb", P)
+        # apply this rotation to the model
+        #  - complexes are now aligned by the interfaces
+        P = np.dot(P, U_int)
 
-            # apply this rotation to the model
-            #  - complexes are now aligned by the interfaces
-            P = np.dot(P, U_int)
+        # write_coords("ref_i.pdb", Q)
+        # write_coords("model_i.pdb", P)
 
-            # write_coords("ref_i.pdb", Q)
-            # write_coords("model_i.pdb", P)
+        # Calculate the rmsd of the ligand
+        Q_l = Q[l_start: l_end - 1]
+        P_l = P[l_start: l_end - 1]
 
-            # Calculate the rmsd of the ligand
-            Q_l = Q[l_start: l_end - 1]
-            P_l = P[l_start: l_end - 1]
+        # write_coords("ref_l.pdb", Q_l)
+        # write_coords("model_l.pdb", P_l)
 
-            # write_coords("ref_l.pdb", Q_l)
-            # write_coords("model_l.pdb", P_l)
+        # this will be the interface-ligand-rmsd
+        self.ilrmsd = calc_rmsd(P_l, Q_l)
 
-            # this will be the interface-ligand-rmsd
-            i_l_rmsd = self.calc_rmsd(P_l, Q_l)
-            self.ilrmsd_dic[model] = i_l_rmsd
+    def calc_fnat(self, cutoff=5.0):
+        """
+        Calculate the frequency of native contacts.
 
-        return self.ilrmsd_dic
-
-    def fnat(self, cutoff=5.0):
-        """Calculate the frequency of native contacts."""
+        Parameters
+        ----------
+        cutoff : float
+            The cutoff distance for the intermolecular contacts.
+        """
         ref_contacts = self.load_contacts(self.reference, cutoff)
-        for model in self.model_list:
-            model_contacts = self.load_contacts(model, cutoff)
-            intersection = ref_contacts & model_contacts
-            fnat = len(intersection) / float(len(ref_contacts))
-            self.fnat_dic[model] = fnat
-        return self.fnat_dic
+        model_contacts = self.load_contacts(self.model, cutoff)
+        intersection = ref_contacts & model_contacts
+        self.fnat = len(intersection) / float(len(ref_contacts))
 
-    def dockq(self):
+    def calc_dockq(self):
         """Calculate the DockQ metric."""
-        for model in self.model_list:
-            irmsd = self.irmsd_dic[model]
-            fnat = self.fnat_dic[model]
-            lrmsd = self.lrmsd_dic[model]
-            dockq = (
-                float(fnat)
-                + 1 / (1 + (irmsd / 1.5) * (irmsd / 1.5))
-                + 1 / (1 + (lrmsd / 8.5) * (lrmsd / 8.5))
+        if self.fnat and self.irmsd and self.lrmsd:
+            self.dockq = (
+                float(self.fnat)
+                + 1 / (1 + (self.irmsd / 1.5) * (self.irmsd / 1.5))
+                + 1 / (1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5))
                 ) / 3
-            self.dockq_dic[model] = dockq
-
-        return self.dockq_dic
-
-    def output(
-            self,
-            clt_threshold,
-            sortby_key,
-            sort_ascending,
-            ):
-        """Output the CAPRI results to a .tsv file."""
-        self._output_ss(sortby_key, sort_ascending)
-        self._output_clt(clt_threshold, sortby_key, sort_ascending,)
-
-    def _output_ss(self, sortby_key, sort_ascending):
-        output_l = []
-        for model in self.model_list:
-            data = {}
-            # keep always "model" the first key
-            data["model"] = model
-            # create the empty rank here so that it will appear
-            #  as the second column
-            data["caprieval_rank"] = None
-            data["score"] = model.score
-            if model in self.irmsd_dic:
-                data["irmsd"] = self.irmsd_dic[model]
-            if model in self.fnat_dic:
-                data["fnat"] = self.fnat_dic[model]
-            if model in self.lrmsd_dic:
-                data["lrmsd"] = self.lrmsd_dic[model]
-            if model in self.ilrmsd_dic:
-                data["ilrmsd"] = self.ilrmsd_dic[model]
-            if model in self.dockq_dic:
-                data["dockq"] = self.dockq_dic[model]
-            # add cluster data
-            data["cluster-id"] = model.clt_id
-            data["cluster-ranking"] = model.clt_rank
-            data["model-cluster-ranking"] = model.clt_model_rank
-            # list of dictionaries
-            output_l.append(data)
-
-        if self.core is None:
-            capri_name = "capri_ss.tsv"
         else:
-            capri_name = "capri_ss_" + str(self.core) + ".tsv"
-        output_fname = Path(self.path, capri_name)
+            self.dockq = float("nan")
 
-        self._dump_file(
-            output_l,
-            output_fname,
-            sortby_key,
-            sort_ascending,
-            )
+    def has_cluster_info(self):
+        """
+        Check wether this object contains cluster information.
 
-    def _output_clt(
-            self,
-            clt_threshold,
-            sortby_key,
-            sort_ascending,
-            ):
-        """Output cluster-based results."""
-        has_cluster_info = any(m.clt_id for m in self.model_list)
-        if not has_cluster_info:
+        Returns
+        -------
+        bool
+            True if this object contains cluster information.
+        """
+        has_cluster_info = False
+        if self.model.clt_id:
+            has_cluster_info = True
+        return has_cluster_info
+
+    def make_output(self):
+        """Output the CAPRI results to a .tsv file."""
+        data = {}
+        # keep always "model" the first key
+        data["model"] = self.model
+        data["md5"] = self.model.md5
+        # create the empty rank here so that it will appear
+        #  as the second column
+        data["caprieval_rank"] = None
+        data["score"] = self.model.score
+        data["irmsd"] = self.irmsd
+        data["fnat"] = self.fnat
+        data["lrmsd"] = self.lrmsd
+        data["ilrmsd"] = self.ilrmsd
+        data["dockq"] = self.dockq
+
+        if self.has_cluster_info():
+            data["cluster-id"] = self.model.clt_id
+            data["cluster-ranking"] = self.model.clt_rank
+            data["model-cluster-ranking"] = self.model.clt_model_rank
+        else:
+            data["cluster-id"] = None
+            data["cluster-ranking"] = None
+            data["self.model-cluster-ranking"] = None
+
+        output_fname = Path(self.path, self.output_ss_fname)
+
+        write_dic_to_file(data, output_fname)
+
+    def run(self):
+        """Get the CAPRI metrics."""
+        try:
+            align_func = get_align(
+                method=self.params["alignment_method"],
+                lovoalign_exec=self.params["lovoalign_exec"]
+                )
+            self.model2ref_numbering = align_func(
+                self.reference,
+                self.model,
+                self.path
+                )
+        except AlignError:
+            log.warning(
+                f"Alignment failed between {self.reference} "
+                f"and {self.model}, skipping..."
+                )
             return
 
-        # get the cluster data
-        clt_data = dict(((m.clt_rank, m.clt_id), []) for m in self.model_list)
+        if self.params["fnat"]:
+            log.debug(f"id {self.identificator}, calculating FNAT")
+            fnat_cutoff = self.params["fnat_cutoff"]
+            log.debug(f" cutoff: {fnat_cutoff}A")
+            self.calc_fnat(cutoff=fnat_cutoff)
 
-        # add models to each cluster
-        for model in self.model_list:
-            clt_data[(model.clt_rank, model.clt_id)].append(model)
+        if self.params["irmsd"]:
+            log.debug(f"id {self.identificator}, calculating I-RMSD")
+            irmsd_cutoff = self.params["irmsd_cutoff"]
+            log.debug(f" cutoff: {irmsd_cutoff}A")
+            self.calc_irmsd(cutoff=irmsd_cutoff)
 
-        output_l = []
-        for element in clt_data:
-            data = {}
-            number_of_models_in_cluster = len(clt_data[element])
-            # TODO: Refactor these ugly try/excepts
-            try:
-                score_array = [v.score
-                               for v in clt_data[element][: clt_threshold]]
-                score_mean, score_stdev = self._calc_stats(
-                    score_array, clt_threshold)
-            except KeyError:
-                score_mean = float("nan")
-                score_stdev = float("nan")
+        if self.params["lrmsd"]:
+            log.debug(f"id {self.identificator}, calculating L-RMSD")
+            self.calc_lrmsd()
 
-            try:
-                irmsd_array = [
-                    self.irmsd_dic[v]
-                    for v in clt_data[element]
-                    [: clt_threshold]]
-                irmsd_mean, irmsd_stdev = self._calc_stats(
-                    irmsd_array, clt_threshold)
-            except KeyError:
-                irmsd_mean = float("nan")
-                irmsd_stdev = float("nan")
+        if self.params["ilrmsd"]:
+            log.debug(f"id {self.identificator}, calculating I-L-RMSD")
+            ilrmsd_cutoff = self.params["irmsd_cutoff"]
+            log.debug(f" cutoff: {ilrmsd_cutoff}A")
+            self.calc_ilrmsd(cutoff=ilrmsd_cutoff)
 
-            try:
-                fnat_array = [self.fnat_dic[v]
-                              for v in clt_data[element][:clt_threshold]]
-                fnat_mean, fnat_stdev = self._calc_stats(
-                    fnat_array, clt_threshold)
-            except KeyError:
-                fnat_mean = float("nan")
-                fnat_stdev = float("nan")
+        if self.params["dockq"]:
+            log.debug(f"id {self.identificator}, calculating DockQ metric")
+            self.calc_dockq()
 
-            try:
-                lrmsd_array = [self.lrmsd_dic[v]
-                               for v in clt_data[element]
-                               [: clt_threshold]]
-                lrmsd_mean, lrmsd_stdev = self._calc_stats(
-                    lrmsd_array, clt_threshold)
-            except KeyError:
-                lrmsd_mean = float("nan")
-                lrmsd_stdev = float("nan")
-            try:
-                dockq_array = [self.dockq_dic[v]
-                               for v in clt_data[element]
-                               [: clt_threshold]]
-                dockq_mean, dockq_stdev = self._calc_stats(
-                    dockq_array, clt_threshold)
-            except KeyError:
-                dockq_mean = float("nan")
-                dockq_stdev = float("nan")
-
-            data["cluster_rank"] = element[0]
-            data["cluster_id"] = element[1]
-            data["n"] = number_of_models_in_cluster
-            if number_of_models_in_cluster < clt_threshold:
-                # under-evaluated, the mean was divided by a value
-                #  larger than the total number of models in the cluster
-                data["under_eval"] = "yes"
-            else:
-                data["under_eval"] = "-"
-
-            data["score"] = score_mean
-            data["score_std"] = score_stdev
-            data["irmsd"] = irmsd_mean
-            data["irmsd_std"] = irmsd_stdev
-            data["fnat"] = fnat_mean
-            data["fnat_std"] = fnat_stdev
-            data["lrmsd"] = lrmsd_mean
-            data["lrmsd_std"] = lrmsd_stdev
-            data["dockqn"] = dockq_mean
-            data["dockq_std"] = dockq_stdev
-
-            output_l.append(data)
-        if self.core is None:
-            capri_name = "capri_clt.tsv"
-        else:
-            capri_name = "capri_clt_" + str(self.core) + ".tsv"
-        output_fname = Path(self.path, capri_name)
-
-        info_header = "#" * 40 + os.linesep
-        info_header += "# `caprieval` cluster-based analysis" + os.linesep
-        info_header += "#" + os.linesep
-        info_header += f"# > sortby_key={sortby_key}" + os.linesep
-        info_header += f"# > sort_ascending={sort_ascending}" + os.linesep
-        info_header += f"# > clt_threshold={clt_threshold}" + os.linesep
-        info_header += "#" + os.linesep
-        info_header += (
-            "# NOTE: if under_eval=yes, it means that there were less models in"
-            " a cluster than" + os.linesep
-            )
-        info_header += (
-            "#    clt_threshold, thus these values were under evaluated."
-            + os.linesep
-            )
-        info_header += (
-            "#   You might need to tweak the value of clt_threshold or change"
-            " some parameters" + os.linesep
-            )
-        info_header += (
-            "#    in `clustfcc` depending on your analysis." + os.linesep
-            )
-        info_header += "#" + os.linesep
-        info_header += "#" * 40
-
-        self._dump_file(
-            output_l,
-            output_fname,
-            sortby_key,
-            sort_ascending,
-            info_header=info_header,
-            )
-
-    def _dump_file(
-            self,
-            container,
-            output_fname,
-            sortby_key,
-            sort_ascending,
-            info_header="",
-            ):
-
-        # rank
-        ranked_output_l = self._rank(
-            container, key='score',
-            ascending=True, core_model_idx=self.core_model_idx
-            )
-
-        # sort
-        sorted_keys = self._sort(
-            ranked_output_l, key=sortby_key, ascending=sort_ascending
-            )
-
-        header = "\t".join(ranked_output_l[0].keys())
-
-        if info_header:
-            header = info_header + os.linesep + header
-
-        with open(output_fname, "w") as out_fh:
-            out_fh.write(header + os.linesep)
-            for idx, _ in sorted_keys:
-                row_l = []
-                for value in ranked_output_l[idx].values():
-                    if isinstance(value, Path):
-                        row_l.append(str(value))
-                    elif isinstance(value, PDBFile):
-                        row_l.append(str(value.rel_path))
-                    elif isinstance(value, int):
-                        row_l.append(f"{value}")
-                    elif isinstance(value, str):
-                        row_l.append(f"{value}")
-                    elif value is None:
-                        row_l.append("-")
-                    else:
-                        row_l.append(f"{value:.3f}")
-                out_fh.write("\t".join(row_l) + os.linesep)
+        self.make_output()
 
     @staticmethod
-    def _sort(container, key, ascending):
-        # Sort the column
-        key_values = [(i, k[key]) for i, k in enumerate(container)]
-        key_values.sort(key=lambda x: x[1], reverse=not ascending)
-        return key_values
+    def _load_atoms(model, reference):
+        """
+        Load atoms from a model and reference.
 
-    @staticmethod
-    def _rank(container, key, ascending, core_model_idx):
-        rankkey_values = [(i, k[key]) for i, k in enumerate(container)]
-        rankkey_values.sort(key=lambda x: x[1], reverse=not ascending)
-        for i, k in enumerate(rankkey_values, start=1):
-            idx, _ = k
-            container[idx]["caprieval_rank"] = core_model_idx + i
-        return container
+        Parameters
+        ----------
+        model : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+            PDB file of the model to have its atoms identified
+        reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+            PDB file of the model to have its atoms identified
 
-    @staticmethod
-    def _calc_stats(data, n):
-        """Calculate the mean and stdev."""
-        mean = sum(data) / n
-        var = sum((x - mean) ** 2 for x in data) / n
-        stdev = sqrt(var)
-        return mean, stdev
+        Returns
+        -------
+        atom_dic : dict
+            Dictionary containing atoms observed in model and reference
+        """
+        model_atoms = get_atoms(model)
+        reference_atoms = get_atoms(reference)
+        atoms_dict = {}
+        atoms_dict.update(model_atoms)
+        atoms_dict.update(reference_atoms)
+        return atoms_dict
 
     @staticmethod
     def identify_interface(pdb_f, cutoff=5.0):
-        """Identify the interface."""
+        """Identify the interface.
+
+        Parameters
+        ----------
+        pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+            PDB file of the model to have its atoms identified
+        cutoff : float, optional
+            Cutoff distance for the interface identification.
+        """
         if isinstance(pdb_f, PDBFile):
             pdb_f = pdb_f.rel_path
         pdb = read_pdb(pdb_f)
@@ -650,7 +496,16 @@ class CAPRI:
 
     @staticmethod
     def load_contacts(pdb_f, cutoff=5.0):
-        """Load residue-based contacts."""
+        """
+        Load residue-based contacts.
+
+        Parameters
+        ----------
+        pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+            PDB file of the model to have its atoms identified
+        cutoff : float, optional
+            Cutoff distance for the interface identification.
+        """
         con_list = []
         if isinstance(pdb_f, PDBFile):
             pdb_f = pdb_f.rel_path
@@ -661,38 +516,15 @@ class CAPRI:
         return set(con_list)
 
     @staticmethod
-    def calc_rmsd(V, W):
-        """Calculate the RMSD from two vectors."""
-        diff = np.array(V) - np.array(W)
-        N = len(V)
-        return np.sqrt((diff * diff).sum() / N)
-
-    @staticmethod
-    def kabsch(P, Q):
-        """Find the rotation matrix using Kabsch algorithm."""
-        # Covariance matrix
-        P = np.array(P)
-        Q = np.array(Q)
-        C = np.dot(np.transpose(P), Q)
-        # use SVD
-        V, S, W = np.linalg.svd(C)
-        d = (np.linalg.det(V) * np.linalg.det(W)) < 0.0
-        if d:
-            S[-1] = -S[-1]
-            V[:, -1] = -V[:, -1]
-        # Create Rotation matrix U
-        U = np.dot(V, W)
-        return U
-
-    @staticmethod
-    def centroid(X):
-        """Get the centroid."""
-        X = np.array(X)
-        return X.mean(axis=0)
-
-    @staticmethod
     def add_chain_from_segid(pdb_path):
-        """Replace the chainID with the segID."""
+        """
+        Replace the chainID with the segID.
+
+        Parameters
+        ----------
+        pdb_path : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+            PDB file to be replaced
+        """
         temp_f = tempfile.NamedTemporaryFile(delete=False, mode="w+t")
         with open(pdb_path) as fh:
             for line in list(pdb_segxchain.run(fh)):
@@ -702,69 +534,260 @@ class CAPRI:
         new_pdb_path = shutil.move(temp_f.name, pdb_path)
         return new_pdb_path
 
-    def load_coords(self, pdb_f, filter_resdic=None, match=False):
-        """Load coordinates from PDB."""
-        coord_dic = {}
-        chain_dic = {}
-        idx = 0
-        if isinstance(pdb_f, PDBFile):
-            pdb_f = pdb_f.rel_path
-        with open(pdb_f, "r") as fh:
-            for line in fh.readlines():
-                if line.startswith("ATOM"):
 
-                    atom_name = line[12:16].strip()
-                    resname = line[17:20].strip()
-                    chain = line[21]
-                    resnum = int(line[22:26])
+def merge_data(capri_jobs):
+    """Merge CAPRI data."""
+    capri_dic = {}
+    for ident in range(1, len(capri_jobs) + 1):
+        out_file = Path(f"capri_ss_{ident}.tsv")
+        if not out_file.exists():
+            continue
+        header, content = out_file.read_text().split(os.linesep, 1)
 
-                    x = float(line[30:38])
-                    y = float(line[38:46])
-                    z = float(line[46:54])
-                    coords = np.asarray([x, y, z])
+        header_data = header.split('\t')
+        content_data = content.split('\t')
 
-                    if match:
-                        # This will match the number of the MODEL with the
-                        #  number of the REFERENCE
-                        try:
-                            resnum = self.model2ref_numbering[chain][resnum]
-                        except KeyError:
-                            # this residue is not matched, it exists in
-                            #  the MODEL but not in the REFERENCE so it
-                            #  should not be considered
-                            continue
+        model_name = Path(content_data[header_data.index("model")]).name
+        capri_dic[model_name] = {}
+        target_keys = ['irmsd', 'fnat', 'ilrmsd', 'lrmsd', 'dockq']
+        for key in target_keys:
+            capri_dic[model_name][key] = float(
+                content_data[header_data.index(key)])
 
-                    identifier = (chain, resnum, atom_name)
+    for j in capri_jobs:
+        for m in capri_dic:
+            if m == j.model.file_name:
+                # add the data
+                j.irmsd = capri_dic[m]['irmsd']
+                j.fnat = capri_dic[m]['fnat']
+                j.lrmsd = capri_dic[m]['lrmsd']
+                j.ilrmsd = capri_dic[m]['ilrmsd']
+                j.dockq = capri_dic[m]['dockq']
 
-                    if atom_name not in self.atoms[resname]:
-                        continue
+    return capri_jobs
 
-                    if chain not in chain_dic:
-                        chain_dic[chain] = []
 
-                    if filter_resdic:
-                        # Only retrieve coordinates from the filter_resdic
-                        if (
-                                chain in filter_resdic
-                                and resnum in filter_resdic[chain]
-                                ):
-                            coord_dic[identifier] = coords
-                            chain_dic[chain].append(idx)
-                            idx += 1
+def rearrange_ss_capri_output(
+        output_name,
+        output_count,
+        sort_key,
+        sort_ascending,
+        path
+        ):
+    """
+    Combine different capri outputs in a single file.
 
-                    else:
-                        # retrieve everything
-                        coord_dic[identifier] = coords
-                        chain_dic[chain].append(idx)
-                        idx += 1
+    Parameters
+    ----------
+    output_name : str
+        Name of the output file.
+    output_count : int
+        Number of output files to combine.
+    sort_key : str
+        Key to sort the output files.
+    path : Path
+        Path to the output directory.
+    """
+    # this would be easier and more readable with pandas (:
+    output_fname = Path(path, output_name)
+    log.info(f"Rearranging output files into {output_fname}")
+    keyword = output_name.split(".")[0]
+    split_dict = {
+        "capri_ss": "model-cluster-ranking",
+        "capri_clt": "caprieval_rank"
+        }
+    if keyword not in split_dict.keys():
+        raise Exception(f'Keyword {keyword} does not exist.')
 
-        chain_ranges = {}
-        for chain in chain_dic:
-            min_idx = min(chain_dic[chain])
-            max_idx = max(chain_dic[chain])
-            chain_ranges[chain] = (min_idx, max_idx)
+    # Load the information of each intermediate file
+    data = {}
+    for ident in range(1, output_count + 1):
+        out_file = Path(path, f"{keyword}_{ident}.tsv")
+        data[ident] = {}
 
-        return coord_dic, chain_ranges
+        # add this dummy data so we can rank it later
+        #  without messing up the order of the output
+        if not out_file.exists():
+            data[ident]['score'] = 99999.9
+            continue
+
+        header, content = out_file.read_text().split(os.linesep, 1)
+
+        header_data = header.split('\t')
+        content_data = content.split('\t')
+
+        # find out the data type of each field
+        for key, value in zip(header_data, content_data):
+            try:
+                value = int(value)
+            except ValueError:
+                try:
+                    value = float(value)
+                except ValueError:
+                    value = str(value).strip(os.linesep)
+            data[ident][key] = value
+
+        out_file.unlink()
+
+    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False
+        )
+    for i, k in enumerate(rankkey_values):
+        idx, _ = k
+        data[idx + 1]["caprieval_rank"] = i + 1
+
+        if data[idx + 1]['score'] == 99999.9:
+            del data[idx + 1]
+
+    if not data:
+        # This means there were only "dummy" values
+        return
+    else:
+        write_nested_dic_to_file(data, output_name)
+
+
+def calc_stats(data):
+    """
+    Calculate the mean and stdev.
+
+    Parameters
+    ----------
+    data : list
+        List of values.
+
+    Returns
+    -------
+    mean : float
+        Mean of the values.
+    stdev : float
+        Standard deviation of the values.
+    """
+    mean = np.mean(data)
+    stdev = np.std(data)
+    return mean, stdev
+
+
+def capri_cluster_analysis(
+        capri_list,
+        model_list,
+        output_fname,
+        clt_threshold,
+        sort_key,
+        sort_ascending,
+        path
+        ):
+    """Consider the cluster results for the CAPRI evaluation."""
+    # get the cluster data
+    clt_data = dict(((m.clt_rank, m.clt_id), []) for m in model_list)
+
+    # add models to each cluster
+    for capri, model in zip(capri_list, model_list):
+        clt_data[(model.clt_rank, model.clt_id)].append((capri, model))
+
+    output_dic = {}
+    for i, element in enumerate(clt_data):
+        data = {}
+        number_of_models_in_cluster = len(clt_data[element])
+        # TODO: Refactor these ugly try/excepts
+        try:
+            score_array = [
+                e[1].score for e in clt_data[element][:clt_threshold]]
+            score_mean, score_stdev = calc_stats(score_array)
+        except KeyError:
+            score_mean = float("nan")
+            score_stdev = float("nan")
+
+        try:
+            irmsd_array = [
+                e[0].irmsd for e in clt_data[element][:clt_threshold]]
+            irmsd_mean, irmsd_stdev = calc_stats(irmsd_array)
+        except KeyError:
+            irmsd_mean = float("nan")
+            irmsd_stdev = float("nan")
+
+        try:
+            fnat_array = [e[0].fnat for e in clt_data[element][:clt_threshold]]
+            fnat_mean, fnat_stdev = calc_stats(fnat_array)
+        except KeyError:
+            fnat_mean = float("nan")
+            fnat_stdev = float("nan")
+
+        try:
+            lrmsd_array = [
+                e[0].lrmsd for e in clt_data[element][:clt_threshold]]
+            lrmsd_mean, lrmsd_stdev = calc_stats(lrmsd_array)
+        except KeyError:
+            lrmsd_mean = float("nan")
+            lrmsd_stdev = float("nan")
+
+        try:
+            dockq_array = [
+                e[0].dockq for e in clt_data[element][:clt_threshold]]
+            dockq_mean, dockq_stdev = calc_stats(dockq_array)
+        except KeyError:
+            dockq_mean = float("nan")
+            dockq_stdev = float("nan")
+
+        data["cluster_rank"] = element[0]
+        data["cluster_id"] = element[1]
+        data["n"] = number_of_models_in_cluster
+        if number_of_models_in_cluster < clt_threshold:
+            # under-evaluated, the mean was divided by a value
+            #  larger than the total number of models in the cluster
+            data["under_eval"] = "yes"
+        else:
+            data["under_eval"] = "-"
+
+        data["score"] = score_mean
+        data["score_std"] = score_stdev
+        data["irmsd"] = irmsd_mean
+        data["irmsd_std"] = irmsd_stdev
+        data["fnat"] = fnat_mean
+        data["fnat_std"] = fnat_stdev
+        data["lrmsd"] = lrmsd_mean
+        data["lrmsd_std"] = lrmsd_stdev
+        data["dockqn"] = dockq_mean
+        data["dockq_std"] = dockq_stdev
+
+        output_dic[i] = data
+
+    output_fname = Path(path, output_fname)
+
+    info_header = "#" * 40 + os.linesep
+    info_header += "# `caprieval` cluster-based analysis" + os.linesep
+    info_header += "#" + os.linesep
+    info_header += f"# > sortby_key={sort_key}" + os.linesep
+    info_header += f"# > sort_ascending={sort_ascending}" + os.linesep
+    info_header += f"# > clt_threshold={clt_threshold}" + os.linesep
+    info_header += "#" + os.linesep
+    info_header += (
+        "# NOTE: if under_eval=yes, it means that there were less models in"
+        " a cluster than" + os.linesep
+        )
+    info_header += (
+        "#    clt_threshold, thus these values were under evaluated."
+        + os.linesep
+        )
+    info_header += (
+        "#   You might need to tweak the value of clt_threshold or change"
+        " some parameters" + os.linesep
+        )
+    info_header += (
+        "#    in `clustfcc` depending on your analysis." + os.linesep
+        )
+    info_header += "#" + os.linesep
+    info_header += "#" * 40
+
+    if not data:
+        # This means there were only "dummy" values
+        return
+    else:
+        write_nested_dic_to_file(
+            output_dic,
+            output_fname,
+            info_header=info_header)
 
 
 class CAPRIError(Exception):
@@ -774,350 +797,6 @@ class CAPRIError(Exception):
         self.msg = msg
         super().__init__(self.msg)
 
-
-def get_atoms(pdb_list):
-    """Identify what is the molecule type of each PDB."""
-    atom_dic = {}
-    atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
-    atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
-    for pdb in pdb_list:
-        if isinstance(pdb, PDBFile):
-            pdb = pdb.rel_path
-        with open(pdb) as fh:
-            for line in fh.readlines():
-                if line.startswith(("ATOM", "HETATM")):
-                    resname = line[17:20].strip()
-                    atom_name = line[12:16].strip()
-                    element = line[76:78].strip()
-                    if (
-                            resname not in PROT_RES
-                            and resname not in DNA_RES
-                            and resname not in RES_TO_BE_IGNORED
-                            ):
-                        # its neither DNA nor protein, use the heavy atoms
-                        # WARNING: Atoms that belong to unknown residues must
-                        #  be bound to a residue name;
-                        #   For example: residue NEP, also contains
-                        #  CB and CG atoms, if we do not bind it to the
-                        #  residue name, the next functions will include
-                        #  CG and CG atoms in the calculations for all
-                        #  other residue names
-                        if element != "H":
-                            if resname not in atom_dic:
-                                atom_dic[resname] = []
-                            if atom_name not in atom_dic[resname]:
-                                atom_dic[resname].append(atom_name)
-    return atom_dic
-
-
-def pdb2fastadic(pdb_f):
-    """Write the sequence as a fasta."""
-    res_codes = dict(
-        [
-            ("CYS", "C"),
-            ("ASP", "D"),
-            ("SER", "S"),
-            ("GLN", "Q"),
-            ("LYS", "K"),
-            ("ILE", "I"),
-            ("PRO", "P"),
-            ("THR", "T"),
-            ("PHE", "F"),
-            ("ASN", "N"),
-            ("GLY", "G"),
-            ("HIS", "H"),
-            ("LEU", "L"),
-            ("ARG", "R"),
-            ("TRP", "W"),
-            ("ALA", "A"),
-            ("VAL", "V"),
-            ("GLU", "E"),
-            ("TYR", "Y"),
-            ("MET", "M"),
-            ("DA", "A"),
-            ("DG", "G"),
-            ("DC", "C"),
-            ("DT", "T"),
-            ]
-        )
-    seq_dic = {}
-    with open(pdb_f) as fh:
-        for line in fh.readlines():
-            if line.startswith("ATOM"):
-                res_num = int(line[22:26])
-                res_name = line[17:20].strip()
-                chain = line[21]
-                if res_name in RES_TO_BE_IGNORED:
-                    continue
-                try:
-                    one_letter = res_codes[res_name]
-                except KeyError:
-                    one_letter = "X"
-                if chain not in seq_dic:
-                    seq_dic[chain] = {}
-                seq_dic[chain][res_num] = one_letter
-    return seq_dic
-
-
-def get_align(method, **kwargs):
-    """Get the alignment function."""
-    log.info(f"Using {method} alignment")
-    if method == "structure":
-        return partial(align_strct, lovoalign_exec=kwargs["lovoalign_exec"])
-    elif method == "sequence":
-        return partial(align_seq)
-    else:
-        available_alns = ("sequence", "structure")
-        raise ValueError(
-            f"Alignment method {method!r} not recognized. "
-            f"Available options are {', '.join(available_alns)}"
-            )
-
-
-def align_strct(reference, model, output_path, lovoalign_exec=None):
-    """Structuraly align and get numbering relationship."""
-    if lovoalign_exec is None:
-        log.error(
-            "Structural alignment needs LovoAlign "
-            "get it at github.com/m3g/lovoalign"
-            )
-        raise CAPRIError("Path to LovoAlign executable required.")
-
-    if not lovoalign_exec:
-        raise CAPRIError("lovoalign_exec parameter not defined ")
-
-    if not os.access(lovoalign_exec, os.X_OK):
-        raise CAPRIError(f"{lovoalign_exec!r} for LovoAlign is not executable")
-
-    numbering_dic = {}
-    protein_a_dic = dict(
-        (str(e.stem).split("_")[-1], e) for e in split_by_chain(reference)
-        )
-    protein_b_dic = dict(
-        (str(e.stem).split("_")[-1], e) for e in split_by_chain(model)
-        )
-
-    # check if chain ids match
-    if protein_a_dic.keys() != protein_b_dic.keys():
-        # TODO: Make this a clearer raise
-        return numbering_dic
-
-    for chain in protein_a_dic.keys():
-        pa_seqdic = pdb2fastadic(protein_a_dic[chain])
-        pb_seqdic = pdb2fastadic(protein_b_dic[chain])
-        # logging.debug(f"Structurally aligning chain {chain}")
-        numbering_dic[chain] = {}
-        cmd = (
-            f"{lovoalign_exec} -p1 {protein_a_dic[chain]} "
-            f"-p2 {protein_b_dic[chain]} "
-            f"-c1 {chain} -c2 {chain}"
-            )
-
-        # logging.debug(f"Command is: {cmd}")
-        p = subprocess.run(shlex.split(cmd), capture_output=True, text=True)
-        lovoalign_out = p.stdout.split(os.linesep)
-
-        # we don"t need the splitted proteins anymore
-        protein_a_dic[chain].unlink()
-        protein_b_dic[chain].unlink()
-
-        # find out where the alignment starts and ends
-        alignment_pass = True
-        for i, line in enumerate(lovoalign_out):
-            if "SEQUENCE ALIGNMENT" in line:
-                # there are 2 extra white lines after this header
-                alignment_start_index = i + 2
-            elif "FINAL" in line:
-                # there are 2 extra white lines after this header
-                alignment_end_index = i - 2
-            elif "ERROR" in line:
-                failed_pdb = line.split()[-1]
-                _msg = (
-                    f"LovoAlign could not read {failed_pdb} " "is it a ligand?"
-                    )
-                log.warning(_msg)
-                alignment_pass = False
-
-                for elem in [k for k in pa_seqdic[chain]]:
-                    numbering_dic[chain][elem] = elem
-
-        if not alignment_pass:
-            # This alignment failed, move on to the next
-            log.warning(
-                f"Skipping alignment of chain {chain}, "
-                "used sequential matching"
-                )
-            continue
-
-        aln_l = lovoalign_out[alignment_start_index:alignment_end_index]
-
-        # dump this alignment to a file
-        aln_fname = Path(output_path, f"lovoalign_{chain}.aln")
-        log.debug(f"Writing alignment to {aln_fname.name}")
-        with open(aln_fname, "w") as fh:
-            fh.write(os.linesep.join(aln_l))
-
-        # remove the line between the alignment segments
-        alignment = [aln_l[i: i + 3][:2] for i in range(0, len(aln_l), 3)]
-        # 100% (5 identical nucleotides / min(length(A),length(B))).
-        len_seq_a = len(pa_seqdic[chain])
-        len_seq_b = len(pb_seqdic[chain])
-        identity = (
-            (len_seq_a - sum([e[0].count("-") for e in alignment]))
-            / min(len_seq_a, len_seq_b)
-            * 100
-            )
-
-        if identity <= 40.0:
-            log.warning(
-                f"\"Structural\" identity of chain {chain} is {identity:.2f}%,"
-                " please check the results carefully"
-                )
-        else:
-            log.info(
-                f"\"Structural\" identity of chain {chain} is {identity:.2f}%"
-                )
-
-        # logging.debug("Reading alignment and matching numbering")
-        for element in alignment:
-            line_a, line_b = element
-
-            resnum_a, seq_a, _ = line_a.split()
-            resnum_b, seq_b, _ = line_b.split()
-
-            resnum_a = int(resnum_a) - 1
-            resnum_b = int(resnum_b) - 1
-
-            for resname_a, resname_b in zip(seq_a, seq_b):
-                if resname_a != "-":
-                    resnum_a += 1
-
-                if resname_b != "-":
-                    resnum_b += 1
-
-                if resname_a != "-" and resname_b != "-":
-                    numbering_dic[chain][resnum_b] = resnum_a
-
-    izone_fname = Path(output_path, "lovoalign.izone")
-    log.debug(f"Saving .izone to {izone_fname.name}")
-    dump_as_izone(izone_fname, numbering_dic)
-
-    return numbering_dic
-
-
-def align_seq(reference, model, output_path):
-    """Sequence align and get the numbering relationship."""
-    seqdic_ref = pdb2fastadic(reference)
-    seqdic_model = pdb2fastadic(model)
-
-    if seqdic_ref.keys() != seqdic_model.keys():
-        # TODO: Implement chain-matching here
-        return False
-
-    align_dic = {}
-    for ref_chain, model_chain in zip(seqdic_ref, seqdic_model):
-
-        assert ref_chain == model_chain
-
-        align_dic[ref_chain] = {}
-
-        seq_ref = Seq("".join(seqdic_ref[ref_chain].values()))
-        seq_model = Seq("".join(seqdic_model[model_chain].values()))
-
-        aligner = Align.PairwiseAligner()
-        aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
-        alns = aligner.align(seq_ref, seq_model)
-        top_aln = alns[0]
-
-        aln_fname = Path(output_path, f"blosum62_{ref_chain}.aln")
-        log.debug(f"Writing alignment to {aln_fname.name}")
-        with open(aln_fname, "w") as fh:
-            fh.write(str(top_aln))
-        aligned_ref_segment, aligned_model_segment = top_aln.aligned
-
-        # this should always be true
-        assert len(aligned_ref_segment) == len(aligned_model_segment)
-
-        identity = (
-            str(top_aln).count("|") / float(min(len(seq_ref), len(seq_model)))
-            ) * 100
-
-        if not any(e for e in top_aln.aligned):
-            # No alignment!
-            log.warning(
-                f"No alignment for chain {ref_chain} is it protein/dna? "
-                "Matching sequentially"
-                )
-            if all(
-                    "X" in s for s in seq_ref) and all(
-                    "X" in s for s in seq_model):
-                # this sequence contains only ligands, do it manually
-                if len(seq_ref) != len(seq_model):
-                    # we cannot handle this
-                    raise f"Cannot align chain {model_chain}"
-                for ref_res, model_res in zip(
-                        seqdic_ref[ref_chain],
-                        seqdic_model[model_chain]):
-
-                    align_dic[ref_chain].update({model_res: ref_res})
-        else:
-            if identity <= 40.0:
-                # Identity is very low
-                log.warning(
-                    f"Sequence identity of chain {ref_chain} is "
-                    f"{identity:.2f}%, please check the results carefully")
-                log.warning(
-                    "Please use alignment_method = \"structure\" instead")
-            else:
-                log.info(
-                    f"Sequence identity of chain {ref_chain} is "
-                    f"{identity:.2f}%")
-            for ref_segment, model_segment in zip(
-                    aligned_ref_segment, aligned_model_segment):
-
-                start_ref_segment, end_ref_segment = ref_segment
-                start_model_segment, end_model_segment = model_segment
-
-                reslist_ref = list(seqdic_ref[ref_chain].keys())[
-                    start_ref_segment:end_ref_segment]
-
-                reslist_model = list(seqdic_model[model_chain].keys())[
-                    start_model_segment:end_model_segment]
-
-                for _ref_res, _model_res in zip(reslist_ref, reslist_model):
-                    align_dic[ref_chain].update({_model_res: _ref_res})
-
-    izone_fname = Path(output_path, "blosum62.izone")
-    log.debug(f"Saving .izone to {izone_fname.name}")
-    dump_as_izone(izone_fname, align_dic)
-
-    return align_dic
-
-
-def make_range(chain_range_dic):
-    """Expand a chain dictionary into ranges."""
-    chain_ranges = {}
-    for chain in chain_range_dic:
-        min_idx = min(chain_range_dic[chain])
-        max_idx = max(chain_range_dic[chain])
-        chain_ranges[chain] = (min_idx, max_idx)
-    return chain_ranges
-
-
-def dump_as_izone(fname, numbering_dic):
-    """Dump the numbering dictionary as .izone."""
-    # FIXME: Collapse the izones so its faster to load in profit
-    with open(fname, "w") as fh:
-        for chain in numbering_dic:
-            for bound_res in numbering_dic[chain]:
-                unbound_res = numbering_dic[chain][bound_res]
-                #
-                izone_str = (
-                    "ZONE "
-                    f"{chain}{bound_res}:{chain}{unbound_res}"
-                    f"{os.linesep}"
-                    )
-                fh.write(izone_str)
 
 # # debug only
 # def write_coord_dic(output_name, coord_dic):

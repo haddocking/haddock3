@@ -367,7 +367,7 @@ mrswi_hot:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 mrswi_cool1:
   default: 0.5
   type: float
@@ -378,7 +378,7 @@ mrswi_cool1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 mrswi_cool2:
   default: 0.5
   type: float
@@ -389,7 +389,7 @@ mrswi_cool2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 mrswi_cool3:
   default: 0.5
   type: float
@@ -400,7 +400,7 @@ mrswi_cool3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 rswi_hot:
   default: 0.5
   type: float
@@ -411,7 +411,7 @@ rswi_hot:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 rswi_cool1:
   default: 0.5
   type: float
@@ -422,7 +422,7 @@ rswi_cool1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 rswi_cool2:
   default: 0.5
   type: float
@@ -433,7 +433,7 @@ rswi_cool2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 rswi_cool3:
   default: 0.5
   type: float
@@ -444,7 +444,7 @@ rswi_cool3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 masy_hot:
   default: -1.0
   type: float
@@ -455,7 +455,7 @@ masy_hot:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 masy_cool1:
   default: -1.0
   type: float
@@ -466,7 +466,7 @@ masy_cool1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 masy_cool2:
   default: -0.1
   type: float
@@ -477,7 +477,7 @@ masy_cool2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 masy_cool3:
   default: -0.1
   type: float
@@ -488,7 +488,7 @@ masy_cool3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 asy_hot:
   default: 1.0
   type: float
@@ -499,7 +499,7 @@ asy_hot:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 asy_cool1:
   default: 1.0
   type: float
@@ -510,7 +510,7 @@ asy_cool1:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 asy_cool2:
   default: 0.1
   type: float
@@ -521,7 +521,7 @@ asy_cool2:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 asy_cool3:
   default: 0.1
   type: float
@@ -532,7 +532,7 @@ asy_cool3:
   short: No short description yet
   long: No long description yet
   group: ''
-  explevel: easy
+  explevel: hidden
 #
 # Group symmetry
 #

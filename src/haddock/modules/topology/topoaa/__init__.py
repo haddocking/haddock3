@@ -80,6 +80,18 @@ class HaddockModule(BaseCNSModule):
         """Confirm if module is installed."""
         return
 
+    @staticmethod
+    def get_md5(ensemble_f):
+        """Get MD5 hash of a multi-model PDB file."""
+        md5_dic = {}
+        with open(ensemble_f, 'r') as fh:
+            for line in fh.readlines():
+                if line.startswith("REMARK") and "9" in line:
+                    model_num = int(line.split('MODEL')[-1].split()[0])
+                    md5 = line.split()[-1]
+                    md5_dic[model_num] = md5
+        return md5_dic
+
     def _run(self):
         """Execute module."""
         molecules = make_molecules(self.params.pop('molecules'))
@@ -104,6 +116,7 @@ class HaddockModule(BaseCNSModule):
         jobs = []
 
         models_dic = {}
+        ens_dic = {}
         for i, molecule in enumerate(molecules, start=1):
             self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
@@ -119,6 +132,9 @@ class HaddockModule(BaseCNSModule):
                 molecule.with_parent,
                 dest=Path.cwd(),
                 )
+
+            # get the MD5 hash of each model
+            ens_dic[i] = self.get_md5(molecule.with_parent)
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
@@ -181,14 +197,28 @@ class HaddockModule(BaseCNSModule):
         expected = {}
         for i in models_dic:
             expected[i] = {}
+            md5_dic = ens_dic[i]
             for j, model in enumerate(models_dic[i]):
+                md5_hash = None
+                try:
+                    model_id = int(model.stem.split('_')[-1])
+                except ValueError:
+                    model_id = ''
+
+                if model_id in md5_dic:
+                    md5_hash = md5_dic[model_id]
+
                 model_name = model.stem
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
                 processed_topology = \
                     Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
 
                 topology = TopologyFile(processed_topology, path=".")
-                pdb = PDBFile(processed_pdb, topology, path=".")
+                pdb = PDBFile(
+                    file_name=processed_pdb,
+                    topology=topology,
+                    path=".",
+                    md5=md5_hash)
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
 

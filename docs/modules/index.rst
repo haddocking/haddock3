@@ -29,3 +29,12 @@ Parent code for CNS modules
    :members:
    :show-inheritance:
    :inherited-members:
+
+General Default parameters
+--------------------------
+
+General default parameters can be defined in the main section of the
+configuration file, but can also be defined for each individual module (step).
+In the later case, overriding the general definition.
+
+.. include:: general_module_params.rst

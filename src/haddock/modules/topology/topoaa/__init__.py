@@ -87,14 +87,26 @@ class HaddockModule(BaseCNSModule):
         with open(ensemble_f, 'r') as fh:
             for line in fh.readlines():
                 if line.startswith("REMARK") and "9" in line:
-                    model_num = int(line.split('MODEL')[-1].split()[0])
+                    try:
+                        model_num = int(line.split('MODEL')[-1].split()[0])
+                    except ValueError:
+                        continue
                     md5 = line.split()[-1]
                     md5_dic[model_num] = md5
         return md5_dic
 
     def _run(self):
         """Execute module."""
-        molecules = make_molecules(self.params.pop('molecules'))
+        if self.order == 0:
+            molecules = make_molecules(self.params.pop('molecules'))
+
+        else:
+            # in case topoaa is not the first step
+            # it takes the input molecules from the previous step and
+            # when topoaa is not the first step, we only need the first model
+            # because all models will have the same identity.
+            _molecules = self.previous_io.retrieve_models()[0]
+            molecules = make_molecules([_molecules.rel_path], no_parent=True)
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately

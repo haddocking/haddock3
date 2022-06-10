@@ -34,12 +34,24 @@ def on_linux():
     [
         ('[header]', 'header'),
         ('[under_scores_work]', 'under_scores_work'),
-        ("['header.3']", 'header')
         ],
     )
 def test_main_header_re(line, expected):
     """Test header regex."""
     result = config_reader._main_header_re.match(line)
+    assert result[1] == expected
+
+
+@pytest.mark.parametrize(
+    'line,expected',
+    [
+        ("['header.3']", 'header'),
+        ("['header.1234']", 'header'),
+        ],
+    )
+def test_main_quoted_header_re(line, expected):
+    """Test quoted header regex."""
+    result = config_reader._main_quoted_header_re.match(line)
     assert result[1] == expected
 
 
@@ -54,6 +66,20 @@ def test_sub_header_re(line, expected):
     """Test header regex."""
     result = config_reader._sub_header_re.match(line)
     assert result[1] == expected
+
+
+@pytest.mark.parametrize(
+    'line,expected1,expected2',
+    [
+        ("['another.3'.header]", 'another', '.header'),
+        ("['another.3'.header.some]", 'another', '.header.some'),
+        ],
+    )
+def test__sub_quoted_header_re(line, expected1, expected2):
+    """Test sub quoted header regex."""
+    result = config_reader._sub_quoted_header_re.match(line)
+    assert result[1] == expected1
+    assert result[2] == expected2
 
 
 @pytest.mark.parametrize(
@@ -74,6 +100,22 @@ def test_main_header_re_wrong(line):
 @pytest.mark.parametrize(
     'line',
     [
+        "['header']",
+        "['header with spaces.1']",
+        "['header.']",
+        "['not'.valid]",
+        "['header.1]",
+        "[header.1']",
+        ],
+    )
+def test_main_quoted_header_re_wrong(line):
+    """Test main quoted header wrong."""
+    assert config_reader._main_quoted_header_re.match(line) is None
+
+
+@pytest.mark.parametrize(
+    'line',
+    [
         '[[header]]',
         'value = "some_string"',
         '[header with spaces]',
@@ -84,6 +126,20 @@ def test_main_header_re_wrong(line):
 def test_sub_header_re_wrong(line):
     """Test sub header wrong."""
     assert config_reader._sub_header_re.match(line) is None
+
+
+@pytest.mark.parametrize(
+    'line',
+    [
+        "['header.1']",
+        "['another.1.header']",
+        "[another.1'.header]",
+        "[another.1.header]",
+        ],
+    )
+def test_sub_quoted_header_re_wrong(line):
+    """Test sub quoted header wrong."""
+    assert config_reader._sub_quoted_header_re.match(line) is None
 
 
 @pytest.mark.parametrize(
@@ -658,12 +714,22 @@ val = 20
 ['headerone.3']
 val = 30
 
+['headerone.3'.weights]
+other = 40
+
+[headerone]
+val = 50
+
+[headerone.weights]
+other = 60
+
 """
 
 _config_example_dict_4 = {
     "headerone": {'val': 10},
     "headerone.1": {'val': 20},
-    "headerone.2": {'val': 30},
+    "headerone.2": {'val': 30, 'weights': {'other': 40}},
+    "headerone.3": {'val': 50, 'weights': {'other': 60}},
     }
 
 

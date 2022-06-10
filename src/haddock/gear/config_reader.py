@@ -26,6 +26,10 @@ The most relevant features of HADDOCK3 user configuration files are:
         [caprieval]
         # parameters here...
 
+Another way to repeat names is by quoting the name and appending a dot
+ and a unique number. In example the above the last `[caprieval]`
+ could also be written as `['caprieval.1']`.
+
 **Allows in-line comments:**
 
 .. code:: toml
@@ -79,12 +83,21 @@ from haddock.libs.libfunc import false, give_same, nan, none, true
 
 # Captures the main headers.
 # https://regex101.com/r/9urqti/1
-_main_header_re = re.compile(r'^ *\[\'?(\w+)(?:\.\d+\')?\]', re.ASCII)
+# Matches [<name>]
+_main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
+# Matches ['<name>.<digit>']
+_main_quoted_header_re = re.compile(r'^ *\[\'(\w+)\.\d+\'\]', re.ASCII)
 
 # Captures sub-headers
 # https://regex101.com/r/6OpJJ8/1
 # thanks https://stackoverflow.com/questions/39158902
+# Matches [<name>.<subname>]
 _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]', re.ASCII)
+# Matches ['<name>.<digit>'.<subname>]
+_sub_quoted_header_re = re.compile(
+    r'^ *\[\'(\w+)\.\d+\'((?:\.\w+)+)\]',
+    re.ASCII,
+    )
 
 # capture string parameters (paths are not strings, see later)
 # https://regex101.com/r/0LYCAG/1
@@ -338,17 +351,39 @@ def _read_config(fin):
 
         # collects header and subheader
         main_header_group = _main_header_re.match(line)
+        main_quoted_header_group = _main_quoted_header_re.match(line)
         sub_header_group = _sub_header_re.match(line)
+        sub_quoted_header_group = _sub_quoted_header_re.match(line)
 
         # prepares header
         if main_header_group:
             header = _update_key_number(main_header_group[1], d)
             d1 = d.setdefault(header, {})
 
+        elif main_quoted_header_group:
+            header = _update_key_number(main_quoted_header_group[1], d)
+            d1 = d.setdefault(header, {})
+
         # prepares subheader
         elif sub_header_group:
             headers = sub_header_group[1].split('.')
             header_ = _update_key_number(headers[0], d, offset=-1)
+
+            if header != header_:
+                raise ConfigFormatError(
+                    'A subheader cannot be defined before its main header.'
+                    )
+
+            d1 = d[header_]
+            for head in headers[1:]:
+                d1 = d1.setdefault(head, {})
+
+        elif sub_quoted_header_group:
+            headers = sub_quoted_header_group[2].split('.')
+            header_ = _update_key_number(sub_quoted_header_group[1],
+                                         d,
+                                         offset=-1,
+                                         )
 
             if header != header_:
                 raise ConfigFormatError(

@@ -34,6 +34,7 @@ def on_linux():
     [
         ('[header]', 'header'),
         ('[under_scores_work]', 'under_scores_work'),
+        ("['header.3']", 'header')
         ],
     )
 def test_main_header_re(line, expected):
@@ -647,6 +648,24 @@ _config_example_dict_3 = {
         }
     }
 
+_config_example_4 = """
+[headerone]
+val = 10
+
+['headerone.2']
+val = 20
+
+['headerone.3']
+val = 30
+
+"""
+
+_config_example_dict_4 = {
+    "headerone": {'val': 10},
+    "headerone.1": {'val': 20},
+    "headerone.2": {'val': 30},
+    }
+
 
 @pytest.mark.parametrize(
     'config,expected',
@@ -654,6 +673,7 @@ _config_example_dict_3 = {
         (_config_example_1, _config_example_dict_1),
         (_config_example_2, _config_example_dict_2),
         (_config_example_3, _config_example_dict_3),
+        (_config_example_4, _config_example_dict_4),
         ],
     )
 def test_read_config(config, expected):

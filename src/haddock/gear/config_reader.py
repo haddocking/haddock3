@@ -79,7 +79,7 @@ from haddock.libs.libfunc import false, give_same, nan, none, true
 
 # Captures the main headers.
 # https://regex101.com/r/9urqti/1
-_main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
+_main_header_re = re.compile(r'^ *\[\'?(\w+)(?:\.\d+\')?\]', re.ASCII)
 
 # Captures sub-headers
 # https://regex101.com/r/6OpJJ8/1

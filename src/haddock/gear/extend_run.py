@@ -45,7 +45,10 @@ class WorkflowManagerExtend(WorkflowManager):
                 f'Compressing original folder: {folder_!r} because it '
                 'was originally compressed.'
                 )
+
+            start = time()
             clean_output(folder_, ncores)
+            end = time()
 
         # apply compression to the new modules
         super().clean()

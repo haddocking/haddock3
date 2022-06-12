@@ -104,4 +104,4 @@ clean:
     succeeds. In this process, PDB files are compressed to gzip. `.seed`, `.inp`, and `.out`
     files are archived.
   group: 'clean'
-  explevel: guru
+  explevel: easy

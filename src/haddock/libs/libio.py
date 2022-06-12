@@ -149,7 +149,9 @@ def working_directory(path):
 
 def compress_files_ext(path, ext, ncores=1, **kwargs):
     """
-    Compress all files with same extension in folder.
+    Compress all files with same extension in folder to `.gz`.
+
+    Do not archive the files in TAR, only compress files individually.
 
     Parameters
     ----------
@@ -165,9 +167,11 @@ def compress_files_ext(path, ext, ncores=1, **kwargs):
     Returns
     -------
     bool
-        ``True`` if files with ``ext`` were found and the Zip files created.
+        ``True`` if files with ``ext`` were found and the compressed
+        `.gz` files created.
+
         ``False`` if no files with ``ext`` were found and, hence, the
-        Zip files was not created.
+        `.gz` files were not created.
     """
     files = glob_folder(path, ext)
     gzip_ready = partial(gzip_files, **kwargs)
@@ -187,7 +191,7 @@ def gzip_files(file_, block_size=None, compresslevel=9):
     Parameters
     ----------
     file_ : str or :external:py:class:`pathlib.Path`
-        The path to the file to zip.
+        The path to the file to compress.
 
     block_size : int
         The block size to treat per cycle. Defaults to 200MB (2*10**8

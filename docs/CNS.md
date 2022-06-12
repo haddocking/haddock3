@@ -71,7 +71,7 @@ If no suitable compiler is found, you will get an error message:
 Error: no suitable compiler (ifort, pgf95, ifort_i4, ifort_mp or pgf95_mp) found
 ```
 
-In this case, you will have to install a compiler. For more information, check the [CNS Installation page](http://cns-online.org/v1.3/).
+In this case, you will have to install a compiler. For more information, check the [CNS Installation page](http://cns-online.org/v1.3/installation/frame.html).
 One Fortran compiler that is easy (and free) to install is `gfortran`. It is part of the GNU Compiler Collection (GCC), which can be installed with one command if you have homebrew:
 
 ```bash

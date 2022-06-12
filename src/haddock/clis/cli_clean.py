@@ -5,7 +5,8 @@ Clean the output of an HADDOCK3 run directory.
 The clean process performs file archiving and file compressing
 operations. File with extension `seed`, `inp`, `out`, and `con` are
 compressed and archived into `.tgz` files. While files with `.pdb` and
-`.psf` extension are compressed to `.gz` files.
+`.psf` extension are compressed to `.gz` files. The original files are
+deleted.
 
 Usage::
 

@@ -5,6 +5,7 @@ from pathlib import Path
 from haddock.gear.clean_steps import (
     clean_output,
     unpack_compressed_and_archived_files,
+    update_unpacked_names,
     )
 
 from . import clean_steps_folder
@@ -12,6 +13,7 @@ from . import clean_steps_folder
 
 def test_clean_output():
     outdir = Path(clean_steps_folder, 'run1c')
+    shutil.rmtree(outdir, ignore_errors=True)
 
     # copies the directory to avoid messing with git stack
     shutil.copytree(
@@ -19,9 +21,9 @@ def test_clean_output():
         outdir,
         )
 
-    clean_output("0_topoaa")
-    clean_output("1_rigidbody")
-    clean_output("2_clustfcc")
+    clean_output(Path(outdir, "0_topoaa"))
+    clean_output(Path(outdir, "1_rigidbody"))
+    clean_output(Path(outdir, "2_clustfcc"))
 
     files_that_should_exist = [
         Path("0_topoaa", "params.cfg"),
@@ -117,3 +119,11 @@ def test_clean_output():
         assert not Path(outdir, file_).exists()
 
     shutil.rmtree(outdir)
+
+
+def test_update_unpacked_names():
+    original = ['0_topoaa', Path('4_flexref'), '5_seletopclusts']
+    prev = ['0_topoaa', 'run_dir/4_flexref', '5_seletopclusts']
+    new = ['run_dir/0_topoaa', '1_flexref', 'run_dir/2_seletopclusts']
+    update_unpacked_names(prev, new, original)
+    assert original == ['0_topoaa', Path('1_flexref'), '2_seletopclusts']

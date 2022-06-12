@@ -93,16 +93,10 @@ def test_file_exists_wrong(i):
         file_exists(i)
 
 
-@pytest.mark.parametrize(
-    'i,expected',
-    [
-        (Path(__file__).parent, Path(Path(__file__).parent)), # this is a folder
-        ],
-    )
-def test_folder_exists(i, expected):
+def test_folder_exists():
     """."""
-    r = folder_exists(i)
-    assert r == expected
+    r = folder_exists(Path(__file__).parent)
+    assert r == Path(__file__).parent
 
 
 @pytest.mark.parametrize(

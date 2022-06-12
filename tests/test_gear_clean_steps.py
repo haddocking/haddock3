@@ -1,0 +1,119 @@
+"""Test clean steps."""
+import shutil
+from pathlib import Path
+
+from haddock.gear.clean_steps import (
+    clean_output,
+    unpack_compressed_and_archived_files,
+    )
+
+from . import clean_steps_folder
+
+
+def test_clean_output():
+    outdir = Path(clean_steps_folder, 'run1c')
+
+    # copies the directory to avoid messing with git stack
+    shutil.copytree(
+        Path(clean_steps_folder, 'run1'),
+        outdir,
+        )
+
+    clean_output("0_topoaa")
+    clean_output("1_rigidbody")
+    clean_output("2_clustfcc")
+
+    files_that_should_exist = [
+        Path("0_topoaa", "params.cfg"),
+        Path("0_topoaa", "inp.tgz"),
+        Path("0_topoaa", "out.tgz"),
+        Path("0_topoaa", "structure_1.pdb.gz"),
+        Path("0_topoaa", "structure_1.psf.gz"),
+
+        Path("1_rigidbody", "params.cfg"),
+        Path("1_rigidbody", "io.json"),
+        Path("1_rigidbody", "inp.tgz"),
+        Path("1_rigidbody", "out.tgz"),
+        Path("1_rigidbody", "seed.tgz"),
+        Path("1_rigidbody", "structure_1.pdb.gz"),
+        Path("1_rigidbody", "structure_2.pdb.gz"),
+
+        Path("2_clustfcc", "con.tgz"),
+        ]
+
+    for file_ in files_that_should_exist:
+        assert Path(outdir, file_).exists()
+
+    files_that_should_not_exist = [
+        Path("0_topoaa", "structure_1.inp"),
+        Path("0_topoaa", "structure_1.out"),
+        Path("0_topoaa", "structure_1.pdb"),
+        Path("0_topoaa", "structure_1.psf"),
+
+        Path("1_rigidbody", "structure_1.inp"),
+        Path("1_rigidbody", "structure_1.out"),
+        Path("1_rigidbody", "structure_1.pdb"),
+        Path("1_rigidbody", "structure_1.seed"),
+        Path("1_rigidbody", "structure_2.inp"),
+        Path("1_rigidbody", "structure_2.out"),
+        Path("1_rigidbody", "structure_2.pdb"),
+        Path("1_rigidbody", "structure_2.seed"),
+
+        Path("2_clustfcc", "structure_2.con"),
+        Path("2_clustfcc", "structure_2.con"),
+        ]
+
+    for file_ in files_that_should_not_exist:
+        assert not Path(outdir, file_).exists()
+
+    unpack_compressed_and_archived_files([
+        Path(outdir, "0_topoaa"),
+        Path(outdir, "1_rigidbody"),
+        Path(outdir, "2_clustfcc"),
+        ])
+
+    # asserts the other way around
+    files_that_should_exist = [
+        Path("0_topoaa", "params.cfg"),
+        Path("0_topoaa", "structure_1.inp"),
+        Path("0_topoaa", "structure_1.out"),
+        Path("0_topoaa", "structure_1.pdb"),
+        Path("0_topoaa", "structure_1.psf"),
+
+        Path("1_rigidbody", "params.cfg"),
+        Path("1_rigidbody", "io.json"),
+        Path("1_rigidbody", "structure_1.inp"),
+        Path("1_rigidbody", "structure_1.out"),
+        Path("1_rigidbody", "structure_1.pdb"),
+        Path("1_rigidbody", "structure_1.seed"),
+        Path("1_rigidbody", "structure_2.inp"),
+        Path("1_rigidbody", "structure_2.out"),
+        Path("1_rigidbody", "structure_2.pdb"),
+        Path("1_rigidbody", "structure_2.seed"),
+
+        Path("2_clustfcc", "structure_2.con"),
+        Path("2_clustfcc", "structure_2.con"),
+        ]
+
+    files_that_should_not_exist = [
+        Path("0_topoaa", "inp.tgz"),
+        Path("0_topoaa", "out.tgz"),
+        Path("0_topoaa", "structure_1.pdb.gz"),
+        Path("0_topoaa", "structure_1.psf.gz"),
+
+        Path("1_rigidbody", "inp.tgz"),
+        Path("1_rigidbody", "out.tgz"),
+        Path("1_rigidbody", "seed.tgz"),
+        Path("1_rigidbody", "structure_1.pdb.gz"),
+        Path("1_rigidbody", "structure_2.pdb.gz"),
+
+        Path("2_clustfcc", "con.tgz"),
+        ]
+
+    for file_ in files_that_should_exist:
+        assert Path(outdir, file_).exists()
+
+    for file_ in files_that_should_not_exist:
+        assert not Path(outdir, file_).exists()
+
+    shutil.rmtree(outdir)

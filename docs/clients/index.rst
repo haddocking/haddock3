@@ -12,8 +12,10 @@ The available CLIs are the following:
    :maxdepth: 1
 
    clihd3
-   clicp
    clicfg
+   clicp
+   cliclean
+   cliunpack
+   climpi
    clibm
    clidmn
-   climpi

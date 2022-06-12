@@ -20,7 +20,10 @@ from haddock.libs.libcli import add_rundir_arg, add_version_arg
 
 
 # Command line interface parser
-ap = argparse.ArgumentParser()
+ap = argparse.ArgumentParser(
+    description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
 
 add_rundir_arg(ap)
 add_version_arg(ap)
@@ -63,7 +66,7 @@ def main(run_dir, ncores=None):
 
     See Also
     --------
-    :py:mod:`haddock.gear.clean_steps`
+    :py:module:`haddock.gear.clean_steps`
     """
     # anti-pattern to speed up CLI initiation
     from pathlib import Path

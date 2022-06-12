@@ -1,4 +1,18 @@
-"""Clean module output."""
+"""
+Clean workflow steps output.
+
+This concerns removing unnecessary files, compressing, and archiving
+files with the same extension to reduce space and stress when listing
+files in the modules' step folders.
+
+The two main functions of this module are:
+
+* :py:func:`clean_output`
+* :py:func:`unpack_compressed_and_archived_files`
+
+See also the command-line clients ``haddock3-clean`` and
+``haddock3-unpack``.
+"""
 import gzip
 import shutil
 import tarfile
@@ -115,7 +129,7 @@ def update_unpacked_names(prev, new, original):
 
     Sometimes the step folders are renamed to ajust their index number.
     Such operation happens after the output data is unpacked. This module,
-    :py:mod:`haddock.gear.clean_steps`, keeps registry of the folders
+    :py:module:`haddock.gear.clean_steps`, keeps registry of the folders
     unpacked to the correct funtioning of the `extend_run` module.
 
     Given the original names and the new names of the step folders,

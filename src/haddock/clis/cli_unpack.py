@@ -71,7 +71,7 @@ def main(run_dir, ncores=None):
 
     See Also
     --------
-    :py:mod:`haddock.gear.clean_steps`
+    :py:module:`haddock.gear.clean_steps`
     """
     # anti-pattern to speed up CLI initiation
     from pathlib import Path

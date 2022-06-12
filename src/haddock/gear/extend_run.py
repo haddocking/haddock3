@@ -47,7 +47,7 @@ class WorkflowManagerExtend(WorkflowManager):
                 'was originally compressed.'
                 )
 
-            with log_time("compressing took"):
+            with log_time("cleaning output files took"):
                 clean_output(folder_, ncores)
 
         # apply compression to the new modules

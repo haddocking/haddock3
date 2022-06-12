@@ -119,9 +119,9 @@ class Step:
 
     def clean(self):
         """Clean step output."""
-        with log_time("compressing took"):
-            if self.module is None and self.config["clean"]:
+        if self.module is None and self.config["clean"]:
+            with log_time("cleaning output files took"):
                 clean_output(self.working_path, self.config["ncores"])
 
-            elif self.module is not None and self.module.params["clean"]:
-                self.module.clean_output()
+        elif self.module is not None and self.module.params["clean"]:
+            self.module.clean_output()

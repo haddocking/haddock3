@@ -5,7 +5,6 @@ import pytest
 
 from haddock.libs.libutil import (
     extract_keys_recursive,
-    file_exists,
     get_number_from_path_stem,
     non_negative_int,
     recursive_dict_update,
@@ -34,32 +33,6 @@ def test_non_negative_int_error(i):
     """."""
     with pytest.raises(ValueError):
         non_negative_int(i)
-
-
-@pytest.mark.parametrize(
-    'i,expected',
-    [
-        (Path(__file__), Path(__file__)),
-        (str(Path(__file__)), Path(__file__)),
-        ],
-    )
-def test_file_exists(i, expected):
-    """."""
-    r = file_exists(i)
-    assert r == expected
-
-
-@pytest.mark.parametrize(
-    'i',
-    [
-        'some_bad.path',
-        Path(__file__).parent,  # this is a folder
-        ],
-    )
-def test_file_exists_wrong(i):
-    """."""
-    with pytest.raises(ValueError):
-        file_exists(i)
 
 
 @pytest.mark.parametrize(

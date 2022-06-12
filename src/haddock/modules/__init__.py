@@ -19,6 +19,7 @@ from haddock.libs.libio import working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
+from haddock.libs.libtimer import log_time
 from haddock.libs.libutil import recursive_dict_update
 
 
@@ -218,7 +219,8 @@ class BaseHaddockModule(ABC):
         --------
         :py:func:`haddock.gear.clean_steps.clean_output`
         """
-        clean_output(self.path, self.params["ncores"])
+        with log_time("cleaning output files took"):
+            clean_output(self.path, self.params["ncores"])
 
     @classmethod
     @abstractmethod

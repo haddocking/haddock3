@@ -5,6 +5,8 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libio import (
+    file_exists,
+    folder_exists,
     parse_suffix,
     read_from_yaml,
     write_dic_to_file,
@@ -63,3 +65,60 @@ def test_write_dic_to_file():
 def test_parse_suffix(in_, expected):
     result = parse_suffix(in_)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    'i,expected',
+    [
+        (Path(__file__), Path(__file__)),
+        (str(Path(__file__)), Path(__file__)),
+        ],
+    )
+def test_file_exists(i, expected):
+    """."""
+    r = file_exists(i)
+    assert r == expected
+
+
+@pytest.mark.parametrize(
+    'i',
+    [
+        'some_bad_path',
+        Path(__file__).parent,  # this is a folder
+        ],
+    )
+def test_file_exists_wrong(i):
+    """."""
+    with pytest.raises(ValueError):
+        file_exists(i)
+
+
+@pytest.mark.parametrize(
+    'i,expected',
+    [
+        (Path(__file__).parent, Path(Path(__file__).parent)), # this is a folder
+        ],
+    )
+def test_folder_exists(i, expected):
+    """."""
+    r = folder_exists(i)
+    assert r == expected
+
+
+@pytest.mark.parametrize(
+    'i',
+    [
+        'some_bad_path',
+        Path(__file__),  # this is a file
+        str(Path(__file__)),  # this is a file
+        ],
+    )
+def test_folder_exists_wrong(i):
+    """."""
+    with pytest.raises(ValueError):
+        folder_exists(i)
+
+
+def test_folder_exists_wrong_othererror():
+    with pytest.raises(TypeError):
+        folder_exists("some_bad_path", exception=TypeError)

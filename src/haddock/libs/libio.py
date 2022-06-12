@@ -319,3 +319,89 @@ def remove_files_with_ext(folder, ext):
     for file_ in files:
         log.debug(f'removing: {file_}')
         file_.unlink()
+
+
+def folder_exists(
+        path,
+        exception=ValueError,
+        emsg="The folder {!r} does not exist.",
+        ):
+    """
+    Assert if a folder exist.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        The path to the folder.
+
+    exception : Exception
+        The Exception to raise in case `path` is not file or does not
+        exist.
+
+    emsg : str
+        The error message to give to `exception`. May accept formatting
+        to pass `path`.
+
+    Returns
+    -------
+    pathlib.Path
+        The Path representation of the input ``path`` if condition is
+        true.
+
+    Raises
+    ------
+    Exception
+        Any exception that pathlib.Path can raise.
+    """
+    p = Path(path)
+
+    valid = [p.exists, p.is_dir]
+
+    if all(f() for f in valid):
+        return p
+
+    # don't change to f-strings, .format has a purpose
+    raise exception(emsg.format(str(path)))
+
+
+def file_exists(
+        path,
+        exception=ValueError,
+        emsg="`path` is not a file or does not exist",
+        ):
+    """
+    Assert if file exist.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        The file path.
+
+    exception : Exception
+        The Exception to raise in case `path` is not file or does not
+        exist.
+
+    emsg : str
+        The error message to give to `exception`. May accept formatting
+        to pass `path`.
+
+    Returns
+    -------
+    pathlib.Path
+        The Path representation of the input ``path`` if condition is
+        true.
+
+    Raises
+    ------
+    Exception
+        Any exception that pathlib.Path can raise.
+    """
+    p = Path(path)
+
+    valid = [p.exists, p.is_file]
+
+    if all(f() for f in valid):
+        return p
+
+    # don't change to f-strings, .format has a purpose
+    raise exception(emsg.format(str(path)))

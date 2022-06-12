@@ -201,43 +201,6 @@ def non_negative_int(
     raise exception(emsg.format(n))
 
 
-def file_exists(
-        path,
-        exception=ValueError,
-        emsg="`path` is not a file or does not exist",
-        ):
-    """
-    Assert if file exist.
-
-    Parameters
-    ----------
-    path : str or pathlib.Path
-        The file path.
-
-    exception : Exception
-        The Exception to raise in case `path` is not file or does not
-        exist.
-
-    emsg : str
-        The error message to give to `exception`. May accept formatting
-        to pass `path`.
-
-    Raises
-    ------
-    Exception
-        Any exception that pathlib.Path can raise.
-    """
-    p = Path(path)
-
-    valid = [p.exists, p.is_file]
-
-    if all(f() for f in valid):
-        return p
-
-    # don't change to f-strings, .format has a purpose
-    raise exception(emsg.format(str(path)))
-
-
 def recursive_dict_update(d, u):
     """
     Update dictionary `d` according to `u` recursively.

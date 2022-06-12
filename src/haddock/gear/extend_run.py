@@ -7,6 +7,7 @@ from haddock.core.defaults import MODULE_IO_FILE
 from haddock.gear.clean_steps import UNPACK_FOLDERS, clean_output
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libtimer import log_time
 from haddock.libs.libworkflow import Workflow, WorkflowManager
 from haddock.modules import get_module_steps_folders
 
@@ -46,9 +47,8 @@ class WorkflowManagerExtend(WorkflowManager):
                 'was originally compressed.'
                 )
 
-            start = time()
-            clean_output(folder_, ncores)
-            end = time()
+            with log_time("compressing took"):
+                clean_output(folder_, ncores)
 
         # apply compression to the new modules
         super().clean()

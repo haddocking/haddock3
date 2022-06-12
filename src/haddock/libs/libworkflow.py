@@ -9,7 +9,7 @@ from haddock.core.exceptions import HaddockError, StepError
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.config_reader import get_module_name
 from haddock.gear.zerofill import zero_fill
-from haddock.libs.libtimer import convert_seconds_to_min_sec
+from haddock.libs.libtimer import convert_seconds_to_min_sec, log_time
 from haddock.libs.libutil import recursive_dict_update
 from haddock.modules import (
     modules_category,
@@ -119,14 +119,9 @@ class Step:
 
     def clean(self):
         """Clean step output."""
-        start = time()
+        with log_time("compressing took"):
+            if self.module is None and self.config["clean"]:
+                clean_output(self.working_path, self.config["ncores"])
 
-        if self.module is None and self.config["clean"]:
-            clean_output(self.working_path, self.config["ncores"])
-
-        elif self.module is not None and self.module.params["clean"]:
-            self.module.clean_output()
-
-        end = time()
-        elapsed = convert_seconds_to_min_sec(end - start)
-        log.info(f"compressing took {elapsed}")
+            elif self.module is not None and self.module.params["clean"]:
+                self.module.clean_output()

@@ -1,7 +1,12 @@
 """Test libtimer."""
 import pytest
 
-from haddock.libs.libtimer import convert_seconds_to_min_sec
+from haddock.libs.libtimer import convert_seconds_to_min_sec, log_time
+
+
+def test_logtime():
+    with log_time("some string"):
+        2 * 2
 
 
 @pytest.mark.parametrize(

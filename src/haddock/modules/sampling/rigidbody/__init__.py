@@ -57,7 +57,6 @@ class HaddockModule(BaseCNSModule):
         idx = 1
         self.output_models = []
         self.log("Preparing jobs...")
-        print('>>>>>>>>', models_to_dock)
         for combination in models_to_dock:
 
             for _i in range(sampling_factor):

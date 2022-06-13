@@ -15,7 +15,7 @@ from haddock.gear.config_writer import save_config as _save_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libio import working_directory
+from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
@@ -486,3 +486,33 @@ def get_module_steps_folders(folder):
         key=lambda x: int(x.split("_")[0]),
         )
     return steps
+
+
+def is_a_step_folder(path):
+    """
+    Assess whether a folder is a possible step folder.
+
+    The folder is considered a step folder if has a zero or positive
+    integer index followed by a name of a module.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        The path to the folder.
+
+    Returns
+    -------
+    bool
+        Whether the folder is a step folder or not.
+    """
+    path = Path(path)
+    folder_exists(path)
+    main_folder_name = path.name
+    parts = main_folder_name.split("_")
+    if \
+            len(parts) == 2 \
+            and parts[0].isdigit() \
+            and parts[1] in modules_category:
+        return True
+    else:
+        return False

@@ -324,7 +324,7 @@ def remove_files_with_ext(folder, ext):
 def folder_exists(
         path,
         exception=ValueError,
-        emsg="The folder {!r} does not exist.",
+        emsg="The folder {!r} does not exist or is not a folder.",
         ):
     """
     Assert if a folder exist.

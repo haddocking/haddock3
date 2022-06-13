@@ -76,16 +76,26 @@ def main(run_dir, ncores=None):
     # anti-pattern to speed up CLI initiation
     from pathlib import Path
 
+    from haddock import log
     from haddock.gear.clean_steps import unpack_compressed_and_archived_files
     from haddock.libs.libtimer import log_time
     from haddock.libs.libutil import parse_ncores
-    from haddock.modules import get_module_steps_folders
+    from haddock.modules import get_module_steps_folders, is_a_step_folder
 
+    log.info(f"Unpacking {str(run_dir)!r} folder")
     ncores = parse_ncores(ncores)
-    step_folders = [Path(run_dir, p) for p in get_module_steps_folders(run_dir)]
 
-    with log_time("unpacking took"):
-        unpack_compressed_and_archived_files(step_folders, ncores)
+    if is_a_step_folder(run_dir):
+        with log_time("unpacking took"):
+            unpack_compressed_and_archived_files([run_dir], ncores)
+
+    else:
+        step_folders = [
+            Path(run_dir, p)
+            for p in get_module_steps_folders(run_dir)
+            ]
+        with log_time("unpacking took"):
+            unpack_compressed_and_archived_files(step_folders, ncores)
 
     return
 

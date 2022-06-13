@@ -87,10 +87,7 @@ class HaddockModule(BaseCNSModule):
         with open(ensemble_f, 'r') as fh:
             for line in fh.readlines():
                 if line.startswith("REMARK") and "9" in line:
-                    try:
-                        model_num = int(line.split('MODEL')[-1].split()[0])
-                    except ValueError:
-                        continue
+                    model_num = int(line.split('MODEL')[-1].split()[0])
                     md5 = line.split()[-1]
                     md5_dic[model_num] = md5
         return md5_dic

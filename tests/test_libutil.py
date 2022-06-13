@@ -4,9 +4,7 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libutil import (
-    convert_seconds_to_min_sec,
     extract_keys_recursive,
-    file_exists,
     get_number_from_path_stem,
     non_negative_int,
     recursive_dict_update,
@@ -35,32 +33,6 @@ def test_non_negative_int_error(i):
     """."""
     with pytest.raises(ValueError):
         non_negative_int(i)
-
-
-@pytest.mark.parametrize(
-    'i,expected',
-    [
-        (Path(__file__), Path(__file__)),
-        (str(Path(__file__)), Path(__file__)),
-        ],
-    )
-def test_file_exists(i, expected):
-    """."""
-    r = file_exists(i)
-    assert r == expected
-
-
-@pytest.mark.parametrize(
-    'i',
-    [
-        'some_bad.path',
-        Path(__file__).parent,  # this is a folder
-        ],
-    )
-def test_file_exists_wrong(i):
-    """."""
-    with pytest.raises(ValueError):
-        file_exists(i)
 
 
 @pytest.mark.parametrize(
@@ -133,28 +105,6 @@ def test_recursive_dict_update_empty():
     c = recursive_dict_update(a, {})
     assert a is not c
     assert a == c
-
-
-@pytest.mark.parametrize(
-    "seconds,expected",
-    [
-        (60, "1 minute and 0 seconds"),
-        (120, "2 minutes and 0 seconds"),
-        (40, "40 seconds"),
-        (179, "2 minutes and 59 seconds"),
-        (3600, "1h0m0s"),
-        (3601, "1h0m1s"),
-        (3600 + 120, "1h2m0s"),
-        (3600 + 125, "1h2m5s"),
-        (3600 * 2 + 125, "2h2m5s"),
-        (3600 * 2 + 179, "2h2m59s"),
-        (3600 * 2 + 180, "2h3m0s"),
-        ]
-    )
-def test_convert_seconds(seconds, expected):
-    """Convert seconds to min&sec."""
-    result = convert_seconds_to_min_sec(seconds)
-    assert result == expected
 
 
 a = {

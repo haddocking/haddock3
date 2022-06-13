@@ -364,14 +364,20 @@ def test_get_module_steps_folders():
         ("1_clustfcc", True),
         ("100_rigidbody", True),
         ("50_emscoring", True),
+        (Path("rundir", "50_emscoring"), True),
         ("0_nothing", False),
-        ("before_1_topoaa", False),
+        (Path("before_1_topoaa"), False),
         ("1_topoaa_other", False),
         ("topoaa", False),
         ]
     )
 def test_is_step_folder(in_, expected):
-    Path(in_).mkdir()
+    """
+    Test the `is_step_folder` funtion.
+
+    Tests a combination of Paths and strings.
+    """
+    Path(in_).mkdir(parents=True)
     result = is_step_folder(in_)
     assert result == expected
-    Path(in_).rmdir()
+    shutil.rmtree(in_)

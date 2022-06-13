@@ -16,6 +16,7 @@ See also the command-line clients ``haddock3-clean`` and
 import gzip
 import shutil
 import tarfile
+from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
 
@@ -50,23 +51,31 @@ def clean_output(path, ncores=1):
 
     ncores : int
         The number of cores.
-
     """
     log.info(f"Cleaning output for {str(path)!r} using {ncores} cores.")
     # add any formats generated to
     # `unpack_compressed_and_archived_files` so that the
     # uncompressing routines when restarting the run work.
     files_to_archive = ['seed', 'inp', 'out', 'con']
-    for fta in files_to_archive:
-        found = archive_files_ext(path, fta)
-        if found:
-            remove_files_with_ext(path, fta)
+
+    archive_ready = partial(_archive_and_remove_files, path=path)
+    ncores = min(ncores, len(files_to_archive))
+    with Pool(ncores) as pool:
+        imap = pool.imap_unordered(archive_ready, files_to_archive)
+        for _ in imap:
+            pass
 
     files_to_compress = ['pdb', 'psf']
     for ftc in files_to_compress:
         found = compress_files_ext(path, ftc, ncores=ncores)
         if found:
             remove_files_with_ext(path, ftc)
+
+
+def _archive_and_remove_files(fta, path):
+    found = archive_files_ext(path, fta)
+    if found:
+        remove_files_with_ext(path, fta)
 
 
 # eventually this function can be moved to `libs.libio` in case of future need.

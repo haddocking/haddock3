@@ -1,5 +1,7 @@
 """Create and manage CNS all-atom topology."""
 import operator
+import os
+import re
 from functools import partial
 from pathlib import Path
 
@@ -84,12 +86,27 @@ class HaddockModule(BaseCNSModule):
     def get_md5(ensemble_f):
         """Get MD5 hash of a multi-model PDB file."""
         md5_dic = {}
-        with open(ensemble_f, 'r') as fh:
-            for line in fh.readlines():
-                if line.startswith("REMARK") and "9" in line:
-                    model_num = int(line.split('MODEL')[-1].split()[0])
-                    md5 = line.split()[-1]
-                    md5_dic[model_num] = md5
+        text = Path(ensemble_f).read_text()
+        lines = text.split(os.linesep)
+        REMARK_lines = (line for line in lines if line.startswith('REMARK'))
+        remd5 = re.compile(r"^[a-f0-9]{32}$")
+        for line in REMARK_lines:
+            parts = line.strip().split()
+
+            try:
+                idx = parts.index('MODEL')
+            except ValueError:  # MODEL not in parts, this line can be ignored
+                continue
+
+            # check if there's a md5 hash in line
+            for part in parts:
+                group = remd5.fullmatch(part)
+                if group:
+                    # the model num comes after the MODEL
+                    model_num = int(parts[idx + 1])
+                    md5_dic[model_num] = group.string  # md5 hash
+                    break
+
         return md5_dic
 
     def _run(self):

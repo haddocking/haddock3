@@ -10,10 +10,15 @@ unpacked from their `.tgz` files. While files with `.pdb.gz` and
 This CLI performs the opposite operations as the ``haddock3-clean``
 command-line.
 
+The <run_directory> can either be a whole HADDOCK3 run folder or a
+specific folder of the workflow step.
+
 Usage::
 
     haddock3-unpack -h
     haddock3-unpack -r <run_directory>
+    haddock3-unpack run1
+    haddock3-unpack run1/1_rigidbody
 """
 import argparse
 import sys
@@ -63,7 +68,8 @@ def main(run_dir, ncores=None):
     Parameters
     ----------
     run_dir : str or :external:py:class:`pathlib.Path`.
-        The path to the run directory.
+        The path to the run directory or to a folder of a specific step
+        of the workflow.
 
     ncores : int, or None
         The number of cores to use. If ``None``, use all possible threads.
@@ -80,12 +86,12 @@ def main(run_dir, ncores=None):
     from haddock.gear.clean_steps import unpack_compressed_and_archived_files
     from haddock.libs.libtimer import log_time
     from haddock.libs.libutil import parse_ncores
-    from haddock.modules import get_module_steps_folders, is_a_step_folder
+    from haddock.modules import get_module_steps_folders, is_step_folder
 
     log.info(f"Unpacking {str(run_dir)!r} folder")
     ncores = parse_ncores(ncores)
 
-    if is_a_step_folder(run_dir):
+    if is_step_folder(run_dir):
         with log_time("unpacking took"):
             unpack_compressed_and_archived_files([run_dir], ncores)
 

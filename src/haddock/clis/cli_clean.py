@@ -8,10 +8,15 @@ compressed and archived into `.tgz` files. While files with `.pdb` and
 `.psf` extension are compressed to `.gz` files. The original files are
 deleted.
 
+The <run_directory> can either be a whole HADDOCK3 run folder or a
+specific folder of the workflow step.
+
 Usage::
 
     haddock3-clean -h
-    haddock3-clean -r <run_directory>
+    haddock3-clean <run_directory>
+    haddock3-clean run1
+    haddock3-clean run1/1_rigidbody
 """
 import argparse
 import sys
@@ -58,7 +63,8 @@ def main(run_dir, ncores=None):
     Parameters
     ----------
     run_dir : str or :external:py:class:`pathlib.Path`.
-        The path to the run directory.
+        The path to the run directory or to a folder of a specific step
+        of the workflow.
 
     ncores : int, or None
         The number of cores to use. If ``None``, use all possible threads.
@@ -75,12 +81,12 @@ def main(run_dir, ncores=None):
     from haddock.gear.clean_steps import clean_output
     from haddock.libs.libtimer import log_time
     from haddock.libs.libutil import parse_ncores
-    from haddock.modules import get_module_steps_folders, is_a_step_folder
+    from haddock.modules import get_module_steps_folders, is_step_folder
 
     log.info(f"Compressing {str(run_dir)!r} folder")
     ncores = parse_ncores(ncores)
 
-    if is_a_step_folder(run_dir):
+    if is_step_folder(run_dir):
         with log_time("compressing took"):
             clean_output(run_dir, ncores)
 

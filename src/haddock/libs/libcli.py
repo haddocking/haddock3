@@ -33,9 +33,7 @@ def add_version_arg(ap):
 def add_rundir_arg(ap):
     """Add run directory option."""
     ap.add_argument(
-        "-r",
-        "--run-dir",
+        "run_dir",
         help="The run directory.",
-        required=True,
         type=arg_folder_exist,
         )

@@ -488,7 +488,7 @@ def get_module_steps_folders(folder):
     return steps
 
 
-def is_a_step_folder(path):
+def is_step_folder(path):
     """
     Assess whether a folder is a possible step folder.
 

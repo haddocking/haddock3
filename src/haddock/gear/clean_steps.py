@@ -1,9 +1,9 @@
 """
-Clean workflow steps output.
+Clean workflow steps' output.
 
-This concerns removing unnecessary files, compressing, and archiving
-files with the same extension to reduce space and stress when listing
-files in the modules' step folders.
+This module concerns removing unnecessary files, compressing, and
+archiving files with the same extension to reduce space and stress when
+listing files in the modules' step folders.
 
 The two main functions of this module are:
 

@@ -59,8 +59,8 @@ def clean_output(path, ncores=1):
     files_to_archive = ['seed', 'inp', 'out', 'con']
 
     archive_ready = partial(_archive_and_remove_files, path=path)
-    ncores = min(ncores, len(files_to_archive))
-    with Pool(ncores) as pool:
+    _ncores = min(ncores, len(files_to_archive))
+    with Pool(_ncores) as pool:
         imap = pool.imap_unordered(archive_ready, files_to_archive)
         for _ in imap:
             pass

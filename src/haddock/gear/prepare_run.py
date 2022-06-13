@@ -164,6 +164,8 @@ def setup_run(
         params,
         )
 
+    validate_module_names_are_not_misspelled(params)
+
     # separate general from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
@@ -177,7 +179,6 @@ def setup_run(
 
         general_params[RUNDIR] = extend_run
 
-    validate_module_names_are_not_misspelled(modules_params)
     check_if_modules_are_installed(modules_params)
     check_specific_validations(general_params)
 
@@ -549,7 +550,7 @@ def validate_module_names_are_not_misspelled(params):
                 matched = fuzzy_match([module_name], module_names)
                 emsg = (
                     f"Module {param_name!r} is not a valid module name,"
-                    f" did you mean {matched[0][1]}?. "
+                    f" did you mean {matched[0][1]!r}?. "
                     f"Valid modules are: {', '.join(module_names)}."
                     )
                 raise ValueError(emsg)

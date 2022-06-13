@@ -19,3 +19,12 @@ def config_level(request):
 def test_export_cfgs(module, config_level):
     """Test export all configs work."""
     cli_cfg.main(module, config_level)
+
+
+@pytest.mark.parametrize(
+    "module",
+    list(modules_category.keys()),
+    )
+def test_export_cfgs_add_global(module, config_level):
+    """Test export all configs work with `add_global` parameter."""
+    cli_cfg.main(module, explevel=config_level, add_global=True)

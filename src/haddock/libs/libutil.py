@@ -201,43 +201,6 @@ def non_negative_int(
     raise exception(emsg.format(n))
 
 
-def file_exists(
-        path,
-        exception=ValueError,
-        emsg="`path` is not a file or does not exist",
-        ):
-    """
-    Assert if file exist.
-
-    Parameters
-    ----------
-    path : str or pathlib.Path
-        The file path.
-
-    exception : Exception
-        The Exception to raise in case `path` is not file or does not
-        exist.
-
-    emsg : str
-        The error message to give to `exception`. May accept formatting
-        to pass `path`.
-
-    Raises
-    ------
-    Exception
-        Any exception that pathlib.Path can raise.
-    """
-    p = Path(path)
-
-    valid = [p.exists, p.is_file]
-
-    if all(f() for f in valid):
-        return p
-
-    # don't change to f-strings, .format has a purpose
-    raise exception(emsg.format(str(path)))
-
-
 def recursive_dict_update(d, u):
     """
     Update dictionary `d` according to `u` recursively.
@@ -306,7 +269,8 @@ def sort_numbered_paths(*paths):
     """
     Sort input paths to tail number.
 
-    If possible, sort criteria is provided by :py:func:`get_number`.
+    If possible, sort criteria is provided by
+    :py:func:`get_number_from_path_stem`.
     If paths do not have a numbered tag, sort paths alphabetically.
 
     Parameters
@@ -348,44 +312,6 @@ def log_error_and_exit():
             )
         log.info(get_goodbye_help())
         sys.exit(1)
-
-
-def convert_seconds_to_min_sec(seconds):
-    """
-    Convert seconds to min&sec.
-
-    Examples
-    --------
-    >>> convert_seconds_to_min_sec(60)
-    1 minute
-    >>> convert_seconds_to_min_sec(120)
-    2 minutes and 0 seconds
-    >>> convert_seconds_to_min_sec(179)
-    2 minutes and 59 seconds
-
-    Parameters
-    ----------
-    seconds : int
-        The elapsed time in seconds. Seconds are round to integers.
-
-    Returns
-    -------
-    str
-    """
-    seconds = int(round(seconds, 0))
-    hours = seconds // 3600
-    minutes = (seconds) // 60 % 60
-    seconds = (seconds) % 60
-
-    if hours:
-        return f"{hours}h{minutes}m{seconds}s"
-
-    if minutes:
-        s = "" if minutes == 1 else "s"
-        return f"{minutes} minute{s} and {seconds} seconds"
-
-    s = "" if seconds == 1 else "s"
-    return f"{seconds} seconds"
 
 
 def extract_keys_recursive(config):

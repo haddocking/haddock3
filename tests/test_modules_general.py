@@ -371,7 +371,6 @@ def test_get_module_steps_folders():
         ]
     )
 def test_is_step_folder(in_, expected):
-    Path(in_).rmdir()
     Path(in_).mkdir()
     result = is_step_folder(in_)
     assert result == expected

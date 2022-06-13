@@ -18,6 +18,7 @@ from haddock.modules import (
     category_hierarchy,
     config_readers,
     get_module_steps_folders,
+    is_step_folder,
     modules_category,
     save_config,
     save_config_ignored,
@@ -354,3 +355,29 @@ def test_get_module_steps_folders():
     result = get_module_steps_folders(rd)
     shutil.rmtree(rd)
     assert result == ['0_topoaa', '1_rigidbody', '150_flexref']
+
+
+@pytest.mark.parametrize(
+    "in_,expected",
+    [
+        ("0_topoaa", True),
+        ("1_clustfcc", True),
+        ("100_rigidbody", True),
+        ("50_emscoring", True),
+        (Path("rundir", "50_emscoring"), True),
+        ("0_nothing", False),
+        (Path("before_1_topoaa"), False),
+        ("1_topoaa_other", False),
+        ("topoaa", False),
+        ]
+    )
+def test_is_step_folder(in_, expected):
+    """
+    Test the `is_step_folder` funtion.
+
+    Tests a combination of Paths and strings.
+    """
+    Path(in_).mkdir(parents=True)
+    result = is_step_folder(in_)
+    assert result == expected
+    shutil.rmtree(in_)

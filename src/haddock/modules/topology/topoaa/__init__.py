@@ -95,13 +95,18 @@ class HaddockModule(BaseCNSModule):
     def _run(self):
         """Execute module."""
         if self.order == 0:
+            # topoaa is the first step in the workflow
             molecules = make_molecules(self.params.pop('molecules'))
 
         else:
-            # in case topoaa is not the first step
-            # it takes the input molecules from the previous step and
-            # when topoaa is not the first step, we only need the first model
-            # because all models will have the same identity.
+            # in case topoaa is not the first step it reads the input
+            # molecules from the previous step but it only takes the
+            # first model because all models will have the same
+            # identity, as is the case for all PDBs created by rigidbody.
+            # In these cases, it is likely that each PDB contains the
+            # complex structure instead of the separated chains.
+            # Currently, we have not implemented a way to split chains
+            # and recreate the topology of the chains separately.
             _molecules = self.previous_io.retrieve_models()[0]
             molecules = make_molecules([_molecules.rel_path], no_parent=True)
 

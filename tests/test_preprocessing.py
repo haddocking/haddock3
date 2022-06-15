@@ -279,9 +279,9 @@ expected_nochain_chainIDs_4 = [
     'in_,expected',
     [
         (nochain_chainIDs_1, expected_nochain_chainIDs_1),
-        #(nochain_chainIDs_2, expected_nochain_chainIDs_1),
-        #(nochain_chainIDs_3, expected_nochain_chainIDs_1),
-        #(nochain_chainIDs_4, expected_nochain_chainIDs_4),
+        (nochain_chainIDs_2, expected_nochain_chainIDs_1),
+        (nochain_chainIDs_3, expected_nochain_chainIDs_1),
+        (nochain_chainIDs_4, expected_nochain_chainIDs_4),
         ]
     )
 def test_solve_nochainID(in_, expected):

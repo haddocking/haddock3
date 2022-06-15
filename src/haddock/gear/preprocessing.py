@@ -4,7 +4,8 @@ Process input PDB files to ensure compatibility with HADDOCK3.
 This module checks and modifies PDB files for compatibility with
 HADDOCK3. There are three types of checks/modifications:
 
-1. Performed to each PDB line-by-line, in the likes of ``pdb-tools``.
+1. Performed to each PDB line-by-line, in a equal fashion of ``pdb-tools``.
+   In fact, this step mostly uses the ``pdb-tools`` package.
 2. Performed on each PDB as a whole.
 3. Performed on all PDBs together.
 
@@ -16,30 +17,31 @@ Main functions
 
 Corrections performed on 1)
 ---------------------------
+
 The following actions are perfomed sequentially over all PDBs:
 
-* from ``pdb-tools``: ``pdb_keepcoord``
-* from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
-* from ``pdb-toos``: ``pdb_element``
-* from ``pdb-tools``: ``pdb_selaltloc``
-* from ``pdb-tools``: ``pdb_pdb_occ`` with ``occupancy=1.00``
-* replace ``MSE`` to ``MET``
-* replace ``HSD`` to ``HIS``
-* replace ``HSE`` to ``HIS``
-* replace ``HID`` to ``HIS``
-* replace ``HIE`` to ``HIS``
-* add charges to ions
-* add_charges_to_ions, see :py:func:`add_charges_to_ions`
-* convert ``ATOM`` to ``HETATM`` for those atoms that should be ``HETATM``.
-  Considers the additional residues provided by the user.
-  See :py:func:`convert_ATOM_to_HETATM`.
-* convert ``HETATM`` to ``ATOM`` for those atoms that should be ``ATOM``,
-* from ``pdb-toos``: ``pdb_fixinsert``, with ``option_list=[]``.
-* remove unsupported ``HETATM``. Considers residues provided by the user.
-* remove unsupported ``ATOM``. Considers residues provided by the user.
-* from ``pdb-tools``: ``pdb_reres``, start from ``1``.
-* from ``pdb-tools``: ``pdb_reatom``, start from ``1``.
-* from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
+#. from ``pdb-tools``: ``pdb_keepcoord``
+#. from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
+#. from ``pdb-toos``: ``pdb_element``
+#. from ``pdb-tools``: ``pdb_selaltloc``
+#. from ``pdb-tools``: ``pdb_pdb_occ`` with ``occupancy=1.00``
+#. replace ``MSE`` to ``MET``
+#. replace ``HSD`` to ``HIS``
+#. replace ``HSE`` to ``HIS``
+#. replace ``HID`` to ``HIS``
+#. replace ``HIE`` to ``HIS``
+#. add charges to ions
+#. add_charges_to_ions, see :py:func:`add_charges_to_ions`
+#. convert ``ATOM`` to ``HETATM`` for those atoms that should be ``HETATM``.
+   Considers the additional residues provided by the user.
+   See :py:func:`convert_ATOM_to_HETATM`.
+#. convert ``HETATM`` to ``ATOM`` for those atoms that should be ``ATOM``,
+#. from ``pdb-toos``: ``pdb_fixinsert``, with ``option_list=[]``.
+#. remove unsupported ``HETATM``. Considers residues provided by the user.
+#. remove unsupported ``ATOM``. Considers residues provided by the user.
+#. from ``pdb-tools``: ``pdb_reres``, start from ``1``.
+#. from ``pdb-tools``: ``pdb_reatom``, start from ``1``.
+#. from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
 
 Corrections performed on 2)
 ---------------------------
@@ -50,12 +52,16 @@ The following actions are performed sequentially for each PDB:
 * :py:func:`solve_no_chainID_no_segID`
 * :py:func:`homogenize_chains`
 
+Read the documentation of the above functions for details what they do.
+
 Corrections performed on 3)
 ---------------------------
 
 The following actions are performed to all PDBs together:
 
 * :py:func:`correct_equal_chain_segids`
+
+Read the documentation of the above functions for details what they do.
 
 When it happens
 ---------------
@@ -65,8 +71,8 @@ molecules and copying them to the `data/` folder inside the run
 directory. When PDBs are processed, a copy of the original input PDBs is
 also stored in the `data/` folder.
 
-To deactivate this initial PDB processing, set ``skip_preprocess =
-False`` boolean parameter.
+To deactivate this initial PDB processing, set ``skip_preprocess = False``
+in the general parameters of the configuration file.
 
 Additional information
 ----------------------
@@ -76,12 +82,6 @@ preprocessing module, visit:
 
 https://github.com/haddocking/haddock3/projects/16
 """
-# search for ABSTRACT to reach the section where abstractions are defined
-# search for CHECKING to reach the section where checking functions are defined
-# search for CORRECT to reach the section where checking functions are defined
-#
-# functions can be defined with `def` or as variables with functools.partial
-#
 import io
 import itertools as it
 import string
@@ -126,6 +126,7 @@ from haddock.libs.libpdb import (
     )
 
 
+# defines chain letters for chain and seg IDs
 _ascii_letters = list(string.ascii_uppercase + string.ascii_lowercase)
 _CHAINS = it.cycle(_ascii_letters)
 
@@ -143,13 +144,14 @@ def _report(log_msg):
     Functions decorated with `_report` log the difference between the
     input and the output. Decorated functions gain an additional boolean
     parameter `report` to activate or deactivate the report
-    functionality; it is `False` by default.
+    functionality; defaults to ``False``.
 
-    Note that a decorated generator no longer behaves as such if
-    `report=True`. Instead, it returns a list from the exhausted
-    generator.
+    Note that a generator decorated with ``_report`` no longer behaves
+    as a generator if ``report=True`` is given. Instead, it returns a
+    list from the exhausted generator.
 
-    DON'T USE `_report` WITH INFINITE GENERATORS, such as `itertools.cycle`.
+    **Important:** Do NOT use ``_report`` with infinite generators,
+    such as ``itertools.cycle``.
     """
     def decorator(function):
         @wraps(function)
@@ -161,7 +163,7 @@ def _report(log_msg):
 
                 # Here we could use sets to increase speed, but for the size
                 # of the systems, we can actually use lists and get a sorted
-                # result by default. I tried using difflib from STD. But it is
+                # result by default. I tried using difflib from STD but it is
                 # just too slow.
 
                 # _ is line
@@ -184,7 +186,7 @@ def _report(log_msg):
                 log.info(linesep.join(extended_log))
                 return result
 
-            # on report, maintain the generator functionality
+            # If report=False, maintain the original behaviour
             else:
                 return function(lines, *args, **kwargs)
 
@@ -206,12 +208,14 @@ def _open_or_give(inputdata):
     Parameters
     ----------
     inputdata : list
-        The list is a FLAT list and in each index it can contain:
+        A **flat** list where in each index it can contain:
 
         * file objects
         * paths to files
         * strings representing paths
         * lists or tuples of lines
+
+        The above types can be mixed in the input list.
 
         Files are read to lines in a list. Line separators are stripped.
 
@@ -253,7 +257,7 @@ def _open_or_give(inputdata):
 
 def read_additional_residues(top_fname):
     """
-    Read additional residues listed in a .top filename.
+    Read additional residues listed in a ``*.top`` filename.
 
     Expects new residues to be defined as:
 
@@ -282,14 +286,16 @@ def process_pdbs(
     ----------
     inputdata : list of (str, path, list of str [lines], file handler)
 
-        The list is a FLAT list and in each index it can contain:
+        A **flat** list where in each index it can contain:
 
         * file objects
         * paths to files
         * strings representing paths
         * lists or tuples of lines
 
-        Files are read to lines in a list. Newline chars are stripped.
+        The above types can be mixed in the input list.
+
+        Files are read to lines in a list. Line separators are stripped.
 
         Do not provide nested lists with lists containing paths inside
         lists.
@@ -310,8 +316,9 @@ def process_pdbs(
     structures = _open_or_give(inputdata)
 
     # these are the processing or checking functions that should (if needed)
-    # modify the input PDB and return the corrected lines
-    # in the likes of pdb-tools, these functions yield line-by-line
+    # modify the input PDB and return the corrected lines.
+    # Follows the same style as for pdb-tools.
+    # these functions yield line-by-line.
     line_by_line_processing_steps = [
         wrep_pdb_keepcoord,  # also discards ANISOU
         # tidy is important before some other corrections
@@ -875,7 +882,8 @@ def correct_equal_chain_segids(structures):
 
         new_structures.append(new_lines or lines)
 
-    assert len(new_structures) == len(structures)
+    if len(new_structures) != len(structures):
+        raise AssertionError("Number of lines differ. This is a bug!")
     return new_structures
 
 

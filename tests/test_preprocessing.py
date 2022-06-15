@@ -62,61 +62,61 @@ def test_all(caplog):
 
 
 
-models_okay = """MODEL        1                                                                  
-ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
+models_okay = """MODEL        1
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
 TER
 ENDMDL
-MODEL        2                                                                  
-ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
+MODEL        2
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
 TER
 ENDMDL
-MODEL        3                                                                  
-ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
-TER
-ENDMDL
-"""
-
-
-models_wrong_2 = """MODEL        1                                                                  
-ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
-TER
-ENDMDL
-MODEL        2                                                                  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
-TER
-ENDMDL
-MODEL        3                                                                  
-ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
+MODEL        3
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
 TER
 ENDMDL
 """
 
-models_wrong_3 = """MODEL        1                                                                  
-ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
+
+models_wrong_2 = """MODEL        1
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
 TER
 ENDMDL
-MODEL        2                                                                  
-ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
+MODEL        2
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
 TER
 ENDMDL
-MODEL        3                                                                  
-ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C  
-ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C  
+MODEL        3
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
+TER
+ENDMDL
+"""
+
+models_wrong_3 = """MODEL        1
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
+TER
+ENDMDL
+MODEL        2
+ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00           C
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
+TER
+ENDMDL
+MODEL        3
+ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00           C
+ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00           C
 TER
 ENDMDL
 """
@@ -286,6 +286,59 @@ expected_nochain_chainIDs_4 = [
     )
 def test_solve_nochainID(in_, expected):
     result = pp.solve_no_chainID_no_segID(in_)
-    print(result)
     for r, e in zip(result, expected):
         assert r == e
+
+
+# test cases to test adding the ion charges
+# even indexes are the input, odd indexes are the expected results
+ion_cases = [
+    # 0
+    'HETATM 3833 ZN+2 ZN2 A  42      21.391  -8.794  33.944  1.00 24.37          ZN  ',
+    'HETATM 3833 ZN+2 ZN2 A  42      21.391  -8.794  33.944  1.00 24.37          ZN+2',
+
+    # 1
+    'HETATM 3833 ZN   ZN2 A  42      21.391  -8.794  33.944  1.00 24.37          ZN  ',
+    'HETATM 3833 ZN+2 ZN2 A  42      21.391  -8.794  33.944  1.00 24.37          ZN+2',
+
+    # 2
+    'HETATM 3833 ZN+2 ZN  A  42      21.391  -8.794  33.944  1.00 24.37          ZN  ',
+    'HETATM 3833 ZN+2 ZN2 A  42      21.391  -8.794  33.944  1.00 24.37          ZN+2',
+
+    # 3
+    'HETATM 3833 ZN   ZN  A  42      21.391  -8.794  33.944  1.00 24.37          ZN  ',
+    'HETATM 3833 ZN    ZN A  42      21.391  -8.794  33.944  1.00 24.37          ZN  ',
+
+    # 4
+    'HETATM 3833 ZN    ZN A  42      21.391  -8.794  33.944  1.00 24.37          ZN+2',
+    'HETATM 3833 ZN+2 ZN2 A  42      21.391  -8.794  33.944  1.00 24.37          ZN+2',
+
+    # 5
+    'HETATM 3834  K    K1 A  42      21.391  -8.794  33.944  1.00 24.37              ',
+    'HETATM 3834  K+1  K1 A  42      21.391  -8.794  33.944  1.00 24.37           K+1',
+
+    # 6
+    'HETATM 3835 NI    NI A  42      21.391  -8.794  33.944  1.00 24.37              ',
+    'HETATM 3835 NI    NI A  42      21.391  -8.794  33.944  1.00 24.37          NI  ',
+
+    # 7
+    'HETATM 3834  F-1   F A  42      21.391  -8.794  33.944  1.00 24.37              ',
+    'HETATM 3834  F-1  F1 A  42      21.391  -8.794  33.944  1.00 24.37           F-1',
+    ]
+
+# made this way to make each line a separate tests
+@pytest.fixture(params=list(zip(ion_cases[::2], ion_cases[1::2])))
+def ion_cases_fixture(request):
+    return request.param[0], request.param[1]
+
+
+def tests_correct_ion_charges(ion_cases_fixture):
+    input_, expected = ion_cases_fixture
+
+    # 1. puts input_ inside a list because the function only accepts lists
+    # 2. the function is wrapped around list() because it is a generator
+    result = list(pp.add_charges_to_ions([input_]))
+
+    assert len(result) == 1
+    # compares two strings
+    assert result[0] == expected

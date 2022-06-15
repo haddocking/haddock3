@@ -28,7 +28,7 @@ slc_occ = slice(54, 60)
 slc_temp = slice(60, 66)
 slc_segid = slice(72, 76)
 slc_element = slice(76, 78)
-slc_model = slice(78, 80)
+slc_charge = slice(78, 80)
 
 
 def format_atom_name(atom, element):

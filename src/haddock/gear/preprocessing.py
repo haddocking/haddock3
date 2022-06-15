@@ -1,3 +1,6 @@
+# TODO:
+# 1. single_ions may contain PO4 - verify
+# 2. the single_ions_elements map seems not needed
 """
 Process input PDB files to ensure compatibility with HADDOCK3.
 
@@ -112,7 +115,6 @@ from haddock.core.supported_molecules import (
     supported_ATOM,
     supported_HETATM,
     supported_single_ions_atoms_map,
-    supported_single_ions_elements_map,
     supported_single_ions_resnames_map,
     )
 from haddock.libs.libfunc import chainf
@@ -123,6 +125,7 @@ from haddock.libs.libpdb import (
     slc_name,
     slc_resname,
     slc_element,
+    slc_charge,
     )
 
 
@@ -635,61 +638,131 @@ def add_charges_to_ions(fhandler):
     line : str
         Line-by-line: modified ion lines and any other line.
     """
+    # list of functions that correct ion entries
+    # by order of preference in case a preference is not found.
+    # see further
+    ion_correction_cases = [
+        _process_ion_case_resname,
+        _process_ion_case_atom,
+        _process_ion_case_element_charge,
+        ]
+
     for line in fhandler:
         if line.startswith(("ATOM", "ANISOU", "HETATM")):
 
             # get values
-            atom = line[slc_name].strip()
-            resname = line[slc_resname].strip()
-            element = line[slc_element].strip()
+            atom = line[slc_name].strip()  # max 4 chars
+            resname = line[slc_resname].strip()  # max 3 chars
+            element = line[slc_element].strip()  # max 2 chars
+            charge = line[slc_charge].strip()  # max 2 chars
 
-            # case 1: charge is correctly defined in resname
-            # ignore other fields and write them from scratch
-            # even if they are already correct
-            if resname in supported_single_ions_resnames_map:
-                new_atom = supported_single_ions_resnames_map[resname].atoms[0]
-                yield line[:12] \
-                    + format_atom_name(new_atom, element) \
-                    + line[16:76] \
-                    + new_atom.rjust(2, " ") \
-                    + line[78:]
-                continue
+            # Which of the above fields has information on the charge?
+            # If more than one have information on the charge, we give
+            # the preference to the atom, resname, and then charge
+            func_to_apply = False
+            if atom[-1].isdigit():
+                func_to_apply = _process_ion_case_atom
+            elif resname[-1].isdigit():
+                func_to_apply = _process_ion_case_resname
+            elif element and charge and charge[-1].isdigit():
+                func_to_apply = _process_ion_case_element_charge
 
-            # case 2: charge is correctly defined in atom name
-            # ignore other fields and write them from scratch
-            # even if they are already correct
-            #
-            # Remember calcium is CA like carbon alpha...
-            if atom in supported_single_ions_atoms_map and element != "C":
-                new_resname = supported_single_ions_atoms_map[atom].resname
-                yield line[:17] \
-                    + new_resname.rjust(3, " ") \
-                    + line[20:76] \
-                    + atom.rjust(2, " ") \
-                    + line[78:]
-                continue
+            if func_to_apply:
+                try:
+                    yield func_to_apply(line)
+                except Exception:
+                    yield line  # lines that do not concern to ions
 
-            # case 3: charge is not defined but atom element is defined
-            if atom in supported_single_ions_elements_map and atom == resname:
-                assert False, line
-                new_atom = supported_single_ions_elements_map[atom].atoms[0]
-                new_resname = supported_single_ions_elements_map[atom].resname
-                wmsg = (
-                    "Ion {atom!r} automatically set to charge {charge!r}. "
-                    "If this is not intended, please edit the PDB manually."
-                    )
-                log.warning(wmsg)
-                yield line[:12] \
-                    + format_atom_name(new_atom, element) \
-                    + line[16] \
-                    + new_resname \
-                    + line[20:76] \
-                    + new_atom.rjust(2, " ") \
-                    + line[78:]
-                continue
+            # in case none of the fields has information on the charge,
+            # applies the process functions by giving preference to the
+            # residue names.
+            else:
+                for func in ion_correction_cases:
+                    try:
+                        yield func(line)
+                    except Exception:
+                        # test the next function
+                        continue
+                    else:
+                        break  # done
+                else:
+                    yield line  # lines that do not concern to ions
 
-        # yield any other lines unmodified
-        yield line
+        else:
+            yield line  # lines that are not atoms
+
+
+def _process_ion_case_resname(line):
+    """
+    case 1: charge is correctly defined in resname, for example, ZN2.
+    In this case, ignore other fields and write ion information from
+    scratch even if it's already correct.
+    """
+    resname = line[slc_resname].strip()  # max 3 chars
+    new_atom = supported_single_ions_resnames_map[resname].atoms[0]
+    new_element = supported_single_ions_resnames_map[resname].elements[0]
+    charge = new_atom[-2:] if len(new_atom) > 2 else '  '
+
+    new_line = \
+        line[:12] \
+        + format_atom_name(new_atom, new_element) \
+        + line[16] \
+        + resname.rjust(3, " ") \
+        + line[20:76] \
+        + new_element.rjust(2, " ") \
+        + charge
+
+    return new_line
+
+
+def _process_ion_case_atom(line):
+    """
+    case 2: charge is correctly defined in atom name ignore other fields
+    and write them from scratch even if they are already correct.
+    """
+    element = line[slc_element].strip()  # max 2 chars
+    if element == "C":
+        # element C can have atom name CA which conflicts carbon alpha
+        # and calcium
+        raise ValueError("Element is 'C', does not apply to this case.")
+
+    atom = line[slc_name].strip()  # max 4 chars
+    new_resname = supported_single_ions_atoms_map[atom].resname
+    new_element = supported_single_ions_atoms_map[atom].elements[0]
+    charge = atom[-2:] if len(atom) > 2 else '  '
+
+    new_line = \
+        line[:12] \
+        + format_atom_name(atom, new_element) \
+        + line[16] \
+        + new_resname.rjust(3, " ") \
+        + line[20:76] \
+        + new_element.rjust(2, " ") \
+        + charge
+
+    return new_line
+
+
+def _process_ion_case_element_charge(line):
+    """
+    case 3: charge is correctly defined in atom name ignore other fields
+    and write them from scratch even if they are already correct.
+    """
+    element = line[slc_element].strip()  # max 2 chars
+    charge = line[slc_charge].strip()  # max 2 chars
+    atom = element + charge
+    new_resname = supported_single_ions_atoms_map[atom].resname
+
+    new_line = \
+        line[:12] \
+        + format_atom_name(atom, element) \
+        + line[16] \
+        + new_resname.rjust(3, " ") \
+        + line[20:76] \
+        + element.rjust(2, " ") \
+        + charge
+
+    return new_line
 
 
 @_report("Convert record: {!r} to {!r}.")

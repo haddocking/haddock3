@@ -1,4 +1,4 @@
-name: unittests py39
+name: tests
 
 on:
   push:
@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest, macos-latest]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
@@ -19,14 +20,14 @@ jobs:
         submodules: recursive
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install coverage[toml] tox
+        pip install virtualenv tox
 
     - name: Install FCC
       run: |
@@ -39,10 +40,8 @@ jobs:
         ./Makefile 2>%1 >/dev/null || true
         cd -
 
-
-    - name: Test
-      if: always()
-      run: tox -e py39
+    - name: unit tests
+      run: tox -e test
 
     # from https://github.com/codecov/codecov-action
     - name: Upload coverage to Codecov

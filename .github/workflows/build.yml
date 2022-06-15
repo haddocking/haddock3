@@ -1,7 +1,9 @@
 # this action must be synchronized with version-bump-and-package.yml
-name: Package Build
+name: build
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 
@@ -19,7 +21,7 @@ jobs:
         submodules: recursive
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -28,5 +30,5 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install virtualenv tox
 
-    - name: Test Build
+    - name: build
       run: tox -e build

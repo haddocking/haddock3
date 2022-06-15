@@ -13,6 +13,11 @@ from pathlib import Path
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
+from haddock.gear.clean_steps import (
+    UNPACK_FOLDERS,
+    unpack_compressed_and_archived_files,
+    update_unpacked_names,
+    )
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
@@ -165,6 +170,8 @@ def setup_run(
         params,
         )
 
+    validate_module_names_are_not_misspelled(params)
+
     # separate general from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
@@ -178,7 +185,6 @@ def setup_run(
 
         general_params[RUNDIR] = extend_run
 
-    validate_module_names_are_not_misspelled(modules_params)
     check_if_modules_are_installed(modules_params)
     check_specific_validations(general_params)
 
@@ -201,8 +207,23 @@ def setup_run(
         _data_dir = Path(general_params[RUNDIR], "data")
         remove_folders_after_number(_data_dir, restart_from)
 
+    if restarting_from or starting_from_copy:
+        # get run files in folder
+        step_folders = get_module_steps_folders(general_params[RUNDIR])
+
+        log.info(
+            'Uncompressing previous output files for folders: '
+            f'{", ".join(step_folders)}'
+            )
+        # unpack the possible compressed and archived files
+        _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
+        unpack_compressed_and_archived_files(
+            _step_folders,
+            general_params["ncores"],
+            )
+
     if starting_from_copy:
-        num_steps = len(get_module_steps_folders(extend_run))
+        num_steps = len(step_folders)
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
@@ -229,6 +250,8 @@ def setup_run(
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
         renum_step_folders(Path(general_params[RUNDIR], "data"))
+        if UNPACK_FOLDERS:  # only if there was any folder unpacked
+            update_unpacked_names(_prev, _new, UNPACK_FOLDERS)
         update_step_contents_to_step_names(
             _prev,
             _new,
@@ -566,7 +589,7 @@ def validate_module_names_are_not_misspelled(params):
                 matched = fuzzy_match([module_name], module_names)
                 emsg = (
                     f"Module {param_name!r} is not a valid module name,"
-                    f" did you mean {matched[0][1]}?. "
+                    f" did you mean {matched[0][1]!r}?. "
                     f"Valid modules are: {', '.join(module_names)}."
                     )
                 raise ValueError(emsg)

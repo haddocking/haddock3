@@ -112,7 +112,7 @@ def split_ensemble(pdb_file_path, dest=None):
         Destination folder.
     """
     dest = Path.cwd()
-    assert pdb_file_path.is_file()
+    assert pdb_file_path.is_file(), pdb_file_path
     with open(pdb_file_path) as input_handler:
         with working_directory(dest):
             split_model(input_handler)

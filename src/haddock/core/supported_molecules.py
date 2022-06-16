@@ -111,21 +111,43 @@ class CNSTopologyResidue:
     @property
     def elements(self):
         """
-        List of residue atom elements.
+        List of elements for all atoms composing the molecule.
 
-        This list is synchronized with the residue atoms.
+        This list is ordered the same as ``atoms``.
+
+        By default ``elements`` is not defined and must be injected manually.
+
+        See Also
+        --------
+        * :py:func:`get_ion_element_from_atoms`
         """
         try:
             return self._elements
         except AttributeError as err:
-            emsg = "`elements` is not defined. Use `make_elements` first."
+            emsg = "`elements` is not defined."
             raise AttributeError(emsg) from err
 
-    def make_elements(self, n=1):
-        """Generate elements from atoms."""
-        ele = (a.rstrip(string.digits + "+-")[:n] for a in self.atoms)
-        self._elements = tuple(ele)
-        return
+    @elements.setter
+    def elements(self, elements):
+        self._elements = elements
+
+
+def get_ion_element_from_atoms(atoms):
+    """
+    Generate the element name from the atom name for single atom ions.
+
+    Examples
+    --------
+    >>> get_ion_element_from_atoms(["ZN+2", "CU+2", "NI"])
+    ("ZN", "CU", "NI")
+
+    Parameters
+    ----------
+    atom : list
+        A list of atom names.
+    """
+    ele = (a.rstrip(string.digits + "+-") for a in atoms)
+    return tuple(ele)
 
 
 def read_residues_from_top_file(topfile):
@@ -156,12 +178,8 @@ def read_residues_from_top_file(topfile):
     """
     # just to avoid identention with with
     fin = open(topfile, 'r')
-
-    # all lines are striped before looping
-    lines = list(map(str.strip, fin))
-
+    lines = fin.readlines()
     fin.close()
-
     return _read_residues_from_top_file(lines)
 
 
@@ -176,7 +194,8 @@ def _read_residues_from_top_file(lines):
     atoms, charges, residues = [], [], []
     in_residue = False
 
-    for line in lines:
+    # all lines are striped before looping
+    for line in map(str.strip, lines):  # it is important to strip spaces
         if line.startswith(('RESI', 'residue')):
             in_residue = True  # defines we start a new residue
 
@@ -329,7 +348,7 @@ def read_supported_residues(source_path):
 
     # other attributes
     for ion in supported_single_ions:
-        ion.make_elements(n=2)
+        ion.elements = get_ion_element_from_atoms(ion.atoms)
 
     supported_ions_elements = \
         {ion.elements[0]: ion for ion in supported_single_ions}

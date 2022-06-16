@@ -138,8 +138,6 @@ def read_residues_from_top_file(topfile):
     in identifying the supported residues and correctly format their PDB
     lines.
 
-    This function can be further extended if needed.
-
     Parameters
     ----------
     topfile : str or :external:py:class:`pathlib.Path`
@@ -156,6 +154,18 @@ def read_residues_from_top_file(topfile):
     --------
     * :py:func:`haddock.gear.preprocessing.read_additional_residues`
     """
+    # just to avoid identention with with
+    fin = open(topfile, 'r')
+
+    # all lines are striped before looping
+    lines = list(map(str.strip, fin))
+
+    fin.close()
+
+    return _read_residues_from_top_file(lines)
+
+
+def _read_residues_from_top_file(lines):
     # regular expression to parse information from atom lines
     atom_regex = (
         r"^ATOM +([A-Z0-9\'\+\-]{1,4}) +.* +(?:charge|CHARGE|CHARge) *= *"
@@ -165,12 +175,6 @@ def read_residues_from_top_file(topfile):
     # helper variables for the for-loop
     atoms, charges, residues = [], [], []
     in_residue = False
-
-    # just to avoid identention with with
-    fin = open(topfile, 'r')
-
-    # all lines are striped before looping
-    lines = map(str.strip, fin)
 
     for line in lines:
         if line.startswith(('RESI', 'residue')):
@@ -207,7 +211,6 @@ def read_residues_from_top_file(topfile):
             atoms.clear()
             in_residue = False
 
-    fin.close()
     return residues
 
 

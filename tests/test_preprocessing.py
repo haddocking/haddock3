@@ -342,3 +342,19 @@ def tests_correct_ion_charges(ion_cases_fixture):
     assert len(result) == 1
     # compares two strings
     assert result[0] == expected
+
+
+
+@pytest.mark.parametrize(
+    "lines, expected",
+    [
+        (
+            'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00      A       ',
+            'ATOM      3  CA  GLU B   6      33.861  45.127  -2.233  1.00  0.00      A       ',
+            ),
+        ]
+    )
+def test_wrep_chain(lines, expected):
+    """Test if dry report works."""
+    result = pp.wrep_pdb_chain([lines], "B", report=True)
+    assert result[0] == expected

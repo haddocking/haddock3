@@ -9,7 +9,13 @@ data_folder = Path(tests_path, 'data')
 golden_data = Path(tests_path, 'golden_data')
 
 broken_pdb = Path(data_folder, 'broken.pdb')
+corrected_pdb = Path(data_folder, 'corrected.pdb')
+
+
+
+
 good_pdb = Path(data_folder, 'good.pdb')
+residues_top = Path(data_folder, 'residues.top')
 
 configs_data = Path(tests_path, 'configs')
 emptycfg = Path(configs_data, 'empty.cfg')

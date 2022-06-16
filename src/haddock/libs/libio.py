@@ -4,7 +4,7 @@ import glob
 import gzip
 import os
 import tarfile
-from functools import partial
+from functools import partial, wraps
 from multiprocessing import Pool
 from pathlib import Path
 
@@ -13,6 +13,24 @@ import yaml
 from haddock import log
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
+
+
+def read_lines(func):
+    """
+    Open the file and read lines for the decorated function.
+
+    Send to the decorated function the lines of the file in the form
+    of list.
+    """
+    #@wraps(func)
+    def wrapper(fpath, *args, **kwargs):
+        lines = Path(fpath).read_text().split(os.linesep)
+        return func(lines, *args, **kwargs)
+    # manual wrapping for displaying documentation properly
+    wrapper.original = func
+    wrapper.__doc__ = func.__doc__
+    wrapper.__name__ = func.__name__
+    return wrapper
 
 
 def read_from_yaml(yaml_file):

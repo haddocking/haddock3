@@ -1,16 +1,17 @@
 """Test preprocessing operations."""
 import logging
 import os
+import filecmp
 from pathlib import Path
 
 import pytest
 
 from haddock.gear import preprocessing as pp
 
-from . import broken_pdb, data_folder, good_pdb
+from . import broken_pdb, data_folder, good_pdb, residues_top, corrected_pdb
 
-
-def test_open_or_give_3():
+@pytest.mark.skip
+def test_open_or_give():
     in1 = open(broken_pdb)
     input_ = [
         broken_pdb,  # path inside list
@@ -27,39 +28,34 @@ def test_open_or_give_3():
     in1.close()
 
 
+@pytest.mark.parametrize(
+    "value",
+    [1, 1.1, {1: None}, None],
+    )
+def test_open_or_give_wrong(value):
+    with pytest.raises(TypeError):
+        pp._open_or_give(value)
+
+
+def test_read_additional_residues():
+    result = pp.read_additional_residues(residues_top)
+    assert isinstance(result, tuple)
+    assert result == ("DA2", "DE3", "DI", "DO", "DU1")
+
+
+def test_read_additional_residues_lines():
+    lines = Path(residues_top).read_text().split(os.linesep)
+    result = pp.read_additional_residues.original(lines)
+    assert isinstance(result, tuple)
+    assert result == ("DA2", "DE3", "DI", "DO", "DU1")
+
+
 def test_wrep_pdb_tidy():
     pp.wrep_pdb_tidy(pp._open_or_give([broken_pdb])[0], strict=False)
 
 
 def test_wrep_pdb_tidy_strict():
     pp.wrep_pdb_tidy(pp._open_or_give([broken_pdb])[0], strict=True)
-
-
-#@pytest.mark.skip
-def test_all(caplog):
-    """."""
-    caplog.set_level(logging.WARNING)
-
-    result = pp.process_pdbs(broken_pdb)
-
-    output = Path(
-        broken_pdb.parent,
-        broken_pdb.stem + '_processed').with_suffix(broken_pdb.suffix)
-
-    output.write_text(os.linesep.join(result[0]))
-
-    #lines_results = output.read_text().split('\n')
-    #lines_expected = good_pdb.read_text().split('\n')
-
-    # asserts the number of WARNING messages is appropriate
-    # see: https://docs.pytest.org/en/6.2.x/logging.html
-    #assert len(caplog.text.split(os.linesep)) > 0
-
-    #assert lines_results[-1] == lines_expected[-1]
-    #assert len(lines_results) == len(lines_expected)
-    #for i in range(len(lines_results)):
-    #    assert lines_results[i] == lines_expected[i]
-
 
 
 models_okay = """MODEL        1
@@ -222,6 +218,7 @@ expected_multiple_chainIDs_2 = [
     'ATOM      3  CA  ALA C   7      35.081  45.036   1.305  1.00  0.00      C    C  ',
     ]
 
+
 @pytest.mark.parametrize(
     "in_,expected",
     [
@@ -230,12 +227,14 @@ expected_multiple_chainIDs_2 = [
         ]
     )
 def test_homogenize_chainIDs(in_, expected):
+    """Test homogenize chain IDs."""
     result = pp.homogenize_chains(in_)
-    print(result)
-    for r, e in zip(result, expected):
-        assert len(result) == len(expected)
-    for r, e in zip(result, expected):
-        assert result == expected
+
+    # assert line by line to facilitate finding errors
+    for r_line, e_line in zip(result, expected):
+        assert len(r_line) == len(e_line)
+    for r_line, e_line in zip(result, expected):
+        assert r_line == e_line
 
 
 nochain_chainIDs_1 = [
@@ -285,6 +284,7 @@ expected_nochain_chainIDs_4 = [
         ]
     )
 def test_solve_nochainID(in_, expected):
+    """Test solve nochainID function."""
     result = pp.solve_no_chainID_no_segID(in_)
     for r, e in zip(result, expected):
         assert r == e
@@ -326,13 +326,15 @@ ion_cases = [
     'HETATM 3834  F-1  F1 A  42      21.391  -8.794  33.944  1.00 24.37           F-1',
     ]
 
+
 # made this way to make each line a separate tests
 @pytest.fixture(params=list(zip(ion_cases[::2], ion_cases[1::2])))
 def ion_cases_fixture(request):
+    """Give ion test cases."""
     return request.param[0], request.param[1]
 
 
-def tests_correct_ion_charges(ion_cases_fixture):
+def test_correct_ion_charges(ion_cases_fixture):
     input_, expected = ion_cases_fixture
 
     # 1. puts input_ inside a list because the function only accepts lists
@@ -342,7 +344,6 @@ def tests_correct_ion_charges(ion_cases_fixture):
     assert len(result) == 1
     # compares two strings
     assert result[0] == expected
-
 
 
 @pytest.mark.parametrize(
@@ -358,3 +359,15 @@ def test_wrep_chain(lines, expected):
     """Test if dry report works."""
     result = pp.wrep_pdb_chain([lines], "B", report=True)
     assert result[0] == expected
+
+
+def test_process_pdbs():
+    """."""
+    result = pp.process_pdbs(broken_pdb)
+    assert len(result) == 1
+
+    expected = corrected_pdb.read_text().strip().split(os.linesep)
+    Path('testpreprocessing.pdb').write_text(os.linesep.join(result[0]))
+
+    for i, (rline, eline) in enumerate(zip(result[0], expected)):
+        assert rline == eline, i

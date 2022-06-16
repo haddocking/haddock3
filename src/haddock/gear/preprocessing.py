@@ -87,8 +87,8 @@ https://github.com/haddocking/haddock3/projects/16
 """
 import io
 import itertools as it
+import re
 import string
-from collections import namedtuple
 from functools import partial, wraps
 from os import linesep
 from pathlib import Path
@@ -111,21 +111,21 @@ from pdbtools import (
 from haddock import log
 from haddock.core.exceptions import HaddockError
 from haddock.core.supported_molecules import (
-    read_residues_from_top_file,
     supported_ATOM,
     supported_HETATM,
     supported_single_ions_atoms_map,
     supported_single_ions_resnames_map,
     )
 from haddock.libs.libfunc import chainf
+from haddock.libs.libio import read_lines
 from haddock.libs.libpdb import (
     format_atom_name,
     read_chainids,
     read_segids,
+    slc_charge,
+    slc_element,
     slc_name,
     slc_resname,
-    slc_element,
-    slc_charge,
     )
 
 
@@ -258,23 +258,55 @@ def _open_or_give(inputdata):
     return lines
 
 
-def read_additional_residues(top_fname):
+@read_lines
+def read_additional_residues(lines, *ignore, **everything):
     """
     Read additional residues listed in a ``*.top`` filename.
 
-    Expects new residues to be defined as:
+    Expects new residues to be defined as::
 
         RESIdue XXX
+        RESI XXX
+        residue XXX
 
-    where, XXX is the new residue.
+    where, XXX is the new residue name. Does not read ATOM or charge
+    information. Reads only the residue name.
+
+    Examples
+    --------
+    Read directly the file:
+
+    >>> read_additional_residues(fpath)
+
+    Read the lines instead:
+
+    >>> lines = Path(fpath).read_text().split(os.linesep)
+    >>> read_additional_residues.original(lines)
+
+    Parameters
+    ----------
+    fpath : str or pathlib.Path
+        The path to the file.
+
+    lines : list of lines
+        You can also use this function in the form of
+        ``read_additional_residues.original(...)`` and directly give it
+        a list containing the lines of the file.
+
+    Returns
+    -------
+    tuple
+        A tuple with the new identified residues names.
     """
-    residues = read_residues_from_top_file(
-        top_fname,
-        regex=r'\nRESIdue ([A-Z0-9]{1,3}).*\n',
-        Residue=namedtuple('New', ['resname']),
-        )
+    # https://regex101.com/r/1H44kO/1
+    res_regex = re.compile(r'^(RESIdue|residue|RESI) ([A-Z0-9]{1,3}).*$')
+    residues = []
+    for line in map(str.strip, lines):
+        name = res_regex.findall(line)
+        if name:
+            residues.append(name[0][1])
 
-    return tuple(i.resname for i in residues)
+    return tuple(residues)
 
 
 def process_pdbs(
@@ -694,6 +726,8 @@ def add_charges_to_ions(fhandler):
 
 def _process_ion_case_resname(line):
     """
+    Process ion information based on resnames.
+
     case 1: charge is correctly defined in resname, for example, ZN2.
     In this case, ignore other fields and write ion information from
     scratch even if it's already correct.
@@ -717,6 +751,8 @@ def _process_ion_case_resname(line):
 
 def _process_ion_case_atom(line):
     """
+    Process ion information based on atom names.
+
     case 2: charge is correctly defined in atom name ignore other fields
     and write them from scratch even if they are already correct.
     """
@@ -745,6 +781,8 @@ def _process_ion_case_atom(line):
 
 def _process_ion_case_element_charge(line):
     """
+    Process ion information based on element and charge.
+
     case 3: charge is correctly defined in atom name ignore other fields
     and write them from scratch even if they are already correct.
     """

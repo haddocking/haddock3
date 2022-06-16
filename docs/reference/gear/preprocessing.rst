@@ -5,3 +5,5 @@ PDB Preprocessing
    :members:
    :show-inheritance:
    :inherited-members:
+
+   .. autofunction:: read_additional_residues(fpath)

@@ -1,12 +1,12 @@
 REMARK residue 1 to 20 are the natural amino acids
-REMARK the residues after 20 have the different broken/correction cases
+REMARK the residues after 20 have the different broken/correction cases:
 REMARK SELALTLOC IN RESIDUE 21 and 22
 REMARK MSE to MET in residue 23
 REMARK HSD, HSE, HID, HSE to HIS in residues 24 to 27
 REMARK Fix Insert in residue 28 (27A)
 REMARK Unsupported ATOM in residue 30
 REMARK Unsupported HETATM in residue 31
-REMARK Break between 31 and 34 - should not add TER here
+REMARK Break between 31 and 34 - the correct PDB should not add TER here
 REMARK Supported 'BMA' example HETATM in 34
 REMARK Unsupported 'FUC' in ATOM in 35
 ATOM      1  N   ALA A   1       0.000   0.000   0.000  0.00  0.00           N  
@@ -38,11 +38,11 @@ ATOM     47  N   GLY A   6      -3.598 -11.985  -3.680  0.00  0.00           N
 ATOM     48  CA  GLY A   6      -3.051 -13.014  -2.808  0.00  0.00           C  
 ATOM     49  C   GLY A   6      -1.981 -12.522  -1.854  0.00  0.00           C  
 ATOM     50  O   GLY A   6      -0.805 -12.851  -2.031  0.00  0.00           O  
-ATOM     52  N   HIP A   7      -2.349 -11.740  -0.843  0.00  0.00           N  
-ATOM     53  CA  HIP A   7      -1.357 -11.233   0.101  0.00  0.00           C  
-ATOM     54  C   HIP A   7      -1.999 -10.979   1.458  0.00  0.00           C  
-ATOM     55  O   HIP A   7      -3.091 -10.411   1.543  0.00  0.00           O  
-ATOM     56  CB  HIP A   7      -0.712  -9.954  -0.435  0.00  0.00           C  
+ATOM     52  N   HIS A   7      -2.349 -11.740  -0.843  0.00  0.00           N  
+ATOM     53  CA  HIS A   7      -1.357 -11.233   0.101  0.00  0.00           C  
+ATOM     54  C   HIS A   7      -1.999 -10.979   1.458  0.00  0.00           C  
+ATOM     55  O   HIS A   7      -3.091 -10.411   1.543  0.00  0.00           O  
+ATOM     56  CB  HIS A   7      -0.712  -9.954  -0.435  0.00  0.00           C  
 ATOM     63  N   ILE A   8      -1.309 -11.406   2.513  0.00  0.00           N  
 ATOM     64  CA  ILE A   8      -1.603 -10.896   3.850  0.00  0.00           C  
 ATOM     65  C   ILE A   8      -0.318 -10.437   4.531  0.00  0.00           C  
@@ -118,124 +118,3 @@ ATOM    198  CA BALA A  22      -6.012 -24.814  33.696  0.60  0.00           C
 ATOM    199  C  BALA A  22      -4.990 -25.677  34.426  0.60  0.00           C  
 ATOM    200  O  BALA A  22      -4.494 -26.675  33.897  0.60  0.00           O  
 ATOM    201  CB BALA A  22      -7.405 -25.428  33.847  0.60  0.00           C  
-HETATM  203  N   MSE A  23      -4.662 -25.299  35.659  0.00  0.00           N  
-HETATM  204  CA  MSE A  23      -3.791 -26.153  36.463  0.00  0.00           C  
-HETATM  205  C   MSE A  23      -4.453 -27.501  36.731  0.00  0.00           C  
-HETATM  206  O   MSE A  23      -5.576 -27.551  37.239  0.00  0.00           O  
-HETATM  207  CB  MSE A  23      -3.418 -25.481  37.804  0.00  0.00           C  
-HETATM  211  N   HSD A  24      -3.759 -28.584  36.389  0.00  0.00           N  
-HETATM  212  CA  HSD A  24      -4.318 -29.909  36.647  0.00  0.00           C  
-HETATM  213  C   HSD A  24      -3.978 -30.324  38.074  0.00  0.00           C  
-HETATM  214  O   HSD A  24      -2.924 -29.949  38.595  0.00  0.00           O  
-HETATM  215  CB  HSD A  24      -3.783 -30.923  35.634  0.00  0.00           C  
-HETATM  217  N   HID A  25      -4.880 -31.093  38.678  0.00  0.00           N  
-HETATM  218  CA  HID A  25      -4.643 -31.583  40.033  0.00  0.00           C  
-HETATM  219  C   HID A  25      -4.205 -33.042  40.097  0.00  0.00           C  
-HETATM  220  O   HID A  25      -3.486 -33.412  41.028  0.00  0.00           O  
-HETATM  221  CB  HID A  25      -5.899 -31.423  40.921  0.00  0.00           C  
-HETATM  225  N   HSE A  26      -4.621 -33.864  39.136  0.00  0.00           N  
-HETATM  226  CA  HSE A  26      -4.053 -35.196  38.943  0.00  0.00           C  
-HETATM  227  C   HSE A  26      -2.562 -35.097  38.641  0.00  0.00           C  
-HETATM  228  O   HSE A  26      -2.134 -34.200  37.909  0.00  0.00           O  
-HETATM  229  CB  HSE A  26      -4.781 -35.930  37.815  0.00  0.00           C  
-HETATM  231  N   HIE A  27      -1.770 -36.010  39.197  0.00  0.00           N  
-HETATM  232  CA  HIE A  27      -0.347 -36.093  38.876  0.00  0.00           C  
-HETATM  233  C   HIE A  27      -0.214 -36.431  37.395  0.00  0.00           C  
-HETATM  234  O   HIE A  27      -0.780 -37.419  36.921  0.00  0.00           O  
-HETATM  235  CB  HIE A  27       0.371 -37.143  39.755  0.00  0.00           C  
-ATOM    239  N   ALA A  27A      0.536 -35.609  36.666  0.00  0.00           N  
-ATOM    240  CA  ALA A  27A      0.781 -35.822  35.242  0.00  0.00           C  
-ATOM    241  C   ALA A  27A      1.959 -36.762  35.013  0.00  0.00           C  
-ATOM    242  O   ALA A  27A      2.906 -36.783  35.804  0.00  0.00           O  
-ATOM    243  CB  ALA A  27A      1.033 -34.489  34.536  0.00  0.00           C  
-ATOM    245  N   VAL A  29       1.913 -37.542  33.935  0.00  0.00           N  
-ATOM    246  CA  VAL A  29       2.996 -38.466  33.608  0.00  0.00           C  
-ATOM    247  C   VAL A  29       4.013 -37.986  32.579  0.00  0.00           C  
-ATOM    248  O   VAL A  29       5.087 -38.582  32.463  0.00  0.00           O  
-ATOM    249  CB  VAL A  29       2.451 -39.816  33.089  0.00  0.00           C  
-ATOM    253  N   ZZZ A  30       3.717 -36.929  31.827  0.00  0.00           N  
-ATOM    254  CA  ZZZ A  30       4.632 -36.382  30.828  0.00  0.00           C  
-ATOM    255  C   ZZZ A  30       4.529 -34.866  30.705  0.00  0.00           C  
-ATOM    256  O   ZZZ A  30       4.141 -34.337  29.660  0.00  0.00           O  
-ATOM    257  CB  ZZZ A  30       4.374 -37.017  29.461  0.00  0.00           C  
-HETATM  259  N   XXX A  31       4.883 -34.180  31.789  0.00  0.00           N  
-HETATM  260  CA  XXX A  31       4.945 -32.721  31.759  0.00  0.00           C  
-HETATM  261  C   XXX A  31       6.384 -32.240  31.910  0.00  0.00           C  
-HETATM  262  O   XXX A  31       7.175 -32.853  32.632  0.00  0.00           O  
-HETATM  263  CB  XXX A  31       4.064 -32.094  32.864  0.00  0.00           C  
-HETATM  281  N   BMA A  34       8.760 -26.856  34.782  0.00  0.00           N  
-HETATM  282  CA  BMA A  34       8.529 -25.426  34.596  0.00  0.00           C  
-HETATM  283  C   BMA A  34       9.642 -24.661  35.303  0.00  0.00           C  
-HETATM  284  O   BMA A  34      10.157 -25.121  36.325  0.00  0.00           O  
-HETATM  285  CB  BMA A  34       7.151 -25.031  35.132  0.00  0.00           C  
-ATOM    287  N   FUC A  35       9.990 -23.506  34.741  0.00  0.00           N  
-ATOM    288  CA  FUC A  35      10.988 -22.627  35.345  0.00  0.00           C  
-ATOM    289  C   FUC A  35      10.651 -22.347  36.806  0.00  0.00           C  
-ATOM    290  O   FUC A  35      11.538 -22.312  37.664  0.00  0.00           O  
-ATOM    291  CB  FUC A  35      11.109 -21.292  34.575  0.00  0.00           C  
-ATOM    295  N   ALA A  36       9.378 -22.142  37.134  0.00  0.00           N  
-ATOM    296  CA  ALA A  36       9.000 -21.883  38.522  0.00  0.00           C  
-ATOM    297  C   ALA A  36       8.979 -23.185  39.313  0.00  0.00           C  
-ATOM    298  O   ALA A  36       8.690 -23.177  40.512  0.00  0.00           O  
-ATOM    299  CB  ALA A  36       7.637 -21.192  38.586  0.00  0.00           C  
-ATOM    301  N   VAL A  36       9.281 -24.308  38.665  0.00  0.00           N  
-ATOM    302  CA  VAL A  36       9.432 -25.576  39.374  0.00  0.00           C  
-ATOM    303  C   VAL A  36      10.884 -25.727  39.818  0.00  0.00           C  
-ATOM    304  O   VAL A  36      11.809 -25.460  39.046  0.00  0.00           O  
-ATOM    305  CB  VAL A  36       9.003 -26.772  38.495  0.00  0.00           C  
-ATOM    309  N   ALA A  38      11.120 -26.152  41.056  0.00  0.00           N  
-ATOM    310  CA  ALA A  38      12.443 -26.590  41.496  0.00  0.00           C  
-ATOM    311  C   ALA A  38      12.923 -27.781  40.674  0.00  0.00           C  
-ATOM    312  O   ALA A  38      12.134 -28.672  40.351  0.00  0.00           O  
-ATOM    313  CB  ALA A  38      12.422 -26.948  42.983  0.00  0.00           C  
-ATOM    315  N   VAL A  39      14.216 -27.761  40.358  0.00  0.00           N  
-ATOM    316  CA  VAL A  39      14.875 -28.879  39.689  0.00  0.00           C  
-ATOM    317  C   VAL A  39      14.805 -30.084  40.621  0.00  0.00           C  
-ATOM    318  O   VAL A  39      15.227 -30.006  41.778  0.00  0.00           O  
-ATOM    319  CB  VAL A  39      16.337 -28.536  39.320  0.00  0.00           C  
-ATOM    323  N   ALA A  40      14.273 -31.196  40.119  0.00  0.00           N  
-ATOM    324  CA  ALA A  40      14.194 -32.409  40.929  0.00  0.00           C  
-ATOM    325  C   ALA A  40      15.493 -33.201  40.838  0.00  0.00           C  
-ATOM    326  O   ALA A  40      16.164 -33.187  39.802  0.00  0.00           O  
-ATOM    327  CB  ALA A  40      13.012 -33.273  40.487  0.00  0.00           C  
-ATOM    329  N   VAL A  41      15.838 -33.889  41.924  0.00  0.00           N  
-ATOM    330  CA  VAL A  41      17.019 -34.747  41.978  0.00  0.00           C  
-ATOM    331  C   VAL A  41      16.589 -36.203  42.116  0.00  0.00           C  
-ATOM    332  O   VAL A  41      15.637 -36.533  42.829  0.00  0.00           O  
-ATOM    333  CB  VAL A  41      17.955 -34.350  43.143  0.00  0.00           C  
-ATOM    337  N   ALA A  42      17.304 -37.084  41.421  0.00  0.00           N  
-ATOM    338  CA  ALA A  42      17.074 -38.525  41.480  0.00  0.00           C  
-ATOM    339  C   ALA A  42      17.667 -39.017  42.795  0.00  0.00           C  
-ATOM    340  O   ALA A  42      18.871 -39.268  42.895  0.00  0.00           O  
-ATOM    341  CB  ALA A  42      17.699 -39.218  40.267  0.00  0.00           C  
-ATOM    343  N   VAL A  43      16.826 -39.160  43.817  0.00  0.00           N  
-ATOM    344  CA  VAL A  43      17.334 -39.659  45.092  0.00  0.00           C  
-ATOM    345  C   VAL A  43      18.035 -40.997  44.882  0.00  0.00           C  
-ATOM    346  O   VAL A  43      17.549 -41.853  44.139  0.00  0.00           O  
-ATOM    347  CB  VAL A  43      16.200 -39.807  46.134  0.00  0.00           C  
-ATOM    351  N   ALA A  44      19.175 -41.131  45.556  0.00  0.00           N  
-ATOM    352  CA  ALA A  44      19.941 -42.374  45.530  0.00  0.00           C  
-ATOM    353  C   ALA A  44      19.128 -43.541  46.079  0.00  0.00           C  
-ATOM    354  O   ALA A  44      18.205 -43.324  46.869  0.00  0.00           O  
-ATOM    355  CB  ALA A  44      21.238 -42.222  46.327  0.00  0.00           C  
-ATOM    357  N   VAL A  45      19.497 -44.743  45.642  0.00  0.00           N  
-ATOM    358  CA  VAL A  45      18.816 -45.949  46.107  0.00  0.00           C  
-ATOM    359  C   VAL A  45      19.041 -46.138  47.603  0.00  0.00           C  
-ATOM    360  O   VAL A  45      18.133 -46.550  48.330  0.00  0.00           O  
-ATOM    361  CB  VAL A  45      19.295 -47.201  45.337  0.00  0.00           C  
-ATOM    365  N   ALA A  46      20.252 -45.839  48.066  0.00  0.00           N  
-ATOM    366  CA  ALA A  46      20.566 -45.933  49.489  0.00  0.00           C  
-ATOM    367  C   ALA A  46      20.284 -44.558  50.084  0.00  0.00           C  
-ATOM    368  O   ALA A  46      20.739 -43.546  49.543  0.00  0.00           O  
-ATOM    369  CB  ALA A  46      22.018 -46.373  49.690  0.00  0.00           C  
-ATOM    371  N   VAL A  47      19.540 -44.529  51.187  0.00  0.00           N  
-ATOM    372  CA  VAL A  47      19.281 -43.305  51.940  0.00  0.00           C  
-ATOM    373  C   VAL A  47      19.958 -43.389  53.304  0.00  0.00           C  
-ATOM    374  O   VAL A  47      20.038 -44.460  53.911  0.00  0.00           O  
-ATOM    375  CB  VAL A  47      17.765 -43.053  52.108  0.00  0.00           C  
-ATOM    379  N   ALA A  48      20.450 -42.254  53.794  0.00  0.00           N  
-ATOM    380  CA  ALA A  48      21.098 -42.171  55.101  0.00  0.00           C  
-ATOM    381  C   ALA A  48      20.044 -42.210  56.202  0.00  0.00           C  
-ATOM    382  O   ALA A  48      20.140 -43.057  57.143  0.00  0.00           O  
-ATOM    383  CB  ALA A  48      21.942 -40.899  55.201  0.00  0.00           C  
-TER

@@ -35,7 +35,13 @@ If you are using sh/bash, edit `.cns_solve_env_sh`:
 
 ## 2 Add HADDOCK routines
 
-HADDOCK requires some adjustments in CNS to function properly. Download the [set of routines to add](https://www.dropbox.com/s/wliubqovuusqdvr/cns.tgz?dl=0). Uncompress the archive and move all of its files into the CNS source directory (`PATH/TO/cns_solve_1.3/source/`).
+HADDOCK requires some adjustments in CNS to function properly. Download the [set of routines to add](https://www.dropbox.com/s/wliubqovuusqdvr/cns.tgz?dl=0). Uncompress the archive and move all of its files into the CNS source directory (`PATH/TO/cns_solve_1.3/source/`):
+
+```bash
+wget https://www.dropbox.com/s/wliubqovuusqdvr/cns.tgz
+tar -xvf cns.tgz
+mv cns1.3/* source/
+```
 
 ## 3 Compile CNS
 
@@ -80,9 +86,37 @@ brew install gcc
 
 Alternatively, gfortran can be downloaded as a [separate binary](https://gcc.gnu.org/wiki/GFortranBinaries).
 
-#### Makefile
+#### Write a Makefile header
 
-Check whether a corresponding `Makefile` is provided for your system in `PATH/TO/cns_solve_1.3/instlib/machine/supported/YOUR-SYSTEM/`. If no such file (eg. `Makefile.header.2.gfortran`) exists, create one manually.
+If a suitable compiler is installed but no corresponding `Makefile.header` is found, `make install` will give an error as well. For example (with gfortran):
+
+```
+Error: Makefile template for compiler gfortran is not available
+```
+
+Makefile headers for each supported system-compiler combination are provided in `instlib/machine/supported/` (for unsupported systems, see `instlib/machine/unsupported/`). If you already tried `make install`, the appropriate directory for your system (eg. `mac-intel-darwin`) will have been copied to the main `cns_solve_1.3` directory.
+If this directory does not contain the desired file (eg. `Makefile.header.2.gfortran`), create one manually.
+
+For example, for `gfortran`, create a new file named `Makefile.header.6.gfortran` inside the directory containing Makefile headers for your system. Save the following lines in this file:
+
+```
+# fortran options
+F77 = gfortran
+F77STD = -fdefault-integer-8 -w -fallow-argument-mismatch
+F77OPT = -O3 $(CNS_MALIGN_I86) -funroll-loops -ffast-math -march=native -mtune=native -static
+F77FLAGS = $(F77STD) $(F77OPT) $(EXT_F77FLAGS) $(F77BUG)
+
+# C options
+CC = gcc
+CPP = g++
+CCFLAGS = -O -DINTEGER='long int' -DCNS_ARCH_TYPE_$(CNS_ARCH_TYPE) $(EXT_CCFLAGS)
+
+# link options
+LD = gfortran
+LDFLAGS = -w $(EXT_LDFLAGS)
+```
+
+Note the `-fallow-argument-mismatch` flag. From gfortran version 10 onward, type mismatches by default give an error rather than a warning. This flag returns warnings instead, so that CNS compilation can successfully complete. If a `Makefile.header.x.gfortran` is provided for your system but compilation fails with (many) `Error: Type mismatch`, you may need to add this flag to the provided file.
 
 Then try [`make install`](#Start-compilation) again, as described above.
 
@@ -102,7 +136,7 @@ For sh/bash:
 source .cns_solve_env_sh
 ```
 
-To avoid having to repeat this step each time you open a terminal window to run CNS/HADDOCK, you may want to add the relevant `source` line to your `~/.cshrc` / `~/.tcshrc` / `~/.bashrc` / `~/.bash_profile`.
+To avoid having to repeat this step each time you open a terminal window to run CNS/HADDOCK, you may want to add the relevant `source` line to your `~/.cshrc`, `~/.tcshrc`, `~/.bashrc`, or `~/.bash_profile`. When doing this, make sure to use the full path instead of only the file name.
 
 ## 5 Check installation
 
@@ -129,4 +163,4 @@ If the installation was successful, CNS will open in your terminal with a header
 
 The command to exit CNS is `STOP`.
 
-You now have a suitable version of CNS to [install HADDOCK3](INSTALL.md).
+You now have a suitable CNS executable to finish [installing HADDOCK3](INSTALL.md).

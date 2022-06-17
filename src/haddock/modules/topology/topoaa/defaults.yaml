@@ -154,3 +154,14 @@ mol1:
   long: You can expand this parameter and associated sub-parameters to the other input molecules. For example,
         if you input three molecules, you can define mol1, mol2, and mol3
         subparameters. Those not defined will be populated with the defaults.
+molecules:
+  default: False
+  type: boolean
+  title: Input molecules
+  short: Path to the input molecules.
+  long: This parameter is a general mandatory parameter but is masked here to
+    allow parameter validation while preparing the run. Therefore, the default
+    and type values of this parameter are meaningless.
+  explevel: hidden
+  group: molecules
+

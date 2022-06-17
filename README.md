@@ -1,7 +1,11 @@
-Welcome to the HADDOCK3-Beta version
+Welcome to the HADDOCK3-Beta version.
 
 The `main` branch represents the latest state of HADDOCK v3. Currently,
 stable beta version.
+
+[![unit tests](https://github.com/haddocking/haddock3/workflows/tests/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=tests)
+[![build](https://github.com/haddocking/haddock3/workflows/build/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=build)
+[![docs](https://github.com/haddocking/haddock3/workflows/docs/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=docs)
 
 * * *
 

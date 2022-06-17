@@ -1,5 +1,7 @@
 """Create and manage CNS all-atom topology."""
 import operator
+import os
+import re
 from functools import partial
 from pathlib import Path
 
@@ -84,17 +86,46 @@ class HaddockModule(BaseCNSModule):
     def get_md5(ensemble_f):
         """Get MD5 hash of a multi-model PDB file."""
         md5_dic = {}
-        with open(ensemble_f, 'r') as fh:
-            for line in fh.readlines():
-                if line.startswith("REMARK") and "9" in line:
-                    model_num = int(line.split('MODEL')[-1].split()[0])
-                    md5 = line.split()[-1]
-                    md5_dic[model_num] = md5
+        text = Path(ensemble_f).read_text()
+        lines = text.split(os.linesep)
+        REMARK_lines = (line for line in lines if line.startswith('REMARK'))
+        remd5 = re.compile(r"^[a-f0-9]{32}$")
+        for line in REMARK_lines:
+            parts = line.strip().split()
+
+            try:
+                idx = parts.index('MODEL')
+            except ValueError:  # MODEL not in parts, this line can be ignored
+                continue
+
+            # check if there's a md5 hash in line
+            for part in parts:
+                group = remd5.fullmatch(part)
+                if group:
+                    # the model num comes after the MODEL
+                    model_num = int(parts[idx + 1])
+                    md5_dic[model_num] = group.string  # md5 hash
+                    break
+
         return md5_dic
 
     def _run(self):
         """Execute module."""
-        molecules = make_molecules(self.params.pop('molecules'))
+        if self.order == 0:
+            # topoaa is the first step in the workflow
+            molecules = make_molecules(self.params.pop('molecules'))
+
+        else:
+            # in case topoaa is not the first step it reads the input
+            # molecules from the previous step but it only takes the
+            # first model because all models will have the same
+            # identity, as is the case for all PDBs created by rigidbody.
+            # In these cases, it is likely that each PDB contains the
+            # complex structure instead of the separated chains.
+            # Currently, we have not implemented a way to split chains
+            # and recreate the topology of the chains separately.
+            _molecules = self.previous_io.retrieve_models()[0]
+            molecules = make_molecules([_molecules.rel_path], no_parent=True)
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately

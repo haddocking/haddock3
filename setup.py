@@ -76,6 +76,8 @@ setup(
             'haddock3-dmn = haddock.clis.cli_dmn:maincli',
             'haddock3-cfg = haddock.clis.cli_cfg:maincli',
             'haddock3-copy = haddock.clis.cli_cp:maincli',
+            'haddock3-clean = haddock.clis.cli_clean:maincli',
+            'haddock3-unpack = haddock.clis.cli_unpack:maincli',
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

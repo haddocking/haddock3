@@ -5,9 +5,9 @@ from haddock.gear.parameters import (  # noqa: F401
     MANDATORY_YAML,
     OPTIONAL_YAML,
     _mandatory_parameters,
-    _optional_parameters,
     config_mandatory_general_parameters,
     config_optional_general_parameters,
+    config_optional_general_parameters_dict,
     )
 
 
@@ -32,7 +32,7 @@ def test_rundir_in_set():
 
 
 def test_optional_skip_preprocessing_yaml():
-    assert "preprocess" in _optional_parameters
+    assert "preprocess" in config_optional_general_parameters_dict
 
 
 def test_optional_skip_preprocessing_set():

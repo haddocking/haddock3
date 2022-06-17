@@ -4,7 +4,7 @@ import glob
 import gzip
 import os
 import tarfile
-from functools import partial, wraps
+from functools import partial
 from multiprocessing import Pool
 from pathlib import Path
 
@@ -22,7 +22,6 @@ def read_lines(func):
     Send to the decorated function the lines of the file in the form
     of list.
     """
-    #@wraps(func)
     def wrapper(fpath, *args, **kwargs):
         lines = Path(fpath).read_text().split(os.linesep)
         return func(lines, *args, **kwargs)

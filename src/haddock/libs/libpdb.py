@@ -269,7 +269,7 @@ def read_ATOM_section(lines, section_slice, func=set):
     chainids = func(
         the_line
         for line in lines
-        if line.startswith(('ATOM', 'HETATM')) and (the_line := line[section_slice].strip())
+        if line.startswith(('ATOM', 'HETATM')) and (the_line := line[section_slice].strip())  # noqa: E501
         )
     return chainids
 

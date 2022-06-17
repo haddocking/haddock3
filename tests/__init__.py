@@ -8,13 +8,10 @@ tests_path = Path(__file__).resolve().parents[0]
 data_folder = Path(tests_path, 'data')
 golden_data = Path(tests_path, 'golden_data')
 
+# preprocessing files
 broken_pdb = Path(data_folder, 'broken.pdb')
 corrected_pdb = Path(data_folder, 'corrected.pdb')
 
-
-
-
-good_pdb = Path(data_folder, 'good.pdb')
 residues_top = Path(data_folder, 'residues.top')
 
 configs_data = Path(tests_path, 'configs')

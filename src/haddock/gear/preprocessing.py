@@ -374,7 +374,7 @@ def process_pdbs(
                 user_supported_residues or set(),
                 ),
             ),
-        #convert_HETATM_to_ATOM,
+        # convert_HETATM_to_ATOM,
         partial(wrep_pdb_fixinsert, option_list=[]),
         #####
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
@@ -1055,7 +1055,7 @@ def models_should_have_the_same_labels(lines):
     first_key = keys[0]
     for model_num in keys[1:]:
         if models[model_num] != models[first_key]:
-            emsg = f"MODEL {model_num} differs from MODEL {first_key}."
+            emsg = f"Labels in MODEL {model_num} differ from MODEL {first_key}."
             raise ModelsDifferError(emsg)
 
     return lines

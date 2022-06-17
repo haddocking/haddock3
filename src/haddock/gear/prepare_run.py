@@ -6,8 +6,8 @@ import os
 import shutil
 import string
 import sys
-from copy import copy
 from contextlib import contextmanager, suppress
+from copy import copy
 from functools import lru_cache, wraps
 from pathlib import Path
 
@@ -39,6 +39,7 @@ from haddock.gear.extend_run import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import (
     config_mandatory_general_parameters,
+    config_optional_general_parameters,
     config_optional_general_parameters_dict,
     )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
@@ -68,6 +69,7 @@ from haddock.modules.analysis import (
 ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     set(config_mandatory_general_parameters),
     set(non_mandatory_general_parameters_defaults),
+    config_optional_general_parameters,
     )
 
 
@@ -487,8 +489,6 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
         See :py:mod:`haddock.gear.preprocessing`.
     """
     topoaa_dir = zero_fill.fill('topoaa', 0)
-    print('>>>>>', Path.cwd())
-    print('>>>>>', data_dir)
 
     # define paths
     data_topoaa_dir = Path(data_dir, topoaa_dir)
@@ -498,7 +498,6 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
 
     new_molecules = []
     for molecule in copy(topoaa_params['molecules']):
-        print('>>>>>>>', molecule)
         check_if_path_exists(molecule)
 
         mol_name = Path(molecule).name

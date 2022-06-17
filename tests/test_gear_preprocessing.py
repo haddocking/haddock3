@@ -1,14 +1,13 @@
 """Test preprocessing operations."""
-import logging
 import os
-import filecmp
 from pathlib import Path
 
 import pytest
 
 from haddock.gear import preprocessing as pp
 
-from . import broken_pdb, data_folder, good_pdb, residues_top, corrected_pdb
+from . import broken_pdb, corrected_pdb, residues_top
+
 
 @pytest.mark.skip
 def test_open_or_give():
@@ -126,14 +125,14 @@ def test_check_models_wrong_2():
     _lines = models_wrong_2.split(os.linesep)
     with pytest.raises(pp.ModelsDifferError) as error:
         pp.models_should_have_the_same_labels(_lines)
-    assert str(error.value) == "MODEL 2 differs from MODEL 1."
+    assert str(error.value) == "Labels in MODEL 2 differ from MODEL 1."
 
 
 def test_check_models_wrong_3():
     _lines = models_wrong_3.split(os.linesep)
     with pytest.raises(pp.ModelsDifferError) as error:
         pp.models_should_have_the_same_labels(_lines)
-    assert str(error.value) == "MODEL 3 differs from MODEL 1."
+    assert str(error.value) == "Labels in MODEL 3 differ from MODEL 1."
 
 
 rep_chains_1 = [

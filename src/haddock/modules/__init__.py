@@ -34,6 +34,8 @@ modules_category = {
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
 
+modules_names = set(modules_category.keys())
+
 category_hierarchy = [
     "topology",
     "sampling",

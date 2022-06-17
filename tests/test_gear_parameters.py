@@ -32,8 +32,8 @@ def test_rundir_in_set():
 
 
 def test_optional_skip_preprocessing_yaml():
-    assert "skip_preprocess" in _optional_parameters
+    assert "preprocess" in _optional_parameters
 
 
 def test_optional_skip_preprocessing_set():
-    assert "skip_preprocess" in config_optional_general_parameters
+    assert "preprocess" in config_optional_general_parameters

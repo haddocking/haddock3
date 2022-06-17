@@ -365,7 +365,7 @@ def process_pdbs(
         replace_HSD_to_HIS,
         replace_HSE_to_HIS,
         replace_HID_to_HIS,
-        eplace_HIE_to_HIS,
+        replace_HIE_to_HIS,
         add_charges_to_ions,
         partial(
             convert_ATOM_to_HETATM,

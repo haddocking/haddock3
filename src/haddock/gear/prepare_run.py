@@ -6,6 +6,7 @@ import os
 import shutil
 import string
 import sys
+from copy import copy
 from contextlib import contextmanager, suppress
 from functools import lru_cache, wraps
 from pathlib import Path
@@ -38,7 +39,7 @@ from haddock.gear.extend_run import (
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import (
     config_mandatory_general_parameters,
-    config_optional_general_parameters,
+    config_optional_general_parameters_dict,
     )
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
@@ -163,7 +164,9 @@ def setup_run(
     params = read_config(workflow_path)
 
     # update default non-mandatory parameters with user params
-    params = recursive_dict_update(config_optional_general_parameters, params)
+    params = recursive_dict_update(
+        config_optional_general_parameters_dict,
+        params)
 
     params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
@@ -267,7 +270,7 @@ def setup_run(
         copy_molecules_to_data_dir(
             data_dir,
             modules_params["topoaa"],
-            preprocess=not general_params["skip_preprocess"],
+            preprocess=general_params["preprocess"],
             )
 
     if starting_from_copy:
@@ -472,19 +475,21 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
         See :py:mod:`haddock.gear.preprocessing`.
     """
     topoaa_dir = zero_fill.fill('topoaa', 0)
+    print('>>>>>', Path.cwd())
+    print('>>>>>', data_dir)
 
     # define paths
     data_topoaa_dir = Path(data_dir, topoaa_dir)
     data_topoaa_dir.mkdir(parents=True, exist_ok=True)
     rel_data_topoaa_dir = Path(data_dir.name, topoaa_dir)
-    original_mol_dir = Path(data_topoaa_dir, "original_molecules")
+    original_mol_dir = Path(data_dir, "original_molecules")
 
-    for molecule in topoaa_params['molecules']:
-
+    new_molecules = []
+    for molecule in copy(topoaa_params['molecules']):
+        print('>>>>>>>', molecule)
         check_if_path_exists(molecule)
 
         mol_name = Path(molecule).name
-        original_mol = Path(original_mol_dir, mol_name)
 
         if preprocess:  # preprocess PDB files
 
@@ -497,6 +502,7 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
 
             # copy the original molecule
             original_mol_dir.mkdir(parents=True, exist_ok=True)
+            original_mol = Path(original_mol_dir, mol_name)
             shutil.copy(molecule, original_mol)
 
             # write the new processed molecule
@@ -506,7 +512,9 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
         else:
             shutil.copy(molecule, Path(data_topoaa_dir, mol_name))
 
-        topoaa_params['molecules'].append(Path(rel_data_topoaa_dir, mol_name))
+        new_molecules.append(Path(rel_data_topoaa_dir, mol_name))
+
+    topoaa_params['molecules'] = copy(new_molecules)
 
 
 def copy_input_files_to_data_dir(data_dir, modules_params, start=0):

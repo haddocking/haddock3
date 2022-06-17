@@ -14,5 +14,5 @@ OPTIONAL_YAML = Path(haddock3_source_path, "core", "optional.yaml")
 _mandatory_parameters = read_from_yaml_config(MANDATORY_YAML)
 config_mandatory_general_parameters = set(_mandatory_parameters)
 
-_optional_parameters = read_from_yaml_config(OPTIONAL_YAML)
-config_optional_general_parameters = set(_optional_parameters)
+config_optional_general_parameters_dict = read_from_yaml_config(OPTIONAL_YAML)
+config_optional_general_parameters = set(config_optional_general_parameters_dict)  # noqa: E501

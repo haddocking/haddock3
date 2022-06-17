@@ -54,10 +54,10 @@ python setup.py develop --no-deps
 mkdir -p bin/
 
 # on mac
-ln -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe bin/cns
 
 # on linux
-ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
 ```
 
 As long as you have the HADDOCK3 python environment activated, you can

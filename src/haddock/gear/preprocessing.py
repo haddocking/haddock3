@@ -357,7 +357,7 @@ def process_pdbs(
     line_by_line_processing_steps = [
         wrep_pdb_keepcoord,  # also discards ANISOU
         # tidy is important before some other corrections
-        partial(wrep_pdb_tidy, strict=True),
+        wrep_pdb_tidy_strict,
         wrep_pdb_element,
         wrep_pdb_selaltloc,
         partial(wrep_pdb_occ, occupancy=1.00),
@@ -382,8 +382,8 @@ def process_pdbs(
         ####
         partial(wrep_pdb_reres, starting_resid=1),
         partial(wrep_pdb_reatom, starting_value=1),
-        partial(wrep_pdb_tidy, strict=True),
-        ##
+        wrep_pdb_tidy_strict,
+        ###
         wrep_rstrip,
         ]
 
@@ -416,7 +416,20 @@ def process_pdbs(
         ]
 
     # combined processing
-    final_result = chainf(result_2, *processed_combined_steps)
+    pre_final_result = chainf(result_2, *processed_combined_steps)
+
+    # final tidy and cleaning extra newlines
+    final_result = [
+        list(chainf(
+            _structure,
+            wrep_pdb_tidy_strict,
+            wrep_rstrip,
+            ))
+        for _structure in pre_final_result
+        ]
+
+    #if len(pre_final_result) != len(final_result):
+    #    raise AssertionError("A structure was lost. This is a bug!")
 
     return final_result
 
@@ -436,6 +449,7 @@ wrep_pdb_rplresname = _report('pdb_rplresname')(pdb_rplresname.run)
 wrep_pdb_segxchain = _report('pdb_segxchain')(pdb_segxchain.run)
 wrep_pdb_selaltloc = _report('pdb_selaltloc')(pdb_selaltloc.run)
 wrep_pdb_tidy = _report('pdb_tidy')(pdb_tidy.run)
+wrep_pdb_tidy_strict = _report('pdb_tidy')(partial(pdb_tidy.run, strict=True))
 wrep_rstrip = _report("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  # noqa: E501
 
 
@@ -932,10 +946,8 @@ def homogenize_chains(lines):
     if len(chainids) > 1:
         return list(chainf(
             lines,
-            *[
-                partial(pdb_chain.run, chain_id=chainids[0]),
-                pdb_chainxseg.run,
-                ]
+            partial(pdb_chain.run, chain_id=chainids[0]),
+            pdb_chainxseg.run,
             ))
     else:
         return lines
@@ -981,12 +993,10 @@ def correct_equal_chain_segids(structures):
         if chain_id in chain_ids:
             new_lines = list(chainf(
                 lines,
-                *[
-                    # change the chain ID by a new one
-                    partial(pdb_chain.run, chain_id=next(remaining_chars)),
-                    # applies chain ID to seg ID as well
-                    pdb_chainxseg.run,
-                    ],
+                # change the chain ID by a new one
+                partial(pdb_chain.run, chain_id=next(remaining_chars)),
+                # applies chain ID to seg ID as well
+                pdb_chainxseg.run,
                 ))
         else:
             chain_ids.append(chain_id)

@@ -369,4 +369,7 @@ def test_process_pdbs():
     Path('testpreprocessing.pdb').write_text(os.linesep.join(result[0]))
 
     for i, (rline, eline) in enumerate(zip(result[0], expected)):
+        print('result ', rline, len(rline))
+        print('expected ', eline, len(eline))
+        print()
         assert rline == eline, i

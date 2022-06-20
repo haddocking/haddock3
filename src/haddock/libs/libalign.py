@@ -228,9 +228,12 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
                     idx += 1
     chain_ranges = {}
     for chain in chain_dic:
-        min_idx = min(chain_dic[chain])
-        max_idx = max(chain_dic[chain])
-        chain_ranges[chain] = (min_idx, max_idx)
+        if chain_dic[chain] == []:
+            raise ALIGNError(f"Chain matching error on {pdb_f}, chain {chain}")
+        else:
+            min_idx = min(chain_dic[chain])
+            max_idx = max(chain_dic[chain])
+            chain_ranges[chain] = (min_idx, max_idx)
     return coord_dic, chain_ranges
 
 

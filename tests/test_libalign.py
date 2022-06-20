@@ -5,6 +5,8 @@ from pathlib import Path
 
 import numpy as np
 
+import pytest
+
 from haddock.libs.libalign import (
     align_seq,
     calc_rmsd,
@@ -180,6 +182,18 @@ def test_load_coords():
     expected_chain_ranges = {"B": (0, 19)}
 
     assert observed_chain_ranges == expected_chain_ranges
+
+
+def test_error_load_coords():
+    """
+    Test the chain-matching error on loading the coordinates
+    with an uncompatible resdic.
+    """
+    filter_resdic = {'A': [1, 2, 3, 4, 5]} # protein has only chain B
+    pdb_f = Path(golden_data, "protein.pdb")
+    atoms = get_atoms(pdb_f)
+    with pytest.raises(Exception):
+        load_coords(pdb_f, atoms, filter_resdic)
 
 
 def test_get_atoms():

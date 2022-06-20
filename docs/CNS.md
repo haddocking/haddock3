@@ -1,8 +1,11 @@
 # CNS Installation
 
+The computational engine for most of HADDOCK3's modules is the [Crystallography and NMR System (CNS)](http://cns-online.org/v1.3/).
+Once you have [cloned the HADDOCK3 repository](INSTALL.md), please follow these instructions to compile a CNS executable that can be used to run HADDOCK.
+
 ## 1 Download CNS
 
-Downloading [CNS (Crystallography and NMR System)](http://cns-online.org/v1.3/) requires a license, which academic users can [request for free](http://cns-online.org/cns_request/). You will be sent a password for the download via e-mail.
+Downloading CNS requires a license, which academic users can [request for free](http://cns-online.org/cns_request/). You will be sent a password for the download via e-mail.
 Using the link provided in the same e-mail, download CNS ("Source installer (compilation required on your system)") to the directory in which you want to install it (for example `software`). Navigate to this directory, then uncompress and extract the archive:
 
 ```bash
@@ -45,8 +48,6 @@ mv cns1.3/* source/
 
 ## 3 Compile CNS
 
-#### Start compilation
-
 Make sure you are inside the main `cns_solve_1.3` directory.
 
 If a suitable compiler is installed on your system, the following command should start the compilation of CNS:
@@ -88,7 +89,7 @@ source .cns_solve_env_sh
 
 ## 5 Check installation
 
-To check that CNS has been installed, start the program (from any working directory) with the following command:
+To check that CNS has been installed, start the program with the following command:
 
 ```bash
 cns

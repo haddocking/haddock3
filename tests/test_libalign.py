@@ -4,7 +4,6 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
-
 import pytest
 
 from haddock.libs.libalign import (
@@ -185,11 +184,8 @@ def test_load_coords():
 
 
 def test_error_load_coords():
-    """
-    Test the chain-matching error on loading the coordinates
-    with an uncompatible resdic.
-    """
-    filter_resdic = {'A': [1, 2, 3, 4, 5]} # protein has only chain B
+    """Test the chain-matching error with an uncompatible resdic."""
+    filter_resdic = {'A': [1, 2, 3, 4, 5]}  # protein has only chain B
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
     with pytest.raises(Exception):

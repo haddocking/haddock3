@@ -67,9 +67,57 @@ You should see the progress of the compilation, followed by a confirmation that 
 created executable file cns_solve-2206031450.exe
 ```
 
-If this worked, you can continue to the [next step](#4-Source-CNS).
+If this does not work, check the [troubleshooting section](#Troubleshooting) below.
 
-#### Install a compiler
+
+## 4 Source CNS
+
+Lastly, CNS needs to be loaded in the current shell before it can be used.
+
+For csh/tcsh:
+
+```bash
+source cns_solve_env
+```
+
+For sh/bash:
+
+```bash
+source .cns_solve_env_sh
+```
+
+## 5 Check installation
+
+To check that CNS has been installed, start the program (from any working directory) with the following command:
+
+```bash
+cns
+```
+
+If the installation was successful, CNS will open in your terminal with a header including the following information:
+
+```
+============================================================
+|                                                          |
+|            Crystallography & NMR System (CNS)            |
+|                         CNSsolve                         |
+|                                                          |
+============================================================
+ Version: 1.3 at patch level U
+ Status: Special UU release with Rg, paramagnetic
+         and Z-restraints (A. Bonvin, UU 2013)
+============================================================
+```
+
+The command to exit CNS is `STOP`.
+
+You now have a suitable CNS executable to finish [installing HADDOCK3](INSTALL.md).
+
+***
+
+# Troubleshooting
+
+## Compiler
 
 If no suitable compiler is found, you will get an error message:
 
@@ -86,7 +134,7 @@ brew install gcc
 
 Alternatively, gfortran can be downloaded as a [separate binary](https://gcc.gnu.org/wiki/GFortranBinaries).
 
-#### Write a Makefile header
+## Makefile
 
 If a suitable compiler is installed but no corresponding `Makefile.header` is found, `make install` will give an error as well. For example (with gfortran):
 
@@ -117,50 +165,3 @@ LDFLAGS = -w $(EXT_LDFLAGS)
 ```
 
 Note the `-fallow-argument-mismatch` flag. From gfortran version 10 onward, type mismatches by default give an error rather than a warning. This flag returns warnings instead, so that CNS compilation can successfully complete. If a `Makefile.header.x.gfortran` is provided for your system but compilation fails with (many) `Error: Type mismatch`, you may need to add this flag to the provided file.
-
-Then try [`make install`](#Start-compilation) again, as described above.
-
-## 4 Source CNS
-
-Lastly, CNS needs to be loaded in the current shell before it can be used.
-
-For csh/tcsh:
-
-```bash
-source cns_solve_env
-```
-
-For sh/bash:
-
-```bash
-source .cns_solve_env_sh
-```
-
-To avoid having to repeat this step each time you open a terminal window to run CNS/HADDOCK, you may want to add the relevant `source` line to your `~/.cshrc`, `~/.tcshrc`, `~/.bashrc`, or `~/.bash_profile`. When doing this, make sure to use the full path instead of only the file name.
-
-## 5 Check installation
-
-To check that CNS has been installed, start the program (from any working directory) with the following command:
-
-```bash
-cns
-```
-
-If the installation was successful, CNS will open in your terminal with a header including the following information:
-
-```
-============================================================
-|                                                          |
-|            Crystallography & NMR System (CNS)            |
-|                         CNSsolve                         |
-|                                                          |
-============================================================
- Version: 1.3 at patch level U
- Status: Special UU release with Rg, paramagnetic
-         and Z-restraints (A. Bonvin, UU 2013)
-============================================================
-```
-
-The command to exit CNS is `STOP`.
-
-You now have a suitable CNS executable to finish [installing HADDOCK3](INSTALL.md).

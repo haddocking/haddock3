@@ -1,0 +1,202 @@
+forcefield:
+  default: ['amber14-all.xml']
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - 'amber14-all.xml'
+    - 'amber14/protein.ff14SB.xml'
+    - 'amber14/protein.ff15ipq.xml'
+    - 'amber14/DNA.OL15.xml'
+    - 'amber14/DNA.bsc1.xml'
+    - 'amber14/RNA.OL3.xml'
+    - 'amber14/lipid17.xml'
+    - 'amber14/GLYCAM_06j-1.xml'
+    - 'charmm36.xml'
+  title: Used forcefield by OpenMM.
+  short: Forcefields that can be used by OpenMM.
+  long: Forcefields that can be used by OpenMM.
+  group: ''
+  explevel: easy
+
+explicit_solvent_model:
+  default: ['amber14/tip3p.xml']
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - 'amber14/tip3p.xml'
+    - 'amber14/spce.xml'
+    - 'charmm36/spce.xml'
+    - 'amber14/tip4pew.xml'
+    - 'charmm36/tip4pew.xml'
+    - 'charmm36/tip5p.xml'
+  title: Explicit solvent models.
+  short: Solvent models supported by the OpenMM modeller to build the water solvation box.
+  long: Solvent models supported by the OpenMM modeller to build the water solvation box.
+  group: ''
+  explevel: easy
+
+implicit_solvent:
+  default: false
+  type: boolean
+  title: Indicate use of implicit solvent.
+  short: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.
+  long: Indicate use of implicit solvent, avoids building a water solvation box around pdbs. 
+  group: ''
+  explevel: easy
+
+implicit_solvent_model:
+  default: ['implicit/hct.xml']
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - 'implicit/hct.xml'
+    - 'implicit/obc1.xml'
+    - 'implicit/obc2.xml'
+    - 'implicit/gbn.xml'
+    - 'implicit/gbn2.xml'
+  title: Implicit solvent models.
+  short: Implicit solvent models supported by OpenMM.
+  long: Implicit solvent models supported by OpenMM.
+  group: ''
+  explevel: easy
+
+add_extra_particles_for_forcefield:
+  default: false
+  type: boolean
+  title: Add extra particles for forcefield.
+  short: Add extra particles for forcefield if needed such as e.g. Drude particles.
+  long: Add extra particles for forcefield if needed such as e.g. Drude particles.
+  group: ''
+  explevel: easy
+
+timestep_ps:
+  default: 0.004
+  type: float
+  min: 0
+  max: 0.1
+  title: Timestep definition.
+  short: Definition of timestep used by the integrator to progress the simulation.
+  long: Definition of timestep used by the integrator to progress the simulation.
+  group: ''
+  explevel: easy
+
+constraints:
+  default: 'HBonds'
+  type: string
+  minchars: 0
+  maxchars: 100
+  choices:
+    - 'None'
+    - 'HBonds'
+    - 'AllBonds'
+    - 'HAngles'
+  title: Integration constraints.
+  short: Integration constraints used to allow for larger integration time step.
+  long: Integration constraints used to allow for larger integration time step. For extra info see http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints
+  group: ''
+  explevel: easy
+
+equilibration_timesteps:
+  default: 1000
+  type: int
+  min: 0
+  max: 100000
+  title: Equilibration timesteps.
+  short: Equilibration timesteps performed without saving the simulation state.
+  long: Equilibration timesteps performed without saving the simulation state.
+  group: ''
+  explevel: easy
+
+simulation_timesteps:
+  default: 1000
+  type: int
+  min: 1
+  max: 1000000
+  title: Simulation timesteps.
+  short: Simulation timesteps performed during the simulation.
+  long: Simulation timesteps performed during the simulation.
+  group: ''
+  explevel: easy
+
+move_atoms_to_solvationbox_center:
+  default: false
+  type: boolean
+  title: Move atoms to solvationbox center.
+  short: Move atoms to solvationbox center, the pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.
+  long: Move atoms to solvationbox center, the pdb is placed around the origin, and water molecules of the solvation box are build up from the origin. Not centering the atoms shouldn't be a problem if periodic boundary conditions are deployed, but employing it also prevents the molecule from jumping around the boundary while visually inspecting the simulation in e.g. PyMOL.
+  group: ''
+  explevel: easy
+
+temperature_kelvin:
+  default: 300
+  type: int
+  min: 1
+  max: 1000
+  title: Average temperature.
+  short: Average temperature used by e.g. the integrator or by for temperature coupling.
+  long: Average temperature used by e.g. the integrator or by for temperature coupling.
+  group: ''
+  explevel: easy
+
+solvent_boxsize_nm:
+  default: 10
+  type: int
+  min: 1
+  max: 100
+  title: Solvent boxsize in nm.
+  short: Solvent boxsize in nm used to build the water solvationbox around the molecule.
+  long: Solvent boxsize in nm used to build the water solvationbox around the molecule. Value is used when the crystallographic cell size is removed in the pipeline.
+  group: ''
+  explevel: easy
+
+remove_center_of_mass_motion:
+  default: true
+  type: boolean
+  title: Remove center of mass motion.
+  short: Remove center of mass motion when overall molecular drift is detected.
+  long: Remove center of mass motion when overall molecular drift is detected.
+  group: ''
+  explevel: easy
+
+save_intermediate_simulation_structures:
+  default: false
+  type: boolean
+  title: Save intermediate simulation structures.
+  short: Save intermediate simulation structures of the simulation.
+  long: Save intermediate simulation structures of the simulation. Each structure is saved after the number of timesteps specified by the save_intermediate_simulation_structures_after_number_of_timesteps parameter. 
+  group: ''
+  explevel: easy
+
+save_intermediate_simulation_structures_after_number_of_timesteps:
+  default: 100
+  type: int
+  min: 0
+  max: 1000000
+  title: Save intermediate simulation structures after number of timesteps.
+  short: Save intermediate simulation structures after number of timesteps. Each structure is saved after the number of timesteps if the save_intermediate_simulation_structures parameter is true. 
+  long: Save intermediate simulation structures after number of timesteps. Each structure is saved after the number of timesteps if the save_intermediate_simulation_structures parameter is true.
+  group: ''
+  explevel: easy
+
+contains_xray_crystallography_cell_data_solvationbox_padding_nm:
+  default: 1.0
+  type: float
+  min: 0
+  max: 10
+  title: Contains xray crystallography cell data solvationbox padding nm.
+  short: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm.
+  long: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm. If the molecules contained inside xray crystallography cell are close to the cell edge, with periodic boundary conditions the atoms of the one side of the molecule will interact with the other side of itself.
+  group: ''
+  explevel: easy
+
+rigid_water:
+  default: true
+  type: boolean
+  title: Use rigid water.
+  short: Use of rigid water in the simulation.
+  long: Use of rigid water in the simulation. Flexible water molecules usually require a slower taken timestep by the used integrator.
+  group: ''
+  explevel: easy

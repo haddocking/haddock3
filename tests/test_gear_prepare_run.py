@@ -6,12 +6,16 @@ import pytest
 
 from haddock.gear.prepare_run import (
     check_if_path_exists,
+    copy_molecules_to_topology,
     fuzzy_match,
     get_expandable_parameters,
     populate_mol_parameters,
     populate_topology_molecule_params,
+    validate_module_names_are_not_misspelled,
+    validate_parameters_are_not_misspelled,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.modules import modules_names
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG
 
 
@@ -160,3 +164,58 @@ def test_check_if_path_exists():
 def test_fuzzy_match(user_input, expected):
     possibilities = ["long-format", "short-format", "verbose", "output-dir"]
     assert fuzzy_match(user_input, possibilities) == expected
+
+
+@pytest.mark.parametrize(
+    "molecules,expected",
+    [
+        ("mol1.pdb", 1),
+        (["mol1.pdb", "mol2.pdb"], 2),
+        ],
+    )
+def test_copy_mols_to_topo_dir(molecules, expected):
+    d = {}
+    copy_molecules_to_topology(molecules, d)
+    assert "molecules" in d
+    assert len(d["molecules"]) == expected
+    assert all(isinstance(m, Path) for m in d["molecules"])
+
+
+def test_validate_step_names_are_not_misspelled():
+    params = {
+        "par1": None,
+        }
+
+    for i, module in enumerate(modules_names):
+        # the key and value for this function do not matter
+        if i % 2 == 0:
+            params[module] = {None: None}
+        else:
+            # add index
+            params[module + ".1"] = {None: None}
+
+    validate_module_names_are_not_misspelled(params)
+
+
+def test_validate_step_names_are_not_misspelled_error():
+    params = {
+        "par1": None,
+        }
+
+    params["r1g1dbod1"] = {None: None}
+
+    with pytest.raises(ValueError):
+        validate_module_names_are_not_misspelled(params)
+
+
+def test_validate_params():
+    params = ["param1", "param2"]
+    ref = ["param1", "param2", "param3"]
+    validate_parameters_are_not_misspelled(params, ref)
+
+
+def test_validate_params_error():
+    params = ["param1", "param4"]
+    ref = ["param1", "param2", "param3"]
+    with pytest.raises(ValueError):
+        validate_parameters_are_not_misspelled(params, ref)

@@ -38,9 +38,9 @@ To contribute to the HADDOCK3's Python shell, follow these steps:
     (should) use our `tox` environments to test your code. Use the
     following commands from the main repository folder:
 
-    1.  `tox -e py39` runs tests in Python 3.9 environment. If you tox
+    1.  `tox -e test` runs tests in current python version. If you tox
     to report test names and status for every single test (high verbosity) use
-    `tox -e py39 -- -vv`.
+    `tox -e test -- -vv`.
     2.  `tox -e lint` shows you errors in the code style.
     3.  `tox -e build` simulates building the HADDOCK3 package.
     4.  Run the above altogether with the simple `tox` command
@@ -130,8 +130,8 @@ you create new `*.py` files you should create a new test file of the
 same name, `test_new_file_name.py`. Aim at 100% test coverage for the
 code you have created. Write tests according to [pytest][pytest]. You
 can see examples in our `test_*.py` files. You can run the tests using
-the `tox -e py39` commands explained above. Or, if you want to run the
-tests for a singly file use `tox -e py39 -- tests/test_myfile.py`.
+the `tox -e test` commands explained above. Or, if you want to run the
+tests for a singly file use `tox -e test -- tests/test_myfile.py`.
 
 ### 1.3 Dependencies
 

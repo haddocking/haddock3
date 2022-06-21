@@ -228,20 +228,25 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
                     idx += 1
     chain_ranges = {}
     for chain in chain_dic:
-        min_idx = min(chain_dic[chain])
-        max_idx = max(chain_dic[chain])
-        chain_ranges[chain] = (min_idx, max_idx)
+        if not chain_dic[chain]:
+            # this may happen when filter_resdic is defined on a different set
+            # of chains
+            raise ALIGNError(f"Chain matching error on {pdb_f}, chain {chain}")
+        else:
+            min_idx = min(chain_dic[chain])
+            max_idx = max(chain_dic[chain])
+            chain_ranges[chain] = (min_idx, max_idx)
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb_list):
+def get_atoms(pdb):
     """
     Identify what is the molecule type of each PDB.
 
     Parameters
     ----------
-    pdb_list : list
-        list of PDBFile objects (:py:class:`haddock.libs.libontology.PDBFile`).
+    pdb : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+        PDB file to have its atoms identified
 
     Returns
     -------
@@ -251,33 +256,34 @@ def get_atoms(pdb_list):
     atom_dic = {}
     atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
-    for pdb in pdb_list:
-        if isinstance(pdb, PDBFile):
-            pdb = pdb.rel_path
-        with open(pdb) as fh:
-            for line in fh.readlines():
-                if line.startswith(("ATOM", "HETATM")):
-                    resname = line[17:20].strip()
-                    atom_name = line[12:16].strip()
-                    element = line[76:78].strip()
-                    if (
-                            resname not in PROT_RES
-                            and resname not in DNA_RES
-                            and resname not in RES_TO_BE_IGNORED
-                            ):
-                        # its neither DNA nor protein, use the heavy atoms
-                        # WARNING: Atoms that belong to unknown residues must
-                        #  be bound to a residue name;
-                        #   For example: residue NEP, also contains
-                        #  CB and CG atoms, if we do not bind it to the
-                        #  residue name, the next functions will include
-                        #  CG and CG atoms in the calculations for all
-                        #  other residue names
-                        if element != "H":
-                            if resname not in atom_dic:
-                                atom_dic[resname] = []
-                            if atom_name not in atom_dic[resname]:
-                                atom_dic[resname].append(atom_name)
+
+    if isinstance(pdb, PDBFile):
+        pdb = pdb.rel_path
+
+    with open(pdb) as fh:
+        for line in fh.readlines():
+            if line.startswith(("ATOM", "HETATM")):
+                resname = line[17:20].strip()
+                atom_name = line[12:16].strip()
+                element = line[76:78].strip()
+                if (
+                        resname not in PROT_RES
+                        and resname not in DNA_RES
+                        and resname not in RES_TO_BE_IGNORED
+                        ):
+                    # its neither DNA nor protein, use the heavy atoms
+                    # WARNING: Atoms that belong to unknown residues must
+                    #  be bound to a residue name;
+                    #   For example: residue NEP, also contains
+                    #  CB and CG atoms, if we do not bind it to the
+                    #  residue name, the next functions will include
+                    #  CG and CG atoms in the calculations for all
+                    #  other residue names
+                    if element != "H":
+                        if resname not in atom_dic:
+                            atom_dic[resname] = []
+                        if atom_name not in atom_dic[resname]:
+                            atom_dic[resname].append(atom_name)
     return atom_dic
 
 
@@ -287,7 +293,7 @@ def pdb2fastadic(pdb_f):
 
     Parameters
     ----------
-    pdb_f : :py:class:`haddock.libs.libontology.PDBFile`
+    pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
 
     Returns
     -------
@@ -323,6 +329,10 @@ def pdb2fastadic(pdb_f):
             ]
         )
     seq_dic = {}
+
+    if isinstance(pdb_f, PDBFile):
+        pdb_f = pdb_f.rel_path
+
     with open(pdb_f) as fh:
         for line in fh.readlines():
             if line.startswith("ATOM"):
@@ -341,7 +351,7 @@ def pdb2fastadic(pdb_f):
     return seq_dic
 
 
-def get_align(method, **kwargs):
+def get_align(method, lovoalign_exec):
     """
     Get the alignment function.
 
@@ -350,19 +360,19 @@ def get_align(method, **kwargs):
     method : str
         Available options: ``sequence`` and ``structure``.
 
-    **kwargs : dict
-        dictionary of keyword arguments
+    lovoalign_exec : str
+        Path to the lovoalign executable.
 
     Returns
     -------
     align_func : functools.partial
         desired alignment function
     """
-    log.info(f"Using {method} alignment")
+    log.debug(f"Using {method} alignment")
     if method == "structure":
         align_func = partial(
             align_strct,
-            lovoalign_exec=kwargs["lovoalign_exec"]
+            lovoalign_exec=lovoalign_exec
             )
     elif method == "sequence":
         align_func = partial(align_seq)
@@ -530,9 +540,9 @@ def align_seq(reference, model, output_path):
 
     Parameters
     ----------
-    reference : :py:class:`haddock.libs.libontology.PDBFile`
+    reference : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
 
-    model : :py:class:`haddock.libs.libontology.PDBFile`
+    model : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
 
     output_path : Path
 
@@ -551,7 +561,10 @@ def align_seq(reference, model, output_path):
     align_dic = {}
     for ref_chain, model_chain in zip(seqdic_ref, seqdic_model):
 
-        assert ref_chain == model_chain
+        if ref_chain != model_chain:
+            raise AlignError(
+                f"Chain mismatch: {ref_chain} != {model_chain}"
+                )
 
         align_dic[ref_chain] = {}
 
@@ -603,8 +616,9 @@ def align_seq(reference, model, output_path):
                 log.warning(
                     "Please use alignment_method = \"structure\" instead")
             else:
-                log.info(
-                    f"Sequence identity of chain {ref_chain} is "
+                log.debug(
+                    f"Sequence identity between chain {ref_chain} "
+                    f" of {reference} and {model} is "
                     f"{identity:.2f}%")
             for ref_segment, model_segment in zip(
                     aligned_ref_segment, aligned_model_segment):
@@ -674,3 +688,11 @@ def dump_as_izone(fname, numbering_dic):
                     f"{os.linesep}"
                     )
                 fh.write(izone_str)
+
+
+class AlignError(Exception):
+    """Raised when something goes wrong with the Alignment library."""
+
+    def __init__(self, msg=""):
+        self.msg = msg
+        super().__init__(self.msg)

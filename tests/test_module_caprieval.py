@@ -7,14 +7,19 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.analysis.caprieval.capri import CAPRI
+from haddock.modules.analysis.caprieval.capri import (
+    CAPRI,
+    calc_stats,
+    capri_cluster_analysis,
+    rearrange_ss_capri_output,
+    )
 
 from . import golden_data
 
 
-def round_two_dec(dic):
-    """Round a rms dictionary to two digits."""
-    return dict((k, round(dic[k], 2)) for k in dic)
+def round_two_dec(value):
+    """Round a value to two digits."""
+    return round(value, 2)
 
 
 def remove_aln_files(class_name):
@@ -55,16 +60,23 @@ def protlig_input_list():
 
 
 @pytest.fixture
-def protdna_caprimodule(protdna_input_list):
+def params():
+    return {
+        "receptor_chain": "A", "ligand_chain": "B", "aln_method": "sequence"
+        }
+
+
+@pytest.fixture
+def protdna_caprimodule(protdna_input_list, params):
     """Protein-DNA CAPRI module."""
-    ref = protdna_input_list[0].rel_path
+    reference = protdna_input_list[0].rel_path
+    model = protdna_input_list[1].rel_path
     capri = CAPRI(
-        reference=ref,
-        model_list=protdna_input_list,
-        receptor_chain="A",
-        ligand_chain="B",
-        aln_method="sequence",
+        identificator=42,
+        reference=reference,
+        model=model,
         path=golden_data,
+        params=params,
         )
 
     yield capri
@@ -73,16 +85,16 @@ def protdna_caprimodule(protdna_input_list):
 
 
 @pytest.fixture
-def protlig_caprimodule(protlig_input_list):
+def protlig_caprimodule(protlig_input_list, params):
     """Protein-Ligand CAPRI module."""
-    ref = protlig_input_list[0].rel_path
+    reference = protlig_input_list[0].rel_path
+    model = protlig_input_list[1].rel_path
     capri = CAPRI(
-        reference=ref,
-        model_list=protlig_input_list,
-        receptor_chain="A",
-        ligand_chain="B",
-        aln_method="sequence",
+        identificator=42,
+        reference=reference,
+        model=model,
         path=golden_data,
+        params=params,
         )
 
     yield capri
@@ -91,16 +103,16 @@ def protlig_caprimodule(protlig_input_list):
 
 
 @pytest.fixture
-def protprot_caprimodule(protprot_input_list):
+def protprot_caprimodule(protprot_input_list, params):
     """Protein-Protein CAPRI module."""
-    ref = protprot_input_list[0].rel_path
+    reference = protprot_input_list[0].rel_path
+    model = protprot_input_list[1]
     capri = CAPRI(
-        reference=ref,
-        model_list=protprot_input_list,
-        receptor_chain="A",
-        ligand_chain="B",
-        aln_method="sequence",
+        identificator=42,
+        reference=reference,
+        model=model,
         path=golden_data,
+        params=params,
         )
 
     yield capri
@@ -111,15 +123,16 @@ def protprot_caprimodule(protprot_input_list):
 @pytest.fixture
 def protprot_caprimodule_parallel(protprot_input_list):
     """Protein-Protein CAPRI module."""
-    ref = protprot_input_list[0].rel_path
+    reference = protprot_input_list[0].rel_path
+    model = protprot_input_list[1].rel_path
     capri = CAPRI(
-        reference=ref,
-        model_list=protprot_input_list,
+        reference=reference,
+        model=model,
         receptor_chain="A",
         ligand_chain="B",
         aln_method="sequence",
         path=golden_data,
-        core=0,
+        identificator=0,
         core_model_idx=0
         )
 
@@ -128,280 +141,105 @@ def protprot_caprimodule_parallel(protprot_input_list):
     remove_aln_files(capri)
 
 
-def test_protprot_irmsd(protprot_caprimodule, protprot_input_list):
+def test_protprot_irmsd(protprot_caprimodule):
     """Test protein-protein i-rmsd calculation."""
-    observed_irmsd_dic = protprot_caprimodule.irmsd()
-    # round the irmsd to 2 digits so we can compare
-    observed_irmsd_dic = round_two_dec(observed_irmsd_dic)
-
-    expected_irmsd_dic = {
-        protprot_input_list[0]: 0.0,
-        protprot_input_list[1]: 7.92,
-        }
-
-    assert observed_irmsd_dic == expected_irmsd_dic
+    protprot_caprimodule.calc_irmsd()
+    assert round_two_dec(protprot_caprimodule.irmsd) == 7.38
 
 
-def test_protprot_lrmsd(protprot_caprimodule, protprot_input_list):
+def test_protprot_lrmsd(protprot_caprimodule):
     """Test protein-protein l-rmsd calculation."""
-    observed_lrmsd_dic = protprot_caprimodule.lrmsd()
-    observed_lrmsd_dic = round_two_dec(observed_lrmsd_dic)
-
-    expected_lrmsd_dic = {
-        protprot_input_list[0]: 0.0,
-        protprot_input_list[1]: 15.85,
-        }
-
-    assert observed_lrmsd_dic == expected_lrmsd_dic
+    protprot_caprimodule.calc_lrmsd()
+    assert round_two_dec(protprot_caprimodule.lrmsd) == 15.9
 
 
-def test_protprot_ilrmsd(protprot_caprimodule, protprot_input_list):
+def test_protprot_ilrmsd(protprot_caprimodule):
     """Test protein-protein i-l-rmsd calculation."""
-    observed_ilrmsd_dic = protprot_caprimodule.ilrmsd()
-    observed_ilrmsd_dic = round_two_dec(observed_ilrmsd_dic)
-
-    expected_ilrmsd_dic = {
-        protprot_input_list[0]: 0.0,
-        protprot_input_list[1]: 9.66,
-        }
-
-    assert observed_ilrmsd_dic == expected_ilrmsd_dic
+    protprot_caprimodule.calc_ilrmsd()
+    assert round_two_dec(protprot_caprimodule.ilrmsd) == 9.67
 
 
-def test_protprot_fnat(protprot_caprimodule, protprot_input_list):
+def test_protprot_fnat(protprot_caprimodule):
     """Test protein-protein fnat calculation."""
-    observed_fnat_dic = protprot_caprimodule.fnat()
-    observed_fnat_dic = round_two_dec(observed_fnat_dic)
-
-    expected_fnat_dic = {
-        protprot_input_list[0]: 1.0,
-        protprot_input_list[1]: 0.05,
-        }
-
-    assert observed_fnat_dic == expected_fnat_dic
+    protprot_caprimodule.calc_fnat()
+    assert round_two_dec(protprot_caprimodule.fnat) == 0.05
 
 
-def test_protlig_irmsd(protlig_caprimodule, protlig_input_list):
+def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""
-    observed_irmsd_dic = protlig_caprimodule.irmsd()
-    # round the irmsd to 2 digits so we can compare
-    observed_irmsd_dic = round_two_dec(observed_irmsd_dic)
-
-    expected_irmsd_dic = {
-        protlig_input_list[0]: 0.0,
-        protlig_input_list[1]: 0.22,
-        }
-
-    assert observed_irmsd_dic == expected_irmsd_dic
+    protlig_caprimodule.calc_irmsd()
+    assert round_two_dec(protlig_caprimodule.irmsd) == 0.22
 
 
-def test_protlig_lrmsd(protlig_caprimodule, protlig_input_list):
+def test_protlig_lrmsd(protlig_caprimodule):
     """Test protein-ligand l-rmsd calculation."""
-    observed_lrmsd_dic = protlig_caprimodule.lrmsd()
-    # round the irmsd to 2 digits so we can compare
-    observed_lrmsd_dic = round_two_dec(observed_lrmsd_dic)
-
-    expected_lrmsd_dic = {
-        protlig_input_list[0]: 0.0,
-        protlig_input_list[1]: 0.51,
-        }
-
-    assert observed_lrmsd_dic == expected_lrmsd_dic
+    protlig_caprimodule.calc_lrmsd()
+    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.51
 
 
-def test_protlig_ilrmsd(protlig_caprimodule, protlig_input_list):
+def test_protlig_ilrmsd(protlig_caprimodule):
     """Test protein-ligand i-l-rmsd calculation."""
-    observed_ilrmsd_dic = protlig_caprimodule.ilrmsd()
-    # round the irmsd to 2 digits so we can compare
-    observed_ilrmsd_dic = round_two_dec(observed_ilrmsd_dic)
-
-    expected_ilrmsd_dic = {
-        protlig_input_list[0]: 0.0,
-        protlig_input_list[1]: 0.5,
-        }
-
-    assert observed_ilrmsd_dic == expected_ilrmsd_dic
+    protlig_caprimodule.calc_ilrmsd()
+    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.5
 
 
-def test_protlig_fnat(protlig_caprimodule, protlig_input_list):
+def test_protlig_fnat(protlig_caprimodule):
     """Test protein-ligand fnat calculation."""
-    observed_fnat_dic = protlig_caprimodule.fnat()
-    # round the irmsd to 2 digits so we can compare
-    observed_fnat_dic = round_two_dec(observed_fnat_dic)
-
-    expected_fnat_dic = {protlig_input_list[0]: 1.0, protlig_input_list[1]: 1.0}
-
-    assert observed_fnat_dic == expected_fnat_dic
+    protlig_caprimodule.calc_fnat()
+    assert round_two_dec(protlig_caprimodule.fnat) == 1.0
 
 
-def test_protdna_irmsd(protdna_caprimodule, protdna_input_list):
+def test_protdna_irmsd(protdna_caprimodule):
     """Test protein-dna i-rmsd calculation."""
-    observed_irmsd_dic = protdna_caprimodule.irmsd()
-    # round the irmsd to 2 digits so we can compare
-    observed_irmsd_dic = round_two_dec(observed_irmsd_dic)
-
-    expected_irmsd_dic = {
-        protdna_input_list[0]: 0.0,
-        protdna_input_list[1]: 2.05,
-        }
-
-    assert observed_irmsd_dic == expected_irmsd_dic
+    protdna_caprimodule.calc_irmsd()
+    assert round_two_dec(protdna_caprimodule.irmsd) == 2.05
 
 
-def test_protdna_lrmsd(protdna_caprimodule, protdna_input_list):
+def test_protdna_lrmsd(protdna_caprimodule):
     """Test protein-dna l-rmsd calculation."""
-    observed_lrmsd_dic = protdna_caprimodule.lrmsd()
-    # round the irmsd to 2 digits so we can compare
-    observed_lrmsd_dic = round_two_dec(observed_lrmsd_dic)
-
-    expected_lrmsd_dic = {
-        protdna_input_list[0]: 0.0,
-        protdna_input_list[1]: 4.19,
-        }
-
-    assert observed_lrmsd_dic == expected_lrmsd_dic
+    protdna_caprimodule.calc_lrmsd()
+    assert round_two_dec(protdna_caprimodule.lrmsd) == 4.19
 
 
-def test_protdna_ilrmsd(protdna_caprimodule, protdna_input_list):
+def test_protdna_ilrmsd(protdna_caprimodule):
     """Test protein-dna i-l-rmsd calculation."""
-    observed_ilrmsd_dic = protdna_caprimodule.ilrmsd()
-    # round the irmsd to 2 digits so we can compare
-    observed_ilrmsd_dic = round_two_dec(observed_ilrmsd_dic)
-
-    expected_ilrmsd_dic = {
-        protdna_input_list[0]: 0.0,
-        protdna_input_list[1]: 1.89,
-        }
-
-    assert observed_ilrmsd_dic == expected_ilrmsd_dic
+    protdna_caprimodule.calc_ilrmsd()
+    assert round_two_dec(protdna_caprimodule.ilrmsd) == 1.89
 
 
 def test_protdna_fnat(protdna_caprimodule, protdna_input_list):
     """Test protein-dna fnat calculation."""
-    observed_fnat_dic = protdna_caprimodule.fnat()
-    # round the irmsd to 2 digits so we can compare
-    observed_fnat_dic = round_two_dec(observed_fnat_dic)
-
-    expected_fnat_dic = {
-        protdna_input_list[0]: 1.0,
-        protdna_input_list[1]: 0.49,
-        }
-
-    assert observed_fnat_dic == expected_fnat_dic
+    protdna_caprimodule.calc_fnat()
+    assert round_two_dec(protdna_caprimodule.fnat) == 0.49
 
 
-def test_output(protprot_caprimodule):
+def test_make_output(protprot_caprimodule):
     """Test the writing of capri.tsv file."""
-    factor = 1
-    clt_id = 1
-    for m in protprot_caprimodule.model_list:
-        protprot_caprimodule.irmsd_dic[m] = 0.111 * factor
-        protprot_caprimodule.fnat_dic[m] = 0.333 * factor
-        protprot_caprimodule.lrmsd_dic[m] = 0.444 * factor
-        protprot_caprimodule.ilrmsd_dic[m] = 0.555 * factor
-        m.clt_id = clt_id
-        clt_id += 1
-        factor += 1.5
+    protprot_caprimodule.model.clt_id = 1
+    protprot_caprimodule.model.clt_rank = 1
+    protprot_caprimodule.model.clt_model_rank = 10
 
-    sortby_key = "fnat"
-    sort_ascending = True
-    clt_threshold = 1
-    protprot_caprimodule.output(
-        clt_threshold,
-        sortby_key=sortby_key,
-        sort_ascending=sort_ascending,
+    protprot_caprimodule.make_output()
+
+    ss_fname = Path(
+        protprot_caprimodule.path,
+        f"capri_ss_{protprot_caprimodule.identificator}.tsv"
         )
 
-    ss_fname = Path(protprot_caprimodule.path, "capri_ss.tsv")
-    clt_fname = Path(protprot_caprimodule.path, "capri_clt.tsv")
-
     assert ss_fname.stat().st_size != 0
-    assert clt_fname.stat().st_size != 0
 
     # remove the model column since its name will depend on where we are running
     #  the test
     observed_outf_l = [e.split()[1:] for e in open(
         ss_fname).readlines() if not e.startswith('#')]
     expected_outf_l = [
-        ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
-         'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
-        ['1', 'nan', '0.111', '0.333', '0.444', '0.555', '1', '-', '-'],
-        ['2', 'nan', '0.278', '0.833', '1.110', '1.388', '2', '-', '-']]
-
-    assert observed_outf_l == expected_outf_l
-
-    observed_outf_l = [e.split() for e in open(
-        clt_fname).readlines() if not e.startswith('#')]
-    expected_outf_l = [
-        ['cluster_rank', 'cluster_id', 'n', 'under_eval', 'score', 'score_std',
-         'irmsd', 'irmsd_std', 'fnat', 'fnat_std', 'lrmsd', 'lrmsd_std',
-         'dockqn', 'dockq_std', 'caprieval_rank'],
-        ['-', '1', '1', '-', 'nan', 'nan', '0.111', '0.000', '0.333', '0.000',
-         '0.444', '0.000', 'nan', 'nan', '1'],
-        ['-', '2', '1', '-', 'nan', 'nan', '0.278', '0.000', '0.833', '0.000',
-         '1.110', '0.000', 'nan', 'nan', '2']]
+        ['md5', 'caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
+         'dockq', 'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
+        ['-', '-', 'nan', 'nan', 'nan', 'nan', 'nan', 'nan', '1', '1', '10'], ]
 
     assert observed_outf_l == expected_outf_l
 
     os.unlink(ss_fname)
-    os.unlink(clt_fname)
-
-
-def test_output_parallel(protprot_caprimodule_parallel):
-    """Test the writing of capri.tsv file."""
-    factor = 1
-    clt_id = 1
-    for m in protprot_caprimodule_parallel.model_list:
-        protprot_caprimodule_parallel.irmsd_dic[m] = 0.111 * factor
-        protprot_caprimodule_parallel.fnat_dic[m] = 0.333 * factor
-        protprot_caprimodule_parallel.lrmsd_dic[m] = 0.444 * factor
-        protprot_caprimodule_parallel.ilrmsd_dic[m] = 0.555 * factor
-        m.clt_id = clt_id
-        clt_id += 1
-        factor += 1.5
-
-    sortby_key = "fnat"
-    sort_ascending = True
-    clt_threshold = 1
-    protprot_caprimodule_parallel.output(
-        clt_threshold,
-        sortby_key=sortby_key,
-        sort_ascending=sort_ascending,
-        )
-
-    # check that the parallel files are present
-    ss_fname_0 = Path(protprot_caprimodule_parallel.path, "capri_ss_0.tsv")
-    clt_fname_0 = Path(protprot_caprimodule_parallel.path, "capri_clt_0.tsv")
-
-    assert ss_fname_0.stat().st_size != 0
-    assert clt_fname_0.stat().st_size != 0
-
-    # replicate the previous task, on files *_0.tsv, to ensure consistency
-    observed_outf_l = [e.split()[1:] for e in open(
-        ss_fname_0).readlines() if not e.startswith('#')]
-    expected_outf_l = [
-        ['caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
-         'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
-        ['1', 'nan', '0.111', '0.333', '0.444', '0.555', '1', '-', '-'],
-        ['2', 'nan', '0.278', '0.833', '1.110', '1.388', '2', '-', '-']]
-
-    assert observed_outf_l == expected_outf_l
-
-    observed_outf_l = [e.split() for e in open(
-        clt_fname_0).readlines() if not e.startswith('#')]
-    expected_outf_l = [
-        ['cluster_rank', 'cluster_id', 'n', 'under_eval', 'score', 'score_std',
-         'irmsd', 'irmsd_std', 'fnat', 'fnat_std', 'lrmsd', 'lrmsd_std',
-         'dockqn', 'dockq_std', 'caprieval_rank'],
-        ['-', '1', '1', '-', 'nan', 'nan', '0.111', '0.000', '0.333', '0.000',
-         '0.444', '0.000', 'nan', 'nan', '1'],
-        ['-', '2', '1', '-', 'nan', 'nan', '0.278', '0.000', '0.833', '0.000',
-         '1.110', '0.000', 'nan', 'nan', '2']]
-
-    assert observed_outf_l == expected_outf_l
-
-    os.unlink(ss_fname_0)
-    os.unlink(clt_fname_0)
 
 
 def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
@@ -513,13 +351,53 @@ def test_add_chain_from_segid(protprot_caprimodule):
                 assert line[21] == "A"
 
 
-# def test_write_coord_dic():
-#     pass
+def test_rearrange_ss_capri_output():
+    """Test rearranging the capri output."""
+    with open(f"{golden_data}/capri_ss_1.tsv", 'w') as fh:
+        fh.write(
+            "model	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	"
+            "dockq	cluster-id	cluster-ranking	"
+            "model-cluster-ranking" + os.linesep)
+        fh.write(
+            "../1_emscoring/emscoring_909.pdb	1	-424.751	0.000	"
+            "1.000	0.000	0.000	1.000	-	-	-" + os.linesep)
+    rearrange_ss_capri_output(
+        'capri_ss.txt',
+        output_count=1,
+        sort_key="score",
+        sort_ascending=True,
+        path=golden_data)
+
+    assert Path('capri_ss.txt').stat().st_size != 0
+    Path('capri_ss.txt').unlink()
 
 
-# def test_write_coords():
-#     pass
+def test_calc_stats():
+    """Test the calculation of statistics."""
+    observed_mean, observed_std = calc_stats([2, 2, 4, 5])
+    assert round_two_dec(observed_mean) == 3.25
+    assert round_two_dec(observed_std) == 1.3
 
 
-# def test_write_pymol_viz():
-#     pass
+def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
+    """Test the cluster analysis."""
+    model = protprot_input_list[0]
+    model.clt_rank = 1
+    model.clt_id = 1
+    model.score = 42.0
+    protprot_caprimodule.irmsd = 0.1
+    protprot_caprimodule.fnat = 1.0
+    protprot_caprimodule.lrmsd = 1.2
+    protprot_caprimodule.ilrmsd = 4.3
+    capri_cluster_analysis(
+        capri_list=[protprot_caprimodule],
+        model_list=[model],
+        output_fname="capri_clt.txt",
+        clt_threshold=5,
+        sort_key="score",
+        sort_ascending=True,
+        path=Path("."))
+
+    assert Path('capri_clt.txt').stat().st_size != 0
+
+    Path('capri_clt.txt').unlink()

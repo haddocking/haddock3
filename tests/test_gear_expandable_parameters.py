@@ -12,9 +12,11 @@ from haddock.gear.expandable_parameters import (
     get_mol_parameters,
     get_multiple_index_groups,
     get_single_index_groups,
+    get_trail_index,
     is_mol_parameter,
     make_param_name_multiple_index,
     make_param_name_single_index,
+    populate_mol_parameters_in_module,
     read_mol_parameters,
     read_multiple_idx_groups_user_config,
     read_single_idx_groups_user_config,
@@ -664,3 +666,28 @@ def test_remove_trail_idx(param, expected):
     """Test remove trail index from parameter."""
     result = remove_trail_idx(param)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "in_,expected",
+    [
+        ("some_parameter_1", "1"),
+        ("some_parameter_1_1", "1"),
+        ("some_parameter1", None),
+        ("some_parameter_1-1", None),
+        ("some_parameter", None),
+        ],
+    )
+def test_get_trail_index(in_, expected):
+    result = get_trail_index(in_)
+    assert result == expected
+
+
+def test_populate_mol_parameters():
+    d = {"mol_fix_1": 5, "mol_fix_2": 15}
+    populate_mol_parameters_in_module(d, 5, {"mol_fix_1": 10})
+    assert d["mol_fix_1"] == 5
+    assert d["mol_fix_2"] == 15
+    assert d["mol_fix_3"] == 10
+    assert d["mol_fix_4"] == 10
+    assert d["mol_fix_5"] == 10

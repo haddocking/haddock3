@@ -12,14 +12,14 @@ jobs:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
-        platform: [ubuntu-latest]
+        platform: [ubuntu-latest, macos-latest]
         python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2.2.2
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -28,5 +28,5 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install virtualenv tox
 
-    - name: Test Lint
+    - name: lint
       run: tox -e lint

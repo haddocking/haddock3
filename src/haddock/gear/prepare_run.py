@@ -13,6 +13,11 @@ from pathlib import Path
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
+from haddock.gear.clean_steps import (
+    UNPACK_FOLDERS,
+    unpack_compressed_and_archived_files,
+    update_unpacked_names,
+    )
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
@@ -46,11 +51,18 @@ from haddock.libs.libutil import (
 from haddock.modules import (
     get_module_steps_folders,
     modules_category,
+    modules_names,
     non_mandatory_general_parameters_defaults,
     )
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
     modules_using_resdic,
+    )
+
+
+ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
+    set(config_mandatory_general_parameters),
+    set(non_mandatory_general_parameters_defaults),
     )
 
 
@@ -159,10 +171,17 @@ def setup_run(
         params,
         )
 
+    validate_module_names_are_not_misspelled(params)
+
     # separate general from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+
+    validate_parameters_are_not_misspelled(
+        general_params,
+        reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
+        )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -172,7 +191,6 @@ def setup_run(
 
         general_params[RUNDIR] = extend_run
 
-    validate_module_names_are_not_misspelled(modules_params)
     check_if_modules_are_installed(modules_params)
     check_specific_validations(general_params)
 
@@ -195,8 +213,23 @@ def setup_run(
         _data_dir = Path(general_params[RUNDIR], "data")
         remove_folders_after_number(_data_dir, restart_from)
 
+    if restarting_from or starting_from_copy:
+        # get run files in folder
+        step_folders = get_module_steps_folders(general_params[RUNDIR])
+
+        log.info(
+            'Uncompressing previous output files for folders: '
+            f'{", ".join(step_folders)}'
+            )
+        # unpack the possible compressed and archived files
+        _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
+        unpack_compressed_and_archived_files(
+            _step_folders,
+            general_params["ncores"],
+            )
+
     if starting_from_copy:
-        num_steps = len(get_module_steps_folders(extend_run))
+        num_steps = len(step_folders)
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
@@ -223,6 +256,8 @@ def setup_run(
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
         renum_step_folders(Path(general_params[RUNDIR], "data"))
+        if UNPACK_FOLDERS:  # only if there was any folder unpacked
+            update_unpacked_names(_prev, _new, UNPACK_FOLDERS)
         update_step_contents_to_step_names(
             _prev,
             _new,
@@ -243,7 +278,7 @@ def setup_run(
     elif restarting_from:
         # copies only the input molecules needed
         _keys = list(modules_params.keys())
-        _partial_params = {k: modules_params[k] for k in _keys}
+        _partial_params = {k: modules_params[k] for k in _keys[restart_from:]}
         copy_input_files_to_data_dir(
             data_dir,
             _partial_params,
@@ -325,11 +360,11 @@ def validate_modules_params(modules_params, max_mols):
             max_mols,
             )
 
-        all_parameters = \
-            set.union(set(extract_keys_recursive(defaults)),
-                      set(config_mandatory_general_parameters),
-                      set(non_mandatory_general_parameters_defaults.keys()),
-                      expandable_params)
+        all_parameters = set.union(
+            set(extract_keys_recursive(defaults)),
+            set(non_mandatory_general_parameters_defaults.keys()),
+            expandable_params,
+            )
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 
@@ -418,7 +453,7 @@ def create_data_dir(run_dir):
 @with_config_error
 def copy_molecules_to_topology(molecules, topoaa_params):
     """Copy molecules to mandatory topology module."""
-    topoaa_params['molecules'] = list(map(Path, molecules))
+    topoaa_params['molecules'] = list(map(Path, transform_to_list(molecules)))
 
 
 def copy_molecules_to_data_dir(data_dir, topoaa_params):
@@ -518,19 +553,38 @@ def inject_in_modules(modules_params, key, value):
 
 
 def validate_module_names_are_not_misspelled(params):
-    """Validate headers are not misspelled."""
-    module_names = sorted(modules_category.keys())
-    for param_name, value in params.items():
-        if isinstance(value, dict):
-            module_name = get_module_name(param_name)
-            if module_name not in module_names:
-                matched = fuzzy_match([module_name], module_names)
-                emsg = (
-                    f"Module {param_name!r} is not a valid module name,"
-                    f" did you mean {matched[0][1]}?. "
-                    f"Valid modules are: {', '.join(module_names)}."
-                    )
-                raise ValueError(emsg)
+    """
+    Validate module names are not misspelled in step definitions.
+
+    Parameters
+    ----------
+    params : dict
+        The user configuration file.
+    """
+    params_to_check = [
+        get_module_name(param)
+        for param, value in params.items()
+        if isinstance(value, dict)
+        ]
+
+    validate_parameters_are_not_misspelled(
+        params_to_check,
+        reference_parameters=modules_names,
+        )
+
+    return
+
+
+def validate_parameters_are_not_misspelled(params, reference_parameters):
+    """Validate general parameters are not misspelled."""
+    for param_name in params:
+        if param_name not in reference_parameters:
+            matched = fuzzy_match([param_name], reference_parameters)
+            emsg = (
+                f"Parameter {param_name!r} is not a valid general parameter,"
+                f" did you mean {matched[0][1]!r}?"
+                )
+            raise ValueError(emsg)
 
 
 @with_config_error
@@ -741,6 +795,7 @@ def fuzzy_match(user_input, possibilities):
     ----------
     user_input : list(string)
         List of strings with the faulty input given by the user.
+
     possibilities : list(string)
         List of strings with all possible options that would be
         valid in this context.

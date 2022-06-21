@@ -1,5 +1,7 @@
 """Create and manage CNS all-atom topology."""
 import operator
+import os
+import re
 from functools import partial
 from pathlib import Path
 
@@ -80,9 +82,50 @@ class HaddockModule(BaseCNSModule):
         """Confirm if module is installed."""
         return
 
+    @staticmethod
+    def get_md5(ensemble_f):
+        """Get MD5 hash of a multi-model PDB file."""
+        md5_dic = {}
+        text = Path(ensemble_f).read_text()
+        lines = text.split(os.linesep)
+        REMARK_lines = (line for line in lines if line.startswith('REMARK'))
+        remd5 = re.compile(r"^[a-f0-9]{32}$")
+        for line in REMARK_lines:
+            parts = line.strip().split()
+
+            try:
+                idx = parts.index('MODEL')
+            except ValueError:  # MODEL not in parts, this line can be ignored
+                continue
+
+            # check if there's a md5 hash in line
+            for part in parts:
+                group = remd5.fullmatch(part)
+                if group:
+                    # the model num comes after the MODEL
+                    model_num = int(parts[idx + 1])
+                    md5_dic[model_num] = group.string  # md5 hash
+                    break
+
+        return md5_dic
+
     def _run(self):
         """Execute module."""
-        molecules = make_molecules(self.params.pop('molecules'))
+        if self.order == 0:
+            # topoaa is the first step in the workflow
+            molecules = make_molecules(self.params.pop('molecules'))
+
+        else:
+            # in case topoaa is not the first step it reads the input
+            # molecules from the previous step but it only takes the
+            # first model because all models will have the same
+            # identity, as is the case for all PDBs created by rigidbody.
+            # In these cases, it is likely that each PDB contains the
+            # complex structure instead of the separated chains.
+            # Currently, we have not implemented a way to split chains
+            # and recreate the topology of the chains separately.
+            _molecules = self.previous_io.retrieve_models()[0]
+            molecules = make_molecules([_molecules.rel_path], no_parent=True)
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
@@ -104,6 +147,7 @@ class HaddockModule(BaseCNSModule):
         jobs = []
 
         models_dic = {}
+        ens_dic = {}
         for i, molecule in enumerate(molecules, start=1):
             self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
@@ -119,6 +163,9 @@ class HaddockModule(BaseCNSModule):
                 molecule.with_parent,
                 dest=Path.cwd(),
                 )
+
+            # get the MD5 hash of each model
+            ens_dic[i] = self.get_md5(molecule.with_parent)
 
             # nice variable name, isn't it? :-)
             # molecule parameters are shared among models of the same molecule
@@ -181,14 +228,28 @@ class HaddockModule(BaseCNSModule):
         expected = {}
         for i in models_dic:
             expected[i] = {}
+            md5_dic = ens_dic[i]
             for j, model in enumerate(models_dic[i]):
+                md5_hash = None
+                try:
+                    model_id = int(model.stem.split('_')[-1])
+                except ValueError:
+                    model_id = ''
+
+                if model_id in md5_dic:
+                    md5_hash = md5_dic[model_id]
+
                 model_name = model.stem
                 processed_pdb = Path(f"{model_name}_haddock.{Format.PDB}")
                 processed_topology = \
                     Path(f"{model_name}_haddock.{Format.TOPOLOGY}")
 
                 topology = TopologyFile(processed_topology, path=".")
-                pdb = PDBFile(processed_pdb, topology, path=".")
+                pdb = PDBFile(
+                    file_name=processed_pdb,
+                    topology=topology,
+                    path=".",
+                    md5=md5_hash)
                 pdb.ori_name = model.stem
                 expected[i][j] = pdb
 

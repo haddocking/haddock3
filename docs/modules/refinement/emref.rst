@@ -5,3 +5,8 @@ Energy Minimization Refinement module
    :members:
    :show-inheritance:
    :inherited-members:
+
+Default parameters
+------------------
+
+.. include:: params/emref.rst

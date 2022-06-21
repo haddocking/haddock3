@@ -8,16 +8,18 @@ from pathlib import Path
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
+from haddock.gear.clean_steps import clean_output
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
 from haddock.gear.config_writer import save_config as _save_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libio import working_directory
+from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
+from haddock.libs.libtimer import log_time
 from haddock.libs.libutil import recursive_dict_update
 
 
@@ -31,6 +33,8 @@ modules_category = {
     }
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
+
+modules_names = set(modules_category.keys())
 
 category_hierarchy = [
     "topology",
@@ -111,6 +115,10 @@ class BaseHaddockModule(ABC):
 
         # instantiate module's parameters
         self._origignal_config_file = params_fname
+        with _not_valid_config():
+            extension = Path(params_fname).suffix
+            self._original_params = config_readers[extension](params_fname)
+
         self._params = {}
         self.update_params(update_from_cfg_file=params_fname)
 
@@ -122,7 +130,7 @@ class BaseHaddockModule(ABC):
     def reset_params(self):
         """Reset parameters to the ones used to instantiate the class."""
         self._params.clear()
-        self.update_params(update_from_cfg_file=self._original_config_file)
+        self.update_params(**self._original_params)
 
     def update_params(self, update_from_cfg_file=None, **params):
         """
@@ -205,6 +213,17 @@ class BaseHaddockModule(ABC):
 
         log.info(f'Module [{self.name}] finished.')
 
+    def clean_output(self):
+        """
+        Clean module output folder.
+
+        See Also
+        --------
+        :py:func:`haddock.gear.clean_steps.clean_output`
+        """
+        with log_time("cleaning output files took"):
+            clean_output(self.path, self.params["ncores"])
+
     @classmethod
     @abstractmethod
     def confirm_installation(self):
@@ -253,11 +272,17 @@ class BaseHaddockModule(ABC):
 
     def _load_previous_io(self, filename=MODULE_IO_FILE):
         if self.order == 0:
+            self._num_of_input_molecules = 0
             return ModuleIO()
+
         io = ModuleIO()
         previous_io = Path(self.previous_path(), filename)
+
         if previous_io.is_file():
             io.load(previous_io)
+
+        self._num_of_input_molecules = len(io.output)
+
         return io
 
     def previous_path(self):
@@ -339,29 +364,38 @@ def get_engine(mode, params):
             )
 
 
-convert_config = partial(
-    _convert_config,
-    ignore_params=non_mandatory_general_parameters_defaults,
-    module_names=set(modules_category.keys()),
-    )
-convert_config.__doc__ = \
+def convert_config(params):
     """
-    Convert a module's parameters to a HADDOCK3 user config file text.
+    Convert a module's parameters dictionary to a HADDOCK3 user config text.
 
     This function is a generator.
 
     Examples
     --------
-    >>> gen = convert_config(parameters_dict)
+    >>> gen = convert_config(params)
     >>> text = os.linesep.join(gen)
     >>> with open("params.cfg", "w") as fout:
     >>>     fout.write(text)
+
+    Parameters
+    ----------
+    params : dictionary
+        The dictionary containing the parameters.
 
     Yields
     ------
     str
         Line by line for the HADDOCK3 user configuration file.
+
+    See Also
+    --------
+    :py:func:`haddock.gear.config_writer.convert_config`.
     """
+    return _convert_config(
+        params,
+        ignore_params=non_mandatory_general_parameters_defaults,
+        module_names=set(modules_category.keys()),
+        )
 
 
 def save_config(*args, **kwargs):
@@ -379,6 +413,10 @@ def save_config(*args, **kwargs):
 
     path : str or pathlib.Path
         File name where to save the configuration file.
+
+    See Also
+    --------
+    :py:func:`haddock.gear.config_writer.save_config`.
     """
     kwargs.setdefault("module_names", set(modules_category.keys()))
     return _save_config(*args, **kwargs)
@@ -388,7 +426,9 @@ def save_config_ignored(*args, **kwargs):
     """
     Save HADDOCK3 configuration dictionary to user config file.
 
-    Ignores the `non_mandatory_general_parameters_defaults` parameters.
+    Ignores the
+    :py:data:`haddock.modules.non_mandatory_general_parameters_defaults`
+    parameters.
 
     Useful to keep clean versions of the modules' specific parameters.
 
@@ -399,6 +439,11 @@ def save_config_ignored(*args, **kwargs):
 
     path : str or pathlib.Path
         File name where to save the configuration file.
+
+    See Also
+    --------
+    :py:func:`save_config`
+    :py:func:`haddock.gear.config_writer.save_config`.
     """
     kwargs.setdefault("module_names", set(modules_category.keys()))
     kwargs.setdefault(
@@ -443,3 +488,33 @@ def get_module_steps_folders(folder):
         key=lambda x: int(x.split("_")[0]),
         )
     return steps
+
+
+def is_step_folder(path):
+    """
+    Assess whether a folder is a possible step folder.
+
+    The folder is considered a step folder if has a zero or positive
+    integer index followed by a name of a module.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        The path to the folder.
+
+    Returns
+    -------
+    bool
+        Whether the folder is a step folder or not.
+    """
+    path = Path(path)
+    folder_exists(path)
+    main_folder_name = path.name
+    parts = main_folder_name.split("_")
+    if \
+            len(parts) == 2 \
+            and parts[0].isdigit() \
+            and parts[1] in modules_category:
+        return True
+    else:
+        return False

@@ -141,4 +141,11 @@ tags
 bin/cns
 # ignore generated data of the examples
 examples/*/run*
+examples/*/capriscoring-test/*
 examples/thirdparty/*/run*
+
+# ignore generated data for docs
+docs/modules/*/params/*.rst
+docs/modules/general_module_params.rst
+docs/reference/core/mandatory_parameters.rst
+haddock3-docs/

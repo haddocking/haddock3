@@ -105,6 +105,7 @@ from pdbtools import (
     pdb_rplresname,
     pdb_segxchain,
     pdb_selaltloc,
+    pdb_shiftres,
     pdb_tidy,
     )
 
@@ -374,15 +375,15 @@ def process_pdbs(
                 user_supported_residues or set(),
                 ),
             ),
-        # convert_HETATM_to_ATOM,
+        convert_HETATM_to_ATOM,
         partial(wrep_pdb_fixinsert, option_list=[]),
         #####
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
         partial(remove_unsupported_atom),
         ####
-        partial(wrep_pdb_reres, starting_resid=1),
+        # partial(wrep_pdb_shiftres, starting_resid=1),
         partial(wrep_pdb_reatom, starting_value=1),
-        wrep_pdb_tidy_strict,
+        wrep_pdb_tidy,
         ###
         wrep_rstrip,
         ]
@@ -416,20 +417,7 @@ def process_pdbs(
         ]
 
     # combined processing
-    pre_final_result = chainf(result_2, *processed_combined_steps)
-
-    # final tidy and cleaning extra newlines
-    final_result = [
-        list(chainf(
-            _structure,
-            wrep_pdb_tidy_strict,
-            wrep_rstrip,
-            ))
-        for _structure in pre_final_result
-        ]
-
-    #if len(pre_final_result) != len(final_result):
-    #    raise AssertionError("A structure was lost. This is a bug!")
+    final_result = chainf(result_2, *processed_combined_steps)
 
     return final_result
 
@@ -445,6 +433,7 @@ wrep_pdb_keepcoord = _report('pdb_keepcoord')(pdb_keepcoord.run)
 wrep_pdb_occ = _report('pdb_occ')(pdb_occ.run)
 wrep_pdb_reatom = _report('pdb_reatom')(pdb_reatom.run)
 wrep_pdb_reres = _report('pdb_reres')(pdb_reres.run)
+wrep_pdb_shiftres = _report('pdb_shiftres')(pdb_shiftres.run)
 wrep_pdb_rplresname = _report('pdb_rplresname')(pdb_rplresname.run)
 wrep_pdb_segxchain = _report('pdb_segxchain')(pdb_segxchain.run)
 wrep_pdb_selaltloc = _report('pdb_selaltloc')(pdb_selaltloc.run)

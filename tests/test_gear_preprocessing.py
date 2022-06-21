@@ -1,5 +1,6 @@
 """Test preprocessing operations."""
 import os
+from itertools import zip_longest
 from pathlib import Path
 
 import pytest
@@ -9,7 +10,6 @@ from haddock.gear import preprocessing as pp
 from . import broken_pdb, corrected_pdb, residues_top
 
 
-@pytest.mark.skip
 def test_open_or_give():
     in1 = open(broken_pdb)
     input_ = [
@@ -23,7 +23,7 @@ def test_open_or_give():
     result = pp._open_or_give(input_)
     assert len(result) == 5
     for r in result:
-        assert len(r) == 241
+        assert len(r) == 192
     in1.close()
 
 
@@ -365,11 +365,8 @@ def test_process_pdbs():
     result = pp.process_pdbs(broken_pdb)
     assert len(result) == 1
 
-    expected = corrected_pdb.read_text().strip().split(os.linesep)
+    expected = corrected_pdb.read_text().rstrip(os.linesep).split(os.linesep)
     Path('testpreprocessing.pdb').write_text(os.linesep.join(result[0]))
 
-    for i, (rline, eline) in enumerate(zip(result[0], expected)):
-        print('result ', rline, len(rline))
-        print('expected ', eline, len(eline))
-        print()
+    for i, (rline, eline) in enumerate(zip_longest(result[0], expected)):
         assert rline == eline, i

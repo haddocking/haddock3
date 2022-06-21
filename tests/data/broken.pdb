@@ -1,14 +1,16 @@
 REMARK residue 1 to 20 are the natural amino acids
-REMARK the residues after 20 have the different broken/correction cases:
-REMARK SELALTLOC IN RESIDUE 21 and 22
-REMARK MSE to MET in residue 23
-REMARK HSD, HSE, HID, HSE to HIS in residues 24 to 27
-REMARK Fix Insert in residue 28 (27A)
-REMARK Unsupported ATOM in residue 30
-REMARK Unsupported HETATM in residue 31
-REMARK Break between 31 and 34 - the correct PDB should not add TER here
-REMARK Supported 'BMA' example HETATM in 34
-REMARK Unsupported 'FUC' in ATOM in 35
+REMARK
+REMARK The residues after 20 have the different broken/correction cases:
+REMARK
+REMARK 1) SELALTLOC IN RESIDUE 21 and 22
+REMARK 2) MSE to MET in residue 23
+REMARK 3) HSD, HSE, HID, HSE to HIS in residues 24 to 27
+REMARK 4) Fix Insert in residue 28, defined as 27A
+REMARK 5) Unsupported ATOM in residue 30 - resname ZZZ
+REMARK 6) Unsupported HETATM in residue 31 - resname XXX
+REMARK 7) Break between 31 and 34 - the correct PDB should not have TER here
+REMARK 8) Supported 'BMA' example HETATM in 34
+REMARK 9) Supported HETATM 'FUC' in ATOM in 35 converted to HETATM
 ATOM      1  N   ALA A   1       0.000   0.000   0.000  0.00  0.00           N  
 ATOM      2  CA  ALA A   1       0.012  -0.740  -1.260  0.00  0.00           C  
 ATOM      3  C   ALA A   1      -1.318  -0.585  -1.989  0.00  0.00           C  
@@ -128,3 +130,63 @@ ATOM    198  CA BGLY A  22      -6.012 -24.814  33.696  0.60  0.00           C
 ATOM    199  C  BGLY A  22      -4.990 -25.677  34.426  0.60  0.00           C  
 ATOM    200  O  BGLY A  22      -4.494 -26.675  33.897  0.60  0.00           O  
 ATOM    201  CB BGLY A  22      -7.405 -25.428  33.847  0.60  0.00           C  
+HETATM  203  N   MSE A  23      -4.662 -25.299  35.659  0.00  0.00           N  
+HETATM  204  CA  MSE A  23      -3.791 -26.153  36.463  0.00  0.00           C  
+HETATM  205  C   MSE A  23      -4.453 -27.501  36.731  0.00  0.00           C  
+HETATM  206  O   MSE A  23      -5.576 -27.551  37.239  0.00  0.00           O  
+HETATM  207  CB  MSE A  23      -3.418 -25.481  37.804  0.00  0.00           C  
+HETATM  211  N   HSD A  24      -3.759 -28.584  36.389  0.00  0.00           N  
+HETATM  212  CA  HSD A  24      -4.318 -29.909  36.647  0.00  0.00           C  
+HETATM  213  C   HSD A  24      -3.978 -30.324  38.074  0.00  0.00           C  
+HETATM  214  O   HSD A  24      -2.924 -29.949  38.595  0.00  0.00           O  
+HETATM  215  CB  HSD A  24      -3.783 -30.923  35.634  0.00  0.00           C  
+HETATM  217  N   HID A  25      -4.880 -31.093  38.678  0.00  0.00           N  
+HETATM  218  CA  HID A  25      -4.643 -31.583  40.033  0.00  0.00           C  
+HETATM  219  C   HID A  25      -4.205 -33.042  40.097  0.00  0.00           C  
+HETATM  220  O   HID A  25      -3.486 -33.412  41.028  0.00  0.00           O  
+HETATM  221  CB  HID A  25      -5.899 -31.423  40.921  0.00  0.00           C  
+HETATM  225  N   HSE A  26      -4.621 -33.864  39.136  0.00  0.00           N  
+HETATM  226  CA  HSE A  26      -4.053 -35.196  38.943  0.00  0.00           C  
+HETATM  227  C   HSE A  26      -2.562 -35.097  38.641  0.00  0.00           C  
+HETATM  228  O   HSE A  26      -2.134 -34.200  37.909  0.00  0.00           O  
+HETATM  229  CB  HSE A  26      -4.781 -35.930  37.815  0.00  0.00           C  
+HETATM  231  N   HIE A  27      -1.770 -36.010  39.197  0.00  0.00           N  
+HETATM  232  CA  HIE A  27      -0.347 -36.093  38.876  0.00  0.00           C  
+HETATM  233  C   HIE A  27      -0.214 -36.431  37.395  0.00  0.00           C  
+HETATM  234  O   HIE A  27      -0.780 -37.419  36.921  0.00  0.00           O  
+HETATM  235  CB  HIE A  27       0.371 -37.143  39.755  0.00  0.00           C  
+ATOM    239  N   ALA A  27A      0.536 -35.609  36.666  0.00  0.00           N  
+ATOM    240  CA  ALA A  27A      0.781 -35.822  35.242  0.00  0.00           C  
+ATOM    241  C   ALA A  27A      1.959 -36.762  35.013  0.00  0.00           C  
+ATOM    242  O   ALA A  27A      2.906 -36.783  35.804  0.00  0.00           O  
+ATOM    243  CB  ALA A  27A      1.033 -34.489  34.536  0.00  0.00           C  
+ATOM    245  N   VAL A  28       1.913 -37.542  33.935  0.00  0.00           N  
+ATOM    246  CA  VAL A  28       2.996 -38.466  33.608  0.00  0.00           C  
+ATOM    247  C   VAL A  28       4.013 -37.986  32.579  0.00  0.00           C  
+ATOM    248  O   VAL A  28       5.087 -38.582  32.463  0.00  0.00           O  
+ATOM    249  CB  VAL A  28       2.451 -39.816  33.089  0.00  0.00           C  
+ATOM    253  N   ZZZ A  29       3.717 -36.929  31.827  0.00  0.00           N  
+ATOM    254  CA  ZZZ A  29       4.632 -36.382  30.828  0.00  0.00           C  
+ATOM    255  C   ZZZ A  29       4.529 -34.866  30.705  0.00  0.00           C  
+ATOM    256  O   ZZZ A  29       4.141 -34.337  29.660  0.00  0.00           O  
+ATOM    257  CB  ZZZ A  29       4.374 -37.017  29.461  0.00  0.00           C  
+HETATM  259  N   XXX A  30       4.883 -34.180  31.789  0.00  0.00           N  
+HETATM  260  CA  XXX A  30       4.945 -32.721  31.759  0.00  0.00           C  
+HETATM  261  C   XXX A  30       6.384 -32.240  31.910  0.00  0.00           C  
+HETATM  262  O   XXX A  30       7.175 -32.853  32.632  0.00  0.00           O  
+HETATM  263  CB  XXX A  30       4.064 -32.094  32.864  0.00  0.00           C  
+HETATM  281  N   BMA A  34       8.760 -26.856  34.782  0.00  0.00           N  
+HETATM  282  CA  BMA A  34       8.529 -25.426  34.596  0.00  0.00           C  
+HETATM  283  C   BMA A  34       9.642 -24.661  35.303  0.00  0.00           C  
+HETATM  284  O   BMA A  34      10.157 -25.121  36.325  0.00  0.00           O  
+HETATM  285  CB  BMA A  34       7.151 -25.031  35.132  0.00  0.00           C  
+ATOM    287  N   FUC A  35       9.990 -23.506  34.741  0.00  0.00           N  
+ATOM    288  CA  FUC A  35      10.988 -22.627  35.345  0.00  0.00           C  
+ATOM    289  C   FUC A  35      10.651 -22.347  36.806  0.00  0.00           C  
+ATOM    290  O   FUC A  35      11.538 -22.312  37.664  0.00  0.00           O  
+ATOM    291  CB  FUC A  35      11.109 -21.292  34.575  0.00  0.00           C  
+HETATM  295  N   ALA A  36       9.378 -22.142  37.134  0.00  0.00           N  
+HETATM  296  CA  ALA A  36       9.000 -21.883  38.522  0.00  0.00           C  
+HETATM  297  C   ALA A  36       8.979 -23.185  39.313  0.00  0.00           C  
+HETATM  298  O   ALA A  36       8.690 -23.177  40.512  0.00  0.00           O  
+HETATM  299  CB  ALA A  36       7.637 -21.192  38.586  0.00  0.00           C  

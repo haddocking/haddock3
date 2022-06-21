@@ -151,7 +151,7 @@ def runOpenMM(
         pdb.topology,
         nonbondedMethod=PME,
         nonbondedCutoff=1 * nanometer,
-        constraints=globals()[haddockmodule.params['constraints']],
+        constraints=[haddockmodule.params['constraints']],
         removeCMMotion=haddockmodule.params['remove_center_of_mass_motion'],
         rigidWater=haddockmodule.params['rigid_water'],
         )  # ERROR when system_constraints = 'None'.

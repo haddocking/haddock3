@@ -78,7 +78,7 @@ def createSolvationBox(
         buildPdbPath,
         forcefield,
         waterModel,
-        contains_xray_crystallography_cell_data
+        contains_xray_crystallography_cell_data,
         ):
     """Create solvation box."""
     try:
@@ -115,6 +115,7 @@ def createSolvationBox(
             AtomPositions = modeller.positions
 
         output_file = Path(buildPdbPath, pdb_file_name)
+        print('OUTPUT FILE', output_file)
         with open(output_file, 'w') as fout:
             openmmpdbfile.writeFile(
                 modeller.topology,
@@ -144,7 +145,12 @@ def runOpenMM(
         solvent_model,
         ):
     """Run OpenMM."""
+    print(2, inputPDBfile)
+    print(4, outputDirectory)
+    print(5, intermediate_structure_directory)
     pdb = openmmpdbfile(inputPDBfile)
+    print(forcefield_model)
+    print(solvent_model)
     forcefield = ForceField(forcefield_model, solvent_model)
 
     system = forcefield.createSystem(

@@ -102,7 +102,7 @@ class HaddockModule(BaseHaddockModule):
 
                 pdb_filePath = str(Path(pdb.path, pdb.file_name))
 
-                self.pdb_filepath_openmm_pdbfixer_directory = \
+                pdb_filepath_openmm_pdbfixer_directory = \
                     Path(self.openmmPdbfixer_output_Directory, pdb.file_name)
 
                 self.log('Fixing PDB with OpenMM PDBFixer.')
@@ -110,7 +110,7 @@ class HaddockModule(BaseHaddockModule):
                 openmmfunctions.OpenmmPdbfixer(
                     self,
                     pdb_filePath,
-                    pdb.file_name,
+                    str(pdb.file_name),
                     str(self.openmmPdbfixer_output_Directory),
                     )
 
@@ -125,8 +125,8 @@ class HaddockModule(BaseHaddockModule):
 
                     openmmfunctions.createSolvationBox(
                         self,
-                        str(self.pdb_filepath_openmm_pdbfixer_directory),
-                        pdb.file_name,
+                        str(pdb_filepath_openmm_pdbfixer_directory),
+                        str(pdb.file_name),
                         str(self.modeller_solvationbox_pdbs_Directory),
                         self.params['forcefield'],
                         self.params['explicit_solvent_model'],
@@ -135,7 +135,6 @@ class HaddockModule(BaseHaddockModule):
 
         self.log('Starting openMM simulations.')
         if self.params['implicit_solvent']:
-
             for pdb_path in self.openmmPdbfixer_output_Directory.iterdir():
                 self.log(f'Starting openMM with file: {str(pdb_path)}')
                 openmmfunctions.runOpenMM(

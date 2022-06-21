@@ -135,3 +135,18 @@ export GDOCK_PATH=some-folder
 instructions as here only the model generation is used. Please check the
 [repository page](https://github.com/rvhonorato/gdock) for more
 information.
+
+## `openmm`
+
+1. Install the latest version of openmm:
+```
+conda install -c conda-forge openmm
+```
+
+2. Install the latest version of pdbfixer:
+```
+conda install -c conda-forge pdbfixer
+```
+
+Please refer to the [official page](http://docs.openmm.org/latest/userguide/)
+of the project for a full description of the installation procedure.

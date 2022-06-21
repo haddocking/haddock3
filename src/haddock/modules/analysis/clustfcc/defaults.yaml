@@ -49,11 +49,3 @@ strictness:
   long: No long description yet
   group: ''
   explevel: easy
-individualize:
-  default: False
-  type: boolean
-  title: Individualise models
-  short: Treat each model in the PDB ensemble as a separate entity.
-  long: Treat each model in the PDB ensemble as a separate entity. This means that for each a separate topology file will be generated. The models in the ensemble can thus correspond to different molecules.
-  group: analysis
-  explevel: expert

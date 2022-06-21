@@ -44,7 +44,7 @@ class HaddockModule(BaseHaddockModule):
         # Get the models generated in previous step
         models_to_cluster = self.previous_io.retrieve_models(
             individualize=True
-        )
+            )
 
         # Calculate the contacts for each model
         log.info('Calculating contacts')

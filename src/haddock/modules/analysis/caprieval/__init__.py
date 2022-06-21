@@ -37,8 +37,8 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(_e)
         
         models = self.previous_io.retrieve_models(
-           individualize=True
-           )
+            individualize=True
+            )
         # Sort by score to find the "best"
         models.sort()
         best_model_fname = Path(models[0].rel_path)

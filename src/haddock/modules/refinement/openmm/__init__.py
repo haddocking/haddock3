@@ -26,15 +26,15 @@ class HaddockModule(BaseHaddockModule):
         self.openmmPdbfixer_output_Directory = Path(cwd, 'openmm_pdbfixer_pdbs')
 
         self.modeller_solvationbox_pdbs_Directory = \
-            Path(cwd, 'self.modeller_solvationbox_pdbs_Directory')
+            Path(cwd, 'modeller_solvationbox_pdbs_Directory')
 
         self.openmm_intermediate_structures = \
-            Path(cwd, 'self.openmm_intermediate_structures')
+            Path(cwd, 'openmm_intermediate_structures')
 
         self.openmm_md_raw_output_Directory = \
-            Path(cwd, 'self.openmm_md_raw_output_Directory')
+            Path(cwd, 'openmm_md_raw_output_Directory')
 
-        self.openmm_output = Path(cwd, 'self.openmm_output')
+        self.openmm_output = Path(cwd, 'openmm_output')
 
         self.log(
             'Making directory for the pdbs builded with openmm pdbfixer: '
@@ -100,7 +100,7 @@ class HaddockModule(BaseHaddockModule):
         for pdb in previous_models:
             if pdb.file_type is Format.PDB:
 
-                pdb_filePath = Path(pdb.path, pdb.file_name)
+                pdb_filePath = str(Path(pdb.path, pdb.file_name))
 
                 self.pdb_filepath_openmm_pdbfixer_directory = \
                     Path(self.openmmPdbfixer_output_Directory, pdb.file_name)
@@ -111,7 +111,7 @@ class HaddockModule(BaseHaddockModule):
                     self,
                     pdb_filePath,
                     pdb.file_name,
-                    self.openmmPdbfixer_output_Directory,
+                    str(self.openmmPdbfixer_output_Directory),
                     )
 
                 if not self.params['implicit_solvent']:
@@ -121,13 +121,13 @@ class HaddockModule(BaseHaddockModule):
                         )
 
                     contains_xray_crystallography_cell_data = \
-                        openmmfunctions.Does_pdb_contain_xray_crystallography_cell_data(pdb_filePath)  # noqa: E501
+                        openmmfunctions.does_pdb_contain_xray_crystallography_cell_data(pdb_filePath)  # noqa: E501
 
                     openmmfunctions.createSolvationBox(
                         self,
-                        self.pdb_filepath_openmm_pdbfixer_directory,
+                        str(self.pdb_filepath_openmm_pdbfixer_directory),
                         pdb.file_name,
-                        self.modeller_solvationbox_pdbs_Directory,
+                        str(self.modeller_solvationbox_pdbs_Directory),
                         self.params['forcefield'][0],
                         self.params['explicit_solvent_model'][0],
                         contains_xray_crystallography_cell_data,
@@ -140,7 +140,7 @@ class HaddockModule(BaseHaddockModule):
                 self.log(f'Starting openMM with file: {str(pdb_path)}')
                 openmmfunctions.runOpenMM(
                     self,
-                    pdb_path,
+                    str(pdb_path),
                     pdb_path.name,
                     self.openmm_output,
                     self.openmm_intermediate_structures,
@@ -153,10 +153,10 @@ class HaddockModule(BaseHaddockModule):
                 self.log(f'Starting openMM with file: {str(pdb_path)}')
                 openmmfunctions.runOpenMM(
                     self,
-                    pdb_path,
+                    str(pdb_path),
                     pdb_path.name,
-                    self.openmm_md_raw_output_Directory,
-                    self.openmm_intermediate_structures,
+                    str(self.openmm_md_raw_output_Directory),
+                    str(self.openmm_intermediate_structures),
                     self.params['forcefield'][0],
                     self.params['explicit_solvent_model'][0],
                     )
@@ -166,9 +166,9 @@ class HaddockModule(BaseHaddockModule):
 
             for pdb_path in self.openmm_md_raw_output_Directory.iterdir():
                 openmmfunctions.removeWaterMolecules(
-                    pdb_path,
+                    str(pdb_path),
                     pdb_path.name,
-                    self.openmm_output,
+                    str(self.openmm_output),
                     )
 
         for pdb_path in self.openmm_output.iterdir():

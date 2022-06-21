@@ -39,7 +39,7 @@ def move_atoms(atomPositionList, nanometerBoxSize, addition=True):
 
 def does_pdb_contain_xray_crystallography_cell_data(pdb_path):
     """Check of PDB contains x-ray cell data."""
-    openmmpdb = openmmpdbfile(pdb_path)
+    openmmpdb = openmmpdbfile(str(pdb_path))
     modeller = Modeller(openmmpdb.topology, openmmpdb.positions)
     if modeller.topology.getUnitCellDimensions() is None:
         return False
@@ -82,7 +82,7 @@ def createSolvationBox(
         ):
     """Create solvation box."""
     try:
-        if str(pdb_FilePath).endswith('.cif'):
+        if pdb_FilePath.endswith('.cif'):
             openmmpdb = PDBxFile(pdb_FilePath)
         else:
             openmmpdb = openmmpdbfile(pdb_FilePath)
@@ -172,7 +172,7 @@ def runOpenMM(
     simulation.step(haddockmodule.params['equilibration_timesteps'])
     simulation.reporters.append(
         PDBReporter(
-            Path(outputDirectory, pdbFilename),
+            str(Path(outputDirectory, pdbFilename)),
             haddockmodule.params['simulation_timesteps'],
             )
         )
@@ -180,7 +180,7 @@ def runOpenMM(
     if haddockmodule.params['save_intermediate_simulation_structures']:
         simulation.reporters.append(
             PDBReporter(
-                Path(intermediate_structure_directory, pdbFilename),
+                str(Path(intermediate_structure_directory, pdbFilename)),
                 haddockmodule.params['save_intermediate_simulation_structures_after_number_of_timesteps'],  # noqa: E501
                 )
             )

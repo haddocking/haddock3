@@ -128,8 +128,8 @@ class HaddockModule(BaseHaddockModule):
                         str(self.pdb_filepath_openmm_pdbfixer_directory),
                         pdb.file_name,
                         str(self.modeller_solvationbox_pdbs_Directory),
-                        self.params['forcefield'][0],
-                        self.params['explicit_solvent_model'][0],
+                        self.params['forcefield'],
+                        self.params['explicit_solvent_model'],
                         contains_xray_crystallography_cell_data,
                         )
 
@@ -142,10 +142,10 @@ class HaddockModule(BaseHaddockModule):
                     self,
                     str(pdb_path),
                     pdb_path.name,
-                    self.openmm_output,
-                    self.openmm_intermediate_structures,
-                    self.params['forcefield'][0],
-                    self.params['implicit_solvent_model'][0],
+                    str(self.openmm_output),
+                    str(self.openmm_intermediate_structures),
+                    self.params['forcefield'],
+                    self.params['implicit_solvent_model'],
                     )
 
         else:
@@ -157,8 +157,8 @@ class HaddockModule(BaseHaddockModule):
                     pdb_path.name,
                     str(self.openmm_md_raw_output_Directory),
                     str(self.openmm_intermediate_structures),
-                    self.params['forcefield'][0],
-                    self.params['explicit_solvent_model'][0],
+                    self.params['forcefield'],
+                    self.params['explicit_solvent_model'],
                     )
 
         # Remove water molecules if implicit_solvent is False.

@@ -1,5 +1,5 @@
 forcefield:
-  default: ['amber14-all.xml']
+  default: 'amber14-all.xml'
   type: string
   minchars: 0
   maxchars: 100
@@ -20,7 +20,7 @@ forcefield:
   explevel: easy
 
 explicit_solvent_model:
-  default: ['amber14/tip3p.xml']
+  default: 'amber14/tip3p.xml'
   type: string
   minchars: 0
   maxchars: 100
@@ -47,7 +47,7 @@ implicit_solvent:
   explevel: easy
 
 implicit_solvent_model:
-  default: ['implicit/hct.xml']
+  default: 'implicit/hct.xml'
   type: string
   minchars: 0
   maxchars: 100
@@ -89,7 +89,7 @@ constraints:
   minchars: 0
   maxchars: 100
   choices:
-    - 'None'
+    - None
     - 'HBonds'
     - 'AllBonds'
     - 'HAngles'

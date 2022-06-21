@@ -90,7 +90,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models(
-            individualize=self.params["individualize"]
+            individualize=True
             )
 
         # Parallelisation : optimal dispatching of models

@@ -138,14 +138,9 @@ information.
 
 ## `openmm`
 
-1. Install the latest version of openmm:
+1. Install the latest version of openmm and pdbfixer
 ```
-conda install -c conda-forge openmm
-```
-
-2. Install the latest version of pdbfixer:
-```
-conda install -c conda-forge pdbfixer
+conda install -c conda-forge openmm pdbfixer
 ```
 
 Please refer to the [official page](http://docs.openmm.org/latest/userguide/)

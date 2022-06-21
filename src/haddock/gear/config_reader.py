@@ -90,7 +90,7 @@ _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]', re.ASCII)
 # https://regex101.com/r/0LYCAG/1
 _string_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([\w\-]*?)"|'([\w\-]*?)')''',
+    r'''("([\w\-\.\/\\]*?)"|'([\w\-\.\/\\]*?)')''',
     re.ASCII,
     )
 

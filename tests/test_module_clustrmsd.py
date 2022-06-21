@@ -264,9 +264,7 @@ def test_correct_output(input_protdna_models):
 
     assert expected_txt_filename in ls
 
-    expected_out_content = "Cluster 1 -> 1"
-    expected_out_content += os.linesep
-    expected_out_content += "Cluster 2 -> 2"
+    expected_out_content = "Cluster 1 -> 1 2"
     expected_out_content += os.linesep
 
     observed_out_content = open(expected_out_filename).read()

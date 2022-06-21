@@ -701,6 +701,12 @@ def add_charges_to_ions(fhandler):
                 func_to_apply = _process_ion_case_resname
             elif element and charge and charge[-1].isdigit():
                 func_to_apply = _process_ion_case_element_charge
+            elif atom != resname:
+                # Dodges situations where the atom is CA (carbon alpha) and the
+                # element is not defined. If none of the above checks is true
+                # atom should be equal to resname for the atom to be an ion.
+                yield line
+                continue
 
             if func_to_apply:
                 try:
@@ -932,7 +938,7 @@ def homogenize_chains(lines):
         The modified lines.
     """
     chainids = read_chainids(lines)
-    if len(chainids) > 1:
+    if len(set(chainids)) > 1:
         return list(chainf(
             lines,
             partial(pdb_chain.run, chain_id=chainids[0]),

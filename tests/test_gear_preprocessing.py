@@ -207,7 +207,7 @@ multiple_chainIDs_2 = [
 expected_multiple_chainIDs_1 = [
     'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00      A    C  ',
     'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00      A    C  ',
-    'TER                  A                                                           ',  # wtf this extra space?
+    'TER                  A                                                           ',  # why this extra space?
     'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00      A    C  ',
     ]
 
@@ -223,6 +223,8 @@ expected_multiple_chainIDs_2 = [
     [
         (multiple_chainIDs_1, expected_multiple_chainIDs_1),
         (multiple_chainIDs_2, expected_multiple_chainIDs_2),
+        # returns the same thing
+        (expected_multiple_chainIDs_2, expected_multiple_chainIDs_2),
         ]
     )
 def test_homogenize_chainIDs(in_, expected):
@@ -272,6 +274,12 @@ expected_nochain_chainIDs_4 = [
     'ATOM      3  CA  ALA B   7      35.081  45.036   1.305  1.00  0.00      B       ',
     ]
 
+chain_and_seg_IDs = [
+    'ATOM      3  CA  ARG A   4      37.080  43.455  -3.421  1.00  0.00      A       ',
+    'ATOM      3  CA  GLU A   6      33.861  45.127  -2.233  1.00  0.00      A       ',
+    'ATOM      3  CA  ALA A   7      35.081  45.036   1.305  1.00  0.00      A       ',
+    ]
+
 
 @pytest.mark.parametrize(
     'in_,expected',
@@ -280,6 +288,7 @@ expected_nochain_chainIDs_4 = [
         (nochain_chainIDs_2, expected_nochain_chainIDs_1),
         (nochain_chainIDs_3, expected_nochain_chainIDs_1),
         (nochain_chainIDs_4, expected_nochain_chainIDs_4),
+        (chain_and_seg_IDs, chain_and_seg_IDs),
         ]
     )
 def test_solve_nochainID(in_, expected):
@@ -323,6 +332,19 @@ ion_cases = [
     # 7
     'HETATM 3834  F-1   F A  42      21.391  -8.794  33.944  1.00 24.37              ',
     'HETATM 3834  F-1  F1 A  42      21.391  -8.794  33.944  1.00 24.37           F-1',
+
+    # 8 lines not concerning ions - note element is not defined
+    # carbon alpha conflicting with calcium
+    'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B       ',
+    'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B       ',
+
+    # 9 other lines not concerning ions - atom not CA (carbon alpha)
+    'ATOM      1  N   ALA A   1       0.000   0.000   0.000  0.00  0.00           N  ',
+    'ATOM      1  N   ALA A   1       0.000   0.000   0.000  0.00  0.00           N  ',
+
+    # 10 lines not concerning ions - here the element is defined
+    'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B    C  ',
+    'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B    C  ',
     ]
 
 

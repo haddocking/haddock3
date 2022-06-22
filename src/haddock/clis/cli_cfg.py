@@ -6,11 +6,12 @@ By default presents the parameters from the three expertise levels:
 
 Usage::
 
-    haddock3-cfg -m MODULE
+    haddock3-cfg  # prints only the general parametes
+    haddock3-cfg -g  # same as above
+    haddock3-cfg -m MODULE  # prints only the module parameters
     haddock3-cfg -m MODULE -l LEVEL
     haddock3-cfg -m topoaa -l all
-    haddock3-cfg -m rigidbody -l all -g
-    haddock3-cfg -G
+    haddock3-cfg -m rigidbody -l all -g  # prints the module and the globals
 """
 import argparse
 import importlib
@@ -27,20 +28,7 @@ ap = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-_group = ap.add_argument_group(
-    "Mandatory parameters",
-    "These parameters are mutually exclusive.",
-    )
-group = _group.add_mutually_exclusive_group(required=True)
-groupm = ap.add_argument_group(
-    title="Additional arguments when selecting a module",
-    description=(
-        "Use these optional arguments together with the `-m` option. "
-        "If `-G` is given, these arguments will be ignored."
-        ),
-    )
-
-group.add_argument(
+ap.add_argument(
     "-m",
     dest="module",
     help="The module for which you want to retrieve the default configuration.",
@@ -48,15 +36,7 @@ group.add_argument(
     default=None,
     )
 
-group.add_argument(
-    "-G",
-    "--only-globals",
-    dest="only_globals",
-    help="Retrieve only the optional module's general parameters.",
-    action="store_true",
-    )
-
-groupm.add_argument(
+ap.add_argument(
     "-l",
     dest="explevel",
     required=False,
@@ -65,9 +45,10 @@ groupm.add_argument(
     choices=config_expert_levels + ("all",),
     )
 
-groupm.add_argument(
+ap.add_argument(
     '-g',
-    dest='add_global',
+    '--globals',
+    dest='global_params',
     help="Add also the optional module's general parameters.",
     action="store_true",
     )
@@ -87,6 +68,20 @@ def load_args(ap):
 def cli(ap, main):
     """Command-line interface entry point."""
     cmd = load_args(ap)
+
+    # I didn't want to to have the `--globals` param as a negative parameter
+    # ('store_false'). However, `module` and `globals` can't both be false.
+    # In order for the commands below performing the same:
+    #
+    # haddock3-cfg
+    # haddock3-cfg -g
+    #
+    # we need this quick if statement. Which basically adjust the argparse to
+    # the default values in the main function.
+    # @joaomcteixeira
+    if cmd.global_params is False and cmd.module is None:
+        cmd.global_params = True
+
     main(**vars(cmd))
 
 
@@ -95,25 +90,26 @@ def maincli():
     cli(ap, main)
 
 
-def main(module=None, explevel="all", add_globals=True):
+def main(module=None, explevel="all", global_params=True):
     """
     Extract the defaults in the form of a run configuration file.
 
     Parameters
     ----------
     module : str or None
-        The module name to extract the defaults from. ``None`` can be given
-        if ``only_globals`` is ``True``.
+        The module name to extract the defaults from.
+        If ``None`` given, we expect ``global_params`` to be ``True``,
+        otherwise nothing will be printed.
 
     explevel : str
         Filter the parameters according to the expert level. Output all
         parameters that belong to the referred level or below. Choices
         are: all, easy, expert, and guru.
 
-    add_globals : bool
-        Whether to add the module's general global parameter. If this
-        option is given and ``module`` is ``None``, outputs only the
-        general parameters.
+    global_params : bool
+        Whether to add the module's general global parameter. If
+        ``True`` and ``module`` is ``None``, outputs only the general
+        parameters.
     """
     from haddock import modules_defaults_path
     from haddock.gear.yaml2cfg import yaml2cfg_text
@@ -121,7 +117,7 @@ def main(module=None, explevel="all", add_globals=True):
 
     new_config = ''
 
-    if add_globals:
+    if global_params:
         general_cfg = read_from_yaml(modules_defaults_path)
         general_params_str = yaml2cfg_text(
             general_cfg,
@@ -156,7 +152,7 @@ def main(module=None, explevel="all", add_globals=True):
 
         new_config = os.linesep.join((new_config, module_config))
 
-    sys.stdout.write(new_config, flush=True)
+    sys.stdout.write(new_config)
 
     return 0
 

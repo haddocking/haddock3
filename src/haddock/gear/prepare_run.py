@@ -51,11 +51,18 @@ from haddock.libs.libutil import (
 from haddock.modules import (
     get_module_steps_folders,
     modules_category,
+    modules_names,
     non_mandatory_general_parameters_defaults,
     )
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
     modules_using_resdic,
+    )
+
+
+ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
+    set(config_mandatory_general_parameters),
+    set(non_mandatory_general_parameters_defaults),
     )
 
 
@@ -164,10 +171,17 @@ def setup_run(
         params,
         )
 
+    validate_module_names_are_not_misspelled(params)
+
     # separate general from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+
+    validate_parameters_are_not_misspelled(
+        general_params,
+        reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
+        )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -177,7 +191,6 @@ def setup_run(
 
         general_params[RUNDIR] = extend_run
 
-    validate_module_names_are_not_misspelled(modules_params)
     check_if_modules_are_installed(modules_params)
     check_specific_validations(general_params)
 
@@ -347,11 +360,11 @@ def validate_modules_params(modules_params, max_mols):
             max_mols,
             )
 
-        all_parameters = \
-            set.union(set(extract_keys_recursive(defaults)),
-                      set(config_mandatory_general_parameters),
-                      set(non_mandatory_general_parameters_defaults.keys()),
-                      expandable_params)
+        all_parameters = set.union(
+            set(extract_keys_recursive(defaults)),
+            set(non_mandatory_general_parameters_defaults.keys()),
+            expandable_params,
+            )
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 
@@ -540,19 +553,38 @@ def inject_in_modules(modules_params, key, value):
 
 
 def validate_module_names_are_not_misspelled(params):
-    """Validate headers are not misspelled."""
-    module_names = sorted(modules_category.keys())
-    for param_name, value in params.items():
-        if isinstance(value, dict):
-            module_name = get_module_name(param_name)
-            if module_name not in module_names:
-                matched = fuzzy_match([module_name], module_names)
-                emsg = (
-                    f"Module {param_name!r} is not a valid module name,"
-                    f" did you mean {matched[0][1]}?. "
-                    f"Valid modules are: {', '.join(module_names)}."
-                    )
-                raise ValueError(emsg)
+    """
+    Validate module names are not misspelled in step definitions.
+
+    Parameters
+    ----------
+    params : dict
+        The user configuration file.
+    """
+    params_to_check = [
+        get_module_name(param)
+        for param, value in params.items()
+        if isinstance(value, dict)
+        ]
+
+    validate_parameters_are_not_misspelled(
+        params_to_check,
+        reference_parameters=modules_names,
+        )
+
+    return
+
+
+def validate_parameters_are_not_misspelled(params, reference_parameters):
+    """Validate general parameters are not misspelled."""
+    for param_name in params:
+        if param_name not in reference_parameters:
+            matched = fuzzy_match([param_name], reference_parameters)
+            emsg = (
+                f"Parameter {param_name!r} is not a valid general parameter,"
+                f" did you mean {matched[0][1]!r}?"
+                )
+            raise ValueError(emsg)
 
 
 @with_config_error
@@ -763,6 +795,7 @@ def fuzzy_match(user_input, possibilities):
     ----------
     user_input : list(string)
         List of strings with the faulty input given by the user.
+
     possibilities : list(string)
         List of strings with all possible options that would be
         valid in this context.

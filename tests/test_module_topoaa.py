@@ -28,7 +28,11 @@ def test_variable_defaults_are_nan_in_mol1(param):
 
 def test_there_is_only_one_mol():
     """Test there is only one mol parameter in topoaa."""
-    r = set(p for p in DEFAULT_DICT if p.startswith("mol"))
+    r = set(
+        p
+        for p in DEFAULT_DICT
+        if p.startswith("mol") and p[3].isdigit()
+        )
     assert len(r) == 1
 
 

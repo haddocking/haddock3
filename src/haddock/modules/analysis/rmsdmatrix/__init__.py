@@ -89,7 +89,9 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(_e)
 
         # Get the models generated in previous step
-        models = self.previous_io.retrieve_models()
+        models = self.previous_io.retrieve_models(
+            individualize=True
+            )
 
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)

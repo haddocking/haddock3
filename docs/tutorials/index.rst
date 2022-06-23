@@ -1,5 +1,5 @@
-Examples
-=========
+Advanced features
+=================
 
 Here we provide an index of the available HADDOCK3 examples. Some examples
 illustrate the different functionalities of the program and how to approach them.

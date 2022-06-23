@@ -12,10 +12,17 @@ def config_level(request):
     return request.param
 
 
-@pytest.mark.parametrize(
-    "module",
-    list(modules_category.keys()),
-    )
-def test_export_cfgs(module, config_level):
-    """Test export all configs work."""
-    cli_cfg.main(module, config_level)
+@pytest.fixture(params=(True, False))
+def global_params(request):
+    """Haddock3 config levels."""
+    return request.param
+
+
+@pytest.fixture(params=list(modules_category.keys()) + [None])
+def module(request):
+    return request.param
+
+
+def test_export_cfgs_add_global(module, config_level, global_params):
+    """Test export all configs work with `add_global` parameter."""
+    cli_cfg.main(module, explevel=config_level, global_params=global_params)

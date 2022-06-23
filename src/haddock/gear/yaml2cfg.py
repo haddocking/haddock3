@@ -33,7 +33,8 @@ def yaml2cfg_text(ymlcfg, module, explevel):
         parameters will be considered.
     """
     new_config = []
-    new_config.append(f"[{module}]")
+    if module is not None:
+        new_config.append(f"[{module}]")
 
     new_config.append(_yaml2cfg_text(ymlcfg, module, explevel))
 
@@ -68,7 +69,10 @@ def _yaml2cfg_text(ycfg, module, explevel):
         if isinstance(param, Mapping) and "default" not in param:
 
             params.append("")  # give extra space
-            curr_module = f"{module}.{param_name}"
+            if module is not None:
+                curr_module = f"{module}.{param_name}"
+            else:
+                curr_module = param_name
             params.append(f"[{curr_module}]")
             _ = _yaml2cfg_text(param, module=curr_module, explevel=explevel)
             params.append(_)

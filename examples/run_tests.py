@@ -50,6 +50,7 @@ examples = (
     ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501

@@ -360,11 +360,11 @@ def validate_modules_params(modules_params, max_mols):
             max_mols,
             )
 
-        all_parameters = \
-            set.union(set(extract_keys_recursive(defaults)),
-                      set(config_mandatory_general_parameters),
-                      set(non_mandatory_general_parameters_defaults.keys()),
-                      expandable_params)
+        all_parameters = set.union(
+            set(extract_keys_recursive(defaults)),
+            set(non_mandatory_general_parameters_defaults.keys()),
+            expandable_params,
+            )
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 

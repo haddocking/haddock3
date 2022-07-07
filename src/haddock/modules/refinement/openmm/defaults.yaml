@@ -13,7 +13,7 @@ forcefield:
     - 'amber14/lipid17.xml'
     - 'amber14/GLYCAM_06j-1.xml'
     - 'charmm36.xml'
-  title: Used forcefield by OpenMM.
+  title: Forcefield used by OpenMM.
   short: Forcefields that can be used by OpenMM.
   long: Forcefields that can be used by OpenMM.
   group: ''
@@ -161,7 +161,7 @@ remove_center_of_mass_motion:
   group: ''
   explevel: easy
 
-save_intermediate_simulation_structures:
+save_intermediate:
   default: false
   type: boolean
   title: Save intermediate simulation structures.
@@ -170,18 +170,18 @@ save_intermediate_simulation_structures:
   group: ''
   explevel: easy
 
-save_intermediate_simulation_structures_after_number_of_timesteps:
+steps_intermediate:
   default: 100
   type: int
   min: 0
   max: 1000000
   title: Save intermediate simulation structures after number of timesteps.
-  short: Save intermediate simulation structures after number of timesteps. Each structure is saved after the number of timesteps if the save_intermediate_simulation_structures parameter is true. 
-  long: Save intermediate simulation structures after number of timesteps. Each structure is saved after the number of timesteps if the save_intermediate_simulation_structures parameter is true.
+  short: Save intermediate simulation structures after the specified number of timesteps. 
+  long: Save intermediate simulation structures after the specified number of timesteps. Such structures are saved only if the save_intermediate parameter is true.
   group: ''
   explevel: easy
 
-contains_xray_crystallography_cell_data_solvationbox_padding_nm:
+xray_cell_padding:
   default: 1.0
   type: float
   min: 0
@@ -198,5 +198,16 @@ rigid_water:
   title: Use rigid water.
   short: Use of rigid water in the simulation.
   long: Use of rigid water in the simulation. Flexible water molecules usually require a slower taken timestep by the used integrator.
+  group: ''
+  explevel: easy
+
+seed:
+  default: 0
+  type: int
+  min: 0
+  max: 1000000
+  title: Simulation seed.
+  short: Set a non-random seed for the simulation.
+  long: Set a non-random seed for the simulation. This defines how the velocities are created, but has no effect on the randomicity of the solvation box.
   group: ''
   explevel: easy

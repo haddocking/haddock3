@@ -4,7 +4,10 @@ from haddock.modules import BaseHaddockModule
 import os
 import subprocess
 from pathlib import Path
-import haddock.modules.refinement.openmm.openmmfunctions as openmmfunctions
+#import haddock.modules.refinement.openmm.openmmfunctions as openmmfunctions
+# my additions
+from haddock.modules.refinement.openmm.openmm import OPENMM
+from haddock.libs.libparallel import Scheduler
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -17,25 +20,26 @@ class HaddockModule(BaseHaddockModule):
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         super().__init__(order, path, initial_params)
     
-    def createDirectories(self):
-        currentworkingdirectory = os.getcwd()
-        openmmPdbfixer_output_Directory = os.path.join(currentworkingdirectory, 'openmm_pdbfixer_pdbs')
-        modeller_solvationbox_pdbs_Directory = os.path.join(currentworkingdirectory, 'modeller_solvationbox_pdbs_Directory')
-        openmm_intermediate_structures = os.path.join(currentworkingdirectory, 'openmm_intermediate_structures')
-        openmm_md_raw_output_Directory = os.path.join(currentworkingdirectory, 'openmm_md_raw_output_Directory')
-        openmm_output = os.path.join(currentworkingdirectory, 'openmm_output')
-        self.log(f'Making directory for the pdbs builded with openmm pdbfixer: {openmmPdbfixer_output_Directory}')
-        os.mkdir(openmmPdbfixer_output_Directory)
-        self.log(f'Making directory for the pdbs with OpenMM modeller builded solvation boxes: {modeller_solvationbox_pdbs_Directory}')
-        os.mkdir(modeller_solvationbox_pdbs_Directory)
-        self.log(f'Making directory for saving the intermediate structures if the parameter save_intermediate_simulation_structures is specified: {openmm_intermediate_structures}')
-        os.mkdir(openmm_intermediate_structures)
-        self.log(f'Making directory for the openmm raw output containing water molecules: {openmm_md_raw_output_Directory}')
-        os.mkdir(openmm_md_raw_output_Directory)
-        self.log(f'Making directory for the openmm output: {openmm_output}')
-        os.mkdir(openmm_output)
-        return [openmmPdbfixer_output_Directory, modeller_solvationbox_pdbs_Directory, openmm_intermediate_structures, openmm_md_raw_output_Directory, openmm_output]
-    
+    def create_directories(self):
+        """Creates the necessary directories and provides the paths."""
+        cwd = os.getcwd()
+
+        directory_list = [
+            "pdbfixer",
+            "solvation_boxes",
+            "intermediates",
+            "md_raw_output",
+            "openmm_output"
+        ]
+        directory_dict = {}
+        for dir in directory_list:
+            self.log(f"Creating directory {dir}")
+            dir_path = os.path.join(cwd, dir)
+            os.mkdir(dir_path)
+            directory_dict[dir] = dir_path
+
+        return directory_dict
+
     @classmethod
     def confirm_installation(cls):
         def runSubprocess(command_to_run):
@@ -54,41 +58,62 @@ class HaddockModule(BaseHaddockModule):
         """Execute module."""
         
         previous_models = self.previous_io.retrieve_models()[0]
+        self.log(f"previous models = {previous_models}")
         models_to_export = []
 
-        openmmPdbfixer_output_Directory, modeller_solvationbox_pdbs_Directory, openmm_intermediate_structures, openmm_md_raw_output_Directory, openmm_output = self.createDirectories()
-
-        for pdb in previous_models:
-            if(pdb.file_type is Format.PDB):
-                pdb_filePath = f'{Path(pdb.path) / pdb.file_name}'
-                pdb_filepath_openmm_pdbfixer_directory = os.path.join(openmmPdbfixer_output_Directory, pdb.file_name)                
-                self.log('Fixing pdb with openmm pdbfixer.')
-                openmmfunctions.OpenmmPdbfixer(self, pdb_filePath, pdb.file_name, openmmPdbfixer_output_Directory)
-                if(self.params['implicit_solvent'] == False):
-                    self.log(f'Building solvation box for file: {pdb.file_name}')
-                    contains_xray_crystallography_cell_data = openmmfunctions.Does_pdb_contain_xray_crystallography_cell_data(pdb_filePath)
-                    openmmfunctions.createSolvationBox(self, pdb_filepath_openmm_pdbfixer_directory, pdb.file_name, modeller_solvationbox_pdbs_Directory, self.params['forcefield'][0], self.params['explicit_solvent_model'][0], contains_xray_crystallography_cell_data)
-
-        self.log(f'Starting openMM simulations.')
-        if(self.params['implicit_solvent']):
-            for pdb in os.listdir(openmmPdbfixer_output_Directory):
-                pdbPath = os.path.join(openmmPdbfixer_output_Directory, pdb)
-                self.log(f'Starting openMM with file: {pdbPath}')
-                openmmfunctions.runOpenMM(self, pdbPath, pdb, openmm_output, openmm_intermediate_structures, self.params['forcefield'][0], self.params['implicit_solvent_model'][0])
-        else:
-            for pdb in os.listdir(modeller_solvationbox_pdbs_Directory):
-                pdbPath = os.path.join(modeller_solvationbox_pdbs_Directory, pdb)
-                self.log(f'Starting openMM with file: {pdbPath}')
-                openmmfunctions.runOpenMM(self, pdbPath, pdb, openmm_md_raw_output_Directory, openmm_intermediate_structures, self.params['forcefield'][0], self.params['explicit_solvent_model'][0])
+        #openmmPdbfixer_output_Directory, modeller_solvationbox_pdbs_Directory, openmm_intermediate_structures, openmm_md_raw_output_Directory, openmm_output = self.createDirectories()
+        directory_dict = self.create_directories()
         
-        # Remove water molecules if implicit_solvent is False.
-        if(self.params['implicit_solvent'] == False):
-            for pdb in os.listdir(openmm_md_raw_output_Directory):
-                pdbPath = os.path.join(openmm_md_raw_output_Directory, pdb)
-                openmmfunctions.removeWaterMolecules(pdbPath, pdb, openmm_output)
+        openmm_jobs = []
+        for i, model_to_be_simulated in enumerate(previous_models, start=1):
+            self.log(f"pdb {model_to_be_simulated}")
+            #self.log(f"pdb {model_to_be_evaluated.keys()}")
+            self.log(f"filename {model_to_be_simulated.file_name}")
+            openmm_jobs.append(
+               OPENMM(
+                   identificator=i,
+                   model=model_to_be_simulated,
+                   path=Path("."),
+                   params=self.params,
+                   directory_dict=directory_dict
+                   )
+               )
+        # running jobs
+        ncores = self.params['ncores']
+        openmm_engine = Scheduler(openmm_jobs, ncores=ncores)
+        openmm_engine.run()
 
-        for pdb in os.listdir(openmm_output):
-            pdbPath = os.path.join(openmm_output, pdb)
+        #for pdb in previous_models:
+        #    if(pdb.file_type is Format.PDB):
+        #        pdb_filePath = f'{Path(pdb.path) / pdb.file_name}'
+        #        pdb_filepath_openmm_pdbfixer_directory = os.path.join(directory_dict["pdbfixer"], pdb.file_name)                
+        #        self.log('Fixing pdb with openmm pdbfixer.')
+        #        openmmfunctions.OpenmmPdbfixer(self, pdb_filePath, pdb.file_name, directory_dict["pdbfixer"])
+        #        if(self.params['implicit_solvent'] == False):
+        #            self.log(f'Building solvation box for file: {pdb.file_name}')
+        #            contains_xray_crystallography_cell_data = openmmfunctions.Does_pdb_contain_xray_crystallography_cell_data(pdb_filePath)
+        #            openmmfunctions.createSolvationBox(self, pdb_filepath_openmm_pdbfixer_directory, pdb.file_name, directory_dict["solvation_boxes"], self.params['forcefield'][0], self.params['explicit_solvent_model'][0], contains_xray_crystallography_cell_data)
+#
+        #self.log(f'Starting openMM simulations.')
+        #if(self.params['implicit_solvent']):
+        #    for pdb in os.listdir(directory_dict["pdbfixer"]):
+        #        pdbPath = os.path.join(directory_dict["pdbfixer"], pdb)
+        #        self.log(f'Starting openMM with file: {pdbPath}')
+        #        openmmfunctions.runOpenMM(self, pdbPath, pdb, directory_dict["openmm_output"], directory_dict["intermediates"], self.params['forcefield'][0], self.params['implicit_solvent_model'][0])
+        #else:
+        #    for pdb in os.listdir(directory_dict["solvation_boxes"]):
+        #        pdbPath = os.path.join(directory_dict["solvation_boxes"], pdb)
+        #        self.log(f'Starting openMM with file: {pdbPath}')
+        #        openmmfunctions.runOpenMM(self, pdbPath, pdb, directory_dict["md_raw_output"], directory_dict["intermediates"], self.params['forcefield'][0], self.params['explicit_solvent_model'][0])
+        #    # Remove water molecules if implicit_solvent is False.
+        #    for pdb in os.listdir(directory_dict["md_raw_output"]):
+        #        pdbPath = os.path.join(directory_dict["md_raw_output"], pdb)
+        #        openmmfunctions.removeWaterMolecules(pdbPath, pdb, directory_dict["openmm_output"])
+
+
+        # export models
+        for pdb in os.listdir(directory_dict["openmm_output"]):
+            pdbPath = os.path.join(directory_dict["openmm_output"], pdb)
             pdbToExport = PDBFile(pdbPath)
             models_to_export.append(pdbToExport)
 

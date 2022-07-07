@@ -8,7 +8,7 @@ w_air:
   max: 9999
   precision: 3
   title: Weight of the distance restraint energy
-  short: Weight of the distance restraints energy in the scoring function
+  short: Weight of the distance restraints energy in the scoring function.
   long: Weight of the distance restraints energy in the scoring function.
     Note that this is different from the force constants used during the calculations.
   group: 'scoring'
@@ -20,7 +20,7 @@ w_bsa:
   max: 9999
   precision: 3
   title: Weight of the buried surface area term
-  short: Weight of the buried surface area term in the scoring function
+  short: Weight of the buried surface area term in the scoring function.
   long: Weight of the buried surface area (BSA) term in the scoring function.
     Note that the BSA is only used for scoring.
   group: 'scoring'
@@ -32,7 +32,7 @@ w_cdih:
   max: 9999
   precision: 3
   title: Weight of the dihedral angle restraint energy
-  short: Weight of the dihedral angle restraints energy in the scoring function
+  short: Weight of the dihedral angle restraints energy in the scoring function.
   long: Weight of the dihedral angle restraints energy in the scoring function.
     Note that this is different from the force constant used during the calculations.
   group: 'scoring'
@@ -44,8 +44,8 @@ w_dani:
   max: 9999
   precision: 3
   title: Weight of the relaxation anisotropy (DANI) restraint energy
-  short: Weight of the relaxation anisotropy (DANI) restraint energy
-  long: Weight of the relaxation anisotropy (DANI) restraint energy
+  short: Weight of the relaxation anisotropy (DANI) restraint energy.
+  long: Weight of the relaxation anisotropy (DANI) restraint energy.
   group: 'scoring'
   explevel: hidden
 w_deint:
@@ -55,8 +55,8 @@ w_deint:
   max: 9999
   precision: 3
   title: Weight of the interaction energy term
-  short: Weight of the interaction energy term
-  long: Weight of the interaction energy term calculated as the difference in total energy of the complex and of the separate components
+  short: Weight of the interaction energy term.
+  long: Weight of the interaction energy term calculated as the difference in total energy of the complex and of the separate components.
   group: 'scoring'
   explevel: hidden
 w_desolv:
@@ -66,7 +66,7 @@ w_desolv:
   max: 9999
   precision: 3
   title: Weight of the desolvation energy term
-  short: Weight of the desolvation energy term in the scoring function
+  short: Weight of the desolvation energy term in the scoring function.
   long: Weight of the desolvation energy term in the scoring function.
     Note that the desolvation energy is only used for scoring.
   group: 'scoring'
@@ -78,7 +78,7 @@ w_elec:
   max: 9999
   precision: 3
   title: Weight of the intermolecular electrostatic energy
-  short: Weight of the intermolecular electrostatic energy in the scoring function
+  short: Weight of the intermolecular electrostatic energy in the scoring function.
   long: Weight of the intermolecular electrostatic energy in the scoring function.
     Note that this does not affect the electostatic energy during the EM minimization.
   group: 'scoring'
@@ -90,8 +90,8 @@ w_lcc:
   max: 0
   precision: 3
   title: Weight of the EM local correlation coefficient
-  short: Weight of the EM local correlation coefficient
-  long: Weight of the EM local correlation coefficient
+  short: Weight of the EM local correlation coefficient.
+  long: Weight of the EM local correlation coefficient.
   group: 'scoring'
   explevel: hidden
 w_rg:
@@ -101,8 +101,8 @@ w_rg:
   max: 9999
   precision: 3
   title: Weight of the radius of gyration restraint energy
-  short: Weight of the radius of gyration restraint energy
-  long: Weight of the radius of gyration restraint energy
+  short: Weight of the radius of gyration restraint energy.
+  long: Weight of the radius of gyration restraint energy.
   group: 'scoring'
   explevel: hidden
 w_sani:
@@ -112,8 +112,8 @@ w_sani:
   max: 9999
   precision: 3
   title: Weight of the residual dipolar coupling (SANI) restraint energy
-  short: Weight of the residual dipolar coupling (SANI) restraint energy
-  long: Weight of the residual dipolar coupling (SANI) restraint energy
+  short: Weight of the residual dipolar coupling (SANI) restraint energy.
+  long: Weight of the residual dipolar coupling (SANI) restraint energy.
   group: 'scoring'
   explevel: hidden
 w_sym:
@@ -123,7 +123,7 @@ w_sym:
   max: 9999
   precision: 3
   title: Weight of the symmetry restraint energy
-  short: Weight of the symmetry restraints energy in the scoring function
+  short: Weight of the symmetry restraints energy in the scoring function.
   long: Weight of the symmetry restraints energy in the scoring function.
     Note that this is different from the force constant used during the calculations.
   group: 'scoring'
@@ -135,7 +135,7 @@ w_vdw:
   max: 9999
   precision: 3
   title: Weight of the intermolecular van der Waals energy
-  short: Weight of the intermolecular van der Waals energy in the scoring function
+  short: Weight of the intermolecular van der Waals energy in the scoring function.
   long: Weight of the intermolecular van der Waals energy in the scoring function.
     Note that this does not affect the van der Waals energy during the EM minimization.
   group: 'scoring'
@@ -147,8 +147,8 @@ w_vean:
   max: 9999
   precision: 3
   title: Weight of the residual dipolar coupling (VEAN) restraint energy
-  short: Weight of the residual dipolar coupling (VEAN) restraint energy
-  long: Weight of the residual dipolar coupling (VEAN) restraint energy
+  short: Weight of the residual dipolar coupling (VEAN) restraint energy.
+  long: Weight of the residual dipolar coupling (VEAN) restraint energy.
   group: 'scoring'
   explevel: hidden
 w_xpcs:
@@ -158,8 +158,8 @@ w_xpcs:
   max: 9999
   precision: 3
   title: Weight of the pseudo contact shifts (XPCS) restraint energy
-  short: Weight of the pseudo contact shifts (XPCS) restraint energy
-  long: Weight of the pseudo contact shifts (XPCS) restraint energy
+  short: Weight of the pseudo contact shifts (XPCS) restraint energy.
+  long: Weight of the pseudo contact shifts (XPCS) restraint energy.
   group: 'scoring'
   explevel: hidden
 w_xrdc:
@@ -169,8 +169,8 @@ w_xrdc:
   max: 9999
   precision: 3
   title: Weight of the residual dipolar coupling (XRDC) restraint energy
-  short: Weight of the residual dipolar coupling (XRDC) restraint energy
-  long: Weight of the residual dipolar coupling (XRDC) restraint energy
+  short: Weight of the residual dipolar coupling (XRDC) restraint energy.
+  long: Weight of the residual dipolar coupling (XRDC) restraint energy.
   group: 'scoring'
   explevel: hidden
 w_zres:
@@ -180,10 +180,22 @@ w_zres:
   max: 9999
   precision: 3
   title: Weight of the Z-restraining potential energy
-  short: Weight of the Z-restraining potential energy
-  long: Weight of the Z-restraining potential energy
+  short: Weight of the Z-restraining potential energy.
+  long: Weight of the Z-restraining potential energy.
   group: 'scoring'
   explevel: hidden
+w_saxs:
+  default: 50.0
+  type: float
+  min: 0
+  max: 9999
+  precision: 3
+  title: Weight of the SAXS term
+  short: Weight of the SAXS term in the scoring function.
+  long: Weight of the SAXS term in the scoring function.
+    The chi value is multiplied by this weight and added to the standard HADDOCK score to get the HADDOCKsaxs score.
+  group: 'scoring'
+  explevel: expert
 #
 # Group CRYSOL
 #
@@ -191,31 +203,33 @@ saxs_fname:
     default: ''
     type: file
     title: Path to SAXS data
-    short: Path to SAXS data
-    long: Path to SAXS data
+    short: Path to SAXS data.
+    long: Path to the .dat file containing SAXS data for CRYSOL.
+      Two or three columns separated by whitespace, containing (in this order)
+      momentum transfer, scattering intensity, and (optional) standard deviation.
     group: 'scoring'
     explevel: easy
 lm:
   default: 18
   type: integer
   title: Maximum order of harmonics
-  short: Maximum order of harmonics
-  long: Maximum order of harmonics
+  short: Maximum order of harmonics.
+  long: Maximum order of harmonics for CRYSOL.
   group: 'scoring'
-  explevel: easy
-cst:
-  default: '-cst'
-  type: string
-  title: Subtract constant
-  short: Subtract constant
-  long: Subtract constant
-  group: 'scoring'
-  explevel: easy
+  explevel: expert
 ns:
   default: 256
   type: integer
   title: Number of calculated data points in computed curve
-  short: Number of calculated data points in computed curve
-  long: Number of calculated data points in computed curve
+  short: Number of calculated data points in computed curve.
+  long: Number of calculated data points in computed curve from CRYSOL.
   group: 'scoring'
-  explevel: easy
+  explevel: expert
+cst:
+  default: true
+  type: boolean
+  title: Subtract constant
+  short: Subtract constant.
+  long: Subtract constant in CRYSOL.
+  group: 'scoring'
+  explevel: expert

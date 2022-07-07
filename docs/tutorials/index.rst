@@ -1,7 +1,7 @@
-Examples
-=========
+Advanced features
+=================
 
-Here we provide an index of the available HADDOCK3 examples. Some examples
+Here we provide an index of the available HADDOCK3 advanced features. Some examples
 illustrate the different functionalities of the program and how to approach them.
 At the end, we explain how to use HADDOCK3 in the various simulation scenarios.
 

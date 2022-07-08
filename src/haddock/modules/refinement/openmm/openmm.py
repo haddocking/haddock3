@@ -267,11 +267,12 @@ class OPENMM:
             self.xray_cell_data = self.contains_xray_cell_data()
             solvent_model = self.params['explicit_solvent_model'][0]
             self.create_solvation_box(solvent_model)
-            # output files
+            # output files and string
             pdbPath = os.path.join(self.directory_dict["solvation_boxes"],
                                    self.model.file_name
                                    )
             output_folder = self.directory_dict["md_raw_output"]
+            solvent = "explicit solvent"
         # implicit solvent simulation
         else:
             pdbPath = os.path.join(self.directory_dict["pdbfixer"],
@@ -279,8 +280,9 @@ class OPENMM:
                                    )
             output_folder = self.directory_dict["openmm_output"]
             solvent_model = self.params['implicit_solvent_model'][0]
+            solvent = "implicit solvent"
         
-        log.info(f'starting openMM simulation with file: {pdbPath}')
+        log.info(f'starting {solvent} openMM simulation with file: {pdbPath}')
         self.runOpenMM(pdbPath, output_folder, solvent_model)
         
         # Remove water molecules if implicit_solvent is False.

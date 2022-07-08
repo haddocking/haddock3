@@ -17,6 +17,7 @@ from pdbfixer import PDBFixer
 from pdbtools import pdb_delresname
 
 from haddock import log
+from haddock.libs.libontology import PDBFile
 
 
 def moveAtoms(atomPositionList, nanometerBoxSize, addition=True):
@@ -86,7 +87,7 @@ class OPENMM:
 
     def contains_xray_cell_data(self):
         """Determine if the model pdb contains xray cell data."""
-        pdb_filepath = f'{Path(self.model.path) / self.model.file_name}'
+        pdb_filepath = self.get_pdb_filepath()
         openmmpdb = openmmpdbfile(pdb_filepath)
         modeller = Modeller(openmmpdb.topology, openmmpdb.positions)
         if(modeller.topology.getUnitCellDimensions() is None):
@@ -94,11 +95,24 @@ class OPENMM:
         else:
             xray_cell_data = True
         return xray_cell_data
+    
+    def get_pdb_filepath(self, folder=None):
+        """Get correct path to pdb file"""
+        if folder:
+            pdb_filepath = os.path.join(self.directory_dict["pdbfixer"],
+                                    self.model.file_name)
+        else:
+            if isinstance(self.model, PDBFile):
+                pdb_filepath = f'{self.model.rel_path}'
+            else:
+                pdb_filepath = f'{Path(self.model.path) / self.model.file_name}'
+        log.debug(f"pdb_filepath is {pdb_filepath}")
+        return pdb_filepath
 
-    def OpenmmPdbfixer(self):
+    def openmm_pdbfixer(self):
         """Call Pdbfixer on the model pdb."""
-        pdb_filepath = f'{Path(self.model.path) / self.model.file_name}'
-        log.info(f'Fixing pdb: {self.model.file_name}')
+        pdb_filepath = self.get_pdb_filepath()
+        log.info(f'Fixing pdb: {self.model.file_name} (path {pdb_filepath})')
         # creating PDBFixer
         fixer = PDBFixer(filename=pdb_filepath)
         fixer.findMissingResidues()
@@ -117,8 +131,7 @@ class OPENMM:
 
     def create_solvation_box(self, solvent_model):
         """Create solvation box for an explicit solvent simulation."""
-        pdb_filepath = os.path.join(self.directory_dict["pdbfixer"],
-                                    self.model.file_name)
+        pdb_filepath = self.get_pdb_filepath(self.directory_dict["pdbfixer"])
         forcefield = self.params["forcefield"][0]
         try:
             if('.cif' in pdb_filepath):
@@ -245,7 +258,7 @@ class OPENMM:
     def run(self):
         """Run openmm simulation."""
         # using pdbfixer
-        self.OpenmmPdbfixer()
+        self.openmm_pdbfixer()
         # explicit solvent simulation
         if not self.params['implicit_solvent']:
             # solvation box

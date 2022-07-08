@@ -65,8 +65,13 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self):
         """Execute module."""
-        previous_models = self.previous_io.retrieve_models()[0]
+        #previous_models = self.previous_io.retrieve_models()[0]
+        #previous_models = self.previous_io.retrieve_models()
+        previous_models = self.previous_io.retrieve_models(
+            individualize=True
+            )
         self.log(f"previous models = {previous_models}")
+        previous_models.sort()
         models_to_export = []
         # create directories
         directory_dict = self.create_directories()

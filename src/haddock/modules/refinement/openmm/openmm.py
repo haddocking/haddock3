@@ -97,10 +97,10 @@ class OPENMM:
         return xray_cell_data
     
     def get_pdb_filepath(self, folder=None):
-        """Get correct path to pdb file"""
+        """Get correct path to pdb file."""
         if folder:
             pdb_filepath = os.path.join(self.directory_dict["pdbfixer"],
-                                    self.model.file_name)
+                                        self.model.file_name)
         else:
             if isinstance(self.model, PDBFile):
                 pdb_filepath = f'{self.model.rel_path}'

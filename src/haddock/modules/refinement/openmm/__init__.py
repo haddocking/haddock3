@@ -65,8 +65,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self):
         """Execute module."""
-        #previous_models = self.previous_io.retrieve_models()[0]
-        #previous_models = self.previous_io.retrieve_models()
         previous_models = self.previous_io.retrieve_models(
             individualize=True
             )

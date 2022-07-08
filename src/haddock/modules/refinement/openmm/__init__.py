@@ -4,11 +4,10 @@ import subprocess
 from pathlib import Path
 
 from haddock.libs.libontology import PDBFile
-from haddock.libs.libparallel import Scheduler
-from haddock.modules import BaseHaddockModule
+# from haddock.libs.libparallel import Scheduler
+from haddock.modules import BaseHaddockModule, get_engine
 from haddock.modules.refinement.openmm.openmm import OPENMM
 
-from haddock.modules import get_engine
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -77,8 +76,6 @@ class HaddockModule(BaseHaddockModule):
         
         openmm_jobs = []
         for i, model_to_be_simulated in enumerate(previous_models, start=1):
-            #self.log(f"pdb {model_to_be_simulated}")
-            #self.log(f"filename {model_to_be_simulated.file_name}")
             openmm_jobs.append(
                 OPENMM(
                     identificator=i,
@@ -90,8 +87,8 @@ class HaddockModule(BaseHaddockModule):
                 )
 
         # running jobs
-        ncores = self.params['ncores']
-        # currently it only accepts local and mpi
+        # currently it only accepts local and mpi.
+        # And at the end of the execution mpi fails
         Engine = get_engine(self.params['mode'], self.params)
         engine = Engine(openmm_jobs)
         engine.run()

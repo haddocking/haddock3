@@ -132,7 +132,7 @@ class OPENMM:
     def create_solvation_box(self, solvent_model):
         """Create solvation box for an explicit solvent simulation."""
         pdb_filepath = self.get_pdb_filepath(self.directory_dict["pdbfixer"])
-        forcefield = self.params["forcefield_fname"]
+        forcefield = self.params["forcefield"]
         try:
             if('.cif' in pdb_filepath):
                 openmmpdb = PDBxFile(pdb_filepath)
@@ -199,7 +199,7 @@ class OPENMM:
     def runOpenMM(self, inputPDBfile, output_directory, solvent_model):
         """Run openmm simulation of the model pdb."""
         pdb = openmmpdbfile(inputPDBfile)
-        forcefield = ForceField(self.params['forcefield_fname'], solvent_model)
+        forcefield = ForceField(self.params['forcefield'], solvent_model)
         # system setup
         # should give an ERROR when system_constraints = 'None'.
         system = forcefield.createSystem(
@@ -265,7 +265,7 @@ class OPENMM:
             log.info(f'Building solvation box for file: {self.model.file_name}')
             # check if pdb contains xray cell data
             self.xray_cell_data = self.contains_xray_cell_data()
-            solvent_model = self.params['explicit_solvent_model_fname']
+            solvent_model = self.params['explicit_solvent_model']
             self.create_solvation_box(solvent_model)
             # output files and string
             pdbPath = os.path.join(self.directory_dict["solvation_boxes"],
@@ -279,7 +279,7 @@ class OPENMM:
                                    self.model.file_name
                                    )
             output_folder = self.directory_dict["openmm_output"]
-            solvent_model = self.params['implicit_solvent_model_fname']
+            solvent_model = self.params['implicit_solvent_model']
             solvent = "implicit solvent"
         
         log.info(f'starting {solvent} openMM simulation with file: {pdbPath}')

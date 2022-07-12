@@ -1,6 +1,6 @@
-forcefield_fname:
+forcefield:
   default: 'amber14-all.xml'
-  type: file
+  type: string
   minchars: 0
   maxchars: 100
   choices:
@@ -19,9 +19,9 @@ forcefield_fname:
   group: ''
   explevel: easy
 
-explicit_solvent_model_fname:
+explicit_solvent_model:
   default: 'amber14/tip3p.xml'
-  type: file
+  type: string
   minchars: 0
   maxchars: 100
   choices:
@@ -46,9 +46,9 @@ implicit_solvent:
   group: ''
   explevel: easy
 
-implicit_solvent_model_fname:
+implicit_solvent_model:
   default: 'implicit/hct.xml'
-  type: file
+  type: string
   minchars: 0
   maxchars: 100
   choices:

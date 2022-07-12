@@ -87,10 +87,11 @@ _main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
 _sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]', re.ASCII)
 
 # capture string parameters (paths are not strings, see later)
-# https://regex101.com/r/0LYCAG/1
+# https://regex101.com/r/0LYCAG/1 - original without paths
+# current: https://regex101.com/r/PgrXLf/1
 _string_re = re.compile(
     r'''^ *(\w+) *= *'''
-    r'''("([\w\-]*?)"|'([\w\-]*?)')''',
+    r'''("([\w\-\.\\\/]*?)"|'([\w\-\.\\\/]*?)')''',
     re.ASCII,
     )
 

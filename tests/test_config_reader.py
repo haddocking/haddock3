@@ -102,6 +102,8 @@ def test_sub_header_re_wrong(line):
         ("var2='other'    #somecomment", 'var2', "'other'"),
         ("var_2='other'    #somecomment", 'var_2', "'other'"),
         ("v_ar_2='other'    #somecomment", 'v_ar_2', "'other'"),
+        ('value = "string_with-other/chars"', "value", '"string_with-other/chars"'),  # noqa: E501
+        ("value='.'", "value", "'.'"),
         ],
     )
 def test_string_re(line, name, value):
@@ -116,12 +118,10 @@ def test_string_re(line, name, value):
     [
         "value='s*ràngë'",
         "vàlüé = 'some'",
-        "value='.'",
         'value=1',
         'value=other',
         'value=true',
         'value=string with spaces',
-        'value = "string_with-other/chars"',
         'value = ["list"]',
         ],
     )

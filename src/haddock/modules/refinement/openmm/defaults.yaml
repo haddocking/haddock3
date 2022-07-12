@@ -1,6 +1,6 @@
-forcefield:
-  default: ['amber14-all.xml']
-  type: string
+forcefield_fname:
+  default: 'amber14-all.xml'
+  type: file
   minchars: 0
   maxchars: 100
   choices:
@@ -19,9 +19,9 @@ forcefield:
   group: ''
   explevel: easy
 
-explicit_solvent_model:
-  default: ['amber14/tip3p.xml']
-  type: string
+explicit_solvent_model_fname:
+  default: 'amber14/tip3p.xml'
+  type: file
   minchars: 0
   maxchars: 100
   choices:
@@ -46,9 +46,9 @@ implicit_solvent:
   group: ''
   explevel: easy
 
-implicit_solvent_model:
-  default: ['implicit/hct.xml']
-  type: string
+implicit_solvent_model_fname:
+  default: 'implicit/hct.xml'
+  type: file
   minchars: 0
   maxchars: 100
   choices:
@@ -75,6 +75,7 @@ add_extra_particles_for_forcefield:
 timestep_ps:
   default: 0.004
   type: float
+  precision: 3
   min: 0
   max: 0.1
   title: Timestep definition.
@@ -101,7 +102,7 @@ constraints:
 
 equilibration_timesteps:
   default: 1000
-  type: int
+  type: integer
   min: 0
   max: 100000
   title: Equilibration timesteps.
@@ -112,7 +113,7 @@ equilibration_timesteps:
 
 simulation_timesteps:
   default: 1000
-  type: int
+  type: integer
   min: 1
   max: 1000000
   title: Simulation timesteps.
@@ -132,7 +133,7 @@ move_atoms_to_solvationbox_center:
 
 temperature_kelvin:
   default: 300
-  type: int
+  type: integer
   min: 1
   max: 1000
   title: Average temperature.
@@ -143,7 +144,7 @@ temperature_kelvin:
 
 solvent_boxsize_nm:
   default: 10
-  type: int
+  type: integer
   min: 1
   max: 100
   title: Solvent boxsize in nm.
@@ -172,7 +173,7 @@ save_intermediate:
 
 steps_intermediate:
   default: 100
-  type: int
+  type: integer
   min: 0
   max: 1000000
   title: Save intermediate simulation structures after number of timesteps.
@@ -184,6 +185,7 @@ steps_intermediate:
 xray_cell_padding:
   default: 1.0
   type: float
+  precision: 3
   min: 0
   max: 10
   title: Contains xray crystallography cell data solvationbox padding nm.
@@ -203,7 +205,7 @@ rigid_water:
 
 seed:
   default: 0
-  type: int
+  type: integer
   min: 0
   max: 1000000
   title: Simulation seed.

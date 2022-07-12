@@ -1,12 +1,16 @@
 """OpenMM refinement module for HADDOCK3."""
 import os
 import subprocess
+from contextlib import suppress
 from pathlib import Path
 
 from haddock.libs.libontology import PDBFile
-# from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule, get_engine
-from haddock.modules.refinement.openmm.openmm import OPENMM
+
+
+# allow general testing when OpenMM is not installed
+with suppress(ImportError):
+    from haddock.modules.refinement.openmm.openmm import OPENMM
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -29,7 +33,7 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
         super().__init__(order, path, initial_params)
-    
+
     def create_directories(self):
         """Create the necessary directories and provides the paths."""
         cwd = os.getcwd()
@@ -73,7 +77,7 @@ class HaddockModule(BaseHaddockModule):
         models_to_export = []
         # create directories
         directory_dict = self.create_directories()
-        
+
         openmm_jobs = []
         for i, model_to_be_simulated in enumerate(previous_models, start=1):
             openmm_jobs.append(

@@ -27,7 +27,7 @@ def moveAtoms(atomPositionList, nanometerBoxSize, addition=True):
         sign = 1.0
     else:
         sign = -1.0
-    
+
     shift = sign * nanometerBoxSize / 2 * 10
     for Vector3 in atomPositionList:
         newAtomVec3PositionManual = Vec3(Vector3.x * 10 + shift,
@@ -95,7 +95,7 @@ class OPENMM:
         else:
             xray_cell_data = True
         return xray_cell_data
-    
+
     def get_pdb_filepath(self, folder=None):
         """Get correct path to pdb file."""
         if folder:
@@ -216,7 +216,7 @@ class OPENMM:
             1 / picosecond,
             self.params['timestep_ps'] * picoseconds
             )
-        
+
         # setting integrator seed
         seed = self.params["seed"]
         if seed != 0:
@@ -281,10 +281,10 @@ class OPENMM:
             output_folder = self.directory_dict["openmm_output"]
             solvent_model = self.params['implicit_solvent_model']
             solvent = "implicit solvent"
-        
+
         log.info(f'starting {solvent} openMM simulation with file: {pdbPath}')
         self.runOpenMM(pdbPath, output_folder, solvent_model)
-        
+
         # Remove water molecules if implicit_solvent is False.
         if not self.params['implicit_solvent']:
             self.remove_water_molecules()

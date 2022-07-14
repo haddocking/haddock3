@@ -65,6 +65,8 @@ class HaddockModule(BaseHaddockModule):
                 haddock_score = HaddockModel(model.rel_path).calc_haddock_score(
                     **weights ) + ( chi * self.params["w_saxs"] )
 
+                model.score = haddock_score
+
                 # Write score to output file
                 fh.write(f"{model.file_name}\t{chi}\t{haddock_score}" + linesep)
 

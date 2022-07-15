@@ -122,12 +122,12 @@ simulation_timesteps:
   group: ''
   explevel: easy
 
-move_atoms_to_solvationbox_center:
+center_atoms:
   default: false
   type: boolean
-  title: Move atoms to solvationbox center.
-  short: Move atoms to solvationbox center, the pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.
-  long: Move atoms to solvationbox center, the pdb is placed around the origin, and water molecules of the solvation box are build up from the origin. Not centering the atoms shouldn't be a problem if periodic boundary conditions are deployed, but employing it also prevents the molecule from jumping around the boundary while visually inspecting the simulation in e.g. PyMOL.
+  title: Move atoms to the center of the solvation box.
+  short: Move atoms to the center of the solvation box. The pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.
+  long: Move atoms to the center of the solvation box. The pdb is placed around the origin, and water molecules of the solvation box are build up from the origin. Not centering the atoms shouldn't be a problem if periodic boundary conditions are deployed, but employing it also prevents the molecule from jumping around the boundary while visually inspecting the simulation in e.g. PyMOL.
   group: ''
   explevel: easy
 
@@ -148,8 +148,8 @@ solvent_boxsize_nm:
   min: 1
   max: 100
   title: Solvent boxsize in nm.
-  short: Solvent boxsize in nm used to build the water solvationbox around the molecule.
-  long: Solvent boxsize in nm used to build the water solvationbox around the molecule. Value is used when the crystallographic cell size is removed in the pipeline.
+  short: Solvent boxsize in nm used to build the water solvation box around the molecule.
+  long: Solvent boxsize in nm used to build the water solvation box around the molecule. Value is used when the crystallographic cell size is removed in the pipeline.
   group: ''
   explevel: easy
 

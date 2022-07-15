@@ -20,23 +20,38 @@ from haddock import log
 from haddock.libs.libontology import PDBFile
 
 
-def moveAtoms(atomPositionList, nanometerBoxSize, addition=True):
-    """Shift atoms positions."""
-    shiftedAtomPostions = []
+def move_atoms(atom_positions, boxsize_nm, addition=True):
+    """
+    Shift atoms positions.
+    
+    Parameters
+    ----------
+    atom_positions : list
+        list of atom positions
+
+    boxsize_nm : float
+        size of the box in nanometers
+    
+    Returns
+    -------
+    shifted_positions : list
+        list of shifted atom positions
+    """
+    shifted_positions = []
     if addition:
         sign = 1.0
     else:
         sign = -1.0
 
-    shift = sign * nanometerBoxSize / 2 * 10
-    for Vector3 in atomPositionList:
-        newAtomVec3PositionManual = Vec3(Vector3.x * 10 + shift,
-                                         Vector3.y * 10 + shift,
-                                         Vector3.z * 10 + shift
-                                         )
-        shiftedAtomPostions.append(newAtomVec3PositionManual)
+    shift = sign * boxsize_nm / 2 * 10
+    for Vector3 in atom_positions:
+        cent_vector = Vec3(Vector3.x * 10 + shift,
+                           Vector3.y * 10 + shift,
+                           Vector3.z * 10 + shift
+                           )
+        shifted_positions.append(cent_vector)
 
-    return shiftedAtomPostions
+    return shifted_positions
 
 
 class OPENMM:
@@ -150,10 +165,10 @@ class OPENMM:
                 modeller.addSolvent(usedForcefield,
                                     padding=xray_padding)
             else:
-                boxsizeIn_nm = self.params['solvent_boxsize_nm']
-                box_size = Vec3(boxsizeIn_nm,
-                                boxsizeIn_nm,
-                                boxsizeIn_nm) * nanometers
+                boxsize_nm = self.params['solvent_boxsize_nm']
+                box_size = Vec3(boxsize_nm,
+                                boxsize_nm,
+                                boxsize_nm) * nanometers
                 modeller.addSolvent(usedForcefield,
                                     boxSize=box_size,
                                     neutralize=False
@@ -165,9 +180,9 @@ class OPENMM:
                 log.info("adding extra particles")
                 modeller.addExtraParticles(forcefield)
             # check centering atoms
-            if(self.params['move_atoms_to_solvationbox_center']):
+            if(self.params['center_atoms']):
                 log.info("centering atoms")
-                AtomPositions = moveAtoms(modeller.positions, 10)
+                AtomPositions = move_atoms(modeller.positions, 10)
             else:
                 log.info("centering of atoms is not performed")
                 AtomPositions = modeller.positions

@@ -119,7 +119,7 @@ class HaddockModule(BaseCNSModule):
             # in case topoaa is not the first step, the topology is rebuilt for
             # each retrieved model
             _molecules = self.previous_io.retrieve_models()
-            molecules_paths = [el.rel_path for el in _molecules]
+            molecules_paths = [mol.rel_path for mol in _molecules]
             molecules = make_molecules(molecules_paths, no_parent=True)
 
         # extracts `input` key from params. The `input` keyword needs to

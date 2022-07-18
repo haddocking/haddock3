@@ -5,6 +5,6 @@ message:
   maxchars: 1000
   title: Exiting message.
   short: The message to print when exiting.
-  long: The exit module stops the workflow.
+  long: The message to print when exiting.
   group:
   explevel: easy

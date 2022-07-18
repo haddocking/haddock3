@@ -42,6 +42,7 @@ category_hierarchy = [
     "refinement",
     "scoring",
     "analysis",
+    "extras",
     ]
 
 # this dictionary defines non-mandatory general parameters that can be defined

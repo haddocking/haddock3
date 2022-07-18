@@ -5,7 +5,7 @@ from pathlib import Path
 from time import time
 
 from haddock import log
-from haddock.core.exceptions import HaddockError, StepError
+from haddock.core.exceptions import HaddockError, HaddockTermination, StepError
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.config_reader import get_module_name
 from haddock.gear.zerofill import zero_fill
@@ -23,15 +23,22 @@ class WorkflowManager:
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start
         self.recipe = Workflow(workflow_params, start=0, **other_params)
+        self._terminated = None
 
     def run(self):
         """High level workflow composer."""
-        for step in self.recipe.steps[self.start:]:
-            step.execute()
+        for i, step in enumerate(
+                self.recipe.steps[self.start:],
+                start=self.start):
+            try:
+                step.execute()
+            except HaddockTermination:
+                self._terminated = i + 1
+                break
 
     def clean(self):
         """Clean steps."""
-        for step in self.recipe.steps:
+        for step in self.recipe.steps[:self._terminated]:
             step.clean()
 
 

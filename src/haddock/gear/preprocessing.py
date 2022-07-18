@@ -381,7 +381,7 @@ def process_pdbs(
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
         partial(remove_unsupported_atom),
         ####
-        # partial(wrep_pdb_shiftres, starting_resid=1),
+        partial(wrep_pdb_shiftres, starting_resid=1),
         partial(wrep_pdb_reatom, starting_value=1),
         wrep_pdb_tidy,
         ###

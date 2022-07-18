@@ -22,11 +22,11 @@ jobs:
         tox-envs: [docs, lint, build, test]  # add 'pr' env here once changelog is working
         # workaround to ignore 'pr' when merging to main
         # see: https://github.community/t/how-to-conditionally-include-exclude-items-in-matrix-eg-based-on-branch/16853/6
-        isMerge:
-            - ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        exclude:
-          - isMerge: true
-            tox-envs: pr
+        #isMerge:
+        #    - ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        #exclude:
+        #  - isMerge: true
+        #    tox-envs: pr
 
     runs-on: ${{ matrix.platform }}
 

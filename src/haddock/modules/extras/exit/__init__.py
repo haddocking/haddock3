@@ -6,18 +6,25 @@ Stop the workflow when this module is reached.
 Examples
 --------
 
-```
-[topoaa]
-(...)
+Consider the following config file example::
 
-[rigidbody]
-(...)
+    [topoaa]
+    (...)
 
-[exit]  # <- workflow will stop here
+    [rigidbody]
+    (...)
 
-[flexref]
-(...)
+    [exit]  # <- workflow will stop here
+
+    [flexref]
+    (...)
+
+The workflow will stop at ``[exit]`` and ``[flexref]`` will not be performed.
+
+You can also use this option combined with ``--restart`` and ``--extend-run``.
+See examples in ``examples/docking-protein-protein/*-exit-test.cfg`` files.
 """
+import shutil
 from pathlib import Path
 
 from haddock.core.exceptions import HaddockTermination
@@ -49,5 +56,8 @@ class HaddockModule(BaseHaddockModule):
         return
 
     def _run(self):
-        error = HaddockTermination(self.params["message"])
+        # removes the `exit` step folder
+        self.log(self.params["message"])
+        shutil.rmtree(Path.cwd())
+        error = HaddockTermination()
         raise error

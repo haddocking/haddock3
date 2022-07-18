@@ -4,6 +4,7 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.exceptions import HaddockTermination
 from haddock.gear.clean_steps import UNPACK_FOLDERS, clean_output
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
@@ -21,11 +22,19 @@ class WorkflowManagerExtend(WorkflowManager):
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start
         self.recipe = Workflow(workflow_params, start=start, **other_params)
+        # terminate is used to synchronize the `clean` option with the
+        # `exit` module. If the `exit` module is removed in the future,
+        # you can also remove and clean the `terminate` part here.
+        self._terminated = 0
 
     def run(self):
         """High level workflow composer."""
-        for step in self.recipe.steps:
-            step.execute()
+        for i, step in enumerate(self.recipe.steps, start=0):
+            try:
+                step.execute()
+            except HaddockTermination:
+                self._terminated = i
+                break
 
     def clean(self):
         """Clean the step output."""
@@ -51,7 +60,7 @@ class WorkflowManagerExtend(WorkflowManager):
                 clean_output(folder_, ncores)
 
         # apply compression to the new modules
-        super().clean()
+        super().clean(terminated=self._terminated)
 
 
 def add_extend_run(parser):

@@ -1,0 +1,56 @@
+#taken from https://github.com/joaomcteixeira/python-project-skeleton version 0.11.1
+# tox enviroments that run on both pull requests and merge to main
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      # fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, macos-latest]
+        python-version: [3.9]
+        # you can separate the tox-envs in different .yml files
+        # see version 0.10.1
+        # https://github.com/joaomcteixeira/python-project-skeleton/releases/tag/v0.10.1
+        # below the list of tox envs that you wish to include in the matrix
+        tox-envs: [docs, lint, build, test]  # add 'pr' env here once changelog is working
+        # workaround to ignore 'pr' when merging to main
+        # see: https://github.community/t/how-to-conditionally-include-exclude-items-in-matrix-eg-based-on-branch/16853/6
+        isMerge:
+            - ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        exclude:
+          - isMerge: true
+            tox-envs: pr
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install tox
+
+    - name: unit tests
+      run: tox -e ${{ matrix.tox-envs }}
+
+    # from https://github.com/codecov/codecov-action
+    - name: Upload coverage to Codecov
+      if: matrix.tox-envs == 'test'
+      uses: codecov/codecov-action@v2
+      with:
+        files: ./coverage.xml
+        fail_ci_if_error: true
+        verbose: true

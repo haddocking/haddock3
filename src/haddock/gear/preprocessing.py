@@ -114,6 +114,7 @@ from haddock.core.exceptions import HaddockError
 from haddock.core.supported_molecules import (
     supported_ATOM,
     supported_HETATM,
+    supported_non_ions,
     supported_single_ions_atoms_map,
     supported_single_ions_resnames_map,
     )
@@ -381,7 +382,7 @@ def process_pdbs(
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
         partial(remove_unsupported_atom),
         ####
-        partial(wrep_pdb_shiftres, starting_resid=1),
+        partial(wrep_pdb_shiftres, shifting_factor=0),
         partial(wrep_pdb_reatom, starting_value=1),
         wrep_pdb_tidy,
         ###
@@ -691,6 +692,10 @@ def add_charges_to_ions(fhandler):
             element = line[slc_element].strip()  # max 2 chars
             charge = line[slc_charge].strip()  # max 2 chars
 
+            if resname in supported_non_ions:
+                yield line
+                continue
+
             # Which of the above fields has information on the charge?
             # If more than one have information on the charge, we give
             # the preference to the atom, resname, and then charge
@@ -709,10 +714,7 @@ def add_charges_to_ions(fhandler):
                 continue
 
             if func_to_apply:
-                try:
-                    yield func_to_apply(line)
-                except Exception:
-                    yield line  # lines that do not concern to ions
+                yield func_to_apply(line)
 
             # in case none of the fields has information on the charge,
             # applies the process functions by giving preference to the
@@ -765,6 +767,7 @@ def _process_ion_case_atom(line):
     case 2: charge is correctly defined in atom name ignore other fields
     and write them from scratch even if they are already correct.
     """
+    print('>>>>>>>>>< here')
     element = line[slc_element].strip()  # max 2 chars
     if element == "C":
         # element C can have atom name CA which conflicts carbon alpha

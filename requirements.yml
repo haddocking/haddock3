@@ -12,5 +12,5 @@ dependencies:
   - scipy=1.8.0
   - tox==3.24.5
   - pip:
-      - pdb-tools==2.4.8
+      - pdb-tools==2.5.0
       - git+https://github.com/joaorodrigues/fcc@fcc2

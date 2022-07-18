@@ -333,18 +333,26 @@ ion_cases = [
     'HETATM 3834  F-1   F A  42      21.391  -8.794  33.944  1.00 24.37              ',
     'HETATM 3834  F-1  F1 A  42      21.391  -8.794  33.944  1.00 24.37           F-1',
 
-    # 8 lines not concerning ions - note element is not defined
+    # 8
+    'HETATM    3 CA    CA B   4      37.080  43.455  -3.421  1.00  0.00      B   CA+2',
+    'HETATM    3 CA+2 CA2 B   4      37.080  43.455  -3.421  1.00  0.00      B   CA+2',
+
+    # 9 lines not concerning ions - note element is not defined
     # carbon alpha conflicting with calcium
     'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B       ',
     'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B       ',
 
-    # 9 other lines not concerning ions - atom not CA (carbon alpha)
+    # 10 other lines not concerning ions - atom not CA (carbon alpha)
     'ATOM      1  N   ALA A   1       0.000   0.000   0.000  0.00  0.00           N  ',
     'ATOM      1  N   ALA A   1       0.000   0.000   0.000  0.00  0.00           N  ',
 
-    # 10 lines not concerning ions - here the element is defined
+    # 11 lines not concerning ions - here the element is defined
     'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B    C  ',
     'ATOM      3  CA  ARG B   4      37.080  43.455  -3.421  1.00  0.00      B    C  ',
+
+    # 12 exception
+    'HETATM 3834  F    FA A  42      21.391  -8.794  33.944  1.00 24.37              ',
+    'HETATM 3834  F     F A  42      21.391  -8.794  33.944  1.00 24.37           F  ',
     ]
 
 
@@ -365,6 +373,14 @@ def test_correct_ion_charges(ion_cases_fixture):
     assert len(result) == 1
     # compares two strings
     assert result[0] == expected
+
+
+def test_process_ion_case_atom():
+    """Test processing an exception case."""
+    inp = 'HETATM 3834  F    FA A  42      21.391  -8.794  33.944  1.00 24.37              '  # noqa: E501
+    exp = 'HETATM 3834  F     F A  42      21.391  -8.794  33.944  1.00 24.37           F  '  # noqa: E501
+    result = pp._process_ion_case_atom(inp)
+    assert result == exp
 
 
 @pytest.mark.parametrize(

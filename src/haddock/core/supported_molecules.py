@@ -434,6 +434,15 @@ These residues must be defined as ``ATOM`` records
 in PDB files for HADDOCK3.
 """
 
+# non-ion residue names
+supported_non_ions = set(it.chain(
+    supported_ATOM,
+    supported_carbo_resnames,
+    supported_fragments_resnames,
+    supported_hemes_resnames,
+    supported_solvents_resnames,
+    ))
+
 # Residues that must be set as HETATM
 supported_HETATM = set(it.chain(
     supported_carbo_resnames,

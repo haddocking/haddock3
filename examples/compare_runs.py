@@ -75,6 +75,7 @@ examples = (
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501

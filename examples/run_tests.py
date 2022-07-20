@@ -181,7 +181,7 @@ def main(examples, break_on_errors=True):
                     )
 
                 subprocess.run(
-                    "haddock3 docking-restart-exit-test.cfg --restart",
+                    "haddock3 docking-restart-exit-test.cfg --restart 3",
                     shell=True,
                     check=break_on_errors,
                     stdout=sys.stdout,

@@ -42,7 +42,6 @@ The following actions are perfomed sequentially over all PDBs:
 #. from ``pdb-toos``: ``pdb_fixinsert``, with ``option_list=[]``.
 #. remove unsupported ``HETATM``. Considers residues provided by the user.
 #. remove unsupported ``ATOM``. Considers residues provided by the user.
-#. from ``pdb-tools``: ``pdb_reres``, start from ``1``.
 #. from ``pdb-tools``: ``pdb_reatom``, start from ``1``.
 #. from ``pdb-tools``: ``pdb_tidy`` with ``strict=True``
 
@@ -101,7 +100,6 @@ from pdbtools import (
     pdb_keepcoord,
     pdb_occ,
     pdb_reatom,
-    pdb_reres,
     pdb_rplresname,
     pdb_segxchain,
     pdb_selaltloc,
@@ -382,7 +380,7 @@ def process_pdbs(
         partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
         partial(remove_unsupported_atom),
         ####
-        partial(wrep_pdb_shiftres, shifting_factor=0),
+        # partial(wrep_pdb_shiftres, shifting_factor=0),
         partial(wrep_pdb_reatom, starting_value=1),
         wrep_pdb_tidy,
         ###
@@ -433,7 +431,6 @@ wrep_pdb_fixinsert = _report('pdb_fixinsert')(pdb_fixinsert.run)
 wrep_pdb_keepcoord = _report('pdb_keepcoord')(pdb_keepcoord.run)
 wrep_pdb_occ = _report('pdb_occ')(pdb_occ.run)
 wrep_pdb_reatom = _report('pdb_reatom')(pdb_reatom.run)
-wrep_pdb_reres = _report('pdb_reres')(pdb_reres.run)
 wrep_pdb_shiftres = _report('pdb_shiftres')(pdb_shiftres.run)
 wrep_pdb_rplresname = _report('pdb_rplresname')(pdb_rplresname.run)
 wrep_pdb_segxchain = _report('pdb_segxchain')(pdb_segxchain.run)

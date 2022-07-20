@@ -678,8 +678,8 @@ def add_charges_to_ions(fhandler):
     # by order of preference in case a preference is not found.
     # see further
     ion_correction_cases = [
-        _process_ion_case_resname,
         _process_ion_case_atom,
+        _process_ion_case_resname,
         _process_ion_case_element_charge,
         ]
 
@@ -706,12 +706,6 @@ def add_charges_to_ions(fhandler):
                 func_to_apply = _process_ion_case_resname
             elif element and charge and charge[-1].isdigit():
                 func_to_apply = _process_ion_case_element_charge
-            elif atom != resname:
-                # Dodges situations where the atom is CA (carbon alpha) and the
-                # element is not defined. If none of the above checks is true
-                # atom should be equal to resname for the atom to be an ion.
-                yield line
-                continue
 
             if func_to_apply:
                 yield func_to_apply(line)
@@ -767,7 +761,6 @@ def _process_ion_case_atom(line):
     case 2: charge is correctly defined in atom name ignore other fields
     and write them from scratch even if they are already correct.
     """
-    print('>>>>>>>>>< here')
     element = line[slc_element].strip()  # max 2 chars
     if element == "C":
         # element C can have atom name CA which conflicts carbon alpha

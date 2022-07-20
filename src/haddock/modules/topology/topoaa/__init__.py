@@ -132,9 +132,12 @@ class HaddockModule(BaseCNSModule):
         # to facilite the for loop down the line, we create a list with the keys
         # of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
-        if self.order == 0:
-            if self.params['limit']:
-                mol_params_get = mol_params_keys.pop
+
+        # limit is only useful when order == 0
+        if self.order == 0 and self.params['limit']:
+            mol_params_get = mol_params_keys.pop
+
+        # `else` is used in any case where limit is False.
         else:
             mol_params_get = partial(operator.getitem, mol_params_keys, -1)
 

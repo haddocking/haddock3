@@ -1,4 +1,25 @@
-"""HADDOCK3 PDB preprocessing client."""
+"""
+HADDOCK3 PDB preprocessing client.
+
+Process PDB files for agreement with HADDOCK3 requirements. Follows the
+logic implemented in the :py:mod:`haddock.gear.preprocessing`. See
+documentation pages for more details.
+
+You can use the `--dry` option to report on the performed changes
+without actually performing the changes.
+
+Corrected PDBs are saved to new files named after the `--suffix` option.
+Original PDBs are never overwritten, unless `--suffix` is given an empty
+string.
+
+You can pass multiple PDB files to the command-line.
+
+Usage::
+
+    haddock-pp file1.pdb file2.pdb
+    haddock-pp file1.pdb file2.pdb --suffix _new
+    haddock-pp file1.pdb file2.pdb --dry
+"""
 import argparse
 import sys
 
@@ -42,6 +63,10 @@ ap.add_argument(
 
 
 # client helper functions
+def _ap():
+    return ap
+
+
 def load_args(ap):
     """Load argument parser args."""
     return ap.parse_args()
@@ -58,7 +83,7 @@ def maincli():
     cli(ap, main)
 
 
-def main(pdb_files, dry=False, topfile=None, suffix=SUFFIX_DEFAULT):
+def main(*pdb_files, dry=False, topfile=None, suffix=SUFFIX_DEFAULT):
     """Process PDB files."""
     new_residues = read_additional_residues(topfile) if topfile else None
 

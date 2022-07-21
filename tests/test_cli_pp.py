@@ -16,7 +16,7 @@ def test_pp_cli():
     This is the same PDB used to test the preprocessing library.
     """
     main(broken_pdb)
-    output = Path(broken_pdb.parent, 'broken_processed.pdb')
+    output = Path(Path.cwd(), 'broken_processed.pdb')
     assert output.exists()
 
     result = output.read_text().strip(os.linesep)
@@ -35,6 +35,8 @@ def test_pp_cli():
         ('--topfile file1.top file2.top', "topfile", ['file1.top', 'file2.top']),  # noqa: E501
         ('-s somesuffix', 'suffix', 'somesuffix'),
         ('--suffix somesuffix', 'suffix', 'somesuffix'),
+        ('-odir somedir', 'output_directory', Path('somedir')),
+        ('--output-directory somedir', 'output_directory', Path('somedir')),
         ]
     )
 def test_cli_args(arg, key, value):

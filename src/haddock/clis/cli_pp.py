@@ -22,9 +22,11 @@ Usage::
 """
 import argparse
 import sys
+from pathlib import Path
 
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.libs.libio import add_suffix_to_files, save_lines_to_files
+from haddock.libs.libcli import add_output_dir_arg
 
 
 SUFFIX_DEFAULT = "_processed"
@@ -61,6 +63,8 @@ ap.add_argument(
     default=SUFFIX_DEFAULT,
     )
 
+add_output_dir_arg(ap)
+
 
 # client helper functions
 def _ap():
@@ -86,8 +90,35 @@ def maincli():
     cli(ap, main)
 
 
-def main(*pdb_files, dry=False, topfile=None, suffix=SUFFIX_DEFAULT):
-    """Process PDB files."""
+def main(
+        *pdb_files,
+        dry=False,
+        output_directory=None,
+        suffix=SUFFIX_DEFAULT,
+        topfile=None,
+        ):
+    """
+    Process PDB files.
+
+    Parameters
+    ----------
+    dry : bool
+        Whether to perform a dry test only.
+
+    output_directory : str or ``pathlib.Path``
+        The directory where to save the output. Defaults to the current
+        working directory.
+
+    suffix : str
+        The suffix to append to the new files. Will be added before the
+        file extension. Original extension will be kept.
+
+    topfile : str or ``pathlib.Path``
+        The path to an additional HADDOCK3 topology file.
+    """
+    output_directory = output_directory or Path.cwd()
+    output_directory.mkdir(parents=True, exist_ok=True)
+
     new_residues = read_additional_residues(topfile) if topfile else None
 
     processed_pdbs = process_pdbs(
@@ -96,7 +127,8 @@ def main(*pdb_files, dry=False, topfile=None, suffix=SUFFIX_DEFAULT):
         user_supported_residues=new_residues,
         )
 
-    out_files = add_suffix_to_files(pdb_files, suffix)
+    pdb_names = (Path(output_directory, Path(pdb).name) for pdb in pdb_files)
+    out_files = add_suffix_to_files(pdb_names, suffix)
     save_lines_to_files(out_files, processed_pdbs)
 
     return

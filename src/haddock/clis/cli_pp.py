@@ -74,8 +74,11 @@ def load_args(ap):
 
 def cli(ap, main):
     """Command-line interface entry point."""
-    cmd = load_args(ap)
-    main(**vars(cmd))
+    cmd = vars(load_args(ap))
+    # I use this `pop` structure to maintain the unpacking argument in
+    # the `main` function because I foresee the `main` to be used from
+    # other parts of the software(s)
+    main(*cmd.pop("pdb_files"), **cmd)
 
 
 def maincli():

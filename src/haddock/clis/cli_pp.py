@@ -25,8 +25,8 @@ import sys
 from pathlib import Path
 
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
-from haddock.libs.libio import add_suffix_to_files, save_lines_to_files
 from haddock.libs.libcli import add_output_dir_arg
+from haddock.libs.libio import add_suffix_to_files, save_lines_to_files
 
 
 SUFFIX_DEFAULT = "_processed"

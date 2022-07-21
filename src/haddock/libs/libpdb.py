@@ -1,15 +1,80 @@
 """Parse molecular structures in PDB format."""
 import os
+from functools import partial
 from pathlib import Path
 
-from pdbtools.pdb_segxchain import place_seg_on_chain
-from pdbtools.pdb_splitchain import split_chain
-from pdbtools.pdb_splitmodel import split_model
-from pdbtools.pdb_tidy import tidy_pdbfile
+from pdbtools.pdb_segxchain import run as place_seg_on_chain
+from pdbtools.pdb_splitchain import run as split_chain
+from pdbtools.pdb_splitmodel import run as split_model
+from pdbtools.pdb_tidy import run as tidy_pdbfile
 
-from haddock.core.cns_paths import topology_file
+from haddock.core.supported_molecules import supported_residues
 from haddock.libs.libio import working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
+
+
+slc_record = slice(0, 6)
+slc_serial = slice(6, 11)
+slc_name = slice(12, 16)
+slc_altloc = slice(16, 17)
+slc_resname = slice(17, 20)
+slc_chainid = slice(21, 22)
+slc_resseq = slice(22, 26)
+slc_icode = slice(26, 27)
+slc_x = slice(30, 38)
+slc_y = slice(38, 46)
+slc_z = slice(46, 54)
+slc_occ = slice(54, 60)
+slc_temp = slice(60, 66)
+slc_segid = slice(72, 76)
+slc_element = slice(76, 78)
+slc_charge = slice(78, 80)
+
+
+def format_atom_name(atom, element):
+    """
+    Format PDB atom name.
+
+    Further Reading:
+
+    * https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/tutorials/pdbintro.html
+
+    Parameters
+    ----------
+    atom : str
+        The atom name.
+
+    element : str
+        The atom element code.
+
+    Returns
+    -------
+    str
+        Formatted atom name.
+    """
+    # string formats for atom name
+    _3 = ' {:<3s}'
+    _4 = '{:<4s}'
+    # len of element, atom formatting string
+    # anything outside this is an error
+    _atom_format_dict = {
+        # len of element: {len of atom name}
+        1: {1: _3, 2: _3, 3: _3, 4: _4},
+        2: {1: _4, 2: _4, 3: _4, 4: _4},
+        }
+
+    atm = atom.strip()
+    len_atm = len(atm)
+    len_ele = len(element.strip())
+
+    try:
+        return _atom_format_dict[len_ele][len_atm].format(atm)
+    except KeyError as err:
+        _ = f'Could not format this atom:type -> {atom}:{element}'
+        # raising KeyError assures that no context in IDPConfGen
+        # will handle it. @joaomcteixeira never handles pure Python
+        # exceptions, those are treated as bugs.
+        raise KeyError(_) from err
 
 
 def get_supported_residues(haddock_topology):
@@ -34,7 +99,7 @@ _to_rename = {
     " 0.00969": " 0.00   ",
     }
 
-_to_keep = get_supported_residues(topology_file)
+_to_keep = list(supported_residues)
 
 
 def split_ensemble(pdb_file_path, dest=None):
@@ -186,10 +251,28 @@ def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
         List of Paths with the identified PBD files.
         If no files are found return an empty list.
     """
-    folder = path or Path.cwd()
-
-    if not folder.is_dir():
-        raise ValueError(f'{str(folder)!r} should be a directory.')
-
     basename = Path(file_name)
-    return list(folder.glob(f"{basename.stem}{sep}*{basename.suffix}"))
+    path = path or Path.cwd()
+    return list(path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
+
+
+def read_RECORD_section(lines, section_slice, func=set):
+    """
+    Create a set of observations from a section of the ATOM line.
+
+    Returns
+    -------
+    set
+        A set of the observations.
+    """
+    # read the chain ID
+    chainids = func(
+        the_line
+        for line in lines
+        if line.startswith(('ATOM', 'HETATM')) and (the_line := line[section_slice].strip())  # noqa: E501
+        )
+    return chainids
+
+
+read_chainids = partial(read_RECORD_section, section_slice=slc_chainid, func=list)  # noqa: E501
+read_segids = partial(read_RECORD_section, section_slice=slc_segid, func=list)

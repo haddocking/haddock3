@@ -15,6 +15,23 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
 
 
+def read_lines(func):
+    """
+    Open the file and read lines for the decorated function.
+
+    Send to the decorated function the lines of the file in the form
+    of list.
+    """
+    def wrapper(fpath, *args, **kwargs):
+        lines = Path(fpath).read_text().split(os.linesep)
+        return func(lines, *args, **kwargs)
+    # manual wrapping for displaying documentation properly
+    wrapper.original = func
+    wrapper.__doc__ = func.__doc__
+    wrapper.__name__ = func.__name__
+    return wrapper
+
+
 def read_from_yaml(yaml_file):
     """
     Read a YAML file to a dictionary.
@@ -42,6 +59,64 @@ def read_from_yaml(yaml_file):
 
     assert isinstance(ycfg, dict), type(ycfg)
     return ycfg
+
+
+def open_files_to_lines(*files):
+    """
+    Open files to lines.
+
+    New-lines are stripped.
+
+    Returns
+    -------
+    list of lists of strings
+        The lines of the files.
+        Input order is maintained.
+    """
+    f_paths = map(Path, files)
+    return [f.read_text().split(os.linesep) for f in f_paths]
+
+
+def save_lines_to_files(files, lines):
+    """
+    Save a list of list of lines to files.
+
+    The first list of strings in `lines` will be saved in the first file
+    of `files`, and so on.
+
+    Lines are saved using `pathlib.Path.write_text` function.
+
+    Parameters
+    ----------
+    files : list
+        The list of file names to save.
+
+    lines : list of lists of str
+        A list containing lists of lines that are the file contents.
+        Must be synched with `files`.
+    """
+    for file_, content in zip(files, lines):
+        Path(file_).write_text(os.linesep.join(content) + os.linesep)
+
+    return
+
+
+def add_suffix_to_files(files, suffix):
+    """
+    Add a suffix to file paths.
+
+    Yields
+    ------
+    pathlib.Path objects
+        Exhausts when files exhaust.
+    """
+    for file_ in files:
+        p = Path(file_)
+        folder = p.parent
+        psuffix = p.suffix
+        name = p.stem + suffix + psuffix
+        path = Path(folder, name)
+        yield path
 
 
 def write_dic_to_file(

@@ -15,6 +15,7 @@ Here, you will find documentation to use HADDOCK3 Gears as a library.
    haddockmodel
    parameters
    prepare_run
+   preprocessing
    restart_run
    validations
    yaml2cfg

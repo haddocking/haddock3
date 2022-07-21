@@ -24,6 +24,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from haddock import log
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.libs.libcli import add_output_dir_arg
 from haddock.libs.libio import add_suffix_to_files, save_lines_to_files
@@ -116,10 +117,22 @@ def main(
     topfile : str or ``pathlib.Path``
         The path to an additional HADDOCK3 topology file.
     """
-    output_directory = output_directory or Path.cwd()
-    output_directory.mkdir(parents=True, exist_ok=True)
+    log.info("Starting processing PDB files.")
+    log.info(f"Total number of PDB files: {len(pdb_files)}")
+
+    if dry:
+        log.info(
+            "You selected the `--dry` option. No new files will be created. "
+            "A report of the changes that would be performed in the PDB files "
+            "will be printed."
+            )
 
     new_residues = read_additional_residues(topfile) if topfile else None
+
+    log.info(
+        "Processing the PDB files... "
+        "This may take a bit if there are many."
+        )
 
     processed_pdbs = process_pdbs(
         *pdb_files,
@@ -127,10 +140,20 @@ def main(
         user_supported_residues=new_residues,
         )
 
+    if dry:
+        log.info("Everything done. Exiting...")
+        sys.exit(0)
+
+    log.info("Finished processing PDBs. Saving to disk...")
+    output_directory = output_directory or Path.cwd()
+    log.info("Output dir: {!r}".format(str(output_directory)))
+    output_directory.mkdir(parents=True, exist_ok=True)
+
     pdb_names = (Path(output_directory, Path(pdb).name) for pdb in pdb_files)
     out_files = add_suffix_to_files(pdb_names, suffix)
     save_lines_to_files(out_files, processed_pdbs)
 
+    log.info("Everything done. Exiting...")
     return
 
 

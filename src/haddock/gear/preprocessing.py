@@ -33,7 +33,6 @@ The following actions are perfomed sequentially over all PDBs:
 #. replace ``HSE`` to ``HIS``
 #. replace ``HID`` to ``HIS``
 #. replace ``HIE`` to ``HIS``
-#. add charges to ions
 #. add_charges_to_ions, see :py:func:`add_charges_to_ions`
 #. convert ``ATOM`` to ``HETATM`` for those atoms that should be ``HETATM``.
    Considers the additional residues provided by the user.

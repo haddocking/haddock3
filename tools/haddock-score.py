@@ -17,12 +17,9 @@ from haddock.gear.haddockmodel import HaddockModel
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import PDBFile, TopologyFile
-from haddock.modules.scoring.emscoring import \
-    DEFAULT_CONFIG as SCORING_DEFAULT_CONFIG
-from haddock.modules.scoring.emscoring import \
-    RECIPE_PATH as emscoring_module_folder
-from haddock.modules.topology.topoaa import \
-    DEFAULT_CONFIG as TOPO_DEFAULT_CONFIG
+from haddock.modules.scoring.emscoring import DEFAULT_CONFIG as SCORING_DEFAULT_CONFIG
+from haddock.modules.scoring.emscoring import RECIPE_PATH as emscoring_module_folder
+from haddock.modules.topology.topoaa import DEFAULT_CONFIG as TOPO_DEFAULT_CONFIG
 from haddock.modules.topology.topoaa import RECIPE_PATH as topoaa_module_folder
 from haddock.modules.topology.topoaa import generate_topology
 
@@ -44,8 +41,8 @@ def topo_wrapper(pdb):
     model_path = Path(pdb).resolve()
 
     tidy_model_path = Path(f"{model_path.stem}_tidy.pdb").resolve()
-    with open(model_path, 'r') as inp_fh:
-        with open(tidy_model_path, 'w') as out_fh:
+    with open(model_path, "r") as inp_fh:
+        with open(tidy_model_path, "w") as out_fh:
             for line in tidy_pdbfile(inp_fh):
                 out_fh.write(line)
 
@@ -77,11 +74,9 @@ def topo_wrapper(pdb):
     _ = subprocess.run(CNS_EXEC, env=env, stdin=inp, stdout=out, stderr=err)
 
     output_pdb = Path(
-        Path.cwd(),
-        f"{tidy_model_path.stem}_haddock.pdb").resolve()
+        Path.cwd(), f"{tidy_model_path.stem}_haddock.pdb").resolve()
     output_psf = Path(
-        Path.cwd(),
-        f"{tidy_model_path.stem}_haddock.psf").resolve()
+        Path.cwd(), f"{tidy_model_path.stem}_haddock.psf").resolve()
 
     pdb_obj = PDBFile(
         file_name=output_pdb,
@@ -185,10 +180,17 @@ def main():
     # bsa = haddock_score_component_dic["bsa"]
 
     # emscoring is equivalent to itw
-    haddock_score_itw = (
-        1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.1 * air)
+    haddock_score_itw = (1.0 * vdw) + (0.2 * elec) + \
+        (1.0 * desolv) + (0.1 * air)
 
-    print(f"HADDOCK-score (emscoring): {haddock_score_itw:.4f}")
+    print("-----")
+    print(f"vdw\t{vdw:.4f}")
+    print(f"elec't{elec:.4f}")
+    print(f"desolv\t{desolv:.4f}")
+    print(f"air\t{air:.4f}")
+    print("HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.1 * air)")
+    print("-----")
+    print(f"HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")
 
 
 if __name__ == "__main__":

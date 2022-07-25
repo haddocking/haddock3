@@ -7,6 +7,8 @@ include LICENSE
 include requirements.txt
 include requirements.yml
 
+recursive-include tools *.py
+
 exclude .gitmodules
 exclude .bumpversion.cfg
 exclude .coveragerc
@@ -24,6 +26,6 @@ exclude docs/modules/*/params/*.rst
 exclude docs/reference/core/mandatory_parameters.rst
 exclude docs/modules/general_module_params.rst
 
-global-exclude *.py[cod] __pycache__/* *.so *.dylib 
+global-exclude *.py[cod] __pycache__/* *.so *.dylib
 global-exclude tags
 global-exclude *.swp

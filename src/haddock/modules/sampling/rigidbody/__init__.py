@@ -1,4 +1,27 @@
-"""Rigid-body docking module."""
+"""
+Rigid-body docking sampling module
+==================================
+
+This module does a **randomization of orientations and rigid-body
+minimization.** It corresponds to the classical ``it0`` step in the HADDOCK2.x
+series.
+
+In this module, the interacting partners are treated as rigid bodies, meaning
+that all geometrical parameters such as bond lengths, bond angles, and dihedral
+angles are frozen. Next, the partners are separated in space and rotated
+randomly about their centres of mass.
+
+Afterwards, partners are brought together and allowed to rotate and translate to
+optimize their interaction through a rigid-body energy minimization step.
+
+The energy function also considers ambiguous interaction restraints (AIRs) if
+input. Hence, AIRs are particularly important here as the resulting complexes
+will be biased towards them. For example, defining a stringent set of AIRs leads
+to a very narrow sampling of the conformational space, meaning that the
+generated poses will be very similar. Conversely, very sparse restraints (e.g.
+the entire surface of a partner) will result in very different solutions,
+displaying greater variability in the region of binding.
+"""
 from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel

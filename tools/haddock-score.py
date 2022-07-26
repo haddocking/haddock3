@@ -74,9 +74,11 @@ def topo_wrapper(pdb):
     _ = subprocess.run(CNS_EXEC, env=env, stdin=inp, stdout=out, stderr=err)
 
     output_pdb = Path(
-        Path.cwd(), f"{tidy_model_path.stem}_haddock.pdb").resolve()
+        Path.cwd(),
+        f"{tidy_model_path.stem}_haddock.pdb").resolve()
     output_psf = Path(
-        Path.cwd(), f"{tidy_model_path.stem}_haddock.psf").resolve()
+        Path.cwd(),
+        f"{tidy_model_path.stem}_haddock.psf").resolve()
 
     pdb_obj = PDBFile(
         file_name=output_pdb,
@@ -118,6 +120,8 @@ def emscoring_wrapper(pdb_object, root="calc-hs", model_num=1):
         emscoring_module_folder, "cns/emscoring.cns"
         ).read_text()
 
+    topology = pdb_object.topology
+
     scoring_inp_file_name = prepare_cns_input(
         1,
         pdb_object,
@@ -142,17 +146,14 @@ def emscoring_wrapper(pdb_object, root="calc-hs", model_num=1):
 
     output_pdb = Path(Path.cwd(), f"{root}_{model_num}.pdb").resolve()
 
-    component_dic = HaddockModel(output_pdb).energies
+    pdb_obj = PDBFile(file_name=output_pdb, topology=topology, path=".")
 
     # Clean everything except the minimized pdb
     scoring_out_file_name.unlink()
     scoring_err_file_name.unlink()
     scoring_inp_file_name.unlink()
 
-    pdb_object.rel_path.unlink()
-    pdb_object.topology.rel_path.unlink()
-
-    return component_dic
+    return pdb_obj
 
 
 def main():
@@ -162,7 +163,16 @@ def main():
         description=__doc__,
         )
 
-    parser.add_argument("pdb_file")
+    parser.add_argument("pdb_file", help="Input PDB file")
+    parser.add_argument(
+        "--full", action="store_true", help="Print all energy components"
+        )
+    parser.add_argument(
+        "--outputpdb", action="store_true",
+        help="Save the output PDB file (minimized structure)")
+    parser.add_argument(
+        "--outputpsf", action="store_true",
+        help="Save the output PSF file (topology)")
 
     args = parser.parse_args()
 
@@ -170,27 +180,41 @@ def main():
     pdb_object = topo_wrapper(args.pdb_file)
 
     # Run emscoring and return the energy components
-    haddock_score_component_dic = emscoring_wrapper(pdb_object)
+    emscoring_pdb = emscoring_wrapper(pdb_object)
 
-    # Get the components
+    pdb_object.rel_path.unlink()
+
+    haddock_score_component_dic = HaddockModel(emscoring_pdb.rel_path).energies
+
     vdw = haddock_score_component_dic["vdw"]
     elec = haddock_score_component_dic["elec"]
     desolv = haddock_score_component_dic["desolv"]
     air = haddock_score_component_dic["air"]
-    # bsa = haddock_score_component_dic["bsa"]
+    bsa = haddock_score_component_dic["bsa"]
 
     # emscoring is equivalent to itw
-    haddock_score_itw = (1.0 * vdw) + (0.2 * elec) + \
-        (1.0 * desolv) + (0.1 * air)
+    haddock_score_itw = (
+        1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.1 * air)
 
-    print("-----")
-    print(f"vdw\t{vdw:.4f}")
-    print(f"elec't{elec:.4f}")
-    print(f"desolv\t{desolv:.4f}")
-    print(f"air\t{air:.4f}")
-    print("HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.1 * air)")
-    print("-----")
-    print(f"HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")
+    print("> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.1 * air)")
+    if args.full:
+        print(f"> vdw={vdw},elec={elec},desolv={desolv},air={air},bsa={bsa}")
+
+    original_name = Path(args.pdb_file).stem
+    if args.outputpdb:
+        # haddock_model
+        output_pdb = Path(f"{original_name}_hs.pdb")
+        emscoring_pdb.rel_path.rename(output_pdb)
+    else:
+        emscoring_pdb.rel_path.unlink()
+
+    if args.outputpsf:
+        output_psf = Path(f"{original_name}_hs.psf")
+        emscoring_pdb.topology.rel_path.rename(output_psf)
+    else:
+        emscoring_pdb.topology.rel_path.unlink()
+
+    print(f"# HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")
 
 
 if __name__ == "__main__":

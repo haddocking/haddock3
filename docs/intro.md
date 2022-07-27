@@ -6,8 +6,8 @@ of the HADDOCK2.X series, implementing a new way to interact with HADDOCK and
 offering new features to users who can now define custom workflows. 
 
 In the previous HADDOCK2.x versions, users had access to a highly
-parameterisable yet rigid simulation pipeline composed of three mandatory steps:
-`it0`, `it1`, and `itwater`.
+parameterisable yet rigid simulation pipeline composed of three steps:
+`it0`, `it1`, and `itwater`. 
 
 ![HADDOCK 2.x workflow](figs/HADDOCK2-stages.png)
 

@@ -17,7 +17,7 @@ The driving force for this energy minimisation is the energy function, which
 consists of the intermolecular van der Waals and electrostatic energy terms and the
 restraints defined to guide the docking. The restraints are distance-based and can consist
 of unambiguous or ambiguous interactions restraints (AIRS). In ab-initio docking mode those 
-restraintscan be automatically defined in various ways (e.g. between center of masses 
+restraints can be automatically defined in various ways (e.g. between center of masses 
 (CM restraints) or between randomly selected patches on the surface (random AIRs).
 
 The definition of those restraints is particularly important as they effectively guide 

@@ -8,19 +8,22 @@ series.
 
 In this module, the interacting partners are treated as rigid bodies, meaning
 that all geometrical parameters such as bond lengths, bond angles, and dihedral
-angles are frozen. Next, the partners are separated in space and rotated
-randomly about their centres of mass.
+angles are frozen. The partners are first separated in space and randomly rotated
+around their respective centres of mass. Afterwards, the molecules are brought 
+together by rigid-body energy minimisation with as only degrees of freedome rotations and translation. 
 
-Afterwards, partners are brought together and allowed to rotate and translate to
-optimize their interaction through a rigid-body energy minimization step.
+The driving force for this energy minimisation is the energy function which 
+consists of the intermolecular van der Waals and electrostatic energy terms and the
+restraints defined to guide the docking. The restraints are distance-based and can consist
+of unambiguous or ambiguous interactions restraints (AIRS). In ab-initio docking mode those restraints
+can be automatically defined in various ways (e.g. between center of masses (CM restraints) or between
+randomly selected patches on the surface (random AIRs).
 
-The energy function also considers ambiguous interaction restraints (AIRs) if
-input. Hence, AIRs are particularly important here as the resulting complexes
-will be biased towards them. For example, defining a stringent set of AIRs leads
-to a very narrow sampling of the conformational space, meaning that the
-generated poses will be very similar. Conversely, very sparse restraints (e.g.
-the entire surface of a partner) will result in very different solutions,
-displaying greater variability in the region of binding.
+The definition of those restraints is particularly important as they effectively guide the minimisation 
+process. For example, with a stringent set of AIRs or unambiguous distance restraints, the solutions of the
+minimisation will converge much better and the sampling can be limited. In ab-initio mode, however, very diverse 
+solutions will be obtained and the sampling should be increased to make sure to sample enough the possible 
+interaction space
 """
 from pathlib import Path
 

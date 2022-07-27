@@ -10,8 +10,8 @@ In this module, the interacting partners are treated as rigid bodies, meaning
 that all geometrical parameters such as bond lengths, bond angles, and dihedral
 angles are frozen. The partners are first separated in space and randomly rotated
 around their respective centres of mass. Afterwards, the molecules are brought 
-together by rigid-body energy minimisation with as only degrees of freedome rotations
-and translation. 
+together by rigid-body energy minimisation with rotations and translation
+as the only degrees of freedom
 
 The driving force for this energy minimisation is the energy function which 
 consists of the intermolecular van der Waals and electrostatic energy terms and the

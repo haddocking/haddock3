@@ -24,7 +24,7 @@ The definition of those restraints is particularly important as they effectively
 the minimisation process. For example, with a stringent set of AIRs or unambiguous distance restraints, 
 the solutions of the minimisation will converge much better and the sampling can be limited. 
 In ab-initio mode, however, very diverse solutions will be obtained and the sampling should be 
-increased to make sure to sample enough the possible interaction space
+increased to make sure to sample enough the possible interaction space.
 """
 from pathlib import Path
 

@@ -7,7 +7,7 @@ offering new features to users who can now define custom workflows.
 
 In the previous HADDOCK2.x versions, users had access to a highly
 parameterisable yet rigid simulation pipeline composed of three steps:
-`it0`, `it1`, and `itwater`. 
+`ridig-body docking (it0)`, `semi-flexible refinemnt (it1)`, and `final refinement (itw)`. 
 
 ![HADDOCK 2.x workflow](figs/HADDOCK2-stages.png)
 

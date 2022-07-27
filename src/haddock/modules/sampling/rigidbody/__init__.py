@@ -13,7 +13,7 @@ around their respective centres of mass. Afterwards, the molecules are brought
 together by rigid-body energy minimisation with rotations and translation
 as the only degrees of freedom
 
-The driving force for this energy minimisation is the energy function which 
+The driving force for this energy minimisation is the energy function, which 
 consists of the intermolecular van der Waals and electrostatic energy terms and the
 restraints defined to guide the docking. The restraints are distance-based and can consist
 of unambiguous or ambiguous interactions restraints (AIRS). In ab-initio docking mode those 

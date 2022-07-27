@@ -64,7 +64,7 @@ all categories and modules. Below is a summary of the available modules:
 The HADDOCK3 workflows are defined in simple configuration text files, similar to the TOML format but with extra features. Here is an example of a configuration file that would reproduce the HADDOCK2.x rigid workflow:
 
 ```toml
-run_dir = "run1-test"
+run_dir = "run1-protein-protein"
 ncores = 40
 mode = "local"
 
@@ -75,45 +75,24 @@ molecules =  [
     ]
 
 [topoaa]
-autohis = false
-[topoaa.mol1]
-nhisd = 0
-nhise = 1
-hise_1 = 75
-[topoaa.mol2]
-nhisd = 1
-hisd_1 = 76
-nhise = 1
-hise_1 = 15
 
 [rigidbody]
-tolerance = 20
 ambig_fname = "data/e2a-hpr_air.tbl"
-sampling = 20
-
-[caprieval]
-reference_fname = "data/e2a-hpr_1GGR.pdb"
 
 [seletop]
-#tolerance = 20
-select = 5
 
 [flexref]
-tolerance = 20
 ambig_fname = "data/e2a-hpr_air.tbl"
-
-[caprieval]
-reference_fname = "data/e2a-hpr_1GGR.pdb"
 
 [emref]
-tolerance = 20
 ambig_fname = "data/e2a-hpr_air.tbl"
 
-[caprieval]
-reference_fname = "data/e2a-hpr_1GGR.pdb"
-
 [clustfcc]
+
+[caprieval]
 ```
+
+In this expample only very few parameters are defined as most correspond to the default ones defined for each module. The sampling in this case would be 1000 rigidbody models and 200 for the refinement stages. Clustering is based on the fraction of common contacts and the final clusters are analysed using the best model generated as a reference (the `caprieval` module).
 
 Detailed explanations on how to configure a workflow through the configuration files can be found 
 <a href="https://github.com/haddocking/haddock3/blob/main/docs/tutorials/user_config.rst">here</a>.

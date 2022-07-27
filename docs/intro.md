@@ -55,8 +55,8 @@ all categories and modules. Below is a summary of the available modules:
     * `mdscoring`: *scoring of a complex performing a short MD in explicit solvent + EM (builds the topology and all missing atoms).*
 * **Analysis modules**
     * `caprieval`: *Calculates CAPRI metrics (i-RMDS, l-RMSD, Fnat, DockQ) with respect to the top scoring model or reference structure if provided.*
-    * `clusterfcc`: *Clusters models based on the fraction of common contacts (FCC)*
-    * `clusterrmsd`: *Clusters models based on pairwise RMSD matrix calculated with the `rmsdmatrix` module.*
+    * `clustfcc`: *Clusters models based on the fraction of common contacts (FCC)*
+    * `clustrmsd`: *Clusters models based on pairwise RMSD matrix calculated with the `rmsdmatrix` module.*
     * `rmsdmatrix`: *Calculates the pairwise RMSD matrix between all the models generated in the previous step.*
     * `seletop`: *Selects the top N models from the previous step.*
     * `seletopclusts`: *Selects top N clusters from the previous step.*

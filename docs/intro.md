@@ -1,6 +1,6 @@
 # A brieft introduction to HADDOCK3
 
-HADDOCK3 is the next generation of integrative modelling software in the
+HADDOCK3 is the next generation integrative modelling software in the
 long-lasting HADDOCK project. It represents a complete rethinking and rewriting
 of the HADDOCK2.X series, implementing a new way to interact with HADDOCK and
 offering new features to users who can now define custom workflows. 

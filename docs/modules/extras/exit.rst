@@ -1,6 +1,3 @@
-Exit module
-===========
-
 .. automodule:: haddock.modules.extras.exit
    :members:
    :show-inheritance:

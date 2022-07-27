@@ -1,7 +1,10 @@
 """
-Exit module.
+Exit module
+===========
 
-Stop the workflow when this module is reached.
+Stop the workflow when this module is reached. This allows users to execute
+only a certain initial part of the workflow without having to comment/uncomment
+the unwanted lines.
 
 Examples
 --------

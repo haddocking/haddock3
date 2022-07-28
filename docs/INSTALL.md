@@ -135,3 +135,9 @@ export GDOCK_PATH=some-folder
 instructions as here only the model generation is used. Please check the
 [repository page](https://github.com/rvhonorato/gdock) for more
 information.
+
+## `optint` module
+
+```text
+pip install deap
+```

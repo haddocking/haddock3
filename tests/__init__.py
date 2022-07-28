@@ -1,11 +1,18 @@
-"""Test module."""
+"""Define common test variables."""
 from pathlib import Path
 
 from haddock.modules import modules_category
 
 
 tests_path = Path(__file__).resolve().parents[0]
+data_folder = Path(tests_path, 'data')
 golden_data = Path(tests_path, 'golden_data')
+
+# preprocessing files
+broken_pdb = Path(data_folder, 'broken.pdb')
+corrected_pdb = Path(data_folder, 'corrected.pdb')
+
+residues_top = Path(data_folder, 'residues.top')
 
 configs_data = Path(tests_path, 'configs')
 emptycfg = Path(configs_data, 'empty.cfg')

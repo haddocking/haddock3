@@ -7,6 +7,7 @@ import shutil
 import string
 import sys
 from contextlib import contextmanager, suppress
+from copy import copy
 from functools import lru_cache, wraps
 from pathlib import Path
 
@@ -36,7 +37,12 @@ from haddock.gear.extend_run import (
     renum_step_folders,
     )
 from haddock.gear.greetings import get_goodbye_help
-from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.gear.parameters import (
+    config_mandatory_general_parameters,
+    config_optional_general_parameters,
+    config_optional_general_parameters_dict,
+    )
+from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
@@ -63,6 +69,7 @@ from haddock.modules.analysis import (
 ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     set(config_mandatory_general_parameters),
     set(non_mandatory_general_parameters_defaults),
+    config_optional_general_parameters,
     )
 
 
@@ -167,6 +174,10 @@ def setup_run(
 
     # update default non-mandatory parameters with user params
     params = recursive_dict_update(
+        config_optional_general_parameters_dict,
+        params)
+
+    params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
         params,
         )
@@ -270,7 +281,11 @@ def setup_run(
     data_dir = create_data_dir(general_params[RUNDIR])
 
     if scratch_rest0:
-        copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
+        copy_molecules_to_data_dir(
+            data_dir,
+            modules_params["topoaa"],
+            preprocess=general_params["preprocess"],
+            )
 
     if starting_from_copy:
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
@@ -348,7 +363,7 @@ def validate_modules_params(modules_params, max_mols):
     for module_name, args in modules_params.items():
         defaults = _read_defaults(module_name)
         if not defaults:
-            return
+            continue
 
         if module_name in modules_using_resdic:
             confirm_resdic_chainid_length(args)
@@ -456,7 +471,7 @@ def copy_molecules_to_topology(molecules, topoaa_params):
     topoaa_params['molecules'] = list(map(Path, transform_to_list(molecules)))
 
 
-def copy_molecules_to_data_dir(data_dir, topoaa_params):
+def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
     """
     Copy molecules to data directory and to topoaa parameters.
 
@@ -468,18 +483,49 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params):
 
     topoaa_params : dict
         A dictionary containing the topoaa parameters.
-    """
-    # this line must be synchronized with create_data_dir()
-    rel_data_dir = data_dir.name
 
+    preprocess : bool
+        Whether to preprocess input molecules. Defaults to ``True``.
+        See :py:mod:`haddock.gear.preprocessing`.
+    """
     topoaa_dir = zero_fill.fill('topoaa', 0)
-    for i, molecule in enumerate(topoaa_params['molecules']):
-        end_path = Path(data_dir, topoaa_dir)
-        end_path.mkdir(parents=True, exist_ok=True)
-        name = Path(molecule).name
+
+    # define paths
+    data_topoaa_dir = Path(data_dir, topoaa_dir)
+    data_topoaa_dir.mkdir(parents=True, exist_ok=True)
+    rel_data_topoaa_dir = Path(data_dir.name, topoaa_dir)
+    original_mol_dir = Path(data_dir, "original_molecules")
+
+    new_molecules = []
+    for molecule in copy(topoaa_params['molecules']):
         check_if_path_exists(molecule)
-        shutil.copy(molecule, Path(end_path, name))
-        topoaa_params['molecules'][i] = Path(rel_data_dir, topoaa_dir, name)
+
+        mol_name = Path(molecule).name
+
+        if preprocess:  # preprocess PDB files
+
+            top_fname = topoaa_params.get("ligand_top_fname", False)
+            new_residues = \
+                read_additional_residues(top_fname) if top_fname else None
+
+            new_pdbs = \
+                process_pdbs(molecule, user_supported_residues=new_residues)
+
+            # copy the original molecule
+            original_mol_dir.mkdir(parents=True, exist_ok=True)
+            original_mol = Path(original_mol_dir, mol_name)
+            shutil.copy(molecule, original_mol)
+
+            # write the new processed molecule
+            new_pdb = os.linesep.join(new_pdbs[0])
+            Path(data_topoaa_dir, mol_name).write_text(new_pdb)
+
+        else:
+            shutil.copy(molecule, Path(data_topoaa_dir, mol_name))
+
+        new_molecules.append(Path(rel_data_topoaa_dir, mol_name))
+
+    topoaa_params['molecules'] = copy(new_molecules)
 
 
 def copy_input_files_to_data_dir(data_dir, modules_params, start=0):

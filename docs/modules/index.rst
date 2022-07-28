@@ -13,6 +13,7 @@ composed in *steps*, and each step is a HADDOCK3 module. There are modules for
    refinement/index
    scoring/index
    analysis/index
+   extras/index
 
 Parent code for modules
 -----------------------

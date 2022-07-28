@@ -1,0 +1,10 @@
+message:
+  default: Stopping the workflow.
+  type: string
+  minchars: 0
+  maxchars: 1000
+  title: Exiting message.
+  short: The message to print when exiting.
+  long: The message to print when exiting.
+  group:
+  explevel: easy

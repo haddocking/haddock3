@@ -1,6 +1,7 @@
 """Add functionalities for CLIs."""
 from argparse import ArgumentTypeError
 from functools import partial
+from pathlib import Path
 
 from haddock import version
 from haddock.libs.libio import file_exists, folder_exists
@@ -36,4 +37,16 @@ def add_rundir_arg(ap):
         "run_dir",
         help="The run directory.",
         type=arg_folder_exist,
+        )
+
+
+def add_output_dir_arg(ap):
+    """Add output dir argument."""
+    ap.add_argument(
+        "-odir",
+        "--output-directory",
+        dest="output_directory",
+        help="The directory where to save the output.",
+        type=Path,
+        default=Path.cwd(),
         )

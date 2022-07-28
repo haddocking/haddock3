@@ -21,6 +21,7 @@ def dict_containing_paths(request):
 
 @pytest.fixture(
     params=[
+        # these are functions
         cns_paths.get_axis,
         cns_paths.get_tensors,
         cns_paths.get_translation_vectors,
@@ -28,7 +29,8 @@ def dict_containing_paths(request):
         ]
     )
 def dummy_generated_paths(request):
-    """HADDOCK3 dict containig paths to be tested equally."""
+    """HADDOCK3 dict containig dummy paths to be tested equally."""
+    # add the "dummy_folder" to the functions
     return request.param("dummy_folder")
 
 
@@ -96,13 +98,13 @@ def test_dummy_path_parent_position(dummy_generated_paths):
         )
 
 
-def test_static_file_definitions_exist():
-    """Test if static file definitions exist."""
-    files = (
+@pytest.mark.parametrize(
+    'path',
+    [
         cns_paths.link_file,
         cns_paths.scatter_lib,
-        cns_paths.topology_file,
-        cns_paths.parameters_file,
-        )
-
-    assert all(p.exists() for p in files)
+        ]
+    )
+def test_static_file_definitions_exist(path):
+    """Test if static file definitions exist."""
+    assert path.exists()

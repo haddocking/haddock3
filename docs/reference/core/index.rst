@@ -10,4 +10,5 @@ Here, you will find documentation for core haddock3 functionalities.
    defaults
    exceptions
    mandatory_parameters
+   supported_molecules
 

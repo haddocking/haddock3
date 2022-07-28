@@ -1,4 +1,4 @@
-# Examples
+# Workflow Examples
 
 The HADDOCK3 `examples/` directory contains various subdirectories and config files
 corresponding to different types of complexes, scenarios and data.
@@ -23,17 +23,19 @@ The following examples are currently provided:
 
 ## docking-antibogy-antigen
 
-An antibody-antigen docking example making use only of the knowledge of the hypervarialbles (HV) loops on the antibody to guide the docking. This is the same complex used in our [HADDOCK2.4 webserver tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-antibody-antigen/); refer to it for more details. Two different ways of using the knowledge of the HV loop residues are illustrated:
+An antibody-antigen docking example making use only of the knowledge of the hypervarialbles (HV) loops on the antibody to guide the docking. This is the same complex used in our [HADDOCK2.4 webserver tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-antibody-antigen/); refer to it for more details. Three different ways of using the knowledge of the HV loop residues are illustrated:
 
 - __CDR-accessible__: using ambiguous distance restraints (AIRs) between the HV loop residues and the solvent-accesible residues of the antigen. Those are defined in the `ambig.tbl` file provided in the `data` directory
 - __ranairCDR__: using random AIRs sampled from the HV loops on the antibody and the solvent-accessible residues on the antigen. The random AIRs are used during the rigidbody docking sampling phase and replaced by contact AIRs during refinement.
+- __CDR-NMR-CSP__: using ambiguous distance restraints (AIRs) between the HV loop residues and the epitope residues identified by NMR.
 
 Since antibodies consists of two separate chains, a few additional unambiguous restraints are defined between the antibody chains to keep them together during the flexible refinement stage. Those are defined in the `unambig.tbl` file in the `data` directory.
 
-Two different protocols/workflows are illustrated:
+Three different protocols/workflows are illustrated:
 
 1) 10000 rigidbody docking models, selection of top500 and flexible refinement + EM of those (`docking-antibody-antigen-CDR-accessible-full.cfg` and `docking-antibody-antigen-ranairCDR-full.cfg`)
 2) 10000 rigidbody docking models, FCC clustering and selection of max 20 models per cluster followed by flexible refinement and EM (`docking-antibody-antigen-CDR-accessible-clt-full.cfg` and `docking-antibody-antigen-ranairCDR-clt-full.cfg`).
+3) 1000 rigidbody docking models, selection of top200 and flexible refinement + EM of those (default sampling in the case in which the epitope has been determined by NMR: `docking-antibody-antigen-CDR-NMR-CSP-full.cfg`
 
 The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.
 

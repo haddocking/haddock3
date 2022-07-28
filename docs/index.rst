@@ -14,6 +14,7 @@ Contents
 .. toctree::
    :maxdepth: 1
 
+   intro
    INSTALL
    USAGE
    examples

@@ -50,6 +50,7 @@ The most relevant features of HADDOCK3 user configuration files are:
 * :py:func:`haddock.gear.config_reader.get_module_name`
 """
 import ast
+import importlib
 import re
 from contextlib import contextmanager
 from datetime import datetime
@@ -60,6 +61,8 @@ from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError
 from haddock.libs.libfunc import false, give_same, nan, none, true
 
+
+toml_dependency_found = importlib.util.find_spec("toml") is not None
 
 # The main value types are parsed from the configuration file using
 # regular expressions. There is a regular expression for each type of
@@ -304,8 +307,18 @@ def read_config(fpath):
         keys are the module names. Repeated modules will have a numeric
         suffix, for example: ``module.1``.
     """
-    with open(fpath, 'r') as fin:
-        return _read_config(fin)
+    if ".toml" in Path(fpath).name:
+        if toml_dependency_found:
+            import toml
+            return toml.load(fpath)
+        else:
+            raise ConfigFormatError(
+                "To use `.toml` files, you need to install"
+                " toml with `pip install toml`"
+                )
+    else:
+        with open(fpath, 'r') as fin:
+            return _read_config(fin)
 
 
 def _read_config(fin):

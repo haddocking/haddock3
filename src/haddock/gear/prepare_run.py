@@ -552,7 +552,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
                 if value:
-                    name = value.name
+                    name = Path(value).name
                     # path is created here to avoid creating empty folders
                     # for those modules without '_fname' parameters
                     pf = Path(data_dir, end_path)

@@ -55,7 +55,7 @@ def remove_folders_after_number(run_dir, num):
         representation.
     """
     num = _arg_non_neg_int(num)
-    previous = get_module_steps_folders(run_dir.resolve())
+    previous = get_module_steps_folders(Path(run_dir).resolve())
     for folder in previous[num:]:
         remove_folder(Path(run_dir, folder))
     return

@@ -211,7 +211,7 @@ class OPENMM:
             with open(output_filepath, 'w') as writefh:
                 writefh.writelines(pdbYieldedLines)
 
-    def runOpenMM(self, inputPDBfile, output_directory, solvent_model):
+    def run_openmm(self, inputPDBfile, output_directory, solvent_model):
         """Run openmm simulation of the model pdb."""
         pdb = openmmpdbfile(inputPDBfile)
         forcefield = ForceField(self.params['forcefield'], solvent_model)
@@ -256,9 +256,12 @@ class OPENMM:
             int_filepath = os.path.join(self.directory_dict["intermediates"],
                                         self.model.file_name
                                         )
+            # get number of steps between each intermediate saved conf.
+            steps_intermediate = self.params['simulation_timesteps'] // \
+                self.params['save_intermediate']
             simulation.reporters.append(
                 PDBReporter(int_filepath,
-                            self.params['steps_intermediate'])
+                            steps_intermediate)
                 )
         # simulation.reporters.append(StateDataReporter(sys.stdout,
         # 100,
@@ -298,7 +301,7 @@ class OPENMM:
             solvent = "implicit solvent"
 
         log.info(f'starting {solvent} openMM simulation with file: {pdbPath}')
-        self.runOpenMM(pdbPath, output_folder, solvent_model)
+        self.run_openmm(pdbPath, output_folder, solvent_model)
 
         # Remove water molecules if implicit_solvent is False.
         if not self.params['implicit_solvent']:

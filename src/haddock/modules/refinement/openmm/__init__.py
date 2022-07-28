@@ -5,6 +5,7 @@ from contextlib import suppress
 from pathlib import Path
 
 from haddock.libs.libontology import PDBFile
+# from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule, get_engine
 
 
@@ -96,12 +97,18 @@ class HaddockModule(BaseHaddockModule):
         Engine = get_engine(self.params['mode'], self.params)
         engine = Engine(openmm_jobs)
         engine.run()
+        # openmm_engine = Scheduler(openmm_jobs, ncores=self.params['ncores'])
+        # openmm_engine.run()
 
         # export models
-        for pdb in os.listdir(directory_dict["openmm_output"]):
+        output_pdbs = os.listdir(directory_dict["openmm_output"])
+        self.log(f"output_pdbs {output_pdbs}")
+        for pdb in output_pdbs:
             pdbPath = os.path.join(directory_dict["openmm_output"], pdb)
             pdbToExport = PDBFile(pdbPath)
             models_to_export.append(pdbToExport)
+        
+        self.log(f"models_to_export {models_to_export}")
 
         self.output_models = models_to_export
         self.export_output_models()

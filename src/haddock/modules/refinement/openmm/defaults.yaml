@@ -163,22 +163,13 @@ remove_center_of_mass_motion:
   explevel: easy
 
 save_intermediate:
-  default: false
-  type: boolean
-  title: Save intermediate simulation structures.
-  short: Save intermediate simulation structures of the simulation.
-  long: Save intermediate simulation structures of the simulation. Each structure is saved after the number of timesteps specified by the save_intermediate_simulation_structures_after_number_of_timesteps parameter. 
-  group: ''
-  explevel: easy
-
-steps_intermediate:
-  default: 100
+  default: 0
   type: integer
   min: 0
-  max: 1000000
-  title: Save intermediate simulation structures after number of timesteps.
-  short: Save intermediate simulation structures after the specified number of timesteps. 
-  long: Save intermediate simulation structures after the specified number of timesteps. Such structures are saved only if the save_intermediate parameter is true.
+  max: 100
+  title: Number of intermediate configurations to save.
+  short: Number of intermediate configurations to save during the simulation.
+  long: Number of intermediate configurations to save during the simulation. The code divides the length of the simulation (simulation_timesteps) by this parameter to get how often configurations should be saved.
   group: ''
   explevel: easy
 

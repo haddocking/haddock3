@@ -93,6 +93,8 @@ class HaddockModule(BaseHaddockModule):
         # If you module exports models, the line below is almost mandatory.
         # see other modules, such as topoaa or mdref, emref to see how they
         # handle `output_models`.
+        # the PDB references in `list_of_created_models` must be instances of
+        # the `libs.libontology.PDBFile` class.
         self.output_models = list_of_created_models
         self.export_output_models(faulty_tolerance=self.params["tolerance"])
 

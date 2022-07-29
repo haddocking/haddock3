@@ -92,8 +92,8 @@ class HaddockModule(BaseHaddockModule):
         # once the module loads, you can access its parameters in
         # `self.params`. See more in the BaseHaddockModule class.
         #  `self.params` is a dictionary that contains both the general
-        #  parameters such as the number of processors 
-        #  `self.params['ncores']` parameters as well as those 
+        #  parameters such as the number of processors
+        #  `self.params['ncores']` parameters as well as those
         #  defined in your `defaults.yml`
 
         # Add here all the magic that your module does. You can split this part
@@ -107,7 +107,10 @@ class HaddockModule(BaseHaddockModule):
         # the PDB references in `list_of_created_models` must be instances of
         # the `libs.libontology.PDBFile` class.
         self.output_models = list_of_created_models
-        self.export_output_models(faulty_tolerance=self.params["tolerance"])
+        self.export_output_models()
+        # in case your module considers possible tolerance for generated models,
+        # you can use:
+        # self.export_output_models(faulty_tolerance=self.params["tolerance"])
 
 
 # Finally, the haddock module's class inherit from BaseHaddockModule. It is

@@ -276,6 +276,11 @@ needed. Write comments that explain why you do stuff, and not how you do
 stuff. Use the `TODO:` flag in your comments to note something for the
 future. If needed, raise an issue.
 
+### 1.6 Creating a new module
+
+To develop a new HADDOCK3 module follow our guidelines and templates
+under `src/haddock/modules/_template_cat/_template_mod/`.
+
 ## 2. Contributing with documentation
 
 HADDOCK3 has (will have) two sources of documentation: 1) the library

@@ -1,0 +1,96 @@
+# this is an example of the default parameters
+# add here the parameters of your module. You can follow examples
+# in other default config files. Each parameter type has it's own specific extra
+# fields. Below an example of parameters of different types:
+# explevel can only be easy, expert, guru
+
+# You may wish to read our functionalities in "extended parameters":
+# https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/expandable_parameters.py#L1-L73
+
+# INTEGER parameter
+random_seed:
+  default: 42
+  type: integer
+  min: 0
+  max: 999
+  title:
+  short:
+  long:
+  group: ""
+  explevel: easy
+
+# FLOAT parameter
+indpb:
+  default: 0.2
+  type: float
+  min: 0
+  max: 1
+  precision: 2
+  title:
+  short:
+  long:
+  group: ""
+  explevel: expert
+
+# LIST parameter
+region:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 1000
+  title:
+  short:
+  long:
+  group: ""
+  explevel: guru
+
+# STRING parameter with CHOICES
+initial_mutation:
+  default: keep
+  type: string
+  minchars: 0
+  maxchars: 7
+  choices:
+    - alanine
+    - random
+    - keep
+  title:
+  short:
+  long:
+  group: ""
+  explevel: guru
+
+# STRING parameter without CHOICES
+target_chain:
+  default: "A"
+  type: string
+  minchars: 1
+  maxchars: 1
+  title:
+  short:
+  long:
+  group: ""
+  explevel: hidden
+
+# a DICTIONARY parameter
+# these parameter are tricky to maintain, use them only if strickly needed.
+mol1:
+  prot_segid:
+    default: A
+    type: string
+    minchars: 0
+    maxchars: 4
+    title: Segment ID
+    short: Segment ID assigned to this molecule
+    long: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
+    group: molecule
+    explevel: easy
+  cyclicpept:
+    default: false
+    type: boolean
+    title: Cyclic peptide
+    short: Defines the molecule as a cyclic peptide
+    long: This option defines the molecule as a cyclic peptide and HADDOCK will generate a peptide bond between the N- and C-ter provided those are within 2A.
+          This cutoff can be changed in the generate-topology.cns script.
+    group: molecule
+    explevel: easy

@@ -868,7 +868,7 @@ def fuzzy_match(user_input, possibilities):
 
 def update_step_contents_to_step_names(prev_names, new_names, folder):
     """
-    Find-replace run directory and step name in step folders.
+    Update step folder names in files after the `--restart` option.
 
     Parameters
     ----------
@@ -891,7 +891,34 @@ def update_step_contents_to_step_names(prev_names, new_names, folder):
     for new_step in new_names:
         new_step_p = Path(folder, new_step)
         for file_ in new_step_p.iterdir():
-            text = file_.read_text()
-            for s1, s2 in zip(prev_names, new_names):
-                text = text.replace(s1, s2)
-            file_.write_text(text)
+
+            # goes recursive into the next folder
+            if file_.is_dir():
+                update_step_names_in_subfolders(file_, prev_names, new_names)
+
+            else:
+                update_step_names_in_file(file_, prev_names, new_names)
+
+
+def update_step_names_in_subfolders(folder, prev_names, new_names):
+    """
+    Update step names in subfolders.
+
+    Some modules may generate subfolders. This function update
+    its files accordingly to the `--restart` feature.
+    """
+    for file_ in folder.iterdir():
+        if file_.is_dir():
+            update_step_names_in_subfolders(file_, prev_names, new_names)
+        else:
+            update_step_names_in_file(file_, prev_names, new_names)
+    return
+
+
+def update_step_names_in_file(file_, prev_names, new_names):
+    """Update step names in file following the `--restart` option."""
+    text = file_.read_text()
+    for s1, s2 in zip(prev_names, new_names):
+        text = text.replace(s1, s2)
+    file_.write_text(text)
+    return

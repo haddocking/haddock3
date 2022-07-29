@@ -106,6 +106,21 @@ class HaddockModule(BaseHaddockModule):
         # handle `output_models`.
         # the PDB references in `list_of_created_models` must be instances of
         # the `libs.libontology.PDBFile` class.
+        output_model_list = your_function(models_to_use, self.params)
+        # output_model_list = [(pdb, psf, score), ...]
+        list_of_created_models = []
+        for element in output_model_list:
+            pdb, psf, score = element
+            # IMPORTANT: pass `file_name=Path.name`
+            pdb_object = PDBFile(
+                Path(pdb).name,
+                topology=TopologyFile(
+                    Path(psf).name, path="."
+                    ),
+                path=".")
+            pdb_object.score = score
+            list_of_created_models.append(pdb_object)
+            
         self.output_models = list_of_created_models
         self.export_output_models()
         # in case your module considers possible tolerance for generated models,

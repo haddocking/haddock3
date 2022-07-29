@@ -13,7 +13,7 @@ number_of_generations:
   default: 25
   type: integer
   min: 1
-  max: 150
+  max: 250
   title: Number of generations
   short: The number of generations to run the optimizer for
   long: The number of generations to run the optimizer for
@@ -24,7 +24,7 @@ population_size:
   default: 250
   type: integer
   min: 10
-  max: 1000
+  max: 5000
   title: Population size
   short: The number of individuals in each generation
   long: The number of individuals in each generation

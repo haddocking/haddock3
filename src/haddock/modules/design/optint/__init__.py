@@ -13,7 +13,7 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
 class HaddockModule(BaseHaddockModule):
-    """HADDOCK3 module to perform energy minimization scoring."""
+    """HADDOCK3 module to perform interface optimization."""
 
     name = RECIPE_PATH.name
 
@@ -44,6 +44,15 @@ class HaddockModule(BaseHaddockModule):
 
         self.output_models = []
         for element in output_model_list:
+            log.warning("#" * 80)
+            log.warning("#" * 80)
+            log.warning("#" * 80)
+            log.warning(
+                "THIS MODULE HAS NOT BEEN TESTED/VALIDATED DO NOT USE IT"
+                )
+            log.warning("#" * 80)
+            log.warning("#" * 80)
+            log.warning("#" * 80)
             pdb, psf, score = element
             # IMPORTANT: pass `file_name=Path.name` or CNS will fail
             pdb_object = PDBFile(

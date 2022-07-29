@@ -90,6 +90,10 @@ class HaddockModule(BaseHaddockModule):
 
         # once the module loads, you can access its parameters in
         # `self.params`. See more in the BaseHaddockModule class.
+        #  `self.params` is a dictionary that contains both the general
+        #  parameters such as the number of processors 
+        #  `self.params['ncores']` parameters as well as those 
+        #  defined in your `defaults.yml`
 
         # Add here all the magic that your module does. You can split this part
         # into many functions, classes, or add any extra files or subfolders to

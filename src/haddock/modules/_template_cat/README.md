@@ -20,7 +20,7 @@ To develop your own HADDOCK3 module follow the patterns used in other modules.
    feel welcomed to reach out to us with any doubts.
 1. Please write also tests for your module. Our testing machinery already
    tests for the common patterns, for example, inspecting the `defaults.yaml` file.
-   But you should write any additional tests to ensure your module work appropriately.
+   But you should write any additional tests to ensure that your module works properly.
    See other examples in the `tests/` folder.
 1. Finally, add an example of how to use your module in the `examples/` folder.
    The example should have a short sampling scheme. Name the config file ending with

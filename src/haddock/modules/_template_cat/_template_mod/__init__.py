@@ -101,26 +101,32 @@ class HaddockModule(BaseHaddockModule):
         # the module's folder as you may need. You can even import other modules
         # if needed.
 
-        # If you module exports models, the line below is almost mandatory.
+        # If you module creates models, the line below is almost mandatory.
         # see other modules, such as topoaa or mdref, emref to see how they
         # handle `output_models`.
-        # the PDB references in `list_of_created_models` must be instances of
-        # the `libs.libontology.PDBFile` class.
+        # the PDB references in `list_of_created_models` below must be instances
+        # of the `libs.libontology.PDBFile` class.
+
         output_model_list = your_function(models_to_use, self.params)
         # output_model_list = [(pdb, psf, score), ...]
+
         list_of_created_models = []
         for element in output_model_list:
             pdb, psf, score = element
             # IMPORTANT: pass `file_name=Path.name`
+
+            # alternatively to the strategy below, you can use the
+            # `libs.libcns.prepare_expected_pdb` function if it better fits
+            # your case. See `emref` and `mdref` for examples.
             pdb_object = PDBFile(
                 Path(pdb).name,
-                topology=TopologyFile(
-                    Path(psf).name, path="."
-                    ),
+                topology=TopologyFile(Path(psf).name, path="."),
                 path=".")
+
             pdb_object.score = score
             list_of_created_models.append(pdb_object)
-            
+
+        # final section
         self.output_models = list_of_created_models
         self.export_output_models()
         # in case your module considers possible tolerance for generated models,

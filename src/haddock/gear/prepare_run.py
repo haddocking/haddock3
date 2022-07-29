@@ -870,14 +870,17 @@ def update_step_contents_to_step_names(prev_names, new_names, folder):
     """
     Update step folder names in files after the `--restart` option.
 
+    Runs over the folders defined in `new_names`.
+
     Parameters
     ----------
     prev_names : list
         List of step names to find in file contents.
 
     new_names : list
-        List of new step names to place `prev_names`. Both lists need
-        to be synchronized.
+        List of new step names to replace `prev_names`. Both lists need
+        to be synchronized. That is, the first index of `prev_names` should
+        correspond to the old names of `new_names`.
 
     folder : str or Path
         Folder where the step folders are. Usually run directory or

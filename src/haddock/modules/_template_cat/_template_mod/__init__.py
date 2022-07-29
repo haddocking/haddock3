@@ -59,7 +59,8 @@ class HaddockModule(BaseHaddockModule):
 
         # if your module uses CNS you might need to define where the main CNS
         # script is localted. See examples in `topoaa`, `emref`.
-        cns_script = Path(RECIPE_PATH, "cns", "main.cns")
+        #  else leave it out.
+        # cns_script = Path(RECIPE_PATH, "cns", "main.cns")
 
         # use one of the following:
         # if the module does not use CNS:

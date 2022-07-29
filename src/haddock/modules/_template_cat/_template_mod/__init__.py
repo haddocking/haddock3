@@ -15,6 +15,10 @@ You should use restructureText syntax:
 # Import here what you need
 from pathlib import Path
 
+# In case you need to import a Python library that is a run-time dependency,
+# you should import it inside the `_run` method to avoid import errors for those
+# users not using the new module, thus not having its dependencies installed.
+
 # If your module does not use CNS, import the following
 from haddock.modules import BaseHaddockModule
 
@@ -77,6 +81,8 @@ class HaddockModule(BaseHaddockModule):
 
     # here is where the module magic will happen
     def _run(self):
+        # Import here any Python run-time dependencies that your module needs.
+
         # you can refer to other modules as examples to see how they perform.
         # Likely, the new module will need to load the output from the previous
         # module. For example:

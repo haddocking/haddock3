@@ -64,6 +64,7 @@ examples = (
     ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
@@ -74,10 +75,14 @@ examples = (
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
-    ("scoring"                     , "emscoring-mdscoring-test.cfg")  # noqa: E203, E501
+    ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg")  # noqa: E203, E501
     )
 
 

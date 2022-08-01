@@ -8,16 +8,18 @@ from pathlib import Path
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
+from haddock.gear.clean_steps import clean_output
 from haddock.gear.config_reader import read_config
 from haddock.gear.config_writer import convert_config as _convert_config
 from haddock.gear.config_writer import save_config as _save_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
-from haddock.libs.libio import working_directory
+from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libparallel import Scheduler
+from haddock.libs.libtimer import log_time
 from haddock.libs.libutil import recursive_dict_update
 
 
@@ -32,12 +34,15 @@ modules_category = {
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
 
+modules_names = set(modules_category.keys())
+
 category_hierarchy = [
     "topology",
     "sampling",
     "refinement",
     "scoring",
     "analysis",
+    "extras",
     ]
 
 # this dictionary defines non-mandatory general parameters that can be defined
@@ -208,6 +213,17 @@ class BaseHaddockModule(ABC):
             self._run()
 
         log.info(f'Module [{self.name}] finished.')
+
+    def clean_output(self):
+        """
+        Clean module output folder.
+
+        See Also
+        --------
+        :py:func:`haddock.gear.clean_steps.clean_output`
+        """
+        with log_time("cleaning output files took"):
+            clean_output(self.path, self.params["ncores"])
 
     @classmethod
     @abstractmethod
@@ -473,3 +489,33 @@ def get_module_steps_folders(folder):
         key=lambda x: int(x.split("_")[0]),
         )
     return steps
+
+
+def is_step_folder(path):
+    """
+    Assess whether a folder is a possible step folder.
+
+    The folder is considered a step folder if has a zero or positive
+    integer index followed by a name of a module.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        The path to the folder.
+
+    Returns
+    -------
+    bool
+        Whether the folder is a step folder or not.
+    """
+    path = Path(path)
+    folder_exists(path)
+    main_folder_name = path.name
+    parts = main_folder_name.split("_")
+    if \
+            len(parts) == 2 \
+            and parts[0].isdigit() \
+            and parts[1] in modules_category:
+        return True
+    else:
+        return False

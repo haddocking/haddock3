@@ -1,0 +1,16 @@
+# dummy residues
+RESIdue DA2 {dammy 2+}
+  GROUp
+    ATOM DA+2 TYPE=DA+2 CHARge=+2.0 END
+END {DA2}
+
+residue DE3
+
+RESIdue DI {dimmy}
+RESI DO {dommy}
+
+residue DU1 {dummy 1+}
+  GROUp
+    ATOM DU+1 TYPE=DU+1 CHARge=+1.0 END
+END {DU1}
+

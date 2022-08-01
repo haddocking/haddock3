@@ -286,7 +286,7 @@ def main(
         sys.exit('+ ERROR! No jobs found in folder: {str(benchmark_path)!r}')
 
     # sorts the job list
-    job_list.sort(key=calc_size, reverse=not(short_first))
+    job_list.sort(key=calc_size, reverse=not(short_first))  # noqa: E275
 
     # create the job objects according to the queue managing systme
     _jobsys = workload_manager_launch[manager]

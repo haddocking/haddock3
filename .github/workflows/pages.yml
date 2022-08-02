@@ -1,0 +1,63 @@
+name: pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  pages:
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Setup Git
+        run: |
+          git config user.name "amjjbonvin"
+          git config user.email 'amjjbonvin@users.noreply.github.com'
+          git remote set-url origin \https://x-access-token:${{ secrets.PAGES }}@github.com/$GITHUB_REPOSITORY
+          git checkout "${GITHUB_REF:11}"
+          git branch --show-current
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install virtualenv tox
+
+
+      # needs to install hd3 so the command-line pages are
+      # rendered properly
+      - name: Install HADDOCK3
+        run: |
+          pwd
+          ls -lsa
+          mkdir bin
+          touch bin/cns
+          cd src/fcc/src
+          chmod u+x Makefile
+          ./Makefile 2>%1 >/dev/null || true
+          cd -
+
+      - name: Generate docs
+        run: tox -e docs
+
+      - name: Commit updated pages to gh-pages branch
+        run: |
+          git checkout gh-pages
+          git branch --show-current
+          cp -r haddock3-docs/* .
+          rm -r haddock3-docs
+          rm -r src 2>/dev/null || true
+          git add -A
+          git commit -m "update pages"
+          git push origin gh-pages
+          git branch --show-current

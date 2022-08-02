@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.gear.expandable_parameters &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>haddock.gear.expandable_parameters</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.gear.expandable_parameters</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Expandable parameter module.</span>
+
+<span class="sd">This module contains all logic for reading and preparing expandable parameters.</span>
+
+<span class="sd">Expandable parameters are parameters that follow a specific name structure.</span>
+<span class="sd">They can be repeated multiple times (in groups) in the user configuration file</span>
+<span class="sd">while being defined only once in the `defaults.yaml` files. For example, in the</span>
+<span class="sd">`refinement.flexref` module there are the parameters:</span>
+
+<span class="sd">- `fle_sta_1_1`</span>
+<span class="sd">- `fle_end_1_1`</span>
+
+<span class="sd">For these cases, you can also define in the user configuration file the</span>
+<span class="sd">following:</span>
+
+<span class="sd">- `fle_sta_1_2`</span>
+<span class="sd">- `fle_end_1_2`</span>
+
+<span class="sd">The above parameters will be accepted and used in the CNS modules. We</span>
+<span class="sd">say they are the second groupd of the `fle1` group. We explain in detail</span>
+<span class="sd">below.</span>
+
+<span class="sd">Currently, there are three types of expandable parameters:</span>
+
+<span class="sd">1 - Parameters following the name structure:</span>
+
+<span class="sd">- `name_something_1`,</span>
+<span class="sd">- `name_something_else_1`</span>
+
+<span class="sd">These two parameters belong to the parameter name `name` and group `1`.</span>
+<span class="sd">The two parameters have the name `something` and `something_else`.</span>
+<span class="sd">Therefore, you could define also:</span>
+
+<span class="sd">- `name_something_2`</span>
+<span class="sd">- `name_something_else_2`</span>
+
+<span class="sd">Numbers are allowed as long as in combination with word characters, for</span>
+<span class="sd">example: `name_something1_2`, but not `name_something_1_1` because the</span>
+<span class="sd">latter is of the second type.</span>
+
+<span class="sd">2 - Parameters following the name structure:</span>
+
+<span class="sd">- `name_something_X_Y`</span>
+<span class="sd">- `name_else_X_Y`</span>
+
+<span class="sd">In these cases, the parameter name is `nameX`, where `X` is an integer.</span>
+<span class="sd">`Y` is the number of the group, and `something` and `else` are the name</span>
+<span class="sd">of the parameters. Taking example:</span>
+
+<span class="sd">- `fle_sta_1_1`</span>
+<span class="sd">- `fle_end_1_1`</span>
+
+<span class="sd">The parameter name is `fle1` and the parameters belonging to the groups</span>
+<span class="sd">are `sta` and `end`, and the group is either `1`.</span>
+
+<span class="sd">3 - The simplest parameters in the form of:</span>
+
+<span class="sd">- `param_1`</span>
+
+<span class="sd">In these cases, you can define `param_2`, `param_3`, etc, in the user</span>
+<span class="sd">configuration file despite those are not defined in the `defaults.yaml`.</span>
+<span class="sd">However, because `&lt;name&gt;_&lt;integer&gt;` is too much of a simple rule, we</span>
+<span class="sd">need to define in this module which parameters are actualy expandable.</span>
+<span class="sd">If you are developing here look for the `type_simplest_ep` variable.</span>
+
+<span class="sd">4. Parameters that are expandable to the max number of molecules:</span>
+
+<span class="sd">Those are the parameters starting with `mol`. For example:</span>
+<span class="sd">`mol_fix_origin_1`, which refers to the `fix_origin` parameter for</span>
+<span class="sd">molecule 1. These parameters are allowed to expand only to the maximum</span>
+<span class="sd">of input molecules, and at most to the max number of molecules allowed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">itertools</span> <span class="k">as</span> <span class="nn">it</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">max_molecules_allowed</span>
+<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
+
+
+<span class="c1"># error messages used in _read_groups_in_user_config function</span>
+<span class="c1"># errors messages for single indexed groups</span>
+<span class="n">_emsg_no_group_single</span> <span class="o">=</span> \
+    <span class="s2">&quot;The parameter block &#39;</span><span class="si">{}</span><span class="s2">_*_</span><span class="si">{}</span><span class="s2">&#39; is not a valid expandable parameter.&quot;</span>
+<span class="n">_emsg_unexpected_params_single</span> <span class="o">=</span> \
+    <span class="s2">&quot;These parameters do not belong to the block &#39;</span><span class="si">{}</span><span class="s2">_*_</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{!r}</span><span class="s2">.&quot;</span>
+
+<span class="c1"># errors messages for multiple indexed groups</span>
+<span class="n">_emsg_no_group_multiple</span> <span class="o">=</span> \
+    <span class="s2">&quot;The parameter block &#39;</span><span class="si">{}</span><span class="s2">_*_</span><span class="si">{}</span><span class="s2">_*&#39; is not a valid expandable parameter.&quot;</span>
+<span class="n">_emsg_unexpected_params_multiple</span> <span class="o">=</span> \
+    <span class="s2">&quot;These parameters do not belong to the block &#39;</span><span class="si">{}</span><span class="s2">_*_</span><span class="si">{}</span><span class="s2">_*&#39;: </span><span class="si">{!r}</span><span class="s2">.&quot;</span>
+
+<span class="c1"># common error messages</span>
+<span class="n">_emsg_num_differ</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;The parameter block </span><span class="si">{!r}</span><span class="s2"> expects &quot;</span>
+    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> parameters, but </span><span class="si">{}</span><span class="s2"> are present &quot;</span>
+    <span class="s2">&quot;in the user configuration file: </span><span class="si">{}</span><span class="s2">.&quot;</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># this dictionary defines which parameters of the form &quot;param_1&quot; are</span>
+<span class="c1"># expandable, and for which modules. We cannot define a general</span>
+<span class="c1"># expandable rule for such a simple parameter name because there can be</span>
+<span class="c1"># many other parameters with the same structure but that are not</span>
+<span class="c1"># supposed to be expandable.</span>
+<span class="n">type_simplest_ep</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;topoaa&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;hisd&quot;</span><span class="p">,</span>  <span class="c1"># hisd_1 should be defined in the `defaults.yaml`</span>
+        <span class="s2">&quot;hise&quot;</span><span class="p">,</span>  <span class="c1"># hise_1 should be defined in the `defaults.yaml`</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+
+<span class="c1"># this is an engine function that must be populated with the respective</span>
+<span class="c1"># functions the specify its behaviour. This engine is used in</span>
+<span class="c1"># `get_single_index_groups` and `get_multiple_index_groups`, for</span>
+<span class="c1"># example. The latter are defined later on with `partial`.</span>
+<span class="k">def</span> <span class="nf">_get_groups</span><span class="p">(</span>
+        <span class="n">config</span><span class="p">,</span>
+        <span class="n">belongs_to_group</span><span class="p">,</span>
+        <span class="n">make_param_name</span><span class="p">,</span>
+        <span class="n">rejoin_parts</span><span class="p">,</span>
+        <span class="n">minimum</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Identify expandable parameter groups - main engine function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    config : dict</span>
+<span class="sd">        The configuration file, where keys are the parameter names.</span>
+
+<span class="sd">    belongs_to_group : callable</span>
+<span class="sd">        A callable receiving the parameter name after str.split(&quot;_&quot;)</span>
+<span class="sd">        that returns a boolean identifying if the parameter belongs a</span>
+<span class="sd">        given expadanble group.</span>
+
+<span class="sd">    make_param_name : callable</span>
+<span class="sd">        Recreates the parameter preffix from the parameter parts.</span>
+
+<span class="sd">    rejoin_parts : callable</span>
+<span class="sd">        Recreates the parameter name from the parts. For example:</span>
+<span class="sd">        `something_else` in `param_something_else_1`.</span>
+
+<span class="sd">    minimum : int</span>
+<span class="sd">        Consider only the groups with at least `minimum` parameters.</span>
+
+<span class="sd">    reference : bool</span>
+<span class="sd">        Whether reading a default config file or not. If true, only</span>
+<span class="sd">        groups ending with &quot;1&quot; will be considered. This avoids capturing</span>
+<span class="sd">        parameters for molecules, such as &quot;mol_fix_origin_1&quot;,</span>
+<span class="sd">        &quot;mol_fix_origin_2&quot;, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">splitted</span> <span class="o">=</span> <span class="p">(</span><span class="n">parameter</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">config</span><span class="p">)</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">(</span><span class="n">_parts</span> <span class="k">for</span> <span class="n">_parts</span> <span class="ow">in</span> <span class="n">splitted</span> <span class="k">if</span> <span class="n">belongs_to_group</span><span class="p">(</span><span class="n">_parts</span><span class="p">))</span>
+
+    <span class="c1"># identify groups in config</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+        <span class="n">group_identity</span> <span class="o">=</span> <span class="n">make_param_name</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>  <span class="c1"># (&quot;param&quot;, &quot;1&quot;)</span>
+
+        <span class="n">new</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">group_identity</span><span class="p">,</span> <span class="p">{})</span>
+
+        <span class="c1"># counts the number of parameters within the block</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;counts&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">new</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># registers the parameters belonging to the group</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;mid&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+        <span class="n">new</span><span class="p">[</span><span class="s2">&quot;mid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rejoin_parts</span><span class="p">(</span><span class="n">p</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">reference</span><span class="p">:</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">remove_ghost_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+
+    <span class="c1"># creates the final dictionary</span>
+    <span class="n">final_groups</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;mid&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">minimum</span>
+        <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">final_groups</span>
+
+
+<div class="viewcode-block" id="remove_ghost_groups"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.remove_ghost_groups">[docs]</a><span class="k">def</span> <span class="nf">remove_ghost_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove ghost groups from dictionary.</span>
+
+<span class="sd">    Ghost groups are parameters that are defined in the defaults</span>
+<span class="sd">    in a manner that they look they are already expanded. For example:</span>
+
+<span class="sd">    - mol_shape_1</span>
+<span class="sd">    - mol_shape_2</span>
+<span class="sd">    - mol_shape_3</span>
+<span class="sd">    - mol_fix_origin_1</span>
+<span class="sd">    - mol_fix_origin_2</span>
+<span class="sd">    - mol_fix_origin_3</span>
+
+<span class="sd">    These integer suffix refer to the input molecules and not to</span>
+<span class="sd">    expandable groups.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    groups : dict</span>
+<span class="sd">        A dictionary containing the groups. For example as those created</span>
+<span class="sd">        by `get_single_index_groups`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+        <span class="n">counter</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">counter</span><span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">new_groups</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">counter</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">gk</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">gk</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+                    <span class="n">new_groups</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">gk</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new_groups</span></div>
+
+
+<span class="c1"># this is an engine function that must be populated with the respective</span>
+<span class="c1"># functions the specify its behaviour. This engine is used in</span>
+<span class="c1"># `read_single_idx_groups_user_config` and</span>
+<span class="c1"># `read_multiple_idx_groups_user_config`, for example. The latter are</span>
+<span class="c1"># defined later on with `partial`.</span>
+<span class="k">def</span> <span class="nf">_read_groups_in_user_config</span><span class="p">(</span>
+        <span class="n">user_config</span><span class="p">,</span>
+        <span class="n">default_groups</span><span class="p">,</span>
+        <span class="n">get_user_groups</span><span class="p">,</span>
+        <span class="n">extract_params</span><span class="p">,</span>
+        <span class="n">_emsg_no_group</span><span class="o">=</span><span class="s2">&quot;Parameter block is not a valid expandable group&quot;</span><span class="p">,</span>
+        <span class="n">_emsg_unexpected_params</span><span class="o">=</span><span class="s2">&quot;Unexpected params for group&quot;</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read groups in user config.</span>
+
+<span class="sd">    This is an engine-like function that serves the different expandable</span>
+<span class="sd">    parameter rules. This function should be parametrized with the correct</span>
+<span class="sd">    functions that provide functionality. See `get_` and `read_` functions</span>
+<span class="sd">    defined in this module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_config : dict</span>
+<span class="sd">        The user configuration dictionary.</span>
+
+<span class="sd">    default_groups : dict</span>
+<span class="sd">        The groups present in the default configuration file for the</span>
+<span class="sd">        specific module. This dictionary is that created by,</span>
+<span class="sd">        `get_single_index_groups`, or `get_multiple_index_groups`.</span>
+
+<span class="sd">    get_user_groups : callable</span>
+<span class="sd">        A function to extract groups from a parameter dictionary.</span>
+<span class="sd">        See `get_single_index_groups` and `get_multiple_index_groups`.</span>
+
+<span class="sd">    extract_params : callable</span>
+<span class="sd">        A function to extract parameters from a parameter dictionary</span>
+<span class="sd">        according to the selected group. See `extract_single_index_params`,</span>
+<span class="sd">        `extract_multiple_index_params`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    set</span>
+<span class="sd">        A set with the new parameters in the user configuration file</span>
+<span class="sd">        that are acceptable according to the expandable rules.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># minimum=1 is used to capture groups with missing parameters</span>
+    <span class="n">user_groups</span> <span class="o">=</span> <span class="n">get_user_groups</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">minimum</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">default_group_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">default_groups</span><span class="p">)</span>
+
+    <span class="n">new</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">),</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">user_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+        <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">default_group_names</span><span class="p">:</span>
+            <span class="n">emsg</span> <span class="o">=</span> <span class="n">_emsg_no_group</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+
+        <span class="n">default_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span>
+        <span class="n">expected_params</span> <span class="o">=</span> <span class="n">default_groups</span><span class="p">[</span><span class="n">default_key</span><span class="p">]</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">expected_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">diff</span><span class="p">:</span>
+            <span class="n">emsg</span> <span class="o">=</span> <span class="n">_emsg_unexpected_params</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">param_name</span><span class="p">,</span>
+                <span class="n">group_idx</span><span class="p">,</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">diff</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+
+        <span class="n">num_found</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">num_expected</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">expected_params</span><span class="p">)</span>
+
+        <span class="c1"># it should only trigger when num_found &lt; num_expected</span>
+        <span class="c1"># when num_found &gt; num_expected the error about in `diff` is</span>
+        <span class="c1"># triggered instead</span>
+        <span class="k">if</span> <span class="n">num_found</span> <span class="o">!=</span> <span class="n">num_expected</span><span class="p">:</span>
+            <span class="n">emsg</span> <span class="o">=</span> <span class="n">_emsg_num_differ</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">param_name</span><span class="p">,</span>
+                <span class="n">num_expected</span><span class="p">,</span>
+                <span class="n">num_found</span><span class="p">,</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+
+        <span class="n">related_params</span> <span class="o">=</span> <span class="n">extract_params</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">)</span>
+        <span class="n">new</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">related_params</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">new</span>
+
+
+<div class="viewcode-block" id="read_simplest_expandable"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.read_simplest_expandable">[docs]</a><span class="k">def</span> <span class="nf">read_simplest_expandable</span><span class="p">(</span><span class="n">expparams</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read expandable parameters from config file of the type `param_1`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expparams : dict, dict.keys, set, or alike</span>
+<span class="sd">        The parameter names that should be considered as expandable.</span>
+<span class="sd">        Usually, this is a module subdictionary of `type_simplest_ep`.</span>
+
+<span class="sd">    config : dict, dict.keys, set, or alike</span>
+<span class="sd">        The user configuration file.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    set of str</span>
+<span class="sd">        The parameters in `config` that comply with `expparams`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">expparams</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new</span></div>
+
+
+<div class="viewcode-block" id="get_mol_parameters"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.get_mol_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_mol_parameters</span><span class="p">(</span><span class="n">config</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Identify expandable `mol` parameters.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">config</span> <span class="k">if</span> <span class="n">is_mol_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="is_mol_parameter"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.is_mol_parameter">[docs]</a><span class="k">def</span> <span class="nf">is_mol_parameter</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Identify if a parameter is a `mol` parameter.&quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">param</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;mol_&quot;</span><span class="p">)</span> \
+        <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> \
+        <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="read_mol_parameters"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.read_mol_parameters">[docs]</a><span class="k">def</span> <span class="nf">read_mol_parameters</span><span class="p">(</span>
+        <span class="n">user_config</span><span class="p">,</span>
+        <span class="n">default_groups</span><span class="p">,</span>
+        <span class="n">max_mols</span><span class="o">=</span><span class="n">max_molecules_allowed</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read the mol parameters in the user_config following expectations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_config : dict</span>
+<span class="sd">        The user configuration dictionary.</span>
+
+<span class="sd">    default_groups : dict or set.</span>
+<span class="sd">        The mol parameters present in the default configuration file for</span>
+<span class="sd">        the specific module. These are defined by `get_mol_parameters`.</span>
+
+<span class="sd">    max_mols : int</span>
+<span class="sd">        HADDOCK3 has a limit in the number of different molecules it</span>
+<span class="sd">        accepts for a calculation. Expandable parameters affecting molecules</span>
+<span class="sd">        should not be allowed to go beyond that number. Defaults to</span>
+<span class="sd">        `core.default.max_molecules_allowed`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    set</span>
+<span class="sd">        The allowed parameters according to the default config and the</span>
+<span class="sd">        max allowed molecules.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># removes the integer suffix from the default mol parameters</span>
+    <span class="n">default_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">remove_trail_idx</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">default_groups</span><span class="p">]</span>
+
+    <span class="n">new</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">get_mol_parameters</span><span class="p">(</span><span class="n">user_config</span><span class="p">):</span>
+        <span class="n">param_name</span> <span class="o">=</span> <span class="n">remove_trail_idx</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="n">param_idx</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">default_names</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">param_idx</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">max_mols</span><span class="p">:</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new</span></div>
+
+
+<div class="viewcode-block" id="remove_trail_idx"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.remove_trail_idx">[docs]</a><span class="k">def</span> <span class="nf">remove_trail_idx</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove the trailing integer from a parameter.</span>
+
+<span class="sd">    If trail is defined by an underscore &quot;_&quot;.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    remove_trail_idx(&#39;some_parameter_1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; &#39;some_parameter&#39;</span>
+
+<span class="sd">    remove_trail_idx(&#39;some_parameter&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; &#39;some_parameter&#39;</span>
+
+<span class="sd">    remove_trail_idx(&#39;parameter&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; &#39;parameter&#39;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    param : str</span>
+<span class="sd">        A parameter name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">under_parts</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">under_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">under_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">param</span></div>
+
+
+<div class="viewcode-block" id="get_trail_index"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.get_trail_index">[docs]</a><span class="k">def</span> <span class="nf">get_trail_index</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the trail index if underscored.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    has_trail_index(&#39;some_parameter_1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; &#39;1&#39;</span>
+
+<span class="sd">    has_trail_index(&#39;some_parameter1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; None</span>
+
+<span class="sd">    has_trail_index(&#39;some_parameter_1_1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; &#39;1&#39;</span>
+
+<span class="sd">    has_trail_index(&#39;some_parameter_1-1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; None</span>
+
+<span class="sd">    has_trail_index(&#39;some_parameter&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; None</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    param : str</span>
+<span class="sd">        A parameter name.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str or None</span>
+<span class="sd">        The trail index if exist. ``None`` if not found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">under_parts</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">under_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">under_parts</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="make_param_name_single_index"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.make_param_name_single_index">[docs]</a><span class="k">def</span> <span class="nf">make_param_name_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make the key name from param parts.</span>
+
+<span class="sd">    For example, (&quot;param&quot;, &quot;tag&quot;, &quot;1&quot;) -&gt; (&quot;param&quot;, &quot;1&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">param_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">param_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="make_param_name_multiple_index"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.make_param_name_multiple_index">[docs]</a><span class="k">def</span> <span class="nf">make_param_name_multiple_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make the key name from param parts.</span>
+
+<span class="sd">    For example, (&quot;param&quot;, &quot;tag&quot;, &quot;2&quot;, &quot;1&quot;) -&gt; (&quot;param2&quot;, &quot;1&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">param_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">param_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">param_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="belongs_to_single_index"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.belongs_to_single_index">[docs]</a><span class="k">def</span> <span class="nf">belongs_to_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assert param belong to single index group.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    param_parts : list of str</span>
+<span class="sd">        The parameter name parts after `str.split(&quot;_&quot;)`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    boolean</span>
+<span class="sd">        True if the parameter name follows the rules of single index</span>
+<span class="sd">        expandable parameters.</span>
+
+<span class="sd">        Rules:</span>
+<span class="sd">        - param names have more than 2 parts</span>
+<span class="sd">        - the last part is a digit</span>
+<span class="sd">        - the part before last is not a digit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> \
+        <span class="nb">len</span><span class="p">(</span><span class="n">param_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> \
+        <span class="ow">and</span> <span class="n">param_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> \
+        <span class="ow">and</span> <span class="ow">not</span> <span class="n">param_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> \
+        <span class="ow">and</span> <span class="ow">not</span> <span class="n">param_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;mol&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="belongs_to_multiple_index"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.belongs_to_multiple_index">[docs]</a><span class="k">def</span> <span class="nf">belongs_to_multiple_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assert param belong to multiple index group.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    param_parts : list of str</span>
+<span class="sd">        The parameter name parts after `str.split(&quot;_&quot;)`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    boolean</span>
+<span class="sd">        True if the parameter name follows the rules of multiple index</span>
+<span class="sd">        expandable parameters.</span>
+
+<span class="sd">        Rules:</span>
+<span class="sd">        - param names have more than 4 parts</span>
+<span class="sd">        - the last part is a digit</span>
+<span class="sd">        - the part before last is a digit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> \
+        <span class="nb">len</span><span class="p">(</span><span class="n">param_parts</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span> \
+        <span class="ow">and</span> <span class="n">param_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> \
+        <span class="ow">and</span> <span class="n">param_parts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> \
+        <span class="ow">and</span> <span class="ow">not</span> <span class="n">param_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;mol&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="rejoin_parts_single_index"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.rejoin_parts_single_index">[docs]</a><span class="k">def</span> <span class="nf">rejoin_parts_single_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Join parameter name parts.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">param_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="rejoin_parts_multiple_index"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.rejoin_parts_multiple_index">[docs]</a><span class="k">def</span> <span class="nf">rejoin_parts_multiple_index</span><span class="p">(</span><span class="n">param_parts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Join parameter name parts.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">param_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="extract_single_index_params"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.extract_single_index_params">[docs]</a><span class="k">def</span> <span class="nf">extract_single_index_params</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the parameters belonging to a group.</span>
+
+<span class="sd">    Descriminates between parameters of other expandable groups.</span>
+<span class="sd">    See: `belongs_to_single_index`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; ES = extract_single_index_params</span>
+
+<span class="sd">    &gt;&gt;&gt; ES({&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;param2&quot;, &quot;ppp_ooo&quot;}, &quot;param&quot;, &quot;1&quot;)</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;}</span>
+
+<span class="sd">    &gt;&gt;&gt; ES(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;param_some_2&quot;, &quot;param_other_2&quot;},</span>
+<span class="sd">        &quot;param&quot;, &quot;2&quot;)</span>
+<span class="sd">        {&quot;param_some_2&quot;, &quot;param_other_2&quot;}</span>
+
+<span class="sd">    &gt;&gt;&gt; ES(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="sd">        &quot;param&quot;, &quot;1&quot;)</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;}</span>
+
+<span class="sd">    &gt;&gt;&gt; ES(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="sd">        &quot;par&quot;, &quot;2&quot;)</span>
+<span class="sd">        set()</span>
+
+<span class="sd">    &gt;&gt;&gt; ES(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="sd">        &quot;por&quot;, &quot;2&quot;)</span>
+<span class="sd">        set()</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_config : dict, or dict.keys(), or similar</span>
+<span class="sd">        The user configuration file - parameter keys should be parameter</span>
+<span class="sd">        names.</span>
+
+<span class="sd">    param_name : str</span>
+<span class="sd">        The parameter name of the group to select. For example: `c3sym`.</span>
+
+<span class="sd">    group_idx : str</span>
+<span class="sd">        The number of the group: &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, etc. Only that group</span>
+<span class="sd">        number will be selected.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    set of strings</span>
+<span class="sd">        A set with the selected parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">user_config</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pname</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">pidx</span> <span class="o">=</span> <span class="n">parts</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> \
+                <span class="n">pname</span> <span class="o">==</span> <span class="n">param_name</span> \
+                <span class="ow">and</span> <span class="n">pidx</span> <span class="o">==</span> <span class="n">group_idx</span> \
+                <span class="ow">and</span> <span class="n">belongs_to_single_index</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new</span></div>
+
+
+<div class="viewcode-block" id="extract_multiple_index_params"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.extract_multiple_index_params">[docs]</a><span class="k">def</span> <span class="nf">extract_multiple_index_params</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">group_idx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract the parameters belonging to a group.</span>
+
+<span class="sd">    See also: `belongs_to_multiple_index`.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; EM = extract_multiple_index_params</span>
+
+<span class="sd">    &gt;&gt;&gt; EM({&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;param2&quot;, &quot;ppp_ooo&quot;}, &quot;param&quot;, &quot;1&quot;)</span>
+<span class="sd">        set()</span>
+
+<span class="sd">    &gt;&gt;&gt; EM(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;param_some_2&quot;, &quot;param_other_2&quot;},</span>
+<span class="sd">        &quot;param&quot;, &quot;2&quot;)</span>
+<span class="sd">        set()</span>
+
+<span class="sd">    &gt;&gt;&gt; EM(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="sd">        &quot;param&quot;, &quot;1&quot;)</span>
+<span class="sd">        {&quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+
+<span class="sd">    &gt;&gt;&gt; EM(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="sd">        &quot;par&quot;, &quot;2&quot;)</span>
+<span class="sd">        set()</span>
+
+<span class="sd">    &gt;&gt;&gt; EM(</span>
+<span class="sd">        {&quot;param_some_1&quot;, &quot;param_other_1&quot;, &quot;par_some_2_2&quot;, &quot;par_other_2_2&quot;},</span>
+<span class="sd">        &quot;por&quot;, &quot;2&quot;)</span>
+<span class="sd">        set()</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_config : dict, or dict.keys(), or similar</span>
+<span class="sd">        The user configuration file - parameter keys should be parameter</span>
+<span class="sd">        names.</span>
+
+<span class="sd">    param_name : str</span>
+<span class="sd">        The parameter name of the group to select. For example: `c3sym`.</span>
+
+<span class="sd">    group_idx : str</span>
+<span class="sd">        The number of the group: &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, etc. Only that group</span>
+<span class="sd">        number will be selected.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    set of strings</span>
+<span class="sd">        A set with the selected parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">user_config</span><span class="p">:</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pname</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">molidx</span><span class="p">,</span> <span class="n">pidx</span> <span class="o">=</span> <span class="n">parts</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> \
+                <span class="n">pname</span> <span class="o">+</span> <span class="n">molidx</span> <span class="o">==</span> <span class="n">param_name</span> \
+                <span class="ow">and</span> <span class="n">pidx</span> <span class="o">==</span> <span class="n">group_idx</span> \
+                <span class="ow">and</span> <span class="n">belongs_to_multiple_index</span><span class="p">(</span><span class="n">parts</span><span class="p">):</span>
+            <span class="n">new</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new</span></div>
+
+
+<span class="c1"># define public API by functionalizing the engines with the specific</span>
+<span class="c1"># functions. The docstring below is the docstring of the function.</span>
+<span class="n">get_single_index_groups</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">_get_groups</span><span class="p">,</span>
+    <span class="n">belongs_to_group</span><span class="o">=</span><span class="n">belongs_to_single_index</span><span class="p">,</span>
+    <span class="n">make_param_name</span><span class="o">=</span><span class="n">make_param_name_single_index</span><span class="p">,</span>
+    <span class="n">rejoin_parts</span><span class="o">=</span><span class="n">rejoin_parts_single_index</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get single indexed blocks from a configuration.</span>
+
+<span class="sd">Block parameters follow the rule &lt;preffix&gt;_&lt;something&gt;_&lt;group&gt;.</span>
+
+<span class="sd">These belong to the same parameter (`param`) of the group `1`:</span>
+
+<span class="sd">- param_something1_1</span>
+<span class="sd">- param_something2_1</span>
+<span class="sd">- param_something_else_1</span>
+<span class="sd">- param_something4_1</span>
+
+<span class="sd">You could expand these with:</span>
+
+<span class="sd">- param_something1_2</span>
+<span class="sd">- param_something2_2</span>
+<span class="sd">- param_something_else_2</span>
+<span class="sd">- param_something4_2</span>
+
+<span class="sd">When used to read the modules&#39; default configuration we expect the</span>
+<span class="sd">&lt;group&gt; to be only &quot;_1&quot;. But having &lt;group&gt; allows to identify</span>
+<span class="sd">blocks from the user configuration. See `reference` parameter.</span>
+
+<span class="sd">When we execute this function, we want to know:</span>
+
+<span class="sd">- param, the parameter name preffix</span>
+<span class="sd">- how many parameters exist of the block (`something1`, `something2`, ...)</span>
+<span class="sd">- _1, defines the number of the block</span>
+
+<span class="sd">Returns a dictionary in the form of::</span>
+
+<span class="sd">    {</span>
+<span class="sd">        (&quot;param&quot;, &quot;1&quot;): {</span>
+<span class="sd">            &quot;something1&quot;, &quot;something2&quot;,</span>
+<span class="sd">            &quot;something_else&quot;, &quot;something4&quot;</span>
+<span class="sd">            },</span>
+<span class="sd">        (&quot;otherparam&quot;, &quot;1&quot;): {&quot;somename&quot;, &quot;othername&quot;},</span>
+<span class="sd">        }</span>
+
+<span class="sd">Parameters</span>
+<span class="sd">----------</span>
+<span class="sd">config : dictionary</span>
+<span class="sd">    Where keys are the parameter names. The values are not important.</span>
+
+<span class="sd">minimum : int</span>
+<span class="sd">    Consider only the groups with at least `minimum` parameters.</span>
+
+<span class="sd">reference : bool</span>
+<span class="sd">    Whether reading a default config file or not. If true, only</span>
+<span class="sd">    groups ending with &quot;1&quot; will be considered. This avoids capturing</span>
+<span class="sd">    parameters for molecules, such as &quot;mol_fix_origin_1&quot;,</span>
+<span class="sd">    &quot;mol_fix_origin_2&quot;, etc.</span>
+
+<span class="sd">Returns</span>
+<span class="sd">-------</span>
+<span class="sd">dictionary - {tuple: dict}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">get_multiple_index_groups</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">_get_groups</span><span class="p">,</span>
+    <span class="n">belongs_to_group</span><span class="o">=</span><span class="n">belongs_to_multiple_index</span><span class="p">,</span>
+    <span class="n">make_param_name</span><span class="o">=</span><span class="n">make_param_name_multiple_index</span><span class="p">,</span>
+    <span class="n">rejoin_parts</span><span class="o">=</span><span class="n">rejoin_parts_multiple_index</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Get parameter blocks with multiple indexes.</span>
+
+<span class="sd">These blocks of params apply, for example, to different molecules.</span>
+<span class="sd">That&#39;s why they have two looping indexes: one for the molecule and</span>
+<span class="sd">other for the group.</span>
+
+<span class="sd">This block of parameters follow the rule:</span>
+
+<span class="sd">&lt;param&gt;_&lt;something&gt;_&lt;N&gt;_&lt;G&gt;</span>
+
+<span class="sd">Where the actual param name is `paramN`, where `N` is an integer.</span>
+
+<span class="sd">&lt;something&gt; be can any combination of alphanumeric chars and</span>
+<span class="sd">underscores.</span>
+
+<span class="sd">&lt;G&gt; is the number of the group, the will be incremented as we</span>
+<span class="sd">expand.</span>
+
+<span class="sd">These belong to the same parameter (`param1`) of the group `1`:</span>
+
+<span class="sd">- param_something_1_1</span>
+<span class="sd">- param_something2_1_1</span>
+<span class="sd">- param_something_else_1_1</span>
+<span class="sd">- param_something4_1</span>
+
+<span class="sd">You could expand these with:</span>
+
+<span class="sd">- param_something_1_2</span>
+<span class="sd">- param_something2_1_2</span>
+<span class="sd">- param_something_else_1_2</span>
+<span class="sd">- param_something4_2</span>
+
+<span class="sd">When used to read the modules&#39; default configuration we expect the</span>
+<span class="sd">&lt;digit&gt; to be only &quot;_1&quot;. But having &lt;digit&gt; allows to identify</span>
+<span class="sd">blocks from the user configuration.</span>
+
+<span class="sd">Returns a dictionary in the form of::</span>
+
+<span class="sd">    {(&quot;param1&quot;, &quot;1&quot;): {</span>
+<span class="sd">        &quot;something1&quot;, &quot;something2&quot;, &quot;something_else&quot;, &quot;something4&quot;}</span>
+
+<span class="sd">Parameters</span>
+<span class="sd">----------</span>
+<span class="sd">config : dict</span>
+<span class="sd">    Where keys are the parameter names. The values are not important.</span>
+
+<span class="sd">minimum : int</span>
+<span class="sd">    Consider only the groups with at least `minimum` parameters.</span>
+
+<span class="sd">reference : bool</span>
+<span class="sd">    Whether reading a default config file or not. If true, only</span>
+<span class="sd">    groups ending with &quot;1&quot; will be considered. This avoids capturing</span>
+<span class="sd">    parameters for molecules, such as &quot;mol_fix_origin_1&quot;,</span>
+<span class="sd">    &quot;mol_fix_origin_2&quot;, etc.</span>
+
+<span class="sd">Returns</span>
+<span class="sd">-------</span>
+<span class="sd">dictionary : {(tuple): dict}</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">read_single_idx_groups_user_config</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">_read_groups_in_user_config</span><span class="p">,</span>
+    <span class="n">get_user_groups</span><span class="o">=</span><span class="n">get_single_index_groups</span><span class="p">,</span>
+    <span class="n">extract_params</span><span class="o">=</span><span class="n">extract_single_index_params</span><span class="p">,</span>
+    <span class="n">_emsg_no_group</span><span class="o">=</span><span class="n">_emsg_no_group_single</span><span class="p">,</span>
+    <span class="n">_emsg_unexpected_params</span><span class="o">=</span><span class="n">_emsg_unexpected_params_single</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Read single indexed groups in user config.</span>
+
+<span class="sd">Parameters</span>
+<span class="sd">----------</span>
+<span class="sd">user_config : dict</span>
+<span class="sd">    The user configuration dictionary.</span>
+
+<span class="sd">default_groups : dict</span>
+<span class="sd">    The groups present in the default configuration file for the</span>
+<span class="sd">    specific module. This is the dictionary created by,</span>
+<span class="sd">    `get_single_index_groups`.</span>
+
+<span class="sd">Returns</span>
+<span class="sd">-------</span>
+<span class="sd">set</span>
+<span class="sd">    A set with the new parameters in the user configuration file</span>
+<span class="sd">    that are acceptable according to the expandable rules.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">read_multiple_idx_groups_user_config</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">_read_groups_in_user_config</span><span class="p">,</span>
+    <span class="n">get_user_groups</span><span class="o">=</span><span class="n">get_multiple_index_groups</span><span class="p">,</span>
+    <span class="n">extract_params</span><span class="o">=</span><span class="n">extract_multiple_index_params</span><span class="p">,</span>
+    <span class="n">_emsg_no_group</span><span class="o">=</span><span class="n">_emsg_no_group_multiple</span><span class="p">,</span>
+    <span class="n">_emsg_unexpected_params</span><span class="o">=</span><span class="n">_emsg_unexpected_params_multiple</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Read multiple indexed groups in user config.</span>
+
+<span class="sd">Parameters</span>
+<span class="sd">----------</span>
+<span class="sd">user_config : dict</span>
+<span class="sd">    The user configuration dictionary.</span>
+
+<span class="sd">default_groups : dict</span>
+<span class="sd">    The groups present in the default configuration file for the</span>
+<span class="sd">    specific module. This is the dictionary created by</span>
+<span class="sd">    `get_multiple_index_groups`.</span>
+
+<span class="sd">Returns</span>
+<span class="sd">-------</span>
+<span class="sd">set</span>
+<span class="sd">    A set with the new parameters in the user configuration file</span>
+<span class="sd">    that are acceptable according to the expandable rules.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="populate_mol_parameters_in_module"><a class="viewcode-back" href="../../../reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.populate_mol_parameters_in_module">[docs]</a><span class="k">def</span> <span class="nf">populate_mol_parameters_in_module</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">num_mols</span><span class="p">,</span> <span class="n">defaults</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Populate parameters dictionary with the needed molecule `mol_` parameters.</span>
+
+<span class="sd">    The `mol_` prefixed parameters is a subclass of the expandable parameters.</span>
+
+<span class="sd">    See :py:module:`haddock.gear.expandable_parameters`.</span>
+
+<span class="sd">    Modules require these parameters to be repeated for the number of input</span>
+<span class="sd">    molecules.</span>
+
+<span class="sd">    This function adds `mol_` parameters to the user input parameters,</span>
+<span class="sd">    one per each `molecule` and for those which a values has not been</span>
+<span class="sd">    added yet.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    modules_params : dict</span>
+<span class="sd">        A dictionary of parameters.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        Alter the dictionary in place.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># filter to get only the `mol_` parameters that are defaults</span>
+    <span class="c1"># the get_trail_index is needed because defaults only have the &#39;1&#39;</span>
+    <span class="c1"># suffixed parameters.</span>
+    <span class="n">mol_params</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">p</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">is_mol_parameter</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="n">get_trail_index</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;1&#39;</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">it</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">mol_params</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_mols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
+        <span class="n">param_name</span> <span class="o">=</span> <span class="n">remove_trail_idx</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="n">params</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">defaults</span><span class="p">[</span><span class="n">param</span><span class="p">])</span>
+
+    <span class="k">return</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Jun 12, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

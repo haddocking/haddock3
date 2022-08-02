@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copy steps to new run &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Clean output Client" href="cliclean.html" />
+    <link rel="prev" title="PDB preprocessing client" href="clipp.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Command-line interfaces</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="clihd3.html">Run HADDOCK3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clipp.html">PDB preprocessing client</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Copy steps to new run</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cliclean.html">Clean output Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="climpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clibm.html">Benchmark Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clidmn.html">Benchmark Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Command-line interfaces</a> &raquo;</li>
+      <li>Copy steps to new run</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/clients/clicp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="copy-steps-to-new-run">
+<h1>Copy steps to new run<a class="headerlink" href="#copy-steps-to-new-run" title="Permalink to this headline"></a></h1>
+<p><p>Copy steps to a new run.</p>
+<p>In HADDOCK3 you can copy successful steps from a run directory to a new
+directory and use them as starting points for a new run.</p>
+<p>Considering the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run1</span><span class="o">/</span>
+    <span class="mi">0</span><span class="n">_topoaa</span><span class="o">/</span>
+    <span class="mi">1</span><span class="n">_rigidbody</span><span class="o">/</span>
+    <span class="mi">2</span><span class="n">_caprieval</span><span class="o">/</span>
+    <span class="mi">3</span><span class="n">_seletop</span><span class="o">/</span>
+    <span class="mi">4</span><span class="n">_flexref</span><span class="o">/</span>
+    <span class="p">(</span><span class="n">etc</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can use <cite>4_flexref</cite> step folder as a starting point for a new run.</p>
+<p>USAGE:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span><span class="o">-</span><span class="n">copy</span> <span class="o">-</span><span class="n">r</span> <span class="o">&lt;</span><span class="n">run_dir</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">m</span> <span class="o">&lt;</span><span class="n">num_modules</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">new_run_dir</span><span class="o">&gt;</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">copy</span> <span class="o">-</span><span class="n">r</span> <span class="n">run1</span> <span class="o">-</span><span class="n">m</span> <span class="mi">0</span> <span class="mi">4</span> <span class="o">-</span><span class="n">o</span> <span class="n">run2</span>
+</pre></div>
+</div>
+<p>Where, <code class="docutils literal notranslate"><span class="pre">-m</span> <span class="pre">0</span> <span class="pre">4</span></code> will copy <code class="docutils literal notranslate"><span class="pre">0_topoaa</span></code> and <code class="docutils literal notranslate"><span class="pre">4_flexref</span></code> to &lt;new_run_dir&gt;.</p>
+<p><strong>Note:</strong> If the new run uses CNS-dependent modules, you <strong>also need</strong>
+to copy the folder corresponding to the initial topology creation (the
+<cite>topoaa</cite> module).</p>
+<p><cite>haddock3-copy</cite> will also copy the corresponding files in the <cite>data</cite>
+directory and update the file contents in the copied folder such that
+the information on the run directory and the new step folder names match.
+The output result of the above commands is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run2</span><span class="o">/</span>
+    <span class="mi">0</span><span class="n">_topoaa</span><span class="o">/</span>
+    <span class="mi">1</span><span class="n">_flexref</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Following, you can use the <cite>haddock3</cite> command with the <cite>–extend-run</cite>
+option to continue a new run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">new</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">cfg</span> <span class="o">--</span><span class="n">extend</span><span class="o">-</span><span class="n">run</span> <span class="n">run2</span>
+</pre></div>
+</div>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">cp</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">r</span> <span class="n">RUN_DIR</span> <span class="o">-</span><span class="n">m</span> <span class="n">MODULES</span> <span class="p">[</span><span class="n">MODULES</span> <span class="o">...</span><span class="p">]</span> <span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="Named Arguments">
+<h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline"></a></h2>
+<dl class="option-list">
+<dt><kbd>-r, --run-dir</kbd></dt>
+<dd><p>The input run directory.</p>
+</dd>
+<dt><kbd>-m, --modules</kbd></dt>
+<dd><p>The number of the steps to copy.</p>
+</dd>
+<dt><kbd>-o, --output</kbd></dt>
+<dd><p>The new run directory.</p>
+</dd>
+<dt><kbd>-v, --version</kbd></dt>
+<dd><p>show version</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clipp.html" class="btn btn-neutral float-left" title="PDB preprocessing client" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cliclean.html" class="btn btn-neutral float-right" title="Clean output Client" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

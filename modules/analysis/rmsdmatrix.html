@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RMSD matrix calculation module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Select Top Models module" href="seletop.html" />
+    <link rel="prev" title="RMSD clustering module" href="clustrmsd.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Analysis Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="caprieval.html">CAPRI evaluation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustfcc.html">Cluster FCC Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustrmsd.html">RMSD clustering module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">RMSD matrix calculation module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#default-parameters">Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="seletop.html">Select Top Models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="seletopclusts.html">Select Top Clusters module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../extras/index.html">Extra modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Modules</a> &raquo;</li>
+          <li><a href="index.html">Analysis Modules</a> &raquo;</li>
+      <li>RMSD matrix calculation module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/analysis/rmsdmatrix.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.modules.analysis.rmsdmatrix">
+<span id="rmsd-matrix-calculation-module"></span><h1>RMSD matrix calculation module<a class="headerlink" href="#module-haddock.modules.analysis.rmsdmatrix" title="Permalink to this headline"></a></h1>
+<p>RMSD matrix module.</p>
+<p>This module calculates of the RMSD matrix between all the models
+generated in the previous step.</p>
+<p>As all the pairwise RMSD calculations are independent, the module distributes
+them over all the available cores in an optimal way.</p>
+<p>Once created, the RMSD matrix is saved in text form in the current <cite>rmsdmatrix</cite>
+folder. The path to this file is then shared with the following step of the
+workflow by means of the json file <cite>rmsd_matrix.json</cite>.</p>
+<p>The module accepts two parameters in input, namely:</p>
+<ul class="simple">
+<li><p><cite>max_models</cite> (default = 10000)</p></li>
+<li><p><cite>resdic_</cite> : an expandable parameter to specify which residues must be
+considered for the alignment and the RMSD calculation. If there are
+two proteins denoted by chain IDs A and B, then the user can operate
+such selection in the following way inside the configuration file</p></li>
+</ul>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">resdic_A</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resdic_B</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>thus telling the module to consider residues from 1 to 4 of chain A and from 2
+to 4 of chain B for the alignment and RMSD calculation.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.rmsdmatrix.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/joao/github/haddock3/src/haddock/modules/analysis/rmsdmatrix/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/rmsdmatrix.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">haddock.modules.BaseHaddockModule</span></code></a></p>
+<p>HADDOCK3 module for clustering with RMSD.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.add_parent_to_paths">
+<span class="sig-name descname"><span class="pre">add_parent_to_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.add_parent_to_paths" title="Permalink to this definition"></a></dt>
+<dd><p>Add parent path to paths.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.clean_output">
+<span class="sig-name descname"><span class="pre">clean_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.clean_output" title="Permalink to this definition"></a></dt>
+<dd><p>Clean module output folder.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../../reference/gear/clean_steps.html#haddock.gear.clean_steps.clean_output" title="haddock.gear.clean_steps.clean_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.clean_steps.clean_output()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.confirm_installation">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/rmsdmatrix.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<dd><p>Confirm if contact executable is compiled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.export_output_models">
+<span class="sig-name descname"><span class="pre">export_output_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.export_output_models" title="Permalink to this definition"></a></dt>
+<dd><p>Export output to the ModuleIO interface.</p>
+<p>Modules that generate PDBs that other models should take as input,
+should export those PDBs registries through the ModuleIO interface.</p>
+<p>This function implements a common interface for all modules requiring
+this feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>faulty_tolerance</strong> (<em>int, default 0</em>) – The percentage of missing output allowed. If 20 is given,
+raises an error if 20% of the expected output is missing (not
+saved to disk).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.finish_with_error">
+<span class="sig-name descname"><span class="pre">finish_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Module</span> <span class="pre">has</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.finish_with_error" title="Permalink to this definition"></a></dt>
+<dd><p>Finish with error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.log" title="Permalink to this definition"></a></dt>
+<dd><p>Log a message with a common header.</p>
+<p>Currently the header is the [MODULE NAME] in square brackets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<em>str</em>) – The log message.</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – The level log: ‘debug’, ‘info’, …
+Defaults to ‘info’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.params">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.params" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.previous_path">
+<span class="sig-name descname"><span class="pre">previous_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.previous_path" title="Permalink to this definition"></a></dt>
+<dd><p>Give the path from the previous calculation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.reset_params">
+<span class="sig-name descname"><span class="pre">reset_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.reset_params" title="Permalink to this definition"></a></dt>
+<dd><p>Reset parameters to the ones used to instantiate the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.save_config" title="Permalink to this definition"></a></dt>
+<dd><p>Save current parameters to a HADDOCK3 config file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.rmsdmatrix.HaddockModule.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/rmsdmatrix.html#HaddockModule.update_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.rmsdmatrix.HaddockModule.update_params" title="Permalink to this definition"></a></dt>
+<dd><p>Update parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="default-parameters">
+<h2>Default parameters<a class="headerlink" href="#default-parameters" title="Permalink to this headline"></a></h2>
+<section id="easy">
+<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this headline"></a></h3>
+<section id="max-models">
+<h4>max_models<a class="headerlink" href="#max-models" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 10000</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Maximum number of models to calculate RMSD matrix</div>
+<div class="line"><em>short description</em>: If the number of models exceeds max_models the execution is blocked</div>
+<div class="line"><em>long description</em>: If the number of models exceeds the few thousands, the calculation of the RMSD matrix is computationally demanding, especially in terms of CPU and disk space.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="resdic">
+<h4><a class="reference internal" href="#resdic">resdic</a><a class="headerlink" href="#resdic" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: []</div>
+<div class="line"><em>type</em>: list</div>
+<div class="line"><em>title</em>: List of residues</div>
+<div class="line"><em>short description</em>: The residue numbers that should be used in the alignment and in the RMSD calculation.</div>
+<div class="line"><em>long description</em>: resdic_* is an expandable parameter. You can provide resdic_A, resdic_B, resdic_C, etc, where the last capital letter is the chain identifier.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clustrmsd.html" class="btn btn-neutral float-left" title="RMSD clustering module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="seletop.html" class="btn btn-neutral float-right" title="Select Top Models module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

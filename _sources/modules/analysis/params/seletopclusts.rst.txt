@@ -1,0 +1,27 @@
+
+
+Easy
+````
+
+top_cluster
+~~~~~~~~~~~
+
+| *default*: []
+| *type*: list
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: 
+| *explevel*: easy
+
+top_models
+~~~~~~~~~~
+
+| *default*: nan
+| *type*: float
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: 
+| *explevel*: easy
+

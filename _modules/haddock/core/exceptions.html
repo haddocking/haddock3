@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.core.exceptions &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>haddock.core.exceptions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.core.exceptions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;HADDOCK library custom errors.&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="HaddockError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.HaddockError">[docs]</a><span class="k">class</span> <span class="nc">HaddockError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error in HADDOCK3.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ConfigurationError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.ConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">ConfigurationError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error in the configuration file.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ModuleError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.ModuleError">[docs]</a><span class="k">class</span> <span class="nc">ModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 module.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="StepError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.StepError">[docs]</a><span class="k">class</span> <span class="nc">StepError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 workflow step.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="JobRunningError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.JobRunningError">[docs]</a><span class="k">class</span> <span class="nc">JobRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;General job running error.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="CNSRunningError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.CNSRunningError">[docs]</a><span class="k">class</span> <span class="nc">CNSRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CNS run error.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="HaddockModuleError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.HaddockModuleError">[docs]</a><span class="k">class</span> <span class="nc">HaddockModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;General error in a HADDOCK3 module.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SetupError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.SetupError">[docs]</a><span class="k">class</span> <span class="nc">SetupError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Set up error.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="HaddockTermination"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.HaddockTermination">[docs]</a><span class="k">class</span> <span class="nc">HaddockTermination</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Terminates HADDOCK.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Jul 25, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

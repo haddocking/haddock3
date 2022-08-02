@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>libparallel: multiprocessing helping functions &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="libpdb: PDB helping functions" href="libpdb.html" />
+    <link rel="prev" title="libontology: module communication" href="libontology.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../core/index.html">Core Reference</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Libs Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="libalign.html">libalign: sequence and structural alignments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libcli.html">libcli: functions helping clients</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libcns.html">libcns: creating CNS files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libfunc.html">libfunc: functional-programming helping tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libhpc.html">libhpc: HPC execution functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libio.html">libio: I/O helping functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="liblog.html">liblob: Logging helping functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libmath.html">libmath: Math helping functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libmpi.html">libmpi: MPI execution functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libontology.html">libontology: module communication</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">libparallel: multiprocessing helping functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libpdb.html">libpdb: PDB helping functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libstructure.html">libstructure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libsubprocess.html">libsubprocess</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libutil.html">libutil</a></li>
+<li class="toctree-l3"><a class="reference internal" href="libworkflow.html">libworkflow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../gear/index.html">Gear Reference</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Library Reference</a> &raquo;</li>
+          <li><a href="index.html">Libs Reference</a> &raquo;</li>
+      <li>libparallel: multiprocessing helping functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/libs/libparallel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.libs.libparallel">
+<span id="libparallel-multiprocessing-helping-functions"></span><h1>libparallel: multiprocessing helping functions<a class="headerlink" href="#module-haddock.libs.libparallel" title="Permalink to this headline"></a></h1>
+<p>Module in charge of parallelizing the execution of tasks.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libparallel.</span></span><span class="sig-name descname"><span class="pre">Scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Scheduler" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Schedules tasks to run in multiprocessing.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler.num_processes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_processes</span></span><a class="headerlink" href="#haddock.libs.libparallel.Scheduler.num_processes" title="Permalink to this definition"></a></dt>
+<dd><p>Number of processors to use.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Scheduler.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Scheduler.run" title="Permalink to this definition"></a></dt>
+<dd><p>Run tasks in parallel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler.terminate">
+<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Scheduler.terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Scheduler.terminate" title="Permalink to this definition"></a></dt>
+<dd><p>Terminate tasks in a controlled way.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libparallel.</span></span><span class="sig-name descname"><span class="pre">Worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Worker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">multiprocessing.context.Process</span></code></p>
+<p>Work on tasks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.close" title="Permalink to this definition"></a></dt>
+<dd><p>Close the Process object.</p>
+<p>This method releases resources held by the Process object.  It is
+an error to call this method if the child process is still running.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.daemon">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">daemon</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.daemon" title="Permalink to this definition"></a></dt>
+<dd><p>Return whether process is a daemon</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.exitcode">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exitcode</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.exitcode" title="Permalink to this definition"></a></dt>
+<dd><p>Return exit code of process or <cite>None</cite> if it has yet to stop</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.ident">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ident</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.ident" title="Permalink to this definition"></a></dt>
+<dd><p>Return identifier (PID) of process or <cite>None</cite> if it has yet to start</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.is_alive">
+<span class="sig-name descname"><span class="pre">is_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.is_alive" title="Permalink to this definition"></a></dt>
+<dd><p>Return whether process is alive</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.join" title="Permalink to this definition"></a></dt>
+<dd><p>Wait until child process terminates</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.kill">
+<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.kill" title="Permalink to this definition"></a></dt>
+<dd><p>Terminate process; sends SIGKILL signal or uses TerminateProcess()</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.pid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pid</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.pid" title="Permalink to this definition"></a></dt>
+<dd><p>Return identifier (PID) of process or <cite>None</cite> if it has yet to start</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Worker.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Worker.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute tasks.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.sentinel">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sentinel</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.sentinel" title="Permalink to this definition"></a></dt>
+<dd><p>Return a file descriptor (Unix) or handle (Windows) suitable for
+waiting for process termination.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.start" title="Permalink to this definition"></a></dt>
+<dd><p>Start child process</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.terminate">
+<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.terminate" title="Permalink to this definition"></a></dt>
+<dd><p>Terminate process; sends SIGTERM signal or uses TerminateProcess()</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libparallel.split_tasks">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libparallel.</span></span><span class="sig-name descname"><span class="pre">split_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#split_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.split_tasks" title="Permalink to this definition"></a></dt>
+<dd><p>Split tasks into N-sized chunks.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="libontology.html" class="btn btn-neutral float-left" title="libontology: module communication" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="libpdb.html" class="btn btn-neutral float-right" title="libpdb: PDB helping functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

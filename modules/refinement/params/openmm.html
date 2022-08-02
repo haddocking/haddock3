@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easy &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Easy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/modules/refinement/params/openmm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="easy">
+<h1>Easy<a class="headerlink" href="#easy" title="Permalink to this headline"></a></h1>
+<section id="add-extra-particles-for-forcefield">
+<h2>add_extra_particles_for_forcefield<a class="headerlink" href="#add-extra-particles-for-forcefield" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Add extra particles for forcefield.</div>
+<div class="line"><em>short description</em>: Add extra particles for forcefield if needed such as e.g. Drude particles.</div>
+<div class="line"><em>long description</em>: Add extra particles for forcefield if needed such as e.g. Drude particles.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="constraints">
+<h2>constraints<a class="headerlink" href="#constraints" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘HBonds’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Integration constraints.</div>
+<div class="line"><em>short description</em>: Integration constraints used to allow for larger integration time step.</div>
+<div class="line"><em>long description</em>: Integration constraints used to allow for larger integration time step. For extra info see <a class="reference external" href="http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints">http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints</a></div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="contains-xray-crystallography-cell-data-solvationbox-padding-nm">
+<h2>contains_xray_crystallography_cell_data_solvationbox_padding_nm<a class="headerlink" href="#contains-xray-crystallography-cell-data-solvationbox-padding-nm" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Contains xray crystallography cell data solvationbox padding nm.</div>
+<div class="line"><em>short description</em>: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm.</div>
+<div class="line"><em>long description</em>: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm. If the molecules contained inside xray crystallography cell are close to the cell edge, with periodic boundary conditions the atoms of the one side of the molecule will interact with the other side of itself.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="equilibration-timesteps">
+<h2>equilibration_timesteps<a class="headerlink" href="#equilibration-timesteps" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1000</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Equilibration timesteps.</div>
+<div class="line"><em>short description</em>: Equilibration timesteps performed without saving the simulation state.</div>
+<div class="line"><em>long description</em>: Equilibration timesteps performed without saving the simulation state.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="explicit-solvent-model-fname">
+<h2>explicit_solvent_model_fname<a class="headerlink" href="#explicit-solvent-model-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘amber14/tip3p.xml’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Explicit solvent models.</div>
+<div class="line"><em>short description</em>: Solvent models supported by the OpenMM modeller to build the water solvation box.</div>
+<div class="line"><em>long description</em>: Solvent models supported by the OpenMM modeller to build the water solvation box.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="forcefield-fname">
+<h2>forcefield_fname<a class="headerlink" href="#forcefield-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘amber14-all.xml’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Used forcefield by OpenMM.</div>
+<div class="line"><em>short description</em>: Forcefields that can be used by OpenMM.</div>
+<div class="line"><em>long description</em>: Forcefields that can be used by OpenMM.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="implicit-solvent">
+<h2>implicit_solvent<a class="headerlink" href="#implicit-solvent" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Indicate use of implicit solvent.</div>
+<div class="line"><em>short description</em>: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.</div>
+<div class="line"><em>long description</em>: Indicate use of implicit solvent, avoids building a water solvation box around pdbs.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="implicit-solvent-model-fname">
+<h2>implicit_solvent_model_fname<a class="headerlink" href="#implicit-solvent-model-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘implicit/hct.xml’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Implicit solvent models.</div>
+<div class="line"><em>short description</em>: Implicit solvent models supported by OpenMM.</div>
+<div class="line"><em>long description</em>: Implicit solvent models supported by OpenMM.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="move-atoms-to-solvationbox-center">
+<h2>move_atoms_to_solvationbox_center<a class="headerlink" href="#move-atoms-to-solvationbox-center" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Move atoms to solvationbox center.</div>
+<div class="line"><em>short description</em>: Move atoms to solvationbox center, the pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.</div>
+<div class="line"><em>long description</em>: Move atoms to solvationbox center, the pdb is placed around the origin, and water molecules of the solvation box are build up from the origin. Not centering the atoms shouldn’t be a problem if periodic boundary conditions are deployed, but employing it also prevents the molecule from jumping around the boundary while visually inspecting the simulation in e.g. PyMOL.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="remove-center-of-mass-motion">
+<h2>remove_center_of_mass_motion<a class="headerlink" href="#remove-center-of-mass-motion" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Remove center of mass motion.</div>
+<div class="line"><em>short description</em>: Remove center of mass motion when overall molecular drift is detected.</div>
+<div class="line"><em>long description</em>: Remove center of mass motion when overall molecular drift is detected.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="rigid-water">
+<h2>rigid_water<a class="headerlink" href="#rigid-water" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Use rigid water.</div>
+<div class="line"><em>short description</em>: Use of rigid water in the simulation.</div>
+<div class="line"><em>long description</em>: Use of rigid water in the simulation. Flexible water molecules usually require a slower taken timestep by the used integrator.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="save-intermediate-simulation-structures">
+<h2>save_intermediate_simulation_structures<a class="headerlink" href="#save-intermediate-simulation-structures" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Save intermediate simulation structures.</div>
+<div class="line"><em>short description</em>: Save intermediate simulation structures of the simulation.</div>
+<div class="line"><em>long description</em>: Save intermediate simulation structures of the simulation. Each structure is saved after the number of timesteps specified by the save_intermediate_simulation_structures_after_number_of_timesteps parameter.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="save-intermediate-simulation-structures-after-number-of-timesteps">
+<h2>save_intermediate_simulation_structures_after_number_of_timesteps<a class="headerlink" href="#save-intermediate-simulation-structures-after-number-of-timesteps" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 100</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Save intermediate simulation structures after number of timesteps.</div>
+<div class="line"><em>short description</em>: Save intermediate simulation structures after number of timesteps. Each structure is saved after the number of timesteps if the save_intermediate_simulation_structures parameter is true.</div>
+<div class="line"><em>long description</em>: Save intermediate simulation structures after number of timesteps. Each structure is saved after the number of timesteps if the save_intermediate_simulation_structures parameter is true.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="simulation-timesteps">
+<h2>simulation_timesteps<a class="headerlink" href="#simulation-timesteps" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1000</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Simulation timesteps.</div>
+<div class="line"><em>short description</em>: Simulation timesteps performed during the simulation.</div>
+<div class="line"><em>long description</em>: Simulation timesteps performed during the simulation.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="solvent-boxsize-nm">
+<h2>solvent_boxsize_nm<a class="headerlink" href="#solvent-boxsize-nm" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 10</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Solvent boxsize in nm.</div>
+<div class="line"><em>short description</em>: Solvent boxsize in nm used to build the water solvationbox around the molecule.</div>
+<div class="line"><em>long description</em>: Solvent boxsize in nm used to build the water solvationbox around the molecule. Value is used when the crystallographic cell size is removed in the pipeline.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="temperature-kelvin">
+<h2>temperature_kelvin<a class="headerlink" href="#temperature-kelvin" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 300</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Average temperature.</div>
+<div class="line"><em>short description</em>: Average temperature used by e.g. the integrator or by for temperature coupling.</div>
+<div class="line"><em>long description</em>: Average temperature used by e.g. the integrator or by for temperature coupling.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="timestep-ps">
+<h2>timestep_ps<a class="headerlink" href="#timestep-ps" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.004</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Timestep definition.</div>
+<div class="line"><em>short description</em>: Definition of timestep used by the integrator to progress the simulation.</div>
+<div class="line"><em>long description</em>: Definition of timestep used by the integrator to progress the simulation.</div>
+<div class="line"><em>group</em>:</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+
+
+Easy
+````
+
+contact_distance_cutoff
+~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 5.0
+| *type*: float
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: 
+| *explevel*: easy
+
+executable
+~~~~~~~~~~
+
+| *default*: 'src/contact_fcc'
+| *type*: file
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: 
+| *explevel*: easy
+
+fraction_cutoff
+~~~~~~~~~~~~~~~
+
+| *default*: 0.6
+| *type*: float
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: 
+| *explevel*: easy
+
+strictness
+~~~~~~~~~~
+
+| *default*: 0.75
+| *type*: float
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: 
+| *explevel*: easy
+
+threshold
+~~~~~~~~~
+
+| *default*: 4
+| *type*: integer
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: 
+| *explevel*: easy
+

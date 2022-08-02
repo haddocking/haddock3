@@ -1,0 +1,170 @@
+
+
+Easy
+````
+
+alignment_method
+~~~~~~~~~~~~~~~~
+
+| *default*: 'sequence'
+| *type*: string
+| *title*: Alignment method used to match the numbering.
+| *short description*: Which alignment method should be used to match the numbering.
+| *long description*: Alignment method used to match the numbering. Sequence alignment is haddock3-friendly but might not produce best results for structures that are too different, for that use
+| *group*: analysis
+| *explevel*: easy
+
+clt_threshold
+~~~~~~~~~~~~~
+
+| *default*: 4
+| *type*: integer
+| *title*: Threshold (n) used for the average evaluation in the cluster-based output
+| *short description*: Threshold (n) used for the average evaluation in the cluster-based output.
+| *long description*: Threshold (n) used for the average evaluation in the cluster-based output.
+| *group*: analysis
+| *explevel*: easy
+
+dockq
+~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Calculate DockQ
+| *short description*: Evaluate DockQ.
+| *long description*: Evaluate DockQ. A single continuous quality measure for protein docked models based on the CAPRI criteria, a combination of i-RMSD, l-RMSD and FNAT value. For details check the DockQ publication `DOI:10.1371/journal.pone.0161879`
+| *group*: analysis
+| *explevel*: easy
+
+fnat
+~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Calculate FNAT
+| *short description*: Performs FNAT calculations.
+| *long description*: Calculates the Fraction of Native Contacts. This evaluates how many contacts observed in the reference are present in the model. The distance cutoff used to define intermolecular contacts is defined by the fnat_cutoff parameter.
+| *group*: analysis
+| *explevel*: easy
+
+fnat_cutoff
+~~~~~~~~~~~
+
+| *default*: 5.0
+| *type*: float
+| *title*: Distance cutoff (Å) used to define interface contacts.
+| *short description*: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+| *long description*: Distance cutoff (Å) used to define interface contacts between two interacting molecules.
+| *group*: analysis
+| *explevel*: easy
+
+ilrmsd
+~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Calculate I-L-RMSD
+| *short description*: Performs Interface Ligand RMSD calculations.
+| *long description*: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms of the ligand (defined by the ligand_chain parameter).
+| *group*: analysis
+| *explevel*: easy
+
+irmsd
+~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Calculate I-RMSD
+| *short description*: Performs Interface RMSD calculations.
+| *long description*: Calculates the Interface Root Mean Square Deviation. This calculate the RMSD of interface backbone atoms after fitting on the interface backbone atoms. The interface is idenfied based on intermolecular contacts shorter than the defined irmsd_cutoff.
+| *group*: analysis
+| *explevel*: easy
+
+irmsd_cutoff
+~~~~~~~~~~~~
+
+| *default*: 10.0
+| *type*: float
+| *title*: Distance cutoff (Å) used to define interface residues.
+| *short description*: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.
+| *long description*: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.
+| *group*: analysis
+| *explevel*: easy
+
+ligand_chain
+~~~~~~~~~~~~
+
+| *default*: 'B'
+| *type*: string
+| *title*: Ligand ChainID
+| *short description*: Ligand ChainID to be considered for the RMSD calculations.
+| *long description*: Ligand ChainID to be considered for the RMSD calculations. This determines which chain will be treated as the ligand for the L-RMSD and for I-L-RMSD.
+| *group*: analysis
+| *explevel*: easy
+
+lovoalign_exec
+~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Location (path) of the LovoAlign executable
+| *short description*: Location (path) of the LovoAlign executable.
+| *long description*: Location (path) of the LovoAlign executable.
+| *group*: analysis
+| *explevel*: easy
+
+lrmsd
+~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Calculate L-RMSD
+| *short description*: Performs Ligand RMSD calculations.
+| *long description*: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chain parameter). Superposition and RMSD calculations are done on backbone heavy atoms.
+| *group*: analysis
+| *explevel*: easy
+
+receptor_chain
+~~~~~~~~~~~~~~
+
+| *default*: 'A'
+| *type*: string
+| *title*: Receptor ChainID
+| *short description*: Receptor ChainID to be considered for the RMSD calculations.
+| *long description*: Receptor ChainID to be considered for the RMSD calculations. This determines which chain will be treated as the receptor for the L-RMSD and for I-L-RMSD.
+| *group*: analysis
+| *explevel*: easy
+
+reference_fname
+~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Reference structure
+| *short description*: Structure to be used when calculating the CAPRI metrics.
+| *long description*: Reference tructure to be used when calculating the CAPRI metrics. If none is defined then the lowest scoring model is selected by default.
+| *group*: analysis
+| *explevel*: easy
+
+sort_ascending
+~~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Sort in ascending order
+| *short description*: Sort in ascending order.
+| *long description*: Sort in ascending order.
+| *group*: analysis
+| *explevel*: easy
+
+sortby
+~~~~~~
+
+| *default*: 'score'
+| *type*: string
+| *title*: Sort the structures/clusters in the output file by this value
+| *short description*: Which value should be used to sort the output.
+| *long description*: Which value should be used to sort the output, the output table will be sorted accordingly.
+| *group*: analysis
+| *explevel*: easy
+

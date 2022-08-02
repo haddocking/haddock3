@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules.refinement.openmm &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../modules.html">haddock.modules</a> &raquo;</li>
+      <li>haddock.modules.refinement.openmm</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.modules.refinement.openmm</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;OpenMM refinement module for HADDOCK3.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">Format</span><span class="p">,</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
+
+
+<span class="c1"># added to allow testing global variables in this module without</span>
+<span class="c1"># requiring installing OpenMM</span>
+<span class="c1"># the method `confirm_installation` should confirm openmm is installed.</span>
+<span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">ImportError</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">haddock.modules.refinement.openmm</span> <span class="kn">import</span> <span class="n">openmmfunctions</span>
+
+
+<span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/refinement/openmm.html#haddock.modules.refinement.openmm.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HADDOCK3 OpenMM module.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HaddockModule.create_directories"><a class="viewcode-back" href="../../../../modules/refinement/openmm.html#haddock.modules.refinement.openmm.HaddockModule.create_directories">[docs]</a>    <span class="k">def</span> <span class="nf">create_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create directories required for OpenMM.&quot;&quot;&quot;</span>
+        <span class="n">cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmmPdbfixer_output_Directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;openmm_pdbfixer_pdbs&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeller_solvationbox_pdbs_Directory</span> <span class="o">=</span> \
+            <span class="n">Path</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;modeller_solvationbox_pdbs_Directory&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmm_intermediate_structures</span> <span class="o">=</span> \
+            <span class="n">Path</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;openmm_intermediate_structures&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmm_md_raw_output_Directory</span> <span class="o">=</span> \
+            <span class="n">Path</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;openmm_md_raw_output_Directory&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmm_output</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="s1">&#39;openmm_output&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="s1">&#39;Making directory for the pdbs builded with openmm pdbfixer: &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">openmmPdbfixer_output_Directory</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmmPdbfixer_output_Directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="s1">&#39;Making directory for the pdbs with OpenMM modeller builded &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;solvation boxes: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">modeller_solvationbox_pdbs_Directory</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeller_solvationbox_pdbs_Directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="s1">&#39;Making directory for saving the intermediate structures if the &#39;</span>
+            <span class="s1">&#39;parameter save_intermediate_simulation_structures is specified: &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_intermediate_structures</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmm_intermediate_structures</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="s1">&#39;Making directory for the openmm raw output containing water &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;molecules: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_md_raw_output_Directory</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmm_md_raw_output_Directory</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="s1">&#39;Making directory for the openmm output: &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_output</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">openmm_output</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/refinement/openmm.html#haddock.modules.refinement.openmm.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm OpenMM is properly installed.&quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">runSubprocess</span><span class="p">(</span><span class="n">command_to_run</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">command_to_run</span><span class="p">],</span>
+                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">output_openmm</span> <span class="o">=</span> <span class="n">runSubprocess</span><span class="p">(</span><span class="s2">&quot;conda list openmm --json&quot;</span><span class="p">)</span>
+        <span class="n">output_pdbfixed</span> <span class="o">=</span> <span class="n">runSubprocess</span><span class="p">(</span><span class="s2">&quot;conda list pdbfixer --json&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">output_openmm</span> <span class="o">==</span> <span class="s1">&#39;[]&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;OpenMM is not installed in conda.&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">output_pdbfixed</span> <span class="o">==</span> <span class="s1">&#39;[]&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;OpenMM pdbfixer is not installed in conda.&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
+        <span class="n">previous_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">models_to_export</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_directories</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">previous_models</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">file_type</span> <span class="ow">is</span> <span class="n">Format</span><span class="o">.</span><span class="n">PDB</span><span class="p">:</span>
+
+                <span class="n">pdb_filePath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">))</span>
+
+                <span class="n">pdb_filepath_openmm_pdbfixer_directory</span> <span class="o">=</span> \
+                    <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openmmPdbfixer_output_Directory</span><span class="p">,</span> <span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Fixing PDB with OpenMM PDBFixer.&#39;</span><span class="p">)</span>
+
+                <span class="n">openmmfunctions</span><span class="o">.</span><span class="n">OpenmmPdbfixer</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="n">pdb_filePath</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openmmPdbfixer_output_Directory</span><span class="p">),</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;implicit_solvent&#39;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+                        <span class="s1">&#39;Building solvation box for file: &#39;</span>
+                        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="si">}</span><span class="s1">&#39;</span>
+                        <span class="p">)</span>
+
+                    <span class="n">contains_xray_crystallography_cell_data</span> <span class="o">=</span> \
+                        <span class="n">openmmfunctions</span><span class="o">.</span><span class="n">does_pdb_contain_xray_crystallography_cell_data</span><span class="p">(</span><span class="n">pdb_filePath</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
+
+                    <span class="n">openmmfunctions</span><span class="o">.</span><span class="n">createSolvationBox</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">pdb_filepath_openmm_pdbfixer_directory</span><span class="p">),</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">),</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modeller_solvationbox_pdbs_Directory</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;forcefield_fname&#39;</span><span class="p">],</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;explicit_solvent_model_fname&#39;</span><span class="p">],</span>
+                        <span class="n">contains_xray_crystallography_cell_data</span><span class="p">,</span>
+                        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Starting openMM simulations.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;implicit_solvent&#39;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">pdb_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">openmmPdbfixer_output_Directory</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Starting openMM with file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">openmmfunctions</span><span class="o">.</span><span class="n">runOpenMM</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">),</span>
+                    <span class="n">pdb_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_output</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_intermediate_structures</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;forcefield_fname&#39;</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;implicit_solvent_model_fname&#39;</span><span class="p">],</span>
+                    <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">pdb_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">modeller_solvationbox_pdbs_Directory</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Starting openMM with file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="n">openmmfunctions</span><span class="o">.</span><span class="n">runOpenMM</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">),</span>
+                    <span class="n">pdb_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_md_raw_output_Directory</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_intermediate_structures</span><span class="p">),</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;forcefield_fname&#39;</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;explicit_solvent_model_fname&#39;</span><span class="p">],</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># Remove water molecules if implicit_solvent is False.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;implicit_solvent&#39;</span><span class="p">]:</span>
+
+            <span class="k">for</span> <span class="n">pdb_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">openmm_md_raw_output_Directory</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+                <span class="n">openmmfunctions</span><span class="o">.</span><span class="n">removeWaterMolecules</span><span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">),</span>
+                    <span class="n">pdb_path</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">openmm_output</span><span class="p">),</span>
+                    <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">pdb_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">openmm_output</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+            <span class="n">pdb_to_export</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">)</span>
+            <span class="n">models_to_export</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb_to_export</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models_to_export</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">export_output_models</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s1">&#39;Completed OpenMM module run.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+            <span class="s1">&#39;When you want to continue the haddock3 workflow after the OpenMM &#39;</span>
+            <span class="s1">&#39;module, the next module should be topoaa, &#39;</span>
+            <span class="s1">&#39;to rebuild the molecular topologies.&#39;</span>
+            <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Jul 12, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

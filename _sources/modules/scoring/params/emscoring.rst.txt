@@ -1,0 +1,178 @@
+
+
+Easy
+````
+
+elecflag
+~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Include electrostatics energy
+| *short description*: Include electrostatics energy during the calculations.
+| *long description*: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.
+| *group*: force field
+| *explevel*: easy
+
+
+Expert
+``````
+
+dielec
+~~~~~~
+
+| *default*: 'cdie'
+| *type*: string
+| *title*: Constant (cdie) or distance-dependent dielectric (rdie) constant.
+| *short description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+| *long description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r
+| *group*: force field
+| *explevel*: expert
+
+dihedflag
+~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: No title yet
+| *short description*: No short description yet
+| *long description*: No long description yet
+| *group*: force field
+| *explevel*: expert
+
+epsilon
+~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Dielectric constant
+| *short description*: Dielectric constant for the electrostatic Coulomb energy term.
+| *long description*: Dielectric constant for the electrostatic Coulomb energy term.
+| *group*: force field
+| *explevel*: expert
+
+individualize
+~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Individualise models
+| *short description*: Treat each model in the PDB ensemble as a separate entity.
+| *long description*: Treat each model in the PDB ensemble as a separate entity. This means that for each a separate topology file will be generated. The models in the ensemble can thus correspond to different molecules.
+| *group*: sampling
+| *explevel*: expert
+
+ligand_param_fname
+~~~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand parameter file
+| *short description*: Ligand parameter file in CNS format
+| *long description*: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: expert
+
+ligand_top_fname
+~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand topology file
+| *short description*: Ligand topology file in CNS format
+| *long description*: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: expert
+
+nemsteps
+~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Number of EM steps
+| *short description*: Number of energy minimisation steps to perform.
+| *long description*: Number of energy minimisation steps to perform. Note that the effective number might be smaller if the minimisation converges earlier.
+| *group*: sampling
+| *explevel*: expert
+
+tolerance
+~~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Failure tolerance percentage
+| *short description*: Percentage of allowed failures for a module to successfully complete
+| *long description*: Percentage of allowed failures for a module to successfully complete
+| *group*: module
+| *explevel*: expert
+
+w_bsa
+~~~~~
+
+| *default*: 0.0
+| *type*: float
+| *title*: Weight of the buried surface area term
+| *short description*: Weight of the buried surface area term in the scoring function
+| *long description*: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.
+| *group*: scoring
+| *explevel*: expert
+
+w_cdih
+~~~~~~
+
+| *default*: 0.0
+| *type*: float
+| *title*: Weight of the dihedral angle restraint energy
+| *short description*: Weight of the dihedral angle restraints energy in the scoring function
+| *long description*: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.
+| *group*: scoring
+| *explevel*: expert
+
+w_desolv
+~~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Weight of the desolvation energy term
+| *short description*: Weight of the desolvation energy term in the scoring function
+| *long description*: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.
+| *group*: scoring
+| *explevel*: expert
+
+w_elec
+~~~~~~
+
+| *default*: 0.2
+| *type*: float
+| *title*: Weight of the intermolecular electrostatic energy
+| *short description*: Weight of the intermolecular electrostatic energy in the scoring function
+| *long description*: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the EM minimization.
+| *group*: scoring
+| *explevel*: expert
+
+w_vdw
+~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Weight of the intermolecular van der Waals energy
+| *short description*: Weight of the intermolecular van der Waals energy in the scoring function
+| *long description*: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the EM minimization.
+| *group*: scoring
+| *explevel*: expert
+
+
+Guru
+````
+
+log_level
+~~~~~~~~~
+
+| *default*: 'quiet'
+| *type*: string
+| *title*: Log level verbosity for CNS
+| *short description*: Set the log level verbosity for CNS
+| *long description*: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet)
+| *group*: module
+| *explevel*: guru
+

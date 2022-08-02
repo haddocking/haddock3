@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editing and extending runs &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Running HADDOCK3 with MPI" href="mpi.html" />
+    <link rel="prev" title="Workflow configuration files" href="user_config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Advanced features</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#haddock3-functionalities">HADDOCK3 functionalities</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="user_config.html">Workflow configuration files</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Editing and extending runs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#restarting-a-run">Restarting a run</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#restarting-a-run-with-modified-parameters">Restarting a run with modified parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#restarting-a-run-with-additional-steps">Restarting a run with additional steps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#extend-a-run">Extend a run</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#starting-new-runs-from-successful-steps">Starting new runs from successful steps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#additional-considerations">Additional considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mpi.html">Running HADDOCK3 with MPI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials-for-developers">Tutorials for developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Advanced features</a> &raquo;</li>
+      <li>Editing and extending runs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/continuing_runs.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="editing-and-extending-runs">
+<h1>Editing and extending runs<a class="headerlink" href="#editing-and-extending-runs" title="Permalink to this headline"></a></h1>
+<p>The modularity of HADDOCK3 allows restarting halted runs from a certain step,
+extending previous runs with additional steps, and using successful steps as
+starting points for new runs. Let’s see some examples.</p>
+<section id="restarting-a-run">
+<h2>Restarting a run<a class="headerlink" href="#restarting-a-run" title="Permalink to this headline"></a></h2>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> flag to restart a HADDOCK3 run. For example, imagine you
+start a run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">my</span><span class="o">-</span><span class="n">run</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">cfg</span>
+</pre></div>
+</div>
+<p>Unfortunately, something went wrong in step 4 (the fourth module defined in the
+configuration file).  You want now to continue the run from where it stopped.
+Use the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> followed by <code class="docutils literal notranslate"><span class="pre">N</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is an integer corresponding to
+the step you which to restart from. <strong>Remember</strong>, haddock steps are 0-indexed
+(0, 1, 2, 3, …); so, <code class="docutils literal notranslate"><span class="pre">--restart</span> <span class="pre">3</span></code> is the fourth step.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">my</span><span class="o">-</span><span class="n">run</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">cfg</span> <span class="o">--</span><span class="n">restart</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p><strong>Important:</strong> As soon you run the above command, The <code class="docutils literal notranslate"><span class="pre">--restart</span></code> option will
+<strong>delete</strong> step folders from <code class="docutils literal notranslate"><span class="pre">3</span></code> onward (inclusive), that is, <code class="docutils literal notranslate"><span class="pre">3_</span></code>, <code class="docutils literal notranslate"><span class="pre">4_</span></code>,
+<code class="docutils literal notranslate"><span class="pre">...</span></code>, will be deleted.</p>
+</section>
+<section id="restarting-a-run-with-modified-parameters">
+<h2>Restarting a run with modified parameters<a class="headerlink" href="#restarting-a-run-with-modified-parameters" title="Permalink to this headline"></a></h2>
+<p>You can profit from the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> option described above to (re)run modules
+with modified parameters. For example, if you noticed a parameter was set to
+<code class="docutils literal notranslate"><span class="pre">true</span></code> when you wanted it to <code class="docutils literal notranslate"><span class="pre">false</span></code>, or if you wish to increase the sampling
+for a given refinement module. Simply edit the configuration file modifying the
+parameters for the modules you want to (re)run, in this case, from the fourth
+module onward.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">my</span><span class="o">-</span><span class="n">edited</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">cfg</span> <span class="o">--</span><span class="n">restart</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p><strong>Important:</strong> As soon you run the above command, The <code class="docutils literal notranslate"><span class="pre">--restart</span></code> option will
+<strong>delete</strong> step folders from <code class="docutils literal notranslate"><span class="pre">3</span></code> onward (inclusive), that is, <code class="docutils literal notranslate"><span class="pre">3_</span></code>, <code class="docutils literal notranslate"><span class="pre">4_</span></code>,
+<code class="docutils literal notranslate"><span class="pre">...</span></code>, will be deleted.</p>
+</section>
+<section id="restarting-a-run-with-additional-steps">
+<h2>Restarting a run with additional steps<a class="headerlink" href="#restarting-a-run-with-additional-steps" title="Permalink to this headline"></a></h2>
+<p>You can profit from the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> option to add steps to a run. For example,
+a run has <strong>five</strong> steps and is completed successfully. You now realize you want
+to perform an additional refinement (<code class="docutils literal notranslate"><span class="pre">mdref</span></code>) followed by CAPRI evaluation
+(<code class="docutils literal notranslate"><span class="pre">caprieval</span></code>) and FCC clustering (<code class="docutils literal notranslate"><span class="pre">clustfcc</span></code>). Add the parameters for those
+modules to the <strong>original</strong> configuration file, keeping all the original
+parameters unchanged, and run haddock:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">config</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">additional</span><span class="o">-</span><span class="n">step</span><span class="o">.</span><span class="n">cfg</span> <span class="o">--</span><span class="n">restart</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>We use <code class="docutils literal notranslate"><span class="pre">--restart</span> <span class="pre">5</span></code> because the first new step is the sixth in the new
+workflow: the five initial steps and three new steps. Remember <code class="docutils literal notranslate"><span class="pre">--restart</span></code> is
+0-indexed.</p>
+</section>
+<section id="extend-a-run">
+<h2>Extend a run<a class="headerlink" href="#extend-a-run" title="Permalink to this headline"></a></h2>
+<p>You can extend a successful run with additional steps. For that, prepare a
+configurtation file containing only the new steps you wish to execute on top of
+the previously successful run. In these cases, you <strong>don’t</strong> need to define the
+<code class="docutils literal notranslate"><span class="pre">run_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">molecules</span></code> parameters in this new configuration file because
+they will be ignored. You <strong>can</strong> define the other general parameters like
+<code class="docutils literal notranslate"><span class="pre">ncores</span></code>, <code class="docutils literal notranslate"><span class="pre">mode</span></code>, etc. To extend a run with additional modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">new</span><span class="o">-</span><span class="n">steps</span><span class="o">.</span><span class="n">cfg</span> <span class="o">--</span><span class="n">extend</span><span class="o">-</span><span class="n">run</span> <span class="o">&lt;</span><span class="n">run_dir</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="starting-new-runs-from-successful-steps">
+<h2>Starting new runs from successful steps<a class="headerlink" href="#starting-new-runs-from-successful-steps" title="Permalink to this headline"></a></h2>
+<p>You can also start an independent run from a successful step of a previous run.
+Consider the following successful run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run1</span><span class="o">/</span>
+<span class="o">|---</span> <span class="mi">0</span><span class="n">_topoaa</span><span class="o">/</span>
+<span class="o">|---</span> <span class="mi">1</span><span class="n">_rigidbody</span><span class="o">/</span>
+<span class="o">|---</span> <span class="mi">2</span><span class="n">_caprieval</span><span class="o">/</span>
+<span class="o">|---</span> <span class="mi">3</span><span class="n">_seletop</span><span class="o">/</span>
+<span class="o">|---</span> <span class="mi">4</span><span class="n">_flexref</span><span class="o">/</span>
+<span class="o">|---</span> <span class="p">(</span><span class="n">etc</span><span class="o">...</span><span class="p">)</span>
+<span class="o">|---</span> <span class="n">data</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Now, you want to start a new independent run from the <code class="docutils literal notranslate"><span class="pre">4_flexref</span></code> step.</p>
+<p>First, you need to copy the step to a new run folder using our <code class="docutils literal notranslate"><span class="pre">haddock3-copy</span></code> CLI.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span><span class="o">-</span><span class="n">copy</span> <span class="o">-</span><span class="n">r</span> <span class="n">run1</span> <span class="o">-</span><span class="n">m</span> <span class="mi">0</span> <span class="mi">4</span> <span class="o">-</span><span class="n">o</span> <span class="n">run2</span>
+</pre></div>
+</div>
+<p>The above command copies steps <code class="docutils literal notranslate"><span class="pre">0_topoaa</span></code> and <code class="docutils literal notranslate"><span class="pre">4_flexref</span></code> to a new <code class="docutils literal notranslate"><span class="pre">run2</span></code>
+directory. It also updates the path references in the step folders. Resulting in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">run2</span><span class="o">/</span>
+<span class="o">|---</span> <span class="mi">0</span><span class="n">_topoaa</span><span class="o">/</span>
+<span class="o">|---</span> <span class="mi">1</span><span class="n">_flexref</span><span class="o">/</span>
+<span class="o">|---</span> <span class="n">data</span><span class="o">/</span>
+     <span class="o">|---</span> <span class="mi">0</span><span class="n">_topoaa</span><span class="o">/</span>
+     <span class="o">|---</span> <span class="mi">1</span><span class="n">_flexref</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Do <strong>not</strong> use the bash <code class="docutils literal notranslate"><span class="pre">cp</span></code> command to emulate this operation because there
+several internal aspects treated by <code class="docutils literal notranslate"><span class="pre">haddock3-copy</span></code> that wouldn’t be treated
+by <code class="docutils literal notranslate"><span class="pre">cp</span></code>.</p>
+<p><strong>Note:</strong> If the new run uses CNS-dependent modules, you <strong>also need</strong> to copy
+the folder corresponding to the initial topology creation (the <code class="docutils literal notranslate"><span class="pre">topoaa</span></code> module).</p>
+<p>Second, create a configuration file for the new run containing <strong>only</strong> the
+parameters of the new modules you wish to execute after the <code class="docutils literal notranslate"><span class="pre">flexref</span></code>. You
+<strong>don’t</strong> need to define the <code class="docutils literal notranslate"><span class="pre">run_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">molecules</span></code> parameters in this new
+configuration file because they will be ignored. You <strong>can</strong> define the other
+general parameters like <code class="docutils literal notranslate"><span class="pre">ncores</span></code>, <code class="docutils literal notranslate"><span class="pre">mode</span></code>, etc. For example:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">ncores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span><span class="w"></span>
+
+<span class="k">[emref]</span><span class="w"></span>
+<span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="w"></span>
+<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;path/to/air.tbl&quot;</span><span class="w"></span>
+
+<span class="k">[caprieval]</span><span class="w"></span>
+<span class="n">reference_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;path/to/reference.pdb&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Following the example, to start the new run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="n">my</span><span class="o">-</span><span class="n">new</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">cfg</span> <span class="o">--</span><span class="n">extend</span><span class="o">-</span><span class="n">run</span> <span class="n">run2</span>
+</pre></div>
+</div>
+</section>
+<section id="additional-considerations">
+<h2>Additional considerations<a class="headerlink" href="#additional-considerations" title="Permalink to this headline"></a></h2>
+<p>You can now combine the functionalities explained above in many different
+variations.</p>
+<p>Below is some quick Q&amp;A regarding these options:</p>
+<ol class="arabic simple">
+<li><p>Can I copy run directories to different folders on my computer?</p></li>
+</ol>
+<p>Yes. HADDOCK3 uses relative paths inside the run directory.</p>
+<ol class="arabic simple" start="2">
+<li><p>Can I copy run directories to different computers?</p></li>
+</ol>
+<p>Yes, provided you have installed HADDOCK3 following the <span class="xref myst">INSTALL</span>
+instructions in the two systems. You can copy a run directory (or some of its
+steps) to a different computer/system and (re)run it using the <code class="docutils literal notranslate"><span class="pre">--restart</span></code> and
+<code class="docutils literal notranslate"><span class="pre">--extend-run</span></code> options.</p>
+<ol class="arabic simple" start="3">
+<li><p>Modules are 0-indexed. Is this related to Python being 0-indexed also?</p></li>
+</ol>
+<p>No. It is because we defined the <code class="docutils literal notranslate"><span class="pre">topoaa</span></code> module as zero.</p>
+<ol class="arabic simple" start="4">
+<li><p>Where can I find additional help?</p></li>
+</ol>
+<p>You can find additional help by running the command: <code class="docutils literal notranslate"><span class="pre">haddock3</span> <span class="pre">-h</span></code> and reading
+the parameters’ explanations. Otherwise, ask us in the <a class="reference external" href="https://github.com/haddocking/haddock3/issues">“issues”
+forum</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="user_config.html" class="btn btn-neutral float-left" title="Workflow configuration files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mpi.html" class="btn btn-neutral float-right" title="Running HADDOCK3 with MPI" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running integration tests manually &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing to HADDOCK3" href="../contributing.html" />
+    <link rel="prev" title="Testing" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Testing</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Running integration tests manually</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-haddock3-main-branch-separately">1. Install HADDOCK3 main branch separately</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-tests-in-the-main">3. Running the tests in the <code class="docutils literal notranslate"><span class="pre">main</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-tests-on-your-branch">4. Running the tests on your branch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparing-both-runs">5. Comparing both runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-considerations">Additional considerations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#tests-breaking-with-run-tests-py">Tests breaking with <code class="docutils literal notranslate"><span class="pre">run_tests.py</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-on-a-cluster">Running on a cluster</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-individual-test-cases">Running individual test cases</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Testing</a> &raquo;</li>
+      <li>Running integration tests manually</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/testing/integration_tests.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="running-integration-tests-manually">
+<h1>Running integration tests manually<a class="headerlink" href="#running-integration-tests-manually" title="Permalink to this headline"></a></h1>
+<p><em>This documentation is for developers.</em></p>
+<p>The integration tests ensure HADDOCK3 workflows work correctly by performing
+short docking or analysis on testing systems. With these tests, we evaluate if
+the final scoring values in the developing branch are equal to those obtained in
+the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.</p>
+<p>You can run the integration tests locally using our helper scripts and
+following the guidelines here.</p>
+<p>For a pull request to be accepted, it must pass these integration tests. So we
+kindly ask you to run them before submitting a pull request. We are currently
+working on incorporating these tests into our automatic CI pipelines.</p>
+<p>Running the integration tests for a single branch takes about 1 hour using 8 CPU
+cores in a AMD EPYC 7451 24-Core Processor. In case you do not have the computer
+power to run these tests, ask us and we will run them for you.</p>
+<p><strong>How to correctly set up and run the integration tests?</strong></p>
+<p>The easiest way is to have two installations of haddock3:
+one fixed at the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch and another with your developments.</p>
+<section id="install-haddock3-main-branch-separately">
+<h2>1. Install HADDOCK3 main branch separately<a class="headerlink" href="#install-haddock3-main-branch-separately" title="Permalink to this headline"></a></h2>
+<p>First, you should install HADDOCK3 main branch in a separate folder and
+python environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone --recursive https://github.com/haddocking/haddock3 haddock3main
+<span class="nb">cd</span> haddock3main
+</pre></div>
+</div>
+<p>Rename the conda env name in requirements.yml file</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;s/haddock3/haddock3main/g&#39;</span> <span class="n">requirements</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>Proceed to install the HADDOCK3 main following the installation
+instructions in the repository.</p>
+<p>This repository and environment will be the ones you will use to run the
+test examples from the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch.</p>
+<p>Once installed, you don’t need to install this “main” repository again for
+future occasions. You can keep using it to test all your developments.</p>
+</section>
+<section id="running-the-tests-in-the-main">
+<h2>3. Running the tests in the <code class="docutils literal notranslate"><span class="pre">main</span></code><a class="headerlink" href="#running-the-tests-in-the-main" title="Permalink to this headline"></a></h2>
+<p>Before running the integration tests, ensure the reference repository <code class="docutils literal notranslate"><span class="pre">main</span></code>
+branch is up-to-date.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> haddock3main
+git checkout main
+git pull
+</pre></div>
+</div>
+<p>Remember to activate the corresponding python environment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate haddock3main
+</pre></div>
+</div>
+<p>Or, if you used <code class="docutils literal notranslate"><span class="pre">venv</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> venv/bin/activate
+</pre></div>
+</div>
+<p>Navigate to the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder and execute the tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> examples/
+python run_tests.py -b
+</pre></div>
+</div>
+<p>This script will run all the test cases in the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder (<code class="docutils literal notranslate"><span class="pre">*-test.cfg</span></code>
+files) and stop if any of the tests break. For help, see <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">run_tests.py</span> <span class="pre">-h</span></code>.</p>
+</section>
+<section id="running-the-tests-on-your-branch">
+<h2>4. Running the tests on your branch<a class="headerlink" href="#running-the-tests-on-your-branch" title="Permalink to this headline"></a></h2>
+<p>Navigate to your development repository and activate the haddock3 environment -
+you are likely on a different terminal window.</p>
+<p>Run the tests the same way as before by navigating to the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder and
+executing the tests:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> examples/
+python run_tests.py -b
+</pre></div>
+</div>
+</section>
+<section id="comparing-both-runs">
+<h2>5. Comparing both runs<a class="headerlink" href="#comparing-both-runs" title="Permalink to this headline"></a></h2>
+<p>Once tests in the <code class="docutils literal notranslate"><span class="pre">main</span></code> and your development branch complete, that is, all
+<code class="docutils literal notranslate"><span class="pre">*-test.cfg</span></code> files were executed, you can compare their CAPRI scores.</p>
+<p>Inside the <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder of your development branch, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python compare-runs.py -r &lt;path-to-haddock-main-examples-folder&gt;
+</pre></div>
+</div>
+<p>This command will tell you if there are any differences in the CAPRI tables:
+missing rows or columns and different values. Numeric scores are evaluated with
+0.001 tolerance.</p>
+<p>If there are differences, likely something went wrong unless you are developing
+code that explicitly affects the CAPRI scores. If that is the case, explain it
+in the pull request description.</p>
+</section>
+<section id="additional-considerations">
+<h2>Additional considerations<a class="headerlink" href="#additional-considerations" title="Permalink to this headline"></a></h2>
+<section id="tests-breaking-with-run-tests-py">
+<h3>Tests breaking with <code class="docutils literal notranslate"><span class="pre">run_tests.py</span></code><a class="headerlink" href="#tests-breaking-with-run-tests-py" title="Permalink to this headline"></a></h3>
+<p>Tests break during the <code class="docutils literal notranslate"><span class="pre">run_test.py</span></code> step if the new code breaks the core
+HADDOCK3 workflow. You should work towards correcting those errors first. Once
+the workflows execute completely, you can then compare the CAPRI tables.</p>
+</section>
+<section id="running-on-a-cluster">
+<h3>Running on a cluster<a class="headerlink" href="#running-on-a-cluster" title="Permalink to this headline"></a></h3>
+<p>Following the instructions here, the test cases will run locally on your
+computer. But if you have access to a job scheduling system in a cluster, you
+can prepare a <code class="docutils literal notranslate"><span class="pre">job</span></code> script and launch the job as you would to for any other
+related process.</p>
+</section>
+<section id="running-individual-test-cases">
+<h3>Running individual test cases<a class="headerlink" href="#running-individual-test-cases" title="Permalink to this headline"></a></h3>
+<p>If you want to compare a particular test case only, for example, two different
+runs for the <code class="docutils literal notranslate"><span class="pre">docking-protein-protein/docking-protein-protein-test.cfg</span></code>, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python compare_runs.py -r1 &lt;PATH-TO-RUN1&gt; -r2 &lt;PATH-TO-RUN2&gt;
+</pre></div>
+</div>
+<p><em>Thanks, and enjoy developing and using HADDOCK3 :-)</em></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Testing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../contributing.html" class="btn btn-neutral float-right" title="Contributing to HADDOCK3" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

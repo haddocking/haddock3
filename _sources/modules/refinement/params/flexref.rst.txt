@@ -1,0 +1,3071 @@
+
+
+Easy
+````
+
+ambig_fname
+~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Ambiguous distance restraints filename
+| *short description*: Filename of the ambiguous distance restraints file
+| *long description*: Filename of the ambiguous distance restraints file. By default 50% of those restraints will be randomly discared. This can be changed/turned off and is controlled by the randremoval and npart parameters. Note that this file can contain both ambiguous and unambiguous restraints.
+| *group*: distance restraints
+| *explevel*: easy
+
+dihe_fname
+~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Dihedral angle restraints filename
+| *short description*: Filename of the Dihedral angle restraints file
+| *long description*: Filename of the Dihedral angle restraints file.
+| *group*: dihedral restraints
+| *explevel*: easy
+
+dihedrals_on
+~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Use dihedral angle restraints
+| *short description*: Turns on dihedral angle restraints.
+| *long description*: Turns on dihedral angle restraints. Those should be defined in the dihe_fname file.
+| *group*: dihedral restraints
+| *explevel*: easy
+
+dnarest_on
+~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Restrain the DNA conformation
+| *short description*: Automatically creates restraints to maintain the conformation of DNA/RNA
+| *long description*: This option allows to restraint the conformation of nucleic acids based on the values from the input structures. The following restraints will be automatically defined: - single base planarity - sugar pucker - phosphate backbone diherdral angle restraints - Watson-Crick base pairing
+| *group*: other restraints
+| *explevel*: easy
+
+elecflag
+~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Include electrostatics energy
+| *short description*: Include electrostatics energy during the calculations.
+| *long description*: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.
+| *group*: force field
+| *explevel*: easy
+
+error_dih
+~~~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Force constant for backbone dihedral angle restraints
+| *short description*: Force constant for backbone dihedral angle restraints (ssdihed option)
+| *long description*: Force constant for backbone dihedral angle restraints (ssdihed option)
+| *group*: dihedral restraints
+| *explevel*: easy
+
+hbond_fname
+~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: H-bond restraints filename
+| *short description*: Filename of the hydrogen bond distance restraints file
+| *long description*: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints.
+| *group*: distance restraints
+| *explevel*: easy
+
+mol_shape_1
+~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Is the molecule a shape?
+| *short description*: Defines a molecule as a shape.
+| *long description*: Defines a molecule as a shape, which is a collection of beads.
+| *group*: molecule
+| *explevel*: easy
+
+sinter_rigid_final
+~~~~~~~~~~~~~~~~~~
+
+| *default*: 0.001
+| *type*: float
+| *title*: End rigid-body MD intermolecular interactions scaling factor.
+| *short description*: End scaling factor for intermolecular interactions in the first cooling stage.
+| *long description*: End scaling factor applied to intermolecular interactions during the first cooling stage of the simulated annealing protocol.
+| *group*: 
+| *explevel*: easy
+
+ssdihed
+~~~~~~~
+
+| *default*: 'none'
+| *type*: string
+| *title*: Define automatically backbone dihedral angle restraints
+| *short description*: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.
+| *long description*: This option allows to utomatically defined backbone dihedral angle restraints for the selected regions. The restraints will be defined for the phi and psi backbone dihedral angles of amino acids, with the target value taken from the measured angle in the input structure, and the error bound defined by the error_dih parameter. Those restraints can be applied to the entire structure (all), the alpha/beta secondary structure elements (alphabeta) or only to the alpha helical regions (alpha). Those are automatically detected based on the measured dihedral angle combinations.
+| *group*: dihedral restraints
+| *explevel*: easy
+
+unambig_fname
+~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Unambiguous restraints filename
+| *short description*: Filename of the unambiguous distance restraints file
+| *long description*: Filename of the unambiguous distance restraints file. All restraints in that file will be used. Note that this file can contain both ambiguous and unambiguous restraints.
+| *group*: distance restraints
+| *explevel*: easy
+
+
+Expert
+``````
+
+amb_cool1
+~~~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: First cooling SA force constant for ambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+amb_cool2
+~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Second cooling SA force constant for ambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in ambig_fname during the second cooling phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in ambig_fname during the second cooling phase of the simulatd annealing protocol. Side-chains at the interface are treated as flexible and any region defined in fully flexible segments as fully flexible (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+amb_cool3
+~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Third cooling SA force constant for ambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in ambig_fname during the third cooling phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in ambig_fname during the third cooling phase of the simulatd annealing protocol. Side-chains and backbone at the interface are treated as flexible and any region defined in fully flexible segments as fully flexible (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+amb_hot
+~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Hot phase SA force constant for ambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in ambig_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in ambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+c2sym_end1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the first C2 symmetry segment
+| *long description*: Residue number of last residue in the first C2 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c2sym_end2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the second C2 symmetry segment
+| *long description*: Residue number of last residue in the second C2 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c2sym_seg1_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of first C2 segment
+| *short description*: Segment ID of first C2 segment
+| *long description*: Segment ID of first C2 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c2sym_seg2_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of second C2 segment
+| *short description*: Segment ID of second C2 segment
+| *long description*: Segment ID of second C2 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c2sym_sta1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the first C2 symmetry segment
+| *long description*: Residue number of first residue in the first C2 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c2sym_sta2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the second C2 symmetry segment
+| *long description*: Residue number of first residue in the second C2 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_end1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the first C3 symmetry segment
+| *long description*: Residue number of last residue in the first C3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_end2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the second C3 symmetry segment
+| *long description*: Residue number of last residue in the second C3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_end3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the third C3 symmetry segment
+| *long description*: Residue number of last residue in the third C3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_seg1_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of first C3 segment
+| *short description*: Segment ID of first C3 segment
+| *long description*: Segment ID of first C3 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_seg2_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of second C3 segment
+| *short description*: Segment ID of second C3 segment
+| *long description*: Segment ID of second C3 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_seg3_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of third C3 segment
+| *short description*: Segment ID of third C3 segment
+| *long description*: Segment ID of third C3 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_sta1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the first C3 symmetry segment
+| *long description*: Residue number of first residue in the first C3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_sta2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the second C3 symmetry segment
+| *long description*: Residue number of first residue in the second C3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c3sym_sta3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the third C3 symmetry segment
+| *long description*: Residue number of first residue in the third C3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_end1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the first C4 symmetry segment
+| *long description*: Residue number of last residue in the first C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_end2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the second C4 symmetry segment
+| *long description*: Residue number of last residue in the second C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_end3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the third C4 symmetry segment
+| *long description*: Residue number of last residue in the third C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_end4_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the fourth C4 symmetry segment
+| *long description*: Residue number of last residue in the fourth C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_seg1_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of first C4 segment
+| *short description*: Segment ID of first C4 segment
+| *long description*: Segment ID of first C4 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_seg2_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of second C4 segment
+| *short description*: Segment ID of second C4 segment
+| *long description*: Segment ID of second C4 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_seg3_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of third C4 segment
+| *short description*: Segment ID of third C4 segment
+| *long description*: Segment ID of third C4 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_seg4_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of fourth C4 segment
+| *short description*: Segment ID of fourth C4 segment
+| *long description*: Segment ID of fourth C4 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_sta1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the first C4 symmetry segment
+| *long description*: Residue number of first residue in the first C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_sta2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the second C4 symmetry segment
+| *long description*: Residue number of first residue in the second C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_sta3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the third C4 symmetry segment
+| *long description*: Residue number of first residue in the third C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c4sym_sta4_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the fourth C4 symmetry segment
+| *long description*: Residue number of first residue in the fourth C4 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_end1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the first C5 symmetry segment
+| *long description*: Residue number of last residue in the first C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_end2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the second C5 symmetry segment
+| *long description*: Residue number of last residue in the second C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_end3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the third C5 symmetry segment
+| *long description*: Residue number of last residue in the third C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_end4_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the fourth C5 symmetry segment
+| *long description*: Residue number of last residue in the fourth C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_end5_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the fifth C5 symmetry segment
+| *long description*: Residue number of last residue in the fifth C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_seg1_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of first C5 segment
+| *short description*: Segment ID of first C5 segment
+| *long description*: Segment ID of first C5 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_seg2_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of second C5 segment
+| *short description*: Segment ID of second C5 segment
+| *long description*: Segment ID of second C5 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_seg3_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of third C5 segment
+| *short description*: Segment ID of third C5 segment
+| *long description*: Segment ID of third C5 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_seg4_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of fourth C5 segment
+| *short description*: Segment ID of fourth C5 segment
+| *long description*: Segment ID of fourth C5 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_seg5_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of fifth C5 segment
+| *short description*: Segment ID of fifth C5 segment
+| *long description*: Segment ID of fifth C5 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_sta1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the first C5 symmetry segment
+| *long description*: Residue number of first residue in the first C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_sta2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the second C5 symmetry segment
+| *long description*: Residue number of first residue in the second C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_sta3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the third C5 symmetry segment
+| *long description*: Residue number of first residue in the third C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_sta4_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the fourth C5 symmetry segment
+| *long description*: Residue number of first residue in the fourth C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c5sym_sta5_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the fifth C5 symmetry segment
+| *long description*: Residue number of first residue in the fifth C5 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_end1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the first C6 symmetry segment
+| *long description*: Residue number of last residue in the first C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_end2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the second C6 symmetry segment
+| *long description*: Residue number of last residue in the second C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_end3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the third C6 symmetry segment
+| *long description*: Residue number of last residue in the third C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_end4_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the fourth C6 symmetry segment
+| *long description*: Residue number of last residue in the fourth C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_end5_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the fifth C6 symmetry segment
+| *long description*: Residue number of last residue in the fifth C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_end6_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the sixth C6 symmetry segment
+| *long description*: Residue number of last residue in the sixth C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_seg1_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of first C6 segment
+| *short description*: Segment ID of first C6 segment
+| *long description*: Segment ID of first C6 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_seg2_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of second C6 segment
+| *short description*: Segment ID of second C6 segment
+| *long description*: Segment ID of second C6 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_seg3_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of third C6 segment
+| *short description*: Segment ID of third C6 segment
+| *long description*: Segment ID of third C6 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_seg4_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of fourth C6 segment
+| *short description*: Segment ID of fourth C6 segment
+| *long description*: Segment ID of fourth C6 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_seg5_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of fifth C6 segment
+| *short description*: Segment ID of fifth C6 segment
+| *long description*: Segment ID of fifth C6 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_seg6_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of sixth C6 segment
+| *short description*: Segment ID of sixth C6 segment
+| *long description*: Segment ID of sixth C6 segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_sta1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the first C6 symmetry segment
+| *long description*: Residue number of first residue in the first C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_sta2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the second C6 symmetry segment
+| *long description*: Residue number of first residue in the second C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_sta3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the third C6 symmetry segment
+| *long description*: Residue number of first residue in the third C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_sta4_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the fourth C6 symmetry segment
+| *long description*: Residue number of first residue in the fourth C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_sta5_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the fifth C6 symmetry segment
+| *long description*: Residue number of first residue in the fifth C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+c6sym_sta6_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the sixth C6 symmetry segment
+| *long description*: Residue number of first residue in the sixth C6 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+cmrest
+~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Center of mass restraints
+| *short description*: Automatically defines distance restraints between the geometric center of the various molecules.
+| *long description*: When turned on, this option will automatically define center of mass restraints between the various molecules. This allows HADDOCK to operate in ab-initio mode in the absence of any other restraints. But those restraints can also be combined with other restraints to ensure more compact solutions. The distance restraints are defined between the geometrical centers of the various molecules (calculated on CA atoms for proteins (BB in case of Martini coarse-grained molecules) and N1 atoms for nucleic acids. For small ligands, all atoms will be used to define the geometric center. The upper limit distance is automatically calculated based on the dimension of the molecules (see cmtight description).
+| *group*: distance restraints
+| *explevel*: expert
+
+cmtight
+~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Center of mass restraint tightness
+| *short description*: Defines the upper distance limit based on the sum of the average dimension of the two molecule, if cmtight=false all three dimensions are used, if set to true the shortest two only are used, resulting in tighter distance restraints.
+| *long description*: This parameter controls how the upper limit distance is defined for the center of mass restraints between molecules. Each molecule is oriented along its principle components and the x,y and z dimensions are calculated. If cmtight=true, the molecule distance (size) is set to the average of its smallest two half dimensions. If cmtight=false, the molecule distance (size) is set to the average of its three half dimensions.. In case of DNA or small ligands the molecule distance (size) is set to 0. The effective upper distance limit for the center or mass distance restraint is the sum of the two molecule distances.
+| *group*: distance restraints
+| *explevel*: expert
+
+contactairs
+~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Contact restraints
+| *short description*: Contact restraints between molecules
+| *long description*: Contact restraints between molecules. These are defined as ambiguous distance restraint between each residue of a molecule and all residues of the other molecules with 5A from that residue. This can be used to restraint the contacts between the interfaces. Note that this can generate a large number of ambiguous restraints and slow down the computations
+| *group*: distance restraints
+| *explevel*: expert
+
+dielec
+~~~~~~
+
+| *default*: 'rdie'
+| *type*: string
+| *title*: Constant (cdie) or distance-dependent dielectric (rdie) constant.
+| *short description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.
+| *long description*: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r
+| *group*: force field
+| *explevel*: expert
+
+dihedflag
+~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Use torsion angle dihedral energy term
+| *short description*: Turns on the torsion angle dihedral energy terms of the force field.
+| *long description*: Turns on the torsion angle dihedral energy terms of the force field.
+| *group*: force field
+| *explevel*: expert
+
+dihedrals_cool1
+~~~~~~~~~~~~~~~
+
+| *default*: 5
+| *type*: integer
+| *title*: First cooling SA force constant for dihedral angle restraints
+| *short description*: First cooling SA force constant for dihedral angle restraints read from dihe_fname.
+| *long description*: Force constant applied to the dihedral angle restraints read from dihe_fname during the first cooling phase of the simulatd annealing protocol.
+| *group*: dihedral restraints
+| *explevel*: expert
+
+dihedrals_cool2
+~~~~~~~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Second cooling SA force constant for dihedral angle restraints
+| *short description*: Second cooling SA force constant for dihedral angle restraints read from dihe_fname.
+| *long description*: Force constant applied to the dihedral angle restraints read from dihe_fname during the second cooling phase of the simulatd annealing protocol.
+| *group*: dihedral restraints
+| *explevel*: expert
+
+dihedrals_cool3
+~~~~~~~~~~~~~~~
+
+| *default*: 200
+| *type*: integer
+| *title*: Third cooling SA force constant for dihedral angle restraints
+| *short description*: Third cooling SA force constant for dihedral angle restraints read from dihe_fname.
+| *long description*: Force constant applied to the dihedral angle restraints read from dihe_fname during the third cooling phase of the simulatd annealing protocol.
+| *group*: dihedral restraints
+| *explevel*: expert
+
+dihedrals_hot
+~~~~~~~~~~~~~
+
+| *default*: 5
+| *type*: integer
+| *title*: Hot phase SA force constant for dihedral angle restraints
+| *short description*: Hot phase SA force constant for dihedral angle restraints read from dihe_fname.
+| *long description*: Force constant applied to the dihedral angle restraints read from dihe_fname during the initial hot phase of the simulatd annealing protocol.
+| *group*: dihedral restraints
+| *explevel*: expert
+
+epsilon
+~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Dielectric constant
+| *short description*: Dielectric constant for the electrostatic Coulomb energy term.
+| *long description*: Dielectric constant for the electrostatic Coulomb energy term.
+| *group*: force field
+| *explevel*: expert
+
+fle_end_10_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_11_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_12_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_13_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_14_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_15_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_16_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_17_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_18_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_19_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_1_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_20_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_2_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_3_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_4_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_5_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_6_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_7_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_8_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_end_9_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: End residue number
+| *short description*: Residue number defining the end of the fully flexible segment.
+| *long description*: Residue number defining the end of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_10_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_11_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_12_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_13_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_14_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_15_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_16_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_17_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_18_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_19_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_1_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_20_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_2_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_3_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_4_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_5_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_6_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_7_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_8_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+fle_sta_9_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the fully flexible segment.
+| *long description*: Residue number defining the start of the fully flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+hbond_cool1
+~~~~~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Hot phase SA force constant for hydrogen bond restraints
+| *short description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+hbond_cool2
+~~~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Hot phase SA force constant for hydrogen bond restraints
+| *short description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+hbond_cool3
+~~~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Hot phase SA force constant for hydrogen bond restraints
+| *short description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+hbond_hot
+~~~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Hot phase SA force constant for hbond distance restraints
+| *short description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the hydrogen bond restraints defined in hbond_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+kcm
+~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Center of mass restraints force constant
+| *short description*: Force constant applied to the center of mass restraints
+| *long description*: Force constant applied to the center of mass restraints
+| *group*: distance restraints
+| *explevel*: expert
+
+kcont
+~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Contact restraints force constant
+| *short description*: Force constant applied to the contact restraints.
+| *long description*: Force constant applied to the contact restraints.
+| *group*: distance restraints
+| *explevel*: expert
+
+kncs
+~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Force constant for non-crystallographic restraints
+| *short description*: Force constant for non-crystallographic restraints
+| *long description*: Force constant for non-crystallographic restraints
+| *group*: symmetry
+| *explevel*: expert
+
+ksym
+~~~~
+
+| *default*: 10.0
+| *type*: float
+| *title*: Force constant for symmetry restraints
+| *short description*: Force constant for symmetry restraints
+| *long description*: Force constant for symmetry restraints
+| *group*: symmetry
+| *explevel*: expert
+
+ligand_param_fname
+~~~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand parameter file
+| *short description*: Ligand parameter file in CNS format
+| *long description*: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: expert
+
+ligand_top_fname
+~~~~~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom ligand topology file
+| *short description*: Ligand topology file in CNS format
+| *long description*: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions...) for any ligand not supported by default by HADDOCK
+| *group*: force field
+| *explevel*: expert
+
+mdsteps_cool1
+~~~~~~~~~~~~~
+
+| *default*: 500
+| *type*: integer
+| *title*: First cooling phase SA MD steps
+| *short description*: Number of MD steps for the first cooling phase of the SA.
+| *long description*: Number of MD steps for the first cooling phase of rigid body dynamics of the simulated annealing protocol.
+| *group*: sampling
+| *explevel*: expert
+
+mdsteps_cool2
+~~~~~~~~~~~~~
+
+| *default*: 1000
+| *type*: integer
+| *title*: Second cooling phase SA MD steps
+| *short description*: Number of MD steps for the second cooling phase of the SA.
+| *long description*: Number of MD steps for the second cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle_X and related parameters).
+| *group*: sampling
+| *explevel*: expert
+
+mdsteps_cool3
+~~~~~~~~~~~~~
+
+| *default*: 1000
+| *type*: integer
+| *title*: Third cooling phase SA MD steps
+| *short description*: Number of MD steps for the third cooling phase of the SA.
+| *long description*: Number of MD steps for the third cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains and backbone at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle_X and related parameters).
+| *group*: sampling
+| *explevel*: expert
+
+mdsteps_rigid
+~~~~~~~~~~~~~
+
+| *default*: 500
+| *type*: integer
+| *title*: Hot phase SA MD steps
+| *short description*: Number of MD steps for the hot phase of the SA.
+| *long description*: Number of MD steps for the hot phase rigid body dynamics of the simulated annealing protocol.
+| *group*: sampling
+| *explevel*: expert
+
+mol_fix_origin_1
+~~~~~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Fix molecule
+| *short description*: Fixes the molecule in its original position.
+| *long description*: Fixes the molecule in its original position.
+| *group*: molecule
+| *explevel*: expert
+
+ncs_end1_1
+~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the first NCS segment
+| *long description*: Residue number of last residue in the first NCS segment
+| *group*: symmetry
+| *explevel*: expert
+
+ncs_end2_1
+~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the second NCS segment
+| *long description*: Residue number of last residue in the second NCS segment
+| *group*: symmetry
+| *explevel*: expert
+
+ncs_on
+~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Non-crystallographic symmetry restraints
+| *short description*: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.
+| *long description*: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation. This does not apply any symmetry between the two molecules but rather defines restraints such as the RMSD between those is 0.
+| *group*: symmetry
+| *explevel*: expert
+
+ncs_seg1_1
+~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of first NCS segment
+| *short description*: Segment ID of first NCS segment
+| *long description*: Segment ID of first NCS segment
+| *group*: symmetry
+| *explevel*: expert
+
+ncs_seg2_1
+~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of second NCS segment
+| *short description*: Segment ID of second NCS segment
+| *long description*: Segment ID of second NCS segment
+| *group*: symmetry
+| *explevel*: expert
+
+ncs_sta1_1
+~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the first NCS segment
+| *long description*: Residue number of first residue in the first NCS segment
+| *group*: symmetry
+| *explevel*: expert
+
+ncs_sta2_1
+~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the second NCS segment
+| *long description*: Residue number of first residue in the second NCS segment
+| *group*: symmetry
+| *explevel*: expert
+
+nemsteps
+~~~~~~~~
+
+| *default*: 200
+| *type*: integer
+| *title*: Number of EM steps
+| *short description*: Number of energy minimisation steps to perform.
+| *long description*: Number of energy minimisation steps to perform in the various EM stages of this refinement protocol. Note that the effective number might be smaller if the minimisation converges earlier.
+| *group*: sampling
+| *explevel*: expert
+
+nfle1
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle10
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle11
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle12
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle13
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle14
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle15
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle16
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle17
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle18
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle19
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle2
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle20
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle3
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle4
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle5
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle6
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle7
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle8
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+nfle9
+~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of fully flexible segments
+| *short description*: This defines the number of fully flexible segments.
+| *long description*: This parameter defines the number of fully flexible segments for the specified molecule. If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+| *group*: flexibility
+| *explevel*: expert
+
+npart
+~~~~~
+
+| *default*: 2
+| *type*: integer
+| *title*: Number partitions for ambiguous restraints
+| *short description*: Number of sets into which to randomly partition the ambiguous restraints.
+| *long description*: Number of sets into which to randomly partition the ambiguous restraints. The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.
+| *group*: distance restraints
+| *explevel*: expert
+
+nseg1
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg10
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg11
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg12
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg13
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg14
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg15
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg16
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg17
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg18
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg19
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg2
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg20
+~~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg3
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg4
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg5
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg6
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg7
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg8
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+nseg9
+~~~~~
+
+| *default*: -1
+| *type*: integer
+| *title*: Number of semi-flexible segments
+| *short description*: This defines the number of semi-flexible segments (-1 automatic, 0 ridig, >1 manual definition).
+| *long description*: This parameter defines the number of semi-flexible segments for the specified molecule. If set to -1 then those are automatically defined based on contacts. Those can also be manually defined by defining the number of segment (nseg>=1). In that case the starting and ending residues of each segment must be defined. The position of atoms in regions outside the semi-flexible regions will have weak harmonic positional restraints during the energy minimisation. If nseg is set to 0, then the molecule will be kept ridig.
+| *group*: flexibility
+| *explevel*: expert
+
+numc2sym
+~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C2 symmetry restraints
+| *short description*: Defines the number of C2 symmetry restraints.
+| *long description*: Defines the number of C2 symmetry restraints. For each, a pair of segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+numc3sym
+~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C3 symmetry restraints
+| *short description*: Defines the number of C3 symmetry restraints.
+| *long description*: Defines the number of C3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+numc4sym
+~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C4 symmetry restraints
+| *short description*: Defines the number of C4 symmetry restraints.
+| *long description*: Defines the number of C4 symmetry restraints. For each, four segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+numc5sym
+~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C5 symmetry restraints
+| *short description*: Defines the number of C5 symmetry restraints.
+| *long description*: Defines the number of C5 symmetry restraints. For each, five segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+numc6sym
+~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of C6 symmetry restraints
+| *short description*: Defines the number of C6 symmetry restraints.
+| *long description*: Defines the number of C6 symmetry restraints. For each, six segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+numncs
+~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of non-crystallographic symmetry restraints
+| *short description*: Number of non-crystallographic symmetry restraints (NCS).
+| *long description*: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined. Note that those must contain exactly the same residues/atom combinations.
+| *group*: symmetry
+| *explevel*: expert
+
+nums3sym
+~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Number of S3 symmetry restraints
+| *short description*: Defines the number of S3 symmetry restraints.
+| *long description*: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.
+| *group*: symmetry
+| *explevel*: expert
+
+randremoval
+~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Random removal of ambiguous restraints
+| *short description*: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated.
+| *long description*: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated. The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.
+| *group*: distance restraints
+| *explevel*: expert
+
+s3sym_end1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the first S3 symmetry segment
+| *long description*: Residue number of last residue in the first S3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_end2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the second S3 symmetry segment
+| *long description*: Residue number of last residue in the second S3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_end3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of last residue
+| *short description*: Residue number of last residue in the third S3 symmetry segment
+| *long description*: Residue number of last residue in the third S3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_seg1_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of first S3 segment
+| *short description*: Segment ID of first S3 segment
+| *long description*: Segment ID of first S3 segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_seg2_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of second S3 segment
+| *short description*: Segment ID of second S3 segment
+| *long description*: Segment ID of second S3 segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_seg3_1
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: string
+| *title*: Segment ID of third S3 segment
+| *short description*: Segment ID of third S3 segment
+| *long description*: Segment ID of third S3 segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_sta1_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the first S3 symmetry segment
+| *long description*: Residue number of first residue in the first S3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_sta2_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the second S3 symmetry segment
+| *long description*: Residue number of first residue in the second S3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+s3sym_sta3_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Residue number of first residue
+| *short description*: Residue number of first residue in the third S3 symmetry segment
+| *long description*: Residue number of first residue in the third S3 symmetry segment
+| *group*: symmetry
+| *explevel*: expert
+
+sampling_factor
+~~~~~~~~~~~~~~~
+
+| *default*: 1
+| *type*: integer
+| *title*: Sampling factor for each starting model
+| *short description*: This paramater control how many times a model will be refined.
+| *long description*: This paramater control how many times a model will be refined.
+| *group*: sampling
+| *explevel*: expert
+
+seg_end_10_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_11_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_12_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_13_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_14_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_15_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_16_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_17_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_18_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_19_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_1_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_20_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_2_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_3_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_4_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_5_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_6_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_7_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_8_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_end_9_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Ending residue number
+| *short description*: Residue number defining the end of the semi-flexible segment.
+| *long description*: Residue number defining the end of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_10_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_11_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_12_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_13_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_14_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_15_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_16_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_17_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_18_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_19_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_1_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_20_1
+~~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_2_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_3_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_4_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_5_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_6_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_7_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_8_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+seg_sta_9_1
+~~~~~~~~~~~
+
+| *default*: nan
+| *type*: integer
+| *title*: Starting residue number
+| *short description*: Residue number defining the start of the semi-flexible segment.
+| *long description*: Residue number defining the start of the semi-flexible segment.
+| *group*: flexibility
+| *explevel*: expert
+
+sym_on
+~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Symmetry restraints
+| *short description*: Enables symmetry restraints
+| *long description*: Enables symmetry restraints. The symmetry type (C2,C3,C4,C5,C6,S3 supported) and the segments to which those apply must be defined. In addition a custom symmetry restraint file can be supplied (symrest_fname).
+| *group*: symmetry
+| *explevel*: expert
+
+symtbl_fname
+~~~~~~~~~~~~
+
+| *default*: ''
+| *type*: file
+| *title*: Custom symmetry restraints filename
+| *short description*: Filename of the custom symmetry restraints file
+| *long description*: Filename of the custom symmetry restraints file.
+| *group*: symmetry
+| *explevel*: expert
+
+tolerance
+~~~~~~~~~
+
+| *default*: 0
+| *type*: integer
+| *title*: Failure tolerance percentage
+| *short description*: Percentage of allowed failures for a module to successfully complete
+| *long description*: Percentage of allowed failures for a module to successfully complete
+| *group*: module
+| *explevel*: expert
+
+unamb_cool1
+~~~~~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Hot phase SA force constant for unambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in unambig_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+unamb_cool2
+~~~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Hot phase SA force constant for unambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in ambig_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+unamb_cool3
+~~~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: Hot phase SA force constant for unambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in unambig_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+unamb_hot
+~~~~~~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Hot phase SA force constant for unambiguous distance restraints
+| *short description*: Force constant applied to the distance restraints defined in unambig_fname during the hot phase of the SA.
+| *long description*: Force constant applied to the distance restraints defined in unambig_fname during the initial hot phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
+| *group*: distance restraints
+| *explevel*: expert
+
+w_air
+~~~~~
+
+| *default*: 0.1
+| *type*: float
+| *title*: Weight of the distance restraint energy
+| *short description*: Weight of the distance restraints energy in the scoring function
+| *long description*: Weight of the distance restraints energy in the scoring function. Note that this is different from the force constants used during the calculations.
+| *group*: scoring
+| *explevel*: expert
+
+w_bsa
+~~~~~
+
+| *default*: -0.01
+| *type*: float
+| *title*: Weight of the buried surface area term
+| *short description*: Weight of the buried surface area term in the scoring function
+| *long description*: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.
+| *group*: scoring
+| *explevel*: expert
+
+w_cdih
+~~~~~~
+
+| *default*: 0.0
+| *type*: float
+| *title*: Weight of the dihedral angle restraint energy
+| *short description*: Weight of the dihedral angle restraints energy in the scoring function
+| *long description*: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.
+| *group*: scoring
+| *explevel*: expert
+
+w_desolv
+~~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Weight of the desolvation energy term
+| *short description*: Weight of the desolvation energy term in the scoring function
+| *long description*: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.
+| *group*: scoring
+| *explevel*: expert
+
+w_elec
+~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Weight of the intermolecular electrostatic energy
+| *short description*: Weight of the intermolecular electrostatic energy in the scoring function
+| *long description*: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the MD refinement.
+| *group*: scoring
+| *explevel*: expert
+
+w_sym
+~~~~~
+
+| *default*: 0.1
+| *type*: float
+| *title*: Weight of the symmetry restraint energy
+| *short description*: Weight of the symmetry restraints energy in the scoring function
+| *long description*: Weight of the symmetry restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.
+| *group*: scoring
+| *explevel*: expert
+
+w_vdw
+~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: Weight of the intermolecular van der Waals energy
+| *short description*: Weight of the intermolecular van der Waals energy in the scoring function
+| *long description*: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the MD refinement.
+| *group*: scoring
+| *explevel*: expert
+
+
+Guru
+````
+
+iniseed
+~~~~~~~
+
+| *default*: 917
+| *type*: integer
+| *title*: Random seed
+| *short description*: Random seed used in CNS to initialize the random seed function
+| *long description*: Random seed used in CNS to initialize the random seed function
+| *group*: sampling
+| *explevel*: guru
+
+keepwater
+~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Write water molecules to output file
+| *short description*: Write water molecules if present to the output file.
+| *long description*: Write water molecules if present to the output file.
+| *group*: sampling
+| *explevel*: guru
+
+log_level
+~~~~~~~~~
+
+| *default*: 'quiet'
+| *type*: string
+| *title*: Log level verbosity for CNS
+| *short description*: Set the log level verbosity for CNS
+| *long description*: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).
+| *group*: module
+| *explevel*: guru
+
+sinter_cool2_final
+~~~~~~~~~~~~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: End intermolecular interactions scaling factor for the 2nd cooling phase.
+| *short description*: End scaling factor for intermolecular interactions in the second MD cooling SA stage.
+| *long description*: End scaling factor applied to intermolecular interactions during the second torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which side-chains at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+sinter_cool2_init
+~~~~~~~~~~~~~~~~~
+
+| *default*: 0.001
+| *type*: float
+| *title*: Initial intermolecular interactions scaling factor for the 2nd cooling phase.
+| *short description*: Initial scaling factor for intermolecular interactions in the second MD cooling SA stage.
+| *long description*: Initial scaling factor applied to intermolecular interactions during the second torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which side-chains at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+sinter_cool3_final
+~~~~~~~~~~~~~~~~~~
+
+| *default*: 1.0
+| *type*: float
+| *title*: End intermolecular interactions scaling factor for the 3rd cooling phase.
+| *short description*: End scaling factor for intermolecular interactions in the third MD cooling SA stage.
+| *long description*: End scaling factor applied to intermolecular interactions during the third and final torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which both side-chains and backbone at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+sinter_cool3_init
+~~~~~~~~~~~~~~~~~
+
+| *default*: 0.05
+| *type*: float
+| *title*: Initial intermolecular interactions scaling factor for the 3rd cooling phase.
+| *short description*: Initial scaling factor for intermolecular interactions in the third MD cooling SA stage.
+| *long description*: Initial scaling factor applied to intermolecular interactions during the third and final torsion angle molecular dynamics cooling stage of the simulated annealing protocol during which both side-chains and backbone at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+sinter_rigid_init
+~~~~~~~~~~~~~~~~~
+
+| *default*: 0.001
+| *type*: float
+| *title*: Initial rigid-body MD intermolecular interactions scaling factor.
+| *short description*: Initial scaling factor for intermolecular interactions in the first two SA stages
+| *long description*: Initial scaling factor applied to intermolecular interactions during the first rigid-body molecular dynamics stage and at the start of the first cooling stage of the of the simulated annealing protocol.
+| *group*: sampling
+| *explevel*: guru
+
+tadfactor
+~~~~~~~~~
+
+| *default*: 8
+| *type*: integer
+| *title*: Scaling factor for the integration time step.
+| *short description*: Initial scaling factor for the integration time step of the hot phase SA.
+| *long description*: Scaling factor applied at the start of the simulated annealing protocol to the timestep using during torsion angle molecular dynamics. This factor is automatically reduced during the SA protocol.
+| *group*: sampling
+| *explevel*: guru
+
+temp_cool1_final
+~~~~~~~~~~~~~~~~
+
+| *default*: 500
+| *type*: integer
+| *title*: End temperature for the 1st cooling phase
+| *short description*: End temperature for the first rigid-body MD cooling phase in Kelvin.
+| *long description*: End temperature in Kelvin for the first rigid-body molecular dynamic cooling phase of the simulated annealing protocol.
+| *group*: sampling
+| *explevel*: guru
+
+temp_cool1_init
+~~~~~~~~~~~~~~~
+
+| *default*: 2000
+| *type*: integer
+| *title*: Start temperature for the 1st cooling phase
+| *short description*: Starting temperature for the first rigid-body MD cooling phase in Kelvin.
+| *long description*: Starting temperature in Kelvin for the first rigid-body molecular dynamic cooling phase of the simulated annealing protocol.
+| *group*: sampling
+| *explevel*: guru
+
+temp_cool2_final
+~~~~~~~~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: End temperature for the 2nd cooling phase
+| *short description*: End temperature for the second MD cooling phase in Kelvin.
+| *long description*: End temperature in Kelvin for the second torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+temp_cool2_init
+~~~~~~~~~~~~~~~
+
+| *default*: 1000
+| *type*: integer
+| *title*: Start temperature for the 2nd cooling phase
+| *short description*: Starting temperature for the second MD cooling phase in Kelvin.
+| *long description*: Starting temperature in Kelvin for the second torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+temp_cool3_final
+~~~~~~~~~~~~~~~~
+
+| *default*: 50
+| *type*: integer
+| *title*: End temperature for the 3rd cooling phase
+| *short description*: End temperature for the third  MD cooling phase in Kelvin.
+| *long description*: End temperature in Kelvin for the third and final torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains and backbone at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+temp_cool3_init
+~~~~~~~~~~~~~~~
+
+| *default*: 1000
+| *type*: integer
+| *title*: Start temperature for the 3rd cooling phase
+| *short description*: Starting temperature for the third  MD cooling phase in Kelvin.
+| *long description*: Starting temperature in Kelvin for the third and final torsion angle molecular dynamic cooling phase of the simulated annealing protocol in which side-chains and backbone at the interface are treated as flexible.
+| *group*: sampling
+| *explevel*: guru
+
+temp_high
+~~~~~~~~~
+
+| *default*: 2000
+| *type*: integer
+| *title*: Initial rigid-body MD temperature
+| *short description*: Temperature for the initial rigid-body MD phase in Kelvin.
+| *long description*: Temperature in Kelvin for the initial rigid-body molecular dynamic phase of the simulated annealing protocol.
+| *group*: sampling
+| *explevel*: guru
+
+timestep
+~~~~~~~~
+
+| *default*: 0.002
+| *type*: float
+| *title*: MD integrating time step
+| *short description*: Integration time step for the torsion angle molecular dynamics.
+| *long description*: Integration time step for the torsion angle molecular dynamics.
+| *group*: sampling
+| *explevel*: guru
+

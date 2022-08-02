@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Easy &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Easy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/modules/sampling/params/rigidbody.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="easy">
+<h1>Easy<a class="headerlink" href="#easy" title="Permalink to this headline"></a></h1>
+<section id="ambig-fname">
+<h2>ambig_fname<a class="headerlink" href="#ambig-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Ambiguous distance restraints filename</div>
+<div class="line"><em>short description</em>: Filename of the ambiguous distance restraints file</div>
+<div class="line"><em>long description</em>: Filename of the ambiguous distance restraints file. By default 50% of those restraints will be randomly discared. This can be changed/turned off and is controlled by the randremoval and npart parameters. Note that this file can contain both ambiguous and unambiguous restraints.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="elecflag">
+<h2>elecflag<a class="headerlink" href="#elecflag" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Include electrostatics energy</div>
+<div class="line"><em>short description</em>: Include electrostatics energy during the calculations.</div>
+<div class="line"><em>long description</em>: Include electrostatics energy during the calculations. If set to false electrostatics will not be considered.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="hbond-fname">
+<h2>hbond_fname<a class="headerlink" href="#hbond-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: H-bond restraints filename</div>
+<div class="line"><em>short description</em>: Filename of the hydrogen bond distance restraints file</div>
+<div class="line"><em>long description</em>: Filename of the hydrogen bond distance restraints file. Note that this file can contain any type of distance restraints.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="mol-shape-1">
+<h2>mol_shape_1<a class="headerlink" href="#mol-shape-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Is the molecule a shape?</div>
+<div class="line"><em>short description</em>: Defines a molecule as a shape.</div>
+<div class="line"><em>long description</em>: Defines a molecule as a shape, which is a collection of beads.</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="randorien">
+<h2>randorien<a class="headerlink" href="#randorien" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: No title yet</div>
+<div class="line"><em>short description</em>: No short description yet</div>
+<div class="line"><em>long description</em>: No long description yet</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="sampling">
+<h2>sampling<a class="headerlink" href="#sampling" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1000</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of models to generate</div>
+<div class="line"><em>short description</em>: Number of rigidbody docking models to generate</div>
+<div class="line"><em>long description</em>: Number of rigidbody docking models to generate</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="unambig-fname">
+<h2>unambig_fname<a class="headerlink" href="#unambig-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Unambiguous restraints filename</div>
+<div class="line"><em>short description</em>: Filename of the unambiguous distance restraints file</div>
+<div class="line"><em>long description</em>: Filename of the unambiguous distance restraints file. All restraints in that file will be used. Note that this file can contain both ambiguous and unambiguous restraints.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+<section id="expert">
+<h1>Expert<a class="headerlink" href="#expert" title="Permalink to this headline"></a></h1>
+<section id="amb-scale">
+<h2>amb_scale<a class="headerlink" href="#amb-scale" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 50</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Force constant for ambiguous distance restraints</div>
+<div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in ambig_fname.</div>
+<div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in ambig_fname.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c2sym-end1-1">
+<h2>c2sym_end1_1<a class="headerlink" href="#c2sym-end1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the first C2 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the first C2 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c2sym-end2-1">
+<h2>c2sym_end2_1<a class="headerlink" href="#c2sym-end2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the second C2 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the second C2 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c2sym-seg1-1">
+<h2>c2sym_seg1_1<a class="headerlink" href="#c2sym-seg1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of first C2 segment</div>
+<div class="line"><em>short description</em>: Segment ID of first C2 segment</div>
+<div class="line"><em>long description</em>: Segment ID of first C2 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c2sym-seg2-1">
+<h2>c2sym_seg2_1<a class="headerlink" href="#c2sym-seg2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of second C2 segment</div>
+<div class="line"><em>short description</em>: Segment ID of second C2 segment</div>
+<div class="line"><em>long description</em>: Segment ID of second C2 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c2sym-sta1-1">
+<h2>c2sym_sta1_1<a class="headerlink" href="#c2sym-sta1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the first C2 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the first C2 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c2sym-sta2-1">
+<h2>c2sym_sta2_1<a class="headerlink" href="#c2sym-sta2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the second C2 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the second C2 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-end1-1">
+<h2>c3sym_end1_1<a class="headerlink" href="#c3sym-end1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the first C3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the first C3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-end2-1">
+<h2>c3sym_end2_1<a class="headerlink" href="#c3sym-end2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the second C3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the second C3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-end3-1">
+<h2>c3sym_end3_1<a class="headerlink" href="#c3sym-end3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the third C3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the third C3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-seg1-1">
+<h2>c3sym_seg1_1<a class="headerlink" href="#c3sym-seg1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of first C3 segment</div>
+<div class="line"><em>short description</em>: Segment ID of first C3 segment</div>
+<div class="line"><em>long description</em>: Segment ID of first C3 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-seg2-1">
+<h2>c3sym_seg2_1<a class="headerlink" href="#c3sym-seg2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of second C3 segment</div>
+<div class="line"><em>short description</em>: Segment ID of second C3 segment</div>
+<div class="line"><em>long description</em>: Segment ID of second C3 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-seg3-1">
+<h2>c3sym_seg3_1<a class="headerlink" href="#c3sym-seg3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of third C3 segment</div>
+<div class="line"><em>short description</em>: Segment ID of third C3 segment</div>
+<div class="line"><em>long description</em>: Segment ID of third C3 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-sta1-1">
+<h2>c3sym_sta1_1<a class="headerlink" href="#c3sym-sta1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the first C3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the first C3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-sta2-1">
+<h2>c3sym_sta2_1<a class="headerlink" href="#c3sym-sta2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the second C3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the second C3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c3sym-sta3-1">
+<h2>c3sym_sta3_1<a class="headerlink" href="#c3sym-sta3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the third C3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the third C3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-end1-1">
+<h2>c4sym_end1_1<a class="headerlink" href="#c4sym-end1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the first C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the first C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-end2-1">
+<h2>c4sym_end2_1<a class="headerlink" href="#c4sym-end2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the second C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the second C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-end3-1">
+<h2>c4sym_end3_1<a class="headerlink" href="#c4sym-end3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the third C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the third C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-end4-1">
+<h2>c4sym_end4_1<a class="headerlink" href="#c4sym-end4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the fourth C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the fourth C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-seg1-1">
+<h2>c4sym_seg1_1<a class="headerlink" href="#c4sym-seg1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of first C4 segment</div>
+<div class="line"><em>short description</em>: Segment ID of first C4 segment</div>
+<div class="line"><em>long description</em>: Segment ID of first C4 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-seg2-1">
+<h2>c4sym_seg2_1<a class="headerlink" href="#c4sym-seg2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of second C4 segment</div>
+<div class="line"><em>short description</em>: Segment ID of second C4 segment</div>
+<div class="line"><em>long description</em>: Segment ID of second C4 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-seg3-1">
+<h2>c4sym_seg3_1<a class="headerlink" href="#c4sym-seg3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of third C4 segment</div>
+<div class="line"><em>short description</em>: Segment ID of third C4 segment</div>
+<div class="line"><em>long description</em>: Segment ID of third C4 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-seg4-1">
+<h2>c4sym_seg4_1<a class="headerlink" href="#c4sym-seg4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of fourth C4 segment</div>
+<div class="line"><em>short description</em>: Segment ID of fourth C4 segment</div>
+<div class="line"><em>long description</em>: Segment ID of fourth C4 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-sta1-1">
+<h2>c4sym_sta1_1<a class="headerlink" href="#c4sym-sta1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the first C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the first C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-sta2-1">
+<h2>c4sym_sta2_1<a class="headerlink" href="#c4sym-sta2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the second C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the second C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-sta3-1">
+<h2>c4sym_sta3_1<a class="headerlink" href="#c4sym-sta3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the third C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the third C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c4sym-sta4-1">
+<h2>c4sym_sta4_1<a class="headerlink" href="#c4sym-sta4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the fourth C4 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the fourth C4 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-end1-1">
+<h2>c5sym_end1_1<a class="headerlink" href="#c5sym-end1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the first C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the first C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-end2-1">
+<h2>c5sym_end2_1<a class="headerlink" href="#c5sym-end2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the second C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the second C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-end3-1">
+<h2>c5sym_end3_1<a class="headerlink" href="#c5sym-end3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the third C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the third C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-end4-1">
+<h2>c5sym_end4_1<a class="headerlink" href="#c5sym-end4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the fourth C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the fourth C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-end5-1">
+<h2>c5sym_end5_1<a class="headerlink" href="#c5sym-end5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the fifth C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the fifth C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-seg1-1">
+<h2>c5sym_seg1_1<a class="headerlink" href="#c5sym-seg1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of first C5 segment</div>
+<div class="line"><em>short description</em>: Segment ID of first C5 segment</div>
+<div class="line"><em>long description</em>: Segment ID of first C5 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-seg2-1">
+<h2>c5sym_seg2_1<a class="headerlink" href="#c5sym-seg2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of second C5 segment</div>
+<div class="line"><em>short description</em>: Segment ID of second C5 segment</div>
+<div class="line"><em>long description</em>: Segment ID of second C5 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-seg3-1">
+<h2>c5sym_seg3_1<a class="headerlink" href="#c5sym-seg3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of third C5 segment</div>
+<div class="line"><em>short description</em>: Segment ID of third C5 segment</div>
+<div class="line"><em>long description</em>: Segment ID of third C5 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-seg4-1">
+<h2>c5sym_seg4_1<a class="headerlink" href="#c5sym-seg4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of fourth C5 segment</div>
+<div class="line"><em>short description</em>: Segment ID of fourth C5 segment</div>
+<div class="line"><em>long description</em>: Segment ID of fourth C5 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-seg5-1">
+<h2>c5sym_seg5_1<a class="headerlink" href="#c5sym-seg5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of fifth C5 segment</div>
+<div class="line"><em>short description</em>: Segment ID of fifth C5 segment</div>
+<div class="line"><em>long description</em>: Segment ID of fifth C5 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-sta1-1">
+<h2>c5sym_sta1_1<a class="headerlink" href="#c5sym-sta1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the first C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the first C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-sta2-1">
+<h2>c5sym_sta2_1<a class="headerlink" href="#c5sym-sta2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the second C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the second C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-sta3-1">
+<h2>c5sym_sta3_1<a class="headerlink" href="#c5sym-sta3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the third C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the third C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-sta4-1">
+<h2>c5sym_sta4_1<a class="headerlink" href="#c5sym-sta4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the fourth C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the fourth C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c5sym-sta5-1">
+<h2>c5sym_sta5_1<a class="headerlink" href="#c5sym-sta5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the fifth C5 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the fifth C5 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-end1-1">
+<h2>c6sym_end1_1<a class="headerlink" href="#c6sym-end1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the first C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the first C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-end2-1">
+<h2>c6sym_end2_1<a class="headerlink" href="#c6sym-end2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the second C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the second C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-end3-1">
+<h2>c6sym_end3_1<a class="headerlink" href="#c6sym-end3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the third C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the third C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-end4-1">
+<h2>c6sym_end4_1<a class="headerlink" href="#c6sym-end4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the fourth C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the fourth C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-end5-1">
+<h2>c6sym_end5_1<a class="headerlink" href="#c6sym-end5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the fifth C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the fifth C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-end6-1">
+<h2>c6sym_end6_1<a class="headerlink" href="#c6sym-end6-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the sixth C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the sixth C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-seg1-1">
+<h2>c6sym_seg1_1<a class="headerlink" href="#c6sym-seg1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of first C6 segment</div>
+<div class="line"><em>short description</em>: Segment ID of first C6 segment</div>
+<div class="line"><em>long description</em>: Segment ID of first C6 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-seg2-1">
+<h2>c6sym_seg2_1<a class="headerlink" href="#c6sym-seg2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of second C6 segment</div>
+<div class="line"><em>short description</em>: Segment ID of second C6 segment</div>
+<div class="line"><em>long description</em>: Segment ID of second C6 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-seg3-1">
+<h2>c6sym_seg3_1<a class="headerlink" href="#c6sym-seg3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of third C6 segment</div>
+<div class="line"><em>short description</em>: Segment ID of third C6 segment</div>
+<div class="line"><em>long description</em>: Segment ID of third C6 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-seg4-1">
+<h2>c6sym_seg4_1<a class="headerlink" href="#c6sym-seg4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of fourth C6 segment</div>
+<div class="line"><em>short description</em>: Segment ID of fourth C6 segment</div>
+<div class="line"><em>long description</em>: Segment ID of fourth C6 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-seg5-1">
+<h2>c6sym_seg5_1<a class="headerlink" href="#c6sym-seg5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of fifth C6 segment</div>
+<div class="line"><em>short description</em>: Segment ID of fifth C6 segment</div>
+<div class="line"><em>long description</em>: Segment ID of fifth C6 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-seg6-1">
+<h2>c6sym_seg6_1<a class="headerlink" href="#c6sym-seg6-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of sixth C6 segment</div>
+<div class="line"><em>short description</em>: Segment ID of sixth C6 segment</div>
+<div class="line"><em>long description</em>: Segment ID of sixth C6 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-sta1-1">
+<h2>c6sym_sta1_1<a class="headerlink" href="#c6sym-sta1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the first C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the first C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-sta2-1">
+<h2>c6sym_sta2_1<a class="headerlink" href="#c6sym-sta2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the second C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the second C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-sta3-1">
+<h2>c6sym_sta3_1<a class="headerlink" href="#c6sym-sta3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the third C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the third C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-sta4-1">
+<h2>c6sym_sta4_1<a class="headerlink" href="#c6sym-sta4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the fourth C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the fourth C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-sta5-1">
+<h2>c6sym_sta5_1<a class="headerlink" href="#c6sym-sta5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the fifth C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the fifth C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="c6sym-sta6-1">
+<h2>c6sym_sta6_1<a class="headerlink" href="#c6sym-sta6-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the sixth C6 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the sixth C6 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="cmrest">
+<h2>cmrest<a class="headerlink" href="#cmrest" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Center of mass restraints</div>
+<div class="line"><em>short description</em>: Automatically defines distance restraints between the geometric center of the various molecules.</div>
+<div class="line"><em>long description</em>: When turned on, this option will automatically define center of mass restraints between the various molecules. This allows HADDOCK to operate in ab-initio mode in the absence of any other restraints. But those restraints can also be combined with other restraints to ensure more compact solutions. The distance restraints are defined between the geometrical centers of the various molecules (calculated on CA atoms for proteins (BB in case of Martini coarse-grained molecules) and N1 atoms for nucleic acids. For small ligands, all atoms will be used to define the geometric center. The upper limit distance is automatically calculated based on the dimension of the molecules (see cmtight description).</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="cmtight">
+<h2>cmtight<a class="headerlink" href="#cmtight" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Center of mass restraint tightness</div>
+<div class="line"><em>short description</em>: Defines the upper distance limit based on the sum of the average dimension of the two molecule, if cmtight=false all three dimensions are used, if set to true the shortest two only are used, resulting in tighter distance restraints.</div>
+<div class="line"><em>long description</em>: This parameter controls how the upper limit distance is defined for the center of mass restraints between molecules. Each molecule is oriented along its principle components and the x,y and z dimensions are calculated. If cmtight=true, the molecule distance (size) is set to the average of its smallest two half dimensions. If cmtight=false, the molecule distance (size) is set to the average of its three half dimensions.. In case of DNA or small ligands the molecule distance (size) is set to 0. The effective upper distance limit for the center or mass distance restraint is the sum of the two molecule distances.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="crossdock">
+<h2>crossdock<a class="headerlink" href="#crossdock" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Cross docking of starting ensembles</div>
+<div class="line"><em>short description</em>: In case ensembles of starting structures are provided, if set to true, takes all possible combinations for the docking.</div>
+<div class="line"><em>long description</em>: This variable controls on starting models are combined in case ensembles of starting structures are provided. If set to true, all possible combinations of starting models will be used for the docking. If set to false, the first model from molecule1 will be combined with the first model from molecule2 and so on.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="dielec">
+<h2>dielec<a class="headerlink" href="#dielec" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘rdie’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Constant (cdie) or distance-dependent dielectric (rdie) constant.</div>
+<div class="line"><em>short description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential.</div>
+<div class="line"><em>long description</em>: Use a constant (cdie option) or a distance-dependent dielectric (rdie) constant in the Coulomb potential. A distance dependent dielectric constant will effectively scale down the electrostatic energy by having a 1/r**2 dependency instead of 1/r</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="epsilon">
+<h2>epsilon<a class="headerlink" href="#epsilon" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 10.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Dielectric constant</div>
+<div class="line"><em>short description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
+<div class="line"><em>long description</em>: Dielectric constant for the electrostatic Coulomb energy term.</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="hbond-scale">
+<h2>hbond_scale<a class="headerlink" href="#hbond-scale" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 50</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Force constant for hbonds distance restraints</div>
+<div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in hbond_fname.</div>
+<div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in hbond_fname.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="inter-rigid">
+<h2>inter_rigid<a class="headerlink" href="#inter-rigid" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Scaling of intermolecular interactions</div>
+<div class="line"><em>short description</em>: Scaling of intermolecular interactions</div>
+<div class="line"><em>long description</em>: Scaling of intermolecular interactions. This allows in particular to scale down intermolecular interactions to reach buried sites (recommended value for this is 0.01). If scaled-down do note that the van der Waals intermolecular energy might be bad because of clashes. In that case it is best to also set the weight of the van der Waals energy term to 0 (w_vdw).</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="kcm">
+<h2>kcm<a class="headerlink" href="#kcm" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Center of mass restraints force constant</div>
+<div class="line"><em>short description</em>: Force constant applied to the center of mass restraints</div>
+<div class="line"><em>long description</em>: Force constant applied to the center of mass restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="kncs">
+<h2>kncs<a class="headerlink" href="#kncs" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Force constant for non-crystallographic restraints</div>
+<div class="line"><em>short description</em>: Force constant for non-crystallographic restraints</div>
+<div class="line"><em>long description</em>: Force constant for non-crystallographic restraints</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ksurf">
+<h2>ksurf<a class="headerlink" href="#ksurf" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Surface contact restraints force constant</div>
+<div class="line"><em>short description</em>: Force constant applied to the surface contact restraints.</div>
+<div class="line"><em>long description</em>: Force constant applied to the surface contact restraints.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ksym">
+<h2>ksym<a class="headerlink" href="#ksym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 10.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Force constant for symmetry restraints</div>
+<div class="line"><em>short description</em>: Force constant for symmetry restraints</div>
+<div class="line"><em>long description</em>: Force constant for symmetry restraints</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ligand-param-fname">
+<h2>ligand_param_fname<a class="headerlink" href="#ligand-param-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand parameter file</div>
+<div class="line"><em>short description</em>: Ligand parameter file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand parameter file in CNS format containing all force field parameters (bond, angles, dihedrals, impropers, van der waals) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ligand-top-fname">
+<h2>ligand_top_fname<a class="headerlink" href="#ligand-top-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom ligand topology file</div>
+<div class="line"><em>short description</em>: Ligand topology file in CNS format</div>
+<div class="line"><em>long description</em>: Ligand topology file in CNS format containing the ligand topologies (atoms, masses, charges, bond definitions…) for any ligand not supported by default by HADDOCK</div>
+<div class="line"><em>group</em>: force field</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="mol-fix-origin-1">
+<h2>mol_fix_origin_1<a class="headerlink" href="#mol-fix-origin-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Fix molecule</div>
+<div class="line"><em>short description</em>: Fixes the molecule in its original position.</div>
+<div class="line"><em>long description</em>: Fixes the molecule in its original position.</div>
+<div class="line"><em>group</em>: molecule</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ncs-end1-1">
+<h2>ncs_end1_1<a class="headerlink" href="#ncs-end1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the first NCS segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the first NCS segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ncs-end2-1">
+<h2>ncs_end2_1<a class="headerlink" href="#ncs-end2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the second NCS segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the second NCS segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ncs-on">
+<h2>ncs_on<a class="headerlink" href="#ncs-on" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Non-crystallographic symmetry restraints</div>
+<div class="line"><em>short description</em>: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation.</div>
+<div class="line"><em>long description</em>: Non-crystallographic symmetry restraints to ensure two molecules will have the same conformation. This does not apply any symmetry between the two molecules but rather defines restraints such as the RMSD between those is 0.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ncs-seg1-1">
+<h2>ncs_seg1_1<a class="headerlink" href="#ncs-seg1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of first NCS segment</div>
+<div class="line"><em>short description</em>: Segment ID of first NCS segment</div>
+<div class="line"><em>long description</em>: Segment ID of first NCS segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ncs-seg2-1">
+<h2>ncs_seg2_1<a class="headerlink" href="#ncs-seg2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of second NCS segment</div>
+<div class="line"><em>short description</em>: Segment ID of second NCS segment</div>
+<div class="line"><em>long description</em>: Segment ID of second NCS segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ncs-sta1-1">
+<h2>ncs_sta1_1<a class="headerlink" href="#ncs-sta1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the first NCS segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the first NCS segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ncs-sta2-1">
+<h2>ncs_sta2_1<a class="headerlink" href="#ncs-sta2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the second NCS segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the second NCS segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="npart">
+<h2>npart<a class="headerlink" href="#npart" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 2</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number partitions for ambiguous restraints</div>
+<div class="line"><em>short description</em>: Number of sets into which to randomly partition the ambiguous restraints.</div>
+<div class="line"><em>long description</em>: Number of sets into which to randomly partition the ambiguous restraints. The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-1">
+<h2>nrair_1<a class="headerlink" href="#nrair-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-10">
+<h2>nrair_10<a class="headerlink" href="#nrair-10" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-11">
+<h2>nrair_11<a class="headerlink" href="#nrair-11" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-12">
+<h2>nrair_12<a class="headerlink" href="#nrair-12" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-13">
+<h2>nrair_13<a class="headerlink" href="#nrair-13" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-14">
+<h2>nrair_14<a class="headerlink" href="#nrair-14" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-15">
+<h2>nrair_15<a class="headerlink" href="#nrair-15" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-16">
+<h2>nrair_16<a class="headerlink" href="#nrair-16" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-17">
+<h2>nrair_17<a class="headerlink" href="#nrair-17" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-18">
+<h2>nrair_18<a class="headerlink" href="#nrair-18" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-19">
+<h2>nrair_19<a class="headerlink" href="#nrair-19" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-2">
+<h2>nrair_2<a class="headerlink" href="#nrair-2" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-20">
+<h2>nrair_20<a class="headerlink" href="#nrair-20" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-3">
+<h2>nrair_3<a class="headerlink" href="#nrair-3" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-4">
+<h2>nrair_4<a class="headerlink" href="#nrair-4" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-5">
+<h2>nrair_5<a class="headerlink" href="#nrair-5" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-6">
+<h2>nrair_6<a class="headerlink" href="#nrair-6" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-7">
+<h2>nrair_7<a class="headerlink" href="#nrair-7" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-8">
+<h2>nrair_8<a class="headerlink" href="#nrair-8" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nrair-9">
+<h2>nrair_9<a class="headerlink" href="#nrair-9" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of segments from which to pick random restraints</div>
+<div class="line"><em>short description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of segments for this molecule from which to randomly define random interaction restraints. Only solvent accessible residues will be considered. See also the ranair parameter.</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ntrials">
+<h2>ntrials<a class="headerlink" href="#ntrials" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 5</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of internal docking trials</div>
+<div class="line"><em>short description</em>: Number of internal docking trials. Only the best model will be written to disk.</div>
+<div class="line"><em>long description</em>: Number of internal docking trials. HADDOCK will repeat the docking internally multiple times, ranking them internally and only writing the best model to disk.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="numc2sym">
+<h2>numc2sym<a class="headerlink" href="#numc2sym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of C2 symmetry restraints</div>
+<div class="line"><em>short description</em>: Defines the number of C2 symmetry restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of C2 symmetry restraints. For each, a pair of segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="numc3sym">
+<h2>numc3sym<a class="headerlink" href="#numc3sym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of C3 symmetry restraints</div>
+<div class="line"><em>short description</em>: Defines the number of C3 symmetry restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of C3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="numc4sym">
+<h2>numc4sym<a class="headerlink" href="#numc4sym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of C4 symmetry restraints</div>
+<div class="line"><em>short description</em>: Defines the number of C4 symmetry restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of C4 symmetry restraints. For each, four segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="numc5sym">
+<h2>numc5sym<a class="headerlink" href="#numc5sym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of C5 symmetry restraints</div>
+<div class="line"><em>short description</em>: Defines the number of C5 symmetry restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of C5 symmetry restraints. For each, five segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="numc6sym">
+<h2>numc6sym<a class="headerlink" href="#numc6sym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of C6 symmetry restraints</div>
+<div class="line"><em>short description</em>: Defines the number of C6 symmetry restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of C6 symmetry restraints. For each, six segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="numncs">
+<h2>numncs<a class="headerlink" href="#numncs" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of non-crystallographic symmetry restraints</div>
+<div class="line"><em>short description</em>: Number of non-crystallographic symmetry restraints (NCS).</div>
+<div class="line"><em>long description</em>: Number of non-crystallographic symmetry restraints. For each pairs of segments will have to be defined. Note that those must contain exactly the same residues/atom combinations.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="nums3sym">
+<h2>nums3sym<a class="headerlink" href="#nums3sym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of S3 symmetry restraints</div>
+<div class="line"><em>short description</em>: Defines the number of S3 symmetry restraints.</div>
+<div class="line"><em>long description</em>: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-10-1">
+<h2>rair_end_10_1<a class="headerlink" href="#rair-end-10-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-11-1">
+<h2>rair_end_11_1<a class="headerlink" href="#rair-end-11-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-12-1">
+<h2>rair_end_12_1<a class="headerlink" href="#rair-end-12-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-13-1">
+<h2>rair_end_13_1<a class="headerlink" href="#rair-end-13-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-14-1">
+<h2>rair_end_14_1<a class="headerlink" href="#rair-end-14-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-15-1">
+<h2>rair_end_15_1<a class="headerlink" href="#rair-end-15-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-16-1">
+<h2>rair_end_16_1<a class="headerlink" href="#rair-end-16-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-17-1">
+<h2>rair_end_17_1<a class="headerlink" href="#rair-end-17-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-18-1">
+<h2>rair_end_18_1<a class="headerlink" href="#rair-end-18-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-19-1">
+<h2>rair_end_19_1<a class="headerlink" href="#rair-end-19-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-1-1">
+<h2>rair_end_1_1<a class="headerlink" href="#rair-end-1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-20-1">
+<h2>rair_end_20_1<a class="headerlink" href="#rair-end-20-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-2-1">
+<h2>rair_end_2_1<a class="headerlink" href="#rair-end-2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-3-1">
+<h2>rair_end_3_1<a class="headerlink" href="#rair-end-3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-4-1">
+<h2>rair_end_4_1<a class="headerlink" href="#rair-end-4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-5-1">
+<h2>rair_end_5_1<a class="headerlink" href="#rair-end-5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-6-1">
+<h2>rair_end_6_1<a class="headerlink" href="#rair-end-6-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-7-1">
+<h2>rair_end_7_1<a class="headerlink" href="#rair-end-7-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-8-1">
+<h2>rair_end_8_1<a class="headerlink" href="#rair-end-8-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-end-9-1">
+<h2>rair_end_9_1<a class="headerlink" href="#rair-end-9-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Ending residue number</div>
+<div class="line"><em>short description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Ending residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-10-1">
+<h2>rair_sta_10_1<a class="headerlink" href="#rair-sta-10-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-11-1">
+<h2>rair_sta_11_1<a class="headerlink" href="#rair-sta-11-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-12-1">
+<h2>rair_sta_12_1<a class="headerlink" href="#rair-sta-12-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-13-1">
+<h2>rair_sta_13_1<a class="headerlink" href="#rair-sta-13-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-14-1">
+<h2>rair_sta_14_1<a class="headerlink" href="#rair-sta-14-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-15-1">
+<h2>rair_sta_15_1<a class="headerlink" href="#rair-sta-15-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-16-1">
+<h2>rair_sta_16_1<a class="headerlink" href="#rair-sta-16-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-17-1">
+<h2>rair_sta_17_1<a class="headerlink" href="#rair-sta-17-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-18-1">
+<h2>rair_sta_18_1<a class="headerlink" href="#rair-sta-18-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-19-1">
+<h2>rair_sta_19_1<a class="headerlink" href="#rair-sta-19-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-1-1">
+<h2>rair_sta_1_1<a class="headerlink" href="#rair-sta-1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-20-1">
+<h2>rair_sta_20_1<a class="headerlink" href="#rair-sta-20-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-2-1">
+<h2>rair_sta_2_1<a class="headerlink" href="#rair-sta-2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-3-1">
+<h2>rair_sta_3_1<a class="headerlink" href="#rair-sta-3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-4-1">
+<h2>rair_sta_4_1<a class="headerlink" href="#rair-sta-4-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-5-1">
+<h2>rair_sta_5_1<a class="headerlink" href="#rair-sta-5-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-6-1">
+<h2>rair_sta_6_1<a class="headerlink" href="#rair-sta-6-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-7-1">
+<h2>rair_sta_7_1<a class="headerlink" href="#rair-sta-7-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-8-1">
+<h2>rair_sta_8_1<a class="headerlink" href="#rair-sta-8-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rair-sta-9-1">
+<h2>rair_sta_9_1<a class="headerlink" href="#rair-sta-9-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Starting residue number</div>
+<div class="line"><em>short description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>long description</em>: Starting residue number for segment from which to define random interaction restraints</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="ranair">
+<h2>ranair<a class="headerlink" href="#ranair" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Random interaction restraints</div>
+<div class="line"><em>short description</em>: Ambiguous interaction restraints will be defined randomly from surface patches around solvent accessible residues.</div>
+<div class="line"><em>long description</em>: When turned on, this option will automatically define ambigous interaction restraints between the various molecules from randomly selected surface patches from solvent accessible residues . This allows HADDOCK to operate in ab-initio mode. Note that this type of restraints can not be combined with any other distance restraints. By default the entire surface will be sampled, but it is possible to define per molecule segments from which the random restraints will be defined (see the nrair_X parameter).</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="randremoval">
+<h2>randremoval<a class="headerlink" href="#randremoval" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Random removal of ambiguous restraints</div>
+<div class="line"><em>short description</em>: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated.</div>
+<div class="line"><em>long description</em>: If set to true (default) this will cause the random removal of ambiguous restraints for each model generated. The fraction of restraints randomly removed depends on the npart parameter which defines in how many sets the restraints should be randomly split. The first set will be removed. The fraction of randomly removed ambiguous restraints is thus 1/npart.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="rotate180">
+<h2>rotate180<a class="headerlink" href="#rotate180" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Sample 180-rotated solutions</div>
+<div class="line"><em>short description</em>: If true, HADDOCK will rotate the molecule by 180 degree around an axis perpendicular to the interface.</div>
+<div class="line"><em>long description</em>: This parameter controls the sampling of 180 degree rotated solutions. If set to true, HADDOCK will rotate the molecule by 180 degree around an axis perpendicular to the interface.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-end1-1">
+<h2>s3sym_end1_1<a class="headerlink" href="#s3sym-end1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the first S3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the first S3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-end2-1">
+<h2>s3sym_end2_1<a class="headerlink" href="#s3sym-end2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the second S3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the second S3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-end3-1">
+<h2>s3sym_end3_1<a class="headerlink" href="#s3sym-end3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of last residue</div>
+<div class="line"><em>short description</em>: Residue number of last residue in the third S3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of last residue in the third S3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-seg1-1">
+<h2>s3sym_seg1_1<a class="headerlink" href="#s3sym-seg1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of first S3 segment</div>
+<div class="line"><em>short description</em>: Segment ID of first S3 segment</div>
+<div class="line"><em>long description</em>: Segment ID of first S3 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-seg2-1">
+<h2>s3sym_seg2_1<a class="headerlink" href="#s3sym-seg2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of second S3 segment</div>
+<div class="line"><em>short description</em>: Segment ID of second S3 segment</div>
+<div class="line"><em>long description</em>: Segment ID of second S3 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-seg3-1">
+<h2>s3sym_seg3_1<a class="headerlink" href="#s3sym-seg3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Segment ID of third S3 segment</div>
+<div class="line"><em>short description</em>: Segment ID of third S3 segment</div>
+<div class="line"><em>long description</em>: Segment ID of third S3 segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-sta1-1">
+<h2>s3sym_sta1_1<a class="headerlink" href="#s3sym-sta1-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the first S3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the first S3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-sta2-1">
+<h2>s3sym_sta2_1<a class="headerlink" href="#s3sym-sta2-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the second S3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the second S3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="s3sym-sta3-1">
+<h2>s3sym_sta3_1<a class="headerlink" href="#s3sym-sta3-1" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: nan</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Residue number of first residue</div>
+<div class="line"><em>short description</em>: Residue number of first residue in the third S3 symmetry segment</div>
+<div class="line"><em>long description</em>: Residue number of first residue in the third S3 symmetry segment</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="surfrest">
+<h2>surfrest<a class="headerlink" href="#surfrest" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Surface contact restraints</div>
+<div class="line"><em>short description</em>: Surface contact restraints between molecules</div>
+<div class="line"><em>long description</em>: Surface contact restraints between molecules. These are defined as an ambiguous distance restraint between all CA,BB or N1 atoms of two molecules (for small ligands all atoms are considered). The upper limit is set to 7A (or 4.5A in case of small ligands). Note that this option is computationally more expensive than the center of mass restraints (see cmrest).</div>
+<div class="line"><em>group</em>: ab initio mode</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="sym-on">
+<h2>sym_on<a class="headerlink" href="#sym-on" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Symmetry restraints</div>
+<div class="line"><em>short description</em>: Enables symmetry restraints</div>
+<div class="line"><em>long description</em>: Enables symmetry restraints. The symmetry type (C2,C3,C4,C5,C6,S3 supported) and the segments to which those apply must be defined. In addition a custom symmetry restraint file can be supplied (symrest_fname).</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="symtbl-fname">
+<h2>symtbl_fname<a class="headerlink" href="#symtbl-fname" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Custom symmetry restraints filename</div>
+<div class="line"><em>short description</em>: Filename of the custom symmetry restraints file</div>
+<div class="line"><em>long description</em>: Filename of the custom symmetry restraints file.</div>
+<div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="tolerance">
+<h2>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Failure tolerance percentage</div>
+<div class="line"><em>short description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>long description</em>: Percentage of allowed failures for a module to successfully complete</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="unamb-scale">
+<h2>unamb_scale<a class="headerlink" href="#unamb-scale" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 50</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Force constant for unambiguous distance restraints</div>
+<div class="line"><em>short description</em>: Force constant applied to the distance restraints defined in unambig_fname.</div>
+<div class="line"><em>long description</em>: Force constant applied to the distance restraints defined in unambig_fname.</div>
+<div class="line"><em>group</em>: distance restraints</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-air">
+<h2>w_air<a class="headerlink" href="#w-air" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.01</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the distance restraint energy</div>
+<div class="line"><em>short description</em>: Weight of the distance restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the distance restraints energy in the scoring function. Note that this is different from the force constants used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-bsa">
+<h2>w_bsa<a class="headerlink" href="#w-bsa" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: -0.01</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the buried surface area term</div>
+<div class="line"><em>short description</em>: Weight of the buried surface area term in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the buried surface area (BSA) term in the scoring function. Note that the BSA is only used for scoring.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-cdih">
+<h2>w_cdih<a class="headerlink" href="#w-cdih" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the dihedral angle restraint energy</div>
+<div class="line"><em>short description</em>: Weight of the dihedral angle restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the dihedral angle restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-desolv">
+<h2>w_desolv<a class="headerlink" href="#w-desolv" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the desolvation energy term</div>
+<div class="line"><em>short description</em>: Weight of the desolvation energy term in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the desolvation energy term in the scoring function. Note that the desolvation energy is only used for scoring.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-dist">
+<h2>w_dist<a class="headerlink" href="#w-dist" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.01</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the distance restraint energy</div>
+<div class="line"><em>short description</em>: Weight of the distance restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the distance restraints energy in the scoring function. Note that this is different from the force constants used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-elec">
+<h2>w_elec<a class="headerlink" href="#w-elec" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 1.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the intermolecular electrostatic energy</div>
+<div class="line"><em>short description</em>: Weight of the intermolecular electrostatic energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the intermolecular electrostatic energy in the scoring function. Note that this does not affect the electostatic energy during the rigidbody minimization.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-sym">
+<h2>w_sym<a class="headerlink" href="#w-sym" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.1</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the symmetry restraint energy</div>
+<div class="line"><em>short description</em>: Weight of the symmetry restraints energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the symmetry restraints energy in the scoring function. Note that this is different from the force constant used during the calculations.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="w-vdw">
+<h2>w_vdw<a class="headerlink" href="#w-vdw" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.01</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Weight of the intermolecular van der Waals energy</div>
+<div class="line"><em>short description</em>: Weight of the intermolecular van der Waals energy in the scoring function</div>
+<div class="line"><em>long description</em>: Weight of the intermolecular van der Waals energy in the scoring function. Note that this does not affect the van der Waals energy during the rigidbody minimization.</div>
+<div class="line"><em>group</em>: scoring</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+</section>
+<section id="guru">
+<h1>Guru<a class="headerlink" href="#guru" title="Permalink to this headline"></a></h1>
+<section id="iniseed">
+<h2>iniseed<a class="headerlink" href="#iniseed" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: 917</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Random seed</div>
+<div class="line"><em>short description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>long description</em>: Random seed used in CNS to initialize the random seed function</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="keepwater">
+<h2>keepwater<a class="headerlink" href="#keepwater" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Write water molecules to output file</div>
+<div class="line"><em>short description</em>: Write water molecules if present to the output file.</div>
+<div class="line"><em>long description</em>: Write water molecules if present to the output file.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="log-level">
+<h2>log_level<a class="headerlink" href="#log-level" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘quiet’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Log level verbosity for CNS</div>
+<div class="line"><em>short description</em>: Set the log level verbosity for CNS</div>
+<div class="line"><em>long description</em>: CNS, the computational engine used by HADDOCK can generate a lot of output messages. This parameter controls the verbosity of CNS (verbose, normal or quiet).</div>
+<div class="line"><em>group</em>: module</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+<section id="rigidtrans">
+<h2>rigidtrans<a class="headerlink" href="#rigidtrans" title="Permalink to this headline"></a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Allow translation during EM</div>
+<div class="line"><em>short description</em>: Enables translation during rigidbody energy minimization</div>
+<div class="line"><em>long description</em>: Enables translation during rigidbody energy minimization. If set to false, only a rotational energy minimization will be performed.</div>
+<div class="line"><em>group</em>: sampling</div>
+<div class="line"><em>explevel</em>: guru</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

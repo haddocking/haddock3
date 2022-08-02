@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workflow configuration files &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Editing and extending runs" href="continuing_runs.html" />
+    <link rel="prev" title="Advanced features" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Advanced features</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#haddock3-functionalities">HADDOCK3 functionalities</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Workflow configuration files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="continuing_runs.html">Editing and extending runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mpi.html">Running HADDOCK3 with MPI</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#tutorials-for-developers">Tutorials for developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Advanced features</a> &raquo;</li>
+      <li>Workflow configuration files</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/user_config.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="workflow-configuration-files">
+<h1>Workflow configuration files<a class="headerlink" href="#workflow-configuration-files" title="Permalink to this headline"></a></h1>
+<p>Users can configure HADDOCK3 workflows through human-readable text files. The
+configuration file is divided into two sections. The first contains the general
+<strong>mandatory</strong> and <strong>optional</strong> parameters. The second section contains the
+configuration parameters for each <strong>step</strong> in the workflow. The workflow steps
+are defined by a title header with the module’s name to execute followed by its
+parameters.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="c1"># first section: general parameters =======</span><span class="w"></span>
+<span class="c1"># mandatory parameters</span><span class="w"></span>
+<span class="n">run_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;run1-test&quot;</span><span class="w"></span>
+
+<span class="n">molecules</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;data/mol1.pdb&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;data/mol2.pdb&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">]</span><span class="w"></span>
+
+<span class="c1"># optional parameters</span><span class="w"></span>
+<span class="n">ncores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span><span class="w"></span>
+
+<span class="c1"># second section: step parameters =======</span><span class="w"></span>
+<span class="c1"># each workflow step executes a HADDOCK3 module</span><span class="w"></span>
+<span class="c1"># the step&#39;s header is the name of the module</span><span class="w"></span>
+<span class="c1"># the step&#39;s paramereters are defined below its header</span><span class="w"></span>
+<span class="k">[topoaa]</span><span class="w"></span>
+<span class="n">autohis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<span class="k">[topoaa.mol1]</span><span class="w"></span>
+<span class="n">nhisd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="w"></span>
+<span class="n">nhise</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="n">hise_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">75</span><span class="w"></span>
+<span class="k">[topoaa.mol2]</span><span class="w"></span>
+<span class="n">nhisd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="n">hisd_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">76</span><span class="w"></span>
+<span class="n">nhise</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="n">hise_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="w"></span>
+
+<span class="k">[rigidbody]</span><span class="w"></span>
+<span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="w"></span>
+<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/mol1.tbl&quot;</span><span class="w"></span>
+<span class="n">sampling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="w"></span>
+
+<span class="k">[caprieval]</span><span class="w"></span>
+<span class="n">reference_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/mol1-mol2.pdb&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are a developer and wish to know more details, the HADDOCK3
+configuration files follow the TOML syntax. However they are not TOML files.
+HADDOCK3 implements its own parser with additional features not covered by
+TOML but needed for this project. See <a class="reference internal" href="../reference/gear/config_reader.html#module-haddock.gear.config_reader"><span class="std std-ref">Workflow Configuration file reader</span></a>.</p>
+</div>
+<p>Each module does have default parameters defined and HADDOCK3 will use those default values unless those are specificied and changed by the
+user in the configuration file.</p>
+<p>To obtain the list of all parameters for each module, you can use the
+<code class="docutils literal notranslate"><span class="pre">haddock-cfg</span></code> command-line. For example, to list all parameters from the
+<em>All-atom topology</em> module (<code class="docutils literal notranslate"><span class="pre">topoaa</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock-cfg -m topoaa
+
+<span class="c1"># or to write the output to a file</span>
+haddock-cfg -m topoaa &gt; topoaa_defaults.cfg
+
+<span class="c1"># obtain help on `haddoc-cfg` CLI</span>
+haddock-cfg -h
+</pre></div>
+</div>
+<p>The HADDOCK3 workflow will follow the order of the steps defined in the
+configuration file, reading from top to bottom. For the example above, that
+would be: <code class="docutils literal notranslate"><span class="pre">topoaa</span></code>, <code class="docutils literal notranslate"><span class="pre">rigidbody</span></code>, <code class="docutils literal notranslate"><span class="pre">caprieval</span></code>. Therefore, to edit/add/remove
+steps in a HADDOCK3 workflow, you simply need to add/remove/edit the text blocks
+referring to each module.</p>
+<p>Moreover, you can define the general <strong>optional</strong> parameters in the global scope of the
+workflow or specifically for each module. Optional parameters defined in the
+general scope of the configuration files affect all modules. While those
+described inside a step will affect only that step. For example:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">run_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;run1-test&quot;</span><span class="w"></span>
+
+<span class="n">molecules</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="p">[</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;data/mol1.pdb&quot;</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="s">&quot;data/mol2.pdb&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="p">]</span><span class="w"></span>
+
+<span class="c1"># each .job will produce 5 (or less) models</span><span class="w"></span>
+<span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;hpc&quot;</span><span class="w"></span>
+<span class="n">concat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="w"></span>
+
+<span class="k">[topoaa]</span><span class="w"></span>
+<span class="n">autohis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+
+<span class="k">[rigidbody]</span><span class="w"></span>
+<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/mol1.tbl&quot;</span><span class="w"></span>
+<span class="n">sampling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">20</span><span class="w"></span>
+
+<span class="k">[caprieval]</span><span class="w"></span>
+<span class="n">reference_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/mol1-mol2.pdb&quot;</span><span class="w"></span>
+
+<span class="k">[flexref]</span><span class="w"></span>
+<span class="c1"># flexref jobs are bound to generate one model per job</span><span class="w"></span>
+<span class="c1"># therefore, we can specify the &#39;concat&#39; parameter specifically for flexref</span><span class="w"></span>
+<span class="n">concat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/mol1.tbl&quot;</span><span class="w"></span>
+
+<span class="k">[caprieval]</span><span class="w"></span>
+<span class="n">reference_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/mol1-mol2.pdb&quot;</span><span class="w"></span>
+</pre></div>
+</div>
+<p>Inside the <a class="reference external" href="https://github.com/haddocking/haddock3/tree/main/examples">examples</a> subfolders you will
+a panoply of examples of workflow configuration files (<code class="docutils literal notranslate"><span class="pre">.cfg</span></code>).</p>
+<p>Here is a list of all available <a class="reference internal" href="../modules/index.html#modules"><span class="std std-ref">Modules</span></a>.</p>
+<p>Finally, if you are a developer and wish to use HADDOCK3 as a library to read
+and write configuration files please see the related Python modules:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../reference/gear/config_reader.html#module-haddock.gear.config_reader"><span class="std std-ref">Workflow Configuration file reader</span></a></p></li>
+<li><p><a class="reference internal" href="../reference/gear/config_writer.html#module-haddock.gear.config_writer"><span class="std std-ref">Workflow configuration file writer</span></a></p></li>
+</ul>
+<p>For example, to read a workflow configuration file:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock.gear.config_reader</span> <span class="kn">import</span> <span class="n">read_config</span>
+
+<span class="n">config_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;config.cfg&quot;</span><span class="p">)</span>
+<span class="n">config_dict</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Advanced features" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="continuing_runs.html" class="btn btn-neutral float-right" title="Editing and extending runs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

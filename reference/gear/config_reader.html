@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Workflow Configuration file reader &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Workflow configuration file writer" href="config_writer.html" />
+    <link rel="prev" title="Clean output from step folders" href="clean_steps.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../core/index.html">Core Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../libs/index.html">Libs Reference</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Gear Reference</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="clean_steps.html">Clean output from step folders</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Workflow Configuration file reader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="config_writer.html">Workflow configuration file writer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="expandable_parameters.html">Expandable Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="extend_run.html">Start from copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="greetings.html">Greetings messages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="haddockmodel.html">HADDOCK Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="parameters.html">Parameters helper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="prepare_run.html">Prepare Run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="preprocessing.html">PDB Preprocessing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="restart_run.html">Restart Run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="validations.html">Validations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="yaml2cfg.html">Yaml configs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zerofill.html">Zero fill prefix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Library Reference</a> &raquo;</li>
+          <li><a href="index.html">Gear Reference</a> &raquo;</li>
+      <li>Workflow Configuration file reader</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reference/gear/config_reader.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.gear.config_reader">
+<span id="workflow-configuration-file-reader"></span><h1>Workflow Configuration file reader<a class="headerlink" href="#module-haddock.gear.config_reader" title="Permalink to this headline"></a></h1>
+<p>Implementation of a TOML-like configuration file for HADDOCK3.</p>
+<p>HADDOCK3 user configuration files follow TOML syntax plus additional
+features required for HADDOCK3. Therefore, we have implemented our own
+TOML-like parser to accommodate the extra features needed for HADDOCK3.</p>
+<p>The most relevant features of HADDOCK3 user configuration files are:</p>
+<p><strong>Accepts repeated keys:</strong> blocks can have repeated names, for example:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[topoaa]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[rigidbody]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[caprieval]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[flexref]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[caprieval]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>Allows in-line comments:</strong></p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[module]</span><span class="w"></span>
+<span class="n">parameter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="c1"># some comment</span><span class="w"></span>
+</pre></div>
+</div>
+<p><strong>The following types are implemented</strong>:</p>
+<ul class="simple">
+<li><p>strings</p></li>
+<li><p>numbers</p></li>
+<li><p>null/none</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nan</span></code></p></li>
+<li><p>lists defined in one lines</p></li>
+<li><p>lists defined in multiple lines (require empty line after the list
+definition)</p></li>
+<li><p><cite>datetime.fromisoformat</cite></p></li>
+</ul>
+<p><strong>To efficiently use this module, see functions:</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#haddock.gear.config_reader.read_config" title="haddock.gear.config_reader.read_config"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.config_reader.read_config()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#haddock.gear.config_reader.get_module_name" title="haddock.gear.config_reader.get_module_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.config_reader.get_module_name()</span></code></a></p></li>
+</ul>
+<dl class="py exception">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.ConfigFormatError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.config_reader.</span></span><span class="sig-name descname"><span class="pre">ConfigFormatError</span></span><a class="reference internal" href="../../_modules/haddock/gear/config_reader.html#ConfigFormatError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config_reader.ConfigFormatError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception if there is a format error.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.ConfigFormatError.with_traceback">
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.config_reader.ConfigFormatError.with_traceback" title="Permalink to this definition"></a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.DuplicatedParameterError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.config_reader.</span></span><span class="sig-name descname"><span class="pre">DuplicatedParameterError</span></span><a class="reference internal" href="../../_modules/haddock/gear/config_reader.html#DuplicatedParameterError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config_reader.DuplicatedParameterError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception if duplicated parameters are found.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.DuplicatedParameterError.with_traceback">
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.config_reader.DuplicatedParameterError.with_traceback" title="Permalink to this definition"></a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.MultilineListDefinitionError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.config_reader.</span></span><span class="sig-name descname"><span class="pre">MultilineListDefinitionError</span></span><a class="reference internal" href="../../_modules/haddock/gear/config_reader.html#MultilineListDefinitionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config_reader.MultilineListDefinitionError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception when a multiline list is wrongly formatted.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.MultilineListDefinitionError.with_traceback">
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.config_reader.MultilineListDefinitionError.with_traceback" title="Permalink to this definition"></a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.NoGroupFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.config_reader.</span></span><span class="sig-name descname"><span class="pre">NoGroupFoundError</span></span><a class="reference internal" href="../../_modules/haddock/gear/config_reader.html#NoGroupFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config_reader.NoGroupFoundError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception if no group is found.</p>
+<p>Used for single line.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.NoGroupFoundError.with_traceback">
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.config_reader.NoGroupFoundError.with_traceback" title="Permalink to this definition"></a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.get_module_name">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config_reader.</span></span><span class="sig-name descname"><span class="pre">get_module_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/config_reader.html#get_module_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config_reader.get_module_name" title="Permalink to this definition"></a></dt>
+<dd><p>Get the name according to the config parser.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.config_reader.read_config">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.config_reader.</span></span><span class="sig-name descname"><span class="pre">read_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/config_reader.html#read_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.config_reader.read_config" title="Permalink to this definition"></a></dt>
+<dd><p>Read HADDOCK3 configure file to a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fpath</strong> (str or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) – Path to user configuration file.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><em>dictionary</em> – Representing the user configuration file where first level of
+keys are the module names. Repeated modules will have a numeric
+suffix, for example: <code class="docutils literal notranslate"><span class="pre">module.1</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clean_steps.html" class="btn btn-neutral float-left" title="Clean output from step folders" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="config_writer.html" class="btn btn-neutral float-right" title="Workflow configuration file writer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

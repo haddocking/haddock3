@@ -1,0 +1,29 @@
+Mandatory Parameters
+====================
+
+
+Easy
+----
+
+molecules
+`````````
+
+| *default*: 'No default assigned, this parameter is mandatory'
+| *type*: list
+| *title*: Input Molecules
+| *short description*: The input molecules that will be used for docking.
+| *long description*: Molecules must be provided in PDB format. These PDB files can be single molecules or ensembles using the MODEL/ENDMDL statements.
+| *group*: No group assigned
+| *explevel*: easy
+
+run_dir
+```````
+
+| *default*: 'No default assigned, this parameter is mandatory'
+| *type*: dir
+| *title*: Run directory
+| *short description*: Folder to store the HADDOCK3 run
+| *long description*: The new folder that will be created to save the HADDOCK3 run
+| *group*: No group assigned
+| *explevel*: easy
+

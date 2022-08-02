@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDB preprocessing client &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Copy steps to new run" href="clicp.html" />
+    <link rel="prev" title="Retrieve config" href="clicfg.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Command-line interfaces</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="clihd3.html">Run HADDOCK3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PDB preprocessing client</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="clicp.html">Copy steps to new run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cliclean.html">Clean output Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="climpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clibm.html">Benchmark Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clidmn.html">Benchmark Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Command-line interfaces</a> &raquo;</li>
+      <li>PDB preprocessing client</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/clients/clipp.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pdb-preprocessing-client">
+<h1>PDB preprocessing client<a class="headerlink" href="#pdb-preprocessing-client" title="Permalink to this headline"></a></h1>
+<p><p>HADDOCK3 PDB preprocessing client.</p>
+<p>Process PDB files for agreement with HADDOCK3 requirements. Follows the
+logic implemented in the <a class="reference internal" href="../reference/gear/preprocessing.html#module-haddock.gear.preprocessing" title="haddock.gear.preprocessing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">haddock.gear.preprocessing</span></code></a>. See
+documentation pages for more details.</p>
+<p>You can use the <cite>–dry</cite> option to report on the performed changes
+without actually performing the changes.</p>
+<p>Corrected PDBs are saved to new files named after the <cite>–suffix</cite> option.
+Original PDBs are never overwritten, unless <cite>–suffix</cite> is given an empty
+string.</p>
+<p>You can pass multiple PDB files to the command-line.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock</span><span class="o">-</span><span class="n">pp</span> <span class="n">file1</span><span class="o">.</span><span class="n">pdb</span> <span class="n">file2</span><span class="o">.</span><span class="n">pdb</span>
+<span class="n">haddock</span><span class="o">-</span><span class="n">pp</span> <span class="n">file1</span><span class="o">.</span><span class="n">pdb</span> <span class="n">file2</span><span class="o">.</span><span class="n">pdb</span> <span class="o">--</span><span class="n">suffix</span> <span class="n">_new</span>
+<span class="n">haddock</span><span class="o">-</span><span class="n">pp</span> <span class="n">file1</span><span class="o">.</span><span class="n">pdb</span> <span class="n">file2</span><span class="o">.</span><span class="n">pdb</span> <span class="o">--</span><span class="n">dry</span>
+</pre></div>
+</div>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">pp</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="p">[</span><span class="n">TOPFILE</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SUFFIX</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">odir</span> <span class="n">OUTPUT_DIRECTORY</span><span class="p">]</span> <span class="n">pdb_files</span> <span class="p">[</span><span class="n">pdb_files</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<section id="Positional Arguments">
+<h2>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline"></a></h2>
+<dl class="option-list">
+<dt><kbd>pdb_files</kbd></dt>
+<dd><p>Input PDB files.</p>
+</dd>
+</dl>
+</section>
+<section id="Named Arguments">
+<h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline"></a></h2>
+<dl class="option-list">
+<dt><kbd>-d, --dry</kbd></dt>
+<dd><p>Perform a dry run. Informs changes without modifying files.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>-t, --topfile</kbd></dt>
+<dd><p>Additional .top files.</p>
+</dd>
+<dt><kbd>-s, --suffix</kbd></dt>
+<dd><p>Suffix to output files. Defaults to ‘_processed’</p>
+<p>Default: “_processed”</p>
+</dd>
+<dt><kbd>-odir, --output-directory</kbd></dt>
+<dd><p>The directory where to save the output.</p>
+<p>Default: /home/joao/github/haddock3</p>
+</dd>
+</dl>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="clicfg.html" class="btn btn-neutral float-left" title="Retrieve config" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clicp.html" class="btn btn-neutral float-right" title="Copy steps to new run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

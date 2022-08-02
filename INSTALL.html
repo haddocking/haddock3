@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage" href="USAGE.html" />
+    <link rel="prev" title="A brieft introduction to HADDOCK3" href="intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#clone-this-repository">1 Clone this repository:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#with-venv">with <code class="docutils literal notranslate"><span class="pre">venv</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#with-conda">with <code class="docutils literal notranslate"><span class="pre">conda</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#install-the-haddock3-package-and-command-line-clients">3 Install the HADDOCK3 package and command line clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#make-a-cns-binary-shortcut-to-the-expected-path">4 Make a CNS binary shortcut to the expected path:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#keep-your-installation-up-to-date">5 Keep your installation up to date</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#installing-third-party-packages">Installing third-party packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Installation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/INSTALL.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
+<p>Open a <code class="docutils literal notranslate"><span class="pre">terminal</span></code> window and navigate to the folder where you want to
+install HADDOCK3; for example: <code class="docutils literal notranslate"><span class="pre">software</span></code>. The current installation
+instructions are local and will affect only your user.</p>
+<section id="clone-this-repository">
+<h2>1 Clone this repository:<a class="headerlink" href="#clone-this-repository" title="Permalink to this headline"></a></h2>
+<p>Mind the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag when cloning!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone --recursive https://github.com/haddocking/haddock3.git
+<span class="nb">cd</span> haddock3
+<span class="nb">cd</span> src/fcc/src
+chmod u+x Makefile
+make
+<span class="nb">cd</span> -
+</pre></div>
+</div>
+<p>By the end of the above commands, you should be back to the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code>
+main folder.</p>
+</section>
+<section id="create-a-virtual-environment-with-python-3-9-and-install-dependencies">
+<h2>2 Create a virtual environment with Python 3.9+ and install dependencies:<a class="headerlink" href="#create-a-virtual-environment-with-python-3-9-and-install-dependencies" title="Permalink to this headline"></a></h2>
+<p>You can use Python’s <code class="docutils literal notranslate"><span class="pre">venv</span></code> or Anaconda depending on your choice.
+Commands are provided below:</p>
+<section id="with-venv">
+<h3>with <code class="docutils literal notranslate"><span class="pre">venv</span></code><a class="headerlink" href="#with-venv" title="Permalink to this headline"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv venv --python<span class="o">=</span><span class="m">3</span>.9
+<span class="nb">source</span> venv/bin/activate
+pip install -r requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="with-conda">
+<h3>with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#with-conda" title="Permalink to this headline"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda env create -f requirements.yml
+conda activate haddock3
+</pre></div>
+</div>
+</section>
+</section>
+<section id="install-the-haddock3-package-and-command-line-clients">
+<h2>3 Install the HADDOCK3 package and command line clients<a class="headerlink" href="#install-the-haddock3-package-and-command-line-clients" title="Permalink to this headline"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py develop --no-deps
+</pre></div>
+</div>
+</section>
+<section id="make-a-cns-binary-shortcut-to-the-expected-path">
+<h2>4 Make a CNS binary shortcut to the expected path:<a class="headerlink" href="#make-a-cns-binary-shortcut-to-the-expected-path" title="Permalink to this headline"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir -p bin/
+
+<span class="c1"># on mac</span>
+ln -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns
+
+<span class="c1"># on linux</span>
+ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
+</pre></div>
+</div>
+<p>As long as you have the HADDOCK3 python environment activated, you can
+navigate away from the HADDOCK3 installation folder. You can run
+HADDOCK3 from anywhere. To run HADDOCK3, follow the <a class="reference internal" href="USAGE.html"><span class="doc std std-doc">usage
+guidelines</span></a>.</p>
+</section>
+<section id="keep-your-installation-up-to-date">
+<h2>5 Keep your installation up to date<a class="headerlink" href="#keep-your-installation-up-to-date" title="Permalink to this headline"></a></h2>
+<p>Navigate to the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code> installation folder (the one you cloned from
+GitHub). Ensure you have the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code> python environment activated.
+Please consider HADDOCK3 is under active development, as well as its
+dependencies. If the updating processing fails, it is safe to reinstall
+from scratch. Always refer to the latest installation guidelines.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># if you used `venv`</span>
+<span class="nb">source</span> venv/bin/activate
+
+<span class="c1"># if you used `conda`</span>
+conda activate haddock3
+</pre></div>
+</div>
+<p>Afterwards:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pull the latest source code from our repository to your computer</span>
+git pull
+
+<span class="c1"># if you used venv to create the python environment, run:</span>
+pip install -r requirements.txt  --upgrade
+
+<span class="c1"># if you used anaconda to create the python environment, run:</span>
+conda env update -f requirements.yml
+
+<span class="c1"># ensure all command-lines clients are installed</span>
+python setup.py develop --no-deps
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="installing-third-party-packages">
+<h1>Installing third-party packages<a class="headerlink" href="#installing-third-party-packages" title="Permalink to this headline"></a></h1>
+<p>HADDOCK3 can integrate third-party software in its workflows. However,
+we are not responsible for the proper installation of such packages, but
+we help you install them. Below, you will find a list of all third-party
+packages HADDOCK3 can use and guidelines for their proper installation.</p>
+<section id="lightdock">
+<h2><code class="docutils literal notranslate"><span class="pre">lightdock</span></code><a class="headerlink" href="#lightdock" title="Permalink to this headline"></a></h2>
+<p>To install to <a class="reference external" href="https://github.com/lightdock/lightdock">lightdock</a> follow
+the instructions in the project’s website. Remember to install it under
+the same Python environment you created for HADDOCK3. If you have any
+doubts, please let us know.</p>
+</section>
+<section id="gdock">
+<h2><code class="docutils literal notranslate"><span class="pre">gdock</span></code><a class="headerlink" href="#gdock" title="Permalink to this headline"></a></h2>
+<ol class="arabic simple">
+<li><p>Clone the latest version:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">some</span><span class="o">-</span><span class="n">folder</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">rvhonorato</span><span class="o">/</span><span class="n">gdock</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Install Python3+ dependencies</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">deap</span> <span class="n">scipy</span> <span class="n">mgzip</span> <span class="n">biopython</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">GDOCK_PATH</span></code></p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">GDOCK_PATH</span><span class="o">=</span><span class="n">some</span><span class="o">-</span><span class="n">folder</span>
+</pre></div>
+</div>
+<p><strong>Important</strong>: These are not the full <code class="docutils literal notranslate"><span class="pre">gdock</span></code>’s installation
+instructions as here only the model generation is used. Please check the
+<a class="reference external" href="https://github.com/rvhonorato/gdock">repository page</a> for more
+information.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intro.html" class="btn btn-neutral float-left" title="A brieft introduction to HADDOCK3" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="USAGE.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.libs.libcns &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>haddock.libs.libcns</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.libs.libcns</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;CNS scripts util functions.&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">linesep</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.core</span> <span class="kn">import</span> <span class="n">cns_paths</span>
+<span class="kn">from</span> <span class="nn">haddock.libs</span> <span class="kn">import</span> <span class="n">libpdb</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">false</span><span class="p">,</span> <span class="n">true</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libmath</span> <span class="kn">import</span> <span class="n">RandomNumberGenerator</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">transform_to_list</span>
+
+
+<span class="n">RND</span> <span class="o">=</span> <span class="n">RandomNumberGenerator</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="generate_default_header"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.generate_default_header">[docs]</a><span class="k">def</span> <span class="nf">generate_default_header</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate CNS default header.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">load_axis</span><span class="p">(</span><span class="o">**</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="n">link</span> <span class="o">=</span> <span class="n">load_link</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cns_paths</span><span class="o">.</span><span class="n">LINK_FILE</span><span class="p">))</span>
+        <span class="n">scatter</span> <span class="o">=</span> <span class="n">load_scatter</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cns_paths</span><span class="o">.</span><span class="n">SCATTER_LIB</span><span class="p">))</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">load_tensor</span><span class="p">(</span><span class="o">**</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">get_tensors</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="n">trans_vec</span> <span class="o">=</span> <span class="n">load_trans_vectors</span><span class="p">(</span><span class="o">**</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">get_translation_vectors</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>  <span class="c1"># noqa: E501</span>
+        <span class="n">water_box</span> <span class="o">=</span> <span class="n">load_boxtyp20</span><span class="p">(</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">get_water_box</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="s2">&quot;boxtyp20&quot;</span><span class="p">])</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">load_axis</span><span class="p">(</span><span class="o">**</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">link</span> <span class="o">=</span> <span class="n">load_link</span><span class="p">(</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">link_file</span><span class="p">)</span>
+        <span class="n">scatter</span> <span class="o">=</span> <span class="n">load_scatter</span><span class="p">(</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">scatter_lib</span><span class="p">)</span>
+        <span class="n">tensor</span> <span class="o">=</span> <span class="n">load_tensor</span><span class="p">(</span><span class="o">**</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">tensors</span><span class="p">)</span>
+        <span class="n">trans_vec</span> <span class="o">=</span> <span class="n">load_trans_vectors</span><span class="p">(</span><span class="o">**</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">translation_vectors</span><span class="p">)</span>
+        <span class="n">water_box</span> <span class="o">=</span> <span class="n">load_boxtyp20</span><span class="p">(</span><span class="n">cns_paths</span><span class="o">.</span><span class="n">water_box</span><span class="p">[</span><span class="s2">&quot;boxtyp20&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">link</span><span class="p">,</span>
+        <span class="n">trans_vec</span><span class="p">,</span>
+        <span class="n">tensor</span><span class="p">,</span>
+        <span class="n">scatter</span><span class="p">,</span>
+        <span class="n">axis</span><span class="p">,</span>
+        <span class="n">water_box</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_is_nan</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Inspect if is nan.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<div class="viewcode-block" id="filter_empty_vars"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.filter_empty_vars">[docs]</a><span class="k">def</span> <span class="nf">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filter empty variables.</span>
+
+<span class="sd">    See: https://github.com/haddocking/haddock3/issues/162</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        Returns `True` if the variable is not empty, and `False` if</span>
+<span class="sd">        the variable is empty. That is, `False` reflects those variables</span>
+<span class="sd">        that should not be written in CNS.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If the type of `value` is not supported by CNS.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cases</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">_is_nan</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">false</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">true</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">false</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">bool</span><span class="p">),</span> <span class="n">true</span><span class="p">),</span>  <span class="c1"># it should return True</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">EmptyPath</span><span class="p">,</span> <span class="n">Path</span><span class="p">)),</span> <span class="n">true</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="n">true</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="n">false</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">detect</span><span class="p">,</span> <span class="n">give</span> <span class="ow">in</span> <span class="n">cases</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">detect</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">give</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">emsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Value </span><span class="si">{</span><span class="n">v</span><span class="si">!r}</span><span class="s2"> has a unknown type for CNS: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_workflow_params"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.load_workflow_params">[docs]</a><span class="k">def</span> <span class="nf">load_workflow_params</span><span class="p">(</span>
+        <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Parameters</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">params</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write the values at the header section.</span>
+
+<span class="sd">    &quot;Empty variables&quot; are ignored. These are defined accoring to</span>
+<span class="sd">    :func:`filter_empty_vars`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        Dictionary containing the key:value pars for the parameters to</span>
+<span class="sd">        be written to CNS. Values cannot be of dictionary type.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The string with the CNS parameters defined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">non_empty_parameters</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">filter_empty_vars</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># types besides the ones in the if-statements should not enter this loop</span>
+    <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">non_empty_parameters</span><span class="p">:</span>
+        <span class="n">param_header</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_header</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">param_header</span></div>
+
+
+<div class="viewcode-block" id="write_eval_line"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.write_eval_line">[docs]</a><span class="k">def</span> <span class="nf">write_eval_line</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">eval_line</span><span class="o">=</span><span class="s2">&quot;eval ($</span><span class="si">{}</span><span class="s2">=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Write the CNS eval line depending on the type of `value`.&quot;&quot;&quot;</span>
+    <span class="n">eval_line</span> <span class="o">+=</span> <span class="n">linesep</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">eval_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+        <span class="k">return</span> <span class="n">eval_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+        <span class="k">return</span> <span class="n">eval_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">EmptyPath</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">eval_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">eval_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">emsg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Unexpected type when writing CNS header: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_link"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.load_link">[docs]</a><span class="k">def</span> <span class="nf">load_link</span><span class="p">(</span><span class="n">mol_link</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add the link header.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load_workflow_params</span><span class="p">(</span>
+        <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Link file</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">link_file</span><span class="o">=</span><span class="n">mol_link</span><span class="p">)</span></div>
+
+
+<span class="n">load_axis</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Axis</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
+<span class="n">load_tensor</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Tensors</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
+<span class="n">prepare_output</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Output structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
+<span class="n">load_trans_vectors</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">load_workflow_params</span><span class="p">,</span> <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Translation vectors</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
+
+<span class="n">load_ambig</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">write_eval_line</span><span class="p">,</span> <span class="s2">&quot;ambig_fname&quot;</span><span class="p">)</span>
+<span class="n">load_unambig</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">write_eval_line</span><span class="p">,</span> <span class="s2">&quot;unambig_fname&quot;</span><span class="p">)</span>
+<span class="n">load_hbond</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">write_eval_line</span><span class="p">,</span> <span class="s2">&quot;hbond_fname&quot;</span><span class="p">)</span>
+<span class="n">load_dihe</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">write_eval_line</span><span class="p">,</span> <span class="s2">&quot;dihe_f&quot;</span><span class="p">)</span>
+<span class="n">load_tensor_tbl</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">write_eval_line</span><span class="p">,</span> <span class="s2">&quot;tensor_tbl&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_scatter"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.load_scatter">[docs]</a><span class="k">def</span> <span class="nf">load_scatter</span><span class="p">(</span><span class="n">scatter_lib</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add scatter library.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load_workflow_params</span><span class="p">(</span>
+        <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Scatter lib</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">scatter_lib</span><span class="o">=</span><span class="n">scatter_lib</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="load_boxtyp20"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.load_boxtyp20">[docs]</a><span class="k">def</span> <span class="nf">load_boxtyp20</span><span class="p">(</span><span class="n">waterbox_param</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add boxtyp20 eval line.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">load_workflow_params</span><span class="p">(</span>
+        <span class="n">param_header</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Water box</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">boxtyp20</span><span class="o">=</span><span class="n">waterbox_param</span><span class="p">)</span></div>
+
+
+<span class="c1"># This is used by docking</span>
+<div class="viewcode-block" id="prepare_multiple_input"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.prepare_multiple_input">[docs]</a><span class="k">def</span> <span class="nf">prepare_multiple_input</span><span class="p">(</span><span class="n">pdb_input_list</span><span class="p">,</span> <span class="n">psf_input_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prepare multiple input files.&quot;&quot;&quot;</span>
+    <span class="n">input_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Input structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">psf</span> <span class="ow">in</span> <span class="n">psf_input_list</span><span class="p">:</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  @@</span><span class="si">{</span><span class="n">psf</span><span class="si">}{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;end</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">ncount</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">pdb_input_list</span><span class="p">:</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;coor @@</span><span class="si">{</span><span class="n">pdb</span><span class="si">}{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;input_pdb_filename_</span><span class="si">{</span><span class="n">ncount</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">pdb</span><span class="p">)</span>
+        <span class="n">ncount</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># check how many chains there are across all the PDBs</span>
+    <span class="n">chain_l</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">pdb_input_list</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">libpdb</span><span class="o">.</span><span class="n">identify_chainseg</span><span class="p">(</span><span class="n">pdb</span><span class="p">):</span>
+            <span class="n">chain_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="n">ncomponents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">chain_l</span><span class="p">)))</span>
+    <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s1">&#39;ncomponents&#39;</span><span class="p">,</span> <span class="n">ncomponents</span><span class="p">)</span>
+
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">RND</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">999</span><span class="p">)</span>
+    <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">input_str</span></div>
+
+
+<span class="c1"># This is used by Topology and Scoring</span>
+<div class="viewcode-block" id="prepare_single_input"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.prepare_single_input">[docs]</a><span class="k">def</span> <span class="nf">prepare_single_input</span><span class="p">(</span><span class="n">pdb_input</span><span class="p">,</span> <span class="n">psf_input</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Input of the CNS file.</span>
+
+<span class="sd">    This section will be written for any recipe even if some CNS variables</span>
+<span class="sd">    are not used, it should not be an issue.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Input structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">if</span> <span class="n">psf_input</span><span class="p">:</span>
+        <span class="c1"># if isinstance(psf_input, str):</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  @@</span><span class="si">{</span><span class="n">psf_input</span><span class="si">}{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;end</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;coor @@</span><span class="si">{</span><span class="n">pdb_input</span><span class="si">}{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">psf_input</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">for</span> <span class="n">psf</span> <span class="ow">in</span> <span class="n">psf_input</span><span class="p">:</span>
+                <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;  @@</span><span class="si">{</span><span class="n">psf</span><span class="si">}{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">input_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;end</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># $file variable is still used by some CNS recipes, need refactoring!</span>
+    <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">pdb_input</span><span class="p">)</span>
+    <span class="n">segids</span><span class="p">,</span> <span class="n">chains</span> <span class="o">=</span> <span class="n">libpdb</span><span class="o">.</span><span class="n">identify_chainseg</span><span class="p">(</span><span class="n">pdb_input</span><span class="p">)</span>
+    <span class="n">chainsegs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">segids</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">chains</span><span class="p">)))</span>
+
+    <span class="n">ncomponents</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chainsegs</span><span class="p">)</span>
+    <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s2">&quot;ncomponents&quot;</span><span class="p">,</span> <span class="n">ncomponents</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">segid</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chainsegs</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;prot_segid_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">segid</span><span class="p">)</span>
+
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">RND</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">99999</span><span class="p">)</span>
+    <span class="n">input_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">input_str</span></div>
+
+
+<div class="viewcode-block" id="prepare_cns_input"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.prepare_cns_input">[docs]</a><span class="k">def</span> <span class="nf">prepare_cns_input</span><span class="p">(</span>
+        <span class="n">model_number</span><span class="p">,</span>
+        <span class="n">input_element</span><span class="p">,</span>
+        <span class="n">step_path</span><span class="p">,</span>
+        <span class="n">recipe_str</span><span class="p">,</span>
+        <span class="n">defaults</span><span class="p">,</span>
+        <span class="n">identifier</span><span class="p">,</span>
+        <span class="n">native_segid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">default_params_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate the .inp file needed by the CNS engine.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_number : int</span>
+<span class="sd">        The number of the model. Will be used as file name suffix.</span>
+
+<span class="sd">    input_element : `libs.libontology.Persisten`, list of those</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># read the default parameters</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="n">load_workflow_params</span><span class="p">(</span><span class="o">**</span><span class="n">defaults</span><span class="p">)</span>
+
+    <span class="c1"># write the PDBs</span>
+    <span class="n">pdb_list</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">pdb</span><span class="o">.</span><span class="n">rel_path</span>
+        <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">transform_to_list</span><span class="p">(</span><span class="n">input_element</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="c1"># write the PSFs</span>
+    <span class="n">psf_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_element</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">input_element</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">psf</span> <span class="ow">in</span> <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span><span class="p">:</span>
+                    <span class="n">psf_fname</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">rel_path</span>
+                    <span class="n">psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psf_fname</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">psf_fname</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">rel_path</span>
+                <span class="n">psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psf_fname</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_element</span><span class="o">.</span><span class="n">topology</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">pdb</span> <span class="o">=</span> <span class="n">input_element</span>  <span class="c1"># for clarity</span>
+        <span class="k">for</span> <span class="n">psf</span> <span class="ow">in</span> <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span><span class="p">:</span>
+            <span class="n">psf_fname</span> <span class="o">=</span> <span class="n">psf</span><span class="o">.</span><span class="n">rel_path</span>
+            <span class="n">psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psf_fname</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pdb</span> <span class="o">=</span> <span class="n">input_element</span>  <span class="c1"># for clarity</span>
+        <span class="n">psf_fname</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">rel_path</span>
+        <span class="n">psf_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psf_fname</span><span class="p">)</span>
+
+    <span class="n">input_str</span> <span class="o">=</span> <span class="n">prepare_multiple_input</span><span class="p">(</span><span class="n">pdb_list</span><span class="p">,</span> <span class="n">psf_list</span><span class="p">)</span>
+
+    <span class="n">output_pdb_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_number</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">! Output structure</span><span class="si">{</span><span class="n">linesep</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">output</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s1">&#39;output_pdb_filename&#39;</span><span class="p">,</span> <span class="n">output_pdb_filename</span><span class="p">)</span>
+
+    <span class="c1"># prepare chain/seg IDs</span>
+    <span class="n">segid_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">native_segid</span><span class="p">:</span>
+        <span class="n">chainid_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_element</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="n">input_element</span><span class="p">:</span>
+
+                <span class="n">segids</span><span class="p">,</span> <span class="n">chains</span> <span class="o">=</span> \
+                    <span class="n">libpdb</span><span class="o">.</span><span class="n">identify_chainseg</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                <span class="n">chainsegs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">segids</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">chains</span><span class="p">)))</span>
+                <span class="n">chainid_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">chainsegs</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_chainseg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chainid_list</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">segid_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;prot_segid_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">_chainseg</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">segids</span><span class="p">,</span> <span class="n">chains</span> <span class="o">=</span> \
+                <span class="n">libpdb</span><span class="o">.</span><span class="n">identify_chainseg</span><span class="p">(</span><span class="n">input_element</span><span class="o">.</span><span class="n">rel_path</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="n">chainsegs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">segids</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">chains</span><span class="p">)))</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_chainseg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chainsegs</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">segid_str</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;prot_segid_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">_chainseg</span><span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">model_number</span><span class="p">)</span>
+
+    <span class="n">inp</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">default_params</span>
+        <span class="o">+</span> <span class="n">input_str</span>
+        <span class="o">+</span> <span class="n">output</span>
+        <span class="o">+</span> <span class="n">segid_str</span>
+        <span class="o">+</span> <span class="n">recipe_str</span>
+        <span class="p">)</span>
+
+    <span class="n">inp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_number</span><span class="si">}</span><span class="s2">.inp&quot;</span><span class="p">)</span>
+    <span class="n">inp_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">inp_file</span></div>
+
+
+<div class="viewcode-block" id="prepare_expected_pdb"><a class="viewcode-back" href="../../../reference/libs/libcns.html#haddock.libs.libcns.prepare_expected_pdb">[docs]</a><span class="k">def</span> <span class="nf">prepare_expected_pdb</span><span class="p">(</span><span class="n">model_obj</span><span class="p">,</span> <span class="n">model_nb</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">identifier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prepare a PDBobject.&quot;&quot;&quot;</span>
+    <span class="n">expected_pdb_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">model_nb</span><span class="si">}</span><span class="s2">.pdb&quot;</span><span class="p">)</span>
+    <span class="n">pdb</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">expected_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">model_obj</span><span class="p">)</span> <span class="o">==</span> <span class="nb">tuple</span><span class="p">:</span>
+        <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_obj</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pdb</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="n">model_obj</span><span class="o">.</span><span class="n">topology</span>
+    <span class="k">return</span> <span class="n">pdb</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on May 31, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

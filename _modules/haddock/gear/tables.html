@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.gear.tables &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>haddock.gear.tables</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.gear.tables</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Tools to create visually appealing tables.</span>
+
+<span class="sd">This ``gear`` provide several tools to create pure text tables, from various</span>
+<span class="sd">python data structures.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">HaddockError</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">transform_to_list</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">true</span><span class="p">,</span> <span class="n">is_str_int</span><span class="p">,</span> <span class="n">is_str_float</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">none</span>
+
+
+<div class="viewcode-block" id="TableFormatError"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.TableFormatError">[docs]</a><span class="k">class</span> <span class="nc">TableFormatError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Error related to table format.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="create_adjusted_col_width_table"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.create_adjusted_col_width_table">[docs]</a><span class="k">def</span> <span class="nf">create_adjusted_col_width_table</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">column_spacing</span><span class="o">=</span><span class="s2">&quot;    &quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">fmt_args</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a space-separated text table with column width ajusted to values.</span>
+
+<span class="sd">    Given a table in dictionary format:</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;col_name_1&quot;: [value1, value3],</span>
+<span class="sd">                &quot;col_name_2&quot;: [value2, value4],</span>
+<span class="sd">                &quot;col_name_3&quot;: [value5, value6],</span>
+<span class="sd">                }</span>
+
+<span class="sd">    Creates the following table in text::</span>
+
+<span class="sd">        col_name_1    col_name_2    col_name_3</span>
+<span class="sd">          value1        value2        value5</span>
+<span class="sd">          value3        value4        valut6</span>
+
+<span class="sd">    The returned table can be saved to a file, for example:</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">        from pathlib import Path</span>
+
+<span class="sd">        table = create_adjusted_col_width_table(table_data)</span>
+<span class="sd">        Path(&#39;table.txt&#39;).write_text(table)</span>
+
+<span class="sd">    Developers should decide on the suffix of the table file, ``txt`` in the</span>
+<span class="sd">    above example.  We suggest ``txt``.</span>
+
+<span class="sd">    Examples, on how to parse theses tables:</span>
+
+<span class="sd">    These tables are space-separated values, where the number of spaces</span>
+<span class="sd">    varies to make proper alignment of the text. If you are using Python,</span>
+<span class="sd">    you can parse these tables with, for example:</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        with open(&#39;table&#39;, &#39;r&#39;) as fin:</span>
+<span class="sd">            lines = fin.read().strip(os.linesep).split(os.linesep)</span>
+<span class="sd">            table = [l.split() for l in lines if not l.startswith(comment)]</span>
+<span class="sd">            # where `comment` is the char to comment lines in the table</span>
+
+<span class="sd">        headers = table[0]</span>
+<span class="sd">        values = table[1:]</span>
+
+<span class="sd">    ``values`` is a list of lists where each index is a row.</span>
+
+<span class="sd">    Alternatively, you can use ``numpy.loadtxt`` and work from there:</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        np.loadtxt(&#39;table.txt&#39;, dtype=str)</span>
+
+<span class="sd">    Finally, if you want to retrieve the same data dictionary used to</span>
+<span class="sd">    create the table, see :py:func:`read_table_to_data_dict`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dict</span>
+<span class="sd">        A dictionary where keys are the column names and values are the</span>
+<span class="sd">        column values for each row. ``data`` dictionary values can be in</span>
+<span class="sd">        the form of a list if there are multiple rows, or a single value</span>
+<span class="sd">        if there is only one row.</span>
+
+<span class="sd">    header : None or str, optional</span>
+<span class="sd">        The header text to write before the table. Usually this is a commented</span>
+<span class="sd">        text consisting of a small report or instructions. Defaults to</span>
+<span class="sd">        ``None``, no header is written.</span>
+
+<span class="sd">    column_spacing : str, optional</span>
+<span class="sd">        The spacing between columns. Defaults to four empty spaces.</span>
+
+<span class="sd">    fmt_args : arguments</span>
+<span class="sd">        Named arguments to pass to</span>
+<span class="sd">        :py:func:`haddock.gear.tables.format_value`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Table formatted string.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:func:`haddock.gear.tables.read_table_to_data_dict`</span>
+<span class="sd">    :py:func:`haddock.gear.tables.convert_adjusted_width_to_tsv`</span>
+<span class="sd">    :py:func:`haddock.gear.tables.convert_adjusted_width_to_csv`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">header</span>
+    <span class="n">col_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">formatted_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_names</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">col_names</span><span class="p">)):</span>
+
+        <span class="n">longest_</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">value_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">transform_to_list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col_name</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="n">longest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">longest_</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">col_name</span><span class="p">))</span>
+
+        <span class="n">formatted_col_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">col_name</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">longest</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">format_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">longest</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">fmt_args</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">transform_to_list</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col_name</span><span class="p">])</span>
+            <span class="p">]</span>
+
+    <span class="n">col_name_row</span> <span class="o">=</span> <span class="n">column_spacing</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">formatted_col_names</span><span class="p">)</span>
+
+    <span class="c1"># all columns should have the same lenght</span>
+    <span class="n">num_rows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_rows</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_rows</span><span class="p">):</span>
+        <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">col_names</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">col_name</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">emsg</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">col_name</span><span class="si">!r}</span><span class="s2"> as less items than the &quot;</span>
+                    <span class="s2">&quot;expected number of rows.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">TableFormatError</span><span class="p">(</span><span class="n">emsg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+        <span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_spacing</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rows</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">table_data</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
+
+    <span class="c1"># to situations to save tables with and header to avoid having extra</span>
+    <span class="c1"># empty lines.</span>
+    <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="n">header</span><span class="p">,</span>
+            <span class="n">col_name_row</span><span class="p">,</span>
+            <span class="n">table_data</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">,</span>
+            <span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="n">col_name_row</span><span class="p">,</span>
+            <span class="n">table_data</span><span class="p">,</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">,</span>
+            <span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">table</span></div>
+
+
+<div class="viewcode-block" id="read_table_to_data_dict"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.read_table_to_data_dict">[docs]</a><span class="k">def</span> <span class="nf">read_table_to_data_dict</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a table to a data dictionary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fname : str or :external:py:class:`pathlib.Path`</span>
+<span class="sd">        Path to the table file.</span>
+
+<span class="sd">    kwargs : named parameters</span>
+<span class="sd">        As described in</span>
+<span class="sd">        :py:func:`haddock.gear.tables.parse_table_to_data_dict`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The data dictionary in the form of:</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;col_name_1&quot;: [value1, value3],</span>
+<span class="sd">                &quot;col_name_2&quot;: [value2, value4],</span>
+<span class="sd">                &quot;col_name_3&quot;: [value5, value6],</span>
+<span class="sd">                }</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:func:`haddock.gear.tables.parse_table_to_data_dict`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">parse_table_to_data_dict</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_table_to_data_dict"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.parse_table_to_data_dict">[docs]</a><span class="k">def</span> <span class="nf">parse_table_to_data_dict</span><span class="p">(</span><span class="n">table_txt</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read a adjusted with table to a data dictionary format.</span>
+
+<span class="sd">    Does the inverse process of :py:func:`create_adjusted_col_width_table`.</span>
+
+<span class="sd">    Given a table text::</span>
+
+<span class="sd">        col_name_1    col_name_2    col_name_3</span>
+<span class="sd">          value1        value2        value5</span>
+<span class="sd">          value3        value4        valut6</span>
+
+<span class="sd">    Returns a dictionary in the form of:</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">            {</span>
+<span class="sd">                &quot;col_name_1&quot;: [value1, value3],</span>
+<span class="sd">                &quot;col_name_2&quot;: [value2, value4],</span>
+<span class="sd">                &quot;col_name_3&quot;: [value5, value6],</span>
+<span class="sd">                }</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    table_txt : str</span>
+<span class="sd">        The string containing the table.</span>
+
+<span class="sd">    comment : str</span>
+<span class="sd">        Ignores line starting with comment character. Deafults to ``#``.</span>
+
+<span class="sd">    sep : str</span>
+<span class="sd">        Value separator. Defaults to ``None``, empty spaces.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:func:`haddock.gear.tables.create_adjusted_col_width_table`</span>
+<span class="sd">    :py:func:`haddock.gear.tables.read_table_to_data_dict`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">table_txt</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">comment</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="n">table_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col_num</span><span class="p">,</span> <span class="n">header</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">headers</span><span class="p">):</span>
+        <span class="n">table_dict</span><span class="p">[</span><span class="n">header</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">str_to_value</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">col_num</span><span class="p">])</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">table</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+    <span class="k">return</span> <span class="n">table_dict</span></div>
+
+
+<div class="viewcode-block" id="str_to_value"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.str_to_value">[docs]</a><span class="k">def</span> <span class="nf">str_to_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">missing_chars</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a string to a value.</span>
+
+<span class="sd">    Implemented values:</span>
+<span class="sd">        * int</span>
+<span class="sd">        * float</span>
+<span class="sd">        * None</span>
+<span class="sd">        * nan</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conversions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">),</span> <span class="n">none</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">missing_chars</span><span class="p">,</span> <span class="n">none</span><span class="p">),</span>
+        <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">==</span><span class="s2">&quot;nan&quot;</span><span class="p">,</span> <span class="n">nan</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">is_str_int</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">is_str_float</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">true</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+        <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">validate</span><span class="p">,</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">conversions</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">validate</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="format_value"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.format_value">[docs]</a><span class="k">def</span> <span class="nf">format_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">spacing</span><span class="p">,</span> <span class="n">char</span><span class="p">,</span> <span class="n">float_fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format the value for the table depending on its type.</span>
+
+<span class="sd">    Usually this means applying decimal number reduction, left or right</span>
+<span class="sd">    justifying depending on the type, and similar operatations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : anything</span>
+<span class="sd">        The value to process.</span>
+
+<span class="sd">    spacing : int</span>
+<span class="sd">        The spacing of the cell.</span>
+
+<span class="sd">    char : str</span>
+<span class="sd">        The char to space the value.</span>
+
+<span class="sd">    float_fmt : str</span>
+<span class="sd">        The float format string. Defaults to ``{:.3f}``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The formatted value to fill the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">float_fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">spacing</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">PDBFile</span><span class="p">,</span> <span class="n">Path</span><span class="p">))</span> \
+            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.pdb&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">spacing</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">value_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">spacing</span><span class="p">,</span> <span class="n">char</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="value_to_str"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.value_to_str">[docs]</a><span class="k">def</span> <span class="nf">value_to_str</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">float_fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert value to string according to its type.</span>
+
+<span class="sd">    Applies additional style and format convertion specific for</span>
+<span class="sd">    HADDOCK3.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : anything</span>
+<span class="sd">        The value to process.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The formatted value to fill the table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">float_fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;-&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">rel_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_row_to_column_table"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.convert_row_to_column_table">[docs]</a><span class="k">def</span> <span class="nf">convert_row_to_column_table</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert row based dictionaries to column based dictionaries.</span>
+
+<span class="sd">    In other words, convert dictionaries in the form of:</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">        {</span>
+<span class="sd">            1: {</span>
+<span class="sd">                &quot;col_name_1&quot;: value1,</span>
+<span class="sd">                &quot;col_name_2&quot;: value2,</span>
+<span class="sd">                },</span>
+
+<span class="sd">            2: {</span>
+<span class="sd">                &quot;col_name_1&quot;: value3,</span>
+<span class="sd">                &quot;col_name_2&quot;: value4,</span>
+<span class="sd">                },</span>
+<span class="sd">            }</span>
+
+<span class="sd">    To dictionaries compatible with</span>
+<span class="sd">    :py:func:`adjusted_col_width_table`.</span>
+
+<span class="sd">    .. code:: python</span>
+
+<span class="sd">        {</span>
+<span class="sd">            &quot;col_name_1&quot;: [value1, value3],</span>
+<span class="sd">            &quot;col_name_2&quot;: [value2, value4],</span>
+<span class="sd">            }</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The parsed data dictionary.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:func:`haddock.gear.tables.create_adjusted_col_width_table`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data2</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">]:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">element</span><span class="p">]</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">data2</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data2</span></div>
+
+
+<div class="viewcode-block" id="convert_sep_to_sep"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.convert_sep_to_sep">[docs]</a><span class="k">def</span> <span class="nf">convert_sep_to_sep</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">fout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">in_sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out_sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;#&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a text based table from one sep to another.</span>
+
+<span class="sd">    For example, convert a space separated table to a tab separated</span>
+<span class="sd">    table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fname : str or :external:py:class:`pathlib.Path`</span>
+<span class="sd">        The path to the table file.</span>
+
+<span class="sd">    fout : str or :external:py:class:`pathlib.Path`</span>
+<span class="sd">        If provided, saves the table to the file path specified in</span>
+<span class="sd">        ``fout``. If ``None`` returns the table string.</span>
+
+<span class="sd">    comment : str</span>
+<span class="sd">        Reproduces lines starting with comment char unmodified.</span>
+<span class="sd">        Defaults to ``#``.</span>
+
+<span class="sd">    in_sep : str</span>
+<span class="sd">        The value separator for the input table. Defaults to ``None``,</span>
+<span class="sd">        empty spaces.</span>
+
+<span class="sd">    out_sep : str</span>
+<span class="sd">        The value separator for the output table. Defaults to empty spaces.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The new table text if ``fout`` is set to ``None``.</span>
+
+<span class="sd">    None</span>
+<span class="sd">        ``None``. Writes the table to a file if ``fout`` is given.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:func:`haddock.gear.tables.convert_ssc_tsv`</span>
+<span class="sd">    :py:func:`haddock.gear.tables.convert_ssc_csv`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table_text</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">table_text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
+    <span class="n">new_text</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">):</span>
+            <span class="n">new_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">out_sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">in_sep</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_ssc_tsv"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.convert_ssc_tsv">[docs]</a><span class="k">def</span> <span class="nf">convert_ssc_tsv</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a space-separated table to a tab-separated table.</span>
+
+<span class="sd">    Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=&quot; &quot;``</span>
+<span class="sd">    and ``out_sep=&quot;\t&quot;``. Other parameters are as explained there.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">convert_sep_to_sep</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">in_sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out_sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_ssc_csv"><a class="viewcode-back" href="../../../reference/gear/tables.html#haddock.gear.tables.convert_ssc_csv">[docs]</a><span class="k">def</span> <span class="nf">convert_ssc_csv</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a space-separated table to a comma-separated table.</span>
+
+<span class="sd">    Uses :py:func:`haddock.gear.convert_sep_to_sep` with ``in_sep=&quot; &quot;``</span>
+<span class="sd">    and ``out_sep=&quot;,&quot;``. Other parameters are as explained there.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">convert_sep_to_sep</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">in_sep</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out_sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Jun 04, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

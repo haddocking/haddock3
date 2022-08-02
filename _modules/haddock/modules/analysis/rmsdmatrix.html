@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.modules.analysis.rmsdmatrix &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../modules.html">haddock.modules</a> &raquo;</li>
+      <li>haddock.modules.analysis.rmsdmatrix</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.modules.analysis.rmsdmatrix</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">RMSD matrix module.</span>
+
+<span class="sd">This module calculates of the RMSD matrix between all the models</span>
+<span class="sd">generated in the previous step.</span>
+
+<span class="sd">As all the pairwise RMSD calculations are independent, the module distributes</span>
+<span class="sd">them over all the available cores in an optimal way.</span>
+
+<span class="sd">Once created, the RMSD matrix is saved in text form in the current `rmsdmatrix`</span>
+<span class="sd">folder. The path to this file is then shared with the following step of the</span>
+<span class="sd">workflow by means of the json file `rmsd_matrix.json`.</span>
+
+<span class="sd">The module accepts two parameters in input, namely:</span>
+
+<span class="sd">* `max_models` (default = 10000)</span>
+<span class="sd">* `resdic_` : an expandable parameter to specify which residues must be</span>
+<span class="sd">  considered for the alignment and the RMSD calculation. If there are</span>
+<span class="sd">  two proteins denoted by chain IDs A and B, then the user can operate</span>
+<span class="sd">  such selection in the following way inside the configuration file</span>
+
+<span class="sd">&gt;&gt;&gt; resdic_A = [1,2,3,4]</span>
+<span class="sd">&gt;&gt;&gt; resdic_B = [2,3,4]</span>
+
+<span class="sd">thus telling the module to consider residues from 1 to 4 of chain A and from 2</span>
+<span class="sd">to 4 of chain B for the alignment and RMSD calculation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">ModuleIO</span><span class="p">,</span> <span class="n">RMSDFile</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">Scheduler</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">parse_ncores</span>
+<span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis</span> <span class="kn">import</span> <span class="n">confirm_resdic_chainid_length</span>
+<span class="kn">from</span> <span class="nn">haddock.modules.analysis.rmsdmatrix.rmsd</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RMSD</span><span class="p">,</span>
+    <span class="n">RMSDJob</span><span class="p">,</span>
+    <span class="n">rmsd_dispatcher</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="n">RECIPE_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">DEFAULT_CONFIG</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RECIPE_PATH</span><span class="p">,</span> <span class="s2">&quot;defaults.yaml&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/analysis/rmsdmatrix.html#haddock.modules.analysis.rmsdmatrix.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HADDOCK3 module for clustering with RMSD.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="o">=</span><span class="n">DEFAULT_CONFIG</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">initial_params</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/analysis/rmsdmatrix.html#haddock.modules.analysis.rmsdmatrix.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Confirm if contact executable is compiled.&quot;&quot;&quot;</span>
+        <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">_rearrange_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">ncores</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Combine different rmsd outputs in a single file.&quot;&quot;&quot;</span>
+        <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">output_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rearranging output files into </span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Combine files</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_fname</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out_file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
+                <span class="n">tmp_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rmsd_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.matrix&quot;</span><span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+                    <span class="n">out_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">infile</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File number </span><span class="si">{</span><span class="n">core</span><span class="si">}</span><span class="s2"> written&quot;</span><span class="p">)</span>
+                <span class="n">tmp_file</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Completed reconstruction of rmsd files.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_fname</span><span class="si">}</span><span class="s2"> created.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="HaddockModule.update_params"><a class="viewcode-back" href="../../../../modules/analysis/rmsdmatrix.html#haddock.modules.analysis.rmsdmatrix.HaddockModule.update_params">[docs]</a>    <span class="k">def</span> <span class="nf">update_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update parameters.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;resdic_&quot;</span><span class="p">)</span>
+
+        <span class="n">confirm_resdic_chainid_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
+        <span class="c1"># Get the models generated in previous step</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="p">)</span> <span class="o">==</span> <span class="nb">iter</span><span class="p">:</span>
+            <span class="n">_e</span> <span class="o">=</span> <span class="s2">&quot;This module cannot come after one that produced an iterable.&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_e</span><span class="p">)</span>
+
+        <span class="c1"># Get the models generated in previous step</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">(</span>
+            <span class="n">individualize</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Parallelisation : optimal dispatching of models</span>
+        <span class="n">nmodels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nmodels</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_models&quot;</span><span class="p">]:</span>
+            <span class="c1"># too many input models : RMSD matrix would be too big =&gt; Abort!</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Too many models for RMSD matrix calculation&quot;</span><span class="p">)</span>
+        <span class="n">tot_npairs</span> <span class="o">=</span> <span class="n">nmodels</span> <span class="o">*</span> <span class="p">(</span><span class="n">nmodels</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;total number of pairs </span><span class="si">{</span><span class="n">tot_npairs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">ncores</span> <span class="o">=</span> <span class="n">parse_ncores</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ncores&#39;</span><span class="p">],</span> <span class="n">njobs</span><span class="o">=</span><span class="n">tot_npairs</span><span class="p">)</span>
+        <span class="n">npairs</span><span class="p">,</span> <span class="n">ref_structs</span><span class="p">,</span> <span class="n">mod_structs</span> <span class="o">=</span> <span class="n">rmsd_dispatcher</span><span class="p">(</span>
+            <span class="n">nmodels</span><span class="p">,</span>
+            <span class="n">tot_npairs</span><span class="p">,</span>
+            <span class="n">ncores</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the rmsd for each set of models</span>
+        <span class="n">rmsd_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;running Rmsd Jobs with </span><span class="si">{</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> cores&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">core</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncores</span><span class="p">):</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;rmsd_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">core</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.matrix&quot;</span>
+            <span class="n">rmsd_obj</span> <span class="o">=</span> <span class="n">RMSD</span><span class="p">(</span>
+                <span class="n">models</span><span class="p">,</span>
+                <span class="n">core</span><span class="p">,</span>
+                <span class="n">npairs</span><span class="p">[</span><span class="n">core</span><span class="p">],</span>
+                <span class="n">ref_structs</span><span class="p">[</span><span class="n">core</span><span class="p">],</span>
+                <span class="n">mod_structs</span><span class="p">[</span><span class="n">core</span><span class="p">],</span>
+                <span class="n">output_name</span><span class="p">,</span>
+                <span class="n">path</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span>
+                <span class="n">params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span>
+                <span class="p">)</span>
+            <span class="n">job_f</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_name</span><span class="p">)</span>
+            <span class="c1"># init RMSDJob</span>
+            <span class="n">job</span> <span class="o">=</span> <span class="n">RMSDJob</span><span class="p">(</span>
+                <span class="n">job_f</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">rmsd_obj</span>
+                <span class="p">)</span>
+            <span class="n">rmsd_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+
+        <span class="n">rmsd_engine</span> <span class="o">=</span> <span class="n">Scheduler</span><span class="p">(</span><span class="n">rmsd_jobs</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span><span class="p">)</span>
+        <span class="n">rmsd_engine</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="n">rmsd_file_l</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">not_found</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">rmsd_jobs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">job</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="c1"># NOTE: If there is no output, most likely the RMSD calculation</span>
+                <span class="c1"># timed out</span>
+                <span class="n">not_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">wrn</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Rmsd results were not calculated for </span><span class="si">{</span><span class="n">job</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">wrn</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rmsd_file_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">not_found</span><span class="p">:</span>
+            <span class="c1"># Not all distances were calculated, cannot create the full matrix</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="s2">&quot;Several files were not generated:&quot;</span>
+                                   <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">not_found</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Post-processing : single file</span>
+        <span class="n">output_name</span> <span class="o">=</span> <span class="s2">&quot;rmsd.matrix&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rearrange_output</span><span class="p">(</span>
+            <span class="n">output_name</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">rmsd_obj</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+            <span class="n">ncores</span><span class="o">=</span><span class="n">ncores</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Sending models to the next step of the workflow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="n">models</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">export_output_models</span><span class="p">()</span>
+        <span class="c1"># Sending matrix path to the next step of the workflow</span>
+        <span class="n">matrix_io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+        <span class="n">rmsd_matrix_file</span> <span class="o">=</span> <span class="n">RMSDFile</span><span class="p">(</span>
+            <span class="n">output_name</span><span class="p">,</span>
+            <span class="n">npairs</span><span class="o">=</span><span class="n">tot_npairs</span>
+            <span class="p">)</span>
+        <span class="n">matrix_io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rmsd_matrix_file</span><span class="p">)</span>
+        <span class="n">matrix_io</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s2">&quot;rmsd_matrix.json&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Jul 18, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

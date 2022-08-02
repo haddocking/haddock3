@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>haddock.gear.config_writer &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      <li>haddock.gear.config_writer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for haddock.gear.config_writer</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Convert HADDOCK3 config dictionaries to user configuration files.</span>
+
+<span class="sd">The functions implemented here have a general character. For them to be</span>
+<span class="sd">functional within the HADDOCK3 scope you need to provide additional</span>
+<span class="sd">input arguments. All the details are explained in the function&#39;s</span>
+<span class="sd">docstrings (help).</span>
+
+<span class="sd">If you look for equal functions but already pre-prepared for HADDOCK3</span>
+<span class="sd">modules, see the functions:</span>
+
+<span class="sd">* :py:func:`haddock.modules.convert_config`</span>
+<span class="sd">* :py:func:`haddock.modules.save_config`</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">collections.abc</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.config_reader</span> <span class="kn">import</span> <span class="n">get_module_name</span>
+
+
+<div class="viewcode-block" id="convert_config"><a class="viewcode-back" href="../../../reference/gear/config_writer.html#haddock.gear.config_writer.convert_config">[docs]</a><span class="k">def</span> <span class="nf">convert_config</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span>
+        <span class="n">ignore_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">module_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">_module_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert parameter dictionary to a HADDOCK3 user configuration file.</span>
+
+<span class="sd">    This function is a generator.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; gen = convert_config(parameters_dict)</span>
+<span class="sd">    &gt;&gt;&gt; text = os.linesep.join(gen)</span>
+<span class="sd">    &gt;&gt;&gt; with open(&quot;params.cfg&quot;, &quot;w&quot;) as fout:</span>
+<span class="sd">    &gt;&gt;&gt;     fout.write(text)</span>
+
+<span class="sd">    Note you might want to give the list of the available module names,</span>
+<span class="sd">    and remove the non mandatory general parameters.</span>
+
+<span class="sd">    &gt;&gt;&gt; from haddock.modules import modules_category</span>
+<span class="sd">    &gt;&gt;&gt; from haddock.modules import non_mandatory_general_parameters_defaults</span>
+<span class="sd">    &gt;&gt;&gt; gen = convert_config(</span>
+<span class="sd">        parameters_dict,</span>
+<span class="sd">        module_names=modules_category,</span>
+<span class="sd">        ignore_param=non_mandatory_general_parameters_defaults,</span>
+<span class="sd">        )</span>
+<span class="sd">    &gt;&gt;&gt; text = os.linesep.join(gen)</span>
+<span class="sd">    &gt;&gt;&gt; with open(&quot;params.cfg&quot;, &quot;w&quot;) as fout:</span>
+<span class="sd">    &gt;&gt;&gt;     fout.write(text)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : dictionary</span>
+<span class="sd">        The dictionary containing the parameters.</span>
+
+<span class="sd">    ignore_params : set, list, tuple</span>
+<span class="sd">        List of parameters to be ignored. These parameters won&#39;t be</span>
+<span class="sd">        yielded.</span>
+
+<span class="sd">    module_names : set, list, tuple</span>
+<span class="sd">        A list with the names of possible headings. Headings usually are</span>
+<span class="sd">        module names.</span>
+
+<span class="sd">    _module_key : internal parameter</span>
+<span class="sd">        This function uses itself recursively. `_module_key` is for</span>
+<span class="sd">        internal usage only.</span>
+
+<span class="sd">    Yields</span>
+<span class="sd">    ------</span>
+<span class="sd">    str</span>
+<span class="sd">        Line by line for the HADDOCK3 user configuration file.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:func:`haddock.modules.convert_config`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># can&#39;t do</span>
+    <span class="c1"># ignore_params = set() or ignore_params</span>
+    <span class="c1"># because set() also evaluates to false</span>
+    <span class="k">if</span> <span class="n">ignore_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ignore_params</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">module_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">module_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="n">valid_keys</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ignore_params</span>
+        <span class="p">)</span>
+
+    <span class="c1"># place parameters that are dictionaries at the end of the config file</span>
+    <span class="c1"># this is important because toml-like config are to be read line by line</span>
+    <span class="c1"># this was made first for compatibility with the topoaa `molecules` and</span>
+    <span class="c1"># `mol1` like parameters, which are dictionaries. Note `molecules` and</span>
+    <span class="c1"># `mol*` start with `mol`</span>
+    <span class="n">sorted_keys</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">valid_keys</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_is_dict</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sorted_keys</span><span class="p">):</span>
+
+        <span class="n">module_key</span> <span class="o">=</span> <span class="n">get_module_name</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">module_key</span> <span class="ow">in</span> <span class="n">module_names</span><span class="p">:</span>
+
+            <span class="c1"># used to get an extra line when writing the second module</span>
+            <span class="c1"># header</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">module_key</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="k">yield from</span> <span class="n">convert_config</span><span class="p">(</span>
+                <span class="n">value</span><span class="p">,</span>
+                <span class="n">ignore_params</span><span class="o">=</span><span class="n">ignore_params</span><span class="p">,</span>
+                <span class="n">module_names</span><span class="o">=</span><span class="n">module_names</span><span class="p">,</span>
+                <span class="n">_module_key</span><span class="o">=</span><span class="n">module_key</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_module_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># module&#39;s subkeys should follow without an extra</span>
+                <span class="c1"># newline</span>
+                <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">_module_key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">]&quot;</span>
+            <span class="k">yield from</span> <span class="n">convert_config</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = []&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> = [&quot;</span>
+                <span class="k">yield from</span> <span class="n">_list_by_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="s2">&quot;    ]&quot;</span>
+                <span class="c1"># multiline lists in haddock3 configuration files</span>
+                <span class="c1"># need to be followed by an empty line.</span>
+                <span class="k">yield</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">continue</span>
+
+        <span class="k">yield</span> <span class="n">_convert_value_to_config_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_is_dict</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return 1 if value is type Mapping (dict) or 0 otherwise.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : tuple</span>
+<span class="sd">        key and value pair.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">collections</span><span class="o">.</span><span class="n">abc</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">_list_by_value</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert values in a list.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
+        <span class="c1"># empty lists are address at convert_config</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Empty lists should enter this function.&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">yield</span> <span class="n">_convert_value_to_config_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;    </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="p">)</span>
+
+    <span class="c1"># note the comma in the `fmt` parameter!</span>
+    <span class="k">yield</span> <span class="n">_convert_value_to_config_string</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;    </span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_convert_value_to_config_string</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">fmt</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a value to its string representation in an config file.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">EmptyPath</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;&quot;&quot;&#39;</span><span class="p">)</span>
+
+    <span class="c1"># nan values also enter here because they are floats</span>
+    <span class="c1"># and get converted to nan strings and saved to the config without quotes</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+            <span class="s2">&quot;There should be no values of this type: &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">value</span><span class="si">!r}</span><span class="s2"> of type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">!r}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+
+<div class="viewcode-block" id="save_config"><a class="viewcode-back" href="../../../reference/gear/config_writer.html#haddock.gear.config_writer.save_config">[docs]</a><span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">module_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save a dictionary to a HADDOCK3 config file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        The dictionary containing the parameters.</span>
+
+<span class="sd">    path : str or pathlib.Path</span>
+<span class="sd">        File name where to save the configuration file.</span>
+
+<span class="sd">    module_name : str or None</span>
+<span class="sd">        Provide a name to the module to add the module&#39;s name to the</span>
+<span class="sd">        output CFG file. This applies for cases where the parameters</span>
+<span class="sd">        dictionary is a flat dictionary defining only the parameters of</span>
+<span class="sd">        a specific module without referring to the module&#39;s name.</span>
+
+<span class="sd">    kwargs</span>
+<span class="sd">        Other parameters are as defined in `convert_config`. Take special</span>
+<span class="sd">        attention to `module_names` parameter.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    :py:func:`haddock.modules.save_config`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">module_name</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`module_name` must be str: {type(module_name)} given&quot;</span><span class="p">)</span> <span class="c1"># noqa E501</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">module_name</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)}</span>
+        <span class="c1"># add module name to module names parameter</span>
+        <span class="n">mn</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;module_names&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;module_names&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mn</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+
+    <span class="n">ostr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">convert_config</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+        <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ostr</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Jun 12, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

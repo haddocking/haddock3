@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAPRI evaluation module &mdash; haddock3 3.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Cluster FCC Module" href="clustfcc.html" />
+    <link rel="prev" title="Analysis Modules" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> haddock3
+          </a>
+              <div class="version">
+                3.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Analysis Modules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">CAPRI evaluation module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#default-parameters">Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="clustfcc.html">Cluster FCC Module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="clustrmsd.html">RMSD clustering module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmsdmatrix.html">RMSD matrix calculation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="seletop.html">Select Top Models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="seletopclusts.html">Select Top Clusters module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../extras/index.html">Extra modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">haddock3</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Modules</a> &raquo;</li>
+          <li><a href="index.html">Analysis Modules</a> &raquo;</li>
+      <li>CAPRI evaluation module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/analysis/caprieval.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-haddock.modules.analysis.caprieval">
+<span id="capri-evaluation-module"></span><h1>CAPRI evaluation module<a class="headerlink" href="#module-haddock.modules.analysis.caprieval" title="Permalink to this headline"></a></h1>
+<p>Calculate CAPRI metrics.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.caprieval.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ignore</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">init_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/joao/github/haddock3/src/haddock/modules/analysis/caprieval/defaults.yaml')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">everything</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/caprieval.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">haddock.modules.BaseHaddockModule</span></code></a></p>
+<p>HADDOCK3 module to calculate the CAPRI metrics.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.add_parent_to_paths">
+<span class="sig-name descname"><span class="pre">add_parent_to_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.add_parent_to_paths" title="Permalink to this definition"></a></dt>
+<dd><p>Add parent path to paths.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.clean_output">
+<span class="sig-name descname"><span class="pre">clean_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.clean_output" title="Permalink to this definition"></a></dt>
+<dd><p>Clean module output folder.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="../../reference/gear/clean_steps.html#haddock.gear.clean_steps.clean_output" title="haddock.gear.clean_steps.clean_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.clean_steps.clean_output()</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.confirm_installation">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/caprieval.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<dd><p>Confirm if contact executable is compiled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.export_output_models">
+<span class="sig-name descname"><span class="pre">export_output_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.export_output_models" title="Permalink to this definition"></a></dt>
+<dd><p>Export output to the ModuleIO interface.</p>
+<p>Modules that generate PDBs that other models should take as input,
+should export those PDBs registries through the ModuleIO interface.</p>
+<p>This function implements a common interface for all modules requiring
+this feature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>faulty_tolerance</strong> (<em>int, default 0</em>) – The percentage of missing output allowed. If 20 is given,
+raises an error if 20% of the expected output is missing (not
+saved to disk).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.finish_with_error">
+<span class="sig-name descname"><span class="pre">finish_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Module</span> <span class="pre">has</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.finish_with_error" title="Permalink to this definition"></a></dt>
+<dd><p>Finish with error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.log">
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.log" title="Permalink to this definition"></a></dt>
+<dd><p>Log a message with a common header.</p>
+<p>Currently the header is the [MODULE NAME] in square brackets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>msg</strong> (<em>str</em>) – The log message.</p></li>
+<li><p><strong>level</strong> (<em>str</em>) – The level log: ‘debug’, ‘info’, …
+Defaults to ‘info’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.params">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.params" title="Permalink to this definition"></a></dt>
+<dd><p>Configuration parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.previous_path">
+<span class="sig-name descname"><span class="pre">previous_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.previous_path" title="Permalink to this definition"></a></dt>
+<dd><p>Give the path from the previous calculation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.reset_params">
+<span class="sig-name descname"><span class="pre">reset_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.reset_params" title="Permalink to this definition"></a></dt>
+<dd><p>Reset parameters to the ones used to instantiate the class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.run" title="Permalink to this definition"></a></dt>
+<dd><p>Execute the module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.save_config" title="Permalink to this definition"></a></dt>
+<dd><p>Save current parameters to a HADDOCK3 config file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.analysis.caprieval.HaddockModule.update_params">
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_from_cfg_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.caprieval.HaddockModule.update_params" title="Permalink to this definition"></a></dt>
+<dd><p>Update the modules parameters.</p>
+<p>Add/update to the current modules parameters the ones given in
+the function call. If you want to enterily replace the modules
+parameters to their default values use the <cite>reset_params()</cite>
+method.</p>
+<p>Update takes places recursively, that is, nested dictionaries
+will be updated accordingly.</p>
+<p>To update the current config with the parameters defined in an
+HADDOCK3 configuration file use the <cite>update_from_cfg_file</cite>
+parameter.</p>
+<p>To update from a JSON file, first load the JSON into a
+dictionary and unpack the dictionary to the function call.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">param1</span><span class="o">=</span><span class="n">value1</span><span class="p">,</span> <span class="n">param2</span><span class="o">=</span><span class="n">value2</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="o">**</span><span class="n">param_dict</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">update_params</span><span class="p">(</span><span class="n">update_from_cfg_file</span><span class="o">=</span><span class="n">path_to_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p># if you wish to start from scratch
+&gt;&gt;&gt; m.reset_params()
+&gt;&gt;&gt; m.update_params(…)</p>
+</dd></dl>
+
+</dd></dl>
+
+<section id="default-parameters">
+<h2>Default parameters<a class="headerlink" href="#default-parameters" title="Permalink to this headline"></a></h2>
+<section id="easy">
+<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this headline"></a></h3>
+<section id="alignment-method">
+<h4>alignment_method<a class="headerlink" href="#alignment-method" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘sequence’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Alignment method used to match the numbering.</div>
+<div class="line"><em>short description</em>: Which alignment method should be used to match the numbering.</div>
+<div class="line"><em>long description</em>: Alignment method used to match the numbering. Sequence alignment is haddock3-friendly but might not produce best results for structures that are too different, for that use</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="clt-threshold">
+<h4>clt_threshold<a class="headerlink" href="#clt-threshold" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 4</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Threshold (n) used for the average evaluation in the cluster-based output</div>
+<div class="line"><em>short description</em>: Threshold (n) used for the average evaluation in the cluster-based output.</div>
+<div class="line"><em>long description</em>: Threshold (n) used for the average evaluation in the cluster-based output.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="dockq">
+<h4>dockq<a class="headerlink" href="#dockq" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate DockQ</div>
+<div class="line"><em>short description</em>: Evaluate DockQ.</div>
+<div class="line"><em>long description</em>: Evaluate DockQ. A single continuous quality measure for protein docked models based on the CAPRI criteria, a combination of i-RMSD, l-RMSD and FNAT value. For details check the DockQ publication <cite>DOI:10.1371/journal.pone.0161879</cite></div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="fnat">
+<h4>fnat<a class="headerlink" href="#fnat" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate FNAT</div>
+<div class="line"><em>short description</em>: Performs FNAT calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Fraction of Native Contacts. This evaluates how many contacts observed in the reference are present in the model. The distance cutoff used to define intermolecular contacts is defined by the fnat_cutoff parameter.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="fnat-cutoff">
+<h4>fnat_cutoff<a class="headerlink" href="#fnat-cutoff" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 5.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Distance cutoff (Å) used to define interface contacts.</div>
+<div class="line"><em>short description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
+<div class="line"><em>long description</em>: Distance cutoff (Å) used to define interface contacts between two interacting molecules.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ilrmsd">
+<h4>ilrmsd<a class="headerlink" href="#ilrmsd" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate I-L-RMSD</div>
+<div class="line"><em>short description</em>: Performs Interface Ligand RMSD calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms of the ligand (defined by the ligand_chain parameter).</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="irmsd">
+<h4>irmsd<a class="headerlink" href="#irmsd" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate I-RMSD</div>
+<div class="line"><em>short description</em>: Performs Interface RMSD calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Interface Root Mean Square Deviation. This calculate the RMSD of interface backbone atoms after fitting on the interface backbone atoms. The interface is idenfied based on intermolecular contacts shorter than the defined irmsd_cutoff.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="irmsd-cutoff">
+<h4>irmsd_cutoff<a class="headerlink" href="#irmsd-cutoff" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 10.0</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Distance cutoff (Å) used to define interface residues.</div>
+<div class="line"><em>short description</em>: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.</div>
+<div class="line"><em>long description</em>: Distance cutoff (Å) used to define interface residues based on intermolecular contacts.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="ligand-chain">
+<h4>ligand_chain<a class="headerlink" href="#ligand-chain" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘B’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Ligand ChainID</div>
+<div class="line"><em>short description</em>: Ligand ChainID to be considered for the RMSD calculations.</div>
+<div class="line"><em>long description</em>: Ligand ChainID to be considered for the RMSD calculations. This determines which chain will be treated as the ligand for the L-RMSD and for I-L-RMSD.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="lovoalign-exec">
+<h4>lovoalign_exec<a class="headerlink" href="#lovoalign-exec" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Location (path) of the LovoAlign executable</div>
+<div class="line"><em>short description</em>: Location (path) of the LovoAlign executable.</div>
+<div class="line"><em>long description</em>: Location (path) of the LovoAlign executable.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="lrmsd">
+<h4>lrmsd<a class="headerlink" href="#lrmsd" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Calculate L-RMSD</div>
+<div class="line"><em>short description</em>: Performs Ligand RMSD calculations.</div>
+<div class="line"><em>long description</em>: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chain parameter). Superposition and RMSD calculations are done on backbone heavy atoms.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="receptor-chain">
+<h4>receptor_chain<a class="headerlink" href="#receptor-chain" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘A’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Receptor ChainID</div>
+<div class="line"><em>short description</em>: Receptor ChainID to be considered for the RMSD calculations.</div>
+<div class="line"><em>long description</em>: Receptor ChainID to be considered for the RMSD calculations. This determines which chain will be treated as the receptor for the L-RMSD and for I-L-RMSD.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="reference-fname">
+<h4>reference_fname<a class="headerlink" href="#reference-fname" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘’</div>
+<div class="line"><em>type</em>: file</div>
+<div class="line"><em>title</em>: Reference structure</div>
+<div class="line"><em>short description</em>: Structure to be used when calculating the CAPRI metrics.</div>
+<div class="line"><em>long description</em>: Reference tructure to be used when calculating the CAPRI metrics. If none is defined then the lowest scoring model is selected by default.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="sort-ascending">
+<h4>sort_ascending<a class="headerlink" href="#sort-ascending" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: True</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Sort in ascending order</div>
+<div class="line"><em>short description</em>: Sort in ascending order.</div>
+<div class="line"><em>long description</em>: Sort in ascending order.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="sortby">
+<h4>sortby<a class="headerlink" href="#sortby" title="Permalink to this headline"></a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: ‘score’</div>
+<div class="line"><em>type</em>: string</div>
+<div class="line"><em>title</em>: Sort the structures/clusters in the output file by this value</div>
+<div class="line"><em>short description</em>: Which value should be used to sort the output.</div>
+<div class="line"><em>long description</em>: Which value should be used to sort the output, the output table will be sorted accordingly.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Analysis Modules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="clustfcc.html" class="btn btn-neutral float-right" title="Cluster FCC Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, BonvinLab.
+      <span class="lastupdated">Last updated on Aug 02, 2022.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

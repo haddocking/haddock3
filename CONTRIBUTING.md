@@ -291,16 +291,16 @@ source code.
 The `docs/` folder contains all the files used by Sphinx to compile the
 documentation to HTML files. To incorporate new documentation pages or
 update the existing ones, navigate around the `docs/` folder to learn
-how we have it structured and add/edit the files you find relevant. You
+how we have structured it and add/edit the files you find relevant. You
 will see that the structure of folders and files follows the design of
 the documentation website.
 
 You can render the documentation locally to inspect the end result
 before creating a pull request. To compile the documentation locally:
 activate the `haddock3` python environment inside the haddock3 github
-folder, run `tox -e docs` use your favourite browser to open the
-`haddock3-docs/index.html` file We invite you to read through Sphinx-doc
-wepage if you want to exploit any advanced feature of Sphinx, but we
+folder, run `tox -e docs` and then use your favourite browser to open the
+`haddock3-docs/index.html` file. We invite you to read through Sphinx-doc
+webpage if you want to exploit any advanced feature of Sphinx, but we
 already provide examples for virtually any use you may need.
 
 If you need to install any additional library, talk to us first. The

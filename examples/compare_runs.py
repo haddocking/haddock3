@@ -266,7 +266,7 @@ def error_1(l1, l2):
     is_in_l1 = set(l1).difference(set(l2))
     is_in_l2 = set(l2).difference(set(l1))
 
-    if not(is_in_l1) and not(is_in_l2):
+    if not is_in_l1 and not is_in_l2:
         raise AssertionError(
             "BUG FOUND: at least one of these sets should have values"
             )

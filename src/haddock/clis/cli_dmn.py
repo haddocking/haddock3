@@ -66,8 +66,8 @@ ap.add_argument(
     )
 
 ap.add_argument(
-    '--short-first',
-    dest='short_first',
+    '--sort-first',
+    dest='sort_first',
     help=(
         'Sort jobs by size in ascending order. If not given jobs are order by '
         'size in descending order: the biggest first.'
@@ -242,7 +242,7 @@ def main(
         job_limit=10,
         manager='slurm',
         restart=False,
-        short_first=False,
+        sort_first=False,
         ):
     """
     Execute the benchmark daemon.
@@ -274,9 +274,9 @@ def main(
         Whether to restart the `RUNNING` jobs that might have been halted
         in previous daemon runs. Defaults to False.
 
-    short_first : bool
+    sort_first : bool
         Whether to sort jobs by their size in ascending manner. That is,
-        the shorted jobs first. Defaults to False, the longer first.
+        the sorted jobs first. Defaults to False, the longer first.
     """
     # lists of all the job files in the benchmark_path folder
     job_list = list(benchmark_path.glob('*/jobs/*.job'))
@@ -286,7 +286,7 @@ def main(
         sys.exit('+ ERROR! No jobs found in folder: {str(benchmark_path)!r}')
 
     # sorts the job list
-    job_list.sort(key=calc_size, reverse=not(short_first))
+    job_list.sort(key=calc_size, reverse=not(sort_first))  # noqa: E275
 
     # create the job objects according to the queue managing systme
     _jobsys = workload_manager_launch[manager]

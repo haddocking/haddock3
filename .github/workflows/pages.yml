@@ -39,7 +39,9 @@ jobs:
           cd -
 
       - name: Generate docs
-        run: tox -e docs
+        run: |
+          tox -e docs
+          touch haddock3-docs/.nojekyll
 
       - name: deploy
         uses: s0/git-publish-subdir-action@develop

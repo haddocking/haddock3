@@ -1,7 +1,0 @@
-Pretty tables
-=============
-
-.. automodule:: haddock.gear.pretty_table
-   :members:
-   :show-inheritance:
-   :inherited-members:

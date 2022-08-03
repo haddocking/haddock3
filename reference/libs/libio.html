@@ -1,118 +1,209 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>libio: I/O helping functions &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/js/theme.js"></script>
+  <title>libio: I/O helping functions &mdash; haddock3 3.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="liblob: Logging helping functions" href="liblog.html" />
     <link rel="prev" title="libhpc: HPC execution functions" href="libhpc.html" /> 
+
 </head>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> haddock3
-          </a>
-              <div class="version">
-                3.0.0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+<body>
+    <header>
+        <div class="container">
+            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
+            <a class="site-title" href="../../index.html">
+                haddock3
+            </a>
+        </div>
+    </header>
+
+
+<div class="breadcrumbs-outer hidden-xs-down">
+    <div class="container">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a></li>
+        
+          <li><a href="../index.html">Library Reference</a></li>
+        
+          <li><a href="index.html">Libs Reference</a></li>
+        
+      <li>libio: I/O helping functions</li>
+    
+    
+      <li class="breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/reference/libs/libio.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+    </div>
+</div>
+    <div class="main-outer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-3 site-nav">
+                    
+<div role="search">
+    <form class="search" action="../../search.html" method="get">
+        <div class="icon-input">
+            <input type="text" name="q" placeholder="Search" />
+            <span class="icon-search"></span>
+        </div>
+        <input type="submit" value="Go" class="d-hidden" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+                    <div class="site-nav-tree">
+                        
+                            
+                            
+                                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#clone-this-repository">1 Clone this repository:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#install-the-haddock3-package-and-command-line-clients">3 Install the HADDOCK3 package and command line clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4 Make a CNS binary shortcut to the expected path:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#keep-your-installation-up-to-date">5 Keep your installation up to date</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../USAGE.html#run-haddock3">Run HADDOCK3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-dna">docking-protein-dna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-homotrimer">docking-protein-homotrimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand">docking-protein-ligand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand-shape">docking-protein-ligand-shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-peptide">docking-protein-peptide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#refine-complex">refine-complex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#scoring">scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clihd3.html">Run HADDOCK3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clipp.html">PDB preprocessing client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicp.html">Copy steps to new run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean output Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clibm.html">Benchmark Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clidmn.html">Benchmark Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/integration_tests.html">Running integration tests manually</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-new-code">1. Contributing new code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">Core Reference</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html">Libs Reference</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="libalign.html">libalign: sequence and structural alignments</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libcli.html">libcli: functions helping clients</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libcns.html">libcns: creating CNS files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libfunc.html">libfunc: functional-programming helping tools</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libhpc.html">libhpc: HPC execution functions</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">libio: I/O helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="liblog.html">liblob: Logging helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libmath.html">libmath: Math helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libmpi.html">libmpi: MPI execution functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libontology.html">libontology: module communication</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libparallel.html">libparallel: multiprocessing helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libpdb.html">libpdb: PDB helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libstructure.html">libstructure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libsubprocess.html">libsubprocess</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libutil.html">libutil</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libworkflow.html">libworkflow</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Libs Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gear/index.html">Gear Reference</a></li>
 </ul>
 </li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">haddock3</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Library Reference</a> &raquo;</li>
-          <li><a href="index.html">Libs Reference</a> &raquo;</li>
-      <li>libio: I/O helping functions</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/reference/libs/libio.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+                            
+                        
+                    </div>
+                </div>
+                <div class="col-12 col-lg-9">
+                    <div class="document">
+                        
+                            
   <section id="module-haddock.libs.libio">
-<span id="libio-i-o-helping-functions"></span><h1>libio: I/O helping functions<a class="headerlink" href="#module-haddock.libs.libio" title="Permalink to this headline"></a></h1>
+<span id="libio-i-o-helping-functions"></span><h1>libio: I/O helping functions<a class="headerlink" href="#module-haddock.libs.libio" title="Permalink to this heading">¶</a></h1>
 <p>Lib I/O.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.add_suffix_to_files">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">add_suffix_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#add_suffix_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.add_suffix_to_files" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">add_suffix_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#add_suffix_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.add_suffix_to_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a suffix to file paths.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Yields</dt>
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>pathlib.Path objects</em> – Exhausts when files exhaust.</p>
 </dd>
 </dl>
@@ -120,17 +211,17 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.archive_files_ext">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">archive_files_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#archive_files_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.archive_files_ext" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">archive_files_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#archive_files_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.archive_files_ext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Archive all files with same extension in folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (str or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) – The folder containing the files.</p></li>
 <li><p><strong>ext</strong> (<em>str</em>) – The extension of the files.</p></li>
 <li><p><strong>compresslevel</strong> (<em>int</em>) – The compression level.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>bool</em> – <code class="docutils literal notranslate"><span class="pre">True</span></code> if files with <code class="docutils literal notranslate"><span class="pre">ext</span></code> were found and the Zip files created.
 <code class="docutils literal notranslate"><span class="pre">False</span></code> if no files with <code class="docutils literal notranslate"><span class="pre">ext</span></code> were found and, hence, the
 Zip files was not created.</p>
@@ -140,18 +231,18 @@ Zip files was not created.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.compress_files_ext">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">compress_files_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#compress_files_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.compress_files_ext" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">compress_files_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#compress_files_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.compress_files_ext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compress all files with same extension in folder to <cite>.gz</cite>.</p>
 <p>Do not archive the files in TAR, only compress files individually.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (str or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) – The folder containing the files.</p></li>
 <li><p><strong>ext</strong> (<em>str</em>) – The extension of the files.</p></li>
 <li><p><strong>**kwargs</strong> (<em>anything</em>) – Arguments passed to <a class="reference internal" href="#haddock.libs.libio.gzip_files" title="haddock.libs.libio.gzip_files"><code class="xref py py-func docutils literal notranslate"><span class="pre">gzip_files()</span></code></a>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><p><em>bool</em> – <code class="docutils literal notranslate"><span class="pre">True</span></code> if files with <code class="docutils literal notranslate"><span class="pre">ext</span></code> were found and the compressed
 <cite>.gz</cite> files created.</p>
 <p><code class="docutils literal notranslate"><span class="pre">False</span></code> if no files with <code class="docutils literal notranslate"><span class="pre">ext</span></code> were found and, hence, the
@@ -163,10 +254,10 @@ Zip files was not created.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.file_exists">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">file_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception=&lt;class</span> <span class="pre">'ValueError'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emsg='`path`</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">file</span> <span class="pre">or</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#file_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.file_exists" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">file_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception=&lt;class</span> <span class="pre">'ValueError'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emsg='`path`</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">file</span> <span class="pre">or</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#file_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.file_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assert if file exist.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<em>str or pathlib.Path</em>) – The file path.</p></li>
 <li><p><strong>exception</strong> (<em>Exception</em>) – The Exception to raise in case <cite>path</cite> is not file or does not
@@ -175,11 +266,11 @@ exist.</p></li>
 to pass <cite>path</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>pathlib.Path</em> – The Path representation of the input <code class="docutils literal notranslate"><span class="pre">path</span></code> if condition is
 true.</p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><strong>Exception</strong></a> – Any exception that pathlib.Path can raise.</p>
 </dd>
 </dl>
@@ -187,10 +278,10 @@ true.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.folder_exists">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">folder_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception=&lt;class</span> <span class="pre">'ValueError'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emsg='The</span> <span class="pre">folder</span> <span class="pre">{!r}</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">folder.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#folder_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.folder_exists" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">folder_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception=&lt;class</span> <span class="pre">'ValueError'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emsg='The</span> <span class="pre">folder</span> <span class="pre">{!r}</span> <span class="pre">does</span> <span class="pre">not</span> <span class="pre">exist</span> <span class="pre">or</span> <span class="pre">is</span> <span class="pre">not</span> <span class="pre">a</span> <span class="pre">folder.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#folder_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.folder_exists" title="Permalink to this definition">¶</a></dt>
 <dd><p>Assert if a folder exist.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<em>str or pathlib.Path</em>) – The path to the folder.</p></li>
 <li><p><strong>exception</strong> (<em>Exception</em>) – The Exception to raise in case <cite>path</cite> is not file or does not
@@ -199,11 +290,11 @@ exist.</p></li>
 to pass <cite>path</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>pathlib.Path</em> – The Path representation of the input <code class="docutils literal notranslate"><span class="pre">path</span></code> if condition is
 true.</p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.10)"><strong>Exception</strong></a> – Any exception that pathlib.Path can raise.</p>
 </dd>
 </dl>
@@ -211,18 +302,18 @@ true.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.glob_folder">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">glob_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#glob_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.glob_folder" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">glob_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#glob_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.glob_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>List files with extention <cite>ext</cite> in <cite>folder</cite>.</p>
 <p>Does NOT perform recursive search.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>folder</strong> (<em>str</em>) – The path to the folder to investigate.</p></li>
 <li><p><strong>ext</strong> (<em>str</em>) – The file extention. Can be with or without the dot [.]
 preffix.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>list of Path objects</em> – SORTED list of matching results.</p>
 </dd>
 </dl>
@@ -230,10 +321,10 @@ preffix.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.gzip_files">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">gzip_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#gzip_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.gzip_files" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">gzip_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#gzip_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.gzip_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gzip a file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_</strong> (str or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>) – The path to the file to compress.</p></li>
 <li><p><strong>block_size</strong> (<em>int</em>) – The block size to treat per cycle. Defaults to 200MB (2*10**8
@@ -246,11 +337,11 @@ preffix.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.open_files_to_lines">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">open_files_to_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#open_files_to_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.open_files_to_lines" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">open_files_to_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#open_files_to_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.open_files_to_lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Open files to lines.</p>
 <p>New-lines are stripped.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>list of lists of strings</em> – The lines of the files.
 Input order is maintained.</p>
 </dd>
@@ -259,7 +350,7 @@ Input order is maintained.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.parse_suffix">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">parse_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#parse_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.parse_suffix" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">parse_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#parse_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.parse_suffix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represent a suffix of a file.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_suffix</span><span class="p">(</span><span class="s1">&#39;.pdf&#39;</span><span class="p">)</span>
@@ -271,10 +362,10 @@ Input order is maintained.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ext</strong> (<em>str</em>) – String to extract the suffix from.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>str</em> – File extension with leading period.</p>
 </dd>
 </dl>
@@ -282,14 +373,14 @@ Input order is maintained.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.read_from_yaml">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">read_from_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#read_from_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.read_from_yaml" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">read_from_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#read_from_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.read_from_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a YAML file to a dictionary.</p>
 <p>Used internally to read HADDOCK3’s default configuration files.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>yaml_file</strong> (<em>str or Path</em>) – Path to the YAML file.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>dict</em> – Always returns a dictionary.
 Returns empty dictionary if yaml_file is empty.</p>
 </dd>
@@ -298,7 +389,7 @@ Returns empty dictionary if yaml_file is empty.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.read_lines">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">read_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#read_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.read_lines" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">read_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#read_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.read_lines" title="Permalink to this definition">¶</a></dt>
 <dd><p>Open the file and read lines for the decorated function.</p>
 <p>Send to the decorated function the lines of the file in the form
 of list.</p>
@@ -306,10 +397,10 @@ of list.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.remove_files_with_ext">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">remove_files_with_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#remove_files_with_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.remove_files_with_ext" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">remove_files_with_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#remove_files_with_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.remove_files_with_ext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove files with <code class="docutils literal notranslate"><span class="pre">ext</span></code> in folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>folder</strong> (<em>str</em>) – The path to the folder.</p></li>
 <li><p><strong>ext</strong> (<em>str</em>) – The extention of files to delete. Can be with or without the dot <code class="docutils literal notranslate"><span class="pre">.</span></code>
@@ -321,13 +412,13 @@ preffix.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.save_lines_to_files">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">save_lines_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#save_lines_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.save_lines_to_files" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">save_lines_to_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#save_lines_to_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.save_lines_to_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a list of list of lines to files.</p>
 <p>The first list of strings in <cite>lines</cite> will be saved in the first file
 of <cite>files</cite>, and so on.</p>
 <p>Lines are saved using <cite>pathlib.Path.write_text</cite> function.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>files</strong> (<em>list</em>) – The list of file names to save.</p></li>
 <li><p><strong>lines</strong> (<em>list of lists of str</em>) – A list containing lists of lines that are the file contents.
@@ -339,16 +430,16 @@ Must be synched with <cite>files</cite>.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.working_directory">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">working_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#working_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.working_directory" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">working_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#working_directory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.working_directory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Change working directory and returns to previous on exit.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.write_dic_to_file">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">write_dic_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#write_dic_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.write_dic_to_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">write_dic_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#write_dic_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.write_dic_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a table from a dictionary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_dict</strong> (<em>dict</em>) – Dictionary to write.</p></li>
 <li><p><strong>output_fname</strong> (<em>str or Path</em>) – Name of the output file.</p></li>
@@ -360,10 +451,10 @@ Must be synched with <cite>files</cite>.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.write_nested_dic_to_file">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">write_nested_dic_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#write_nested_dic_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.write_nested_dic_to_file" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">write_nested_dic_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#write_nested_dic_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.write_nested_dic_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a table from a nested dictionary.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_dict</strong> (<em>dict</em>) – Dictionary to write.</p></li>
 <li><p><strong>output_fname</strong> (<em>str or Path</em>) – Name of the output file.</p></li>
@@ -378,36 +469,41 @@ Must be synched with <cite>files</cite>.</p></li>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="libhpc.html" class="btn btn-neutral float-left" title="libhpc: HPC execution functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="liblog.html" class="btn btn-neutral float-right" title="liblob: Logging helping functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2022, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 02, 2022.
-      </span></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </div>    
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'3.0.0',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+    <div class="footer" role="contentinfo">
+        <div class="container">
+            &#169; Copyright 2022, BonvinLab.
+        Last updated on Aug 03, 2022.
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
+        </div>
+    </div>  
 
 </body>
 </html>

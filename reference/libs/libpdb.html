@@ -1,128 +1,219 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>libpdb: PDB helping functions &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/js/theme.js"></script>
+  <title>libpdb: PDB helping functions &mdash; haddock3 3.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="libstructure" href="libstructure.html" />
     <link rel="prev" title="libparallel: multiprocessing helping functions" href="libparallel.html" /> 
+
 </head>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> haddock3
-          </a>
-              <div class="version">
-                3.0.0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+<body>
+    <header>
+        <div class="container">
+            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
+            <a class="site-title" href="../../index.html">
+                haddock3
+            </a>
+        </div>
+    </header>
+
+
+<div class="breadcrumbs-outer hidden-xs-down">
+    <div class="container">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a></li>
+        
+          <li><a href="../index.html">Library Reference</a></li>
+        
+          <li><a href="index.html">Libs Reference</a></li>
+        
+      <li>libpdb: PDB helping functions</li>
+    
+    
+      <li class="breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/reference/libs/libpdb.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+    </div>
+</div>
+    <div class="main-outer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-3 site-nav">
+                    
+<div role="search">
+    <form class="search" action="../../search.html" method="get">
+        <div class="icon-input">
+            <input type="text" name="q" placeholder="Search" />
+            <span class="icon-search"></span>
+        </div>
+        <input type="submit" value="Go" class="d-hidden" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+                    <div class="site-nav-tree">
+                        
+                            
+                            
+                                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#clone-this-repository">1 Clone this repository:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#install-the-haddock3-package-and-command-line-clients">3 Install the HADDOCK3 package and command line clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4 Make a CNS binary shortcut to the expected path:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#keep-your-installation-up-to-date">5 Keep your installation up to date</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../USAGE.html#run-haddock3">Run HADDOCK3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-dna">docking-protein-dna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-homotrimer">docking-protein-homotrimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand">docking-protein-ligand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand-shape">docking-protein-ligand-shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-peptide">docking-protein-peptide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#refine-complex">refine-complex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#scoring">scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clihd3.html">Run HADDOCK3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clipp.html">PDB preprocessing client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicp.html">Copy steps to new run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean output Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clibm.html">Benchmark Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clidmn.html">Benchmark Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/integration_tests.html">Running integration tests manually</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-new-code">1. Contributing new code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">Core Reference</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html">Libs Reference</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="libalign.html">libalign: sequence and structural alignments</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libcli.html">libcli: functions helping clients</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libcns.html">libcns: creating CNS files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libfunc.html">libfunc: functional-programming helping tools</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libhpc.html">libhpc: HPC execution functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libio.html">libio: I/O helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="liblog.html">liblob: Logging helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libmath.html">libmath: Math helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libmpi.html">libmpi: MPI execution functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libontology.html">libontology: module communication</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libparallel.html">libparallel: multiprocessing helping functions</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">libpdb: PDB helping functions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libstructure.html">libstructure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libsubprocess.html">libsubprocess</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libutil.html">libutil</a></li>
-<li class="toctree-l3"><a class="reference internal" href="libworkflow.html">libworkflow</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Libs Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../gear/index.html">Gear Reference</a></li>
 </ul>
 </li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">haddock3</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Library Reference</a> &raquo;</li>
-          <li><a href="index.html">Libs Reference</a> &raquo;</li>
-      <li>libpdb: PDB helping functions</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/reference/libs/libpdb.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+                            
+                        
+                    </div>
+                </div>
+                <div class="col-12 col-lg-9">
+                    <div class="document">
+                        
+                            
   <section id="module-haddock.libs.libpdb">
-<span id="libpdb-pdb-helping-functions"></span><h1>libpdb: PDB helping functions<a class="headerlink" href="#module-haddock.libs.libpdb" title="Permalink to this headline"></a></h1>
+<span id="libpdb-pdb-helping-functions"></span><h1>libpdb: PDB helping functions<a class="headerlink" href="#module-haddock.libs.libpdb" title="Permalink to this heading">¶</a></h1>
 <p>Parse molecular structures in PDB format.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.format_atom_name">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">format_atom_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#format_atom_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.format_atom_name" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">format_atom_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#format_atom_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.format_atom_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Format PDB atom name.</p>
 <p>Further Reading:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/tutorials/pdbintro.html">https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/tutorials/pdbintro.html</a></p></li>
 </ul>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>atom</strong> (<em>str</em>) – The atom name.</p></li>
 <li><p><strong>element</strong> (<em>str</em>) – The atom element code.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>str</em> – Formatted atom name.</p>
 </dd>
 </dl>
@@ -130,19 +221,19 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.get_new_models">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">get_new_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#get_new_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.get_new_models" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">get_new_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#get_new_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.get_new_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get new PDB models if they exist.</p>
 <p>If no new models are found, return the original path within a list.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.get_pdb_file_suffix_variations">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">get_pdb_file_suffix_variations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#get_pdb_file_suffix_variations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.get_pdb_file_suffix_variations" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">get_pdb_file_suffix_variations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#get_pdb_file_suffix_variations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.get_pdb_file_suffix_variations" title="Permalink to this definition">¶</a></dt>
 <dd><p>List suffix variations of a PDB file.</p>
 <p>If <cite>file.pdb</cite> is given, and files <cite>file_1.pdb</cite>, <cite>file_2.pdb</cite>, exist
 in the folder, those will be listed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_name</strong> (<em>str or Path</em>) – The name of the file with extension.</p></li>
 <li><p><strong>path</strong> (<em>str or pathlib.Path</em>) – Path pointing to a directory where to perform the search.</p></li>
@@ -150,7 +241,7 @@ in the folder, those will be listed.</p>
 Defaults to “_”.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>list</em> – List of Paths with the identified PBD files.
 If no files are found return an empty list.</p>
 </dd>
@@ -159,22 +250,22 @@ If no files are found return an empty list.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.get_supported_residues">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">get_supported_residues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">haddock_topology</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#get_supported_residues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.get_supported_residues" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">get_supported_residues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">haddock_topology</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#get_supported_residues"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.get_supported_residues" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the topology file and identify which data is supported.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.identify_chainseg">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">identify_chainseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#identify_chainseg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.identify_chainseg" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">identify_chainseg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#identify_chainseg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.identify_chainseg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return segID OR chainID.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.read_RECORD_section">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">read_RECORD_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_slice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'set'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#read_RECORD_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.read_RECORD_section" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">read_RECORD_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_slice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'set'&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#read_RECORD_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.read_RECORD_section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a set of observations from a section of the ATOM line.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>set</em> – A set of the observations.</p>
 </dd>
 </dl>
@@ -182,10 +273,10 @@ If no files are found return an empty list.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.read_chainids">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">read_chainids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_slice=slice(21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">22</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'list'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libpdb.read_chainids" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">read_chainids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_slice=slice(21</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">22</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'list'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libpdb.read_chainids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a set of observations from a section of the ATOM line.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>set</em> – A set of the observations.</p>
 </dd>
 </dl>
@@ -193,10 +284,10 @@ If no files are found return an empty list.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.read_segids">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">read_segids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_slice=slice(72</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">76</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'list'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libpdb.read_segids" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">read_segids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section_slice=slice(72</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">76</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func=&lt;class</span> <span class="pre">'list'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libpdb.read_segids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a set of observations from a section of the ATOM line.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>set</em> – A set of the observations.</p>
 </dd>
 </dl>
@@ -204,22 +295,22 @@ If no files are found return an empty list.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.sanitize">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">sanitize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_topology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#sanitize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.sanitize" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">sanitize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_topology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#sanitize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.sanitize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sanitize a PDB file.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.split_by_chain">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">split_by_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#split_by_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.split_by_chain" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">split_by_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#split_by_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.split_by_chain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Split a PDB file into multiple structures for each chain.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.split_ensemble">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">split_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#split_ensemble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.split_ensemble" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">split_ensemble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dest</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#split_ensemble"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.split_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Split a multimodel PDB file into different structures.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dest</strong> (<em>str or pathlib.Path</em>) – Destination folder.</p>
 </dd>
 </dl>
@@ -227,49 +318,54 @@ If no files are found return an empty list.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.swap_segid_chain">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">swap_segid_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#swap_segid_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.swap_segid_chain" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">swap_segid_chain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#swap_segid_chain"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.swap_segid_chain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add to the Chain ID column the found Segid.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libpdb.tidy">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">tidy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#tidy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.tidy" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libpdb.</span></span><span class="sig-name descname"><span class="pre">tidy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_pdb_file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libpdb.html#tidy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libpdb.tidy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tidy PDB structure.</p>
 </dd></dl>
 
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="libparallel.html" class="btn btn-neutral float-left" title="libparallel: multiprocessing helping functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="libstructure.html" class="btn btn-neutral float-right" title="libstructure" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2022, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 02, 2022.
-      </span></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </div>    
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'3.0.0',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+    <div class="footer" role="contentinfo">
+        <div class="container">
+            &#169; Copyright 2022, BonvinLab.
+        Last updated on Aug 03, 2022.
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
+        </div>
+    </div>  
 
 </body>
 </html>

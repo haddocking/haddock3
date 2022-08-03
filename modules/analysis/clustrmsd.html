@@ -1,110 +1,202 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RMSD clustering module &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/js/theme.js"></script>
+  <title>RMSD clustering module &mdash; haddock3 3.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="RMSD matrix calculation module" href="rmsdmatrix.html" />
     <link rel="prev" title="Cluster FCC Module" href="clustfcc.html" /> 
+
 </head>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> haddock3
-          </a>
-              <div class="version">
-                3.0.0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+<body>
+    <header>
+        <div class="container">
+            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
+            <a class="site-title" href="../../index.html">
+                haddock3
+            </a>
+        </div>
+    </header>
+
+
+<div class="breadcrumbs-outer hidden-xs-down">
+    <div class="container">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a></li>
+        
+          <li><a href="../index.html">Modules</a></li>
+        
+          <li><a href="index.html">Analysis Modules</a></li>
+        
+      <li>RMSD clustering module</li>
+    
+    
+      <li class="breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/modules/analysis/clustrmsd.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+    </div>
+</div>
+    <div class="main-outer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-3 site-nav">
+                    
+<div role="search">
+    <form class="search" action="../../search.html" method="get">
+        <div class="icon-input">
+            <input type="text" name="q" placeholder="Search" />
+            <span class="icon-search"></span>
+        </div>
+        <input type="submit" value="Go" class="d-hidden" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+                    <div class="site-nav-tree">
+                        
+                            
+                            
+                                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#clone-this-repository">1 Clone this repository:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#install-the-haddock3-package-and-command-line-clients">3 Install the HADDOCK3 package and command line clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4 Make a CNS binary shortcut to the expected path:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#keep-your-installation-up-to-date">5 Keep your installation up to date</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../USAGE.html#run-haddock3">Run HADDOCK3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-dna">docking-protein-dna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-homotrimer">docking-protein-homotrimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand">docking-protein-ligand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand-shape">docking-protein-ligand-shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-peptide">docking-protein-peptide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#refine-complex">refine-complex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#scoring">scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clihd3.html">Run HADDOCK3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clipp.html">PDB preprocessing client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicp.html">Copy steps to new run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean output Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clibm.html">Benchmark Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clidmn.html">Benchmark Daemon</a></li>
+</ul>
+</li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../topology/index.html">Topology Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../sampling/index.html">Sampling Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../refinement/index.html">Model Refinement Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../scoring/index.html">Scoring Modules</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html">Analysis Modules</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="caprieval.html">CAPRI evaluation module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="clustfcc.html">Cluster FCC Module</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">RMSD clustering module</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#default-parameters">Default parameters</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="rmsdmatrix.html">RMSD matrix calculation module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="seletop.html">Select Top Models module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="seletopclusts.html">Select Top Clusters module</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../extras/index.html">Extra modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules">Parent code for modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/integration_tests.html">Running integration tests manually</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-new-code">1. Contributing new code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/index.html">Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/core/index.html">Core Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/libs/index.html">Libs Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../reference/gear/index.html">Gear Reference</a></li>
+</ul>
+</li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">haddock3</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Modules</a> &raquo;</li>
-          <li><a href="index.html">Analysis Modules</a> &raquo;</li>
-      <li>RMSD clustering module</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/modules/analysis/clustrmsd.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+                            
+                        
+                    </div>
+                </div>
+                <div class="col-12 col-lg-9">
+                    <div class="document">
+                        
+                            
   <section id="module-haddock.modules.analysis.clustrmsd">
-<span id="rmsd-clustering-module"></span><h1>RMSD clustering module<a class="headerlink" href="#module-haddock.modules.analysis.clustrmsd" title="Permalink to this headline"></a></h1>
+<span id="rmsd-clustering-module"></span><h1>RMSD clustering module<a class="headerlink" href="#module-haddock.modules.analysis.clustrmsd" title="Permalink to this heading">¶</a></h1>
 <p>RMSD clustering module.</p>
 <p>This module takes in input the RMSD matrix calculated in the previous step and
 performs a hierarchical clustering procedure on it, leveraging <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html">scipy routines</a>
@@ -139,18 +231,18 @@ workflow through the <cite>rmsd_matrix.json</cite> file, thus allowing to execut
 matrix.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.clustrmsd.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/joao/github/haddock3/src/haddock/modules/analysis/clustrmsd/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/clustrmsd.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">haddock.modules.BaseHaddockModule</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.modules.analysis.clustrmsd.</span></span><span class="sig-name descname"><span class="pre">HaddockModule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/haddock3/haddock3/src/haddock/modules/analysis/clustrmsd/defaults.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/clustrmsd.html#HaddockModule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../index.html#haddock.modules.BaseHaddockModule" title="haddock.modules.BaseHaddockModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseHaddockModule</span></code></a></p>
 <p>HADDOCK3 module for clustering with RMSD.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.add_parent_to_paths">
-<span class="sig-name descname"><span class="pre">add_parent_to_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.add_parent_to_paths" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_parent_to_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.add_parent_to_paths" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add parent path to paths.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.clean_output">
-<span class="sig-name descname"><span class="pre">clean_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.clean_output" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">clean_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.clean_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clean module output folder.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -160,20 +252,20 @@ matrix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.confirm_installation">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/clustrmsd.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.confirm_installation" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">confirm_installation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/modules/analysis/clustrmsd.html#HaddockModule.confirm_installation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.confirm_installation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Confirm if contact executable is compiled.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.export_output_models">
-<span class="sig-name descname"><span class="pre">export_output_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.export_output_models" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">export_output_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.export_output_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export output to the ModuleIO interface.</p>
 <p>Modules that generate PDBs that other models should take as input,
 should export those PDBs registries through the ModuleIO interface.</p>
 <p>This function implements a common interface for all modules requiring
 this feature.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>faulty_tolerance</strong> (<em>int, default 0</em>) – The percentage of missing output allowed. If 20 is given,
 raises an error if 20% of the expected output is missing (not
 saved to disk).</p>
@@ -183,17 +275,17 @@ saved to disk).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.finish_with_error">
-<span class="sig-name descname"><span class="pre">finish_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Module</span> <span class="pre">has</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.finish_with_error" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">finish_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Module</span> <span class="pre">has</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.finish_with_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finish with error message.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.log">
-<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.log" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'info'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Log a message with a common header.</p>
 <p>Currently the header is the [MODULE NAME] in square brackets.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>msg</strong> (<em>str</em>) – The log message.</p></li>
 <li><p><strong>level</strong> (<em>str</em>) – The level log: ‘debug’, ‘info’, …
@@ -205,37 +297,37 @@ Defaults to ‘info’.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.params">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.params" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Configuration parameters.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.previous_path">
-<span class="sig-name descname"><span class="pre">previous_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.previous_path" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">previous_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.previous_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Give the path from the previous calculation.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.reset_params">
-<span class="sig-name descname"><span class="pre">reset_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.reset_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">reset_params</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.reset_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset parameters to the ones used to instantiate the class.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.run" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute the module.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.save_config">
-<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.save_config" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.save_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save current parameters to a HADDOCK3 config file.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.modules.analysis.clustrmsd.HaddockModule.update_params">
-<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_from_cfg_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.update_params" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">update_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_from_cfg_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.analysis.clustrmsd.HaddockModule.update_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update the modules parameters.</p>
 <p>Add/update to the current modules parameters the ones given in
 the function call. If you want to enterily replace the modules
@@ -266,11 +358,11 @@ dictionary and unpack the dictionary to the function call.</p>
 </dd></dl>
 
 <section id="default-parameters">
-<h2>Default parameters<a class="headerlink" href="#default-parameters" title="Permalink to this headline"></a></h2>
+<h2>Default parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading">¶</a></h2>
 <section id="easy">
-<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this headline"></a></h3>
+<h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading">¶</a></h3>
 <section id="threshold">
-<h4>threshold<a class="headerlink" href="#threshold" title="Permalink to this headline"></a></h4>
+<h4>threshold<a class="headerlink" href="#threshold" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 4</div>
 <div class="line"><em>type</em>: integer</div>
@@ -282,7 +374,7 @@ dictionary and unpack the dictionary to the function call.</p>
 </div>
 </section>
 <section id="tolerance">
-<h4>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this headline"></a></h4>
+<h4>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: float</div>
@@ -295,9 +387,9 @@ dictionary and unpack the dictionary to the function call.</p>
 </section>
 </section>
 <section id="expert">
-<h3>Expert<a class="headerlink" href="#expert" title="Permalink to this headline"></a></h3>
+<h3>Expert<a class="headerlink" href="#expert" title="Permalink to this heading">¶</a></h3>
 <section id="criterion">
-<h4>criterion<a class="headerlink" href="#criterion" title="Permalink to this headline"></a></h4>
+<h4>criterion<a class="headerlink" href="#criterion" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘maxclust’</div>
 <div class="line"><em>type</em>: string</div>
@@ -309,7 +401,7 @@ dictionary and unpack the dictionary to the function call.</p>
 </div>
 </section>
 <section id="linkage">
-<h4>linkage<a class="headerlink" href="#linkage" title="Permalink to this headline"></a></h4>
+<h4>linkage<a class="headerlink" href="#linkage" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: ‘single’</div>
 <div class="line"><em>type</em>: string</div>
@@ -325,36 +417,41 @@ dictionary and unpack the dictionary to the function call.</p>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="clustfcc.html" class="btn btn-neutral float-left" title="Cluster FCC Module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rmsdmatrix.html" class="btn btn-neutral float-right" title="RMSD matrix calculation module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2022, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 02, 2022.
-      </span></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </div>    
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'3.0.0',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+    <div class="footer" role="contentinfo">
+        <div class="container">
+            &#169; Copyright 2022, BonvinLab.
+        Last updated on Aug 03, 2022.
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
+        </div>
+    </div>  
 
 </body>
 </html>

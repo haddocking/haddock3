@@ -1,81 +1,193 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>haddock.modules.analysis.caprieval &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <meta charset="utf-8">
   
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
-    <script src="../../../../_static/js/theme.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>haddock.modules.analysis.caprieval &mdash; haddock3 3.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../../_static/css/theme.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/css/theme.min.css" type="text/css" />
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
+
 </head>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="../../../../index.html" class="icon icon-home"> haddock3
-          </a>
-              <div class="version">
-                3.0.0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+<body>
+    <header>
+        <div class="container">
+            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
+            <a class="site-title" href="../../../../index.html">
+                haddock3
+            </a>
+        </div>
+    </header>
+
+
+<div class="breadcrumbs-outer hidden-xs-down">
+    <div class="container">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a></li>
+        
+          <li><a href="../../../index.html">Module code</a></li>
+        
+          <li><a href="../../modules.html">haddock.modules</a></li>
+        
+      <li>haddock.modules.analysis.caprieval</li>
+    
+    
+      <li class="breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../clients/index.html">Command-line interfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a></li>
+    </div>
+</div>
+    <div class="main-outer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-3 site-nav">
+                    
+<div role="search">
+    <form class="search" action="../../../../search.html" method="get">
+        <div class="icon-input">
+            <input type="text" name="q" placeholder="Search" />
+            <span class="icon-search"></span>
+        </div>
+        <input type="submit" value="Go" class="d-hidden" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+                    <div class="site-nav-tree">
+                        
+                            
+                            
+                                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../intro.html">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../INSTALL.html#clone-this-repository">1 Clone this repository:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../INSTALL.html#install-the-haddock3-package-and-command-line-clients">3 Install the HADDOCK3 package and command line clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4 Make a CNS binary shortcut to the expected path:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../INSTALL.html#keep-your-installation-up-to-date">5 Keep your installation up to date</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../USAGE.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../USAGE.html#run-haddock3">Run HADDOCK3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../examples.html">Workflow Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-dna">docking-protein-dna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-homotrimer">docking-protein-homotrimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-ligand">docking-protein-ligand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-ligand-shape">docking-protein-ligand-shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-peptide">docking-protein-peptide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#refine-complex">refine-complex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#scoring">scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../clients/index.html">Command-line interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clihd3.html">Run HADDOCK3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clipp.html">PDB preprocessing client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clicp.html">Copy steps to new run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/cliclean.html">Clean output Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clibm.html">Benchmark Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clidmn.html">Benchmark Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/analysis/index.html">Analysis Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/extras/index.html">Extra modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../testing/integration_tests.html">Running integration tests manually</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing.html">Contributing to HADDOCK3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../contributing.html#contributing-new-code">1. Contributing new code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../citing.html">Citing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../reference/index.html">Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/core/index.html">Core Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/libs/index.html">Libs Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../reference/gear/index.html">Gear Reference</a></li>
+</ul>
+</li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../../index.html">haddock3</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../../index.html">Module code</a> &raquo;</li>
-          <li><a href="../../modules.html">haddock.modules</a> &raquo;</li>
-      <li>haddock.modules.analysis.caprieval</li>
-      <li class="wy-breadcrumbs-aside">
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+                            
+                        
+                    </div>
+                </div>
+                <div class="col-12 col-lg-9">
+                    <div class="document">
+                        
+                            
   <h1>Source code for haddock.modules.analysis.caprieval</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Calculate CAPRI metrics.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -181,33 +293,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">export_output_models</span><span class="p">()</span></div>
 </pre></div>
 
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2022, BonvinLab.
-      <span class="lastupdated">Last updated on Jul 18, 2022.
-      </span></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </div>    
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'3.0.0',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+    <script type="text/javascript" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+    <div class="footer" role="contentinfo">
+        <div class="container">
+            &#169; Copyright 2022, BonvinLab.
+        Last updated on Aug 03, 2022.
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
+        </div>
+    </div>  
 
 </body>
 </html>

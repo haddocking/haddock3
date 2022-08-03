@@ -1,117 +1,202 @@
-<!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PDB Preprocessing &mdash; haddock3 3.0.0 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/js/theme.js"></script>
+  <title>PDB Preprocessing &mdash; haddock3 3.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/css/theme.min.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Restart Run" href="restart_run.html" />
     <link rel="prev" title="Prepare Run" href="prepare_run.html" /> 
+
 </head>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> haddock3
-          </a>
-              <div class="version">
-                3.0.0
-              </div>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
+<body>
+    <header>
+        <div class="container">
+            <a class="site-nav-toggle hidden-lg-up"><i class="icon-menu"></i></a>
+            <a class="site-title" href="../../index.html">
+                haddock3
+            </a>
+        </div>
+    </header>
+
+
+<div class="breadcrumbs-outer hidden-xs-down">
+    <div class="container">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a></li>
+        
+          <li><a href="../index.html">Library Reference</a></li>
+        
+          <li><a href="index.html">Gear Reference</a></li>
+        
+      <li>PDB Preprocessing</li>
+    
+    
+      <li class="breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/reference/gear/preprocessing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
 </div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul class="current">
+    </div>
+</div>
+    <div class="main-outer">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-lg-3 site-nav">
+                    
+<div role="search">
+    <form class="search" action="../../search.html" method="get">
+        <div class="icon-input">
+            <input type="text" name="q" placeholder="Search" />
+            <span class="icon-search"></span>
+        </div>
+        <input type="submit" value="Go" class="d-hidden" />
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+                    <div class="site-nav-tree">
+                        
+                            
+                            
+                                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../intro.html">A brieft introduction to HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#clone-this-repository">1 Clone this repository:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#install-the-haddock3-package-and-command-line-clients">3 Install the HADDOCK3 package and command line clients</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#make-a-cns-binary-shortcut-to-the-expected-path">4 Make a CNS binary shortcut to the expected path:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#keep-your-installation-up-to-date">5 Keep your installation up to date</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../INSTALL.html#installing-third-party-packages">Installing third-party packages</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#lightdock"><code class="docutils literal notranslate"><span class="pre">lightdock</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../INSTALL.html#gdock"><code class="docutils literal notranslate"><span class="pre">gdock</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../USAGE.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../USAGE.html#run-haddock3">Run HADDOCK3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">Workflow Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-antibogy-antigen">docking-antibogy-antigen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-dna">docking-protein-dna</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-homotrimer">docking-protein-homotrimer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand">docking-protein-ligand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-ligand-shape">docking-protein-ligand-shape</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-peptide">docking-protein-peptide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#refine-complex">refine-complex</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#scoring">scoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#haddock3-functionalities">HADDOCK3 functionalities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../clients/index.html">Command-line interfaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clihd3.html">Run HADDOCK3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clipp.html">PDB preprocessing client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clicp.html">Copy steps to new run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean output Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clibm.html">Benchmark Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clidmn.html">Benchmark Daemon</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/topology/index.html">Topology Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/sampling/index.html">Sampling Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/refinement/index.html">Model Refinement Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing/index.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing/integration_tests.html">Running integration tests manually</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to HADDOCK3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-new-code">1. Contributing new code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-with-documentation">2. Contributing with documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../citing.html">Citing</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../index.html">Library Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../core/index.html">Core Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../libs/index.html">Libs Reference</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html">Gear Reference</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="clean_steps.html">Clean output from step folders</a></li>
-<li class="toctree-l3"><a class="reference internal" href="config_reader.html">Workflow Configuration file reader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="config_writer.html">Workflow configuration file writer</a></li>
-<li class="toctree-l3"><a class="reference internal" href="expandable_parameters.html">Expandable Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="extend_run.html">Start from copy</a></li>
-<li class="toctree-l3"><a class="reference internal" href="greetings.html">Greetings messages</a></li>
-<li class="toctree-l3"><a class="reference internal" href="haddockmodel.html">HADDOCK Models</a></li>
-<li class="toctree-l3"><a class="reference internal" href="parameters.html">Parameters helper</a></li>
-<li class="toctree-l3"><a class="reference internal" href="prepare_run.html">Prepare Run</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">PDB Preprocessing</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#main-functions">Main functions</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#corrections-performed-on-1">Corrections performed on 1)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#corrections-performed-on-2">Corrections performed on 2)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#corrections-performed-on-3">Corrections performed on 3)</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#when-it-happens">When it happens</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#additional-information">Additional information</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="restart_run.html">Restart Run</a></li>
-<li class="toctree-l3"><a class="reference internal" href="validations.html">Validations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="yaml2cfg.html">Yaml configs</a></li>
-<li class="toctree-l3"><a class="reference internal" href="zerofill.html">Zero fill prefix</a></li>
-</ul>
-</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Gear Reference</a></li>
 </ul>
 </li>
 </ul>
 
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">haddock3</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Library Reference</a> &raquo;</li>
-          <li><a href="index.html">Gear Reference</a> &raquo;</li>
-      <li>PDB Preprocessing</li>
-      <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/reference/gear/preprocessing.rst.txt" rel="nofollow"> View page source</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
+                            
+                        
+                    </div>
+                </div>
+                <div class="col-12 col-lg-9">
+                    <div class="document">
+                        
+                            
   <section id="module-haddock.gear.preprocessing">
-<span id="pdb-preprocessing"></span><h1>PDB Preprocessing<a class="headerlink" href="#module-haddock.gear.preprocessing" title="Permalink to this headline"></a></h1>
+<span id="pdb-preprocessing"></span><h1>PDB Preprocessing<a class="headerlink" href="#module-haddock.gear.preprocessing" title="Permalink to this heading">¶</a></h1>
 <p>Process input PDB files to ensure compatibility with HADDOCK3.</p>
 <p>This module checks and modifies PDB files for compatibility with
 HADDOCK3. There are three types of checks/modifications:</p>
@@ -122,14 +207,14 @@ In fact, this step mostly uses the <code class="docutils literal notranslate"><s
 <li><p>Performed on all PDBs together.</p></li>
 </ol>
 <section id="main-functions">
-<h2>Main functions<a class="headerlink" href="#main-functions" title="Permalink to this headline"></a></h2>
+<h2>Main functions<a class="headerlink" href="#main-functions" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="#haddock.gear.preprocessing.process_pdbs" title="haddock.gear.preprocessing.process_pdbs"><code class="xref py py-func docutils literal notranslate"><span class="pre">process_pdbs()</span></code></a></p></li>
 <li><p><a class="reference internal" href="#haddock.gear.preprocessing.read_additional_residues" title="haddock.gear.preprocessing.read_additional_residues"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_additional_residues()</span></code></a></p></li>
 </ul>
 </section>
 <section id="corrections-performed-on-1">
-<h2>Corrections performed on 1)<a class="headerlink" href="#corrections-performed-on-1" title="Permalink to this headline"></a></h2>
+<h2>Corrections performed on 1)<a class="headerlink" href="#corrections-performed-on-1" title="Permalink to this heading">¶</a></h2>
 <p>The following actions are perfomed sequentially over all PDBs:</p>
 <ol class="arabic simple">
 <li><p>from <code class="docutils literal notranslate"><span class="pre">pdb-tools</span></code>: <code class="docutils literal notranslate"><span class="pre">pdb_keepcoord</span></code></p></li>
@@ -155,7 +240,7 @@ See <a class="reference internal" href="#haddock.gear.preprocessing.convert_ATOM
 </ol>
 </section>
 <section id="corrections-performed-on-2">
-<h2>Corrections performed on 2)<a class="headerlink" href="#corrections-performed-on-2" title="Permalink to this headline"></a></h2>
+<h2>Corrections performed on 2)<a class="headerlink" href="#corrections-performed-on-2" title="Permalink to this heading">¶</a></h2>
 <p>The following actions are performed sequentially for each PDB:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#haddock.gear.preprocessing.models_should_have_the_same_labels" title="haddock.gear.preprocessing.models_should_have_the_same_labels"><code class="xref py py-func docutils literal notranslate"><span class="pre">models_should_have_the_same_labels()</span></code></a></p></li>
@@ -165,7 +250,7 @@ See <a class="reference internal" href="#haddock.gear.preprocessing.convert_ATOM
 <p>Read the documentation of the above functions for details what they do.</p>
 </section>
 <section id="corrections-performed-on-3">
-<h2>Corrections performed on 3)<a class="headerlink" href="#corrections-performed-on-3" title="Permalink to this headline"></a></h2>
+<h2>Corrections performed on 3)<a class="headerlink" href="#corrections-performed-on-3" title="Permalink to this heading">¶</a></h2>
 <p>The following actions are performed to all PDBs together:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#haddock.gear.preprocessing.correct_equal_chain_segids" title="haddock.gear.preprocessing.correct_equal_chain_segids"><code class="xref py py-func docutils literal notranslate"><span class="pre">correct_equal_chain_segids()</span></code></a></p></li>
@@ -173,7 +258,7 @@ See <a class="reference internal" href="#haddock.gear.preprocessing.convert_ATOM
 <p>Read the documentation of the above functions for details what they do.</p>
 </section>
 <section id="when-it-happens">
-<h2>When it happens<a class="headerlink" href="#when-it-happens" title="Permalink to this headline"></a></h2>
+<h2>When it happens<a class="headerlink" href="#when-it-happens" title="Permalink to this heading">¶</a></h2>
 <p>The PDB processing step is performed by default when reading the input
 molecules and copying them to the <cite>data/</cite> folder inside the run
 directory. When PDBs are processed, a copy of the original input PDBs is
@@ -182,13 +267,13 @@ also stored in the <cite>data/</cite> folder.</p>
 in the general parameters of the configuration file.</p>
 </section>
 <section id="additional-information">
-<h2>Additional information<a class="headerlink" href="#additional-information" title="Permalink to this headline"></a></h2>
+<h2>Additional information<a class="headerlink" href="#additional-information" title="Permalink to this heading">¶</a></h2>
 <p>If you are a developer and want to read more about the history of this
 preprocessing module, visit:</p>
 <p><a class="reference external" href="https://github.com/haddocking/haddock3/projects/16">https://github.com/haddocking/haddock3/projects/16</a></p>
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.read_additional_residues">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">read_additional_residues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.read_additional_residues" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">read_additional_residues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fpath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.read_additional_residues" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read additional residues listed in a <code class="docutils literal notranslate"><span class="pre">*.top</span></code> filename.</p>
 <p>Expects new residues to be defined as:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RESIdue</span> <span class="n">XXX</span>
@@ -209,7 +294,7 @@ information. Reads only the residue name.</p>
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fpath</strong> (<em>str or pathlib.Path</em>) – The path to the file.</p></li>
 <li><p><strong>lines</strong> (<em>list of lines</em>) – You can also use this function in the form of
@@ -217,7 +302,7 @@ information. Reads only the residue name.</p>
 a list containing the lines of the file.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>tuple</em> – A tuple with the new identified residues names.</p>
 </dd>
 </dl>
@@ -225,12 +310,12 @@ a list containing the lines of the file.</p></li>
 
 <dl class="py exception">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.ModelsDifferError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">ModelsDifferError</span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#ModelsDifferError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.ModelsDifferError" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#haddock.core.exceptions.HaddockError" title="haddock.core.exceptions.HaddockError"><code class="xref py py-class docutils literal notranslate"><span class="pre">haddock.core.exceptions.HaddockError</span></code></a></p>
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">ModelsDifferError</span></span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#ModelsDifferError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.ModelsDifferError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/exceptions.html#haddock.core.exceptions.HaddockError" title="haddock.core.exceptions.HaddockError"><code class="xref py py-class docutils literal notranslate"><span class="pre">HaddockError</span></code></a></p>
 <p>MODELS of the PDB differ in atom labels.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.ModelsDifferError.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.ModelsDifferError.with_traceback" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.ModelsDifferError.with_traceback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exception.with_traceback(tb) –
 set self.__traceback__ to tb and return self.</p>
 </dd></dl>
@@ -239,7 +324,7 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.add_charges_to_ions">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">add_charges_to_ions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#add_charges_to_ions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.add_charges_to_ions" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">add_charges_to_ions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#add_charges_to_ions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.add_charges_to_ions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add charges to ions according to HADDOCK3 specifications.</p>
 <ol class="arabic simple">
 <li><p>Check if charge is correctly defined in residue name.
@@ -250,11 +335,11 @@ end.</p></li>
 the atom as an unconventional charge.</p></li>
 </ol>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>fhandler</strong> (<em>file-hanlder, list, or list-like</em>) – Lines of the PDB file. This function will consumes lines over a
 <code class="docutils literal notranslate"><span class="pre">for</span></code> loop; mind it if you use a generator.</p>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>line</strong> (<em>str</em>) – Line-by-line: modified ion lines and any other line.</p>
 </dd>
 </dl>
@@ -262,7 +347,7 @@ the atom as an unconventional charge.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.convert_ATOM_to_HETATM">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_ATOM_to_HETATM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ATOM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HETATM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A2G',</span> <span class="pre">'ACD',</span> <span class="pre">'ACN',</span> <span class="pre">'ACT',</span> <span class="pre">'ADY',</span> <span class="pre">'AG',</span> <span class="pre">'AG1',</span> <span class="pre">'AL',</span> <span class="pre">'AL3',</span> <span class="pre">'AMN',</span> <span class="pre">'AR',</span> <span class="pre">'AS',</span> <span class="pre">'AU',</span> <span class="pre">'AU1',</span> <span class="pre">'AU3',</span> <span class="pre">'BDY',</span> <span class="pre">'BEN',</span> <span class="pre">'BGC',</span> <span class="pre">'BMA',</span> <span class="pre">'BR',</span> <span class="pre">'BR1',</span> <span class="pre">'BUT',</span> <span class="pre">'CA',</span> <span class="pre">'CA2',</span> <span class="pre">'CD',</span> <span class="pre">'CD2',</span> <span class="pre">'CHE',</span> <span class="pre">'CL',</span> <span class="pre">'CL1',</span> <span class="pre">'CO',</span> <span class="pre">'CO2',</span> <span class="pre">'CO3',</span> <span class="pre">'COH',</span> <span class="pre">'COM',</span> <span class="pre">'CR',</span> <span class="pre">'CR2',</span> <span class="pre">'CR3',</span> <span class="pre">'CS',</span> <span class="pre">'CS1',</span> <span class="pre">'CU',</span> <span class="pre">'CU1',</span> <span class="pre">'CU2',</span> <span class="pre">'CYA',</span> <span class="pre">'DFO',</span> <span class="pre">'DME',</span> <span class="pre">'DMS',</span> <span class="pre">'DOD',</span> <span class="pre">'EOL',</span> <span class="pre">'ETA',</span> <span class="pre">'ETH',</span> <span class="pre">'F',</span> <span class="pre">'F1',</span> <span class="pre">'FCA',</span> <span class="pre">'FCB',</span> <span class="pre">'FE',</span> <span class="pre">'FE2',</span> <span class="pre">'FE3',</span> <span class="pre">'FUC',</span> <span class="pre">'FUL',</span> <span class="pre">'GAL',</span> <span class="pre">'GLA',</span> <span class="pre">'GLC',</span> <span class="pre">'GXL',</span> <span class="pre">'HEB',</span> <span class="pre">'HEC',</span> <span class="pre">'HG',</span> <span class="pre">'HG1',</span> <span class="pre">'HG2',</span> <span class="pre">'HO',</span> <span class="pre">'HO3',</span> <span class="pre">'HOH',</span> <span class="pre">'I',</span> <span class="pre">'I1',</span> <span class="pre">'IMI',</span> <span class="pre">'IR',</span> <span class="pre">'IR3',</span> <span class="pre">'K',</span> <span class="pre">'K1',</span> <span class="pre">'KR',</span> <span class="pre">'LI1',</span> <span class="pre">'MAG',</span> <span class="pre">'MAN',</span> <span class="pre">'MER',</span> <span class="pre">'MG',</span> <span class="pre">'MG2',</span> <span class="pre">'MIY',</span> <span class="pre">'MN',</span> <span class="pre">'MN2',</span> <span class="pre">'MN3',</span> <span class="pre">'MO',</span> <span class="pre">'MO3',</span> <span class="pre">'NA',</span> <span class="pre">'NA1',</span> <span class="pre">'NAG',</span> <span class="pre">'NDG',</span> <span class="pre">'NGA',</span> <span class="pre">'NI',</span> <span class="pre">'NI2',</span> <span class="pre">'O2',</span> <span class="pre">'OS',</span> <span class="pre">'OS4',</span> <span class="pre">'PB',</span> <span class="pre">'PB2',</span> <span class="pre">'PHN',</span> <span class="pre">'PO4',</span> <span class="pre">'PT',</span> <span class="pre">'PT2',</span> <span class="pre">'RAM',</span> <span class="pre">'SIA',</span> <span class="pre">'SIB',</span> <span class="pre">'SO4',</span> <span class="pre">'SR',</span> <span class="pre">'SR2',</span> <span class="pre">'THS',</span> <span class="pre">'TIP',</span> <span class="pre">'TIP3',</span> <span class="pre">'U3',</span> <span class="pre">'U4',</span> <span class="pre">'URE',</span> <span class="pre">'V',</span> <span class="pre">'V2',</span> <span class="pre">'V3',</span> <span class="pre">'WAT',</span> <span class="pre">'WO4',</span> <span class="pre">'XE',</span> <span class="pre">'XYP',</span> <span class="pre">'YB',</span> <span class="pre">'YB2',</span> <span class="pre">'YB3',</span> <span class="pre">'ZN',</span> <span class="pre">'ZN2'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.convert_ATOM_to_HETATM" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_ATOM_to_HETATM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ATOM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HETATM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A2G',</span> <span class="pre">'ACD',</span> <span class="pre">'ACN',</span> <span class="pre">'ACT',</span> <span class="pre">'ADY',</span> <span class="pre">'AG',</span> <span class="pre">'AG1',</span> <span class="pre">'AL',</span> <span class="pre">'AL3',</span> <span class="pre">'AMN',</span> <span class="pre">'AR',</span> <span class="pre">'AS',</span> <span class="pre">'AU',</span> <span class="pre">'AU1',</span> <span class="pre">'AU3',</span> <span class="pre">'BDY',</span> <span class="pre">'BEN',</span> <span class="pre">'BGC',</span> <span class="pre">'BMA',</span> <span class="pre">'BR',</span> <span class="pre">'BR1',</span> <span class="pre">'BUT',</span> <span class="pre">'CA',</span> <span class="pre">'CA2',</span> <span class="pre">'CD',</span> <span class="pre">'CD2',</span> <span class="pre">'CHE',</span> <span class="pre">'CL',</span> <span class="pre">'CL1',</span> <span class="pre">'CO',</span> <span class="pre">'CO2',</span> <span class="pre">'CO3',</span> <span class="pre">'COH',</span> <span class="pre">'COM',</span> <span class="pre">'CR',</span> <span class="pre">'CR2',</span> <span class="pre">'CR3',</span> <span class="pre">'CS',</span> <span class="pre">'CS1',</span> <span class="pre">'CU',</span> <span class="pre">'CU1',</span> <span class="pre">'CU2',</span> <span class="pre">'CYA',</span> <span class="pre">'DFO',</span> <span class="pre">'DME',</span> <span class="pre">'DMS',</span> <span class="pre">'DOD',</span> <span class="pre">'EOL',</span> <span class="pre">'ETA',</span> <span class="pre">'ETH',</span> <span class="pre">'F',</span> <span class="pre">'F1',</span> <span class="pre">'FCA',</span> <span class="pre">'FCB',</span> <span class="pre">'FE',</span> <span class="pre">'FE2',</span> <span class="pre">'FE3',</span> <span class="pre">'FUC',</span> <span class="pre">'FUL',</span> <span class="pre">'GAL',</span> <span class="pre">'GLA',</span> <span class="pre">'GLC',</span> <span class="pre">'GXL',</span> <span class="pre">'HEB',</span> <span class="pre">'HEC',</span> <span class="pre">'HG',</span> <span class="pre">'HG1',</span> <span class="pre">'HG2',</span> <span class="pre">'HO',</span> <span class="pre">'HO3',</span> <span class="pre">'HOH',</span> <span class="pre">'I',</span> <span class="pre">'I1',</span> <span class="pre">'IMI',</span> <span class="pre">'IR',</span> <span class="pre">'IR3',</span> <span class="pre">'K',</span> <span class="pre">'K1',</span> <span class="pre">'KR',</span> <span class="pre">'LI1',</span> <span class="pre">'MAG',</span> <span class="pre">'MAN',</span> <span class="pre">'MER',</span> <span class="pre">'MG',</span> <span class="pre">'MG2',</span> <span class="pre">'MIY',</span> <span class="pre">'MN',</span> <span class="pre">'MN2',</span> <span class="pre">'MN3',</span> <span class="pre">'MO',</span> <span class="pre">'MO3',</span> <span class="pre">'NA',</span> <span class="pre">'NA1',</span> <span class="pre">'NAG',</span> <span class="pre">'NDG',</span> <span class="pre">'NGA',</span> <span class="pre">'NI',</span> <span class="pre">'NI2',</span> <span class="pre">'O2',</span> <span class="pre">'OS',</span> <span class="pre">'OS4',</span> <span class="pre">'PB',</span> <span class="pre">'PB2',</span> <span class="pre">'PHN',</span> <span class="pre">'PO4',</span> <span class="pre">'PT',</span> <span class="pre">'PT2',</span> <span class="pre">'RAM',</span> <span class="pre">'SIA',</span> <span class="pre">'SIB',</span> <span class="pre">'SO4',</span> <span class="pre">'SR',</span> <span class="pre">'SR2',</span> <span class="pre">'THS',</span> <span class="pre">'TIP',</span> <span class="pre">'TIP3',</span> <span class="pre">'U3',</span> <span class="pre">'U4',</span> <span class="pre">'URE',</span> <span class="pre">'V',</span> <span class="pre">'V2',</span> <span class="pre">'V3',</span> <span class="pre">'WAT',</span> <span class="pre">'WO4',</span> <span class="pre">'XE',</span> <span class="pre">'XYP',</span> <span class="pre">'YB',</span> <span class="pre">'YB2',</span> <span class="pre">'YB3',</span> <span class="pre">'ZN',</span> <span class="pre">'ZN2'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.convert_ATOM_to_HETATM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> to <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> for HADDOCK3 supported <code class="docutils literal notranslate"><span class="pre">HETATM</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -274,7 +359,7 @@ the atom as an unconventional charge.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.convert_HETATM_to_ATOM">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_HETATM_to_ATOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HETATM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ATOM</span>&#160; <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A',</span> <span class="pre">'ACE',</span> <span class="pre">'ALA',</span> <span class="pre">'ALY',</span> <span class="pre">'ARG',</span> <span class="pre">'ASH',</span> <span class="pre">'ASN',</span> <span class="pre">'ASP',</span> <span class="pre">'C',</span> <span class="pre">'CFE',</span> <span class="pre">'CHX',</span> <span class="pre">'CSP',</span> <span class="pre">'CTN',</span> <span class="pre">'CYC',</span> <span class="pre">'CYF',</span> <span class="pre">'CYM',</span> <span class="pre">'CYS',</span> <span class="pre">'DA',</span> <span class="pre">'DC',</span> <span class="pre">'DDZ',</span> <span class="pre">'DG',</span> <span class="pre">'DJ',</span> <span class="pre">'DT',</span> <span class="pre">'DUM',</span> <span class="pre">'G',</span> <span class="pre">'GLH',</span> <span class="pre">'GLN',</span> <span class="pre">'GLU',</span> <span class="pre">'GLY',</span> <span class="pre">'HIS',</span> <span class="pre">'HLY',</span> <span class="pre">'HYP',</span> <span class="pre">'ILE',</span> <span class="pre">'LEU',</span> <span class="pre">'LYS',</span> <span class="pre">'M3L',</span> <span class="pre">'MET',</span> <span class="pre">'MLY',</span> <span class="pre">'MLZ',</span> <span class="pre">'MSE',</span> <span class="pre">'NEP',</span> <span class="pre">'NME',</span> <span class="pre">'PHE',</span> <span class="pre">'PNS',</span> <span class="pre">'PRO',</span> <span class="pre">'PTR',</span> <span class="pre">'QSR',</span> <span class="pre">'SEP',</span> <span class="pre">'SER',</span> <span class="pre">'SHA',</span> <span class="pre">'THR',</span> <span class="pre">'TOP',</span> <span class="pre">'TRP',</span> <span class="pre">'TYP',</span> <span class="pre">'TYR',</span> <span class="pre">'TYS',</span> <span class="pre">'U',</span> <span class="pre">'VAL'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.convert_HETATM_to_ATOM" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_HETATM_to_ATOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HETATM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ATOM</span>&#160; <span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A',</span> <span class="pre">'ACE',</span> <span class="pre">'ALA',</span> <span class="pre">'ALY',</span> <span class="pre">'ARG',</span> <span class="pre">'ASH',</span> <span class="pre">'ASN',</span> <span class="pre">'ASP',</span> <span class="pre">'C',</span> <span class="pre">'CFE',</span> <span class="pre">'CHX',</span> <span class="pre">'CSP',</span> <span class="pre">'CTN',</span> <span class="pre">'CYC',</span> <span class="pre">'CYF',</span> <span class="pre">'CYM',</span> <span class="pre">'CYS',</span> <span class="pre">'DA',</span> <span class="pre">'DC',</span> <span class="pre">'DDZ',</span> <span class="pre">'DG',</span> <span class="pre">'DJ',</span> <span class="pre">'DT',</span> <span class="pre">'DUM',</span> <span class="pre">'G',</span> <span class="pre">'GLH',</span> <span class="pre">'GLN',</span> <span class="pre">'GLU',</span> <span class="pre">'GLY',</span> <span class="pre">'HIS',</span> <span class="pre">'HLY',</span> <span class="pre">'HYP',</span> <span class="pre">'ILE',</span> <span class="pre">'LEU',</span> <span class="pre">'LYS',</span> <span class="pre">'M3L',</span> <span class="pre">'MET',</span> <span class="pre">'MLY',</span> <span class="pre">'MLZ',</span> <span class="pre">'MSE',</span> <span class="pre">'NEP',</span> <span class="pre">'NME',</span> <span class="pre">'PHE',</span> <span class="pre">'PNS',</span> <span class="pre">'PRO',</span> <span class="pre">'PTR',</span> <span class="pre">'QSR',</span> <span class="pre">'SEP',</span> <span class="pre">'SER',</span> <span class="pre">'SHA',</span> <span class="pre">'THR',</span> <span class="pre">'TOP',</span> <span class="pre">'TRP',</span> <span class="pre">'TYP',</span> <span class="pre">'TYR',</span> <span class="pre">'TYS',</span> <span class="pre">'U',</span> <span class="pre">'VAL'}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.convert_HETATM_to_ATOM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> to <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> for HADDOCK3 supported <code class="docutils literal notranslate"><span class="pre">ATOM</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -286,11 +371,11 @@ the atom as an unconventional charge.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.convert_record">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#convert_record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.convert_record" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">convert_record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residues</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#convert_record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.convert_record" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert on record to another for specified residues.</p>
 <p>For example, replace <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> by <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> for specific residues.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fhandler</strong> (<em>list-like</em>) – Contains lines of file.</p></li>
 <li><p><strong>record</strong> (<em>str</em>) – The PDB RECORD to match; for example, <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> or <code class="docutils literal notranslate"><span class="pre">HETATM</span></code>.</p></li>
@@ -303,15 +388,15 @@ the atom as an unconventional charge.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.correct_equal_chain_segids">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">correct_equal_chain_segids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#correct_equal_chain_segids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.correct_equal_chain_segids" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">correct_equal_chain_segids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">structures</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#correct_equal_chain_segids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.correct_equal_chain_segids" title="Permalink to this definition">¶</a></dt>
 <dd><p>Correct for repeated chainID in the input PDB files.</p>
 <p>Repeated chain IDs are replaced by an upper case character (<code class="docutils literal notranslate"><span class="pre">[A-Z]</span></code>)
 in order.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>structures</strong> (<em>list of lists of str</em>) – The input data.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>list of lists of str</em> – The new structures.</p>
 </dd>
 </dl>
@@ -319,13 +404,13 @@ in order.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.homogenize_chains">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">homogenize_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#homogenize_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.homogenize_chains" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">homogenize_chains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#homogenize_chains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.homogenize_chains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Homogenize chainIDs within the same PDB.</p>
 <p>If there are multiple chain identifiers in the PDB file, make all
 them equal to the first one.</p>
 <p>ChainIDs are copied to segIDs afterwards.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>list</em> – The modified lines.</p>
 </dd>
 </dl>
@@ -333,19 +418,19 @@ them equal to the first one.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.models_should_have_the_same_labels">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">models_should_have_the_same_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#models_should_have_the_same_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.models_should_have_the_same_labels" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">models_should_have_the_same_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#models_should_have_the_same_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.models_should_have_the_same_labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>Confirm models have the same labels.</p>
 <p>In an ensemble of structures, where the PDB file has multiple MODELS,
 all models should have the same labels; hence the same number and
 typ of atoms.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>lines</strong> (<em>list of strings.</em>) – List containing the lines of the PDB file. Must NOT be a generator.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>list</em> – The original <code class="docutils literal notranslate"><span class="pre">lines</span></code> in case no errors are found.</p>
 </dd>
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#haddock.gear.preprocessing.ModelsDifferError" title="haddock.gear.preprocessing.ModelsDifferError"><strong>ModelsDifferError</strong></a> – In case MODELS differ. Reports on which models differ.</p>
 </dd>
 </dl>
@@ -353,10 +438,10 @@ typ of atoms.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.process_pdbs">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">process_pdbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_supported_residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#process_pdbs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.process_pdbs" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">process_pdbs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">inputdata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_supported_residues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#process_pdbs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.process_pdbs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process PDB file contents for compatibility with HADDOCK3.</p>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul>
 <li><p><strong>inputdata</strong> (<em>list of (str, path, list of str [lines], file handler)</em>) – A <strong>flat</strong> list where in each index it can contain:</p>
 <ul class="simple">
@@ -375,7 +460,7 @@ report.</p></li>
 <li><p><strong>user_supported_residues</strong> (<em>list, tuple, or set</em>) – The new residues that are allowed.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>list of (list of str)</em> – The corrected (processed) PDB content in the same order as
 <code class="docutils literal notranslate"><span class="pre">inputdata</span></code>.</p>
 </dd>
@@ -384,7 +469,7 @@ report.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.remove_unsupported_atom">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A',</span> <span class="pre">'ACE',</span> <span class="pre">'ALA',</span> <span class="pre">'ALY',</span> <span class="pre">'ARG',</span> <span class="pre">'ASH',</span> <span class="pre">'ASN',</span> <span class="pre">'ASP',</span> <span class="pre">'C',</span> <span class="pre">'CFE',</span> <span class="pre">'CHX',</span> <span class="pre">'CSP',</span> <span class="pre">'CTN',</span> <span class="pre">'CYC',</span> <span class="pre">'CYF',</span> <span class="pre">'CYM',</span> <span class="pre">'CYS',</span> <span class="pre">'DA',</span> <span class="pre">'DC',</span> <span class="pre">'DDZ',</span> <span class="pre">'DG',</span> <span class="pre">'DJ',</span> <span class="pre">'DT',</span> <span class="pre">'DUM',</span> <span class="pre">'G',</span> <span class="pre">'GLH',</span> <span class="pre">'GLN',</span> <span class="pre">'GLU',</span> <span class="pre">'GLY',</span> <span class="pre">'HIS',</span> <span class="pre">'HLY',</span> <span class="pre">'HYP',</span> <span class="pre">'ILE',</span> <span class="pre">'LEU',</span> <span class="pre">'LYS',</span> <span class="pre">'M3L',</span> <span class="pre">'MET',</span> <span class="pre">'MLY',</span> <span class="pre">'MLZ',</span> <span class="pre">'MSE',</span> <span class="pre">'NEP',</span> <span class="pre">'NME',</span> <span class="pre">'PHE',</span> <span class="pre">'PNS',</span> <span class="pre">'PRO',</span> <span class="pre">'PTR',</span> <span class="pre">'QSR',</span> <span class="pre">'SEP',</span> <span class="pre">'SER',</span> <span class="pre">'SHA',</span> <span class="pre">'THR',</span> <span class="pre">'TOP',</span> <span class="pre">'TRP',</span> <span class="pre">'TYP',</span> <span class="pre">'TYR',</span> <span class="pre">'TYS',</span> <span class="pre">'U',</span> <span class="pre">'VAL'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ATOM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_atom" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A',</span> <span class="pre">'ACE',</span> <span class="pre">'ALA',</span> <span class="pre">'ALY',</span> <span class="pre">'ARG',</span> <span class="pre">'ASH',</span> <span class="pre">'ASN',</span> <span class="pre">'ASP',</span> <span class="pre">'C',</span> <span class="pre">'CFE',</span> <span class="pre">'CHX',</span> <span class="pre">'CSP',</span> <span class="pre">'CTN',</span> <span class="pre">'CYC',</span> <span class="pre">'CYF',</span> <span class="pre">'CYM',</span> <span class="pre">'CYS',</span> <span class="pre">'DA',</span> <span class="pre">'DC',</span> <span class="pre">'DDZ',</span> <span class="pre">'DG',</span> <span class="pre">'DJ',</span> <span class="pre">'DT',</span> <span class="pre">'DUM',</span> <span class="pre">'G',</span> <span class="pre">'GLH',</span> <span class="pre">'GLN',</span> <span class="pre">'GLU',</span> <span class="pre">'GLY',</span> <span class="pre">'HIS',</span> <span class="pre">'HLY',</span> <span class="pre">'HYP',</span> <span class="pre">'ILE',</span> <span class="pre">'LEU',</span> <span class="pre">'LYS',</span> <span class="pre">'M3L',</span> <span class="pre">'MET',</span> <span class="pre">'MLY',</span> <span class="pre">'MLZ',</span> <span class="pre">'MSE',</span> <span class="pre">'NEP',</span> <span class="pre">'NME',</span> <span class="pre">'PHE',</span> <span class="pre">'PNS',</span> <span class="pre">'PRO',</span> <span class="pre">'PTR',</span> <span class="pre">'QSR',</span> <span class="pre">'SEP',</span> <span class="pre">'SER',</span> <span class="pre">'SHA',</span> <span class="pre">'THR',</span> <span class="pre">'TOP',</span> <span class="pre">'TRP',</span> <span class="pre">'TYP',</span> <span class="pre">'TYR',</span> <span class="pre">'TYS',</span> <span class="pre">'U',</span> <span class="pre">'VAL'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ATOM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_atom" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove unsupported molecules in <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> lines.</p>
 <p>Uses <a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_molecules" title="haddock.gear.preprocessing.remove_unsupported_molecules"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_molecules()</span></code></a> by populating its
 <code class="docutils literal notranslate"><span class="pre">haddock3_define</span></code> and <code class="docutils literal notranslate"><span class="pre">line_startswith</span></code> parameters.</p>
@@ -398,7 +483,7 @@ report.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.remove_unsupported_hetatm">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_hetatm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A2G',</span> <span class="pre">'ACD',</span> <span class="pre">'ACN',</span> <span class="pre">'ACT',</span> <span class="pre">'ADY',</span> <span class="pre">'AG',</span> <span class="pre">'AG1',</span> <span class="pre">'AL',</span> <span class="pre">'AL3',</span> <span class="pre">'AMN',</span> <span class="pre">'AR',</span> <span class="pre">'AS',</span> <span class="pre">'AU',</span> <span class="pre">'AU1',</span> <span class="pre">'AU3',</span> <span class="pre">'BDY',</span> <span class="pre">'BEN',</span> <span class="pre">'BGC',</span> <span class="pre">'BMA',</span> <span class="pre">'BR',</span> <span class="pre">'BR1',</span> <span class="pre">'BUT',</span> <span class="pre">'CA',</span> <span class="pre">'CA2',</span> <span class="pre">'CD',</span> <span class="pre">'CD2',</span> <span class="pre">'CHE',</span> <span class="pre">'CL',</span> <span class="pre">'CL1',</span> <span class="pre">'CO',</span> <span class="pre">'CO2',</span> <span class="pre">'CO3',</span> <span class="pre">'COH',</span> <span class="pre">'COM',</span> <span class="pre">'CR',</span> <span class="pre">'CR2',</span> <span class="pre">'CR3',</span> <span class="pre">'CS',</span> <span class="pre">'CS1',</span> <span class="pre">'CU',</span> <span class="pre">'CU1',</span> <span class="pre">'CU2',</span> <span class="pre">'CYA',</span> <span class="pre">'DFO',</span> <span class="pre">'DME',</span> <span class="pre">'DMS',</span> <span class="pre">'DOD',</span> <span class="pre">'EOL',</span> <span class="pre">'ETA',</span> <span class="pre">'ETH',</span> <span class="pre">'F',</span> <span class="pre">'F1',</span> <span class="pre">'FCA',</span> <span class="pre">'FCB',</span> <span class="pre">'FE',</span> <span class="pre">'FE2',</span> <span class="pre">'FE3',</span> <span class="pre">'FUC',</span> <span class="pre">'FUL',</span> <span class="pre">'GAL',</span> <span class="pre">'GLA',</span> <span class="pre">'GLC',</span> <span class="pre">'GXL',</span> <span class="pre">'HEB',</span> <span class="pre">'HEC',</span> <span class="pre">'HG',</span> <span class="pre">'HG1',</span> <span class="pre">'HG2',</span> <span class="pre">'HO',</span> <span class="pre">'HO3',</span> <span class="pre">'HOH',</span> <span class="pre">'I',</span> <span class="pre">'I1',</span> <span class="pre">'IMI',</span> <span class="pre">'IR',</span> <span class="pre">'IR3',</span> <span class="pre">'K',</span> <span class="pre">'K1',</span> <span class="pre">'KR',</span> <span class="pre">'LI1',</span> <span class="pre">'MAG',</span> <span class="pre">'MAN',</span> <span class="pre">'MER',</span> <span class="pre">'MG',</span> <span class="pre">'MG2',</span> <span class="pre">'MIY',</span> <span class="pre">'MN',</span> <span class="pre">'MN2',</span> <span class="pre">'MN3',</span> <span class="pre">'MO',</span> <span class="pre">'MO3',</span> <span class="pre">'NA',</span> <span class="pre">'NA1',</span> <span class="pre">'NAG',</span> <span class="pre">'NDG',</span> <span class="pre">'NGA',</span> <span class="pre">'NI',</span> <span class="pre">'NI2',</span> <span class="pre">'O2',</span> <span class="pre">'OS',</span> <span class="pre">'OS4',</span> <span class="pre">'PB',</span> <span class="pre">'PB2',</span> <span class="pre">'PHN',</span> <span class="pre">'PO4',</span> <span class="pre">'PT',</span> <span class="pre">'PT2',</span> <span class="pre">'RAM',</span> <span class="pre">'SIA',</span> <span class="pre">'SIB',</span> <span class="pre">'SO4',</span> <span class="pre">'SR',</span> <span class="pre">'SR2',</span> <span class="pre">'THS',</span> <span class="pre">'TIP',</span> <span class="pre">'TIP3',</span> <span class="pre">'U3',</span> <span class="pre">'U4',</span> <span class="pre">'URE',</span> <span class="pre">'V',</span> <span class="pre">'V2',</span> <span class="pre">'V3',</span> <span class="pre">'WAT',</span> <span class="pre">'WO4',</span> <span class="pre">'XE',</span> <span class="pre">'XYP',</span> <span class="pre">'YB',</span> <span class="pre">'YB2',</span> <span class="pre">'YB3',</span> <span class="pre">'ZN',</span> <span class="pre">'ZN2'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HETATM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_hetatm" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_hetatm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'A2G',</span> <span class="pre">'ACD',</span> <span class="pre">'ACN',</span> <span class="pre">'ACT',</span> <span class="pre">'ADY',</span> <span class="pre">'AG',</span> <span class="pre">'AG1',</span> <span class="pre">'AL',</span> <span class="pre">'AL3',</span> <span class="pre">'AMN',</span> <span class="pre">'AR',</span> <span class="pre">'AS',</span> <span class="pre">'AU',</span> <span class="pre">'AU1',</span> <span class="pre">'AU3',</span> <span class="pre">'BDY',</span> <span class="pre">'BEN',</span> <span class="pre">'BGC',</span> <span class="pre">'BMA',</span> <span class="pre">'BR',</span> <span class="pre">'BR1',</span> <span class="pre">'BUT',</span> <span class="pre">'CA',</span> <span class="pre">'CA2',</span> <span class="pre">'CD',</span> <span class="pre">'CD2',</span> <span class="pre">'CHE',</span> <span class="pre">'CL',</span> <span class="pre">'CL1',</span> <span class="pre">'CO',</span> <span class="pre">'CO2',</span> <span class="pre">'CO3',</span> <span class="pre">'COH',</span> <span class="pre">'COM',</span> <span class="pre">'CR',</span> <span class="pre">'CR2',</span> <span class="pre">'CR3',</span> <span class="pre">'CS',</span> <span class="pre">'CS1',</span> <span class="pre">'CU',</span> <span class="pre">'CU1',</span> <span class="pre">'CU2',</span> <span class="pre">'CYA',</span> <span class="pre">'DFO',</span> <span class="pre">'DME',</span> <span class="pre">'DMS',</span> <span class="pre">'DOD',</span> <span class="pre">'EOL',</span> <span class="pre">'ETA',</span> <span class="pre">'ETH',</span> <span class="pre">'F',</span> <span class="pre">'F1',</span> <span class="pre">'FCA',</span> <span class="pre">'FCB',</span> <span class="pre">'FE',</span> <span class="pre">'FE2',</span> <span class="pre">'FE3',</span> <span class="pre">'FUC',</span> <span class="pre">'FUL',</span> <span class="pre">'GAL',</span> <span class="pre">'GLA',</span> <span class="pre">'GLC',</span> <span class="pre">'GXL',</span> <span class="pre">'HEB',</span> <span class="pre">'HEC',</span> <span class="pre">'HG',</span> <span class="pre">'HG1',</span> <span class="pre">'HG2',</span> <span class="pre">'HO',</span> <span class="pre">'HO3',</span> <span class="pre">'HOH',</span> <span class="pre">'I',</span> <span class="pre">'I1',</span> <span class="pre">'IMI',</span> <span class="pre">'IR',</span> <span class="pre">'IR3',</span> <span class="pre">'K',</span> <span class="pre">'K1',</span> <span class="pre">'KR',</span> <span class="pre">'LI1',</span> <span class="pre">'MAG',</span> <span class="pre">'MAN',</span> <span class="pre">'MER',</span> <span class="pre">'MG',</span> <span class="pre">'MG2',</span> <span class="pre">'MIY',</span> <span class="pre">'MN',</span> <span class="pre">'MN2',</span> <span class="pre">'MN3',</span> <span class="pre">'MO',</span> <span class="pre">'MO3',</span> <span class="pre">'NA',</span> <span class="pre">'NA1',</span> <span class="pre">'NAG',</span> <span class="pre">'NDG',</span> <span class="pre">'NGA',</span> <span class="pre">'NI',</span> <span class="pre">'NI2',</span> <span class="pre">'O2',</span> <span class="pre">'OS',</span> <span class="pre">'OS4',</span> <span class="pre">'PB',</span> <span class="pre">'PB2',</span> <span class="pre">'PHN',</span> <span class="pre">'PO4',</span> <span class="pre">'PT',</span> <span class="pre">'PT2',</span> <span class="pre">'RAM',</span> <span class="pre">'SIA',</span> <span class="pre">'SIB',</span> <span class="pre">'SO4',</span> <span class="pre">'SR',</span> <span class="pre">'SR2',</span> <span class="pre">'THS',</span> <span class="pre">'TIP',</span> <span class="pre">'TIP3',</span> <span class="pre">'U3',</span> <span class="pre">'U4',</span> <span class="pre">'URE',</span> <span class="pre">'V',</span> <span class="pre">'V2',</span> <span class="pre">'V3',</span> <span class="pre">'WAT',</span> <span class="pre">'WO4',</span> <span class="pre">'XE',</span> <span class="pre">'XYP',</span> <span class="pre">'YB',</span> <span class="pre">'YB2',</span> <span class="pre">'YB3',</span> <span class="pre">'ZN',</span> <span class="pre">'ZN2'}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HETATM'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_hetatm" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove unsupported molecules in <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> lines.</p>
 <p>Uses <a class="reference internal" href="#haddock.gear.preprocessing.remove_unsupported_molecules" title="haddock.gear.preprocessing.remove_unsupported_molecules"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_unsupported_molecules()</span></code></a> by populating its
 <code class="docutils literal notranslate"><span class="pre">haddock3_define</span></code> and <code class="docutils literal notranslate"><span class="pre">line_startswith</span></code> parameters.</p>
@@ -412,7 +497,7 @@ report.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.remove_unsupported_molecules">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_molecules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('ATOM',</span> <span class="pre">'HETATM')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#remove_unsupported_molecules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_molecules" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">remove_unsupported_molecules</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">haddock3_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_defined</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_startswith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('ATOM',</span> <span class="pre">'HETATM')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#remove_unsupported_molecules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.remove_unsupported_molecules" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove HADDOCK3 unsupported molecules.</p>
 <p>This function is abstract and you need to provide the set of
 residues supported by HADDOCK3. See parameters.</p>
@@ -420,7 +505,7 @@ residues supported by HADDOCK3. See parameters.</p>
 are removed from the PDB lines.</p>
 <p>Other lines are yieled unmodified.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lines</strong> (<em>list or list-like</em>) – Lines of the PDB file. This function will consumes lines over a
 <code class="docutils literal notranslate"><span class="pre">for</span></code> loop; mind it if you use a generator.</p></li>
@@ -431,7 +516,7 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">None</s
 <li><p><strong>line_startswith</strong> (<em>tuple</em>) – The lines to consider. Defaults to <code class="docutils literal notranslate"><span class="pre">(&quot;ATOM&quot;,</span> <span class="pre">&quot;HETATM&quot;)</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>line</strong> (<em>str</em>) – Line-by-line.
 Lines for residues not supported are <em>not</em> yielded.</p>
 </dd>
@@ -448,17 +533,17 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HETATM_to_ATOM">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HETATM_to_ATOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#replace_HETATM_to_ATOM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.replace_HETATM_to_ATOM" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HETATM_to_ATOM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#replace_HETATM_to_ATOM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.replace_HETATM_to_ATOM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace record <cite>HETATM</cite> to <cite>ATOM</cite> for <cite>res</cite>.</p>
 <p>Do not alter other lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fhanlder</strong> (<em>file handler or list of lines</em>) – List-like of file lines. Consumes over a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop.</p></li>
 <li><p><strong>res</strong> (<em>str</em>) – Residue name to match for the substitution.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>str</em> – Yield line-by-line.</p>
 </dd>
 </dl>
@@ -466,7 +551,7 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HID_to_HIS">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HID_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HID_to_HIS" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HID_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HID_to_HIS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HID</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -478,7 +563,7 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HIE_to_HIS">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HIE_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HIE_to_HIS" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HIE_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HIE_to_HIS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HIE</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -490,7 +575,7 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HSD_to_HIS">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HSD_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HSD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HSD_to_HIS" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HSD_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HSD'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HSD_to_HIS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HSD</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -502,7 +587,7 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_HSE_to_HIS">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HSE_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HSE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HSE_to_HIS" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_HSE_to_HIS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HSE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'HIS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_HSE_to_HIS" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace <code class="docutils literal notranslate"><span class="pre">HSE</span></code> to <code class="docutils literal notranslate"><span class="pre">HIS</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -514,7 +599,7 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_MSE_to_MET">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_MSE_to_MET</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MSE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MET'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_MSE_to_MET" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_MSE_to_MET</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MSE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MET'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.gear.preprocessing.replace_MSE_to_MET" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace <code class="docutils literal notranslate"><span class="pre">MSE</span></code> to <code class="docutils literal notranslate"><span class="pre">MET</span></code>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -526,18 +611,18 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.replace_residue">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_residue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#replace_residue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.replace_residue" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_residue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fhandler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resin</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resout</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#replace_residue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.replace_residue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace residue by another and changes <code class="docutils literal notranslate"><span class="pre">HETATM</span></code> to <code class="docutils literal notranslate"><span class="pre">ATOM</span></code> if needed.</p>
 <p>Do not alter other lines.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fhanlder</strong> (<em>file handler or list of lines</em>) – List-like of file lines. Consumes over a <code class="docutils literal notranslate"><span class="pre">for</span></code> loop.</p></li>
 <li><p><strong>resin</strong> (<em>str</em>) – Residue name to match for the substitution.</p></li>
 <li><p><strong>resout</strong> (<em>str</em>) – Name of the new residue. Renames <code class="docutils literal notranslate"><span class="pre">resin</span></code> to <code class="docutils literal notranslate"><span class="pre">resout</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Yields</dt>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>str</em> – Yield line-by-line.</p>
 </dd>
 </dl>
@@ -552,17 +637,17 @@ Lines for residues not supported are <em>not</em> yielded.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.preprocessing.solve_no_chainID_no_segID">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">solve_no_chainID_no_segID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#solve_no_chainID_no_segID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.solve_no_chainID_no_segID" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.preprocessing.</span></span><span class="sig-name descname"><span class="pre">solve_no_chainID_no_segID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/preprocessing.html#solve_no_chainID_no_segID"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.preprocessing.solve_no_chainID_no_segID" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solve inconsistencies with chainID and segID.</p>
 <p>If segID is non-existant, copy chainID over segID, and vice-versa.
 If none are present, adds an upper case char starting from A. This
 char is not repeated until the alphabet exhausts.
 If chainIDs and segIDs differ, copy chainIDs over segIDs.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>lines</strong> (<em>list of str</em>) – The lines of a PDB file.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><em>list</em> – With new lines. Or the input ones if no modification was made.</p>
 </dd>
 </dl>
@@ -572,36 +657,41 @@ If chainIDs and segIDs differ, copy chainIDs over segIDs.</p>
 </section>
 
 
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="prepare_run.html" class="btn btn-neutral float-left" title="Prepare Run" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="restart_run.html" class="btn btn-neutral float-right" title="Restart Run" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-    </div>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2022, BonvinLab.
-      <span class="lastupdated">Last updated on Aug 02, 2022.
-      </span></p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+    </div>    
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'3.0.0',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+    <div class="footer" role="contentinfo">
+        <div class="container">
+            &#169; Copyright 2022, BonvinLab.
+        Last updated on Aug 03, 2022.
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
+        </div>
+    </div>  
 
 </body>
 </html>

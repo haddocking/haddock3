@@ -312,8 +312,9 @@ an example. See also the `docs/conf.py` file `setup(app)` line.
 
 **Troubleshooting:**
 
-1. If you add any new dependency (import statement) in the code, you need to add that library name to the `mock` list in the `docs/conf.py` file.
-1. Are there errors? You can run `tox -e docs > docsout` followed by `cat docsout | grep ERROR` to see if there are any errors. Ignore the errors related to `docs/modules/refinement/params/emref.rst:1480: ERROR: Unknown target name: "fle_sta".`
+1. If you add any new dependency (import statement) in the code, you
+  need to add that library name to the `mock` list in the `docs/conf.py`
+  file.
 
 
 [tox]: https://tox.wiki/en/latest/index.html "tox"

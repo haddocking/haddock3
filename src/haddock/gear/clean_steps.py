@@ -138,7 +138,7 @@ def update_unpacked_names(prev, new, original):
 
     Sometimes the step folders are renamed to ajust their index number.
     Such operation happens after the output data is unpacked. This module,
-    :py:module:`haddock.gear.clean_steps`, keeps registry of the folders
+    :py:mod:`haddock.gear.clean_steps`, keeps registry of the folders
     unpacked to the correct funtioning of the `extend_run` module.
 
     Given the original names and the new names of the step folders,

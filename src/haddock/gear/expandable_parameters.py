@@ -870,7 +870,7 @@ def populate_mol_parameters_in_module(params, num_mols, defaults):
 
     The `mol_` prefixed parameters is a subclass of the expandable parameters.
 
-    See :py:module:`haddock.gear.expandable_parameters`.
+    See :py:mod:`haddock.gear.expandable_parameters`.
 
     Modules require these parameters to be repeated for the number of input
     molecules.

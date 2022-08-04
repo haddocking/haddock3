@@ -94,3 +94,22 @@ self_contained:
     main installation.
   group: 'execution'
   explevel: guru
+clean:
+  default: false
+  type: boolean
+  title: Clean the module output files.
+  short: Clean the module if run succeeds by compressing or removing output files.
+  long: When running haddock through the command-line, the 'clean' parameter will
+    instruct the workflow to clean the output files of the module if the whole
+    run succeeds. In this process, PDB and PSF files are compressed to gzip,
+    with the extension `.gz`. While files with extension `.seed`, `.inp`, and
+    `.out` files are archived, and the original files deleted. The time to
+    perform a cleaning operation depends on the number of files in the folders
+    and the size of the files. However, it should not represent a limit step in
+    the workflow. For example, a rigidbody sampling 10,000 structures takes
+    about 4 minutes in our servers. This operation uses as many cores as allowed
+    by the user in the 'ncores' parameter. SSD disks will perform faster by
+    definition. See also the 'haddock3-clean' and 'haddock3-unpack' command-line
+    clients.
+  group: 'clean'
+  explevel: easy

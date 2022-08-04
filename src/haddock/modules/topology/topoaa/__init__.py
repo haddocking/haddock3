@@ -1,5 +1,7 @@
 """Create and manage CNS all-atom topology."""
 import operator
+import os
+import re
 from functools import partial
 from pathlib import Path
 
@@ -84,17 +86,41 @@ class HaddockModule(BaseCNSModule):
     def get_md5(ensemble_f):
         """Get MD5 hash of a multi-model PDB file."""
         md5_dic = {}
-        with open(ensemble_f, 'r') as fh:
-            for line in fh.readlines():
-                if line.startswith("REMARK") and "9" in line:
-                    model_num = int(line.split('MODEL')[-1].split()[0])
-                    md5 = line.split()[-1]
-                    md5_dic[model_num] = md5
+        text = Path(ensemble_f).read_text()
+        lines = text.split(os.linesep)
+        REMARK_lines = (line for line in lines if line.startswith('REMARK'))
+        remd5 = re.compile(r"^[a-f0-9]{32}$")
+        for line in REMARK_lines:
+            parts = line.strip().split()
+
+            try:
+                idx = parts.index('MODEL')
+            except ValueError:  # MODEL not in parts, this line can be ignored
+                continue
+
+            # check if there's a md5 hash in line
+            for part in parts:
+                group = remd5.fullmatch(part)
+                if group:
+                    # the model num comes after the MODEL
+                    model_num = int(parts[idx + 1])
+                    md5_dic[model_num] = group.string  # md5 hash
+                    break
+
         return md5_dic
 
     def _run(self):
         """Execute module."""
-        molecules = make_molecules(self.params.pop('molecules'))
+        if self.order == 0:
+            # topoaa is the first step in the workflow
+            molecules = make_molecules(self.params.pop('molecules'))
+
+        else:
+            # in case topoaa is not the first step, the topology is rebuilt for
+            # each retrieved model
+            _molecules = self.previous_io.retrieve_models()
+            molecules_paths = [mol.rel_path for mol in _molecules]
+            molecules = make_molecules(molecules_paths, no_parent=True)
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
@@ -107,8 +133,11 @@ class HaddockModule(BaseCNSModule):
         # of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 
-        if self.params['limit']:
+        # limit is only useful when order == 0
+        if self.order == 0 and self.params['limit']:
             mol_params_get = mol_params_keys.pop
+
+        # `else` is used in any case where limit is False.
         else:
             mol_params_get = partial(operator.getitem, mol_params_keys, -1)
 

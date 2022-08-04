@@ -4,26 +4,63 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
+from haddock.core.exceptions import HaddockTermination
+from haddock.gear.clean_steps import UNPACK_FOLDERS, clean_output
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
-from haddock.libs.libworkflow import Workflow
+from haddock.libs.libtimer import log_time
+from haddock.libs.libworkflow import Workflow, WorkflowManager
 from haddock.modules import get_module_steps_folders
 
 
 EXTEND_RUN_DEFAULT = None
 
 
-class WorkflowManagerExtend:
+class WorkflowManagerExtend(WorkflowManager):
     """Workflow to extend a run."""
 
     def __init__(self, workflow_params, start=0, **other_params):
         self.start = start
         self.recipe = Workflow(workflow_params, start=start, **other_params)
+        # terminate is used to synchronize the `clean` option with the
+        # `exit` module. If the `exit` module is removed in the future,
+        # you can also remove and clean the `terminate` part here.
+        self._terminated = 0
 
     def run(self):
         """High level workflow composer."""
-        for step in self.recipe.steps:
-            step.execute()
+        for i, step in enumerate(self.recipe.steps, start=0):
+            try:
+                step.execute()
+            except HaddockTermination:
+                self._terminated = i
+                break
+
+    def clean(self):
+        """Clean the step output."""
+        # return compression to the original state
+        cwd = Path.cwd().name
+
+        # because this WorkflowManagerExtended has no direct access to the
+        # ncores parameters, it needs to take it from the steps.
+        ncores = max(s.config["ncores"] for s in self.recipe.steps)
+
+        for folder in UNPACK_FOLDERS:
+            # temporary hack to get the step folder name.
+            # ensures we can work under the CLI working directory
+            # or inside the run dir.
+            folder_ = str(folder).split(cwd)[1][1:]
+
+            log.info(
+                f'Compressing original folder: {folder_!r} because it '
+                'was originally compressed.'
+                )
+
+            with log_time("cleaning output files took"):
+                clean_output(folder_, ncores)
+
+        # apply compression to the new modules
+        super().clean(terminated=self._terminated)
 
 
 def add_extend_run(parser):

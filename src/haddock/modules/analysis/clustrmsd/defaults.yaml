@@ -12,7 +12,7 @@ criterion:
   - distance
   - maxclust
 linkage:
-  default: "average"
+  default: "single"
   type: "string"
   minchars: 0
   maxchars: 100

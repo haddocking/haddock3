@@ -7,12 +7,18 @@ import shutil
 import string
 import sys
 from contextlib import contextmanager, suppress
+from copy import copy
 from functools import lru_cache, wraps
 from pathlib import Path
 
 from haddock import contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
+from haddock.gear.clean_steps import (
+    UNPACK_FOLDERS,
+    unpack_compressed_and_archived_files,
+    update_unpacked_names,
+    )
 from haddock.gear.config_reader import get_module_name, read_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
@@ -31,7 +37,12 @@ from haddock.gear.extend_run import (
     renum_step_folders,
     )
 from haddock.gear.greetings import get_goodbye_help
-from haddock.gear.parameters import config_mandatory_general_parameters
+from haddock.gear.parameters import (
+    config_mandatory_general_parameters,
+    config_optional_general_parameters,
+    config_optional_general_parameters_dict,
+    )
+from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
@@ -46,11 +57,19 @@ from haddock.libs.libutil import (
 from haddock.modules import (
     get_module_steps_folders,
     modules_category,
+    modules_names,
     non_mandatory_general_parameters_defaults,
     )
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
     modules_using_resdic,
+    )
+
+
+ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
+    set(config_mandatory_general_parameters),
+    set(non_mandatory_general_parameters_defaults),
+    config_optional_general_parameters,
     )
 
 
@@ -155,14 +174,25 @@ def setup_run(
 
     # update default non-mandatory parameters with user params
     params = recursive_dict_update(
+        config_optional_general_parameters_dict,
+        params)
+
+    params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
         params,
         )
+
+    validate_module_names_are_not_misspelled(params)
 
     # separate general from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
+
+    validate_parameters_are_not_misspelled(
+        general_params,
+        reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
+        )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -172,7 +202,6 @@ def setup_run(
 
         general_params[RUNDIR] = extend_run
 
-    validate_module_names_are_not_misspelled(modules_params)
     check_if_modules_are_installed(modules_params)
     check_specific_validations(general_params)
 
@@ -195,8 +224,23 @@ def setup_run(
         _data_dir = Path(general_params[RUNDIR], "data")
         remove_folders_after_number(_data_dir, restart_from)
 
+    if restarting_from or starting_from_copy:
+        # get run files in folder
+        step_folders = get_module_steps_folders(general_params[RUNDIR])
+
+        log.info(
+            'Uncompressing previous output files for folders: '
+            f'{", ".join(step_folders)}'
+            )
+        # unpack the possible compressed and archived files
+        _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
+        unpack_compressed_and_archived_files(
+            _step_folders,
+            general_params["ncores"],
+            )
+
     if starting_from_copy:
-        num_steps = len(get_module_steps_folders(extend_run))
+        num_steps = len(step_folders)
         _num_modules = len(modules_params)
         # has to consider the folders already present, plus the new folders
         # in the configuration file
@@ -223,6 +267,8 @@ def setup_run(
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
         renum_step_folders(Path(general_params[RUNDIR], "data"))
+        if UNPACK_FOLDERS:  # only if there was any folder unpacked
+            update_unpacked_names(_prev, _new, UNPACK_FOLDERS)
         update_step_contents_to_step_names(
             _prev,
             _new,
@@ -235,7 +281,11 @@ def setup_run(
     data_dir = create_data_dir(general_params[RUNDIR])
 
     if scratch_rest0:
-        copy_molecules_to_data_dir(data_dir, modules_params["topoaa"])
+        copy_molecules_to_data_dir(
+            data_dir,
+            modules_params["topoaa"],
+            preprocess=general_params["preprocess"],
+            )
 
     if starting_from_copy:
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
@@ -313,7 +363,7 @@ def validate_modules_params(modules_params, max_mols):
     for module_name, args in modules_params.items():
         defaults = _read_defaults(module_name)
         if not defaults:
-            return
+            continue
 
         if module_name in modules_using_resdic:
             confirm_resdic_chainid_length(args)
@@ -325,11 +375,11 @@ def validate_modules_params(modules_params, max_mols):
             max_mols,
             )
 
-        all_parameters = \
-            set.union(set(extract_keys_recursive(defaults)),
-                      set(config_mandatory_general_parameters),
-                      set(non_mandatory_general_parameters_defaults.keys()),
-                      expandable_params)
+        all_parameters = set.union(
+            set(extract_keys_recursive(defaults)),
+            set(non_mandatory_general_parameters_defaults.keys()),
+            expandable_params,
+            )
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 
@@ -421,7 +471,7 @@ def copy_molecules_to_topology(molecules, topoaa_params):
     topoaa_params['molecules'] = list(map(Path, transform_to_list(molecules)))
 
 
-def copy_molecules_to_data_dir(data_dir, topoaa_params):
+def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
     """
     Copy molecules to data directory and to topoaa parameters.
 
@@ -433,18 +483,49 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params):
 
     topoaa_params : dict
         A dictionary containing the topoaa parameters.
-    """
-    # this line must be synchronized with create_data_dir()
-    rel_data_dir = data_dir.name
 
+    preprocess : bool
+        Whether to preprocess input molecules. Defaults to ``True``.
+        See :py:mod:`haddock.gear.preprocessing`.
+    """
     topoaa_dir = zero_fill.fill('topoaa', 0)
-    for i, molecule in enumerate(topoaa_params['molecules']):
-        end_path = Path(data_dir, topoaa_dir)
-        end_path.mkdir(parents=True, exist_ok=True)
-        name = Path(molecule).name
+
+    # define paths
+    data_topoaa_dir = Path(data_dir, topoaa_dir)
+    data_topoaa_dir.mkdir(parents=True, exist_ok=True)
+    rel_data_topoaa_dir = Path(data_dir.name, topoaa_dir)
+    original_mol_dir = Path(data_dir, "original_molecules")
+
+    new_molecules = []
+    for molecule in copy(topoaa_params['molecules']):
         check_if_path_exists(molecule)
-        shutil.copy(molecule, Path(end_path, name))
-        topoaa_params['molecules'][i] = Path(rel_data_dir, topoaa_dir, name)
+
+        mol_name = Path(molecule).name
+
+        if preprocess:  # preprocess PDB files
+
+            top_fname = topoaa_params.get("ligand_top_fname", False)
+            new_residues = \
+                read_additional_residues(top_fname) if top_fname else None
+
+            new_pdbs = \
+                process_pdbs(molecule, user_supported_residues=new_residues)
+
+            # copy the original molecule
+            original_mol_dir.mkdir(parents=True, exist_ok=True)
+            original_mol = Path(original_mol_dir, mol_name)
+            shutil.copy(molecule, original_mol)
+
+            # write the new processed molecule
+            new_pdb = os.linesep.join(new_pdbs[0])
+            Path(data_topoaa_dir, mol_name).write_text(new_pdb)
+
+        else:
+            shutil.copy(molecule, Path(data_topoaa_dir, mol_name))
+
+        new_molecules.append(Path(rel_data_topoaa_dir, mol_name))
+
+    topoaa_params['molecules'] = copy(new_molecules)
 
 
 def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
@@ -518,19 +599,38 @@ def inject_in_modules(modules_params, key, value):
 
 
 def validate_module_names_are_not_misspelled(params):
-    """Validate headers are not misspelled."""
-    module_names = sorted(modules_category.keys())
-    for param_name, value in params.items():
-        if isinstance(value, dict):
-            module_name = get_module_name(param_name)
-            if module_name not in module_names:
-                matched = fuzzy_match([module_name], module_names)
-                emsg = (
-                    f"Module {param_name!r} is not a valid module name,"
-                    f" did you mean {matched[0][1]}?. "
-                    f"Valid modules are: {', '.join(module_names)}."
-                    )
-                raise ValueError(emsg)
+    """
+    Validate module names are not misspelled in step definitions.
+
+    Parameters
+    ----------
+    params : dict
+        The user configuration file.
+    """
+    params_to_check = [
+        get_module_name(param)
+        for param, value in params.items()
+        if isinstance(value, dict)
+        ]
+
+    validate_parameters_are_not_misspelled(
+        params_to_check,
+        reference_parameters=modules_names,
+        )
+
+    return
+
+
+def validate_parameters_are_not_misspelled(params, reference_parameters):
+    """Validate general parameters are not misspelled."""
+    for param_name in params:
+        if param_name not in reference_parameters:
+            matched = fuzzy_match([param_name], reference_parameters)
+            emsg = (
+                f"Parameter {param_name!r} is not a valid general parameter,"
+                f" did you mean {matched[0][1]!r}?"
+                )
+            raise ValueError(emsg)
 
 
 @with_config_error
@@ -628,7 +728,7 @@ def populate_topology_molecule_params(topoaa):
     # well. `prot_segid` is the only one differing per molecule.
     for i in range(1, len(topoaa["molecules"]) + 1):
         mol = f"mol{i}"
-        if not(mol in topoaa and "prot_segid" in topoaa[mol]):
+        if not (mol in topoaa and "prot_segid" in topoaa[mol]):
             topoaa_dft["mol1"]["prot_segid"] = uppers.pop()
 
         topoaa[mol] = recursive_dict_update(
@@ -741,6 +841,7 @@ def fuzzy_match(user_input, possibilities):
     ----------
     user_input : list(string)
         List of strings with the faulty input given by the user.
+
     possibilities : list(string)
         List of strings with all possible options that would be
         valid in this context.

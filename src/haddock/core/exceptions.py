@@ -47,3 +47,9 @@ class SetupError(HaddockError):
     """Set up error."""
 
     pass
+
+
+class HaddockTermination(HaddockError):
+    """Terminates HADDOCK."""
+
+    pass

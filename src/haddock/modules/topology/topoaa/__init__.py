@@ -171,10 +171,6 @@ class HaddockModule(BaseCNSModule):
 
             # Sanitize the different PDB files
             relative_paths_models = splited_models
-               # (
-               # Path(_p.name) if _p.is_absolute() else _p
-               # for _p in splited_models
-               # )
 
             for model in relative_paths_models:
                 self.log(f"Sanitizing molecule {model.name}")

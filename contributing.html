@@ -478,13 +478,38 @@ future. If needed, raise an issue.</p>
 </section>
 <section id="contributing-with-documentation">
 <h2>2. Contributing with documentation<a class="headerlink" href="#contributing-with-documentation" title="Permalink to this heading">¶</a></h2>
-<p>HADDOCK3 has (will have) two sources of documentation: 1) the library
-documentation itself that is built from code docstrings and <code class="docutils literal notranslate"><span class="pre">.rst</span></code> pages
-in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> folder and 2) the tutorials page at
-<a class="reference external" href="https://bonvinlab.org">https://bonvinlab.org</a>. If you want to suggest a new tutorial, please
-talk with us before start working. On the other hand, if you want to
-improve code’s documentation, go for it following the same procedure as
-described above for <em>code contributions</em>.</p>
+<p>You may contribute to HADDOCK3 documentation by improving parts where
+documentation is lacking or writing the documentation for the new code
+you propose. HADDOCK3 documentation is hosted online at
+https://bonvinlab.org/haddock3.</p>
+<p>HADDOCK3 documentation is rendered with
+<a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a> combining markdown
+files, restructured text files, and extracting the docstrings in the
+source code.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder contains all the files used by Sphinx to compile the
+documentation to HTML files. To incorporate new documentation pages or
+update the existing ones, navigate around the <code class="docutils literal notranslate"><span class="pre">docs/</span></code> folder to learn
+how we have structured it and add/edit the files you find relevant. You
+will see that the structure of folders and files follows the design of
+the documentation website.</p>
+<p>You can render the documentation locally to inspect the end result
+before creating a pull request. To compile the documentation locally:
+activate the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code> python environment inside the haddock3 github
+folder, run <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">docs</span></code> and then use your favourite browser to open the
+<code class="docutils literal notranslate"><span class="pre">haddock3-docs/index.html</span></code> file. We invite you to read through Sphinx-doc
+webpage if you want to exploit any advanced feature of Sphinx, but we
+already provide examples for virtually any use you may need.</p>
+<p>If you need to install any additional library, talk to us first. The
+documentation requirements are in the <code class="docutils literal notranslate"><span class="pre">devtools</span></code> folder.</p>
+<p>Finally, if you find the need to generate new pages during the HTML
+compilation part, you may follow the <code class="docutils literal notranslate"><span class="pre">devtools/build_defaults_rst.py</span></code> as
+an example. See also the <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code> file <code class="docutils literal notranslate"><span class="pre">setup(app)</span></code> line.</p>
+<p><strong>Troubleshooting:</strong></p>
+<ol class="arabic simple">
+<li><p>If you add any new dependency (import statement) in the code, you
+need to add that library name to the <code class="docutils literal notranslate"><span class="pre">mock</span></code> list in the <code class="docutils literal notranslate"><span class="pre">docs/conf.py</span></code>
+file.</p></li>
+</ol>
 </section>
 </section>
 
@@ -520,7 +545,7 @@ described above for <em>code contributions</em>.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 03, 2022.
+        Last updated on Aug 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

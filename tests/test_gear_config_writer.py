@@ -280,3 +280,33 @@ def _assert_dict(d1, d2):
 def _assert_dict_with_nan(d1v, d2v):
     # nan cannot be compared with "=="
     assert d1v == d2v or (isnan(d1v) and isnan(d2v))
+
+
+case_3 = {
+    "headerone": {'val': 10},
+    "headerone.1": {'val': 20},
+    "headerone.2": {'val': 30, 'weights': {'other': 40}},
+    "headerone.3": {'val': 50, 'weights': {'other': 60}},
+    }
+
+case_3_text = '''[headerone]
+val = 10
+
+[headerone]
+val = 20
+
+[headerone]
+val = 30
+[headerone.weights]
+other = 40
+
+[headerone]
+val = 50
+[headerone.weights]
+other = 60'''
+
+
+def test_convert_config_3():
+    """Test repeated module config conversion."""
+    result = os.linesep.join(convert_config(case_3, module_names=('headerone')))
+    assert result == case_3_text

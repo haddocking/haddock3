@@ -728,7 +728,7 @@ def populate_topology_molecule_params(topoaa):
     # well. `prot_segid` is the only one differing per molecule.
     for i in range(1, len(topoaa["molecules"]) + 1):
         mol = f"mol{i}"
-        if not(mol in topoaa and "prot_segid" in topoaa[mol]):
+        if not (mol in topoaa and "prot_segid" in topoaa[mol]):
             topoaa_dft["mol1"]["prot_segid"] = uppers.pop()
 
         topoaa[mol] = recursive_dict_update(

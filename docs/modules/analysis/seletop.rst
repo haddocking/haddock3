@@ -1,5 +1,5 @@
-Select Top Modules module
-=========================
+Select Top Models module
+========================
 
 .. automodule:: haddock.modules.analysis.seletop
    :members:

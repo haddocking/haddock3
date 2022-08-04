@@ -17,7 +17,7 @@ class Molecule:
 
     no_parent : boolean
         Whether to add the parent path ``..`` to the
-        :py:attribute:`haddock.libs.libstructure.Molecule.with_parent`.
+        :py:attr:`haddock.libs.libstructure.Molecule.with_parent`.
         When set to true, the ``with_parent`` attribute returns the same
         as ``file_name``.
     """

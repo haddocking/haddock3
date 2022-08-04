@@ -401,3 +401,23 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     assert Path('capri_clt.txt').stat().st_size != 0
 
     Path('capri_clt.txt').unlink()
+
+
+def test_check_chains(protprot_caprimodule):
+    """Test correct checking of chains."""
+    obs_ch = [["A", "C"],
+              ["A", "B"],
+              ["S", "E", "B", "A"],
+              ["C", "D"]]
+    
+    # assuming exp chains are A and B
+    exp_ch = [["A", "C"],
+              ["A", "B"],
+              ["A", "B"],
+              ["C", "D"]]
+
+    for n in range(len(obs_ch)):
+        obs_r_chain, obs_l_chain = protprot_caprimodule.check_chains(obs_ch[n])
+        exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
+        assert obs_r_chain == exp_r_chain
+        assert obs_l_chain == exp_l_chain

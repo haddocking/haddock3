@@ -73,6 +73,8 @@ def main():
 
     # create RST pages for all modules' configuration files.
     for config in configs:
+        if "_template" in str(config):
+            continue
 
         module_name = config.parents[0].name
         category = config.parents[1].name

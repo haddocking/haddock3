@@ -12,6 +12,7 @@ HADDOCK3 functionalities
    :maxdepth: 1
 
    user_config
+   supported_molecules
    continuing_runs
    mpi
 

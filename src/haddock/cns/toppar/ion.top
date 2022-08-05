@@ -104,396 +104,396 @@ MASS  OWF    15.9994   ! tungstate anion oxygen
 
 {- ========================== uncharged states ============================ -}
 
-RESIdue F {fluorine}
+RESIdue F {fluorine} ! fluorine
   GROUp
     ATOM F TYPE=F CHARge=0.0 END
 END {F}
 
-RESIdue NA {sodium}
+RESIdue NA {sodium} ! sodium
   GROUp
     ATOM NA TYPE=NA CHARge=0.0 END
 END {NA}
 
-RESIdue MG {magnesium}
+RESIdue MG {magnesium} ! magnesium
   GROUp
     ATOM MG TYPE=MG CHARge=0.0 END
 END {MG}
 
-RESIdue AL {aluminum}
+RESIdue AL {aluminum} ! aluminum
   GROUp
     ATOM AL TYPE=AL CHARge=0.0 END
 END {AL}
 
-RESIdue CL {chlorine}
+RESIdue CL {chlorine} ! chlorine
   GROUp
     ATOM CL TYPE=CL CHARge=0.0 END
 END {CL}
 
-RESIdue K {potassium}
+RESIdue K {potassium} ! potassium
   GROUp
     ATOM K TYPE=K CHARge=0.0 END
 END {K}
 
-RESIdue AR {argon}
+RESIdue AR {argon} ! argon
   GROUp
     ATOM AR TYPE=AR CHARge=0.0 END
 END {AR}
 
-RESIdue CA {calcium}
+RESIdue CA {calcium} ! calcium
   GROUp
     ATOM CA TYPE=CA CHARge=0.0 END
 END {CA}
 
-RESIdue V {vanadium}
+RESIdue V {vanadium} ! vanadium
   GROUp
     ATOM V TYPE=V CHARge=0.0 END
 END {V}
 
-RESIdue CR {chromium}
+RESIdue CR {chromium} ! chromium
   GROUp
     ATOM CR TYPE=CR CHARge=0.0 END
 END {CR}
 
-RESIdue MN {manganese}
+RESIdue MN {manganese} ! manganese
   GROUp
     ATOM MN TYPE=MN CHARge=0.0 END
 END {MN}
 
-RESIdue FE {iron}
+RESIdue FE {iron} ! iron
   GROUp
     ATOM FE TYPE=FE CHARge=0.0 END
 END {FE}
 
-RESIdue NI {nickel}
+RESIdue NI {nickel} ! nickel
   GROUp
     ATOM NI TYPE=NI CHARge=0.0 END
 END {NI}
 
-RESIdue CO {cobalt}
+RESIdue CO {cobalt} ! cobalt
   GROUp
     ATOM CO TYPE=CO CHARge=0.0 END
 END {CO}
 
-RESIdue CU {copper}
+RESIdue CU {copper} ! copper
   GROUp
     ATOM CU TYPE=CU CHARge=0.0 END
 END {CU}
 
-RESIdue ZN {zinc}
+RESIdue ZN {zinc} ! zinc
   GROUp
     ATOM ZN TYPE=ZN CHARge=0.0 END
 END {ZN}
 
-RESIdue AS {arsenic}
+RESIdue AS {arsenic} ! arsenic
   GROUp
     ATOM AS TYPE=AS CHARge=0.0 END
 END {AS}
 
-RESIdue BR {bromine}
+RESIdue BR {bromine} ! bromine
   GROUp
     ATOM BR TYPE=BR CHARge=0.0 END
 END {BR}
 
-RESIdue KR {krypton}
+RESIdue KR {krypton} ! krypton
   GROUp
     ATOM KR TYPE=KR CHARge=0.0 END
 END {KR}
 
-RESIdue SR {strontium}
+RESIdue SR {strontium} ! strontium
   GROUp
     ATOM SR TYPE=SR CHARge=0.0 END
 END {SR}
 
-RESIdue MO {molybdenum}
+RESIdue MO {molybdenum} ! molybdenum
   GROUp
     ATOM MO TYPE=MO CHARge=0.0 END
 END {MO}
 
-RESIdue AG {silver}
+RESIdue AG {silver} ! silver
   GROUp
     ATOM AG TYPE=AG CHARge=0.0 END
 END {AG}
 
-RESIdue CD {cadmium}
+RESIdue CD {cadmium} ! cadmium
   GROUp
     ATOM CD TYPE=CD CHARge=0.0 END
 END {CD}
 
-RESIdue I {iodine}
+RESIdue I {iodine} ! iodine
   GROUp
     ATOM I TYPE=I CHARge=0.0 END
 END {I}
 
-RESIdue XE {xenon}
+RESIdue XE {xenon} ! xenon
   GROUp
     ATOM XE TYPE=XE CHARge=0.0 END
 END {XE}
 
-RESIdue CS {cesium}
+RESIdue CS {cesium} ! cesium
   GROUp
     ATOM CS TYPE=CS CHARge=0.0 END
 END {CS}
 
-RESIdue HO {holmium}
+RESIdue HO {holmium} ! holmium
   GROUp
     ATOM HO TYPE=HO CHARge=0.0 END
 END {HO}
 
-RESIdue YB {ytterbium}
+RESIdue YB {ytterbium} ytterbium
   GROUp
     ATOM YB TYPE=YB CHARge=0.0 END
 END {YB}
 
-RESIdue OS {osmium}
+RESIdue OS {osmium} ! osmium
   GROUp
     ATOM OS TYPE=OS CHARge=0.0 END
 END {OS}
 
-RESIdue IR {iridium}
+RESIdue IR {iridium} ! iridium
   GROUp
     ATOM IR TYPE=IR CHARge=0.0 END
 END {IR}
 
-RESIdue PT {platinum}
+RESIdue PT {platinum} ! platinum
   GROUp
     ATOM PT TYPE=PT CHARge=0.0 END
 END {PT}
 
-RESIdue AU {gold}
+RESIdue AU {gold} ! gold
   GROUp
     ATOM AU TYPE=AU CHARge=0.0 END
 END {AU}
 
-RESIdue HG {mercury}
+RESIdue HG {mercury} ! mercury
   GROUp
     ATOM HG TYPE=HG CHARge=0.0 END
 END {HG}
 
-RESIdue PB {lead}
+RESIdue PB {lead} ! lead
   GROUp
     ATOM PB TYPE=PB CHARge=0.0 END
 END {PB}
 
-!RESIdue U {uranium}
+!RESIdue U {uranium} ! uranium
 !  GROUp
 !    ATOM U TYPE=U CHARge=0.0 END
 !END {U}
 
 {- ============================ ionic states ============================== -}
 
-RESIdue LI1 {lithium 1+}
+RESIdue LI1 {lithium 1+} ! lithium 1+
   GROUp
     ATOM LI+1 TYPE=LI+1 CHARge=+1.0 END
 END {LI1}
 
-RESIdue F1 {fluorine 1-}
+RESIdue F1 {fluorine 1-} ! fluorine 1-
   GROUp
     ATOM F-1 TYPE=F-1 CHARge=-1.0 END
 END {F1}
 
-RESIdue NA1 {sodium 1+}
+RESIdue NA1 {sodium 1+} ! sodium 1+
   GROUp
     ATOM NA+1 TYPE=NA+1 CHARge=+1.0 END
 END {NA1}
 
-RESIdue MG2 {magnesium 2+}
+RESIdue MG2 {magnesium 2+} ! magnesium 2+
   GROUp
     ATOM MG+2 TYPE=MG+2 CHARge=+2.0 END
 END {MG2}
 
-RESIdue AL3 {aluminum 3+}
+RESIdue AL3 {aluminum 3+} ! aluminum 3+
   GROUp
     ATOM AL+3 TYPE=AL+3 CHARge=+3.0 END
 END {AL3}
 
-RESIdue CL1 {chloride 1-}
+RESIdue CL1 {chloride 1-} ! chloride 1-
   GROUp
     ATOM CL-1 TYPE=CL-1 CHARge=-1.0 END
 END {CL1}
 
-RESIdue K1 {potassium 1+}
+RESIdue K1 {potassium 1+} ! potassium 1+
   GROUp
     ATOM K+1 TYPE=K+1 CHARge=+1.0 END
 END {K1}
 
-RESIdue CA2 {calcium 2+}
+RESIdue CA2 {calcium 2+} ! calcium 2+
   GROUp
     ATOM CA+2 TYPE=CA+2 CHARge=+2.0 END
 END {CA2}
 
-RESIdue V2 {vanadium 2+}
+RESIdue V2 {vanadium 2+} ! vanadium 2+
   GROUp
     ATOM V+2 TYPE=V+2 CHARge=+2.0 END
 END {V2}
 
-RESIdue V3 {vanadium 3+}
+RESIdue V3 {vanadium 3+} ! vanadium 3+
   GROUp
     ATOM V+3 TYPE=V+3 CHARge=+3.0 END
 END {V3}
 
-RESIdue CR2 {chromium 2+}
+RESIdue CR2 {chromium 2+} ! chromium 2+
   GROUp
     ATOM CR+2 TYPE=CR+2 CHARge=+2.0 END
 END {CR2}
 
-RESIdue CR3 {chromium 3+}
+RESIdue CR3 {chromium 3+} ! chromium 3+
   GROUp
     ATOM CR+3 TYPE=CR+3 CHARge=+3.0 END
 END {CR3}
 
-RESIdue MN2 {manganese 2+}
+RESIdue MN2 {manganese 2+} ! manganese 2+
   GROUp
     ATOM MN+2 TYPE=MN+2 CHARge=+2.0 END
 END {MN2}
 
-RESIdue MN3 {manganese 3+}
+RESIdue MN3 {manganese 3+} ! manganese 3+
   GROUp
     ATOM MN+3 TYPE=MN+3 CHARge=+3.0 END
 END {MN3}
 
-RESIdue FE2 {iron 2+}
+RESIdue FE2 {iron 2+} ! iron 2+
   GROUp
     ATOM FE+2 TYPE=FE+2 CHARge=+2.0 END
 END {FE2}
 
-RESIdue FE3 {iron 3+}
+RESIdue FE3 {iron 3+} ! iron 3+
   GROUp
     ATOM FE+3 TYPE=FE+3 CHARge=+3.0 END
 END {FE3}
 
-RESIdue NI2 {nickel 2+}
+RESIdue NI2 {nickel 2+} ! nickel 2+
   GROUp
     ATOM NI+2 TYPE=NI+2 CHARge=+2.0 END
 END {NI2}
 
-RESIdue CO2 {cobalt 2+}
+RESIdue CO2 {cobalt 2+} ! cobalt 2+
   GROUp
     ATOM CO+2 TYPE=CO+2 CHARge=+2.0 END
 END {CO2}
 
-RESIdue CO3 {cobalt 3+}
+RESIdue CO3 {cobalt 3+} ! cobalt 3+
   GROUp
     ATOM CO+3 TYPE=CO+3 CHARge=+3.0 END
 END {CO3}
 
-RESIdue CU1 {copper 1+}
+RESIdue CU1 {copper 1+} copper 1+
   GROUp
     ATOM CU+1 TYPE=CU+1 CHARge=+1.0 END
 END {CU1}
 
-RESIdue CU2 {copper 2+}
+RESIdue CU2 {copper 2+} ! copper 2+
   GROUp
     ATOM CU+2 TYPE=CU+2 CHARge=+2.0 END
 END {CU2}
 
-RESIdue ZN2 {zinc 2+}
+RESIdue ZN2 {zinc 2+} ! zinc 2+
   GROUp
     ATOM ZN+2 TYPE=ZN+2 CHARge=+0.96 END ! changed AB for better ZN coordination by CYF
 END {ZN2}
 
-RESIdue BR1 {bromine 1-}
+RESIdue BR1 {bromine 1-} ! bromine 1-
   GROUp
     ATOM BR-1 TYPE=BR-1 CHARge=-1.0 END
 END {BR1}
 
-RESIdue SR2 {strontium 2+}
+RESIdue SR2 {strontium 2+} ! strontium 2+
   GROUp
     ATOM SR+2 TYPE=SR+2 CHARge=+2.0 END
 END {SR2}
 
-RESIdue MO3 {molybdenum 3+}
+RESIdue MO3 {molybdenum 3+} ! molybdenum 3+
   GROUp
     ATOM MO+3 TYPE=MO+3 CHARge=+3.0 END
 END {MO3}
 
-RESIdue AG1 {silver 1+}
+RESIdue AG1 {silver 1+} ! silver 1+
   GROUp
     ATOM AG+1 TYPE=AG+1 CHARge=+1.0 END
 END {AG1}
 
-RESIdue CD2 {cadmium 2+}
+RESIdue CD2 {cadmium 2+} ! cadmium 2+
   GROUp
     ATOM CD+2 TYPE=CD+2 CHARge=+2.0 END
 END {CD2}
 
-RESIdue I1 {iodine 1-}
+RESIdue I1 {iodine 1-} ! iodine 1-
   GROUp
     ATOM I-1 TYPE=I-1 CHARge=-1.0 END
 END {I1}
 
-RESIdue CS1 {cesium 1+}
+RESIdue CS1 {cesium 1+} ! cesium 1+
   GROUp
     ATOM CS+1 TYPE=CS+1 CHARge=+1.0 END
 END {CS1}
 
-RESIdue HO3 {holmium 3+}
+RESIdue HO3 {holmium 3+} ! holmium 3+
   GROUp
     ATOM HO+3 TYPE=HO+3 CHARge=+3.0 END
 END {HO3}
 
-RESIdue YB2 {ytterbium 2+}
+RESIdue YB2 {ytterbium 2+} ! ytterbium 2+
   GROUp
     ATOM YB+2 TYPE=YB+2 CHARge=+2.0 END
 END {YB2}
 
-RESIdue YB3 {ytterbium 3+}
+RESIdue YB3 {ytterbium 3+} ! ytterbium 3+
   GROUp
     ATOM YB+3 TYPE=YB+3 CHARge=+3.0 END
 END {YB3}
 
-RESIdue OS4 {osmium 4+}
+RESIdue OS4 {osmium 4+} ! osmium 4+
   GROUp
     ATOM OS+4 TYPE=OS+4 CHARge=+4.0 END
 END {OS4}
 
-RESIdue IR3 {iridium 3+}
+RESIdue IR3 {iridium 3+} ! iridium 3+
   GROUp
     ATOM IR+3 TYPE=IR+3 CHARge=+3.0 END
 END {IR3}
 
-RESIdue PT2 {platinum 2+}
+RESIdue PT2 {platinum 2+} ! platinum 2+
   GROUp
     ATOM PT+2 TYPE=PT+2 CHARge=+2.0 END
 END {PT2}
 
-RESIdue AU1 {gold 1+}
+RESIdue AU1 {gold 1+} ! gold 1+
   GROUp
     ATOM AU+1 TYPE=AU+1 CHARge=+1.0 END
 END {AU1}
 
-RESIdue AU3 {gold 3+}
+RESIdue AU3 {gold 3+} ! gold 3+
   GROUp
     ATOM AU+3 TYPE=AU+3 CHARge=+3.0 END
 END {AU3}
 
-RESIdue HG1 {mercury 1+}
+RESIdue HG1 {mercury 1+} ! mercury 1+
   GROUp
     ATOM HG+1 TYPE=HG+1 CHARge=+1.0 END
 END {HG1}
 
-RESIdue HG2 {mercury 2+}
+RESIdue HG2 {mercury 2+} ! mercury 2+
   GROUp
     ATOM HG+2 TYPE=HG+2 CHARge=+2.0 END
 END {HG2}
 
-RESIdue PB2 {lead 2+}
+RESIdue PB2 {lead 2+} ! lead 2+
   GROUp
     ATOM PB+2 TYPE=PB+2 CHARge=+2.0 END
 END {PB2}
 
-RESIdue U3 {uranium 3+}
+RESIdue U3 {uranium 3+} ! uranium 3+
   GROUp
     ATOM U+3 TYPE=U+3 CHARge=+3.0 END
 END {U3}
 
-RESIdue U4 {uranium 4+}
+RESIdue U4 {uranium 4+} ! uranium 4+
   GROUp
     ATOM U+4 TYPE=U+4 CHARge=+4.0 END
 END {U4}
 
 {- ========================= multi-atom species =========================== -}
 
-RESIdue SO4 {Sulphate}
+RESIdue SO4 {Sulphate} ! sulphate
   GROUP
     ATOM S  TYPE=SUF CHARGE=+2.0 END
     ATOM O1 TYPE=OUF CHARGE=-1.0 END
@@ -508,7 +508,7 @@ RESIdue SO4 {Sulphate}
 
 END {SO4}
 
-RESIdue PO4 {Phosphate}
+RESIdue PO4 {Phosphate} ! phosphate
   GROUP
     ATOM P  TYPE=PHF CHARGE=+2.0 END
     ATOM O1 TYPE=OHF CHARGE=-1.0 END
@@ -523,7 +523,7 @@ RESIdue PO4 {Phosphate}
 
 END {PO4}
 
-RESIdue WO4 {Tungstate}
+RESIdue WO4 {Tungstate} ! tungstate
   GROUP
     ATOM W  TYPE=W   CHARGE=+2.0 END
     ATOM O1 TYPE=OWF CHARGE=-1.0 END

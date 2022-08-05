@@ -43,8 +43,8 @@ MASS CA_     12.010
 MASS N2_     14.010
 
 
-! N,N-dimethylformamide
-RESIdue DFO
+
+RESIdue DFO ! N,N-dimethylformamide
 
 GROUP
 ATOM C1    TYPE= c3__   CHARGE=   0.0793 END
@@ -113,8 +113,8 @@ IMPRoper C     C1    N     C2
 
 END {RESIdue DFO}
 
-! acetaldehyde
-RESIdue ADY
+
+RESIdue ADY ! acetaldehyde
 
 GROUP
 ATOM C     TYPE= c__    CHARGE=   0.5619 END
@@ -153,8 +153,8 @@ IMPRoper O     C     H     CH3
 
 END {RESIdue ADY}
 
-! acetamide
-RESIdue ACD
+
+RESIdue ACD ! acetamide
 
 GROUP
 
@@ -206,8 +206,8 @@ IMPRoper O     C1    N     C2
 
 END {RESIdue ACD}
 
-! acetone
-RESIdue ACT
+
+RESIdue ACT ! acetone
 
 GROUP
 
@@ -265,8 +265,8 @@ IMPRoper O     C     C2    C1
 
 END {RESIdue ACT}
 
-! acetonitrile
-RESIdue ACN
+
+RESIdue ACN ! acetonitrile
 
 GROUP
 
@@ -297,8 +297,8 @@ DIHEdral N     C1    C2    H23
 
 END {RESIdue ACN}
 
-! benzaldehyde
-RESIdue BDY
+
+RESIdue BDY ! benzaldehyde
 
 GROUP
 
@@ -393,8 +393,8 @@ IMPRoper C1    C3    C2    C7
 
 END {RESIdue BDY}
 
-! benzene
-RESIdue BEN
+
+RESIdue BEN ! benzene
 
 GROUP
 
@@ -477,8 +477,8 @@ IMPRoper C1    C5    C6    H6
 
 END {RESIdue BEN}
 
-! cyclohexane
-RESIdue CHE
+
+RESIdue CHE ! cyclohexane
 
 GROUP
 
@@ -614,8 +614,8 @@ DIHEdral C3    C4    C5    C6
 
 END {RESIdue CHE}
 
-! dimethylether
-RESIdue DME
+
+RESIdue DME ! dimethylether
 
 GROUP
 
@@ -661,8 +661,8 @@ DIHEdral H3    C1    O     C
 
 END {RESIdue DME}
 
-! ethane
-RESIdue ETA
+
+RESIdue ETA ! ethane
 
 GROUP
 
@@ -708,8 +708,8 @@ DIHEdral H3    C1    C2    H6
 
 END {RESIdue ETH}
 
-! ethanol
-RESIdue EOL
+
+RESIdue EOL ! ethanol
 
 GROUP
 
@@ -761,8 +761,8 @@ DIHEdral H12   C1    O     HO
 
 END {RESIdue EOL}
 
-! isobutanol
-RESIdue BUT
+
+RESIdue BUT ! isobutanol
 
 GROUP
 
@@ -856,8 +856,8 @@ DIHEdral OAC   CAE   CAD   CAA
 
 END {RESIdue BUT}
 
-! isopropanol
-RESIdue THS
+
+RESIdue THS ! isopropanol
 
 GROUP
 
@@ -930,8 +930,8 @@ DIHEdral HAD   CAB   CAD   OAC
 
 END {RESIdue THS}
 
-! Methylamine
-RESIdue AMN
+
+RESIdue AMN ! Methylamine
 
 GROUP
 
@@ -969,8 +969,8 @@ DIHEdral HN2   N     C     H3
 
 END {RESIdue AMN}
 
-! Phenol
-RESIdue PHN
+
+RESIdue PHN ! Phenol
 
 GROUP
 
@@ -1058,8 +1058,8 @@ IMPRoper O1    C1    C6    C2
 
 END {RESIdue PHN}
 
-! Urea
-RESIdue URE
+
+RESIdue URE ! Urea
 
 GROUP
 
@@ -1106,8 +1106,7 @@ IMPRoper O     C     N2    N1
 END {RESIdue URE}
 
 ! From Cagliari
-! Imipenem
-RESIdue IMI
+RESIdue IMI ! Imipenem
 
 GROUP
 
@@ -1374,8 +1373,8 @@ IMPRoper C2    N1    C4    O2
 END {RESIdue IMI}
 
 
-! Meropenem
-RESIdue MER
+
+RESIdue MER ! Meropenem
 
 GROUP
 
@@ -1757,8 +1756,8 @@ IMPRoper C2    N1    C4    O1
 
 END {RESIdue MER}
 
-! Minocycline
-RESIdue MIY
+
+RESIdue MIY ! Minocycline
 
 GROUP
 

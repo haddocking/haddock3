@@ -1,7 +1,7 @@
 MASS  SHA   100.000   ! dummy atom for shapes
 
 
-RESIdue SHA {dummy atom for shapes}
+RESIdue SHA {dummy atom for shapes} ! dummy atom for shapes
   GROUp
     ATOM SHA TYPE=SHA CHARge=0.0 END
 END {SHA}

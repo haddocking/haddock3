@@ -184,7 +184,7 @@ MASS  HD47   1.0080   ! equivalent to     H
 
 !----------------------------------------------------------------------
 
-residue CYM
+residue CYM ! Cysteine with MTSL group
 GROUP
   ATOM CAC  TYPE= CHAC CHARge= 0.000 END
   ATOM CAS  TYPE= CHAS CHARge= 0.000 END
@@ -285,7 +285,7 @@ END
 
 !----------------------------------------------------------------------
 
-residue ALA
+residue ALA ! alanine
   group
     ATOM N   TYPE=NH1     CHARge=-0.570 end
     ATOM HN  TYPE=H       CHARge= 0.370 end
@@ -315,7 +315,7 @@ end
  
 !----------------------------------------------------------------------
 
-residue ARG
+residue ARG ! arginine
   group
     ATOM N    TYPE=NH1    CHARge=-0.570 end
     ATOM HN   TYPE=H      CHARge= 0.370 end
@@ -398,7 +398,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue ASN
+residue ASN ! asparagine
   group
     ATOM N    TYPE=NH1    CHARge=-0.570 end
     ATOM HN   TYPE=H      CHARge= 0.370 end
@@ -442,7 +442,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue ASP
+residue ASP ! aspartate
   group
     ATOM N   TYPE=NH1   CHARge=-0.570 end
     ATOM HN  TYPE=H     CHARge= 0.370 end
@@ -482,7 +482,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue ASH
+residue ASH ! protonated ASP
   group
     ATOM N   TYPE=NH1   CHARge=-0.570 end
     ATOM HN  TYPE=H     CHARge= 0.370 end
@@ -524,7 +524,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue CSP
+residue CSP ! phosphorylated CYS
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -568,7 +568,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue CFE
+residue CFE ! CYS with an iron sulfur cluster
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -638,7 +638,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue CYF
+residue CYF ! CYS without the sulfur H (for coordinating metals)
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -670,7 +670,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue CYS
+residue CYS ! cysteine
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -704,7 +704,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue GLN
+residue GLN ! glutamine
   group
     ATOM N    TYPE=NH1     CHARge=-0.570 end
     ATOM HN   TYPE=H       CHARge= 0.370 end
@@ -754,7 +754,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue GLU
+residue GLU ! glutamate
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -799,7 +799,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue GLH
+residue GLH ! protonated GLU
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -846,7 +846,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue GLY
+residue GLY ! glycine
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -869,7 +869,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue NEP
+residue NEP ! NE phosphorylated HIS
   group
     ATOM N   TYPE=NH1     CHARge=-0.570 end
     ATOM HN  TYPE=H       CHARge= 0.370 end
@@ -995,7 +995,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue ILE
+residue ILE ! isoleucine
   group
     ATOM N    TYPE=NH1     CHARge=-0.570 end
     ATOM HN   TYPE=H       CHARge= 0.370 end
@@ -1044,7 +1044,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue LEU
+residue LEU ! leucine
   group
     ATOM N    TYPE=NH1    CHARge=-0.570 end
     ATOM HN   TYPE=H      CHARge= 0.370 end
@@ -1092,7 +1092,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue LYS
+residue LYS ! lysine
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -1208,7 +1208,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue ALY
+residue ALY ! Acetylated LYS
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -1273,7 +1273,8 @@ end
 
 !----------------------------------------------------------------------
 
-residue MLZ ! monomethyl lysine, added 30-04-2009 A. Bonvin
+residue MLZ ! monomethyl lysine
+! added 30-04-2009 A. Bonvin
   group
     ATOM N    TYPE=NH1   CHARge=-0.570 end
     ATOM HN   TYPE=H     CHARge= 0.370 end
@@ -1318,7 +1319,8 @@ end
 
 !----------------------------------------------------------------------
 
-residue MLY ! Dimethyl lysine, added 30-04-2009 A. Bonvin
+residue MLY ! Dimethyl lysine
+! added 30-04-2009 A. Bonvin
   group
     ATOM N    TYPE=NH1   CHARge=-0.570 end
     ATOM HN   TYPE=H     CHARge= 0.370 end
@@ -1436,7 +1438,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue MET
+residue MET ! methionine
   group
     ATOM N   TYPE=NH1     CHARge=-0.570 end
     ATOM HN  TYPE=H       CHARge= 0.370 end
@@ -1481,7 +1483,8 @@ end
 
 !----------------------------------------------------------------------
 
-residue MSE ! SeMET ! added 8-19-2011, ATB
+residue MSE ! Selenomethionine
+! added 8-19-2011, ATB
   group
     ATOM N   TYPE=NH1     CHARge=-0.570 end
     ATOM HN  TYPE=H       CHARge= 0.370 end
@@ -1526,7 +1529,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue PHE
+residue PHE ! phenylalanine
   group
     ATOM N   TYPE=NH1     CHARge=-0.570 end
     ATOM HN  TYPE=H       CHARge= 0.370 end
@@ -1589,7 +1592,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue PRO
+residue PRO ! proline
   group
     ATOM N   TYPE=N     CHARge=-0.570 end
     ATOM CA  TYPE=CH1E  CHARge= 0.285 end
@@ -1661,7 +1664,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue SER
+residue SER ! serine
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -1695,7 +1698,8 @@ end
 
 !----------------------------------------------------------------------
 
-residue SEP !phosphorylated Serine, AB-2008-11
+residue SEP ! phosphorylated Serine
+! AB-2008-11
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -1744,7 +1748,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue PNS !phosphopanthetine Serine, ANGGAL-2016-02
+residue PNS ! phosphopanthetine Serine, ANGGAL-2016-02
   group
     ATOM N   TYPE=NH1    CHARge=-0.570 end
     ATOM HN  TYPE=H      CHARge= 0.370 end
@@ -1966,7 +1970,7 @@ residue PNS !phosphopanthetine Serine, ANGGAL-2016-02
 end
 
 
-residue THR
+residue THR ! threonine
   group
     ATOM N    TYPE=NH1 CHARge=-0.570 end
     ATOM HN   TYPE=H   CHARge= 0.370 end
@@ -2006,7 +2010,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue TOP
+residue TOP ! phosphorylated THR
   group
     ATOM N    TYPE=NH1 CHARge=-0.570 end
     ATOM HN   TYPE=H   CHARge= 0.370 end
@@ -2059,7 +2063,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue TRP
+residue TRP ! tryptophan
   group
     ATOM N   TYPE=NH1 CHARge=-0.570 end
     ATOM HN  TYPE=H   CHARge= 0.370 end
@@ -2142,7 +2146,7 @@ residue TRP
   ACCE O    C
 end
 
-residue TYR
+residue TYR ! tyrosine
   group
     ATOM N   TYPE=NH1 CHARge=-0.570 end
     ATOM HN  TYPE=H   CHARge= 0.370 end
@@ -2212,7 +2216,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue TYP
+residue TYP ! phosphorylated TYR
   group
     ATOM N   TYPE=NH1 CHARge=-0.570 end
     ATOM HN  TYPE=H   CHARge= 0.370 end
@@ -2299,7 +2303,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue TYS
+residue TYS ! sulfonated TYR
   group
     ATOM N   TYPE=NH1 CHARge=-0.570 end
     ATOM HN  TYPE=H   CHARge= 0.370 end
@@ -2389,7 +2393,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue PTR
+residue PTR ! phosphorylated TYR
   group
     ATOM N   TYPE=NH1 CHARge=-0.570 end
     ATOM HN  TYPE=H   CHARge= 0.370 end
@@ -2476,7 +2480,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue VAL
+residue VAL ! valine
   group
     ATOM N    TYPE=NH1 CHARge=-0.570 end
     ATOM HN   TYPE=H   CHARge= 0.370 end
@@ -2519,7 +2523,8 @@ end
 
 !----------------------------------------------------------------------
 
-residue CHX  !! ADDED BY MN
+residue CHX
+! ADDED BY MN
   group
     ATOM N   TYPE=NH1 CHARge=-0.360 end
     ATOM HN  TYPE=H   CHARge= 0.260 end
@@ -2579,7 +2584,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue ACE
+residue ACE ! N-terminal acetyl group
   group
     ATOM CA  TYPE=CH3E CHARge= 0.000 end
     ATOM HA1 TYPE=HA CHARge= 0.000 end
@@ -2598,7 +2603,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue CTN     ! C-terminal for all, CONH2 at end "* - CTN"
+residue CTN ! C-terminal for all, CONH2 at end "* - CTN"
   group
     ATOM N   TYPE=NH2    CHARge=-0.520 end
     ATOM H1  TYPE=H      CHARge= 0.260 end
@@ -2614,7 +2619,8 @@ end
 
 !----------------------------------------------------------------------
 
-residue NME     ! C-terminal N-Methyl ! Added by M. Reau
+residue NME ! C-terminal N-Methyl
+! Added by M. Reau
   group
     ATOM HA3  TYPE=HA     CHARge= 0.000 end
     ATOM CA   TYPE=CH3E   CHARge= 0.200 end
@@ -2638,7 +2644,7 @@ end
 
 !----------------------------------------------------------------------
 
-residue DUM
+residue DUM ! dummy residue
   group
     ATOM DUM TYPE=DD CHARge= 0.000 end
     ATOM MAP TYPE=DD CHARge= 0.000 end
@@ -2683,7 +2689,8 @@ end
 
 !----------------------------------------------------------------------
 
-RESIdue QSR ! Added by Rodrigo Honorato / Alexandre Bonvin 06/01/2021
+RESIdue QSR
+! Added by Rodrigo Honorato / Alexandre Bonvin 06/01/2021
 
   group
     ATOM N     TYPE=NH1     CHARge=-0.570 end
@@ -2850,7 +2857,7 @@ RESIdue QSR ! Added by Rodrigo Honorato / Alexandre Bonvin 06/01/2021
 
 !----------------------------------------------------------------------
 
-presidue NTER                      ! patch as "NTER - *" to any except PRO
+presidue NTER ! patch as "NTER - *" to any except PRO
   group
     modify    ATOM +N   TYPE=NH3 CHARge=-0.300 end
     delete    ATOM +HN                        end
@@ -2880,7 +2887,7 @@ end
 
 !----------------------------------------------------------------------
 
-presidue PROP                        ! N-terminal for PRO: "PROP - PRO"
+presidue PROP ! N-terminal for PRO: "PROP - PRO"
 ! the CHARges are guessed from making the residue have CHARge +1
 ! and keeping the same CHARge on N as in NTER (Michael Nilges)
   modify    ATOM +CD           CHARge= 0.320 end

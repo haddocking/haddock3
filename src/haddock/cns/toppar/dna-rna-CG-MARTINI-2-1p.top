@@ -92,7 +92,7 @@ MASS RH8 45.00
 !            DNA               !
 !------------------------------!
 
-RESIdue DA
+RESIdue DA ! DNA Adenine
   GROUp
     ATOM BB1  type=NB1     charge=0.000 end
     ATOM BB2  type=NB2     charge=0.000 end
@@ -127,7 +127,7 @@ END
 
 !----------------------------------------------------------------!
 
-RESIdue DC
+RESIdue DC ! DNA Cytosine
   GROUp
     ATOM BB1  type=NB1    charge=0.000 end
     ATOM BB2  type=NB2    charge=0.000 end
@@ -158,7 +158,7 @@ END
 
 !----------------------------------------------------------------!
 
-RESIdue DG
+RESIdue DG ! DNA Guanine
   GROUp
     ATOM BB1  type=NB1    charge=0.000 end
     ATOM BB2  type=NB2    charge=0.000 end
@@ -194,7 +194,7 @@ END
 
 !----------------------------------------------------------------!
 
-RESIdue DT
+RESIdue DT ! DNA Thymine
   GROUp
     ATOM BB1  type=NB1    charge=0.000 end
     ATOM BB2  type=NB2    charge=0.000 end
@@ -228,7 +228,7 @@ END
 !            RNA               !
 !------------------------------!
 
-RESIdue A
+RESIdue A ! RNA Adenine
   GROUp
     ATOM BB1  type=RNB1   charge=0.000 end
     ATOM BB2  type=RNB2   charge=0.000 end
@@ -264,7 +264,7 @@ END
 
 !----------------------------------------------------------------!
 
-RESIdue C
+RESIdue C ! RNA Cytosine
   GROUp
     ATOM BB1  type=RNB1   charge=0.000 end
     ATOM BB2  type=RNB2   charge=0.000 end
@@ -294,7 +294,7 @@ END
 
 !----------------------------------------------------------------!
 
-RESIdue G
+RESIdue G ! RNA Guanine
   GROUp
     ATOM BB1  type=RNB1   charge=0.000 end
     ATOM BB2  type=RNB2   charge=0.000 end
@@ -331,7 +331,7 @@ END
 
 !----------------------------------------------------------------!
 
-RESIdue U
+RESIdue U ! RNA Uracil
 
   GROUp
     ATOM BB1  type=RNB1   charge=0.00 end

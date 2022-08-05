@@ -32,7 +32,7 @@ AUTOGENERATE ANGLES=TRUE END
  
 !------------------------------------------------------------------
 
-RESIdue WAT      { TIPS3P WATER MODEL }
+RESIdue WAT      { TIPS3P WATER MODEL } ! TIPS3P water model
  GROUp
   ATOM OH2  TYPE=OT   CHARge= -0.834  END
   ATOM H1   TYPE=HT   CHARge=  0.417  END
@@ -45,7 +45,7 @@ END {* WAT *}
 
 !------------------------------------------------------------------
 
-RESIdue HOH      { alias of WAT, but with O instead of OH2 }
+RESIdue HOH      { alias of WAT, but with O instead of OH2 } ! alias of WAT, but with O instead of OH2
  GROUp
   ATOM O    TYPE=OT   CHARge= -0.834  END
   ATOM H1   TYPE=HT   CHARge=  0.417  END
@@ -58,7 +58,7 @@ END {* WAT *}
 
 !------------------------------------------------------------------
 
-RESIdue TIP3      { alias of WAT }
+RESIdue TIP3      { alias of WAT } ! alias of WAT
  GROUp
   ATOM OH2  TYPE=OT   CHARge= -0.834  END
   ATOM H1   TYPE=HT   CHARge=  0.417  END
@@ -71,7 +71,7 @@ END {* WAT *}
 
 !------------------------------------------------------------------
 
-RESIdue TIP      { alias of WAT }
+RESIdue TIP      { alias of WAT } ! alias of WAT
  GROUp
   ATOM OH2  TYPE=OT   CHARge= -0.834  END
   ATOM H1   TYPE=HT   CHARge=  0.417  END
@@ -84,7 +84,7 @@ END {* WAT *}
 
 !------------------------------------------------------------------
 
-RESIdue DOD      { deuterated water }
+RESIdue DOD      { deuterated water } ! deuterated water
  GROUp
   ATOM O    TYPE=OT   CHARge= -0.834  END
   ATOM D1   TYPE=HT   CHARge=  0.417  END
@@ -97,7 +97,7 @@ END {* WAT *}
 
 !------------------------------------------------------------------
 
-RESIdue O2  {* oxygen *}
+RESIdue O2  {* oxygen *} ! oxygen
  GROUp
   ATOM O1  TYPE=OM   CHARGE= 0.021  END
   ATOM O2  TYPE=OM   CHARGE=-0.021  END
@@ -106,7 +106,7 @@ END {* O2 *}
 
 !-------------------------------------------------------------------
 
-RESIdue COM  {* carbon monoxide *}
+RESIdue COM  {* carbon monoxide *} ! carbon monoxide
  GROUp
   ATOM C  TYPE=CM  CHARGE=0.021   END
   ATOM O  TYPE=OM  CHARGE=-0.021  END
@@ -115,7 +115,7 @@ END {* CO *}
 
 !-------------------------------------------------------------------
 
-RESIdue ETH  {* ethylene *}
+RESIdue ETH  {* ethylene *} ! ethylene
  GROUp
   ATOM C2   TYPE=CH3E    CHARge= 0.00  END
  GROUp
@@ -137,7 +137,7 @@ END {* ETH *}
 
 !----------------------------------------------------------------------
 
-RESIdue COH
+RESIdue COH ! methanol
  GROUp
   ATOM C  TYPE=CH3E   CHARge= 0.25  END
   ATOM O  TYPE=OH1    CHARge=-0.65  END
@@ -149,7 +149,8 @@ END  {* COH *}
 
 !----------------------------------------------------------------------
 
-RESIdue DMS  {* DMSO *} ! Added Jan. 2002 Alexandre Bonvin
+RESIdue DMS  {* DMSO *} ! DMSO
+! Added Jan. 2002 Alexandre Bonvin
  GROUp
   ATOM SD   TYPE=SDMS    CHARge= 0.139 END
   ATOM CD1  TYPE=CDMS    CHARge= 0.16  END 

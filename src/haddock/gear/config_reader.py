@@ -647,10 +647,10 @@ def convert_variables_to_paths(cfg):
 
 def convert_to_path(value):
     if value:
-        value2 = Path(value)
+        return Path(value)
     else:
-        value2 = EmptyPath()
-    return value2
+        return EmptyPath()
+
 
 def match_path_criteria(param):
     return param.endswith('_fname') or param in _keys_that_accept_files

@@ -488,7 +488,7 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
         Whether to preprocess input molecules. Defaults to ``True``.
         See :py:mod:`haddock.gear.preprocessing`.
     """
-    topoaa_dir = zero_fill.fill('topoaa.1', 0)
+    topoaa_dir = zero_fill.fill('topoaa', 0)
 
     # define paths
     data_topoaa_dir = Path(data_dir, topoaa_dir)
@@ -552,7 +552,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
                 if value:
-                    name = value.name
+                    name = Path(value).name
                     # path is created here to avoid creating empty folders
                     # for those modules without '_fname' parameters
                     pf = Path(data_dir, end_path)

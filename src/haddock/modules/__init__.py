@@ -10,8 +10,7 @@ from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
 from haddock.gear.clean_steps import clean_output
-from haddock.gear.config_reader import read_config
-from haddock.gear.config_writer import save_config
+from haddock.gear.config_reader import read_config, write_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
@@ -198,7 +197,7 @@ class BaseHaddockModule(ABC):
             for key in list(ignore):
                 params.pop(key)
 
-        save_config({self.name: params}, path)
+        write_config({self.name: params}, path)
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""

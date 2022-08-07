@@ -701,7 +701,7 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
     allowed_params.update(read_multiple_idx_groups_user_config(user_config, type_2))  # noqa: E501
 
     with suppress(KeyError):
-        type_3 = type_simplest_ep[module_name]
+        type_3 = type_simplest_ep[get_module_name(module_name)]
         allowed_params.update(read_simplest_expandable(type_3, user_config))
 
     _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)

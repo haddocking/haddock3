@@ -50,10 +50,14 @@ The most relevant features of HADDOCK3 user configuration files are:
 * :py:func:`haddock.gear.config_reader.get_module_name`
 """
 import ast
+import collections.abc
+import os
 import re
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path, PosixPath, WindowsPath
+
+import toml
 
 from haddock import EmptyPath
 from haddock.core.defaults import RUNDIR
@@ -84,7 +88,7 @@ _main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
 # Captures sub-headers
 # https://regex101.com/r/6OpJJ8/1
 # thanks https://stackoverflow.com/questions/39158902
-_sub_header_re = re.compile(r'^ *\[(\w+(?:\.\w+)+)\]', re.ASCII)
+_sub_header_re = re.compile(r'^ *\[(\w+)((?:\.\w+)+)\]', re.ASCII)
 
 # capture string parameters (paths are not strings, see later)
 # https://regex101.com/r/0LYCAG/1
@@ -288,7 +292,7 @@ class MultilineListDefinitionError(Exception):
 
 
 # main public API
-def read_config(fpath):
+def __read_config(fpath):
     """
     Read HADDOCK3 configure file to a dictionary.
 
@@ -570,3 +574,83 @@ regex_single_line_methods = (
 regex_single_line_special_methods = [
     datetime.fromisoformat,
     ]
+
+
+#####
+
+# Matches ['<name>.<digit>']
+_main_quoted_header_re = re.compile(r'^ *\[\'(\w+)\.\d+\'\]', re.ASCII)
+
+_sub_quoted_header_re = re.compile(
+    r'^ *\[\'(\w+)\.\d+\'((?:\.\w+)+)\]',
+    re.ASCII,
+    )
+
+def read_config(cfg_path):
+    new_lines = []
+    cfg_string = Path(cfg_path).read_text().split(os.linesep)
+
+    counter = {}
+
+    for line in cfg_string:
+
+        if group := _main_header_re.match(line):
+            name = group[1]
+            counter.setdefault(name, 0)
+            counter[name] += 1
+            count = counter[name]
+            new_line = f"['{name}.{count}']"
+
+        elif group := _main_quoted_header_re.match(line):
+            name = group[1]
+            counter.setdefault(name, 0)
+            counter[name] += 1
+            count = counter[name]
+            new_line = f"['{name}.{count}']"
+
+        elif group := _sub_header_re.match(line):
+            name = group[1]
+            count = counter[name]  # name should be already defined here
+            new_line = f"['{name}.{count}'{group[2]}]"
+
+        elif group := _sub_quoted_header_re.match(line):
+            name = group[1]
+            count = counter[name]  # name should be already defined here
+            new_line = f"['{name}.{count}'{group[2]}]"
+
+        else:
+            new_line = line
+
+        new_lines.append(new_line)
+
+    cfg = os.linesep.join(new_lines)
+    cfg = toml.loads(cfg)
+
+    cfg = convert_variables_to_paths(cfg)
+    print(cfg)
+    return cfg
+
+
+def convert_variables_to_paths(cfg):
+    for param, value in cfg.items():
+        if param == "molecules":
+            cfg[param] = [convert_to_path(v) for v in value]
+
+        elif match_path_criteria(param):
+            cfg[param] = convert_to_path(value)
+
+        elif isinstance(value, collections.abc.Mapping):
+            cfg[param] = convert_variables_to_paths(value)
+
+    return cfg
+
+
+def convert_to_path(value):
+    if value:
+        value2 = Path(value)
+    else:
+        value2 = EmptyPath()
+    return value2
+
+def match_path_criteria(param):
+    return param.endswith('_fname') or param in _keys_that_accept_files

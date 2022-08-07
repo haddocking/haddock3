@@ -5,6 +5,8 @@ from contextlib import contextmanager
 from functools import partial
 from pathlib import Path
 
+import toml
+
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
@@ -191,6 +193,7 @@ class BaseHaddockModule(ABC):
         #
         # [topoaa]
         # ...
+        toml.dumps({self.name: self.params}, path)
         save_config_ignored({self.name: self.params}, path)
 
     def add_parent_to_paths(self):

@@ -251,18 +251,18 @@ def setup_run(
     else:
         copy_molecules_to_topology(
             general_params['molecules'],
-            modules_params['topoaa'],
+            modules_params['topoaa.1'],
             )
 
-        if len(modules_params["topoaa"]["molecules"]) > max_molecules_allowed:
+        if len(modules_params["topoaa.1"]["molecules"]) > max_molecules_allowed:
             raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
         zero_fill.read(modules_params)
 
-        populate_topology_molecule_params(modules_params["topoaa"])
+        populate_topology_molecule_params(modules_params["topoaa.1"])
         populate_mol_parameters(modules_params)
 
-        max_mols = len(modules_params["topoaa"]["molecules"])
+        max_mols = len(modules_params["topoaa.1"]["molecules"])
 
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
@@ -283,7 +283,7 @@ def setup_run(
     if scratch_rest0:
         copy_molecules_to_data_dir(
             data_dir,
-            modules_params["topoaa"],
+            modules_params["topoaa.1"],
             preprocess=general_params["preprocess"],
             )
 
@@ -488,7 +488,7 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
         Whether to preprocess input molecules. Defaults to ``True``.
         See :py:mod:`haddock.gear.preprocessing`.
     """
-    topoaa_dir = zero_fill.fill('topoaa', 0)
+    topoaa_dir = zero_fill.fill('topoaa.1', 0)
 
     # define paths
     data_topoaa_dir = Path(data_dir, topoaa_dir)
@@ -662,7 +662,7 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
     # for the `mol` parameter. Instead of defining a general recursive
     # function, I decided to add a simple if/else exception.
     # no other module should have subdictionaries has parameters
-    if module_name == "topoaa":
+    if module_name == "topoaa.1":
         ap = set()  # allowed_parameters
         ap.update(_get_expandable(user_config, defaults, module_name, max_mols))
         for i in range(1, max_mols + 1):
@@ -712,7 +712,7 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
 
 def populate_topology_molecule_params(topoaa):
     """Populate topoaa `molX` subdictionaries."""
-    topoaa_dft = _read_defaults("topoaa")
+    topoaa_dft = _read_defaults("topoaa.1")
 
     # list of possible prot_segids
     uppers = list(string.ascii_uppercase)[::-1]
@@ -764,7 +764,7 @@ def populate_mol_parameters(modules_params):
         Alter the dictionary in place.
     """
     # the starting number of the `mol_` parameters is 1 by CNS definition.
-    num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
+    num_mols = range(1, len(modules_params["topoaa.1"]["molecules"]) + 1)
     for module_name, _ in modules_params.items():
 
         # read the modules default parameters

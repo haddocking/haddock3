@@ -17,8 +17,25 @@ import os
 from copy import deepcopy
 from pathlib import Path
 
+import toml
+
 from haddock import EmptyPath
 from haddock.gear.config_reader import get_module_name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def convert_config(
@@ -237,6 +254,7 @@ def save_config(params, path, module_name=None, **kwargs):
         mn = kwargs.setdefault("module_names", [])
         kwargs["module_names"] = list(mn) + [module_name]
 
-    ostr = os.linesep.join(convert_config(params, **kwargs))
-    with open(path, "w") as fout:
-        fout.write(ostr)
+    toml.dump(params, path)
+    #ostr = os.linesep.join(convert_config(params, **kwargs))
+    #with open(path, "w") as fout:
+    #    fout.write(ostr)

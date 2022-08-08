@@ -7,7 +7,7 @@ from time import time
 from haddock import log
 from haddock.core.exceptions import HaddockError, HaddockTermination, StepError
 from haddock.gear.clean_steps import clean_output
-from haddock.gear.config_reader import get_module_name
+from haddock.gear.config import get_module_name
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libtimer import convert_seconds_to_min_sec, log_time
 from haddock.libs.libutil import recursive_dict_update

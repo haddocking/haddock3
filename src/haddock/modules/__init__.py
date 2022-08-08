@@ -9,7 +9,7 @@ from pathlib import Path
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
-from haddock.gear import config_reader
+from haddock.gear import config
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
@@ -55,7 +55,7 @@ non_mandatory_general_parameters_defaults = \
 
 config_readers = {
     ".yaml": read_from_yaml_config,
-    ".cfg": config_reader.load,
+    ".cfg": config.load,
     }
 
 _step_folder_regex = tuple(
@@ -197,7 +197,7 @@ class BaseHaddockModule(ABC):
             for key in list(ignore):
                 params.pop(key)
 
-        config_reader.save({self.name: params}, path)
+        config.save({self.name: params}, path)
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""

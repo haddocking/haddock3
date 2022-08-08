@@ -46,8 +46,8 @@ The most relevant features of HADDOCK3 user configuration files are:
 
 **To efficiently use this module, see functions:**
 
-* :py:func:`haddock.gear.config_reader.read_config`
-* :py:func:`haddock.gear.config_reader.get_module_name`
+* :py:func:`haddock.gear.config.read_config`
+* :py:func:`haddock.gear.config.get_module_name`
 """
 import collections.abc
 import os

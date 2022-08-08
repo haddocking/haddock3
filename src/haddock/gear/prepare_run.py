@@ -19,8 +19,8 @@ from haddock.gear.clean_steps import (
     unpack_compressed_and_archived_files,
     update_unpacked_names,
     )
-from haddock.gear.config_reader import get_module_name
-from haddock.gear.config_reader import load as read_config
+from haddock.gear.config import get_module_name
+from haddock.gear.config import load as read_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
     get_multiple_index_groups,

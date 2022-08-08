@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from haddock.gear import config_reader
+from haddock.gear import config
 
 
 @pytest.mark.parametrize(
@@ -16,7 +16,7 @@ from haddock.gear import config_reader
     )
 def test_main_header_re(line, expected):
     """Test header regex."""
-    result = config_reader._main_header_re.match(line)
+    result = config._main_header_re.match(line)
     assert result[1] == expected
 
 
@@ -30,7 +30,7 @@ def test_main_header_re(line, expected):
     )
 def test_sub_header_re(line, expected, expected2):
     """Test header regex."""
-    group = config_reader._sub_header_re.match(line)
+    group = config._sub_header_re.match(line)
     assert group[1] == expected
     assert group[2] == expected2
 
@@ -44,7 +44,7 @@ def test_sub_header_re(line, expected, expected2):
     )
 def test_main_quoted_header_re(line, expected):
     """Test quoted header regex."""
-    result = config_reader._main_quoted_header_re.match(line)
+    result = config._main_quoted_header_re.match(line)
     assert result[1] == expected
 
 
@@ -57,7 +57,7 @@ def test_main_quoted_header_re(line, expected):
     )
 def test_sub_quoted_header_re(line, expected1, expected2):
     """Test sub quoted header regex."""
-    result = config_reader._sub_quoted_header_re.match(line)
+    result = config._sub_quoted_header_re.match(line)
     assert result[1] == expected1
     assert result[2] == expected2
 
@@ -74,7 +74,7 @@ def test_sub_quoted_header_re(line, expected1, expected2):
     )
 def test_main_header_re_wrong(line):
     """Test main header wrong."""
-    assert config_reader._main_header_re.match(line) is None
+    assert config._main_header_re.match(line) is None
 
 
 @pytest.mark.parametrize(
@@ -89,7 +89,7 @@ def test_main_header_re_wrong(line):
     )
 def test_sub_header_re_wrong(line):
     """Test sub header wrong."""
-    assert config_reader._sub_header_re.match(line) is None
+    assert config._sub_header_re.match(line) is None
 
 
 @pytest.mark.parametrize(
@@ -102,7 +102,7 @@ def test_sub_header_re_wrong(line):
     )
 def test_get_module_name(header, name):
     """Test get module name."""
-    assert config_reader.get_module_name(header) == name
+    assert config.get_module_name(header) == name
 
 
 _config_example_1 = """
@@ -201,20 +201,20 @@ _config_example_dict_3 = {
 
 
 @pytest.mark.parametrize(
-    'config,expected',
+    'config_example,expected',
     [
         (_config_example_1, _config_example_dict_1),
         (_config_example_2, _config_example_dict_2),
         (_config_example_3, _config_example_dict_3),
         ],
     )
-def test_load(config, expected):
+def test_load(config_example, expected):
     """Test read config."""
-    r = config_reader.loads(config)
+    r = config.loads(config_example)
     assert r == expected
 
 
 def test_load_nan_vlaue():
     """Test read config."""
-    r = config_reader.loads("param=nan")
+    r = config.loads("param=nan")
     assert isnan(r["param"])

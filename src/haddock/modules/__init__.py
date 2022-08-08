@@ -9,8 +9,8 @@ from pathlib import Path
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
-from haddock.gear.clean_steps import clean_output
 from haddock.gear import config_reader
+from haddock.gear.clean_steps import clean_output
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler

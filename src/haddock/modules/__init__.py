@@ -197,7 +197,7 @@ class BaseHaddockModule(ABC):
             for key in list(ignore):
                 params.pop(key)
 
-        config_reader.write_config({self.name: params}, path)
+        config_reader.save({self.name: params}, path)
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""

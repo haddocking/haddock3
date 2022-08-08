@@ -1,8 +1,6 @@
 """Test config reader."""
-import os
-from datetime import datetime
 from math import isnan
-from pathlib import Path, PosixPath, WindowsPath
+from pathlib import Path
 
 import pytest
 
@@ -35,6 +33,33 @@ def test_sub_header_re(line, expected, expected2):
     group = config_reader._sub_header_re.match(line)
     assert group[1] == expected
     assert group[2] == expected2
+
+
+@pytest.mark.parametrize(
+    'line,expected',
+    [
+        ("['header.3']", 'header'),
+        ("['header.1234']", 'header'),
+        ],
+    )
+def test_main_quoted_header_re(line, expected):
+    """Test quoted header regex."""
+    result = config_reader._main_quoted_header_re.match(line)
+    assert result[1] == expected
+
+
+@pytest.mark.parametrize(
+    'line,expected1,expected2',
+    [
+        ("['another.3'.header]", 'another', '.header'),
+        ("['another.3'.header.some]", 'another', '.header.some'),
+        ],
+    )
+def test_sub_quoted_header_re(line, expected1, expected2):
+    """Test sub quoted header regex."""
+    result = config_reader._sub_quoted_header_re.match(line)
+    assert result[1] == expected1
+    assert result[2] == expected2
 
 
 @pytest.mark.parametrize(

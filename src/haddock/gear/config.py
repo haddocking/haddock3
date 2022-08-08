@@ -244,7 +244,7 @@ def get_module_name(name):
     return name.split('.')[0]
 
 
-def save(params, path, toml=False):
+def save(params, path, pure_toml=False):
     """
     Write a dictionary to a HADDOCK3 config file.
 
@@ -261,7 +261,7 @@ def save(params, path, toml=False):
     """
     params = recursive_convert_paths_to_strings(params)
 
-    if toml:
+    if pure_toml:
         with open(path, 'w') as fout:
             toml.dump(params, fout)
         return

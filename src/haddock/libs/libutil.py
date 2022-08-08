@@ -10,7 +10,7 @@ from functools import partial
 from os import cpu_count
 from pathlib import Path
 
-from haddock import log
+from haddock import EmptyPath, log
 from haddock.core.exceptions import SetupError
 from haddock.gear.greetings import get_goodbye_help
 

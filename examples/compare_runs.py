@@ -46,7 +46,7 @@ from pathlib import Path
 
 
 try:
-    from haddock.gear.config_reader import read_config
+    from haddock.gear.config_reader import load as read_config
 except Exception:
     print(  # noqa: T201
         "Haddock3 could not be imported. "

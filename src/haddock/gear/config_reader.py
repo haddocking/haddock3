@@ -52,7 +52,6 @@ The most relevant features of HADDOCK3 user configuration files are:
 import collections.abc
 import os
 import re
-from contextlib import suppress
 from pathlib import Path
 
 import toml
@@ -60,6 +59,7 @@ import toml
 from haddock import EmptyPath
 from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError
+from haddock.libs.libutil import recursive_convert_paths_to_strings
 
 
 # the re.ASCII parameter makes sure non-ascii chars are rejected in the \w key
@@ -72,19 +72,19 @@ _main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
 # Matches ['<name>.<digit>']
 _main_quoted_header_re = re.compile(r'^ *\[\'(\w+)\.\d+\'\]', re.ASCII)
 
+# Captures sub-headers
+# https://regex101.com/r/6OpJJ8/1
+# thanks https://stackoverflow.com/questions/39158902
+_sub_header_re = re.compile(r'^ *\[(\w+)((?:\.\w+)+)\]', re.ASCII)
+
 # regex by @sverhoeven
 _sub_quoted_header_re = re.compile(
     r'^ *\[\'(\w+)\.\d+\'((?:\.\w+)+)\]',
     re.ASCII,
     )
 
-# Captures sub-headers
-# https://regex101.com/r/6OpJJ8/1
-# thanks https://stackoverflow.com/questions/39158902
-_sub_header_re = re.compile(r'^ *\[(\w+)((?:\.\w+)+)\]', re.ASCII)
-
 # Some parameters are paths. The configuration reader reads those as
-# pathlib.Paths so that they are injected properly in the rest of the
+# pathlib.Path so that they are injected properly in the rest of the
 # workflow. In general, any parameter ending with `_fname` is a path,
 # but there are also other parameters that are paths. Those need to be
 # added to this list bellow:
@@ -101,16 +101,12 @@ class ConfigFormatError(Exception):
     pass
 
 
-class DuplicatedParameterError(Exception):
-    """Exception if duplicated parameters are found."""
-
-    pass
-
-
 # main public API
-def read_config(fpath):
+def load(fpath):
     """
-    Read HADDOCK3 configure file to a dictionary.
+    Load an HADDOCK3 configuration file to a dictionary.
+
+    Accepts HADDOCK3 ``cfg`` files or pure ``toml`` files.
 
     Parameters
     ----------
@@ -128,14 +124,14 @@ def read_config(fpath):
         * :py:func:`read_config_str`
     """
     try:
-        return read_config_str(Path(fpath).read_text())
+        return loads(Path(fpath).read_text())
     except Exception as err:
         raise ConfigurationError('Something is wrong with the config file.') from err  # noqa: E501
 
 
-def read_config_str(cfg_str):
+def loads(cfg_str):
     """
-    Read a string representing a config file to a parameter dictionary.
+    Read a string representing a config file to a dictionary.
 
     Config strings are converted to toml-compatible format and finally
     read by the toml library.
@@ -153,53 +149,62 @@ def read_config_str(cfg_str):
         The order of the keys matters as it defines the order of the
         steps in the workflow.
     """
-    # first, attempts to read toml directly
-    with suppress(toml.TomlDecodeError):
-        return toml.loads(cfg_str)
+    try:
+        # first, attempts to read toml directly
+        cfg_dict = toml.loads(cfg_str)
 
-    new_lines = []
-    cfg_lines = cfg_str.split(os.linesep)
+    except toml.TomlDecodeError:
+        # if not, prepares the string for toml
 
-    counter = {}
+        new_lines = []
+        cfg_lines = cfg_str.split(os.linesep)
 
-    for line in cfg_lines:
+        counter = {}
 
-        if group := _main_header_re.match(line):
-            name = group[1]
-            counter.setdefault(name, 0)
-            counter[name] += 1
-            count = counter[name]
-            new_line = f"['{name}.{count}']"
+        for line in cfg_lines:
 
-        elif group := _main_quoted_header_re.match(line):
-            name = group[1]
-            counter.setdefault(name, 0)
-            counter[name] += 1
-            count = counter[name]
-            new_line = f"['{name}.{count}']"
+            if group := _main_header_re.match(line):
+                name = group[1]
+                counter.setdefault(name, 0)
+                counter[name] += 1
+                count = counter[name]
+                new_line = f"['{name}.{count}']"
 
-        elif group := _sub_header_re.match(line):
-            name = group[1]
-            count = counter[name]  # name should be already defined here
-            new_line = f"['{name}.{count}'{group[2]}]"
+            elif group := _main_quoted_header_re.match(line):
+                name = group[1]
+                counter.setdefault(name, 0)
+                counter[name] += 1
+                count = counter[name]
+                new_line = f"['{name}.{count}']"
 
-        elif group := _sub_quoted_header_re.match(line):
-            name = group[1]
-            count = counter[name]  # name should be already defined here
-            new_line = f"['{name}.{count}'{group[2]}]"
+            elif group := _sub_header_re.match(line):
+                name = group[1]
+                count = counter[name]  # name should be already defined here
+                new_line = f"['{name}.{count}'{group[2]}]"
 
-        else:
-            new_line = line
+            elif group := _sub_quoted_header_re.match(line):
+                name = group[1]
+                count = counter[name]  # name should be already defined here
+                new_line = f"['{name}.{count}'{group[2]}]"
 
-        new_lines.append(new_line)
+            else:
+                new_line = line
 
-    cfg = os.linesep.join(new_lines)
+            new_lines.append(new_line)
 
-    cfg = toml.loads(cfg)
+        cfg = os.linesep.join(new_lines)
 
-    cfg = convert_variables_to_paths(cfg)
+        try:
+            cfg_dict = toml.loads(cfg)
+        except Exception as err:
+            raise ConfigurationError(
+                "Some thing is wrong with the config file. "
+                "See message error above"
+                ) from err
 
-    return cfg
+    final_cfg = convert_variables_to_paths(cfg_dict)
+
+    return final_cfg
 
 
 def convert_variables_to_paths(cfg):
@@ -239,7 +244,7 @@ def get_module_name(name):
     return name.split('.')[0]
 
 
-def write_config(params, path, toml=False):
+def save(params, path, toml=False):
     """
     Write a dictionary to a HADDOCK3 config file.
 
@@ -281,19 +286,3 @@ def write_config(params, path, toml=False):
 
     with open(path, "w") as fout:
         fout.write(cfg_str)
-
-
-def recursive_convert_paths_to_strings(params):
-    """Convert paths to strings recursively over a dictionary."""
-    for param, value in params.items():
-        if isinstance(value, (Path, EmptyPath)):
-            params[param] = str(value)
-        elif isinstance(value, collections.abc.Mapping):
-            params[param] = recursive_convert_paths_to_strings(value)
-        elif isinstance(value, (tuple, list)):
-            for i, v in enumerate(value):
-                if isinstance(v, (Path, EmptyPath)):
-                    value[i] = str(v)
-            params[param] = value
-
-    return params

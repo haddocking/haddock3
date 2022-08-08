@@ -117,22 +117,22 @@ def test_populate_topoaa_molecules_4():
 def test_populate_mol_params():
     """Test populate mol."""
     params = {
-        "topoaa": {"molecules": ["file1.pdb", "file2.pdb", "file3.pdb"]},
-        "flexref": {"mol_fix_origin_2": True},
-        "caprieval": {},
+        "topoaa.1": {"molecules": ["file1.pdb", "file2.pdb", "file3.pdb"]},
+        "flexref.1": {"mol_fix_origin_2": True},
+        "caprieval.1": {},
         }
 
     populate_mol_parameters(params)
-    assert "mol_fix_origin_1" in params["flexref"]
-    assert "mol_fix_origin_2" in params["flexref"]
-    assert "mol_fix_origin_3" in params["flexref"]
-    assert not ("mol_fix_origin_4" in params["flexref"])
-    assert params["flexref"]["mol_fix_origin_2"] is True
-    assert "mol_shape_1" in params["flexref"]
-    assert "mol_shape_2" in params["flexref"]
-    assert "mol_shape_3" in params["flexref"]
-    assert not ("mol_shape_4" in params["flexref"])
-    assert not params["caprieval"]
+    assert "mol_fix_origin_1" in params["flexref.1"]
+    assert "mol_fix_origin_2" in params["flexref.1"]
+    assert "mol_fix_origin_3" in params["flexref.1"]
+    assert not ("mol_fix_origin_4" in params["flexref.1"])
+    assert params["flexref.1"]["mol_fix_origin_2"] is True
+    assert "mol_shape_1" in params["flexref.1"]
+    assert "mol_shape_2" in params["flexref.1"]
+    assert "mol_shape_3" in params["flexref.1"]
+    assert not ("mol_shape_4" in params["flexref.1"])
+    assert not params["caprieval.1"]
 
 
 def test_check_if_path_exists():

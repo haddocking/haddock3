@@ -31,7 +31,7 @@ from shutil import rmtree
 
 
 try:
-    from haddock.gear.config_reader import read_config
+    from haddock.gear.config_reader import load as read_config
     from haddock.libs.libio import working_directory
 except Exception:
     print(  # noqa: T201

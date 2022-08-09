@@ -34,14 +34,14 @@ for $id1 in id ( name "LI+1" or name "F-1"  or name "NA+1" or name "MG+2" or nam
     evaluate ($mindis = 7.5)
     evaluate ($minid  = 0)
     for $id2 in id ( (name O* or name S* or name N*) and (id $id1) around $mindis and
-                      (resn ACE or resn ALA or resn ALY or resn ARG or resn ASN or resn ASH or resn ASP or 
-                       resn CSP or resn CTN or resn CYC or resn CYF or resn CYM or resn CYS or resn DDZ or 
-                       resn GLN or resn GLH or resn GLU or resn GLY or resn HIS or resn HYP or resn ILE or 
-                       resn LEU or resn LYS or resn M3L or resn MLY or resn MLZ or resn MET or resn MSE or
-                       resn NEP or resn NME or resn PHE or resn PNS or resn PRO or resn PTR or resn QSR or 
-		       resn SEP or resn SER or resn THR or resn TOP or resn TRP or resn TYP or resn TYR or
-		       resn TYS or resn VAL or resn A   or resn C   or resn G   or resn T   or resn DA  or 
-		       resn DC  or resn DG  or resn DT or resn DJ   )) loop search
+                     (resn ACE or resn ALA or resn ALY or resn ARG or resn ASN or resn ASH or resn ASP or
+                      resn CSP or resn CTN or resn CYC or resn CYF or resn CYM or resn CYS or resn DDZ or
+                      resn GLN or resn GLH or resn GLU or resn GLY or resn HIS or resn HY3 or resn HYP or
+                      resn ILE or resn LEU or resn LYS or resn M3L or resn MLY or resn MLZ or resn MET or
+                      resn MSE or resn NEP or resn NME or resn PHE or resn PNS or resn PRO or resn PTR or
+                      resn QSR or resn SEP or resn SER or resn THR or resn TOP or resn TRP or resn TYP or
+                      resn TYR or resn TYS or resn VAL or resn A   or resn C   or resn G   or resn T   or
+                      resn DA  or resn DC  or resn DG  or resn DT  or resn DJ )) loop search
 
         pick bond (id $id1) (id $id2) geometry
 

@@ -276,15 +276,50 @@ needed. Write comments that explain why you do stuff, and not how you do
 stuff. Use the `TODO:` flag in your comments to note something for the
 future. If needed, raise an issue.
 
+### 1.6 Creating a new module
+
+To develop a new HADDOCK3 module follow our guidelines and templates
+under `src/haddock/modules/_template_cat/_template_mod/`.
+
 ## 2. Contributing with documentation
 
-HADDOCK3 has (will have) two sources of documentation: 1) the library
-documentation itself that is built from code docstrings and `.rst` pages
-in the `docs` folder and 2) the tutorials page at
-<https://bonvinlab.org>. If you want to suggest a new tutorial, please
-talk with us before start working. On the other hand, if you want to
-improve code's documentation, go for it following the same procedure as
-described above for *code contributions*.
+You may contribute to HADDOCK3 documentation by improving parts where
+documentation is lacking or writing the documentation for the new code
+you propose. HADDOCK3 documentation is hosted online at
+https://bonvinlab.org/haddock3.
+
+HADDOCK3 documentation is rendered with
+[Sphinx](https://www.sphinx-doc.org/en/master/) combining markdown
+files, restructured text files, and extracting the docstrings in the
+source code.
+
+The `docs/` folder contains all the files used by Sphinx to compile the
+documentation to HTML files. To incorporate new documentation pages or
+update the existing ones, navigate around the `docs/` folder to learn
+how we have structured it and add/edit the files you find relevant. You
+will see that the structure of folders and files follows the design of
+the documentation website.
+
+You can render the documentation locally to inspect the end result
+before creating a pull request. To compile the documentation locally:
+activate the `haddock3` python environment inside the haddock3 github
+folder, run `tox -e docs` and then use your favourite browser to open the
+`haddock3-docs/index.html` file. We invite you to read through Sphinx-doc
+webpage if you want to exploit any advanced feature of Sphinx, but we
+already provide examples for virtually any use you may need.
+
+If you need to install any additional library, talk to us first. The
+documentation requirements are in the `devtools` folder.
+
+Finally, if you find the need to generate new pages during the HTML
+compilation part, you may follow the `devtools/build_defaults_rst.py` as
+an example. See also the `docs/conf.py` file `setup(app)` line.
+
+**Troubleshooting:**
+
+1. If you add any new dependency (import statement) in the code, you
+  need to add that library name to the `mock` list in the `docs/conf.py`
+  file.
 
 
 [tox]: https://tox.wiki/en/latest/index.html "tox"

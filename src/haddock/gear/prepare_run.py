@@ -362,6 +362,7 @@ def validate_modules_params(modules_params, max_mols):
         in the defaults.cfg of the module.
     """
     for module_name, args in modules_params.items():
+        module_name = get_module_name(module_name)
         defaults = _read_defaults(module_name)
         if not defaults:
             continue

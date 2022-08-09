@@ -70,7 +70,8 @@ class Workflow:
         self.steps = []
         _items = enumerate(modules_parameters.items(), start=start)
         for num_stage, (stage_name, params) in _items:
-            log.info(f"Reading instructions of [{stage_name}] step")
+            stage_name = get_module_name(stage_name)
+            log.info(f"Reading instructions step {num_stage}_{stage_name}")
 
             # updates the module's specific parameter with global parameters
             # that are applicable to the modules. But keep priority to the local
@@ -79,7 +80,7 @@ class Workflow:
 
             try:
                 _ = Step(
-                    get_module_name(stage_name),
+                    stage_name,
                     order=num_stage,
                     **params_up,
                     )

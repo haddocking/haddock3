@@ -432,13 +432,15 @@ A dictionary with the general run parameters.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.prepare_run.update_step_contents_to_step_names">
 <span class="sig-prename descclassname"><span class="pre">haddock.gear.prepare_run.</span></span><span class="sig-name descname"><span class="pre">update_step_contents_to_step_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prev_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/prepare_run.html#update_step_contents_to_step_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.prepare_run.update_step_contents_to_step_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Find-replace run directory and step name in step folders.</p>
+<dd><p>Update step folder names in files after the <cite>–restart</cite> option.</p>
+<p>Runs over the folders defined in <cite>new_names</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>prev_names</strong> (<em>list</em>) – List of step names to find in file contents.</p></li>
-<li><p><strong>new_names</strong> (<em>list</em>) – List of new step names to place <cite>prev_names</cite>. Both lists need
-to be synchronized.</p></li>
+<li><p><strong>new_names</strong> (<em>list</em>) – List of new step names to replace <cite>prev_names</cite>. Both lists need
+to be synchronized. That is, the first index of <cite>prev_names</cite> should
+correspond to the old names of <cite>new_names</cite>.</p></li>
 <li><p><strong>folder</strong> (<em>str or Path</em>) – Folder where the step folders are. Usually run directory or
 data directory.</p></li>
 </ul>
@@ -447,6 +449,20 @@ data directory.</p></li>
 <dd class="field-even"><p><em>None</em> – Save files in place.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.prepare_run.update_step_names_in_file">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.prepare_run.</span></span><span class="sig-name descname"><span class="pre">update_step_names_in_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/prepare_run.html#update_step_names_in_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.prepare_run.update_step_names_in_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update step names in file following the <cite>–restart</cite> option.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.gear.prepare_run.update_step_names_in_subfolders">
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.prepare_run.</span></span><span class="sig-name descname"><span class="pre">update_step_names_in_subfolders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prev_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/prepare_run.html#update_step_names_in_subfolders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.prepare_run.update_step_names_in_subfolders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update step names in subfolders.</p>
+<p>Some modules may generate subfolders. This function update
+its files accordingly to the <cite>–restart</cite> feature.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -532,7 +548,7 @@ data directory.</p></li>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 06, 2022.
+        Last updated on Aug 09, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

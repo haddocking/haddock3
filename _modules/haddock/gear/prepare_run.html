@@ -1057,7 +1057,9 @@
 
 <div class="viewcode-block" id="update_step_contents_to_step_names"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.update_step_contents_to_step_names">[docs]</a><span class="k">def</span> <span class="nf">update_step_contents_to_step_names</span><span class="p">(</span><span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find-replace run directory and step name in step folders.</span>
+<span class="sd">    Update step folder names in files after the `--restart` option.</span>
+
+<span class="sd">    Runs over the folders defined in `new_names`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1065,8 +1067,9 @@
 <span class="sd">        List of step names to find in file contents.</span>
 
 <span class="sd">    new_names : list</span>
-<span class="sd">        List of new step names to place `prev_names`. Both lists need</span>
-<span class="sd">        to be synchronized.</span>
+<span class="sd">        List of new step names to replace `prev_names`. Both lists need</span>
+<span class="sd">        to be synchronized. That is, the first index of `prev_names` should</span>
+<span class="sd">        correspond to the old names of `new_names`.</span>
 
 <span class="sd">    folder : str or Path</span>
 <span class="sd">        Folder where the step folders are. Usually run directory or</span>
@@ -1080,10 +1083,37 @@
     <span class="k">for</span> <span class="n">new_step</span> <span class="ow">in</span> <span class="n">new_names</span><span class="p">:</span>
         <span class="n">new_step_p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">new_step</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">new_step_p</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+            <span class="c1"># goes recursive into the next folder</span>
+            <span class="k">if</span> <span class="n">file_</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+                <span class="n">update_step_names_in_subfolders</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">update_step_names_in_file</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_step_names_in_subfolders"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.update_step_names_in_subfolders">[docs]</a><span class="k">def</span> <span class="nf">update_step_names_in_subfolders</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update step names in subfolders.</span>
+
+<span class="sd">    Some modules may generate subfolders. This function update</span>
+<span class="sd">    its files accordingly to the `--restart` feature.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">folder</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">file_</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+            <span class="n">update_step_names_in_subfolders</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">update_step_names_in_file</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">)</span>
+    <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="update_step_names_in_file"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.update_step_names_in_file">[docs]</a><span class="k">def</span> <span class="nf">update_step_names_in_file</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Update step names in file following the `--restart` option.&quot;&quot;&quot;</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
+    <span class="n">file_</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    <span class="k">return</span></div>
 </pre></div>
 
                         
@@ -1117,7 +1147,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 06, 2022.
+        Last updated on Aug 09, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

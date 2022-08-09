@@ -22,5 +22,7 @@ haddock3_yaml_converted_no_header = \
     Path(configs_data, 'yaml2cfg_converted_no_header.cfg')
 clean_steps_folder = Path(tests_path, 'clean_output_data')
 
+steptmp = Path(data_folder, "0_dummystep")
+
 # defines which modules are already working
 working_modules = [t for t in modules_category.items() if t[0] != 'topocg']

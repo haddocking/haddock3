@@ -1,4 +1,5 @@
 """Test prepare run module."""
+import shutil
 from math import isnan
 from pathlib import Path
 
@@ -11,12 +12,15 @@ from haddock.gear.prepare_run import (
     get_expandable_parameters,
     populate_mol_parameters,
     populate_topology_molecule_params,
+    update_step_contents_to_step_names,
     validate_module_names_are_not_misspelled,
     validate_parameters_are_not_misspelled,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules import modules_names
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG
+
+from . import data_folder, steptmp
 
 
 DEFAULT_DICT = read_from_yaml_config(DEFAULT_CONFIG)
@@ -219,3 +223,21 @@ def test_validate_params_error():
     ref = ["param1", "param2", "param3"]
     with pytest.raises(ValueError):
         validate_parameters_are_not_misspelled(params, ref)
+
+
+def test_update_step_folders_from_restart():
+    output_tmp = Path(data_folder, "1_dummystep")
+    shutil.copytree(steptmp, output_tmp)
+    prev_names = ['0_dummystep']
+    next_names = ['1_dummystep']
+    update_step_contents_to_step_names(prev_names, next_names, data_folder)
+
+    file1 = Path(output_tmp, "file1.in").read_text()
+    assert '0_dummystep' not in file1
+    assert '1_dummystep' in file1
+
+    file2 = Path(output_tmp, "folder", "file2.in").read_text()
+    assert '0_dummystep' not in file2
+    assert '1_dummystep' in file2
+
+    shutil.rmtree(output_tmp)

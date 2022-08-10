@@ -190,12 +190,12 @@ dihedrals_scale:
   group: 'dihedral restraints'
   explevel: expert
 ssdihed:
-  default: none
+  default: ""
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - none
+    - ""
     - all
     - alpha
     - alphabeta

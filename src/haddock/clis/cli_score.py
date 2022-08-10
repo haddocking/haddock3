@@ -124,7 +124,7 @@ def main(
 
     if outputpdb:
         shutil.copy(
-            Path("run_dir", "1_emscoring", "emscoring_1.pdb"),
+            Path(run_dir, "1_emscoring", "emscoring_1.pdb"),
             Path(f"{input_pdb.name}_hs.pdb"),
             )
 

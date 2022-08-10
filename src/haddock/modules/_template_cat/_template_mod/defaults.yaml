@@ -1,0 +1,105 @@
+# this is an example of the default parameters
+# add here the parameters of your module. You can follow examples
+# in other default config files. Each parameter type has it's own specific extra
+# fields. Below an example of parameters of different types:
+# explevel can only be easy, expert, guru
+
+# You may wish to read our functionalities in "extended parameters":
+# https://github.com/haddocking/haddock3/blob/main/src/haddock/gear/expandable_parameters.py#L1-L73
+
+# INTEGER parameter
+random_seed:
+  default: 42
+  type: integer
+  min: 0
+  max: 999
+  title:
+  short:
+  long:
+  group: ""
+  explevel: easy
+
+# FLOAT parameter
+indpb:
+  default: 0.2
+  type: float
+  min: 0
+  max: 1
+  precision: 2
+  title:
+  short:
+  long:
+  group: ""
+  explevel: expert
+
+# LIST parameter
+region:
+  default: []
+  type: list
+  minitems: 0
+  maxitems: 1000
+  title:
+  short:
+  long:
+  group: ""
+  explevel: guru
+
+# STRING parameter with CHOICES
+initial_mutation:
+  default: keep
+  type: string
+  minchars: 0
+  maxchars: 7
+  choices:
+    - alanine
+    - random
+    - keep
+  title:
+  short:
+  long:
+  group: ""
+  explevel: guru
+
+# STRING parameter without CHOICES
+target_chain:
+  default: "A"
+  type: string
+  minchars: 1
+  maxchars: 1
+  title:
+  short:
+  long:
+  group: ""
+  explevel: hidden
+
+# a DICTIONARY parameter
+# these parameter are tricky to maintain, use them only if strickly needed.
+dict_like_par:
+  explevel: easy
+  title: Example of a dictionary mdule
+  short: Some short explanation on dick_like_par
+  long: Some long explanationon dick_like_par
+  group: "the group it belongs"
+  # here are the parameters belonging to the `dict_like_par` key
+  somepar:
+    default: 0.2
+    type: float
+    min: 0
+    max: 1
+    precision: 2
+    title:
+    short:
+    long:
+    group: ""
+    explevel: expert
+
+  otherpar:
+    default: []
+    type: list
+    minitems: 0
+    maxitems: 1000
+    title:
+    short:
+    long:
+    group: ""
+    explevel: guru

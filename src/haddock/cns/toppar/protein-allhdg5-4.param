@@ -186,6 +186,7 @@ checkversion 1.3
  BOND  CH2G NH1     1000.000 {sd=     0.001}      1.451
  BOND  CH2G NH3     1000.000 {sd=     0.001}      1.489
  BOND  CH2P CH2P    1000.000 {sd=     0.001}      1.504
+ BOND  CH1E CH1P    1000.000 {sd=     0.001}      1.504
  BOND  CH2E CH1P    1000.000 {sd=     0.001}      1.504
  BOND  CH2P CH1P    1000.000 {sd=     0.001}      1.504
  BOND  CH1P HA      1000.000 {sd=     0.001}      1.080
@@ -325,6 +326,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
 
  ANGLe  C    CH1E CH1E     500.00 {sd=     0.031}    109.0754
  ANGLe  C    CH1E CH2E     500.00 {sd=     0.031}    110.1094
+ ANGLe  C    CH1E CH1P     500.00 {sd=     0.031}    110.1094
  ANGLe  C    CH1E CH3E     500.00 {sd=     0.031}    110.4838
  ANGLe  C    CH1E HA       500.00 {sd=     0.031}    108.9914
  ANGLe  C    CH1E N        500.00 {sd=     0.031}    111.9082
@@ -394,6 +396,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH1E CH2E CH2E     500.00 {sd=     0.031}    114.0589
  ANGLe  CH1E CH2E CH2P     500.00 {sd=     0.031}    104.3952
  ANGLe  CH1E CH2E CH1P     500.00 {sd=     0.031}    104.3952
+ ANGLe  CH1E CH1P CH2E     500.00 {sd=     0.031}    104.3952
  ANGLe  CH1E CH2E CH3E     500.00 {sd=     0.031}    113.7404
  ANGLe  CH1E CH2E CY       500.00 {sd=     0.031}    113.8748
  ANGLe  CH1E CH2E HA       500.00 {sd=     0.031}    109.2833
@@ -436,6 +439,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH2E CH1E CH3E     500.00 {sd=     0.031}    110.6376
  ANGLe  CH2E CH1E HA       500.00 {sd=     0.031}    109.2487
  ANGLe  CH2E CH1E N        500.00 {sd=     0.031}    103.0552
+ ANGLe  CH1P CH1E N        500.00 {sd=     0.031}    103.0552
  ANGLe  CH2E CH1E NH1      500.00 {sd=     0.031}    110.4763
  ANGLe  CH2E CH1E NH3      500.00 {sd=     0.031}    110.4763  ! N term from 108.4924 14-MAR-00
  ANGLe  CH2E CH2E CH2E     500.00 {sd=     0.031}    111.3121
@@ -445,6 +449,8 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH2E CH2E SM       500.00 {sd=     0.031}    112.6822
  ANGLe  CH2E CH2E SE       500.00 {sd=     0.031}    112.6822 ! for MSE
  ANGLe  CH2E CH2P CH2P     500.00 {sd=     0.031}    106.1000
+ ANGLe  CH1E CH1P CH2P     500.00 {sd=     0.031}    106.1000
+ ANGLe  CH1P CH2P CH2P     500.00 {sd=     0.031}    106.1000
  ANGLe  CH2E CH1P CH2P     500.00 {sd=     0.031}    106.1000
  ANGLe  CH2E CH2P CH1P     500.00 {sd=     0.031}    106.1000
  ANGLe  CH1P CH2P HA       500.00 {sd=     0.031}    109.9548
@@ -457,7 +463,9 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH1E CH1P HA       500.00 {sd=     0.031}    109.9548
  ANGLe  CH1E CH2P HA       500.00 {sd=     0.031}    109.9548
  ANGLe  CH2E CH1P HA       500.00 {sd=     0.031}    109.9548
+ ANGLe  CH1E CH1P OH1      500.00 {sd=     0.031}    109.9548
  ANGLe  CH2E CH1P OH1      500.00 {sd=     0.031}    109.9548
+ ANGLe  CH1E CH1P OHP      500.00 {sd=     0.031}    109.9548
  ANGLe  CH2E CH1P OHP      500.00 {sd=     0.031}    109.9548
  ANGLe  CH2E CH3E HA       500.00 {sd=     0.031}    109.4694
  ANGLe  CH2E CY   CR1E     500.00 {sd=     0.031}    120.9304
@@ -1226,6 +1234,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 
 ! backbone psi related due to O & CB (not active with usual topology file added 07-JUL-01)
  DIHEdral CH2E   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-aaa
+ DIHEdral CH1P   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !aaa-aaa
  DIHEdral CH3E   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !ala-aaa
  DIHEdral CH1E   CH1E   C      O      MULT 6   0.375  1 0.0000 0.3  2 0.0000  0.225  3 0.0000  0.15  4 0.0000  0.075  5 0.0000  0.0375  6 0.0000 !(ile,thr,val)-aaa
 
@@ -1236,6 +1245,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
 
 ! backbone psi related due to NH & CB (N.B. 2.0x the strength of  above not active with usual topology file added 03-JUL-01 modified 07-JUL-01)
  DIHEdral CH2E   CH1E   C      NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
+ DIHEdral CH1P   CH1E   C      NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
  DIHEdral CH2E   CH2E   C      NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !aaa-aaa
  DIHEdral CH3E   CH1E   C      NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !ala-aaa
  DIHEdral CH1E   CH1E   C      NH1    MULT 6   0.5   1 0.0000 0.4  2 0.0000  0.3   3 0.0000  0.2  4 0.0000  0.1   5 0.0000  0.05   6 0.0000 !(ile,thr,val)-aaa

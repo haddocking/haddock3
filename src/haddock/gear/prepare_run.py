@@ -188,11 +188,7 @@ def setup_run(
     # separate general from modules' parameters
     _modules_keys = identify_modules(params)
     general_params = remove_dict_keys(params, _modules_keys)
-    print('general params')
-    print(general_params)
     modules_params = remove_dict_keys(params, list(general_params.keys()))
-    print('modules_params')
-    print(modules_params)
 
     validate_parameters_are_not_misspelled(
         general_params,

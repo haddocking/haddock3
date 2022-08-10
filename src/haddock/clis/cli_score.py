@@ -5,7 +5,44 @@ Usage:
     haddock3-score complex.pdb
 """
 import argparse
+import ast
 import sys
+
+
+class _ParamsToDict(argparse.Action):
+    """
+    Convert command-line parameters in an argument to a dictionary.
+
+    Example
+    -------
+
+    Where ``-x`` is an optional argument of the command-line client
+    interface.
+
+        >>> par1 1 par2 'my name' par3 [1,2,3]
+        >>> {'par1': 1, 'par2': 'my name', 'par3': [1, 2, 3]}
+
+    """
+
+    def __call__(self, parser, namespace, ivalues, option_string=None):
+        """Execute."""
+        params = ivalues[::2]
+        values = ivalues[1::2]
+
+        if len(params) != len(values):
+            raise parser.error(
+                "The parameters and value pairs "
+                "do not match for argument `-p`"
+                )
+
+        param_dict = {}
+        for k, v in zip(params, values):
+            try:
+                param_dict[k] = ast.literal_eval(v)
+            except (ValueError, TypeError, SyntaxError):
+                raise parser.error(f"Parameter {k} with invalid value {v}")
+
+        setattr(namespace, self.dest, param_dict)
 
 
 ap = argparse.ArgumentParser(
@@ -41,6 +78,14 @@ ap.add_argument(
     help="Keep the whole run folder."
     )
 
+ap.add_argument(
+    "-p",
+    "--other-params",
+    help="Any other parameter of the `emscoring` module.",
+    action=_ParamsToDict,
+    nargs="*",
+    )
+
 
 def _ap():
     return ap
@@ -53,8 +98,9 @@ def load_args(ap):
 
 def cli(ap, main):
     """Command-line interface entry point."""
-    cmd = load_args(ap)
-    main(**vars(cmd))
+    cmd = vars(load_args(ap))
+    kwargs = cmd.pop("other_params")
+    main(**cmd, **kwargs)
 
 
 def maincli():
@@ -68,6 +114,7 @@ def main(
         outputpdb=False,
         outputpsf=False,
         keep_all=False,
+        **kwargs,
         ):
     """Calculate the score of a complex."""
     import logging
@@ -90,7 +137,7 @@ def main(
 
     params = {
         "topoaa": {"molecules": [input_pdb]},
-        "emscoring": {},
+        "emscoring": kwargs,
         }
 
     print("> starting calculations...")  # noqa: T201
@@ -123,15 +170,19 @@ def main(
     print(f"> HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")  # noqa: T201, E501
 
     if outputpdb:
+        outputpdb_name = Path(f"{input_pdb.name}_hs.pdb")
+        print(f"> writing {outputpdb_name}")  # noqa: T201
         shutil.copy(
             Path(run_dir, "1_emscoring", "emscoring_1.pdb"),
-            Path(f"{input_pdb.name}_hs.pdb"),
+            outputpdb_name,
             )
 
     if outputpsf:
+        outputpsf_name = Path(f"{input_pdb.name}_hs.psf")
+        print(f"> writing {outputpsf_name}")  # noqa: T201
         shutil.copy(
             Path(run_dir, "0_topoaa", f'{input_pdb.name}_haddock.psf'),
-            Path(f"{input_pdb.name}_hs.pdb"),
+            outputpsf_name,
             )
 
     if not keep_all:

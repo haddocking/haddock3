@@ -324,7 +324,19 @@ def extract_keys_recursive(config):
 
 
 def recursive_convert_paths_to_strings(params):
-    """Convert paths to strings recursively over a dictionary."""
+    """
+    Convert paths to strings recursively over a dictionary.
+
+    Parameters
+    ----------
+    params : dictionary
+
+    Returns
+    -------
+    dictionary
+        A copy of the original dictionary with paths converted to strings.
+    """
+    params = deepcopy(params)
     for param, value in params.items():
         if isinstance(value, (Path, EmptyPath)):
             params[param] = str(value)

@@ -168,7 +168,7 @@ list_ = [
 _config_example_dict_2 = {
     "num1": 10,
     "molecules": [Path("../some/file"), Path("../some/otherfile")],
-    "module": {
+    "module.1": {
         "some_path_fname": Path("pointing", "to", "some", "path"),
         "d1": {
             "var1": 1,
@@ -191,7 +191,7 @@ val3 = 20
 
 _config_example_dict_3 = {
     "val": 1,
-    "header": {
+    "header.1": {
         "d1": {
             "val2": 10,
             "val3": 20,
@@ -218,3 +218,33 @@ def test_load_nan_vlaue():
     """Test read config."""
     r = config.loads("param=nan")
     assert isnan(r["param"])
+
+
+@pytest.mark.parametrize(
+    "conf",
+    [
+        _config_example_dict_1,
+        _config_example_dict_2,
+        _config_example_dict_3,
+        ]
+    )
+def test_save_config(conf):
+    target = Path("dummy_config.cfg")
+    config.save(conf, target)
+    loaded = config.load(target)
+    assert loaded == conf
+    target.unlink()
+
+
+@pytest.mark.parametrize(
+    "conf",
+    [
+        _config_example_dict_1,
+        _config_example_dict_2,
+        _config_example_dict_3,
+        ]
+    )
+def test_save_config_toml(conf):
+    target = Path("dummy_config.toml")
+    config.save(conf, target, pure_toml=True)
+    target.unlink()

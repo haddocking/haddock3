@@ -1,13 +1,14 @@
 """
-Implementation of a TOML-like configuration file for HADDOCK3.
+Module to read and write HADDOCK3 configuration files.
 
 HADDOCK3 user configuration files follow TOML syntax plus additional
 features required for HADDOCK3. Therefore, we have implemented our own
 TOML-like parser to accommodate the extra features needed for HADDOCK3.
+However, HADDOCK3 can also read pure TOML files.
 
-The most relevant features of HADDOCK3 user configuration files are:
-
-**Accepts repeated keys:** blocks can have repeated names, for example:
+The most relevant features of HADDOCK3 user configuration files are the
+hability to prepare TOML-like files but with repeated header names, for
+example:
 
 .. code:: toml
 
@@ -26,28 +27,31 @@ The most relevant features of HADDOCK3 user configuration files are:
         [caprieval]
         # parameters here...
 
-**Allows in-line comments:**
+From the user perspective, everything else just behaves as in TOML.
+Actually, HADDOCK3 uses TOML to finally read the configuration files.
+Users can also provide pure TOML compatible files, for example:
 
 .. code:: toml
 
-    [module]
-    parameter = value # some comment
+        [topoaa]
+        # parameters here...
 
-**The following types are implemented**:
+        [rigidbody]
+        # parameters here...
 
-* strings
-* numbers
-* null/none
-* ``nan``
-* lists defined in one lines
-* lists defined in multiple lines (require empty line after the list
-  definition)
-* `datetime.fromisoformat`
+        [caprieval]
+        # parameters here...
 
-**To efficiently use this module, see functions:**
+        [flexref]
+        # parameters here...
 
-* :py:func:`haddock.gear.config.read_config`
-* :py:func:`haddock.gear.config.get_module_name`
+        ['caprieval.1']
+        # parameters here...
+
+Because HADDOCK3 uses TOML in the end to read the configuration files,
+all TOML rules apply regarding defining ``parameter = value`` pairs.
+
+Read more about TOML for Python here: https://pypi.org/project/toml/
 """
 import collections.abc
 import os
@@ -121,7 +125,7 @@ def load(fpath):
         suffix, for example: ``module.1``.
 
     .. see-also::
-        * :py:func:`read_config_str`
+        * :py:func:`loads`
     """
     try:
         return loads(Path(fpath).read_text())
@@ -136,10 +140,16 @@ def loads(cfg_str):
     Config strings are converted to toml-compatible format and finally
     read by the toml library.
 
+    All headers (dictionary keys) will be suffixed by an integer
+    starting at ``1``. For example: ``topoaa.1``. If the key is
+    repeated, ``2`` is appended, and so forth. Even if specific
+    integers are provided by the user, the suffix integers will be
+    normalized.
+
     Parameters
     ----------
     cfg_str : str
-        The string reprensenting the config file. Accepted formats are
+        The string representing the config file. Accepted formats are
         the HADDOCK3 config file or pure `toml` syntax.
 
     Returns
@@ -149,58 +159,51 @@ def loads(cfg_str):
         The order of the keys matters as it defines the order of the
         steps in the workflow.
     """
+    new_lines = []
+    cfg_lines = cfg_str.split(os.linesep)
+    counter = {}
+
+    # this for-loop normalizes all headers regardless of their input format.
+    for line in cfg_lines:
+
+        if group := _main_header_re.match(line):
+            name = group[1]
+            counter.setdefault(name, 0)
+            counter[name] += 1
+            count = counter[name]
+            new_line = f"['{name}.{count}']"
+
+        elif group := _main_quoted_header_re.match(line):
+            name = group[1]
+            counter.setdefault(name, 0)
+            counter[name] += 1
+            count = counter[name]
+            new_line = f"['{name}.{count}']"
+
+        elif group := _sub_header_re.match(line):
+            name = group[1]
+            count = counter[name]  # name should be already defined here
+            new_line = f"['{name}.{count}'{group[2]}]"
+
+        elif group := _sub_quoted_header_re.match(line):
+            name = group[1]
+            count = counter[name]  # name should be already defined here
+            new_line = f"['{name}.{count}'{group[2]}]"
+
+        else:
+            new_line = line
+
+        new_lines.append(new_line)
+
+    cfg = os.linesep.join(new_lines)
+
     try:
-        # first, attempts to read toml directly
-        cfg_dict = toml.loads(cfg_str)
-
-    except toml.TomlDecodeError:
-        # if not, prepares the string for toml
-
-        new_lines = []
-        cfg_lines = cfg_str.split(os.linesep)
-
-        counter = {}
-
-        for line in cfg_lines:
-
-            if group := _main_header_re.match(line):
-                name = group[1]
-                counter.setdefault(name, 0)
-                counter[name] += 1
-                count = counter[name]
-                new_line = f"['{name}.{count}']"
-
-            elif group := _main_quoted_header_re.match(line):
-                name = group[1]
-                counter.setdefault(name, 0)
-                counter[name] += 1
-                count = counter[name]
-                new_line = f"['{name}.{count}']"
-
-            elif group := _sub_header_re.match(line):
-                name = group[1]
-                count = counter[name]  # name should be already defined here
-                new_line = f"['{name}.{count}'{group[2]}]"
-
-            elif group := _sub_quoted_header_re.match(line):
-                name = group[1]
-                count = counter[name]  # name should be already defined here
-                new_line = f"['{name}.{count}'{group[2]}]"
-
-            else:
-                new_line = line
-
-            new_lines.append(new_line)
-
-        cfg = os.linesep.join(new_lines)
-
-        try:
-            cfg_dict = toml.loads(cfg)
-        except Exception as err:
-            raise ConfigurationError(
-                "Some thing is wrong with the config file. "
-                "See message error above"
-                ) from err
+        cfg_dict = toml.loads(cfg)
+    except Exception as err:
+        raise ConfigurationError(
+            "Some thing is wrong with the config file: "
+            f"{str(err)}"
+            ) from err
 
     final_cfg = convert_variables_to_paths(cfg_dict)
 
@@ -212,6 +215,14 @@ def convert_variables_to_paths(cfg):
     Convert config variables to paths.
 
     Applies only to those variables HADDOCK3 needs as paths.
+
+    Parameters
+    ----------
+    cfg : dictionary
+        A dictionary containing the HADDOCK3 parameters.
+
+    .. see-also::
+        :py:func:`match_path_criteria`
     """
     for param, value in cfg.items():
         if param == "molecules":
@@ -235,18 +246,31 @@ def convert_to_path(value):
 
 
 def match_path_criteria(param):
-    """Confirm a parameter should be converted to path."""
+    """
+    Confirm a parameter should be converted to path.
+
+    This function contains the rules defining which parameter need to be
+    converted to Path before be sent to HADDOCK3.
+    """
     return param.endswith('_fname') or param in _keys_that_accept_files
 
 
 def get_module_name(name):
-    """Get the name according to the config parser."""
+    """
+    Get the module name according to the config parser.
+
+    Get the name without the integer suffix.
+    """
     return name.split('.')[0]
 
 
 def save(params, path, pure_toml=False):
     """
     Write a dictionary to a HADDOCK3 config file.
+
+    Write the HADDOCK3 parameter dictionary to a `.cfg` file. There is
+    also the option to write in pure TOML format. Both are compatible with
+    HADDOCK3.
 
     Parameters
     ----------
@@ -256,7 +280,7 @@ def save(params, path, pure_toml=False):
     path : str or pathlib.Path
         File name where to save the configuration file.
 
-    toml : bool
+    pure_toml : bool
         Save config in pure toml format.
     """
     params = recursive_convert_paths_to_strings(params)

@@ -81,7 +81,11 @@ ap.add_argument(
 ap.add_argument(
     "-p",
     "--other-params",
-    help="Any other parameter of the `emscoring` module.",
+    help=(
+        "Any other parameter of the `emscoring` module."
+        "For example: -p nemsteps 1000. You can give any number of
+        parameters."
+        ),
     action=_ParamsToDict,
     nargs="*",
     )

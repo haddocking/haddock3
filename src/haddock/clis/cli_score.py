@@ -130,7 +130,7 @@ def main(
 
     if outputpsf:
         shutil.copy(
-            Path("run_dir", "0_topoaa", f'{input_pdb.name}_haddock.psf'),
+            Path(run_dir, "0_topoaa", f'{input_pdb.name}_haddock.psf'),
             Path(f"{input_pdb.name}_hs.pdb"),
             )
 

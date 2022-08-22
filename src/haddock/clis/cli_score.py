@@ -183,10 +183,17 @@ def main(
 
     # config all parameters are correctly spelled.
     default_emscoring = read_from_yaml_config(DEFAULT_CONFIG)
+    n_warnings = 0
     for param in kwargs:
         if param not in default_emscoring:
             sys.exit(f'* ERROR * Parameter {param!r} is not a valid `emscoring` parameter')  # noqa:E501
-
+        if kwargs[param] != default_emscoring[param]:
+            print(f"* WARNING * Value ({kwargs[param]}) of parameter {param} different from default ({default_emscoring[param]})")  # noqa:E501
+            n_warnings += 1
+    
+    if n_warnings != 0:
+        print("* WARNING * Non-default parameter values were used. They should be properly reported if the output data are used for publication.")  # noqa:E501
+    
     params = {
         "topoaa": {"molecules": [input_pdb]},
         "emscoring": kwargs,

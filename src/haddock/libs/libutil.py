@@ -10,7 +10,7 @@ from functools import partial
 from os import cpu_count
 from pathlib import Path
 
-from haddock import log
+from haddock import EmptyPath, log
 from haddock.core.exceptions import SetupError
 from haddock.gear.greetings import get_goodbye_help
 
@@ -321,3 +321,31 @@ def extract_keys_recursive(config):
             yield from extract_keys_recursive(value)
         else:
             yield param_name
+
+
+def recursive_convert_paths_to_strings(params):
+    """
+    Convert paths to strings recursively over a dictionary.
+
+    Parameters
+    ----------
+    params : dictionary
+
+    Returns
+    -------
+    dictionary
+        A copy of the original dictionary with paths converted to strings.
+    """
+    params = deepcopy(params)
+    for param, value in params.items():
+        if isinstance(value, (Path, EmptyPath)):
+            params[param] = str(value)
+        elif isinstance(value, collections.abc.Mapping):
+            params[param] = recursive_convert_paths_to_strings(value)
+        elif isinstance(value, (tuple, list)):
+            for i, v in enumerate(value):
+                if isinstance(v, (Path, EmptyPath)):
+                    value[i] = str(v)
+            params[param] = value
+
+    return params

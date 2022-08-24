@@ -6,7 +6,9 @@ configuration file is divided into two sections. The first contains the general
 **mandatory** and **optional** parameters. The second section contains the
 configuration parameters for each **step** in the workflow. The workflow steps
 are defined by a title header with the module's name to execute followed by its
-parameters.
+parameters. The ``parameter = value`` pair definitions follow strictly the TOML
+syntax. However, contrarily to TOML, in HADDOCK3 configuration files can have
+headers with repeated names.
 
 .. code:: toml
 
@@ -48,15 +50,13 @@ parameters.
 
 .. note::
 
-    If you are a developer and wish to know more details, the HADDOCK3
-    configuration files follow the TOML syntax. However they are not TOML files.
-    HADDOCK3 implements its own parser with additional features not covered by
-    TOML but needed for this project. See :ref:`Workflow Configuration
-    file reader`.
+    If you are a developer and wish to know more details, see the
+    :py:mod:`haddock.gear.config` module.
 
 
-Each module does have default parameters defined and HADDOCK3 will use those default values unless those are specificied and changed by the
-user in the configuration file.
+Each module does have default parameters defined and HADDOCK3 will use those
+default values unless those are specified and changed by the user in the
+configuration file.
 
 To obtain the list of all parameters for each module, you can use the
 ``haddock-cfg`` command-line. For example, to list all parameters from the
@@ -105,13 +105,13 @@ described inside a step will affect only that step. For example:
 
     [caprieval]
     reference_fname = "data/mol1-mol2.pdb"
-    
+
     [flexref]
     # flexref jobs are bound to generate one model per job
     # therefore, we can specify the 'concat' parameter specifically for flexref
     concat = 1
     ambig_fname = "data/mol1.tbl"
-    
+
     [caprieval]
     reference_fname = "data/mol1-mol2.pdb"
 
@@ -124,8 +124,7 @@ Here is a list of all available :ref:`Modules`.
 Finally, if you are a developer and wish to use HADDOCK3 as a library to read
 and write configuration files please see the related Python modules:
 
-* :ref:`Workflow configuration file reader`
-* :ref:`Workflow configuration file writer`
+* :ref:`Configuration file I/O`
 
 For example, to read a workflow configuration file:
 
@@ -133,7 +132,56 @@ For example, to read a workflow configuration file:
 
     from pathlib import Path
 
-    from haddock.gear.config_reader import read_config
+    from haddock.gear.config import load
 
     config_path = Path("path", "to", "config.cfg")
-    config_dict = read_config(config_path)
+    config_dict = load(config_path)
+
+Compatibility with TOML
+-----------------------
+
+HADDOCK3 actually uses `TOML <https://pypi.org/project/toml/>`_ to read the
+configuration files. However, some additional features are introduced to enhance
+user experience. For example, the capability to repeat header names. Hence,
+HADDOCK3 can also read pure TOML files as workflow configuration files. For
+those cases, repeated modules should have a trailing integer in their
+definition:
+
+.. code:: toml
+
+    [topoaa]
+    # parameters here...
+
+    [rigidbody]
+    # parameters here...
+
+    [caprieval]
+    # parameters here...
+
+    [flexref]
+    # parameters here...
+
+    ['caprieval.2']
+    # parameters here...
+
+The exact trailing integer is irrelevant as long as headers are not repeated.
+HADDOCK3 will normalize the integers when reading the config file. For example,
+the example below is the same as the above example. What matters is the
+order in which the steps are presented in the configuration file.
+
+.. code:: toml
+
+    [topoaa]
+    # parameters here...
+
+    [rigidbody]
+    # parameters here...
+
+    ['caprieval.10']  # <- mind the 10 here
+    # parameters here...
+
+    [flexref]
+    # parameters here...
+
+    ['caprieval.2']
+    # parameters here...

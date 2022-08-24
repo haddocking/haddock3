@@ -196,7 +196,7 @@
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">HaddockError</span><span class="p">,</span> <span class="n">HaddockTermination</span><span class="p">,</span> <span class="n">StepError</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.clean_steps</span> <span class="kn">import</span> <span class="n">clean_output</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config_reader</span> <span class="kn">import</span> <span class="n">get_module_name</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">get_module_name</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.zerofill</span> <span class="kn">import</span> <span class="n">zero_fill</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libtimer</span> <span class="kn">import</span> <span class="n">convert_seconds_to_min_sec</span><span class="p">,</span> <span class="n">log_time</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">recursive_dict_update</span>
@@ -259,7 +259,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">_items</span> <span class="o">=</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">modules_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">num_stage</span><span class="p">,</span> <span class="p">(</span><span class="n">stage_name</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_items</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading instructions of [</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">] step&quot;</span><span class="p">)</span>
+            <span class="n">stage_name</span> <span class="o">=</span> <span class="n">get_module_name</span><span class="p">(</span><span class="n">stage_name</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading instructions step </span><span class="si">{</span><span class="n">num_stage</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">stage_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
             <span class="c1"># updates the module&#39;s specific parameter with global parameters</span>
             <span class="c1"># that are applicable to the modules. But keep priority to the local</span>
@@ -268,7 +269,7 @@
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">_</span> <span class="o">=</span> <span class="n">Step</span><span class="p">(</span>
-                    <span class="n">get_module_name</span><span class="p">(</span><span class="n">stage_name</span><span class="p">),</span>
+                    <span class="n">stage_name</span><span class="p">,</span>
                     <span class="n">order</span><span class="o">=</span><span class="n">num_stage</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">params_up</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -366,7 +367,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 18, 2022.
+        Last updated on Aug 24, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

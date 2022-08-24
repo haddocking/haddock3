@@ -105,7 +105,7 @@ solvent
 ssdihed
 ~~~~~~~
 
-| *default*: 'none'
+| *default*: ''
 | *type*: string
 | *title*: Define automatically backbone dihedral angle restraints
 | *short description*: If turned on, this option will automatically defined backbone dihedral angle restraints for the selected regions.

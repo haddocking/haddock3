@@ -200,7 +200,9 @@ configuration file is divided into two sections. The first contains the general
 <strong>mandatory</strong> and <strong>optional</strong> parameters. The second section contains the
 configuration parameters for each <strong>step</strong> in the workflow. The workflow steps
 are defined by a title header with the module’s name to execute followed by its
-parameters.</p>
+parameters. The <code class="docutils literal notranslate"><span class="pre">parameter</span> <span class="pre">=</span> <span class="pre">value</span></code> pair definitions follow strictly the TOML
+syntax. However, contrarily to TOML, in HADDOCK3 configuration files can have
+headers with repeated names.</p>
 <div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="c1"># first section: general parameters =======</span><span class="w"></span>
 <span class="c1"># mandatory parameters</span><span class="w"></span>
 <span class="n">run_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;run1-test&quot;</span><span class="w"></span>
@@ -240,13 +242,12 @@ parameters.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>If you are a developer and wish to know more details, the HADDOCK3
-configuration files follow the TOML syntax. However they are not TOML files.
-HADDOCK3 implements its own parser with additional features not covered by
-TOML but needed for this project. See <a class="reference internal" href="../reference/gear/config_reader.html#module-haddock.gear.config_reader"><span class="std std-ref">Workflow Configuration file reader</span></a>.</p>
+<p>If you are a developer and wish to know more details, see the
+<a class="reference internal" href="../reference/gear/config.html#module-haddock.gear.config" title="haddock.gear.config"><code class="xref py py-mod docutils literal notranslate"><span class="pre">haddock.gear.config</span></code></a> module.</p>
 </div>
-<p>Each module does have default parameters defined and HADDOCK3 will use those default values unless those are specificied and changed by the
-user in the configuration file.</p>
+<p>Each module does have default parameters defined and HADDOCK3 will use those
+default values unless those are specified and changed by the user in the
+configuration file.</p>
 <p>To obtain the list of all parameters for each module, you can use the
 <code class="docutils literal notranslate"><span class="pre">haddock-cfg</span></code> command-line. For example, to list all parameters from the
 <em>All-atom topology</em> module (<code class="docutils literal notranslate"><span class="pre">topoaa</span></code>):</p>
@@ -305,18 +306,62 @@ a panoply of examples of workflow configuration files (<code class="docutils lit
 <p>Finally, if you are a developer and wish to use HADDOCK3 as a library to read
 and write configuration files please see the related Python modules:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="../reference/gear/config_reader.html#module-haddock.gear.config_reader"><span class="std std-ref">Workflow Configuration file reader</span></a></p></li>
-<li><p><a class="reference internal" href="../reference/gear/config_writer.html#module-haddock.gear.config_writer"><span class="std std-ref">Workflow configuration file writer</span></a></p></li>
+<li><p><a class="reference internal" href="../reference/gear/config.html#module-haddock.gear.config"><span class="std std-ref">Configuration file I/O</span></a></p></li>
 </ul>
 <p>For example, to read a workflow configuration file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">haddock.gear.config_reader</span> <span class="kn">import</span> <span class="n">read_config</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span>
 
 <span class="n">config_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="s2">&quot;config.cfg&quot;</span><span class="p">)</span>
-<span class="n">config_dict</span> <span class="o">=</span> <span class="n">read_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+<span class="n">config_dict</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
 </pre></div>
 </div>
+<section id="compatibility-with-toml">
+<h2>Compatibility with TOML<a class="headerlink" href="#compatibility-with-toml" title="Permalink to this heading">¶</a></h2>
+<p>HADDOCK3 actually uses <a class="reference external" href="https://pypi.org/project/toml/">TOML</a> to read the
+configuration files. However, some additional features are introduced to enhance
+user experience. For example, the capability to repeat header names. Hence,
+HADDOCK3 can also read pure TOML files as workflow configuration files. For
+those cases, repeated modules should have a trailing integer in their
+definition:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[topoaa]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[rigidbody]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[caprieval]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[flexref]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[&#39;caprieval.2&#39;]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+</pre></div>
+</div>
+<p>The exact trailing integer is irrelevant as long as headers are not repeated.
+HADDOCK3 will normalize the integers when reading the config file. For example,
+the example below is the same as the above example. What matters is the
+order in which the steps are presented in the configuration file.</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="k">[topoaa]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[rigidbody]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="p">[</span><span class="s">&#39;caprieval.10&#39;</span><span class="p">]</span><span class="w">  </span><span class="c1"># &lt;- mind the 10 here</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[flexref]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+
+<span class="k">[&#39;caprieval.2&#39;]</span><span class="w"></span>
+<span class="c1"># parameters here...</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -351,7 +396,7 @@ and write configuration files please see the related Python modules:</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 18, 2022.
+        Last updated on Aug 24, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

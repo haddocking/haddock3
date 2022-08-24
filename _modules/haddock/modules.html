@@ -190,17 +190,16 @@
 <span></span><span class="sd">&quot;&quot;&quot;HADDOCK3 modules.&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">modules_defaults_path</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">MODULE_IO_FILE</span>
 <span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
+<span class="kn">from</span> <span class="nn">haddock.gear</span> <span class="kn">import</span> <span class="n">config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.clean_steps</span> <span class="kn">import</span> <span class="n">clean_output</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config_reader</span> <span class="kn">import</span> <span class="n">read_config</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config_writer</span> <span class="kn">import</span> <span class="n">convert_config</span> <span class="k">as</span> <span class="n">_convert_config</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config_writer</span> <span class="kn">import</span> <span class="n">save_config</span> <span class="k">as</span> <span class="n">_save_config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.parameters</span> <span class="kn">import</span> <span class="n">config_mandatory_general_parameters</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libhpc</span> <span class="kn">import</span> <span class="n">HPCScheduler</span>
@@ -245,7 +244,7 @@
 
 <span class="n">config_readers</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;.yaml&quot;</span><span class="p">:</span> <span class="n">read_from_yaml_config</span><span class="p">,</span>
-    <span class="s2">&quot;.cfg&quot;</span><span class="p">:</span> <span class="n">read_config</span><span class="p">,</span>
+    <span class="s2">&quot;.cfg&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">,</span>
     <span class="p">}</span>
 
 <span class="n">_step_folder_regex</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
@@ -380,7 +379,14 @@
         <span class="c1">#</span>
         <span class="c1"># [topoaa]</span>
         <span class="c1"># ...</span>
-        <span class="n">save_config_ignored</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">},</span> <span class="n">path</span><span class="p">)</span></div>
+        <span class="n">ignore</span> <span class="o">=</span> <span class="n">config_mandatory_general_parameters</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">non_mandatory_general_parameters_defaults</span><span class="p">)</span>  <span class="c1"># noqa: 501</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ignore</span><span class="p">):</span>
+                <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+        <span class="n">config</span><span class="o">.</span><span class="n">save</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">params</span><span class="p">},</span> <span class="n">path</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseHaddockModule.add_parent_to_paths"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.add_parent_to_paths">[docs]</a>    <span class="k">def</span> <span class="nf">add_parent_to_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add parent path to paths.&quot;&quot;&quot;</span>
@@ -554,95 +560,6 @@
             <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="convert_config"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.convert_config">[docs]</a><span class="k">def</span> <span class="nf">convert_config</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert a module&#39;s parameters dictionary to a HADDOCK3 user config text.</span>
-
-<span class="sd">    This function is a generator.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; gen = convert_config(params)</span>
-<span class="sd">    &gt;&gt;&gt; text = os.linesep.join(gen)</span>
-<span class="sd">    &gt;&gt;&gt; with open(&quot;params.cfg&quot;, &quot;w&quot;) as fout:</span>
-<span class="sd">    &gt;&gt;&gt;     fout.write(text)</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    params : dictionary</span>
-<span class="sd">        The dictionary containing the parameters.</span>
-
-<span class="sd">    Yields</span>
-<span class="sd">    ------</span>
-<span class="sd">    str</span>
-<span class="sd">        Line by line for the HADDOCK3 user configuration file.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :py:func:`haddock.gear.config_writer.convert_config`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">_convert_config</span><span class="p">(</span>
-        <span class="n">params</span><span class="p">,</span>
-        <span class="n">ignore_params</span><span class="o">=</span><span class="n">non_mandatory_general_parameters_defaults</span><span class="p">,</span>
-        <span class="n">module_names</span><span class="o">=</span><span class="nb">set</span><span class="p">(</span><span class="n">modules_category</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-        <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="save_config"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.save_config">[docs]</a><span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Save HADDOCK3 configuration dictionary to user config file.</span>
-
-<span class="sd">    Saves all parameters, even the `non_mandatory_general_parameters_defaults`</span>
-<span class="sd">    which can be repeated between the module parameters and the general</span>
-<span class="sd">    parameters.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    params : dict</span>
-<span class="sd">        The dictionary containing the parameters.</span>
-
-<span class="sd">    path : str or pathlib.Path</span>
-<span class="sd">        File name where to save the configuration file.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :py:func:`haddock.gear.config_writer.save_config`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;module_names&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">modules_category</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-    <span class="k">return</span> <span class="n">_save_config</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="save_config_ignored"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.save_config_ignored">[docs]</a><span class="k">def</span> <span class="nf">save_config_ignored</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Save HADDOCK3 configuration dictionary to user config file.</span>
-
-<span class="sd">    Ignores the</span>
-<span class="sd">    :py:data:`haddock.modules.non_mandatory_general_parameters_defaults`</span>
-<span class="sd">    parameters.</span>
-
-<span class="sd">    Useful to keep clean versions of the modules&#39; specific parameters.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    params : dict</span>
-<span class="sd">        The dictionary containing the parameters.</span>
-
-<span class="sd">    path : str or pathlib.Path</span>
-<span class="sd">        File name where to save the configuration file.</span>
-
-<span class="sd">    See Also</span>
-<span class="sd">    --------</span>
-<span class="sd">    :py:func:`save_config`</span>
-<span class="sd">    :py:func:`haddock.gear.config_writer.save_config`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;module_names&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">(</span><span class="n">modules_category</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
-    <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-        <span class="s2">&quot;ignore_params&quot;</span><span class="p">,</span>
-        <span class="n">config_mandatory_general_parameters</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">non_mandatory_general_parameters_defaults</span><span class="p">),</span>  <span class="c1"># noqa: 501</span>
-        <span class="p">)</span>
-    <span class="k">return</span> <span class="n">_save_config</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="get_module_steps_folders"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.get_module_steps_folders">[docs]</a><span class="k">def</span> <span class="nf">get_module_steps_folders</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a sorted list of the step folders in a running directory.</span>
@@ -741,7 +658,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 18, 2022.
+        Last updated on Aug 24, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

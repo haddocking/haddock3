@@ -208,7 +208,8 @@
     <span class="n">unpack_compressed_and_archived_files</span><span class="p">,</span>
     <span class="n">update_unpacked_names</span><span class="p">,</span>
     <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">haddock.gear.config_reader</span> <span class="kn">import</span> <span class="n">get_module_name</span><span class="p">,</span> <span class="n">read_config</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">get_module_name</span>
+<span class="kn">from</span> <span class="nn">haddock.gear.config</span> <span class="kn">import</span> <span class="n">load</span> <span class="k">as</span> <span class="n">read_config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.expandable_parameters</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_mol_parameters</span><span class="p">,</span>
     <span class="n">get_multiple_index_groups</span><span class="p">,</span>
@@ -440,18 +441,18 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">copy_molecules_to_topology</span><span class="p">(</span>
             <span class="n">general_params</span><span class="p">[</span><span class="s1">&#39;molecules&#39;</span><span class="p">],</span>
-            <span class="n">modules_params</span><span class="p">[</span><span class="s1">&#39;topoaa&#39;</span><span class="p">],</span>
+            <span class="n">modules_params</span><span class="p">[</span><span class="s1">&#39;topoaa.1&#39;</span><span class="p">],</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa&quot;</span><span class="p">][</span><span class="s2">&quot;molecules&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">max_molecules_allowed</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa.1&quot;</span><span class="p">][</span><span class="s2">&quot;molecules&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">max_molecules_allowed</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s2">&quot;Too many molecules defined, max is </span><span class="si">{max_molecules_allowed}</span><span class="s2">.&quot;</span><span class="p">)</span>  <span class="c1"># noqa: E501</span>
 
         <span class="n">zero_fill</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">modules_params</span><span class="p">)</span>
 
-        <span class="n">populate_topology_molecule_params</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa&quot;</span><span class="p">])</span>
+        <span class="n">populate_topology_molecule_params</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa.1&quot;</span><span class="p">])</span>
         <span class="n">populate_mol_parameters</span><span class="p">(</span><span class="n">modules_params</span><span class="p">)</span>
 
-        <span class="n">max_mols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa&quot;</span><span class="p">][</span><span class="s2">&quot;molecules&quot;</span><span class="p">])</span>
+        <span class="n">max_mols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa.1&quot;</span><span class="p">][</span><span class="s2">&quot;molecules&quot;</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">from_scratch</span><span class="p">:</span>
         <span class="n">_prev</span><span class="p">,</span> <span class="n">_new</span> <span class="o">=</span> <span class="n">renum_step_folders</span><span class="p">(</span><span class="n">general_params</span><span class="p">[</span><span class="n">RUNDIR</span><span class="p">])</span>
@@ -472,7 +473,7 @@
     <span class="k">if</span> <span class="n">scratch_rest0</span><span class="p">:</span>
         <span class="n">copy_molecules_to_data_dir</span><span class="p">(</span>
             <span class="n">data_dir</span><span class="p">,</span>
-            <span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa&quot;</span><span class="p">],</span>
+            <span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa.1&quot;</span><span class="p">],</span>
             <span class="n">preprocess</span><span class="o">=</span><span class="n">general_params</span><span class="p">[</span><span class="s2">&quot;preprocess&quot;</span><span class="p">],</span>
             <span class="p">)</span>
 
@@ -550,6 +551,7 @@
 <span class="sd">        in the defaults.cfg of the module.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">modules_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="n">get_module_name</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
         <span class="n">defaults</span> <span class="o">=</span> <span class="n">_read_defaults</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">defaults</span><span class="p">:</span>
             <span class="k">continue</span>
@@ -741,7 +743,7 @@
         <span class="k">for</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">parameter</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;_fname&#39;</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
-                    <span class="n">name</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">name</span>
                     <span class="c1"># path is created here to avoid creating empty folders</span>
                     <span class="c1"># for those modules without &#39;_fname&#39; parameters</span>
                     <span class="n">pf</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">end_path</span><span class="p">)</span>
@@ -851,7 +853,7 @@
     <span class="c1"># for the `mol` parameter. Instead of defining a general recursive</span>
     <span class="c1"># function, I decided to add a simple if/else exception.</span>
     <span class="c1"># no other module should have subdictionaries has parameters</span>
-    <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">&quot;topoaa&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">get_module_name</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;topoaa&quot;</span><span class="p">:</span>
         <span class="n">ap</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># allowed_parameters</span>
         <span class="n">ap</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_get_expandable</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">max_mols</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_mols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
@@ -890,7 +892,7 @@
     <span class="n">allowed_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">read_multiple_idx_groups_user_config</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">type_2</span><span class="p">))</span>  <span class="c1"># noqa: E501</span>
 
     <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">):</span>
-        <span class="n">type_3</span> <span class="o">=</span> <span class="n">type_simplest_ep</span><span class="p">[</span><span class="n">module_name</span><span class="p">]</span>
+        <span class="n">type_3</span> <span class="o">=</span> <span class="n">type_simplest_ep</span><span class="p">[</span><span class="n">get_module_name</span><span class="p">(</span><span class="n">module_name</span><span class="p">)]</span>
         <span class="n">allowed_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">read_simplest_expandable</span><span class="p">(</span><span class="n">type_3</span><span class="p">,</span> <span class="n">user_config</span><span class="p">))</span>
 
     <span class="n">_</span> <span class="o">=</span> <span class="n">read_mol_parameters</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">type_4</span><span class="p">,</span> <span class="n">max_mols</span><span class="o">=</span><span class="n">max_mols</span><span class="p">)</span>
@@ -901,7 +903,7 @@
 
 <div class="viewcode-block" id="populate_topology_molecule_params"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.populate_topology_molecule_params">[docs]</a><span class="k">def</span> <span class="nf">populate_topology_molecule_params</span><span class="p">(</span><span class="n">topoaa</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Populate topoaa `molX` subdictionaries.&quot;&quot;&quot;</span>
-    <span class="n">topoaa_dft</span> <span class="o">=</span> <span class="n">_read_defaults</span><span class="p">(</span><span class="s2">&quot;topoaa&quot;</span><span class="p">)</span>
+    <span class="n">topoaa_dft</span> <span class="o">=</span> <span class="n">_read_defaults</span><span class="p">(</span><span class="s2">&quot;topoaa.1&quot;</span><span class="p">)</span>
 
     <span class="c1"># list of possible prot_segids</span>
     <span class="n">uppers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -953,7 +955,7 @@
 <span class="sd">        Alter the dictionary in place.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># the starting number of the `mol_` parameters is 1 by CNS definition.</span>
-    <span class="n">num_mols</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa&quot;</span><span class="p">][</span><span class="s2">&quot;molecules&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">num_mols</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">modules_params</span><span class="p">[</span><span class="s2">&quot;topoaa.1&quot;</span><span class="p">][</span><span class="s2">&quot;molecules&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">modules_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
         <span class="c1"># read the modules default parameters</span>
@@ -1147,7 +1149,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 18, 2022.
+        Last updated on Aug 24, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

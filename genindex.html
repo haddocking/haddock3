@@ -416,7 +416,7 @@
 </li>
       <li><a href="reference/gear/prepare_run.html#haddock.gear.prepare_run.config_key_error">config_key_error() (in module haddock.gear.prepare_run)</a>
 </li>
-      <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.ConfigFormatError">ConfigFormatError</a>
+      <li><a href="reference/gear/config.html#haddock.gear.config.ConfigFormatError">ConfigFormatError</a>
 </li>
       <li><a href="reference/core/exceptions.html#haddock.core.exceptions.ConfigurationError">ConfigurationError</a>
 </li>
@@ -460,15 +460,13 @@
       </ul></li>
       <li><a href="reference/gear/preprocessing.html#haddock.gear.preprocessing.convert_ATOM_to_HETATM">convert_ATOM_to_HETATM() (in module haddock.gear.preprocessing)</a>
 </li>
-      <li><a href="reference/gear/config_writer.html#haddock.gear.config_writer.convert_config">convert_config() (in module haddock.gear.config_writer)</a>
-
-      <ul>
-        <li><a href="modules/index.html#haddock.modules.convert_config">(in module haddock.modules)</a>
-</li>
-      </ul></li>
       <li><a href="reference/gear/preprocessing.html#haddock.gear.preprocessing.convert_HETATM_to_ATOM">convert_HETATM_to_ATOM() (in module haddock.gear.preprocessing)</a>
 </li>
       <li><a href="reference/gear/preprocessing.html#haddock.gear.preprocessing.convert_record">convert_record() (in module haddock.gear.preprocessing)</a>
+</li>
+      <li><a href="reference/gear/config.html#haddock.gear.config.convert_to_path">convert_to_path() (in module haddock.gear.config)</a>
+</li>
+      <li><a href="reference/gear/config.html#haddock.gear.config.convert_variables_to_paths">convert_variables_to_paths() (in module haddock.gear.config)</a>
 </li>
       <li><a href="reference/libs/libutil.html#haddock.libs.libutil.copy_files_to_dir">copy_files_to_dir() (in module haddock.libs.libutil)</a>
 </li>
@@ -519,8 +517,6 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/libs/libalign.html#haddock.libs.libalign.dump_as_izone">dump_as_izone() (in module haddock.libs.libalign)</a>
-</li>
-      <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.DuplicatedParameterError">DuplicatedParameterError</a>
 </li>
   </ul></td>
 </tr></table>
@@ -678,7 +674,7 @@
 </li>
       <li><a href="modules/topology/topoaa.html#haddock.modules.topology.topoaa.HaddockModule.get_md5">get_md5() (haddock.modules.topology.topoaa.HaddockModule static method)</a>
 </li>
-      <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.get_module_name">get_module_name() (in module haddock.gear.config_reader)</a>
+      <li><a href="reference/gear/config.html#haddock.gear.config.get_module_name">get_module_name() (in module haddock.gear.config)</a>
 </li>
       <li><a href="modules/index.html#haddock.modules.get_module_steps_folders">get_module_steps_folders() (in module haddock.modules)</a>
 </li>
@@ -769,17 +765,10 @@
 </li>
       </ul></li>
       <li>
-    haddock.gear.config_reader
+    haddock.gear.config
 
       <ul>
-        <li><a href="reference/gear/config_reader.html#module-haddock.gear.config_reader">module</a>
-</li>
-      </ul></li>
-      <li>
-    haddock.gear.config_writer
-
-      <ul>
-        <li><a href="reference/gear/config_writer.html#module-haddock.gear.config_writer">module</a>
+        <li><a href="reference/gear/config.html#module-haddock.gear.config">module</a>
 </li>
       </ul></li>
       <li>
@@ -1221,7 +1210,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/libs/libontology.html#haddock.libs.libontology.ModuleIO.load">load() (haddock.libs.libontology.ModuleIO method)</a>
+
+      <ul>
+        <li><a href="reference/gear/config.html#haddock.gear.config.load">(in module haddock.gear.config)</a>
 </li>
+      </ul></li>
       <li><a href="reference/libs/libcns.html#haddock.libs.libcns.load_ambig">load_ambig() (in module haddock.libs.libcns)</a>
 </li>
       <li><a href="reference/libs/libcns.html#haddock.libs.libcns.load_axis">load_axis() (in module haddock.libs.libcns)</a>
@@ -1247,6 +1240,8 @@
       <li><a href="reference/libs/libcns.html#haddock.libs.libcns.load_unambig">load_unambig() (in module haddock.libs.libcns)</a>
 </li>
       <li><a href="reference/libs/libcns.html#haddock.libs.libcns.load_workflow_params">load_workflow_params() (in module haddock.libs.libcns)</a>
+</li>
+      <li><a href="reference/gear/config.html#haddock.gear.config.loads">loads() (in module haddock.gear.config)</a>
 </li>
       <li><a href="modules/analysis/caprieval.html#haddock.modules.analysis.caprieval.HaddockModule.log">log() (haddock.modules.analysis.caprieval.HaddockModule method)</a>
 
@@ -1330,6 +1325,8 @@
 </li>
       <li><a href="reference/gear/parameters.html#haddock.gear.parameters.MANDATORY_YAML">MANDATORY_YAML (in module haddock.gear.parameters)</a>
 </li>
+      <li><a href="reference/gear/config.html#haddock.gear.config.match_path_criteria">match_path_criteria() (in module haddock.gear.config)</a>
+</li>
       <li><a href="reference/gear/preprocessing.html#haddock.gear.preprocessing.models_should_have_the_same_labels">models_should_have_the_same_labels() (in module haddock.gear.preprocessing)</a>
 </li>
       <li><a href="reference/gear/preprocessing.html#haddock.gear.preprocessing.ModelsDifferError">ModelsDifferError</a>
@@ -1350,9 +1347,7 @@
 </li>
         <li><a href="reference/gear/clean_steps.html#module-haddock.gear.clean_steps">haddock.gear.clean_steps</a>
 </li>
-        <li><a href="reference/gear/config_reader.html#module-haddock.gear.config_reader">haddock.gear.config_reader</a>
-</li>
-        <li><a href="reference/gear/config_writer.html#module-haddock.gear.config_writer">haddock.gear.config_writer</a>
+        <li><a href="reference/gear/config.html#module-haddock.gear.config">haddock.gear.config</a>
 </li>
         <li><a href="reference/gear/expandable_parameters.html#module-haddock.gear.expandable_parameters">haddock.gear.expandable_parameters</a>
 </li>
@@ -1459,8 +1454,6 @@
 </li>
       <li><a href="reference/libs/libmpi.html#haddock.libs.libmpi.MPIScheduler">MPIScheduler (class in haddock.libs.libmpi)</a>
 </li>
-      <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.MultilineListDefinitionError">MultilineListDefinitionError</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -1468,8 +1461,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/libs/libfunc.html#haddock.libs.libfunc.nan">nan() (in module haddock.libs.libfunc)</a>
-</li>
-      <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.NoGroupFoundError">NoGroupFoundError</a>
 </li>
       <li><a href="reference/libs/libutil.html#haddock.libs.libutil.non_negative_int">non_negative_int() (in module haddock.libs.libutil)</a>
 </li>
@@ -1629,8 +1620,6 @@
 </li>
       <li><a href="reference/libs/libpdb.html#haddock.libs.libpdb.read_chainids">read_chainids() (in module haddock.libs.libpdb)</a>
 </li>
-      <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.read_config">read_config() (in module haddock.gear.config_reader)</a>
-</li>
       <li><a href="reference/libs/libio.html#haddock.libs.libio.read_from_yaml">read_from_yaml() (in module haddock.libs.libio)</a>
 </li>
       <li><a href="reference/gear/yaml2cfg.html#haddock.gear.yaml2cfg.read_from_yaml_config">read_from_yaml_config() (in module haddock.gear.yaml2cfg)</a>
@@ -1654,6 +1643,8 @@
       <li><a href="reference/gear/expandable_parameters.html#haddock.gear.expandable_parameters.read_single_idx_groups_user_config">read_single_idx_groups_user_config() (in module haddock.gear.expandable_parameters)</a>
 </li>
       <li><a href="reference/core/supported_molecules.html#haddock.core.supported_molecules.read_supported_residues">read_supported_residues() (in module haddock.core.supported_molecules)</a>
+</li>
+      <li><a href="reference/libs/libutil.html#haddock.libs.libutil.recursive_convert_paths_to_strings">recursive_convert_paths_to_strings() (in module haddock.libs.libutil)</a>
 </li>
       <li><a href="reference/libs/libutil.html#haddock.libs.libutil.recursive_dict_update">recursive_dict_update() (in module haddock.libs.libutil)</a>
 </li>
@@ -1810,7 +1801,11 @@
       <li><a href="reference/libs/libpdb.html#haddock.libs.libpdb.sanitize">sanitize() (in module haddock.libs.libpdb)</a>
 </li>
       <li><a href="reference/libs/libontology.html#haddock.libs.libontology.ModuleIO.save">save() (haddock.libs.libontology.ModuleIO method)</a>
+
+      <ul>
+        <li><a href="reference/gear/config.html#haddock.gear.config.save">(in module haddock.gear.config)</a>
 </li>
+      </ul></li>
       <li><a href="modules/analysis/caprieval.html#haddock.modules.analysis.caprieval.HaddockModule.save_config">save_config() (haddock.modules.analysis.caprieval.HaddockModule method)</a>
 
       <ul>
@@ -1848,13 +1843,7 @@
 </li>
         <li><a href="modules/topology/topoaa.html#haddock.modules.topology.topoaa.HaddockModule.save_config">(haddock.modules.topology.topoaa.HaddockModule method)</a>
 </li>
-        <li><a href="reference/gear/config_writer.html#haddock.gear.config_writer.save_config">(in module haddock.gear.config_writer)</a>
-</li>
-        <li><a href="modules/index.html#haddock.modules.save_config">(in module haddock.modules)</a>
-</li>
       </ul></li>
-      <li><a href="modules/index.html#haddock.modules.save_config_ignored">save_config_ignored() (in module haddock.modules)</a>
-</li>
       <li><a href="modules/index.html#haddock.modules.base_cns_module.BaseCNSModule.save_envvars">save_envvars() (haddock.modules.base_cns_module.BaseCNSModule method)</a>
 
       <ul>
@@ -1875,10 +1864,10 @@
       </ul></li>
       <li><a href="reference/libs/libio.html#haddock.libs.libio.save_lines_to_files">save_lines_to_files() (in module haddock.libs.libio)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/libs/libparallel.html#haddock.libs.libparallel.Scheduler">Scheduler (class in haddock.libs.libparallel)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/libs/libparallel.html#haddock.libs.libparallel.Worker.sentinel">sentinel (haddock.libs.libparallel.Worker property)</a>
 </li>
       <li><a href="reference/gear/prepare_run.html#haddock.gear.prepare_run.setup_run">setup_run() (in module haddock.gear.prepare_run)</a>
@@ -2072,13 +2061,7 @@
 </li>
         <li><a href="reference/core/exceptions.html#haddock.core.exceptions.StepError.with_traceback">(haddock.core.exceptions.StepError method)</a>
 </li>
-        <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.ConfigFormatError.with_traceback">(haddock.gear.config_reader.ConfigFormatError method)</a>
-</li>
-        <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.DuplicatedParameterError.with_traceback">(haddock.gear.config_reader.DuplicatedParameterError method)</a>
-</li>
-        <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.MultilineListDefinitionError.with_traceback">(haddock.gear.config_reader.MultilineListDefinitionError method)</a>
-</li>
-        <li><a href="reference/gear/config_reader.html#haddock.gear.config_reader.NoGroupFoundError.with_traceback">(haddock.gear.config_reader.NoGroupFoundError method)</a>
+        <li><a href="reference/gear/config.html#haddock.gear.config.ConfigFormatError.with_traceback">(haddock.gear.config.ConfigFormatError method)</a>
 </li>
         <li><a href="reference/gear/preprocessing.html#haddock.gear.preprocessing.ModelsDifferError.with_traceback">(haddock.gear.preprocessing.ModelsDifferError method)</a>
 </li>
@@ -2149,7 +2132,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 18, 2022.
+        Last updated on Aug 24, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

@@ -368,32 +368,6 @@ dictionary and unpack the dictionary to the function call.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="haddock.modules.convert_config">
-<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">convert_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules.html#convert_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.convert_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a module’s parameters dictionary to a HADDOCK3 user config text.</p>
-<p>This function is a generator.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">gen</span> <span class="o">=</span> <span class="n">convert_config</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">text</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gen</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;params.cfg&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>params</strong> (<em>dictionary</em>) – The dictionary containing the parameters.</p>
-</dd>
-<dt class="field-even">Yields<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – Line by line for the HADDOCK3 user configuration file.</p>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../reference/gear/config_writer.html#haddock.gear.config_writer.convert_config" title="haddock.gear.config_writer.convert_config"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.config_writer.convert_config()</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="haddock.modules.get_engine">
 <span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">get_engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules.html#get_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.get_engine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an engine to run the jobs.</p>
@@ -459,49 +433,6 @@ integer index followed by a name of a module.</p>
 <span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">modules_category</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'caprieval':</span> <span class="pre">'analysis',</span> <span class="pre">'clustfcc':</span> <span class="pre">'analysis',</span> <span class="pre">'clustrmsd':</span> <span class="pre">'analysis',</span> <span class="pre">'emref':</span> <span class="pre">'refinement',</span> <span class="pre">'emscoring':</span> <span class="pre">'scoring',</span> <span class="pre">'exit':</span> <span class="pre">'extras',</span> <span class="pre">'flexref':</span> <span class="pre">'refinement',</span> <span class="pre">'gdock':</span> <span class="pre">'sampling',</span> <span class="pre">'lightdock':</span> <span class="pre">'sampling',</span> <span class="pre">'mdref':</span> <span class="pre">'refinement',</span> <span class="pre">'mdscoring':</span> <span class="pre">'scoring',</span> <span class="pre">'rigidbody':</span> <span class="pre">'sampling',</span> <span class="pre">'rmsdmatrix':</span> <span class="pre">'analysis',</span> <span class="pre">'seletop':</span> <span class="pre">'analysis',</span> <span class="pre">'seletopclusts':</span> <span class="pre">'analysis',</span> <span class="pre">'topoaa':</span> <span class="pre">'topology',</span> <span class="pre">'topocg':</span> <span class="pre">'topology'}</span></em><a class="headerlink" href="#haddock.modules.modules_category" title="Permalink to this definition">¶</a></dt>
 <dd><p>Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.modules.save_config">
-<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules.html#save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.save_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save HADDOCK3 configuration dictionary to user config file.</p>
-<p>Saves all parameters, even the <cite>non_mandatory_general_parameters_defaults</cite>
-which can be repeated between the module parameters and the general
-parameters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>dict</em>) – The dictionary containing the parameters.</p></li>
-<li><p><strong>path</strong> (<em>str or pathlib.Path</em>) – File name where to save the configuration file.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../reference/gear/config_writer.html#haddock.gear.config_writer.save_config" title="haddock.gear.config_writer.save_config"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.config_writer.save_config()</span></code></a></p>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.modules.save_config_ignored">
-<span class="sig-prename descclassname"><span class="pre">haddock.modules.</span></span><span class="sig-name descname"><span class="pre">save_config_ignored</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/haddock/modules.html#save_config_ignored"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.modules.save_config_ignored" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save HADDOCK3 configuration dictionary to user config file.</p>
-<p>Ignores the
-<code class="xref py py-data docutils literal notranslate"><span class="pre">haddock.modules.non_mandatory_general_parameters_defaults</span></code>
-parameters.</p>
-<p>Useful to keep clean versions of the modules’ specific parameters.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>dict</em>) – The dictionary containing the parameters.</p></li>
-<li><p><strong>path</strong> (<em>str or pathlib.Path</em>) – File name where to save the configuration file.</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#haddock.modules.save_config" title="haddock.modules.save_config"><code class="xref py py-func docutils literal notranslate"><span class="pre">save_config()</span></code></a>, <a class="reference internal" href="../reference/gear/config_writer.html#haddock.gear.config_writer.save_config" title="haddock.gear.config_writer.save_config"><code class="xref py py-func docutils literal notranslate"><span class="pre">haddock.gear.config_writer.save_config()</span></code></a></p>
-</div>
 </dd></dl>
 
 <dl class="py data">
@@ -829,7 +760,7 @@ In the later case, overriding the general definition.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 18, 2022.
+        Last updated on Aug 24, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

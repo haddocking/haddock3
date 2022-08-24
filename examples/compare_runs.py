@@ -41,7 +41,7 @@ import csv
 import os
 import sys
 from functools import partial
-from math import isclose
+from math import isclose, isnan
 from pathlib import Path
 
 
@@ -254,6 +254,9 @@ def compare_tables(t1, t2):
             if isinstance(v1, str):
                 if v1 != v2:
                     return (3, k, h, v1, v2)
+            elif isnan(v1) or isnan(v2):
+                if not (isnan(v1) and isnan(v2)):
+                    return (3, k, h, v1, v2)
             elif isinstance(v1, float):
                 if not isclose(v1, v2, abs_tol=0.0011):
                     return (3, k, h, v1, v2)
@@ -268,7 +271,7 @@ def error_1(l1, l2):
 
     if not is_in_l1 and not is_in_l2:
         raise AssertionError(
-            "BUG FOUND: at least one of these sets should have values"
+            "BUG FOUND: at least one of these sets should have values."
             )
 
     printf("Keys in capri files differ:")

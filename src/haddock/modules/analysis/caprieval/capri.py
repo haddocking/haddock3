@@ -268,7 +268,7 @@ class CAPRI:
             chain_ranges[chain].append(i)
 
         chain_ranges = make_range(chain_ranges)
-        
+
         obs_chains = list(chain_ranges.keys())  # observed chains
         r_chain, l_chain = self.check_chains(obs_chains)
 
@@ -469,7 +469,7 @@ class CAPRI:
             obs_chains.remove(r_chain)
         if not l_found:
             l_chain = obs_chains[0]
-        
+
         return r_chain, l_chain
 
     @staticmethod
@@ -661,17 +661,28 @@ def rearrange_ss_capri_output(
 
         out_file.unlink()
 
-    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
-    rankkey_values.sort(
-        key=lambda x: x[1],
-        reverse=True if not sort_ascending else False
-        )
-    for i, k in enumerate(rankkey_values):
+    # Rank according to the score
+    score_rankkey_values = [(i, data[k]['score']) for i, k in enumerate(data)]
+    score_rankkey_values.sort(key=lambda x: x[1])
+
+    for i, k in enumerate(score_rankkey_values):
         idx, _ = k
         data[idx + 1]["caprieval_rank"] = i + 1
 
         if data[idx + 1]['score'] == 99999.9:
             del data[idx + 1]
+
+    # Sort according to the sort key
+    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False
+        )
+
+    _data = {}
+    for i, (k, _) in enumerate(rankkey_values):
+        _data[i + 1] = data[k + 1]
+    data = _data
 
     if not data:
         # This means there were only "dummy" values

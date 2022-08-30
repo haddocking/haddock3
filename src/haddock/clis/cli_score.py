@@ -1,12 +1,12 @@
 """
 A simple tool to calculate the HADDOCK-score of a complex.
 
-You can pass to the command-line any parameter accepted by the `emscore` module.
-For this, use the ``-p`` option writing the name of the parameters followed by
-the desired value. Write booleans with capital letter.
+You can pass to the command-line any parameter accepted by the `emscoring`
+module. For this, use the ``-p`` option writing the name of the parameters
+followed by the desired value. Write booleans with capital letter.
 
 Use the ``haddock3-cfg`` command-line to obtain the list of parameters for
-the ``emscore`` module.
+the ``emscoring`` module.
 
 Usage::
 
@@ -183,12 +183,14 @@ def main(
 
     # config all parameters are correctly spelled.
     default_emscoring = read_from_yaml_config(DEFAULT_CONFIG)
+    ems_dict = default_emscoring.copy()
     n_warnings = 0
     for param in kwargs:
         if param not in default_emscoring:
             sys.exit(f'* ERROR * Parameter {param!r} is not a valid `emscoring` parameter')  # noqa:E501
         if kwargs[param] != default_emscoring[param]:
             print(f"* WARNING * Value ({kwargs[param]}) of parameter {param} different from default ({default_emscoring[param]})")  # noqa:E501
+            ems_dict[param] = kwargs[param]
             n_warnings += 1
     
     if n_warnings != 0:
@@ -196,7 +198,7 @@ def main(
     
     params = {
         "topoaa": {"molecules": [input_pdb]},
-        "emscoring": kwargs,
+        "emscoring": ems_dict,
         }
 
     print("> starting calculations...")
@@ -227,12 +229,13 @@ def main(
 
     # emscoring is equivalent to itw
     haddock_score_itw = \
-        1.0 * vdw \
-        + 0.2 * elec \
-        + 1.0 * desolv \
-        + 0.1 * air
+        ems_dict["w_vdw"] * vdw \
+        + ems_dict["w_elec"] * elec \
+        + ems_dict["w_desolv"] * desolv \
+        + ems_dict["w_air"] * air \
+        + ems_dict["w_bsa"] * bsa
 
-    print("> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.1 * air)")  # noqa: E501
+    print(f"""> HADDOCK-score = ({ems_dict['w_vdw']} * vdw) + ({ems_dict['w_elec']} * elec) + ({ems_dict['w_desolv']} * desolv) + ({ems_dict['w_air']} * air) + ({ems_dict['w_bsa']} * bsa)""")  # noqa: E501
     print(f"> HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")
 
     if full:

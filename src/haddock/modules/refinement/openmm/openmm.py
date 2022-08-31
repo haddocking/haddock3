@@ -1,4 +1,22 @@
-"""OpenMM module."""
+"""Refinement module using OpenMM.
+
+This potential of OpenMM can be exploited to perform potentially different
+ tasks, such as:
+- refine the models obtained from a thorough docking run;
+- refine the models in the middle of a docking run. For example, it can be used
+ to refine the models coming from a `rigidbody` module before `flexref` is
+ executed;
+- refine some molecules prior to their use in a thorough docking run.
+
+To get a list of all possible parameters, run::
+     haddock3-cfg -m openmm
+     
+This module will refine all models coming from the previous workflow step and
+ send them to the next step in the workflow. If you want to use other modules
+such as `flexref` or `emref` after the OpenMM module, you need to recreate the
+topologies by simply adding a `[topoaa]` step in the workflow.
+See examples in `examples/thirdparty/openmm` folder.
+"""
 import os
 from pathlib import Path
 
@@ -112,7 +130,14 @@ class OPENMM:
         return xray_cell_data
 
     def get_pdb_filepath(self, folder=None):
-        """Get correct path to pdb file."""
+        """
+        Get correct path to pdb file.
+        
+        Parameters
+        ----------
+        folder : str
+            Path to folder
+        """
         if folder:
             pdb_filepath = os.path.join(self.directory_dict["pdbfixer"],
                                         self.model.file_name)
@@ -145,7 +170,14 @@ class OPENMM:
                                 )
 
     def create_solvation_box(self, solvent_model):
-        """Create solvation box for an explicit solvent simulation."""
+        """
+        Create solvation box for an explicit solvent simulation.
+        
+        Parameters
+        ----------
+        solvent_model : str
+            One of the OpenMM's solvent models.
+        """
         pdb_filepath = self.get_pdb_filepath(self.directory_dict["pdbfixer"])
         forcefield = self.params["forcefield"]
         try:
@@ -212,7 +244,20 @@ class OPENMM:
                 writefh.writelines(pdbYieldedLines)
 
     def run_openmm(self, inputPDBfile, output_directory, solvent_model):
-        """Run openmm simulation of the model pdb."""
+        """
+        Run openmm simulation of the model pdb.
+
+        Parameters
+        ----------
+        inputPDBfile : str
+            Path to the PDB file.
+
+        output_folder : str
+            Path to the output directory.
+
+        solvent_model : str
+            One of the OpenMM's solvent models.
+        """
         pdb = openmmpdbfile(inputPDBfile)
         forcefield = ForceField(self.params['forcefield'], solvent_model)
         # system setup

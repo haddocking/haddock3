@@ -141,6 +141,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../clients/index.html">Command-line interfaces</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clihd3.html">Run HADDOCK3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clicfg.html">Retrieve config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clicp.html">Copy steps to new run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/cliclean.html">Clean output Client</a></li>
@@ -360,13 +361,7 @@
             <span class="c1"># molecule parameters are shared among models of the same molecule</span>
             <span class="n">parameters_for_this_molecule</span> <span class="o">=</span> <span class="n">mol_params</span><span class="p">[</span><span class="n">mol_params_get</span><span class="p">()]</span>
 
-            <span class="c1"># Sanitize the different PDB files</span>
-            <span class="n">relative_paths_models</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">Path</span><span class="p">(</span><span class="n">_p</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">if</span> <span class="n">_p</span><span class="o">.</span><span class="n">is_absolute</span><span class="p">()</span> <span class="k">else</span> <span class="n">_p</span>
-                <span class="k">for</span> <span class="n">_p</span> <span class="ow">in</span> <span class="n">splited_models</span>
-                <span class="p">)</span>
-
-            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">relative_paths_models</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">splited_models</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sanitizing molecule </span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
                 <span class="n">models_dic</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 

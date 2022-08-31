@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Command-line interfaces &mdash; haddock3 3.0.0 documentation</title>
+  <title>Calculate score &mdash; haddock3 3.0.0 documentation</title>
   
 
   
@@ -30,8 +30,8 @@
   <link rel="stylesheet" href="../_static/css/theme.min.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Run HADDOCK3" href="clihd3.html" />
-    <link rel="prev" title="HADDOCK3 benchmark tutorial" href="../tutorials/benchmark.html" /> 
+    <link rel="next" title="PDB preprocessing client" href="clipp.html" />
+    <link rel="prev" title="Retrieve config" href="clicfg.html" /> 
 
 </head>
 
@@ -70,13 +70,15 @@
     
       <li><a href="../index.html">Docs</a></li>
         
-      <li>Command-line interfaces</li>
+          <li><a href="index.html">Command-line interfaces</a></li>
+        
+      <li>Calculate score</li>
     
     
       <li class="breadcrumbs-aside">
         
             
-            <a href="../_sources/clients/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/clients/cliscore.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -141,10 +143,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/index.html#tutorials-for-developers">Tutorials for developers</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Command-line interfaces</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Command-line interfaces</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="clihd3.html">Run HADDOCK3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clicfg.html">Retrieve config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cliscore.html">Calculate score</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clicp.html">Copy steps to new run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cliclean.html">Clean output Client</a></li>
@@ -192,28 +194,60 @@
                     <div class="document">
                         
                             
-  <section id="command-line-interfaces">
-<h1>Command-line interfaces<a class="headerlink" href="#command-line-interfaces" title="Permalink to this heading">¶</a></h1>
-<p>HADDOCK3 has a series of command-line interfaces (CLIs), from which the most important
-one is <code class="docutils literal notranslate"><span class="pre">haddock3</span></code>. You can ask help to the CLIs with the <code class="docutils literal notranslate"><span class="pre">-h</span></code> flag:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="o">-</span><span class="n">h</span>
+  <section id="calculate-score">
+<h1>Calculate score<a class="headerlink" href="#calculate-score" title="Permalink to this heading">¶</a></h1>
+<p><p>A simple tool to calculate the HADDOCK-score of a complex.</p>
+<p>You can pass to the command-line any parameter accepted by the <cite>emscoring</cite>
+module. For this, use the <code class="docutils literal notranslate"><span class="pre">-p</span></code> option writing the name of the parameters
+followed by the desired value. Write booleans with capital letter.</p>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">haddock3-cfg</span></code> command-line to obtain the list of parameters for
+the <code class="docutils literal notranslate"><span class="pre">emscoring</span></code> module.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span><span class="o">-</span><span class="n">score</span> <span class="nb">complex</span><span class="o">.</span><span class="n">pdb</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">score</span> <span class="nb">complex</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">p</span> <span class="n">nemsteps</span> <span class="mi">50</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">score</span> <span class="nb">complex</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">p</span> <span class="n">nemsteps</span> <span class="mi">50</span> <span class="n">w_air</span> <span class="mi">1</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">score</span> <span class="nb">complex</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">p</span> <span class="n">nemsteps</span> <span class="mi">50</span> <span class="n">w_air</span> <span class="mi">1</span> <span class="n">electflag</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>The available CLIs are the following:</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="clihd3.html">Run HADDOCK3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clicfg.html">Retrieve config</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cliscore.html">Calculate score</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clipp.html">PDB preprocessing client</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cliclean.html">Clean output Client</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cliunpack.html">Unpack output</a></li>
-<li class="toctree-l1"><a class="reference internal" href="climpi.html">HADDOCK3 MPI Run</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clibm.html">Benchmark Client</a></li>
-<li class="toctree-l1"><a class="reference internal" href="clidmn.html">Benchmark Daemon</a></li>
-</ul>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">score</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">full</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">outputpdb</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">outputpsf</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">k</span><span class="o">--</span><span class="n">keep</span><span class="o">-</span><span class="nb">all</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="p">[</span><span class="n">OTHER_PARAMS</span> <span class="o">...</span><span class="p">]]</span>
+                      <span class="n">pdb_file</span>
+</pre></div>
 </div>
+<section id="Positional Arguments">
+<h2>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this heading">¶</a></h2>
+<dl class="option-list">
+<dt><kbd>pdb_file</kbd></dt>
+<dd><p>Input PDB file</p>
+</dd>
+</dl>
+</section>
+<section id="Named Arguments">
+<h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this heading">¶</a></h2>
+<dl class="option-list">
+<dt><kbd>--full</kbd></dt>
+<dd><p>Print all energy components</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--outputpdb</kbd></dt>
+<dd><p>Save the output PDB file (minimized structure)</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--outputpsf</kbd></dt>
+<dd><p>Save the output PSF file (topology)</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>-k--keep-all</kbd></dt>
+<dd><p>Keep the whole run folder.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>-p, --other-params</kbd></dt>
+<dd><p>Any other parameter of the <cite>emscoring</cite> module.For example: -p nemsteps 1000. You can give any number of parameters.</p>
+<p>Default: {}</p>
+</dd>
+</dl>
+</section>
 </section>
 
 

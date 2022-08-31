@@ -97,7 +97,7 @@ constraints:
   title: Integration constraints.
   short: Integration constraints used to allow for larger integration time step.
   long: Integration constraints used to allow for larger integration time step.
-  For extra info see http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints
+        For extra info see http://docs.openmm.org/latest/userguide/application/02_running_sims.html#constraints
   group: ''
   explevel: easy
 
@@ -129,8 +129,8 @@ center_atoms:
   title: Move atoms to the center of the solvation box.
   short: Move atoms to the center of the solvation box. The pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.
   long: Move atoms to the center of the solvation box. The pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.
-  Not centering the atoms shouldn't be a problem if periodic boundary conditions are deployed, but employing it also prevents the molecule from jumping around
-   the boundary while visually inspecting the simulation in e.g. PyMOL.
+        Not centering the atoms shouldn't be a problem if periodic boundary conditions are deployed, but employing it also prevents the molecule from jumping around
+        the boundary while visually inspecting the simulation in e.g. PyMOL.
   group: ''
   explevel: easy
 
@@ -153,7 +153,7 @@ solvent_boxsize_nm:
   title: Solvent boxsize in nm.
   short: Solvent boxsize in nm used to build the water solvation box around the molecule.
   long: Solvent boxsize in nm used to build the water solvation box around the molecule.
-  Value is used when the crystallographic cell size is removed in the pipeline.
+        Value is used when the crystallographic cell size is removed in the pipeline.
   group: ''
   explevel: easy
 
@@ -174,7 +174,7 @@ save_intermediate:
   title: Number of intermediate configurations to save.
   short: Number of intermediate configurations to save during the simulation.
   long: Number of intermediate configurations to save during the simulation. The code divides the length of the simulation (simulation_timesteps) by this
-   parameter to get how often configurations should be saved.
+        parameter to get how often configurations should be saved.
   group: ''
   explevel: easy
 
@@ -187,8 +187,8 @@ xray_cell_padding:
   title: Contains xray crystallography cell data solvationbox padding nm.
   short: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm.
   long: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm.
-  If the molecules contained inside xray crystallography cell are close to the cell edge, with periodic boundary conditions the atoms of the one side
-  of the molecule will interact with the other side of itself.
+        If the molecules contained inside xray crystallography cell are close to the cell edge, with periodic boundary conditions the atoms of the one side
+        of the molecule will interact with the other side of itself.
   group: ''
   explevel: easy
 

@@ -105,7 +105,7 @@ class OPENMM:
         pdb_filepath = self.get_pdb_filepath()
         openmmpdb = openmmpdbfile(pdb_filepath)
         modeller = Modeller(openmmpdb.topology, openmmpdb.positions)
-        if(modeller.topology.getUnitCellDimensions() is None):
+        if (modeller.topology.getUnitCellDimensions() is None):
             xray_cell_data = False
         else:
             xray_cell_data = True
@@ -149,7 +149,7 @@ class OPENMM:
         pdb_filepath = self.get_pdb_filepath(self.directory_dict["pdbfixer"])
         forcefield = self.params["forcefield"]
         try:
-            if('.cif' in pdb_filepath):
+            if ('.cif' in pdb_filepath):
                 openmmpdb = PDBxFile(pdb_filepath)
             else:
                 openmmpdb = openmmpdbfile(pdb_filepath)
@@ -176,11 +176,11 @@ class OPENMM:
 
             # Add required extra particles for forcefield,
             # e.g. Drude particles.
-            if(self.params['add_extra_particles_for_forcefield']):
+            if (self.params['add_extra_particles_for_forcefield']):
                 log.info("adding extra particles")
                 modeller.addExtraParticles(forcefield)
             # check centering atoms
-            if(self.params['center_atoms']):
+            if (self.params['center_atoms']):
                 log.info("centering atoms")
                 AtomPositions = move_atoms(modeller.positions, 10)
             else:

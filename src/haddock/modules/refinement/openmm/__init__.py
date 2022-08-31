@@ -37,8 +37,6 @@ class HaddockModule(BaseHaddockModule):
 
     def create_directories(self):
         """Create the necessary directories and provides the paths."""
-        cwd = os.getcwd()
-
         directory_list = [
             "pdbfixer",
             "solvation_boxes",
@@ -50,10 +48,9 @@ class HaddockModule(BaseHaddockModule):
         directory_dict = {}
         for dir in directory_list:
             self.log(f"Creating directory {dir}")
-            dir_path = os.path.join(cwd, dir)
-            os.mkdir(dir_path)
-            directory_dict[dir] = dir_path
-
+            os.mkdir(dir)
+            directory_dict[dir] = dir
+        
         return directory_dict
 
     @classmethod
@@ -62,9 +59,9 @@ class HaddockModule(BaseHaddockModule):
         checkOpenMM = runSubprocess("conda list openmm --json")
         checkPdbfixer = runSubprocess("conda list pdbfixer --json")
 
-        if(checkOpenMM == '[]'):
+        if (checkOpenMM == '[]'):
             raise Exception('OpenMM is not installed in conda.')
-        if(checkPdbfixer == '[]'):
+        if (checkPdbfixer == '[]'):
             raise Exception('OpenMM pdbfixer is not installed in conda.')
         return
 
@@ -97,19 +94,15 @@ class HaddockModule(BaseHaddockModule):
         Engine = get_engine(self.params['mode'], self.params)
         engine = Engine(openmm_jobs)
         engine.run()
-        # openmm_engine = Scheduler(openmm_jobs, ncores=self.params['ncores'])
-        # openmm_engine.run()
 
         # export models
         output_pdbs = os.listdir(directory_dict["openmm_output"])
-        self.log(f"output_pdbs {output_pdbs}")
+
         for pdb in output_pdbs:
             pdbPath = os.path.join(directory_dict["openmm_output"], pdb)
             pdbToExport = PDBFile(pdbPath)
             models_to_export.append(pdbToExport)
         
-        self.log(f"models_to_export {models_to_export}")
-
         self.output_models = models_to_export
         self.export_output_models()
 

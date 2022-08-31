@@ -180,7 +180,7 @@ class OPENMM:
                 log.info("adding extra particles")
                 modeller.addExtraParticles(forcefield)
             # check centering atoms
-            if (self.params['center_atoms']):
+            if self.params['center_atoms']:
                 log.info("centering atoms")
                 AtomPositions = move_atoms(modeller.positions, 10)
             else:

@@ -7,8 +7,7 @@ Here, you will find documentation to use HADDOCK3 Gears as a library.
    :maxdepth: 1
 
    clean_steps
-   config_reader
-   config_writer
+   config
    expandable_parameters
    extend_run
    greetings

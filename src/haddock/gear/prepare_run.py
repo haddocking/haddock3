@@ -19,7 +19,8 @@ from haddock.gear.clean_steps import (
     unpack_compressed_and_archived_files,
     update_unpacked_names,
     )
-from haddock.gear.config_reader import get_module_name, read_config
+from haddock.gear.config import get_module_name
+from haddock.gear.config import load as read_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
     get_multiple_index_groups,
@@ -251,18 +252,18 @@ def setup_run(
     else:
         copy_molecules_to_topology(
             general_params['molecules'],
-            modules_params['topoaa'],
+            modules_params['topoaa.1'],
             )
 
-        if len(modules_params["topoaa"]["molecules"]) > max_molecules_allowed:
+        if len(modules_params["topoaa.1"]["molecules"]) > max_molecules_allowed:
             raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
         zero_fill.read(modules_params)
 
-        populate_topology_molecule_params(modules_params["topoaa"])
+        populate_topology_molecule_params(modules_params["topoaa.1"])
         populate_mol_parameters(modules_params)
 
-        max_mols = len(modules_params["topoaa"]["molecules"])
+        max_mols = len(modules_params["topoaa.1"]["molecules"])
 
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
@@ -283,7 +284,7 @@ def setup_run(
     if scratch_rest0:
         copy_molecules_to_data_dir(
             data_dir,
-            modules_params["topoaa"],
+            modules_params["topoaa.1"],
             preprocess=general_params["preprocess"],
             )
 
@@ -361,6 +362,7 @@ def validate_modules_params(modules_params, max_mols):
         in the defaults.cfg of the module.
     """
     for module_name, args in modules_params.items():
+        module_name = get_module_name(module_name)
         defaults = _read_defaults(module_name)
         if not defaults:
             continue
@@ -552,7 +554,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
                 if value:
-                    name = value.name
+                    name = Path(value).name
                     # path is created here to avoid creating empty folders
                     # for those modules without '_fname' parameters
                     pf = Path(data_dir, end_path)
@@ -662,7 +664,7 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
     # for the `mol` parameter. Instead of defining a general recursive
     # function, I decided to add a simple if/else exception.
     # no other module should have subdictionaries has parameters
-    if module_name == "topoaa":
+    if get_module_name(module_name) == "topoaa":
         ap = set()  # allowed_parameters
         ap.update(_get_expandable(user_config, defaults, module_name, max_mols))
         for i in range(1, max_mols + 1):
@@ -701,7 +703,7 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
     allowed_params.update(read_multiple_idx_groups_user_config(user_config, type_2))  # noqa: E501
 
     with suppress(KeyError):
-        type_3 = type_simplest_ep[module_name]
+        type_3 = type_simplest_ep[get_module_name(module_name)]
         allowed_params.update(read_simplest_expandable(type_3, user_config))
 
     _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)
@@ -712,7 +714,7 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
 
 def populate_topology_molecule_params(topoaa):
     """Populate topoaa `molX` subdictionaries."""
-    topoaa_dft = _read_defaults("topoaa")
+    topoaa_dft = _read_defaults("topoaa.1")
 
     # list of possible prot_segids
     uppers = list(string.ascii_uppercase)[::-1]
@@ -764,7 +766,7 @@ def populate_mol_parameters(modules_params):
         Alter the dictionary in place.
     """
     # the starting number of the `mol_` parameters is 1 by CNS definition.
-    num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
+    num_mols = range(1, len(modules_params["topoaa.1"]["molecules"]) + 1)
     for module_name, _ in modules_params.items():
 
         # read the modules default parameters

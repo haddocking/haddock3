@@ -3,10 +3,12 @@ from pathlib import Path
 
 import pytest
 
+from haddock import EmptyPath
 from haddock.libs.libutil import (
     extract_keys_recursive,
     get_number_from_path_stem,
     non_negative_int,
+    recursive_convert_paths_to_strings,
     recursive_dict_update,
     sort_numbered_paths,
     transform_to_list,
@@ -143,3 +145,29 @@ def test_extract_keys_recursive(inp, expected):
 def test_transform_to_list(value, expected):
     result = transform_to_list(value)
     assert result == expected
+
+
+def test_convert_paths_to_strings_recursive():
+    """Test converts paths to strings."""
+    i = {
+        "a": 1,
+        "p1": Path("file"),
+        "v": [Path("file1"), Path("file2")],
+        "v2": {
+            "v3": EmptyPath(),
+            "v4": Path("file2"),
+            }
+        }
+
+    e = {
+        "a": 1,
+        "p1": "file",
+        "v": ["file1", "file2"],
+        "v2": {
+            "v3": "",
+            "v4": "file2",
+            }
+        }
+
+    r = recursive_convert_paths_to_strings(i)
+    assert r == e

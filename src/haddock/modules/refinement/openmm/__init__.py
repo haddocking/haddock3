@@ -1,11 +1,10 @@
 """OpenMM refinement module for HADDOCK3."""
 import os
-import subprocess
 from contextlib import suppress
 from pathlib import Path
 
 from haddock.libs.libontology import PDBFile
-# from haddock.libs.libparallel import Scheduler
+from haddock.libs.libsubprocess import run_subprocess
 from haddock.modules import BaseHaddockModule, get_engine
 
 
@@ -16,15 +15,6 @@ with suppress(ImportError):
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
-
-
-def runSubprocess(command_to_run):
-    """Run subprocess."""
-    outputOfSubprocess = subprocess.run([command_to_run],
-                                        shell=True,
-                                        capture_output=True,
-                                        encoding='utf-8')
-    return outputOfSubprocess.stdout.strip()
 
 
 class HaddockModule(BaseHaddockModule):
@@ -56,8 +46,8 @@ class HaddockModule(BaseHaddockModule):
     @classmethod
     def confirm_installation(cls):
         """Confirm installation of openmm and pdfixer."""
-        checkOpenMM = runSubprocess("conda list openmm --json")
-        checkPdbfixer = runSubprocess("conda list pdbfixer --json")
+        checkOpenMM = run_subprocess("conda list openmm --json")
+        checkPdbfixer = run_subprocess("conda list pdbfixer --json")
 
         if (checkOpenMM == '[]'):
             raise Exception('OpenMM is not installed in conda.')
@@ -107,8 +97,6 @@ class HaddockModule(BaseHaddockModule):
         self.export_output_models()
 
         self.log('Completed OpenMM module run.')
-        topoaa_reminder = ['If you want to continue the haddock3 workflow',
-                           ' after the OpenMM module, the next module should',
-                           ' be topoaa, to rebuild the molecular topologies.'
-                           ]
-        self.log("".join(topoaa_reminder))
+        self.log('If you want to continue the haddock3 workflow',
+                 ' after the OpenMM module, the next module should',
+                 ' be topoaa, to rebuild the molecular topologies.')

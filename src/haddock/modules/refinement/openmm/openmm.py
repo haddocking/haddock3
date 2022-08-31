@@ -120,7 +120,7 @@ class OPENMM:
             if isinstance(self.model, PDBFile):
                 pdb_filepath = f'{self.model.rel_path}'
             else:
-                pdb_filepath = str(Path(self.model.path,  self.model.file_name))
+                pdb_filepath = str(Path(self.model.path, self.model.file_name))
         log.debug(f"pdb_filepath is {pdb_filepath}")
         return pdb_filepath
 

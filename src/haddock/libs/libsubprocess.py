@@ -172,3 +172,12 @@ class CNSJob:
             raise CNSRunningError(error)
 
         return out
+
+
+def run_subprocess(command_to_run):
+    """Run subprocess."""
+    subprocess_output = subprocess.run([command_to_run],
+                                       shell=True,
+                                       capture_output=True,
+                                       encoding='utf-8')
+    return subprocess_output.stdout.strip()

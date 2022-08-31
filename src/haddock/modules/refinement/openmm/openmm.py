@@ -176,7 +176,7 @@ class OPENMM:
 
             # Add required extra particles for forcefield,
             # e.g. Drude particles.
-            if (self.params['add_extra_particles_for_forcefield']):
+            if self.params['add_extra_particles_for_forcefield']:
                 log.info("adding extra particles")
                 modeller.addExtraParticles(forcefield)
             # check centering atoms

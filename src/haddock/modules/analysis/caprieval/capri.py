@@ -134,20 +134,23 @@ class CAPRI:
         P = []
         # Note: this MUST be sorted since we will use the indexes to
         #  separate between receptor and ligand coordinates
-        instersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
+        intersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
 
         chain_ranges = {}
-        for i, segment in enumerate(instersection):
+        for i, segment in enumerate(intersection):
             chain, _, _ = segment
             if chain not in chain_ranges:
                 chain_ranges[chain] = []
             chain_ranges[chain].append(i)
 
         chain_ranges = make_range(chain_ranges)
-        r_start, r_end = chain_ranges[self.r_chain]
-        l_start, l_end = chain_ranges[self.l_chain]
 
-        for k in instersection:
+        obs_chains = list(chain_ranges.keys())  # observed chains
+        r_chain, l_chain = self.check_chains(obs_chains)
+        r_start, r_end = chain_ranges[r_chain]
+        l_start, l_end = chain_ranges[l_chain]
+
+        for k in intersection:
             ref_xyz = ref_coord_dic[k]
             mod_xyz = mod_coord_dic[k]
 
@@ -265,7 +268,11 @@ class CAPRI:
             chain_ranges[chain].append(i)
 
         chain_ranges = make_range(chain_ranges)
-        l_start, l_end = chain_ranges[self.l_chain]
+
+        obs_chains = list(chain_ranges.keys())  # observed chains
+        r_chain, l_chain = self.check_chains(obs_chains)
+
+        l_start, l_end = chain_ranges[l_chain]
 
         for k in sorted(ref_coord_dic.keys() & mod_coord_dic.keys()):
             ref_xyz = ref_coord_dic[k]
@@ -439,6 +446,31 @@ class CAPRI:
             self.calc_dockq()
 
         self.make_output()
+
+    def check_chains(self, obs_chains):
+        """Check observed chains against the expected ones."""
+        r_found, l_found = False, False
+        obs_chains_cp = obs_chains.copy()
+        if self.r_chain in obs_chains:
+            r_chain = self.r_chain
+            obs_chains.remove(r_chain)
+            r_found = True
+        if self.l_chain in obs_chains:
+            l_chain = self.l_chain
+            obs_chains.remove(l_chain)
+            l_found = True
+        # if one or both exp chains are not observed, use the observed chains
+        if obs_chains != []:
+            exps = {self.r_chain, self.l_chain}
+            log.warning(f"observed chains != expected chains {exps}.")
+            log.info(f"Sticking to observed chains {obs_chains_cp}")
+        if not r_found:
+            r_chain = obs_chains[0]
+            obs_chains.remove(r_chain)
+        if not l_found:
+            l_chain = obs_chains[0]
+
+        return r_chain, l_chain
 
     @staticmethod
     def _load_atoms(model, reference):
@@ -629,17 +661,28 @@ def rearrange_ss_capri_output(
 
         out_file.unlink()
 
-    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
-    rankkey_values.sort(
-        key=lambda x: x[1],
-        reverse=True if not sort_ascending else False
-        )
-    for i, k in enumerate(rankkey_values):
+    # Rank according to the score
+    score_rankkey_values = [(i, data[k]['score']) for i, k in enumerate(data)]
+    score_rankkey_values.sort(key=lambda x: x[1])
+
+    for i, k in enumerate(score_rankkey_values):
         idx, _ = k
         data[idx + 1]["caprieval_rank"] = i + 1
 
         if data[idx + 1]['score'] == 99999.9:
             del data[idx + 1]
+
+    # Sort according to the sort key
+    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False
+        )
+
+    _data = {}
+    for i, (k, _) in enumerate(rankkey_values):
+        _data[i + 1] = data[k + 1]
+    data = _data
 
     if not data:
         # This means there were only "dummy" values

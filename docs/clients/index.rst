@@ -13,6 +13,8 @@ The available CLIs are the following:
 
    clihd3
    clicfg
+   cliscore
+   clipp
    clicp
    cliclean
    cliunpack

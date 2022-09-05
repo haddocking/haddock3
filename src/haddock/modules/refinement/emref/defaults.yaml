@@ -151,12 +151,12 @@ dihedrals_scale:
   group: 'dihedral restraints'
   explevel: easy
 ssdihed:
-  default: none
+  default: ""
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - none
+    - ""
     - all
     - alpha
     - alphabeta
@@ -2082,7 +2082,7 @@ nfle1:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_1_1:
@@ -2113,7 +2113,7 @@ nfle2:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_2_1:
@@ -2144,7 +2144,7 @@ nfle3:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_3_1:
@@ -2175,7 +2175,7 @@ nfle4:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_4_1:
@@ -2206,7 +2206,7 @@ nfle5:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_5_1:
@@ -2237,7 +2237,7 @@ nfle6:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_6_1:
@@ -2268,7 +2268,7 @@ nfle7:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_7_1:
@@ -2299,7 +2299,7 @@ nfle8:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_8_1:
@@ -2330,7 +2330,7 @@ nfle9:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_9_1:
@@ -2361,7 +2361,7 @@ nfle10:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_10_1:
@@ -2392,7 +2392,7 @@ nfle11:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_11_1:
@@ -2423,7 +2423,7 @@ nfle12:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_12_1:
@@ -2454,7 +2454,7 @@ nfle13:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_13_1:
@@ -2485,7 +2485,7 @@ nfle14:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_14_1:
@@ -2516,7 +2516,7 @@ nfle15:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_15_1:
@@ -2547,7 +2547,7 @@ nfle16:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_16_1:
@@ -2578,7 +2578,7 @@ nfle17:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_17_1:
@@ -2609,7 +2609,7 @@ nfle18:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_18_1:
@@ -2640,7 +2640,7 @@ nfle19:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_19_1:
@@ -2671,7 +2671,7 @@ nfle20:
   title: Number of fully flexible segments
   short: This defines the number of fully flexible segments. 
   long: This parameter defines the number of fully flexible segments for the specified molecule.
-    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_ and fle_end_ variables.
+    If >=1 then those must be defined manually with starting and end residue numbers in the fle_sta_* and fle_end_* variables.
   group: 'flexibility'
   explevel: expert
 fle_sta_20_1:

@@ -31,7 +31,7 @@ from shutil import rmtree
 
 
 try:
-    from haddock.gear.config_reader import read_config
+    from haddock.gear.config import load as read_config
     from haddock.libs.libio import working_directory
 except Exception:
     print(  # noqa: T201
@@ -61,6 +61,7 @@ examples = (
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
@@ -125,7 +126,7 @@ def main(examples, break_on_errors=True):
                     stderr=sys.stderr,
                     )
 
-            # perform a restart step from 0
+                # perform a restart step from 0
                 subprocess.run(
                     f"haddock3 {file_} --restart 0",
                     shell=True,
@@ -134,6 +135,7 @@ def main(examples, break_on_errors=True):
                     stderr=sys.stderr,
                     )
 
+                # test --extend-run
                 rmtree("run2", ignore_errors=True)
                 subprocess.run(
                     "haddock3-copy -r run1-test -m 0 4 -o run2",
@@ -145,6 +147,41 @@ def main(examples, break_on_errors=True):
 
                 subprocess.run(
                     "haddock3 docking-protein-protein-test-start-from-cp.cfg --extend-run run2",  # noqa: E501
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                # test exit with extend-run
+                rmtree("run2", ignore_errors=True)
+                subprocess.run(
+                    "haddock3-copy -r run1-test -m 0 4 -o run2",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                subprocess.run(
+                    "haddock3 docking-extend-run-exit-test.cfg --extend-run run2",  # noqa: E501
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                # test exit with --restart
+                subprocess.run(
+                    "cp -r run1-test run1-restart-exit",
+                    shell=True,
+                    check=break_on_errors,
+                    stdout=sys.stdout,
+                    stderr=sys.stderr,
+                    )
+
+                subprocess.run(
+                    "haddock3 docking-restart-exit-test.cfg --restart 3",
                     shell=True,
                     check=break_on_errors,
                     stdout=sys.stdout,

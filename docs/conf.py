@@ -28,6 +28,7 @@ mock_modules = [
     'scipy',
     'scipy.cluster',
     'scipy.cluster.hierarchy',
+    'toml',
     ]
 
 for modulename in mock_modules:
@@ -40,6 +41,7 @@ extensions = [
     'sphinx.ext.doctest',
     'sphinx.ext.extlinks',
     'sphinx.ext.ifconfig',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
@@ -68,13 +70,17 @@ extlinks = {
     'issue': ('https://github.com/haddocking/haddock3/issues/%s', '#'),
     'pr': ('https://github.com/haddocking/haddock3/pull/%s', 'PR #'),
     }
+
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    }
 # on_rtd is whether we are on readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 linkcheck_ignore = [r'https://codecov.io/*']
 
 if not on_rtd:  # only set the theme if we're building docs locally
-    html_theme = 'sphinx_rtd_theme'
+    html_theme = 'karma_sphinx_theme'
 
 # html_logo = 'img/taurenmd_logo_black.png'
 html_use_smartypants = True

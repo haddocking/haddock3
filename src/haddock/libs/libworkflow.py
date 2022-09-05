@@ -5,9 +5,9 @@ from pathlib import Path
 from time import time
 
 from haddock import log
-from haddock.core.exceptions import HaddockError, StepError
+from haddock.core.exceptions import HaddockError, HaddockTermination, StepError
 from haddock.gear.clean_steps import clean_output
-from haddock.gear.config_reader import get_module_name
+from haddock.gear.config import get_module_name
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libtimer import convert_seconds_to_min_sec, log_time
 from haddock.libs.libutil import recursive_dict_update
@@ -21,17 +21,36 @@ class WorkflowManager:
     """Read and execute workflows."""
 
     def __init__(self, workflow_params, start=0, **other_params):
-        self.start = start
+        self.start = 0 if start is None else start
         self.recipe = Workflow(workflow_params, start=0, **other_params)
+        # terminate is used to synchronize the `clean` option with the
+        # `exit` module. If the `exit` module is removed in the future,
+        # you can also remove and clean the `terminate` part here.
+        self._terminated = 0
 
     def run(self):
         """High level workflow composer."""
-        for step in self.recipe.steps[self.start:]:
-            step.execute()
+        for i, step in enumerate(
+                self.recipe.steps[self.start:],
+                start=self.start):
+            try:
+                step.execute()
+            except HaddockTermination:
+                self._terminated = i
+                break
 
-    def clean(self):
-        """Clean steps."""
-        for step in self.recipe.steps:
+    def clean(self, terminated=None):
+        """
+        Clean steps.
+
+        Parameters
+        ----------
+        terminated : int, None
+            At which index of the workflow to stop the cleaning. If ``None``,
+            uses the internal class configuration.
+        """
+        terminated = self._terminated if terminated is None else terminated
+        for step in self.recipe.steps[:terminated]:
             step.clean()
 
 
@@ -51,7 +70,8 @@ class Workflow:
         self.steps = []
         _items = enumerate(modules_parameters.items(), start=start)
         for num_stage, (stage_name, params) in _items:
-            log.info(f"Reading instructions of [{stage_name}] step")
+            stage_name = get_module_name(stage_name)
+            log.info(f"Reading instructions step {num_stage}_{stage_name}")
 
             # updates the module's specific parameter with global parameters
             # that are applicable to the modules. But keep priority to the local
@@ -60,7 +80,7 @@ class Workflow:
 
             try:
                 _ = Step(
-                    get_module_name(stage_name),
+                    stage_name,
                     order=num_stage,
                     **params_up,
                     )

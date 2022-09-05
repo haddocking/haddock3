@@ -1,17 +1,16 @@
 """HADDOCK3 modules."""
 import re
 from abc import ABC, abstractmethod
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
+from copy import deepcopy
 from functools import partial
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
+from haddock.gear import config
 from haddock.gear.clean_steps import clean_output
-from haddock.gear.config_reader import read_config
-from haddock.gear.config_writer import convert_config as _convert_config
-from haddock.gear.config_writer import save_config as _save_config
 from haddock.gear.parameters import config_mandatory_general_parameters
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
@@ -42,6 +41,7 @@ category_hierarchy = [
     "refinement",
     "scoring",
     "analysis",
+    "extras",
     ]
 
 # this dictionary defines non-mandatory general parameters that can be defined
@@ -55,7 +55,7 @@ non_mandatory_general_parameters_defaults = \
 
 config_readers = {
     ".yaml": read_from_yaml_config,
-    ".cfg": read_config,
+    ".cfg": config.load,
     }
 
 _step_folder_regex = tuple(
@@ -190,7 +190,14 @@ class BaseHaddockModule(ABC):
         #
         # [topoaa]
         # ...
-        save_config_ignored({self.name: self.params}, path)
+        ignore = config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults)  # noqa: 501
+        params = deepcopy(self.params)
+
+        with suppress(KeyError):
+            for key in list(ignore):
+                params.pop(key)
+
+        config.save({self.name: params}, path)
 
     def add_parent_to_paths(self):
         """Add parent path to paths."""
@@ -362,95 +369,6 @@ def get_engine(mode, params):
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"
             )
-
-
-def convert_config(params):
-    """
-    Convert a module's parameters dictionary to a HADDOCK3 user config text.
-
-    This function is a generator.
-
-    Examples
-    --------
-    >>> gen = convert_config(params)
-    >>> text = os.linesep.join(gen)
-    >>> with open("params.cfg", "w") as fout:
-    >>>     fout.write(text)
-
-    Parameters
-    ----------
-    params : dictionary
-        The dictionary containing the parameters.
-
-    Yields
-    ------
-    str
-        Line by line for the HADDOCK3 user configuration file.
-
-    See Also
-    --------
-    :py:func:`haddock.gear.config_writer.convert_config`.
-    """
-    return _convert_config(
-        params,
-        ignore_params=non_mandatory_general_parameters_defaults,
-        module_names=set(modules_category.keys()),
-        )
-
-
-def save_config(*args, **kwargs):
-    """
-    Save HADDOCK3 configuration dictionary to user config file.
-
-    Saves all parameters, even the `non_mandatory_general_parameters_defaults`
-    which can be repeated between the module parameters and the general
-    parameters.
-
-    Parameters
-    ----------
-    params : dict
-        The dictionary containing the parameters.
-
-    path : str or pathlib.Path
-        File name where to save the configuration file.
-
-    See Also
-    --------
-    :py:func:`haddock.gear.config_writer.save_config`.
-    """
-    kwargs.setdefault("module_names", set(modules_category.keys()))
-    return _save_config(*args, **kwargs)
-
-
-def save_config_ignored(*args, **kwargs):
-    """
-    Save HADDOCK3 configuration dictionary to user config file.
-
-    Ignores the
-    :py:data:`haddock.modules.non_mandatory_general_parameters_defaults`
-    parameters.
-
-    Useful to keep clean versions of the modules' specific parameters.
-
-    Parameters
-    ----------
-    params : dict
-        The dictionary containing the parameters.
-
-    path : str or pathlib.Path
-        File name where to save the configuration file.
-
-    See Also
-    --------
-    :py:func:`save_config`
-    :py:func:`haddock.gear.config_writer.save_config`.
-    """
-    kwargs.setdefault("module_names", set(modules_category.keys()))
-    kwargs.setdefault(
-        "ignore_params",
-        config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults),  # noqa: 501
-        )
-    return _save_config(*args, **kwargs)
 
 
 def get_module_steps_folders(folder):

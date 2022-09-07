@@ -84,7 +84,6 @@ class CAPRI:
 
         if len(ref_interface_resdic) == 0:
             log.warning("No reference interface found")
-            irmsd = float("nan")
         else:
             # Load interface coordinates
             ref_coord_dic, _ = load_coords(
@@ -121,12 +120,9 @@ class CAPRI:
             U = kabsch(P, Q)
             P = np.dot(P, U)
 
-            irmsd = calc_rmsd(P, Q)
+            self.irmsd = calc_rmsd(P, Q)
             # write_coords("model_aln.pdb", P)
             # write_coords("ref_aln.pdb", Q)
-        
-        self.irmsd = irmsd
-        
 
     def calc_lrmsd(self):
         """Calculate the L-RMSD."""
@@ -156,7 +152,6 @@ class CAPRI:
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating lrmsd")
-            lrmsd = float("nan")
         else:
             r_chain, l_chain = self.check_chains(obs_chains)
             r_start, r_end = chain_ranges[r_chain]
@@ -211,14 +206,11 @@ class CAPRI:
             # write_coords("model_l.pdb", P_l)
 
             # Calculate the RMSD of the ligands
-            lrmsd = calc_rmsd(P_l, Q_l)
+            self.lrmsd = calc_rmsd(P_l, Q_l)
 
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
 
-        self.lrmsd = lrmsd
-
-        
     def calc_ilrmsd(self, cutoff=10.0):
         """
         Calculate the Interface Ligand RMSD.
@@ -287,7 +279,6 @@ class CAPRI:
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating ilrmsd")
-            ilrmsd = float("nan")
         else:
             r_chain, l_chain = self.check_chains(obs_chains)
 
@@ -349,10 +340,8 @@ class CAPRI:
             # write_coords("model_l.pdb", P_l)
 
             # this will be the interface-ligand-rmsd
-            ilrmsd = calc_rmsd(P_l, Q_l)
+            self.ilrmsd = calc_rmsd(P_l, Q_l)
             
-        self.ilrmsd = ilrmsd
-
     def calc_fnat(self, cutoff=5.0):
         """
         Calculate the frequency of native contacts.
@@ -366,11 +355,9 @@ class CAPRI:
         if len(ref_contacts) != 0:
             model_contacts = self.load_contacts(self.model, cutoff)
             intersection = ref_contacts & model_contacts
-            fnat = len(intersection) / float(len(ref_contacts))
+            self.fnat = len(intersection) / float(len(ref_contacts))
         else:
             log.warning("No reference contacts found")
-            fnat = float("nan")
-        self.fnat = fnat
 
     def calc_dockq(self):
         """Calculate the DockQ metric."""
@@ -380,8 +367,6 @@ class CAPRI:
                 + 1 / (1 + (self.irmsd / 1.5) * (self.irmsd / 1.5))
                 + 1 / (1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5))
                 ) / 3
-        else:
-            self.dockq = float("nan")
 
     def has_cluster_info(self):
         """

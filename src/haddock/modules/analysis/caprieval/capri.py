@@ -367,6 +367,8 @@ class CAPRI:
                 + 1 / (1 + (self.irmsd / 1.5) * (self.irmsd / 1.5))
                 + 1 / (1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5))
                 ) / 3
+        else:
+            log.warning("DockQ cannot be calculated")
 
     def has_cluster_info(self):
         """

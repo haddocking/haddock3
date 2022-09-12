@@ -288,6 +288,9 @@ class OPENMM:
 
         # simulation
         simulation = Simulation(pdb.topology, system, integrator)
+        platform = simulation.context.getPlatform()
+        log.info(f"Running on platform {platform.getName()}")
+        log.info(f"Estimated platform speed: {platform.getSpeed()}")
         simulation.context.setPositions(pdb.positions)
         simulation.minimizeEnergy()
         log.info(f"Running equilibration for {self.model.file_name}")

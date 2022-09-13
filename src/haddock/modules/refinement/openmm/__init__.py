@@ -3,6 +3,8 @@ import os
 from contextlib import suppress
 from pathlib import Path
 
+from pdbtools.pdb_mkensemble import run as make_ensemble
+
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import run_subprocess
@@ -63,7 +65,6 @@ class HaddockModule(BaseHaddockModule):
             )
 
         previous_models.sort()
-        models_to_export = []
         # create directories
         directory_dict = self.create_directories()
 
@@ -83,16 +84,23 @@ class HaddockModule(BaseHaddockModule):
         ncores = self.params['ncores']
         openmm_engine = Scheduler(openmm_jobs, ncores=ncores)
         openmm_engine.run()
-
-        # export models
-        output_pdbs = os.listdir(directory_dict["openmm_output"])
-
-        for pdb in output_pdbs:
-            pdbPath = os.path.join(directory_dict["openmm_output"], pdb)
-            pdbToExport = PDBFile(pdbPath)
-            models_to_export.append(pdbToExport)
         
-        self.output_models = models_to_export
+        self.log('Creating output ensemble...')
+        # export models
+        output_pdbs = list(Path(directory_dict["openmm_output"]).glob('*.pdb'))
+
+        # concatenating models in an ensemble placed in the main openmm folder
+        if len(output_pdbs) == 0:
+            raise Exception("No output models generated. Check Openmm Execution.")  # noqa: E501
+        ensemble_name = "openmm_ensemble.pdb"
+        ensemble = make_ensemble(output_pdbs)  # ensemble is a generator
+        with open(ensemble_name, "w") as wfile:
+            for line in ensemble:
+                wfile.write(line)
+
+        self.log(f'Output ensemble {ensemble_name} created.')
+        
+        self.output_models = [PDBFile(ensemble_name)]
         self.export_output_models()
 
         self.log('Completed OpenMM module run.')

@@ -107,6 +107,7 @@ class OPENMM:
         # other parameters
         self.output = Path("output_openmm.log")
         self.constraints = self.import_constraints()
+        self.output_filename = self.model.file_name.replace(".pdb", "_omm.pdb")
 
     def import_constraints(self):
         """Import right openmm constraints."""
@@ -233,10 +234,10 @@ class OPENMM:
     def remove_water_molecules(self):
         """Remove water from the output of an explicit solvent run."""
         input_filepath = os.path.join(self.directory_dict["md_raw_output"],
-                                      self.model.file_name
+                                      self.output_filename
                                       )
         output_filepath = os.path.join(self.directory_dict["openmm_output"],
-                                       self.model.file_name
+                                       self.output_filename
                                        )
         with open(input_filepath, 'r') as fh:
             pdbYieldedLines = pdb_delresname.run(fh, 'HOH')
@@ -295,7 +296,7 @@ class OPENMM:
         simulation.minimizeEnergy()
         log.info(f"Running equilibration for {self.model.file_name}")
         simulation.step(self.params['equilibration_timesteps'])
-        output_filepath = os.path.join(output_directory, self.model.file_name)
+        output_filepath = os.path.join(output_directory, self.output_filename)
         simulation.reporters.append(PDBReporter(output_filepath,
                                     self.params['simulation_timesteps'])
                                     )
@@ -319,7 +320,7 @@ class OPENMM:
         # )
         # # Report system state of the simulation.
         simulation.step(self.params['simulation_timesteps'])
-        log.info(f'OpenMM simulation succesful for: {output_filepath}')
+        log.info(f'OpenMM simulation successful for: {output_filepath}')
 
     def run(self):
         """Run openmm simulation."""

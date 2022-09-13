@@ -143,5 +143,8 @@ information.
 conda install -c conda-forge openmm pdbfixer
 ```
 
+Openmm should automatically detect the fastest platform among those available
+on your machine.
+
 Please refer to the [official page](http://docs.openmm.org/latest/userguide/)
 of the project for a full description of the installation procedure.

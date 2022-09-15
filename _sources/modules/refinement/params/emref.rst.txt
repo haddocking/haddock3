@@ -102,17 +102,6 @@ mol_shape_1
 | *group*: molecule
 | *explevel*: easy
 
-sampling
-~~~~~~~~
-
-| *default*: 200
-| *type*: integer
-| *title*: Number of models to generate
-| *short description*: Number of EM refined models to generate
-| *long description*: Number of EM refined models to generate
-| *group*: sampling
-| *explevel*: easy
-
 ssdihed
 ~~~~~~~
 

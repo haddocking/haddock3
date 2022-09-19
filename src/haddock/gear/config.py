@@ -63,7 +63,7 @@ import toml
 from haddock import EmptyPath
 from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError
-from haddock.libs.libutil import recursive_convert_paths_to_strings
+from haddock.libs.libutil import recursive_convert_paths_to_strings, transform_to_list
 
 
 # the re.ASCII parameter makes sure non-ascii chars are rejected in the \w key
@@ -226,7 +226,7 @@ def convert_variables_to_paths(cfg):
     """
     for param, value in cfg.items():
         if param == "molecules":
-            cfg[param] = [convert_to_path(v) for v in value]
+            cfg[param] = [convert_to_path(v) for v in transform_to_list(value)]
 
         elif match_path_criteria(param):
             cfg[param] = convert_to_path(value)

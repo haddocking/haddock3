@@ -1,9 +1,7 @@
 """Test the libclust library."""
 import os
-import tempfile
 from pathlib import Path
 
-import numpy as np
 import pytest
 
 from haddock.libs.libclust import write_unclustered_list
@@ -16,16 +14,29 @@ from . import golden_data
 def protprot_input_models():
     """Prot-prot input."""
     return [
-        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data, score=-42),
-        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data, score=-17)
+        PDBFile(
+            Path(golden_data, "protprot_complex_1.pdb"),
+            path=golden_data,
+            score=-42),
+        PDBFile(
+            Path(golden_data, "protprot_complex_2.pdb"),
+            path=golden_data,
+            score=-17
+            )
         ]
+
 
 @pytest.fixture
 def protprot_output_models():
     """Prot-prot output."""
     return [
-        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data, score=-42)
+        PDBFile(
+            Path(golden_data, "protprot_complex_1.pdb"),
+            path=golden_data,
+            score=-42
+            )
         ]
+
 
 def test_write_unclustered_list(protprot_input_models, protprot_output_models):
     """Test write_unclustered_list function."""

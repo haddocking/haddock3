@@ -6,9 +6,9 @@ import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
+from haddock.libs.libclust import write_unclustered_list
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
-from haddock.libs.libclust import write_unclustered_list
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
 
 

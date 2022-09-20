@@ -1,6 +1,6 @@
 
 """
-Library of functions to perform sequence and structural alignments.
+Library of functions related to the clustering modules.
 
 Main functions
 --------------

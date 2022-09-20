@@ -253,7 +253,10 @@
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">EmptyPath</span>
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">RUNDIR</span>
 <span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">ConfigurationError</span>
-<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">recursive_convert_paths_to_strings</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">recursive_convert_paths_to_strings</span><span class="p">,</span>
+    <span class="n">transform_to_list</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="c1"># the re.ASCII parameter makes sure non-ascii chars are rejected in the \w key</span>
@@ -416,7 +419,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">param</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">cfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">param</span> <span class="o">==</span> <span class="s2">&quot;molecules&quot;</span><span class="p">:</span>
-            <span class="n">cfg</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">convert_to_path</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+            <span class="c1"># `transform_to_list` is needed to allow strings OR lists in the</span>
+            <span class="c1"># `molecule` parameter</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">convert_to_path</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">transform_to_list</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span>
 
         <span class="k">elif</span> <span class="n">match_path_criteria</span><span class="p">(</span><span class="n">param</span><span class="p">):</span>
             <span class="n">cfg</span><span class="p">[</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_to_path</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -533,7 +538,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Sep 15, 2022.
+        Last updated on Sep 20, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.
         </div>
     </div>  

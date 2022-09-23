@@ -6,7 +6,7 @@ import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
-from haddock.libs.libclust import write_unclustered_list
+from haddock.libs.libclust import write_structure_list
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
@@ -179,7 +179,7 @@ class HaddockModule(BaseHaddockModule):
                     self.output_models.append(pdb)
 
             # Write unclustered structures
-            write_unclustered_list(models_to_cluster, self.output_models)
+            write_structure_list(models_to_cluster, self.output_models)
 
             # Prepare clustfcc.txt
             output_fname = Path('clustfcc.txt')

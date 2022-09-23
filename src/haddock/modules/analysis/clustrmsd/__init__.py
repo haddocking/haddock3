@@ -39,7 +39,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
-from haddock.libs.libclust import write_unclustered_list
+from haddock.libs.libclust import write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
@@ -140,7 +140,7 @@ class HaddockModule(BaseHaddockModule):
                 self.output_models.append(pdb)
         
         # Write unclustered structures
-        write_unclustered_list(models, self.output_models)
+        write_structure_list(models, self.output_models)
 
         # Prepare clustrmsd.txt
         output_fname = Path('clustrmsd.txt')

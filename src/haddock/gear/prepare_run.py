@@ -3,6 +3,7 @@ import difflib
 import importlib
 import itertools as it
 import os
+import tarfile
 import shutil
 import string
 import sys
@@ -560,9 +561,15 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
                     pf = Path(data_dir, end_path)
                     pf.mkdir(exist_ok=True)
                     check_if_path_exists(value)
-                    shutil.copy(value, Path(pf, name))
+                    target_path = Path(pf, name)
+                    shutil.copy(value, target_path)
                     _p = Path(rel_data_dir, end_path, name)
                     modules_params[module][parameter] = _p
+                    # account for input .tgz files
+                    if name.endswith("tgz"):
+                        log.info(f"Uncompressing tar {value}")
+                        with tarfile.open(target_path) as fin:
+                            fin.extractall(pf)
 
 
 def check_run_dir_exists(run_dir):

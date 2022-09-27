@@ -81,7 +81,15 @@ class HaddockModule(BaseCNSModule):
                 f"#model_combinations={len(models_to_dock)},"
                 f' sampling={self.params["sampling"]}.'
                 )
-
+        
+        # checking ambig_fname:
+        prev_ambig_fnames = [None for model in range(self.params["sampling"])]
+        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames) # all the different ambig files
+        if diff_ambig_fnames:
+            ambig_fnames = [diff_ambig_fnames[n%len(diff_ambig_fnames)] for n in range(self.params["sampling"])]
+        else:
+            ambig_fnames = None
+        
         # Prepare the jobs
         idx = 1
         self.output_models = []
@@ -89,6 +97,12 @@ class HaddockModule(BaseCNSModule):
         for combination in models_to_dock:
 
             for _i in range(sampling_factor):
+                # assign ambig_fname
+                if ambig_fnames:
+                    ambig_fname = ambig_fnames[idx-1]
+                else:
+                    ambig_fname = self.params["ambig_fname"]
+                # prepare cns input
                 inp_file = prepare_cns_input(
                     idx,
                     combination,
@@ -96,6 +110,7 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "rigidbody",
+                    ambig_fname=ambig_fname,
                     default_params_path=self.toppar_path,
                     native_segid=True,
                     )
@@ -104,7 +119,7 @@ class HaddockModule(BaseCNSModule):
                 output_pdb_fname = f"rigidbody_{idx}.pdb"
 
                 # Create a model for the expected output
-                model = PDBFile(output_pdb_fname, path=self.path)
+                model = PDBFile(output_pdb_fname, path=self.path, restr_fname=ambig_fname)
                 model.topology = [e.topology for e in combination]
                 self.output_models.append(model)
 
@@ -123,7 +138,7 @@ class HaddockModule(BaseCNSModule):
         # Get the weights according to CNS parameters
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
-
+        
         for model in self.output_models:
             if model.is_present():
                 # Score the model
@@ -133,5 +148,5 @@ class HaddockModule(BaseCNSModule):
                     )
 
                 model.score = haddock_score
-
+                
         self.export_output_models(faulty_tolerance=self.params["tolerance"])

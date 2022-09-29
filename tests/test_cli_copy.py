@@ -12,7 +12,7 @@ def test_main():
     run1 = Path(tests_path, "clis", "hd3_copy", "run1")
     run2 = Path(tests_path, "clis", "hd3_copy", "run2")
     run2_ref = Path(tests_path, "clis", "hd3_copy", "run2_ref")
-    main(run1, [0, 2], run2)
+    main(run1, [0, 2, 3], run2)
     compare_files(run2, run2_ref)
     # easy way to make sure no file is left behind
     compare_files(run2_ref, run2)

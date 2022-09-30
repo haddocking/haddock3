@@ -1,11 +1,12 @@
 """SAXS scoring module."""
-from pathlib import Path
 import subprocess
 from os import linesep
+from pathlib import Path
+
 import numpy as np
 
-from haddock.modules import BaseHaddockModule
 from haddock.libs.libutil import check_subprocess
+from haddock.modules import BaseHaddockModule
 
 
 RECIPE_PATH = Path(__file__).resolve().parent

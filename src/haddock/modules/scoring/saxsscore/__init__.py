@@ -38,7 +38,7 @@ class HaddockModule(BaseHaddockModule):
         w_haddock = self.params["w_haddock"]
         w_saxs = self.params["w_saxs"]
 
-        for model_num, model in enumerate(models_to_score, start=1):
+        for model in models_to_score:
 
             # Calculate chi value
             cmd = f"crysol {model.rel_path} {saxs_data} -lm {lm} -ns {ns}"
@@ -50,7 +50,7 @@ class HaddockModule(BaseHaddockModule):
             fit_file = model.file_name.replace(".pdb", "00.fit")
             with open(fit_file, "r") as ff:
                 fit_header = ff.readline()
-                model.chi = float(fit_header.partition("Chi^2:")[2].partition("\s")[0])  # noqa: E501
+                model.chi = float(fit_header.partition("Chi^2:")[2].partition(r"\s")[0])  # noqa: E501
 
             # Calculate HADDOCKsaxs score
             if np.isnan(model.score):

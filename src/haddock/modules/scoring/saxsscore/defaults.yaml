@@ -43,6 +43,8 @@ saxs_fname:
 lm:
   default: 18
   type: integer
+  min: 1
+  max: 100
   title: Maximum order of harmonics
   short: Maximum order of harmonics.
   long: Maximum order of harmonics for CRYSOL.
@@ -51,6 +53,8 @@ lm:
 ns:
   default: 256
   type: integer
+  min: 1
+  max: 10001
   title: Number of calculated data points in computed curve
   short: Number of calculated data points in computed curve.
   long: Number of calculated data points in computed curve from CRYSOL.

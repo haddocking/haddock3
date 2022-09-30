@@ -1331,16 +1331,6 @@ dihedflag:
 #
 # Group sampling
 #
-sampling:
-  default: 200
-  type: integer
-  min: 1
-  max: 50000
-  title: Number of models to generate
-  short: Number of EM refined models to generate
-  long: Number of EM refined models to generate
-  group: 'sampling'
-  explevel: easy
 sampling_factor:
   default: 1
   type: integer

@@ -1,189 +1,19 @@
 #
 # Group scoring
 #
-w_air:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the distance restraint energy
-  short: Weight of the distance restraints energy in the scoring function.
-  long: Weight of the distance restraints energy in the scoring function.
-    Note that this is different from the force constants used during the calculations.
-  group: 'scoring'
-  explevel: hidden
-w_bsa:
-  default: 0.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: Weight of the buried surface area term
-  short: Weight of the buried surface area term in the scoring function.
-  long: Weight of the buried surface area (BSA) term in the scoring function.
-    Note that the BSA is only used for scoring.
-  group: 'scoring'
-  explevel: expert
-w_cdih:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the dihedral angle restraint energy
-  short: Weight of the dihedral angle restraints energy in the scoring function.
-  long: Weight of the dihedral angle restraints energy in the scoring function.
-    Note that this is different from the force constant used during the calculations.
-  group: 'scoring'
-  explevel: expert
-w_dani:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the relaxation anisotropy (DANI) restraint energy
-  short: Weight of the relaxation anisotropy (DANI) restraint energy.
-  long: Weight of the relaxation anisotropy (DANI) restraint energy.
-  group: 'scoring'
-  explevel: hidden
-w_deint:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the interaction energy term
-  short: Weight of the interaction energy term.
-  long: Weight of the interaction energy term calculated as the difference in total energy of the complex and of the separate components.
-  group: 'scoring'
-  explevel: hidden
-w_desolv:
+w_haddock:
   default: 1.0
   type: float
-  min: -9999
+  min: 0
   max: 9999
   precision: 3
-  title: Weight of the desolvation energy term
-  short: Weight of the desolvation energy term in the scoring function.
-  long: Weight of the desolvation energy term in the scoring function.
-    Note that the desolvation energy is only used for scoring.
+  title: Weight of the HADDOCK score
+  short: Weight of the HADDOCK score in HADDOCKsaxs.
+  long: Weight of the HADDOCK score in the HADDOCKsaxs score.
+    The HADDOCK score from the previous module is multiplied by this weight
+    and added to the chi term to get the HADDOCKsaxs score.
   group: 'scoring'
   explevel: expert
-w_elec:
-  default: 0.2
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: Weight of the intermolecular electrostatic energy
-  short: Weight of the intermolecular electrostatic energy in the scoring function.
-  long: Weight of the intermolecular electrostatic energy in the scoring function.
-    Note that this does not affect the electostatic energy during the EM minimization.
-  group: 'scoring'
-  explevel: expert
-w_lcc:
-  default: -10000.0
-  type: float
-  min: -9999
-  max: 0
-  precision: 3
-  title: Weight of the EM local correlation coefficient
-  short: Weight of the EM local correlation coefficient.
-  long: Weight of the EM local correlation coefficient.
-  group: 'scoring'
-  explevel: hidden
-w_rg:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the radius of gyration restraint energy
-  short: Weight of the radius of gyration restraint energy.
-  long: Weight of the radius of gyration restraint energy.
-  group: 'scoring'
-  explevel: hidden
-w_sani:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the residual dipolar coupling (SANI) restraint energy
-  short: Weight of the residual dipolar coupling (SANI) restraint energy.
-  long: Weight of the residual dipolar coupling (SANI) restraint energy.
-  group: 'scoring'
-  explevel: hidden
-w_sym:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the symmetry restraint energy
-  short: Weight of the symmetry restraints energy in the scoring function.
-  long: Weight of the symmetry restraints energy in the scoring function.
-    Note that this is different from the force constant used during the calculations.
-  group: 'scoring'
-  explevel: hidden
-w_vdw:
-  default: 1.0
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
-  title: Weight of the intermolecular van der Waals energy
-  short: Weight of the intermolecular van der Waals energy in the scoring function.
-  long: Weight of the intermolecular van der Waals energy in the scoring function.
-    Note that this does not affect the van der Waals energy during the EM minimization.
-  group: 'scoring'
-  explevel: expert
-w_vean:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the residual dipolar coupling (VEAN) restraint energy
-  short: Weight of the residual dipolar coupling (VEAN) restraint energy.
-  long: Weight of the residual dipolar coupling (VEAN) restraint energy.
-  group: 'scoring'
-  explevel: hidden
-w_xpcs:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the pseudo contact shifts (XPCS) restraint energy
-  short: Weight of the pseudo contact shifts (XPCS) restraint energy.
-  long: Weight of the pseudo contact shifts (XPCS) restraint energy.
-  group: 'scoring'
-  explevel: hidden
-w_xrdc:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the residual dipolar coupling (XRDC) restraint energy
-  short: Weight of the residual dipolar coupling (XRDC) restraint energy.
-  long: Weight of the residual dipolar coupling (XRDC) restraint energy.
-  group: 'scoring'
-  explevel: hidden
-w_zres:
-  default: 0.0
-  type: float
-  min: 0
-  max: 9999
-  precision: 3
-  title: Weight of the Z-restraining potential energy
-  short: Weight of the Z-restraining potential energy.
-  long: Weight of the Z-restraining potential energy.
-  group: 'scoring'
-  explevel: hidden
 w_saxs:
   default: 50.0
   type: float
@@ -193,7 +23,8 @@ w_saxs:
   title: Weight of the SAXS term
   short: Weight of the SAXS term in the scoring function.
   long: Weight of the SAXS term in the scoring function.
-    The chi value is multiplied by this weight and added to the standard HADDOCK score to get the HADDOCKsaxs score.
+    The chi value is multiplied by this weight
+    and added to the HADDOCK score to get the HADDOCKsaxs score.
   group: 'scoring'
   explevel: expert
 #

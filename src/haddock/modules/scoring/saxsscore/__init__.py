@@ -2,6 +2,7 @@
 from pathlib import Path
 import subprocess
 from os import linesep
+import numpy as np
 
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
@@ -36,11 +37,8 @@ class HaddockModule(BaseHaddockModule):
         lm = self.params["lm"]
         ns = self.params["ns"]
         cst = self.params["cst"]
+        w_haddock = self.params["w_haddock"]
         w_saxs = self.params["w_saxs"]
-
-        # Get the weights
-        _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
-        weights = {e: self.params[e] for e in _weight_keys}
 
         for model_num, model in enumerate(models_to_score, start=1):
 
@@ -51,14 +49,19 @@ class HaddockModule(BaseHaddockModule):
             subprocess.call(cmd, shell=True)
 
             # Read chi value
-            fit_file = model.file_name.replace(".pdb","00.fit")
+            fit_file = model.file_name.replace(".pdb", "00.fit")
             with open(fit_file, "r") as ff:
                 fit_header = ff.readline()
-                model.chi = float(fit_header.partition("Chi^2:")[2].partition("\s")[0])
+                model.chi = float(fit_header.partition("Chi^2:")[2].partition("\s")[0]) # noqa: E501
 
             # Calculate HADDOCKsaxs score
-            haddock_score = HaddockModel(model.rel_path).calc_haddock_score(
-                **weights ) + ( model.chi * w_saxs )
+            if np.isnan(model.score):
+                self.log("No HADDOCK score from previous module")
+                self.log("Using chi value as score")
+                haddock_score = model.chi
+            else:
+                self.log("Calculating HADDOCKsaxs score")
+                haddock_score = (model.score * w_haddock) + (model.chi * w_saxs)
 
             model.score = haddock_score
 
@@ -69,11 +72,13 @@ class HaddockModule(BaseHaddockModule):
         self.log(f"Saving output to {output_fname}")
 
         text_generator = (
-            f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.md5}\t{pdb.chi}\t{pdb.score}"
+            f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.md5}\t{pdb.chi}\t{pdb.score}" # noqa: E501
             for pdb in self.output_models )
 
         with open(output_fname, "w") as fh:
-            fh.write("\t".join(("structure","original_name","md5","chi","score")) + linesep)
+            fh.write("\t".join(
+                ("structure", "original_name", "md5", "chi", "score")
+                ) + linesep)
             fh.write(linesep.join(text_generator))
 
         # Send models (unchanged but with HADDOCKsaxs score) to the next step

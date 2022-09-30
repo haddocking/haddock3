@@ -4,7 +4,6 @@ import subprocess
 from os import linesep
 import numpy as np
 
-from haddock.gear.haddockmodel import HaddockModel
 from haddock.modules import BaseHaddockModule
 from haddock.libs.libutil import check_subprocess
 
@@ -29,7 +28,6 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self):
         """Execute module."""
-
         models_to_score = self.previous_io.retrieve_models(individualize=True)
 
         # Get parameters from .yaml/.cfg
@@ -52,7 +50,7 @@ class HaddockModule(BaseHaddockModule):
             fit_file = model.file_name.replace(".pdb", "00.fit")
             with open(fit_file, "r") as ff:
                 fit_header = ff.readline()
-                model.chi = float(fit_header.partition("Chi^2:")[2].partition("\s")[0]) # noqa: E501
+                model.chi = float(fit_header.partition("Chi^2:")[2].partition("\s")[0])  # noqa: E501
 
             # Calculate HADDOCKsaxs score
             if np.isnan(model.score):
@@ -72,8 +70,8 @@ class HaddockModule(BaseHaddockModule):
         self.log(f"Saving output to {output_fname}")
 
         text_generator = (
-            f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.md5}\t{pdb.chi}\t{pdb.score}" # noqa: E501
-            for pdb in self.output_models )
+            f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.md5}\t{pdb.chi}\t{pdb.score}"  # noqa: E501
+            for pdb in self.output_models)
 
         with open(output_fname, "w") as fh:
             fh.write("\t".join(

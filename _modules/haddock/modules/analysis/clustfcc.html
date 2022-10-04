@@ -198,6 +198,7 @@
 <span class="kn">from</span> <span class="nn">fcc.scripts</span> <span class="kn">import</span> <span class="n">calc_fcc_matrix</span><span class="p">,</span> <span class="n">cluster_fcc</span>
 
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">FCC_path</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libclust</span> <span class="kn">import</span> <span class="n">write_structure_list</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libparallel</span> <span class="kn">import</span> <span class="n">Scheduler</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libsubprocess</span> <span class="kn">import</span> <span class="n">JobInputFirst</span>
 <span class="kn">from</span> <span class="nn">haddock.modules</span> <span class="kn">import</span> <span class="n">BaseHaddockModule</span><span class="p">,</span> <span class="n">read_from_yaml_config</span>
@@ -368,6 +369,9 @@
                     <span class="n">pdb</span><span class="o">.</span><span class="n">clt_rank</span> <span class="o">=</span> <span class="n">cluster_rank</span>
                     <span class="n">pdb</span><span class="o">.</span><span class="n">clt_model_rank</span> <span class="o">=</span> <span class="n">model_ranking</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
+
+            <span class="c1"># Write unclustered structures</span>
+            <span class="n">write_structure_list</span><span class="p">(</span><span class="n">models_to_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">)</span>
 
             <span class="c1"># Prepare clustfcc.txt</span>
             <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;clustfcc.txt&#39;</span><span class="p">)</span>

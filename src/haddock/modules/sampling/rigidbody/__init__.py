@@ -81,12 +81,14 @@ class HaddockModule(BaseCNSModule):
                 f"#model_combinations={len(models_to_dock)},"
                 f' sampling={self.params["sampling"]}.'
                 )
-        
-        # checking ambig_fname:
+
+        # get all the different ambig files
         prev_ambig_fnames = [None for model in range(self.params["sampling"])]
-        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames) # all the different ambig files
+        diff_ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
+        # if no files are found, we will stick to self.params["ambig_fname"]
         if diff_ambig_fnames:
-            ambig_fnames = [diff_ambig_fnames[n%len(diff_ambig_fnames)] for n in range(self.params["sampling"])]
+            n_diffs = len(diff_ambig_fnames)
+            ambig_fnames = [diff_ambig_fnames[n % n_diffs] for n in range(self.params["sampling"])]  # noqa: E501
         else:
             ambig_fnames = None
         
@@ -99,7 +101,7 @@ class HaddockModule(BaseCNSModule):
             for _i in range(sampling_factor):
                 # assign ambig_fname
                 if ambig_fnames:
-                    ambig_fname = ambig_fnames[idx-1]
+                    ambig_fname = ambig_fnames[idx - 1]
                 else:
                     ambig_fname = self.params["ambig_fname"]
                 # prepare cns input
@@ -119,7 +121,9 @@ class HaddockModule(BaseCNSModule):
                 output_pdb_fname = f"rigidbody_{idx}.pdb"
 
                 # Create a model for the expected output
-                model = PDBFile(output_pdb_fname, path=self.path, restr_fname=ambig_fname)
+                model = PDBFile(output_pdb_fname,
+                                path=self.path,
+                                restr_fname=ambig_fname)
                 model.topology = [e.topology for e in combination]
                 self.output_models.append(model)
 

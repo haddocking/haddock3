@@ -3,10 +3,10 @@ import difflib
 import importlib
 import itertools as it
 import os
-import tarfile
 import shutil
 import string
 import sys
+import tarfile
 from contextlib import contextmanager, suppress
 from copy import copy
 from functools import lru_cache, wraps

@@ -275,7 +275,7 @@ def prepare_cns_input(
     # read the default parameters
     default_params = load_workflow_params(**defaults)
     default_params += write_eval_line('ambig_fname', ambig_fname)
-    #log.info(f"default_params {default_params}")
+
     # write the PDBs
     pdb_list = [
         pdb.rel_path

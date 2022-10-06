@@ -43,6 +43,7 @@ option to continue a new run::
     haddock3 new-config.cfg --extend-run run2
 """
 import argparse
+import os
 import sys
 
 from haddock import log
@@ -147,10 +148,14 @@ def main(run_dir, modules, output):
     copy_renum_step_folders(run_dir, outdir, selected_steps)
 
     # copy data folders
+    # `data_steps` are selected to avoid FileNotFoundError because some steps
+    # do not have a `data` folder.
+    # See https://github.com/haddocking/haddock3/issues/559
+    data_steps = [step for step in selected_steps if os.path.exists(Path(run_dir, "data", step))]  # noqa: E501
     copy_renum_step_folders(
         Path(run_dir, "data"),
         Path(outdir, "data"),
-        selected_steps,
+        data_steps,
         )
 
     # update step names in files

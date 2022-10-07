@@ -22,7 +22,7 @@ main folder.
 
 ## 2 Create a virtual environment with Python 3.9+ and install dependencies:
 
-You can use Python's `venv` or Anaconda depending on your choice.
+You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:
 
 ### with `venv`
@@ -100,15 +100,15 @@ python setup.py develop --no-deps
 
 # Installing third-party packages
 
-HADDOCK3 can integrate third-party software in its workflows. However,
-we are not responsible for the proper installation of such packages, but
+HADDOCK3 can integrate third-party software in its workflows.
+We are not responsible for the proper installation of such packages, but
 we help you install them. Below, you will find a list of all third-party
 packages HADDOCK3 can use and guidelines for their proper installation.
 
 ## `lightdock`
 
-To install to [lightdock](https://github.com/lightdock/lightdock) follow
-the instructions in the project's website. Remember to install it under
+To install [lightdock](https://github.com/lightdock/lightdock) follow
+the instructions on the project's website. Remember to install it under
 the same Python environment you created for HADDOCK3. If you have any
 doubts, please let us know.
 

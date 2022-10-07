@@ -1,4 +1,4 @@
-# A brieft introduction to HADDOCK3
+# A brief introduction to HADDOCK3
 
 HADDOCK3 is the next generation integrative modelling software in the
 long-lasting HADDOCK project. It represents a complete rethinking and rewriting
@@ -12,13 +12,13 @@ parameterisable yet rigid simulation pipeline composed of three steps:
 ![HADDOCK 2.x workflow](figs/HADDOCK2-stages.png)
 
 In HADDOCK3, users have the freedom to configure docking workflows into
-functional pipelines by combining the different HADDOCK3's modules, thus
+functional pipelines by combining the different HADDOCK3 modules, thus
 adapting the workflows to their projects. HADDOCK3 has therefore developed to
 truthfully work like a puzzle of many pieces (simulation modules) that users can
 combine freely. To this end, the “old” HADDOCK machinery has been modularised,
-and several new modules added, including third-party software additions. As a
+and several new modules added, including third-party software. As a
 result, the modularisation achieved in HADDOCK3 allows users to duplicate steps
-within one workflow (e.g., to repeat twice the `it1` stage of the HADDOCK2.x
+within one workflow (e.g., to repeat the `it1` stage of the HADDOCK2.x
 rigid workflow).
 
 Note that, for simplification purposes, at this time, not all functionalities of
@@ -44,7 +44,7 @@ all categories and modules. Below is a summary of the available modules:
     * `topoaa`: *generates the all-atom topologies for the CNS engine.*
 * **Sampling modules**
     * `rigidbody`: *Rigid body energy minimisation with CNS (`it0` in haddock2.x).*
-    * `lightdock`: *Third-party glow-worm swam optimisationdocking software.*
+    * `lightdock`: *Third-party Glow-worm Swarm Optimisation (GSO) docking software.*
     * `gdock`: *Third-party genetic algorithm-based docking software.*
 * **Model refinement modules**
     * `flexref`: *Semi-flexible refinement using a simulated annealing protocol through molecular dynamics simulations in torsion angle space (`it1` in haddock2.x).*

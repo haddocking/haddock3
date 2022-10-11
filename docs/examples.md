@@ -12,6 +12,7 @@ corresponding to different types of complexes, scenarios and data.
 1. [docking-protein-protein](#docking-protein-protein)
 1. [refine-complex](#refine-complex)
 1. [scoring](#scoring)
+1. [docking-multiple-ambig](#docking-multiple-ambig)
 
 Each directory contains both:
 
@@ -149,3 +150,10 @@ Two scoring workflows are illustrated:
 
 The model listing with their associated HADDOCK score can be found in a `.tsv` file in the stage 01 directory of the respective runs.
 
+## docking-multiple-ambig
+
+This example shows how to use HADDOCK3 when several restraint files are available. The example is built upon the results obtained running [arctic3d](https://github.com/haddocking/arctic3d) on two proteins forming the complex `2GAF`. The presence of multiple interfaces in both structures allows to define several `.tbl` ambiguous restraint files to be used in the calculations. At first, these files must be compressed in a `.tbl.tgz` archive. During the workflow, the HADDOCK3 machinery unzips the archive and evenly assigns each `.tbl` file to a number of models to be generated. Even if only one sixth of the restraint files contain reasonable information on the interface, HADDOCK3 is still able to retrieve good docking models in the best-scoring positions.
+
+Importantly, in the `docking-multiple-tbls-clt-full.cfg` example the clustering is performed right after the `rigidbody` module, so as to lump together solutions resulting from the application of different sets of restraints.
+
+The `caprieval` module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.

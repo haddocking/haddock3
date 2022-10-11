@@ -226,9 +226,9 @@ def get_new_models(pdb_file_path):
     return new_models
 
 
-def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
+def get_pdb_file_suffix_variations(file_name, sep="_"):
     """
-    List suffix variations of a PDB file.
+    List suffix variations of a PDB file in the current path.
 
     If `file.pdb` is given, and files `file_1.pdb`, `file_2.pdb`, exist
     in the folder, those will be listed.
@@ -237,9 +237,6 @@ def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
     ----------
     file_name : str or Path
         The name of the file with extension.
-
-    path : str or pathlib.Path
-        Path pointing to a directory where to perform the search.
 
     sep : str
         The separation between the file base name and the suffix.
@@ -252,8 +249,7 @@ def get_pdb_file_suffix_variations(file_name, path=None, sep="_"):
         If no files are found return an empty list.
     """
     basename = Path(file_name)
-    path = path or Path.cwd()
-    return list(path.glob(f"{basename.stem}{sep}*{basename.suffix}"))
+    return list(Path(".").glob(f"{basename.stem}{sep}*{basename.suffix}"))
 
 
 def read_RECORD_section(lines, section_slice, func=set):

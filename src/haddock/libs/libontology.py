@@ -52,7 +52,7 @@ class Persistent:
 class PDBFile(Persistent):
     """Represent a PDB file."""
 
-    def __init__(self, file_name, topology=None, path='.', score=NaN, md5=None):
+    def __init__(self, file_name, topology=None, path='.', score=NaN, md5=None, unw_energies=None):
         super().__init__(file_name, Format.PDB, path, md5)
         self.topology = topology
         self.score = score
@@ -61,6 +61,7 @@ class PDBFile(Persistent):
         self.clt_rank = None
         self.clt_model_rank = None
         self.len = score
+        self.unw_energies = unw_energies
 
     def __lt__(self, other):
         return self.score < other.score

@@ -36,7 +36,7 @@ class HaddockModule(BaseCNSModule):
             models_to_refine = self.previous_io.retrieve_models()
         except Exception as e:
             self.finish_with_error(e)
-
+        self.log(f"models_to_refine {models_to_refine}")
         self.output_models = []
         idx = 1
         sampling_factor = self.params["sampling_factor"]
@@ -88,10 +88,10 @@ class HaddockModule(BaseCNSModule):
 
         for pdb in self.output_models:
             if pdb.is_present():
-                haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
-                    **weights
-                    )
-
+                haddock_model = HaddockModel(pdb.file_name)
+                pdb.unw_energies = haddock_model.energies
+                
+                haddock_score = haddock_model.calc_haddock_score(**weights)
                 pdb.score = haddock_score
 
         # Save module information

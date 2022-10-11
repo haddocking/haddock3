@@ -87,10 +87,10 @@ class HaddockModule(BaseCNSModule):
 
         for pdb in self.output_models:
             if pdb.is_present():
-                haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
-                    **weights
-                    )
-
+                haddock_model = HaddockModel(pdb.file_name)
+                pdb.unw_energies = haddock_model.energies
+                
+                haddock_score = haddock_model.calc_haddock_score(**weights)
                 pdb.score = haddock_score
 
         # Save module information

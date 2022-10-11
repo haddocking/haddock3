@@ -127,11 +127,10 @@ class HaddockModule(BaseCNSModule):
         for model in self.output_models:
             if model.is_present():
                 # Score the model
-                haddock_score = HaddockModel(
-                    model.file_name).calc_haddock_score(
-                    **weights
-                    )
+                haddock_model = HaddockModel(model.file_name)
+                model.unw_energies = haddock_model.energies
 
+                haddock_score = haddock_model.calc_haddock_score(**weights)
                 model.score = haddock_score
 
         self.export_output_models(faulty_tolerance=self.params["tolerance"])

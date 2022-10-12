@@ -36,7 +36,7 @@ class HaddockModule(BaseCNSModule):
             models_to_refine = self.previous_io.retrieve_models()
         except Exception as e:
             self.finish_with_error(e)
-        self.log(f"models_to_refine {models_to_refine}")
+
         self.output_models = []
         idx = 1
         sampling_factor = self.params["sampling_factor"]

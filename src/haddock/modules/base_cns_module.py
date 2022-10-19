@@ -141,10 +141,10 @@ class BaseCNSModule(BaseHaddockModule):
                 self.log(f"Found {len(ambig_fnames)} compatible tbl files")
                 ambig_fnames = sort_numbered_paths(*ambig_fnames)
         else:
-            if self.params["previous"]:
+            if self.params["previous_ambig"]:
                 # check if there is restraint information in all models
                 if None in prev_ambig_fnames:
-                    raise Exception("'previous' option selected but no available restraint information in models")  # noqa: E501
+                    raise Exception("'previous_ambig' option selected but no available restraint information in models")  # noqa: E501
                 self.log("Using previously defined restraints")
                 ambig_fnames = prev_ambig_fnames.copy()
         return ambig_fnames

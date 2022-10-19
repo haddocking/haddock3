@@ -39,7 +39,7 @@ def test_prev_fnames(input_models):
     obs_ambig_fnames = flexref_module.get_ambig_fnames(prev_ambig_fnames)
     assert obs_ambig_fnames is None
     # now setting previous to true
-    flexref_module.params["previous"] = True
+    flexref_module.params["previous_ambig"] = True
     obs_ambig_fnames = flexref_module.get_ambig_fnames(prev_ambig_fnames)
     assert obs_ambig_fnames == prev_ambig_fnames
     # removing restraints information from a model while previous is true

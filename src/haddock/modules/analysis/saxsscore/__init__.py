@@ -1,4 +1,27 @@
-"""SAXS scoring module."""
+"""
+SAXS scoring module
+===================
+
+Requires ATSAS 2.6.0 or newer.
+
+This module adds a SAXS term to the HADDOCK score.
+The SAXS term is based on the fit (Chi^2) of a model to corresponding
+scattering data, as calculated by the ATSAS program CRYSOL.
+
+By default the weights of the HADDOCK score (calculated by the preceding module)
+and the Chi value are 1 and 50, respectively.
+If the preceding module did not provide HADDOCK scores,
+the Chi^2 values are returned as is (not multiplied by 50).
+
+The resulting scores are found in ``saxsscore.tsv``.
+This module does not alter the models themselves
+and passes them on unchanged to the subsequent module.
+
+For more information on SAXS-based scoring in HADDOCK, see
+
+Karaca E, Bonvin AMJJ. 2013. On the Usefulness of Ion-Mobility Mass Spectrometry
+and SAXS Data in Scoring Docking Decoys. *Acta Crystallographica* D69:683-694.
+"""
 import subprocess
 import math
 from os import linesep

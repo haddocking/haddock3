@@ -22,8 +22,8 @@ For more information on SAXS-based scoring in HADDOCK, see
 Karaca E, Bonvin AMJJ. 2013. On the Usefulness of Ion-Mobility Mass Spectrometry
 and SAXS Data in Scoring Docking Decoys. *Acta Crystallographica* D69:683-694.
 """
-import subprocess
 import math
+import subprocess
 from os import linesep
 from pathlib import Path
 

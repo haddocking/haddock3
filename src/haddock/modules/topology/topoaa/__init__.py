@@ -116,16 +116,11 @@ class HaddockModule(BaseCNSModule):
             molecules = make_molecules(self.params.pop('molecules'))
 
         else:
-            # in case topoaa is not the first step it reads the input
-            # molecules from the previous step but it only takes the
-            # first model because all models will have the same
-            # identity, as is the case for all PDBs created by rigidbody.
-            # In these cases, it is likely that each PDB contains the
-            # complex structure instead of the separated chains.
-            # Currently, we have not implemented a way to split chains
-            # and recreate the topology of the chains separately.
-            _molecules = self.previous_io.retrieve_models()[0]
-            molecules = make_molecules([_molecules.rel_path], no_parent=True)
+            # in case topoaa is not the first step, the topology is rebuilt for
+            # each retrieved model
+            _molecules = self.previous_io.retrieve_models()
+            molecules_paths = [mol.rel_path for mol in _molecules]
+            molecules = make_molecules(molecules_paths, no_parent=True)
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
@@ -138,8 +133,11 @@ class HaddockModule(BaseCNSModule):
         # of `mol_params` with inverted order (we will use .pop)
         mol_params_keys = list(mol_params.keys())[::-1]
 
-        if self.params['limit']:
+        # limit is only useful when order == 0
+        if self.order == 0 and self.params['limit']:
             mol_params_get = mol_params_keys.pop
+
+        # `else` is used in any case where limit is False.
         else:
             mol_params_get = partial(operator.getitem, mol_params_keys, -1)
 
@@ -171,13 +169,7 @@ class HaddockModule(BaseCNSModule):
             # molecule parameters are shared among models of the same molecule
             parameters_for_this_molecule = mol_params[mol_params_get()]
 
-            # Sanitize the different PDB files
-            relative_paths_models = (
-                Path(_p.name) if _p.is_absolute() else _p
-                for _p in splited_models
-                )
-
-            for model in relative_paths_models:
+            for model in splited_models:
                 self.log(f"Sanitizing molecule {model.name}")
                 models_dic[i].append(model)
 

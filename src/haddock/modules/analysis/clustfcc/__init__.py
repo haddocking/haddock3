@@ -6,6 +6,7 @@ import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
+from haddock.libs.libclust import write_structure_list
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
@@ -42,7 +43,9 @@ class HaddockModule(BaseHaddockModule):
         contact_executable = Path(FCC_path, self.params['executable'])
 
         # Get the models generated in previous step
-        models_to_cluster = self.previous_io.retrieve_models()
+        models_to_cluster = self.previous_io.retrieve_models(
+            individualize=True
+            )
 
         # Calculate the contacts for each model
         log.info('Calculating contacts')
@@ -174,6 +177,9 @@ class HaddockModule(BaseHaddockModule):
                     pdb.clt_rank = cluster_rank
                     pdb.clt_model_rank = model_ranking
                     self.output_models.append(pdb)
+
+            # Write unclustered structures
+            write_structure_list(models_to_cluster, self.output_models)
 
             # Prepare clustfcc.txt
             output_fname = Path('clustfcc.txt')

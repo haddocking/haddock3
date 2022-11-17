@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from haddock.gear.config_reader import read_config
+from haddock.gear.config import load as read_config
 
 
 examples_path = Path(

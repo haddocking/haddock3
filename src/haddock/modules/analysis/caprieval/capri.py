@@ -82,43 +82,47 @@ class CAPRI:
         # Identify reference interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
 
-        # Load interface coordinates
-        ref_coord_dic, _ = load_coords(
-            self.reference, self.atoms, ref_interface_resdic
-            )
+        if len(ref_interface_resdic) == 0:
+            log.warning("No reference interface found")
+        else:
+            # Load interface coordinates
+            ref_coord_dic, _ = load_coords(
+                self.reference, self.atoms, ref_interface_resdic
+                )
 
-        mod_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            ref_interface_resdic,
-            numbering_dic=self.model2ref_numbering
-            )
+            mod_coord_dic, _ = load_coords(
+                self.model,
+                self.atoms,
+                ref_interface_resdic,
+                numbering_dic=self.model2ref_numbering
+                )
 
-        # Here _coord_dic keys are matched
-        #  and formatted as (chain, resnum, atom)
-        #  we will use atoms that are present in both
-        P = []
-        Q = []
-        for k in ref_coord_dic.keys() & mod_coord_dic.keys():
-            ref_xyz = ref_coord_dic[k]
-            mod_xyz = mod_coord_dic[k]
+            # Here _coord_dic keys are matched
+            #  and formatted as (chain, resnum, atom)
+            #  we will use atoms that are present in both
+            P = []
+            Q = []
+            
+            for k in ref_coord_dic.keys() & mod_coord_dic.keys():
+                ref_xyz = ref_coord_dic[k]
+                mod_xyz = mod_coord_dic[k]
 
-            Q.append(ref_xyz)
-            P.append(mod_xyz)
+                Q.append(ref_xyz)
+                P.append(mod_xyz)
 
-        Q = np.asarray(Q)
-        P = np.asarray(P)
-        # write_coords("model.pdb", P)
-        # write_coords("ref.pdb", Q)
+            Q = np.asarray(Q)
+            P = np.asarray(P)
+            # write_coords("model.pdb", P)
+            # write_coords("ref.pdb", Q)
 
-        Q = Q - centroid(Q)
-        P = P - centroid(P)
-        U = kabsch(P, Q)
-        P = np.dot(P, U)
+            Q = Q - centroid(Q)
+            P = P - centroid(P)
+            U = kabsch(P, Q)
+            P = np.dot(P, U)
 
-        self.irmsd = calc_rmsd(P, Q)
-        # write_coords("model_aln.pdb", P)
-        # write_coords("ref_aln.pdb", Q)
+            self.irmsd = calc_rmsd(P, Q)
+            # write_coords("model_aln.pdb", P)
+            # write_coords("ref_aln.pdb", Q)
 
     def calc_lrmsd(self):
         """Calculate the L-RMSD."""
@@ -134,72 +138,78 @@ class CAPRI:
         P = []
         # Note: this MUST be sorted since we will use the indexes to
         #  separate between receptor and ligand coordinates
-        instersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
+        intersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
 
         chain_ranges = {}
-        for i, segment in enumerate(instersection):
+        for i, segment in enumerate(intersection):
             chain, _, _ = segment
             if chain not in chain_ranges:
                 chain_ranges[chain] = []
             chain_ranges[chain].append(i)
 
         chain_ranges = make_range(chain_ranges)
-        r_start, r_end = chain_ranges[self.r_chain]
-        l_start, l_end = chain_ranges[self.l_chain]
+        
+        obs_chains = list(chain_ranges.keys())  # observed chains
+        if len(obs_chains) < 2:
+            log.warning("Not enough chains for calculating lrmsd")
+        else:
+            r_chain, l_chain = self.check_chains(obs_chains)
+            r_start, r_end = chain_ranges[r_chain]
+            l_start, l_end = chain_ranges[l_chain]
 
-        for k in instersection:
-            ref_xyz = ref_coord_dic[k]
-            mod_xyz = mod_coord_dic[k]
+            for k in intersection:
+                ref_xyz = ref_coord_dic[k]
+                mod_xyz = mod_coord_dic[k]
 
-            Q.append(ref_xyz)
-            P.append(mod_xyz)
+                Q.append(ref_xyz)
+                P.append(mod_xyz)
 
-        Q = np.asarray(Q)
-        P = np.asarray(P)
+            Q = np.asarray(Q)
+            P = np.asarray(P)
 
-        # write_coord_dic("ref.pdb", ref_coord_dic)
-        # write_coord_dic("model.pdb", mod_coord_dic)
+            # write_coord_dic("ref.pdb", ref_coord_dic)
+            # write_coord_dic("model.pdb", mod_coord_dic)
 
-        # write_coords("ref.pdb", Q)
-        # write_coords("model.pdb", P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
-        # move to the origin
-        Q = Q - centroid(Q)
-        P = P - centroid(P)
+            # move to the origin
+            Q = Q - centroid(Q)
+            P = P - centroid(P)
 
-        # get receptor coordinates
-        Q_r = Q[r_start: r_end - 1]
-        P_r = P[r_start: r_end - 1]
+            # get receptor coordinates
+            Q_r = Q[r_start: r_end - 1]
+            P_r = P[r_start: r_end - 1]
 
-        # Center receptors and get rotation matrix
-        # Q_r = Q_r - centroid(Q_r)
-        # P_r = P_r - centroid(P_r)
+            # Center receptors and get rotation matrix
+            # Q_r = Q_r - centroid(Q_r)
+            # P_r = P_r - centroid(P_r)
 
-        U_r = kabsch(P_r, Q_r)
+            U_r = kabsch(P_r, Q_r)
 
-        # Center complexes at receptor centroids
-        Q = Q - centroid(Q_r)
-        P = P - centroid(P_r)
+            # Center complexes at receptor centroids
+            Q = Q - centroid(Q_r)
+            P = P - centroid(P_r)
 
-        # Apply rotation to complex
-        #  - complex are now aligned by the receptor
-        P = np.dot(P, U_r)
+            # Apply rotation to complex
+            #  - complex are now aligned by the receptor
+            P = np.dot(P, U_r)
 
-        # write_coords("ref.pdb", Q)
-        # write_coords("model.pdb", P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
-        # Identify the ligand coordinates
-        Q_l = Q[l_start: l_end - 1]
-        P_l = P[l_start: l_end - 1]
+            # Identify the ligand coordinates
+            Q_l = Q[l_start: l_end - 1]
+            P_l = P[l_start: l_end - 1]
 
-        # write_coords("ref_l.pdb", Q_l)
-        # write_coords("model_l.pdb", P_l)
+            # write_coords("ref_l.pdb", Q_l)
+            # write_coords("model_l.pdb", P_l)
 
-        # Calculate the RMSD of the ligands
-        self.lrmsd = calc_rmsd(P_l, Q_l)
+            # Calculate the RMSD of the ligands
+            self.lrmsd = calc_rmsd(P_l, Q_l)
 
-        # write_coords("ref.pdb", Q)
-        # write_coords("model.pdb", P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
     def calc_ilrmsd(self, cutoff=10.0):
         """
@@ -265,66 +275,73 @@ class CAPRI:
             chain_ranges[chain].append(i)
 
         chain_ranges = make_range(chain_ranges)
-        l_start, l_end = chain_ranges[self.l_chain]
 
-        for k in sorted(ref_coord_dic.keys() & mod_coord_dic.keys()):
-            ref_xyz = ref_coord_dic[k]
-            mod_xyz = mod_coord_dic[k]
+        obs_chains = list(chain_ranges.keys())  # observed chains
+        if len(obs_chains) < 2:
+            log.warning("Not enough chains for calculating ilrmsd")
+        else:
+            r_chain, l_chain = self.check_chains(obs_chains)
 
-            Q.append(ref_xyz)
-            P.append(mod_xyz)
+            l_start, l_end = chain_ranges[l_chain]
 
-        Q = np.asarray(Q)
-        P = np.asarray(P)
+            for k in sorted(ref_coord_dic.keys() & mod_coord_dic.keys()):
+                ref_xyz = ref_coord_dic[k]
+                mod_xyz = mod_coord_dic[k]
 
-        # write_coords("ref.pdb", Q)
-        # write_coords("model.pdb", P)
+                Q.append(ref_xyz)
+                P.append(mod_xyz)
 
-        # put system at origin
-        Q_int = Q_int - centroid(Q_int)
-        P_int = P_int - centroid(P_int)
+            Q = np.asarray(Q)
+            P = np.asarray(P)
 
-        # put interfaces at the origin
-        # Q_int = Q_int - centroid(Q_int)
-        # P_int = P_int - centroid(P_int)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
-        # find the rotation that minimizes the interface rmsd
-        U_int = kabsch(P_int, Q_int)
-        P_int = np.dot(P_int, U_int)
+            # put system at origin
+            Q_int = Q_int - centroid(Q_int)
+            P_int = P_int - centroid(P_int)
 
-        # write_coords("ref.pdb", Q_int)
-        # write_coords("model.pdb", P_int)
+            # put interfaces at the origin
+            # Q_int = Q_int - centroid(Q_int)
+            # P_int = P_int - centroid(P_int)
 
-        # # move the system to the centroid of the interfaces
-        Q = Q - centroid(Q)
-        P = P - centroid(P)
+            # find the rotation that minimizes the interface rmsd
+            U_int = kabsch(P_int, Q_int)
+            P_int = np.dot(P_int, U_int)
 
-        # write_coords("ref_1.pdb", Q)
-        # write_coords("model_1.pdb", P)
+            # write_coords("ref.pdb", Q_int)
+            # write_coords("model.pdb", P_int)
 
-        Q = Q - centroid(Q_int)
-        P = P - centroid(P_int)
+            # # move the system to the centroid of the interfaces
+            Q = Q - centroid(Q)
+            P = P - centroid(P)
 
-        # write_coords("ref_2.pdb", Q)
-        # write_coords("model_2.pdb", P)
+            # write_coords("ref_1.pdb", Q)
+            # write_coords("model_1.pdb", P)
 
-        # apply this rotation to the model
-        #  - complexes are now aligned by the interfaces
-        P = np.dot(P, U_int)
+            Q = Q - centroid(Q_int)
+            P = P - centroid(P_int)
 
-        # write_coords("ref_i.pdb", Q)
-        # write_coords("model_i.pdb", P)
+            # write_coords("ref_2.pdb", Q)
+            # write_coords("model_2.pdb", P)
 
-        # Calculate the rmsd of the ligand
-        Q_l = Q[l_start: l_end - 1]
-        P_l = P[l_start: l_end - 1]
+            # apply this rotation to the model
+            #  - complexes are now aligned by the interfaces
+            P = np.dot(P, U_int)
 
-        # write_coords("ref_l.pdb", Q_l)
-        # write_coords("model_l.pdb", P_l)
+            # write_coords("ref_i.pdb", Q)
+            # write_coords("model_i.pdb", P)
 
-        # this will be the interface-ligand-rmsd
-        self.ilrmsd = calc_rmsd(P_l, Q_l)
+            # Calculate the rmsd of the ligand
+            Q_l = Q[l_start: l_end - 1]
+            P_l = P[l_start: l_end - 1]
 
+            # write_coords("ref_l.pdb", Q_l)
+            # write_coords("model_l.pdb", P_l)
+
+            # this will be the interface-ligand-rmsd
+            self.ilrmsd = calc_rmsd(P_l, Q_l)
+            
     def calc_fnat(self, cutoff=5.0):
         """
         Calculate the frequency of native contacts.
@@ -335,21 +352,25 @@ class CAPRI:
             The cutoff distance for the intermolecular contacts.
         """
         ref_contacts = self.load_contacts(self.reference, cutoff)
-        model_contacts = self.load_contacts(self.model, cutoff)
-        intersection = ref_contacts & model_contacts
-        self.fnat = len(intersection) / float(len(ref_contacts))
+        if len(ref_contacts) != 0:
+            model_contacts = self.load_contacts(self.model, cutoff)
+            intersection = ref_contacts & model_contacts
+            self.fnat = len(intersection) / float(len(ref_contacts))
+        else:
+            log.warning("No reference contacts found")
 
     def calc_dockq(self):
         """Calculate the DockQ metric."""
-        if self.fnat and self.irmsd and self.lrmsd:
-            self.dockq = (
-                float(self.fnat)
-                + 1 / (1 + (self.irmsd / 1.5) * (self.irmsd / 1.5))
-                + 1 / (1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5))
-                ) / 3
-        else:
-            self.dockq = float("nan")
-
+        self.dockq = 0.0
+        if self.fnat:
+            self.dockq += float(self.fnat) / 3
+        if self.irmsd:
+            irmsd_denom = 1 + (self.irmsd / 1.5) * (self.irmsd / 1.5)
+            self.dockq += (1 / irmsd_denom) / 3
+        if self.lrmsd:
+            lrmsd_denom = 1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5)
+            self.dockq += (1 / lrmsd_denom) / 3
+        
     def has_cluster_info(self):
         """
         Check wether this object contains cluster information.
@@ -439,6 +460,31 @@ class CAPRI:
             self.calc_dockq()
 
         self.make_output()
+
+    def check_chains(self, obs_chains):
+        """Check observed chains against the expected ones."""
+        r_found, l_found = False, False
+        obs_chains_cp = obs_chains.copy()
+        if self.r_chain in obs_chains:
+            r_chain = self.r_chain
+            obs_chains.remove(r_chain)
+            r_found = True
+        if self.l_chain in obs_chains:
+            l_chain = self.l_chain
+            obs_chains.remove(l_chain)
+            l_found = True
+        # if one or both exp chains are not observed, use the observed chains
+        if obs_chains != []:
+            exps = {self.r_chain, self.l_chain}
+            log.warning(f"observed chains != expected chains {exps}.")
+            log.info(f"Sticking to observed chains {obs_chains_cp}")
+        if not r_found:
+            r_chain = obs_chains[0]
+            obs_chains.remove(r_chain)
+        if not l_found:
+            l_chain = obs_chains[0]
+
+        return r_chain, l_chain
 
     @staticmethod
     def _load_atoms(model, reference):
@@ -629,17 +675,28 @@ def rearrange_ss_capri_output(
 
         out_file.unlink()
 
-    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
-    rankkey_values.sort(
-        key=lambda x: x[1],
-        reverse=True if not sort_ascending else False
-        )
-    for i, k in enumerate(rankkey_values):
+    # Rank according to the score
+    score_rankkey_values = [(i, data[k]['score']) for i, k in enumerate(data)]
+    score_rankkey_values.sort(key=lambda x: x[1])
+
+    for i, k in enumerate(score_rankkey_values):
         idx, _ = k
         data[idx + 1]["caprieval_rank"] = i + 1
 
         if data[idx + 1]['score'] == 99999.9:
             del data[idx + 1]
+
+    # Sort according to the sort key
+    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False
+        )
+
+    _data = {}
+    for i, (k, _) in enumerate(rankkey_values):
+        _data[i + 1] = data[k + 1]
+    data = _data
 
     if not data:
         # This means there were only "dummy" values

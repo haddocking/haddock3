@@ -41,12 +41,12 @@ import csv
 import os
 import sys
 from functools import partial
-from math import isclose
+from math import isclose, isnan
 from pathlib import Path
 
 
 try:
-    from haddock.gear.config_reader import read_config
+    from haddock.gear.config import load as read_config
 except Exception:
     print(  # noqa: T201
         "Haddock3 could not be imported. "
@@ -64,6 +64,7 @@ examples = (
     ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
@@ -74,10 +75,14 @@ examples = (
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
-    ("scoring"                     , "emscoring-mdscoring-test.cfg")  # noqa: E203, E501
+    ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg")  # noqa: E203, E501
     )
 
 
@@ -249,6 +254,9 @@ def compare_tables(t1, t2):
             if isinstance(v1, str):
                 if v1 != v2:
                     return (3, k, h, v1, v2)
+            elif isnan(v1) or isnan(v2):
+                if not (isnan(v1) and isnan(v2)):
+                    return (3, k, h, v1, v2)
             elif isinstance(v1, float):
                 if not isclose(v1, v2, abs_tol=0.0011):
                     return (3, k, h, v1, v2)
@@ -261,9 +269,9 @@ def error_1(l1, l2):
     is_in_l1 = set(l1).difference(set(l2))
     is_in_l2 = set(l2).difference(set(l1))
 
-    if not(is_in_l1) and not(is_in_l2):
+    if not is_in_l1 and not is_in_l2:
         raise AssertionError(
-            "BUG FOUND: at least one of these sets should have values"
+            "BUG FOUND: at least one of these sets should have values."
             )
 
     printf("Keys in capri files differ:")

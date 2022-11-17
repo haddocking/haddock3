@@ -39,6 +39,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
+from haddock.libs.libclust import write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
@@ -80,7 +81,7 @@ class HaddockModule(BaseHaddockModule):
         dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
         crit = self.params["criterion"]
         if np.isnan(self.params["tolerance"]):
-            log.info("tolerance is not defined")
+            self.log("tolerance is not defined")
             if crit == "maxclust":
                 tol = len(models) // 4 + 1
             else:
@@ -89,6 +90,10 @@ class HaddockModule(BaseHaddockModule):
         else:
             if crit == "maxclust":
                 tol = int(self.params["tolerance"])
+            elif crit == "distance":
+                tol = float(self.params["tolerance"])
+            else:
+                raise Exception(f"unknown criterion {crit}")
         log.info(f"tolerance {tol}")
         cluster_list = get_clusters(dendrogram, tol, crit)
         clusters = np.unique(cluster_list)
@@ -134,6 +139,9 @@ class HaddockModule(BaseHaddockModule):
                 pdb.clt_model_rank = model_ranking
                 self.output_models.append(pdb)
         
+        # Write unclustered structures
+        write_structure_list(models, self.output_models)
+
         # Prepare clustrmsd.txt
         output_fname = Path('clustrmsd.txt')
         output_str = f'### clustrmsd output ###{os.linesep}'

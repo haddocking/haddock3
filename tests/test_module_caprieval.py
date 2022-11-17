@@ -4,6 +4,7 @@ import shutil
 import tempfile
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from haddock.libs.libontology import PDBFile
@@ -56,6 +57,14 @@ def protlig_input_list():
     return [
         PDBFile(Path(golden_data, "protlig_complex_1.pdb"), path=golden_data),
         PDBFile(Path(golden_data, "protlig_complex_2.pdb"), path=golden_data),
+        ]
+
+
+@pytest.fixture
+def protprot_onechain_list():
+    """Protein-Protein complex with a single chain ID."""
+    return [
+        PDBFile(Path(golden_data, "protprot_onechain.pdb"), path=golden_data)
         ]
 
 
@@ -164,6 +173,15 @@ def test_protprot_fnat(protprot_caprimodule):
     protprot_caprimodule.calc_fnat()
     assert round_two_dec(protprot_caprimodule.fnat) == 0.05
 
+
+def test_protprot_dockq(protprot_caprimodule):
+    """Test protein-protein dockq calculation."""
+    protprot_caprimodule.irmsd = 7.38
+    protprot_caprimodule.fnat = 0.05
+    protprot_caprimodule.lrmsd = 15.9
+    protprot_caprimodule.calc_dockq()
+    assert round_two_dec(protprot_caprimodule.dockq) == 0.10
+    
 
 def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""
@@ -401,3 +419,101 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     assert Path('capri_clt.txt').stat().st_size != 0
 
     Path('capri_clt.txt').unlink()
+
+
+def test_check_chains(protprot_caprimodule):
+    """Test correct checking of chains."""
+    obs_ch = [["A", "C"],
+              ["A", "B"],
+              ["S", "E", "B", "A"],
+              ["C", "D"]]
+    
+    # assuming exp chains are A and B
+    exp_ch = [["A", "C"],
+              ["A", "B"],
+              ["A", "B"],
+              ["C", "D"]]
+
+    for n in range(len(obs_ch)):
+        obs_r_chain, obs_l_chain = protprot_caprimodule.check_chains(obs_ch[n])
+        exp_r_chain, exp_l_chain = exp_ch[n][0], exp_ch[n][1]
+        assert obs_r_chain == exp_r_chain
+        assert obs_l_chain == exp_l_chain
+
+
+@pytest.fixture
+def protprot_onechain_ref_caprimodule(protprot_input_list,
+                                      protprot_onechain_list,
+                                      params):
+    """Protein-Protein CAPRI module with a single chain structure as ref."""
+    reference = protprot_onechain_list[0].rel_path
+    model = protprot_input_list[1].rel_path
+    capri = CAPRI(
+        identificator=42,
+        reference=reference,
+        model=model,
+        path=golden_data,
+        params=params,
+        )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture
+def protprot_onechain_mod_caprimodule(protprot_input_list,
+                                      protprot_onechain_list,
+                                      params):
+    """Protein-Protein CAPRI module with a single chain structure as model."""
+    reference = protprot_input_list[0].rel_path
+    model = protprot_onechain_list[0].rel_path
+    capri = CAPRI(
+        identificator=42,
+        reference=reference,
+        model=model,
+        path=golden_data,
+        params=params,
+        )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+def test_single_chain_reference(protprot_onechain_ref_caprimodule, params):
+    """Test correct values if reference has a single chain."""
+    # fnat
+    protprot_onechain_ref_caprimodule.calc_fnat()
+    assert np.isnan(protprot_onechain_ref_caprimodule.fnat)
+    # irmsd
+    protprot_onechain_ref_caprimodule.calc_irmsd()
+    assert np.isnan(protprot_onechain_ref_caprimodule.irmsd)
+    # lrmsd
+    protprot_onechain_ref_caprimodule.calc_lrmsd()
+    assert np.isnan(protprot_onechain_ref_caprimodule.lrmsd)
+    # ilrmsd
+    protprot_onechain_ref_caprimodule.calc_ilrmsd()
+    assert np.isnan(protprot_onechain_ref_caprimodule.ilrmsd)
+    # dockq
+    protprot_onechain_ref_caprimodule.calc_dockq()
+    assert np.isnan(protprot_onechain_ref_caprimodule.dockq)
+
+
+def test_single_chain_model(protprot_onechain_mod_caprimodule, params):
+    """Test correct values if model has a single chain."""
+    # fnat
+    protprot_onechain_mod_caprimodule.calc_fnat()
+    assert round_two_dec(protprot_onechain_mod_caprimodule.fnat) == 0.00
+    # irmsd might be different than zero
+    protprot_onechain_mod_caprimodule.calc_irmsd()
+    assert round_two_dec(protprot_onechain_mod_caprimodule.irmsd) == 12.85
+    # lrmsd
+    protprot_onechain_mod_caprimodule.calc_lrmsd()
+    assert np.isnan(protprot_onechain_mod_caprimodule.lrmsd)
+    # ilrmsd
+    protprot_onechain_mod_caprimodule.calc_ilrmsd()
+    assert np.isnan(protprot_onechain_mod_caprimodule.ilrmsd)
+    # dockq
+    protprot_onechain_mod_caprimodule.calc_dockq()
+    assert np.isnan(protprot_onechain_mod_caprimodule.dockq)

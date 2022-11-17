@@ -112,7 +112,6 @@ MASS SH1C  32.060
 MASS SM  32.060
 MASS S   32.060
 MASS SF  32.060
-MASS SG  32.060
 MASS SUF 32.060
 MASS FS  55.847 ! iron (for CFE - iron sulfur cluster)
 MASS SE  78.960 ! selenium (for MSE)
@@ -1654,6 +1653,43 @@ residue HYP  ! 4R-hydroxyproline
   IMPRoper HA N C CB      !chirality CA
   IMPRoper HB1 HB2 CA CG  !stereo CB
   IMPRoper OG1 HG2 CB CD  !stereo CG
+  IMPRoper HD1 HD2 CG N   !stereo CD
+
+  ACCE O    C
+end
+
+!----------------------------------------------------------------------
+
+residue HY3  ! 3L-hydroxyproline
+  group
+    ATOM N   TYPE=N     CHARge=-0.570 end
+    ATOM CA  TYPE=CH1E  CHARge= 0.285 end
+    ATOM HA  TYPE=HA    CHARge= 0.000 end
+    ATOM CB  TYPE=CH1P  CHARge= 0.485 end
+    ATOM OB1 TYPE=OH1   CHARge=-0.700 end   
+    ATOM HB1 TYPE=H     CHARge= 0.500 end   
+    ATOM HB2 TYPE=HA    CHARge= 0.000 end
+    ATOM CG  TYPE=CH2P  CHARge= 0.000 end
+    ATOM HG1 TYPE=HA    CHARge= 0.000 end
+    ATOM HG2 TYPE=HA    CHARge= 0.000 end
+    ATOM CD  TYPE=CH2P  CHARge= 0.285 end
+    ATOM HD1 TYPE=HA    CHARge= 0.000 end
+    ATOM HD2 TYPE=HA    CHARge= 0.000 end
+    ATOM C   TYPE=C     CHARge= 0.500 end   
+    ATOM O   TYPE=O     CHARge=-0.500 end
+
+  BOND N  CA     BOND CA HA
+  BOND CA CB     BOND CB OB1     BOND CB HB2
+  BOND OB1 HB1
+  BOND CB CG     BOND CG HG1     BOND CG HG2
+  BOND CG CD     BOND CD HD1     BOND CD HD2
+  BOND CD N
+  BOND CA C
+  BOND C  O
+
+  IMPRoper HA N C CB      !chirality CA
+  IMPRoper OB1 HB2 CA CG  !stereo CB
+  IMPRoper HG1 HG2 CB CD  !stereo CG
   IMPRoper HD1 HD2 CG N   !stereo CD
 
   ACCE O    C

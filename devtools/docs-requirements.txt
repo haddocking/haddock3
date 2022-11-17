@@ -1,6 +1,6 @@
 sphinx>=2
-sphinx-rtd-theme
 sphinx-argparse
+karma-sphinx-theme
 CommonMark
 mock
 myst-parser

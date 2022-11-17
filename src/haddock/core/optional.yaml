@@ -1,0 +1,13 @@
+preprocess:
+  default: false
+  type: boolean
+  title: Tries to correct input PDBs
+  short: If true, evaluates and tries to correct the input PDB before the
+    workflow.
+  long: HADDOCK3 checks and processes the input PDB files to ensure they
+    all comply with HADDOCK3's requirements. These checks concerns, for example,
+    residue numbering, compatibility of chain IDs, and many others. You can see
+    all checks performs in the live issue
+    https://github.com/haddocking/haddock3/issues/143. If set to false, no
+    checks are performed and HADDOCK3 directly uses the original input PDBs.
+  explevel: easy

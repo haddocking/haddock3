@@ -1,7 +1,5 @@
 # Installation
 
-Before installing HADDOCK3, make sure to properly [install CNS](CNS.md).
-
 Open a `terminal` window and navigate to the folder where you want to
 install HADDOCK3; for example: `software`. The current installation
 instructions are local and will affect only your user.
@@ -21,6 +19,10 @@ cd -
 
 By the end of the above commands, you should be back to the `haddock3`
 main folder.
+
+Before continuing with the installation of HADDOCK3, make sure to properly [install CNS](CNS.md).
+If you have installed a previous version of HADDOCK, you may already have a suitable version of CNS.
+Please do [check your CNS installation](CNS.md#5-Check-installation) before proceeding.
 
 ## 2 Create a virtual environment with Python 3.9+ and install dependencies:
 

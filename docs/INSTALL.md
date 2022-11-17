@@ -4,7 +4,7 @@ Open a `terminal` window and navigate to the folder where you want to
 install HADDOCK3; for example: `software`. The current installation
 instructions are local and will affect only your user.
 
-## 1 Clone this repository:
+## 1. Clone this repository:
 
 Mind the `--recursive` flag when cloning!
 
@@ -20,7 +20,7 @@ cd -
 By the end of the above commands, you should be back to the `haddock3`
 main folder.
 
-## 2 Create a virtual environment with Python 3.9+ and install dependencies:
+## 2. Create a virtual environment with Python 3.9+ and install dependencies:
 
 You can use Python's `venv` or Anaconda depending on your choice.
 Commands are provided below:
@@ -40,13 +40,13 @@ conda env create -f requirements.yml
 conda activate haddock3
 ```
 
-## 3 Install the HADDOCK3 package and command line clients
+## 3. Install the HADDOCK3 package and command line clients
 
 ```bash
 python setup.py develop --no-deps
 ```
 
-## 4 Make a CNS binary shortcut to the expected path:
+## 4. Make a CNS binary shortcut to the expected path:
 
 ```bash
 mkdir -p bin/
@@ -64,7 +64,7 @@ HADDOCK3 from anywhere. To run HADDOCK3, follow the [usage
 guidelines](USAGE.md).
 
 
-## 5 Keep your installation up to date
+## 5. Keep your installation up to date
 
 Navigate to the `haddock3` installation folder (the one you cloned from
 GitHub). Ensure you have the `haddock3` python environment activated.
@@ -96,7 +96,17 @@ conda env update -f requirements.yml
 python setup.py develop --no-deps
 ```
 
-* * *
+
+## 6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI
+
+To use the mpi implementation of haddock3 you must have mpi4py installed in the haddock3 python environment, and OpenMPI in the host system.
+
+```bash
+$ pip install mpi4py
+# or
+$ conda install -c conda-forge mpi4py
+```
+
 
 # Installing third-party packages
 

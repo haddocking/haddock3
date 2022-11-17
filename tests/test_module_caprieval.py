@@ -174,6 +174,15 @@ def test_protprot_fnat(protprot_caprimodule):
     assert round_two_dec(protprot_caprimodule.fnat) == 0.05
 
 
+def test_protprot_dockq(protprot_caprimodule):
+    """Test protein-protein dockq calculation."""
+    protprot_caprimodule.irmsd = 7.38
+    protprot_caprimodule.fnat = 0.05
+    protprot_caprimodule.lrmsd = 15.9
+    protprot_caprimodule.calc_dockq()
+    assert round_two_dec(protprot_caprimodule.dockq) == 0.10
+    
+
 def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""
     protlig_caprimodule.calc_irmsd()

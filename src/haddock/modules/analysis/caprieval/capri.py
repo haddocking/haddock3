@@ -361,15 +361,16 @@ class CAPRI:
 
     def calc_dockq(self):
         """Calculate the DockQ metric."""
-        if self.fnat and self.irmsd and self.lrmsd:
-            self.dockq = (
-                float(self.fnat)
-                + 1 / (1 + (self.irmsd / 1.5) * (self.irmsd / 1.5))
-                + 1 / (1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5))
-                ) / 3
-        else:
-            log.warning("DockQ cannot be calculated")
-
+        self.dockq = 0.0
+        if self.fnat:
+            self.dockq += float(self.fnat) / 3
+        if self.irmsd:
+            irmsd_denom = 1 + (self.irmsd / 1.5) * (self.irmsd / 1.5)
+            self.dockq += (1 / irmsd_denom) / 3
+        if self.lrmsd:
+            lrmsd_denom = 1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5)
+            self.dockq += (1 / lrmsd_denom) / 3
+        
     def has_cluster_info(self):
         """
         Check wether this object contains cluster information.

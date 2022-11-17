@@ -45,7 +45,7 @@ class HaddockModule(BaseHaddockModule):
             self.log(f"Selecting all clusters: {target_rankins_str}")
         else:
             # select top_cluster clusters
-            target_rankings = list(range(1,self.params["top_cluster"]+1))
+            target_rankings = list(range(1, self.params["top_cluster"] + 1))
             target_rankins_str = ",".join(map(str, target_rankings))
             self.log((f"Selecting top {self.params['top_cluster']} clusters: "
                       f"{target_rankins_str}"))

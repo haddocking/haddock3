@@ -25,7 +25,7 @@ If you are using csh/tcsh, edit `cns_solve_env` to point to the correct location
 ```
 # CHANGE THE NEXT LINE TO POINT TO THE LOCATION OF THE CNSsolve DIRECTORY
 
-            setenv CNS_SOLVE PATH/TO/cns_solve_1.3
+            setenv CNS_SOLVE /PATH/TO/cns_solve_1.3
 ```
 
 If you are using sh/bash, edit `.cns_solve_env_sh`:
@@ -33,17 +33,17 @@ If you are using sh/bash, edit `.cns_solve_env_sh`:
 ```
 # CHANGE THE NEXT LINE TO POINT TO THE LOCATION OF THE CNSsolve DIRECTORY
 
-        CNS_SOLVE=PATH/TO/cns_solve_1.3
+        CNS_SOLVE=/PATH/TO/cns_solve_1.3
 ```
 
 ## 2 Add HADDOCK routines
 
-HADDOCK requires some adjustments in CNS to function properly. Download the [set of routines to add](https://www.dropbox.com/s/wliubqovuusqdvr/cns.tgz?dl=0). Uncompress the archive and move all of its files into the CNS source directory (`PATH/TO/cns_solve_1.3/source/`):
+HADDOCK requires some adjustments in CNS to function properly.
+The set of routines to add is provided in the haddock3 repository under [`varia/cns1.3/`](/varia/cns1.3/README.md).
+Copy all of these files into the CNS source directory (`/PATH/TO/cns_solve_1.3/source/`), for example:
 
 ```bash
-wget https://www.dropbox.com/s/wliubqovuusqdvr/cns.tgz
-tar -xvf cns.tgz
-mv cns1.3/* source/
+cp ~/software/haddock3/varia/cns1.3/* source/
 ```
 
 ## 3 Compile CNS
@@ -69,7 +69,6 @@ created executable file cns_solve-2206031450.exe
 ```
 
 If this does not work, check the [troubleshooting section](#Troubleshooting) below.
-
 
 ## 4 Source CNS
 
@@ -144,7 +143,7 @@ Error: Makefile template for compiler gfortran is not available
 ```
 
 Makefile headers for each supported system-compiler combination are provided in `instlib/machine/supported/` (for unsupported systems, see `instlib/machine/unsupported/`). If you already tried `make install`, the appropriate directory for your system (eg. `mac-intel-darwin`) will have been copied to the main `cns_solve_1.3` directory.
-If this directory does not contain the desired file (eg. `Makefile.header.2.gfortran`), create one manually.
+If this directory does not contain the desired file (eg. `Makefile.header.2.gfortran`), you can create one manually.
 
 For example, for `gfortran`, create a new file named `Makefile.header.6.gfortran` inside the directory containing Makefile headers for your system. Save the following lines in this file:
 

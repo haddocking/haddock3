@@ -20,7 +20,7 @@ Then copy the entire haddock3 directory into the `modulefiles` directory of your
 
 Lmod Web Sites
 
-  Documentation:    http://lmod.readthedocs.org
-  Github:           https://github.com/TACC/Lmod
-  Sourceforge:      https://lmod.sf.net
-  TACC Homepage:    https://www.tacc.utexas.edu/research-development/tacc-projects/lmod
+*  Documentation:    http://lmod.readthedocs.org
+*  Github:           https://github.com/TACC/Lmod
+*  Sourceforge:      https://lmod.sf.net
+*  TACC Homepage:    https://www.tacc.utexas.edu/research-development/tacc-projects/lmod

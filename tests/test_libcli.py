@@ -40,7 +40,7 @@ def test_output_dir_default():
         ('--ncores', None),
         ],
     )
-def test_output_dir(cmd, expected):
+def test_ncores(cmd, expected):
     """Test output directory."""
     parser = argparse.ArgumentParser()
     libcli.add_ncores_arg(parser)

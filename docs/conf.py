@@ -28,6 +28,7 @@ mock_modules = [
     'scipy',
     'scipy.cluster',
     'scipy.cluster.hierarchy',
+    'toml',
     ]
 
 for modulename in mock_modules:

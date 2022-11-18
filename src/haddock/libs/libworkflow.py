@@ -7,7 +7,7 @@ from time import time
 from haddock import log
 from haddock.core.exceptions import HaddockError, HaddockTermination, StepError
 from haddock.gear.clean_steps import clean_output
-from haddock.gear.config_reader import get_module_name
+from haddock.gear.config import get_module_name
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libtimer import convert_seconds_to_min_sec, log_time
 from haddock.libs.libutil import recursive_dict_update
@@ -70,7 +70,8 @@ class Workflow:
         self.steps = []
         _items = enumerate(modules_parameters.items(), start=start)
         for num_stage, (stage_name, params) in _items:
-            log.info(f"Reading instructions of [{stage_name}] step")
+            stage_name = get_module_name(stage_name)
+            log.info(f"Reading instructions step {num_stage}_{stage_name}")
 
             # updates the module's specific parameter with global parameters
             # that are applicable to the modules. But keep priority to the local
@@ -79,7 +80,7 @@ class Workflow:
 
             try:
                 _ = Step(
-                    get_module_name(stage_name),
+                    stage_name,
                     order=num_stage,
                     **params_up,
                     )

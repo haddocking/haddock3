@@ -204,16 +204,19 @@ unpacked from their <cite>.tgz</cite> files. While files with <cite>.pdb.gz</cit
 <p>This CLI performs the opposite operations as the <code class="docutils literal notranslate"><span class="pre">haddock3-clean</span></code>
 command-line.</p>
 <p>The &lt;run_directory&gt; can either be a whole HADDOCK3 run folder or a
-specific folder of the workflow step.</p>
+specific folder of the workflow step. &lt;ncores&gt; defined the number of
+threads to use.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="o">-</span><span class="n">h</span>
 <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="o">-</span><span class="n">r</span> <span class="o">&lt;</span><span class="n">run_directory</span><span class="o">&gt;</span>
 <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span>
 <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span><span class="o">/</span><span class="mi">1</span><span class="n">_rigidbody</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span>  <span class="c1"># uses all cores</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span>  <span class="c1"># uses 2 cores</span>
 </pre></div>
 </div>
 </p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">run_dir</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="p">[</span><span class="n">NCORES</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">run_dir</span>
 </pre></div>
 </div>
 <section id="positional-arguments">
@@ -227,6 +230,10 @@ specific folder of the workflow step.</p>
 <section id="named-arguments">
 <h2>Named Arguments<a class="headerlink" href="#named-arguments" title="Permalink to this heading">¶</a></h2>
 <dl class="option-list">
+<dt><kbd>-n, --ncores</kbd></dt>
+<dd><p>The number of threads to use. Uses 1 if not specified. Uses all available threads if <cite>-n</cite> is given. Else, uses the number indicated, for example: <cite>-n 4</cite> will use 4 threads.</p>
+<p>Default: 1</p>
+</dd>
 <dt><kbd>-v, --version</kbd></dt>
 <dd><p>show version</p>
 </dd>
@@ -267,7 +274,7 @@ specific folder of the workflow step.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Nov 17, 2022.
+        Last updated on Nov 18, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

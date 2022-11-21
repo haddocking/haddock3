@@ -61,6 +61,30 @@ PROT_RES = [
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
 PROT_ATOMS = ["C", "N", "CA", "O"]
+# Side chains
+PROT_SIDE_CHAINS_DICT = {
+    "ALA" : ["C", "N", "CA", "O", "CB"],
+    "ARG" : ["C", "N", "CA", "O", "CB", "CG", "CD", "NE", "CZ", "NH1", "NH2"],
+    "ASN" : ["C", "N", "CA", "O", "CB", "CG", "OD1", "ND2"],
+    "ASP" : ["C", "N", "CA", "O", "CB", "CG", "OD1", "OD2"],
+    "CYS" : ["C", "N", "CA", "O", "CB", "SG"],
+    "GLN" : ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "NE2"],
+    "GLU" : ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "OE2"],
+    "GLY" : ["C", "N", "CA", "O"],
+    "HIS" : ["C", "N", "CA", "O", "CB", "CG", "ND1", "CD2", "CE1", "NE2"],
+    "ILE" : ["C", "N", "CA", "O", "CB", "CG1", "CG2", "CD1"],
+    "LEU" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2"],
+    "LYS" : ["C", "N", "CA", "O", "CB", "CG", "CD", "CE", "NZ"],
+    "MET" : ["C", "N", "CA", "O", "CB", "CG", "SD", "CE"],
+    "PHE" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ"],
+    "PRO" : ["C", "N", "CA", "O", "CB", "CG", "CD"],
+    "SER" : ["C", "N", "CA", "O", "CB", "OG"],
+    "THR" : ["C", "N", "CA", "O", "CB", "OG1", "CG2"],
+    "TRP" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "NE1", "CE2", "CE3", "CZ2", "CZ3", "CH2"],
+    "TYR" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ", "OH"],
+    "VAL" : ["C", "N", "CA", "O", "CB", "CG1", "CG2"]
+}
+
 # Bases
 DNA_ATOMS = [
     "C5",
@@ -239,7 +263,7 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb):
+def get_atoms(pdb, full=False):
     """
     Identify what is the molecule type of each PDB.
 
@@ -256,6 +280,9 @@ def get_atoms(pdb):
     atom_dic = {}
     atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
+    if full == True:
+        atom_dic.update(PROT_SIDE_CHAINS_DICT)
+
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path

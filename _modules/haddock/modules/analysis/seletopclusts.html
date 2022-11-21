@@ -222,22 +222,25 @@
             <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;top_models must be either &gt; 0 or nan.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;top_cluster must be a list, it can be an empty one.&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">_msg</span> <span class="o">=</span> <span class="s2">&quot;top_cluster must be an integer.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span>
 
         <span class="n">models_to_select</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">retrieve_models</span><span class="p">()</span>
 
         <span class="c1"># how many models should we output?</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">]:</span>
-            <span class="n">target_rankings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">clt_rank</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">models_to_select</span><span class="p">]))</span>
+        <span class="n">target_rankings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">clt_rank</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">models_to_select</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_rankings</span><span class="p">):</span>
+            <span class="c1"># select all clusters</span>
             <span class="n">target_rankins_str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">target_rankings</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selecting all clusters: </span><span class="si">{</span><span class="n">target_rankins_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">target_rankings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">]))</span>
+            <span class="c1"># select top_cluster clusters</span>
+            <span class="n">target_rankings</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_cluster&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
             <span class="n">target_rankins_str</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">target_rankings</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selecting clusters: </span><span class="si">{</span><span class="n">target_rankins_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;Selecting top </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;top_cluster&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> clusters: &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_rankins_str</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">target_ranking</span> <span class="ow">in</span> <span class="n">target_rankings</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;top_models&quot;</span><span class="p">]):</span>
@@ -307,7 +310,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Nov 18, 2022.
+        Last updated on Nov 21, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

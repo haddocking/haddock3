@@ -6,11 +6,11 @@ Easy
 top_cluster
 ~~~~~~~~~~~
 
-| *default*: []
-| *type*: list
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
+| *default*: 1000
+| *type*: integer
+| *title*: Number of clusters to consider
+| *short description*: Number of clusters to consider (ranked by score)
+| *long description*: Number of clusters to consider (ranked by score)
 | *group*: 
 | *explevel*: easy
 

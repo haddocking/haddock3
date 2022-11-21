@@ -32,6 +32,10 @@ def remove_aln_files(class_name):
         if f.exists():
             os.unlink(f)
 
+def read_capri_file(fname):
+    file_content = [e.split()[1:] for e in open(fname).readlines() if not e.startswith('#')]
+    return file_content
+
 
 @pytest.fixture
 def protprot_input_list():
@@ -181,7 +185,7 @@ def test_protprot_dockq(protprot_caprimodule):
     protprot_caprimodule.lrmsd = 15.9
     protprot_caprimodule.calc_dockq()
     assert round_two_dec(protprot_caprimodule.dockq) == 0.10
-    
+
 
 def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""
@@ -248,8 +252,7 @@ def test_make_output(protprot_caprimodule):
 
     # remove the model column since its name will depend on where we are running
     #  the test
-    observed_outf_l = [e.split()[1:] for e in open(
-        ss_fname).readlines() if not e.startswith('#')]
+    observed_outf_l = read_capri_file(ss_fname)
     expected_outf_l = [
         ['md5', 'caprieval_rank', 'score', 'irmsd', 'fnat', 'lrmsd', 'ilrmsd',
          'dockq', 'cluster-id', 'cluster-ranking', 'model-cluster-ranking'],
@@ -399,17 +402,17 @@ def test_calc_stats():
 
 def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
     """Test the cluster analysis."""
-    model = protprot_input_list[0]
-    model.clt_rank = 1
-    model.clt_id = 1
-    model.score = 42.0
+    model1, model2 = protprot_input_list[0], protprot_input_list[1]
+    model1.clt_rank, model2.clt_rank = 1, 2
+    model1.clt_id, model2.clt_id = 1, 2
+    model1.score, model2.score = 42.0, 50.0
     protprot_caprimodule.irmsd = 0.1
     protprot_caprimodule.fnat = 1.0
     protprot_caprimodule.lrmsd = 1.2
     protprot_caprimodule.ilrmsd = 4.3
     capri_cluster_analysis(
-        capri_list=[protprot_caprimodule],
-        model_list=[model],
+        capri_list=[protprot_caprimodule, protprot_caprimodule],
+        model_list=[model1, model2],
         output_fname="capri_clt.txt",
         clt_threshold=5,
         sort_key="score",
@@ -417,6 +420,30 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
         path=Path("."))
 
     assert Path('capri_clt.txt').stat().st_size != 0
+
+    observed_outf_l = read_capri_file("capri_clt.txt")
+    expected_outf_l = [
+        ['cluster_id', 'n', 'under_eval', 'score', 'score_std', 'irmsd', 'irmsd_std', 'fnat', 'fnat_std',
+            'lrmsd', 'lrmsd_std', 'dockq', 'dockq_std', 'caprieval_rank'], 
+        ['1', '1', 'yes', '42.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '1'], 
+        ['2', '1', 'yes', '50.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '2']]
+    assert observed_outf_l == expected_outf_l
+    
+    # test sorting
+    capri_cluster_analysis(
+        capri_list=[protprot_caprimodule, protprot_caprimodule],
+        model_list=[model1, model2],
+        output_fname="capri_clt.txt",
+        sort_key="cluster_rank",
+        sort_ascending=False,
+        path=Path("."))
+    
+    observed_outf_l = read_capri_file("capri_clt.txt")
+    expected_outf_l = [
+        ['cluster_id', 'n', 'under_eval', 'score', 'score_std', 'irmsd', 'irmsd_std', 'fnat', 'fnat_std',
+            'lrmsd', 'lrmsd_std', 'dockq', 'dockq_std', 'caprieval_rank'],
+        ['2', '1', 'yes', '50.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '2'],
+        ['1', '1', 'yes', '42.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '1']]
 
     Path('capri_clt.txt').unlink()
 

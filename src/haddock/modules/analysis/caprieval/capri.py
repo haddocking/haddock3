@@ -736,9 +736,10 @@ def capri_cluster_analysis(
         path
         ):
     """Consider the cluster results for the CAPRI evaluation."""
+    log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data
     clt_data = dict(((m.clt_rank, m.clt_id), []) for m in model_list)
-
+    
     # add models to each cluster
     for capri, model in zip(capri_list, model_list):
         clt_data[(model.clt_rank, model.clt_id)].append((capri, model))
@@ -805,10 +806,30 @@ def capri_cluster_analysis(
         data["fnat_std"] = fnat_stdev
         data["lrmsd"] = lrmsd_mean
         data["lrmsd_std"] = lrmsd_stdev
-        data["dockqn"] = dockq_mean
+        data["dockq"] = dockq_mean
         data["dockq_std"] = dockq_stdev
 
         output_dic[i] = data
+    
+    # Rank according to the score
+    score_rankkey_values = [(key, output_dic[key]['score']) for key in output_dic.keys()]
+    score_rankkey_values.sort(key=lambda x: x[1])
+    for i, k in enumerate(score_rankkey_values):
+        idx, _ = k
+        output_dic[idx]["caprieval_rank"] = i + 1
+
+    # Rank according to the sorting key
+    rankkey_values = [(key, output_dic[key][sort_key]) for key in output_dic.keys()]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False
+        )
+
+    _output_dic = {}
+    for i, k in enumerate(rankkey_values):
+        idx, _ = k
+        _output_dic[i + 1] = output_dic[idx]
+    output_dic = _output_dic
 
     output_fname = Path(path, output_fname)
 

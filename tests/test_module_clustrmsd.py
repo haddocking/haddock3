@@ -259,7 +259,7 @@ def test_correct_clusters(correct_rmsd_array):
 # TODO: add tests for the other categories of clustering
 
 
-def test_correct_output(input_protdna_models):
+def test_correct_output(input_protdna_models, output_list):
     """Test correct clustrmsd output."""
     rmsd_module = HaddockRMSD(
         order=2,

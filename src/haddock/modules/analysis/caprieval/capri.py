@@ -649,14 +649,14 @@ def rearrange_ss_capri_output(
     data = {}
     for ident in range(1, output_count + 1):
         out_file = Path(path, f"{keyword}_{ident}.tsv")
-        data[ident] = {}
-
-        # add this dummy data so we can rank it later
-        #  without messing up the order of the output
+        
+        # raise a warning if file does not exist.
         if not out_file.exists():
-            data[ident]['score'] = 99999.9
+            log.warning((f"Output file {out_file} does not exist. "
+                        "Caprieval will not be exhaustive..."))
             continue
 
+        data[ident] = {}
         header, content = out_file.read_text().split(os.linesep, 1)
 
         header_data = header.split('\t')
@@ -676,30 +676,27 @@ def rearrange_ss_capri_output(
         out_file.unlink()
 
     # Rank according to the score
-    score_rankkey_values = [(i, data[k]['score']) for i, k in enumerate(data)]
+    score_rankkey_values = [(k, data[k]['score']) for k in data.keys()]
     score_rankkey_values.sort(key=lambda x: x[1])
 
     for i, k in enumerate(score_rankkey_values):
-        idx, _ = k
-        data[idx + 1]["caprieval_rank"] = i + 1
-
-        if data[idx + 1]['score'] == 99999.9:
-            del data[idx + 1]
+        data_idx, _ = k
+        data[data_idx]["caprieval_rank"] = i + 1
 
     # Sort according to the sort key
-    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
+    rankkey_values = [(k, data[k][sort_key]) for k in data.keys()]
     rankkey_values.sort(
         key=lambda x: x[1],
         reverse=True if not sort_ascending else False
         )
 
     _data = {}
-    for i, (k, _) in enumerate(rankkey_values):
-        _data[i + 1] = data[k + 1]
+    for i, (data_idx, _) in enumerate(rankkey_values):
+        _data[i + 1] = data[data_idx]
     data = _data
 
     if not data:
-        # This means there were only "dummy" values
+        # This means no files have been collected
         return
     else:
         write_nested_dic_to_file(data, output_name)

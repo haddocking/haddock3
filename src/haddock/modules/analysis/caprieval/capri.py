@@ -7,6 +7,8 @@ from pathlib import Path
 import numpy as np
 from fccpy import read_pdb
 from fccpy.contacts import get_intermolecular_contacts
+from scipy.spatial.distance import cdist
+from itertools import combinations
 from pdbtools import pdb_segxchain
 
 from haddock import log
@@ -555,10 +557,32 @@ class CAPRI:
         con_list = []
         if isinstance(pdb_f, PDBFile):
             pdb_f = pdb_f.rel_path
-        structure = read_pdb(pdb_f)
-        for atom_i, atom_j in get_intermolecular_contacts(structure, cutoff):
-            con = (atom_i.chain, atom_i.resid, atom_j.chain, atom_j.resid)
-            con_list.append(con)
+        # get also side chains atoms
+        atoms = get_atoms(pdb_f, full=True)
+        ref_coord_dic, _ = load_coords(pdb_f, atoms)
+        # create coordinate arrays
+        coord_arrays, coord_ids = {}, {}
+        for atom in ref_coord_dic.keys():
+            chain = atom[0]
+            if chain not in coord_arrays.keys(): # initialize lists
+                coord_arrays[chain], coord_ids[chain] = [], []
+            coord_arrays[chain].append(ref_coord_dic[atom])
+            coord_ids[chain].append(atom[1]) # only the resid is appended
+        for chain in coord_arrays.keys():
+            coord_arrays[chain] = np.array(coord_arrays[chain])
+        # combinations of chains
+        unique_chain_combs = list(combinations(coord_arrays.keys(), 2))
+
+        # calculating contacts
+        for pair in unique_chain_combs:
+            # cycling over each coordinate of the first chain
+            for s in range(coord_arrays[pair[0]].shape[0]):
+                dist = cdist(coord_arrays[pair[0]][s].reshape(1,3), coord_arrays[pair[1]])
+                npw = np.where(dist < cutoff)
+                del dist
+                for k in range(npw[0].shape[0]):
+                    con = (pair[0], coord_ids[pair[0]][s], pair[1], coord_ids[pair[1]][npw[1][k]])
+                    con_list.append(con)
         return set(con_list)
 
     @staticmethod

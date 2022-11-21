@@ -32,8 +32,10 @@ def remove_aln_files(class_name):
         if f.exists():
             os.unlink(f)
 
+
 def read_capri_file(fname):
-    file_content = [e.split()[1:] for e in open(fname).readlines() if not e.startswith('#')]
+    file_content = [e.split()[1:] for e in open(fname).readlines()
+                    if not e.startswith('#')]
     return file_content
 
 
@@ -423,10 +425,13 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
 
     observed_outf_l = read_capri_file("capri_clt.txt")
     expected_outf_l = [
-        ['cluster_id', 'n', 'under_eval', 'score', 'score_std', 'irmsd', 'irmsd_std', 'fnat', 'fnat_std',
-            'lrmsd', 'lrmsd_std', 'dockq', 'dockq_std', 'caprieval_rank'], 
-        ['1', '1', 'yes', '42.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '1'], 
-        ['2', '1', 'yes', '50.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '2']]
+        ['cluster_id', 'n', 'under_eval', 'score', 'score_std', 'irmsd',
+         'irmsd_std', 'fnat', 'fnat_std', 'lrmsd', 'lrmsd_std', 'dockq',
+         'dockq_std', 'caprieval_rank'],
+        ['1', '1', 'yes', '42.000', '0.000', '0.100', '0.000', '1.000',
+         '0.000', '1.200', '0.000', 'nan', 'nan', '1'],
+        ['2', '1', 'yes', '50.000', '0.000', '0.100', '0.000', '1.000',
+         '0.000', '1.200', '0.000', 'nan', 'nan', '2']]
     assert observed_outf_l == expected_outf_l
     
     # test sorting
@@ -434,16 +439,20 @@ def test_capri_cluster_analysis(protprot_caprimodule, protprot_input_list):
         capri_list=[protprot_caprimodule, protprot_caprimodule],
         model_list=[model1, model2],
         output_fname="capri_clt.txt",
+        clt_threshold=5,
         sort_key="cluster_rank",
         sort_ascending=False,
         path=Path("."))
     
     observed_outf_l = read_capri_file("capri_clt.txt")
     expected_outf_l = [
-        ['cluster_id', 'n', 'under_eval', 'score', 'score_std', 'irmsd', 'irmsd_std', 'fnat', 'fnat_std',
-            'lrmsd', 'lrmsd_std', 'dockq', 'dockq_std', 'caprieval_rank'],
-        ['2', '1', 'yes', '50.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '2'],
-        ['1', '1', 'yes', '42.000', '0.000', '0.100', '0.000', '1.000', '0.000', '1.200', '0.000', 'nan', 'nan', '1']]
+        ['cluster_id', 'n', 'under_eval', 'score', 'score_std', 'irmsd',
+         'irmsd_std', 'fnat', 'fnat_std', 'lrmsd', 'lrmsd_std', 'dockq',
+         'dockq_std', 'caprieval_rank'],
+        ['2', '1', 'yes', '50.000', '0.000', '0.100', '0.000', '1.000',
+         '0.000', '1.200', '0.000', 'nan', 'nan', '2'],
+        ['1', '1', 'yes', '42.000', '0.000', '0.100', '0.000', '1.000',
+         '0.000', '1.200', '0.000', 'nan', 'nan', '1']]
 
     Path('capri_clt.txt').unlink()
 

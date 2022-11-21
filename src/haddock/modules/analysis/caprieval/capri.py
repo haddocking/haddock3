@@ -809,14 +809,16 @@ def capri_cluster_analysis(
         output_dic[i] = data
     
     # Rank according to the score
-    score_rankkey_values = [(key, output_dic[key]['score']) for key in output_dic.keys()]
+    score_rankkey_values = [(key, output_dic[key]['score'])
+                            for key in output_dic.keys()]
     score_rankkey_values.sort(key=lambda x: x[1])
     for i, k in enumerate(score_rankkey_values):
         idx, _ = k
         output_dic[idx]["caprieval_rank"] = i + 1
 
     # Rank according to the sorting key
-    rankkey_values = [(key, output_dic[key][sort_key]) for key in output_dic.keys()]
+    rankkey_values = [(key, output_dic[key][sort_key])
+                      for key in output_dic.keys()]
     rankkey_values.sort(
         key=lambda x: x[1],
         reverse=True if not sort_ascending else False

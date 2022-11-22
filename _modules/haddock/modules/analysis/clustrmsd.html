@@ -332,7 +332,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
         
         <span class="c1"># Write unclustered structures</span>
-        <span class="n">write_structure_list</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">)</span>
+        <span class="n">write_structure_list</span><span class="p">(</span><span class="n">models</span><span class="p">,</span>
+                             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span>
+                             <span class="n">out_fname</span><span class="o">=</span><span class="s2">&quot;clustrmsd.tsv&quot;</span><span class="p">)</span>
 
         <span class="c1"># Prepare clustrmsd.txt</span>
         <span class="n">output_fname</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;clustrmsd.txt&#39;</span><span class="p">)</span>
@@ -418,7 +420,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Nov 21, 2022.
+        Last updated on Nov 22, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

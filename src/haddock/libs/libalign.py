@@ -63,27 +63,27 @@ DNA_RES = ["DA", "DC", "DT", "DG"]
 PROT_ATOMS = ["C", "N", "CA", "O"]
 # Side chains
 PROT_SIDE_CHAINS_DICT = {
-    "ALA" : ["C", "N", "CA", "O", "CB"],
-    "ARG" : ["C", "N", "CA", "O", "CB", "CG", "CD", "NE", "CZ", "NH1", "NH2"],
-    "ASN" : ["C", "N", "CA", "O", "CB", "CG", "OD1", "ND2"],
-    "ASP" : ["C", "N", "CA", "O", "CB", "CG", "OD1", "OD2"],
-    "CYS" : ["C", "N", "CA", "O", "CB", "SG"],
-    "GLN" : ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "NE2"],
-    "GLU" : ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "OE2"],
-    "GLY" : ["C", "N", "CA", "O"],
-    "HIS" : ["C", "N", "CA", "O", "CB", "CG", "ND1", "CD2", "CE1", "NE2"],
-    "ILE" : ["C", "N", "CA", "O", "CB", "CG1", "CG2", "CD1"],
-    "LEU" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2"],
-    "LYS" : ["C", "N", "CA", "O", "CB", "CG", "CD", "CE", "NZ"],
-    "MET" : ["C", "N", "CA", "O", "CB", "CG", "SD", "CE"],
-    "PHE" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ"],
-    "PRO" : ["C", "N", "CA", "O", "CB", "CG", "CD"],
-    "SER" : ["C", "N", "CA", "O", "CB", "OG"],
-    "THR" : ["C", "N", "CA", "O", "CB", "OG1", "CG2"],
-    "TRP" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "NE1", "CE2", "CE3", "CZ2", "CZ3", "CH2"],
-    "TYR" : ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ", "OH"],
-    "VAL" : ["C", "N", "CA", "O", "CB", "CG1", "CG2"]
-}
+    "ALA": ["C", "N", "CA", "O", "CB"],
+    "ARG": ["C", "N", "CA", "O", "CB", "CG", "CD", "NE", "CZ", "NH1", "NH2"],
+    "ASN": ["C", "N", "CA", "O", "CB", "CG", "OD1", "ND2"],
+    "ASP": ["C", "N", "CA", "O", "CB", "CG", "OD1", "OD2"],
+    "CYS": ["C", "N", "CA", "O", "CB", "SG"],
+    "GLN": ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "NE2"],
+    "GLU": ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "OE2"],
+    "GLY": ["C", "N", "CA", "O"],
+    "HIS": ["C", "N", "CA", "O", "CB", "CG", "ND1", "CD2", "CE1", "NE2"],
+    "ILE": ["C", "N", "CA", "O", "CB", "CG1", "CG2", "CD1"],
+    "LEU": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2"],
+    "LYS": ["C", "N", "CA", "O", "CB", "CG", "CD", "CE", "NZ"],
+    "MET": ["C", "N", "CA", "O", "CB", "CG", "SD", "CE"],
+    "PHE": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ"],
+    "PRO": ["C", "N", "CA", "O", "CB", "CG", "CD"],
+    "SER": ["C", "N", "CA", "O", "CB", "OG"],
+    "THR": ["C", "N", "CA", "O", "CB", "OG1", "CG2"],
+    "TRP": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "NE1", "CE2", "CE3", "CZ2", "CZ3", "CH2"],  # noqa: E501
+    "TYR": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ", "OH"],  # noqa: E501
+    "VAL": ["C", "N", "CA", "O", "CB", "CG1", "CG2"]
+    }
 
 # Bases
 DNA_ATOMS = [
@@ -106,15 +106,15 @@ DNA_ATOMS = [
     ]
 
 DNA_FULL_DICT = {
-    "DA" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4", "N3",
-            "C2", "N1", "C6", "N6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],
-    "DG" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4", "N3",
-            "C2", "N2", "N1", "C6", "O6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],
-    "DC" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
-            "C2", "O2", "N3", "C4", "N4", "C5", "C2'", "C3'", "O3'"],
-    "DT" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
-            "C2", "O2", "N3", "C4", "O4", "C5", "C7", "C2'", "C3'", "O3'"]
-}
+    "DA": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4",
+           "N3", "C2", "N1", "C6", "N6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],  # noqa: E501
+    "DG": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4",
+           "N3", "C2", "N2", "N1", "C6", "O6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],  # noqa: E501
+    "DC": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
+           "C2", "O2", "N3", "C4", "N4", "C5", "C2'", "C3'", "O3'"],
+    "DT": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
+           "C2", "O2", "N3", "C4", "O4", "C5", "C7", "C2'", "C3'", "O3'"]
+    }
 
 
 class ALIGNError(Exception):
@@ -291,10 +291,9 @@ def get_atoms(pdb, full=False):
     atom_dic = {}
     atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
-    if full == True:
+    if full:
         atom_dic.update(PROT_SIDE_CHAINS_DICT)
         atom_dic.update(DNA_FULL_DICT)
-
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path

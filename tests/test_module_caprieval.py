@@ -12,8 +12,8 @@ from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     calc_stats,
     capri_cluster_analysis,
+    load_contacts,
     rearrange_ss_capri_output,
-    load_contacts
     )
 
 from . import golden_data
@@ -273,8 +273,8 @@ def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
         "B": [52, 51, 16, 54, 53, 56, 11, 12, 17, 48],
         }
 
-    for chain in expected_interface.keys():
-        assert sorted(observed_interface[chain]) == sorted(expected_interface[chain])
+    for ch in expected_interface.keys():
+        assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
 
 def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
@@ -289,8 +289,8 @@ def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
         "B": [4, 3, 2, 33, 32, 5, 6, 34, 35, 31, 7, 30],
         }
 
-    for chain in expected_interface.keys():
-        assert sorted(observed_interface[chain]) == sorted(expected_interface[chain])
+    for ch in expected_interface.keys():
+        assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
 
 def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
@@ -323,8 +323,8 @@ def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
         "B": [500],
         }
     
-    for chain in expected_interface.keys():
-        assert sorted(observed_interface[chain]) == sorted(expected_interface[chain])
+    for ch in expected_interface.keys():
+        assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
 
 def test_load_contacts(protprot_input_list):

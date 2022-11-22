@@ -2,14 +2,12 @@
 import os
 import shutil
 import tempfile
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
-from fccpy import read_pdb
-from fccpy.contacts import get_intermolecular_contacts
-from scipy.spatial.distance import cdist
-from itertools import combinations
 from pdbtools import pdb_segxchain
+from scipy.spatial.distance import cdist
 
 from haddock import log
 from haddock.libs.libalign import (
@@ -29,6 +27,7 @@ from haddock.libs.libontology import PDBFile
 def load_contacts(pdb_f, cutoff=5.0):
     """
     Load residue-based contacts.
+
     Parameters
     ----------
     pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
@@ -46,23 +45,27 @@ def load_contacts(pdb_f, cutoff=5.0):
     coord_arrays, coord_ids = {}, {}
     for atom in ref_coord_dic.keys():
         chain = atom[0]
-        if chain not in coord_arrays.keys(): # initialize lists
+        if chain not in coord_arrays.keys():  # initialize lists
             coord_arrays[chain], coord_ids[chain] = [], []
         coord_arrays[chain].append(ref_coord_dic[atom])
-        coord_ids[chain].append(atom[1]) # only the resid is appended
+        coord_ids[chain].append(atom[1])  # only the resid is appended
     for chain in coord_arrays.keys():
         coord_arrays[chain] = np.array(coord_arrays[chain])
+
     # combinations of chains
     unique_chain_combs = list(combinations(coord_arrays.keys(), 2))
+
     # calculating contacts
     for pair in unique_chain_combs:
         # cycling over each coordinate of the first chain
         for s in range(coord_arrays[pair[0]].shape[0]):
-            dist = cdist(coord_arrays[pair[0]][s].reshape(1,3), coord_arrays[pair[1]])
+            s_xyz = coord_arrays[pair[0]][s].reshape(1, 3)
+            s_cid = coord_ids[pair[0]][s]
+            dist = cdist(s_xyz, coord_arrays[pair[1]])
             npw = np.where(dist < cutoff)
             del dist
             for k in range(npw[0].shape[0]):
-                con = (pair[0], coord_ids[pair[0]][s], pair[1], coord_ids[pair[1]][npw[1][k]])
+                con = (pair[0], s_cid, pair[1], coord_ids[pair[1]][npw[1][k]])
                 con_list.append(con)
     return set(con_list)
 
@@ -572,10 +575,8 @@ class CAPRI:
 
         for contact in contacts:
             
-            first_chain = contact[0]
-            sec_chain = contact[2]
-            first_resid = contact[1]
-            sec_resid = contact[3]
+            first_chain, first_resid = contact[0], contact[1]
+            sec_chain, sec_resid = contact[2], contact[3]
 
             if first_chain not in interface_resdic:
                 interface_resdic[first_chain] = []
@@ -588,7 +589,6 @@ class CAPRI:
                 interface_resdic[sec_chain].append(sec_resid)
 
         return interface_resdic
-
 
     @staticmethod
     def add_chain_from_segid(pdb_path):

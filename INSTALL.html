@@ -210,6 +210,9 @@ make
 </div>
 <p>By the end of the above commands, you should be back to the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code>
 main folder.</p>
+<p>Before continuing with the installation of HADDOCK3, make sure to properly <a class="reference internal" href="CNS.html"><span class="doc std std-doc">install CNS</span></a>.
+If you have installed a previous version of HADDOCK, you may already have a suitable version of CNS.
+Please do <span class="xref myst">check your CNS installation</span> before proceeding.</p>
 </section>
 <section id="create-a-virtual-environment-with-python-3-9-and-install-dependencies">
 <h2>2 Create a virtual environment with Python 3.9+ and install dependencies:<a class="headerlink" href="#create-a-virtual-environment-with-python-3-9-and-install-dependencies" title="Permalink to this heading">¶</a></h2>
@@ -242,10 +245,10 @@ conda activate haddock3
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir -p bin/
 
 <span class="c1"># on mac</span>
-ln -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe bin/cns
 
 <span class="c1"># on linux</span>
-ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
 </pre></div>
 </div>
 <p>As long as you have the HADDOCK3 python environment activated, you can

@@ -105,6 +105,17 @@ DNA_ATOMS = [
     "O6",
     ]
 
+DNA_FULL_DICT = {
+    "DA" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4", "N3",
+            "C2", "N1", "C6", "N6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],
+    "DG" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4", "N3",
+            "C2", "N2", "N1", "C6", "O6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],
+    "DC" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
+            "C2", "O2", "N3", "C4", "N4", "C5", "C2'", "C3'", "O3'"],
+    "DT" : ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
+            "C2", "O2", "N3", "C4", "O4", "C5", "C7", "C2'", "C3'", "O3'"]
+}
+
 
 class ALIGNError(Exception):
     """Raised when something goes wrong with the ALIGNMENT library."""
@@ -282,6 +293,7 @@ def get_atoms(pdb, full=False):
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
     if full == True:
         atom_dic.update(PROT_SIDE_CHAINS_DICT)
+        atom_dic.update(DNA_FULL_DICT)
 
 
     if isinstance(pdb, PDBFile):

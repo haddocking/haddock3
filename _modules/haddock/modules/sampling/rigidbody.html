@@ -131,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#refine-complex">refine-complex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#scoring">scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a><ul>
@@ -274,6 +275,16 @@
                 <span class="sa">f</span><span class="s1">&#39; sampling=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">.&#39;</span>
                 <span class="p">)</span>
 
+        <span class="c1"># get all the different ambig files</span>
+        <span class="n">prev_ambig_fnames</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling&quot;</span><span class="p">])]</span>
+        <span class="n">diff_ambig_fnames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ambig_fnames</span><span class="p">(</span><span class="n">prev_ambig_fnames</span><span class="p">)</span>
+        <span class="c1"># if no files are found, we will stick to self.params[&quot;ambig_fname&quot;]</span>
+        <span class="k">if</span> <span class="n">diff_ambig_fnames</span><span class="p">:</span>
+            <span class="n">n_diffs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_ambig_fnames</span><span class="p">)</span>
+            <span class="n">ambig_fnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">diff_ambig_fnames</span><span class="p">[</span><span class="n">n</span> <span class="o">%</span> <span class="n">n_diffs</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling&quot;</span><span class="p">])]</span>  <span class="c1"># noqa: E501</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ambig_fnames</span> <span class="o">=</span> <span class="kc">None</span>
+        
         <span class="c1"># Prepare the jobs</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span> <span class="o">=</span> <span class="p">[]</span>
@@ -281,6 +292,12 @@
         <span class="k">for</span> <span class="n">combination</span> <span class="ow">in</span> <span class="n">models_to_dock</span><span class="p">:</span>
 
             <span class="k">for</span> <span class="n">_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sampling_factor</span><span class="p">):</span>
+                <span class="c1"># assign ambig_fname</span>
+                <span class="k">if</span> <span class="n">ambig_fnames</span><span class="p">:</span>
+                    <span class="n">ambig_fname</span> <span class="o">=</span> <span class="n">ambig_fnames</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ambig_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ambig_fname&quot;</span><span class="p">]</span>
+                <span class="c1"># prepare cns input</span>
                 <span class="n">inp_file</span> <span class="o">=</span> <span class="n">prepare_cns_input</span><span class="p">(</span>
                     <span class="n">idx</span><span class="p">,</span>
                     <span class="n">combination</span><span class="p">,</span>
@@ -288,6 +305,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">recipe_str</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
                     <span class="s2">&quot;rigidbody&quot;</span><span class="p">,</span>
+                    <span class="n">ambig_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">,</span>
                     <span class="n">default_params_path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toppar_path</span><span class="p">,</span>
                     <span class="n">native_segid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -296,7 +314,9 @@
                 <span class="n">output_pdb_fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;rigidbody_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">.pdb&quot;</span>
 
                 <span class="c1"># Create a model for the expected output</span>
-                <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">output_pdb_fname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">PDBFile</span><span class="p">(</span><span class="n">output_pdb_fname</span><span class="p">,</span>
+                                <span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                                <span class="n">restr_fname</span><span class="o">=</span><span class="n">ambig_fname</span><span class="p">)</span>
                 <span class="n">model</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">topology</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">combination</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
@@ -315,7 +335,7 @@
         <span class="c1"># Get the weights according to CNS parameters</span>
         <span class="n">_weight_keys</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;w_vdw&quot;</span><span class="p">,</span> <span class="s2">&quot;w_elec&quot;</span><span class="p">,</span> <span class="s2">&quot;w_desolv&quot;</span><span class="p">,</span> <span class="s2">&quot;w_air&quot;</span><span class="p">,</span> <span class="s2">&quot;w_bsa&quot;</span><span class="p">)</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">_weight_keys</span><span class="p">}</span>
-
+        
         <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">is_present</span><span class="p">():</span>
                 <span class="c1"># Score the model</span>
@@ -325,7 +345,7 @@
                     <span class="p">)</span>
 
                 <span class="n">model</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">haddock_score</span>
-
+                
         <span class="bp">self</span><span class="o">.</span><span class="n">export_output_models</span><span class="p">(</span><span class="n">faulty_tolerance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;tolerance&quot;</span><span class="p">])</span></div>
 </pre></div>
 

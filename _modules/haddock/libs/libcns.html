@@ -129,6 +129,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#refine-complex">refine-complex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#scoring">scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a><ul>
@@ -448,6 +449,7 @@
         <span class="n">recipe_str</span><span class="p">,</span>
         <span class="n">defaults</span><span class="p">,</span>
         <span class="n">identifier</span><span class="p">,</span>
+        <span class="n">ambig_fname</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">native_segid</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">default_params_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">):</span>
@@ -463,6 +465,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># read the default parameters</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="n">load_workflow_params</span><span class="p">(</span><span class="o">**</span><span class="n">defaults</span><span class="p">)</span>
+    <span class="n">default_params</span> <span class="o">+=</span> <span class="n">write_eval_line</span><span class="p">(</span><span class="s1">&#39;ambig_fname&#39;</span><span class="p">,</span> <span class="n">ambig_fname</span><span class="p">)</span>
 
     <span class="c1"># write the PDBs</span>
     <span class="n">pdb_list</span> <span class="o">=</span> <span class="p">[</span>

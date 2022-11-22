@@ -132,6 +132,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#refine-complex">refine-complex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#scoring">scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a><ul>
@@ -1608,6 +1609,18 @@
 <div class="line"><em>short description</em>: Defines the number of S3 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="previous-ambig">
+<h2>previous_ambig<a class="headerlink" href="#previous-ambig" title="Permalink to this heading">¶</a></h2>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Boolean condition on the previous ambiguous distance restraints file</div>
+<div class="line"><em>short description</em>: Boolean condition on the previous ambiguous distance restraints file. If True, use the the restraint information coming from the previous CNS module. If False, don’t use previous information.</div>
+<div class="line"><em>long description</em>: Boolean condition on the ambiguous distance restraints file. If True, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module. If False, don’t use previous information.</div>
+<div class="line"><em>group</em>: distance restraints</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>

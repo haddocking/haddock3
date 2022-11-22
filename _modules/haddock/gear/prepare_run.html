@@ -129,6 +129,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#refine-complex">refine-complex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../examples.html#scoring">scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/index.html">Advanced features</a><ul>
@@ -196,6 +197,7 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">string</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
 <span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span><span class="p">,</span> <span class="n">wraps</span>
@@ -750,9 +752,15 @@
                     <span class="n">pf</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">end_path</span><span class="p">)</span>
                     <span class="n">pf</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                     <span class="n">check_if_path_exists</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">pf</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+                    <span class="n">target_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">pf</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">target_path</span><span class="p">)</span>
                     <span class="n">_p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">rel_data_dir</span><span class="p">,</span> <span class="n">end_path</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-                    <span class="n">modules_params</span><span class="p">[</span><span class="n">module</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">_p</span></div>
+                    <span class="n">modules_params</span><span class="p">[</span><span class="n">module</span><span class="p">][</span><span class="n">parameter</span><span class="p">]</span> <span class="o">=</span> <span class="n">_p</span>
+                    <span class="c1"># account for input .tgz files</span>
+                    <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;tgz&quot;</span><span class="p">):</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uncompressing tar </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                        <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">target_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+                            <span class="n">fin</span><span class="o">.</span><span class="n">extractall</span><span class="p">(</span><span class="n">pf</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="check_run_dir_exists"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.check_run_dir_exists">[docs]</a><span class="k">def</span> <span class="nf">check_run_dir_exists</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>

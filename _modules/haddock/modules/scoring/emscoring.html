@@ -131,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#refine-complex">refine-complex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#scoring">scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/index.html">Advanced features</a><ul>
@@ -250,6 +251,7 @@
             <span class="c1"># fill the ori_name field of expected_pdb</span>
             <span class="n">expected_pdb</span><span class="o">.</span><span class="n">ori_name</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">file_name</span>
             <span class="n">expected_pdb</span><span class="o">.</span><span class="n">md5</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">md5</span>
+            <span class="n">expected_pdb</span><span class="o">.</span><span class="n">restr_fname</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">restr_fname</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">expected_pdb</span><span class="p">)</span>
 

@@ -138,6 +138,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-protein-protein">docking-protein-protein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../examples.html#refine-complex">refine-complex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../examples.html#scoring">scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples.html#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/index.html">Advanced features</a><ul>
@@ -253,6 +254,20 @@ saved to disk).</p>
 <dt class="sig sig-object py" id="haddock.modules.refinement.emref.HaddockModule.finish_with_error">
 <span class="sig-name descname"><span class="pre">finish_with_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Module</span> <span class="pre">has</span> <span class="pre">failed.'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.refinement.emref.HaddockModule.finish_with_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finish with error message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="haddock.modules.refinement.emref.HaddockModule.get_ambig_fnames">
+<span class="sig-name descname"><span class="pre">get_ambig_fnames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prev_ambig_fnames</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.refinement.emref.HaddockModule.get_ambig_fnames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the correct ambiguous restraint names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prev_ambig_fnames</strong> (<em>list</em>) – list of ambig_fname files encoded in previous models</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ambig_fnames</strong> (<em>list or None</em>) – list of ambig_fname files to be used by the CNS module</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -2497,6 +2512,18 @@ dictionary and unpack the dictionary to the function call.</p>
 <div class="line"><em>short description</em>: Defines the number of S3 symmetry restraints.</div>
 <div class="line"><em>long description</em>: Defines the number of S3 symmetry restraints. For each, three segments on which the symmetry restraint is applied will have to be defined. Those must all have the same length.</div>
 <div class="line"><em>group</em>: symmetry</div>
+<div class="line"><em>explevel</em>: expert</div>
+</div>
+</section>
+<section id="previous-ambig">
+<h4>previous_ambig<a class="headerlink" href="#previous-ambig" title="Permalink to this heading">¶</a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: False</div>
+<div class="line"><em>type</em>: boolean</div>
+<div class="line"><em>title</em>: Boolean condition on the previous ambiguous distance restraints file</div>
+<div class="line"><em>short description</em>: Boolean condition on the previous ambiguous distance restraints file. If True, use the the restraint information coming from the previous CNS module. If False, don’t use previous information.</div>
+<div class="line"><em>long description</em>: Boolean condition on the ambiguous distance restraints file. If True, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module. If False, don’t use previous information.</div>
+<div class="line"><em>group</em>: distance restraints</div>
 <div class="line"><em>explevel</em>: expert</div>
 </div>
 </section>

@@ -134,6 +134,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#docking-protein-protein">docking-protein-protein</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#refine-complex">refine-complex</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#scoring">scoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#docking-multiple-ambig">docking-multiple-ambig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/index.html">Advanced features</a><ul>
@@ -206,6 +207,7 @@ corresponding to different types of complexes, scenarios and data.</p>
 <li><p><a class="reference internal" href="#docking-protein-protein"><span class="std std-doc">docking-protein-protein</span></a></p></li>
 <li><p><a class="reference internal" href="#refine-complex"><span class="std std-doc">refine-complex</span></a></p></li>
 <li><p><a class="reference internal" href="#scoring"><span class="std std-doc">scoring</span></a></p></li>
+<li><p><a class="reference internal" href="#docking-multiple-ambig"><span class="std std-doc">docking-multiple-ambig</span></a></p></li>
 </ol>
 <p>Each directory contains both:</p>
 <ul class="simple">
@@ -310,6 +312,13 @@ can be seen in our freely-available <a class="reference external" href="https://
 <li><p>A short molecular dynamics simulation in explicit solvent (water) is performed on each model. In that case contact AIRs (<code class="docutils literal notranslate"><span class="pre">contactairs</span> <span class="pre">=</span> <span class="pre">true</span></code>), dihedral angle restraints on secondary structure element (<code class="docutils literal notranslate"><span class="pre">ssdihed</span> <span class="pre">=</span> <span class="pre">alphabeta</span></code>) and DNA restraints (<code class="docutils literal notranslate"><span class="pre">dnarest_on</span> <span class="pre">=</span> <span class="pre">true</span></code>) are automatically defined (<code class="docutils literal notranslate"><span class="pre">mdscoring-test.cfg</span></code>).</p></li>
 </ol>
 <p>The model listing with their associated HADDOCK score can be found in a <code class="docutils literal notranslate"><span class="pre">.tsv</span></code> file in the stage 01 directory of the respective runs.</p>
+</section>
+<section id="docking-multiple-ambig">
+<h2>docking-multiple-ambig<a class="headerlink" href="#docking-multiple-ambig" title="Permalink to this heading">¶</a></h2>
+<p>This example shows how to use HADDOCK3 when several restraint files are available. The example is built upon the results obtained running <a class="reference external" href="https://github.com/haddocking/arctic3d">arctic3d</a> on two proteins forming the complex <code class="docutils literal notranslate"><span class="pre">2GAF</span></code>. The presence of multiple interfaces in both structures allows to define several <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> ambiguous restraint files to be used in the calculations. At first, these files must be compressed in a <code class="docutils literal notranslate"><span class="pre">.tbl.tgz</span></code> archive. During the workflow, the HADDOCK3 machinery unzips the archive and evenly assigns each <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> file to a number of models to be generated. Even if only one sixth of the restraint files contain reasonable information on the interface, HADDOCK3 is still able to retrieve good docking models in the best-scoring positions.</p>
+<p><strong>Note</strong> how the information about restraint files is propagated during the workflow (<code class="docutils literal notranslate"><span class="pre">previous_ambig</span> <span class="pre">=</span> <span class="pre">true</span></code> for <code class="docutils literal notranslate"><span class="pre">flexref</span></code> and <code class="docutils literal notranslate"><span class="pre">emref</span></code> modules), so that each model is always refined with its corresponding <code class="docutils literal notranslate"><span class="pre">.tbl</span></code> file.</p>
+<p>Importantly, in the <code class="docutils literal notranslate"><span class="pre">docking-multiple-tbls-clt-full.cfg</span></code> example the clustering is performed right after the <code class="docutils literal notranslate"><span class="pre">rigidbody</span></code> module, so as to lump together solutions resulting from the application of different sets of restraints.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module is called at various stages during the workflow to assess the quality of the models with respect to the known reference structure.</p>
 </section>
 </section>
 

@@ -13,6 +13,7 @@ from haddock.modules.analysis.caprieval.capri import (
     calc_stats,
     capri_cluster_analysis,
     rearrange_ss_capri_output,
+    load_contacts
     )
 
 from . import golden_data
@@ -225,7 +226,7 @@ def test_protdna_ilrmsd(protdna_caprimodule):
     assert round_two_dec(protdna_caprimodule.ilrmsd) == 1.89
 
 
-def test_protdna_fnat(protdna_caprimodule, protdna_input_list):
+def test_protdna_fnat(protdna_caprimodule):
     """Test protein-dna fnat calculation."""
     protdna_caprimodule.calc_fnat()
     assert round_two_dec(protdna_caprimodule.fnat) == 0.49
@@ -272,7 +273,8 @@ def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
         "B": [52, 51, 16, 54, 53, 56, 11, 12, 17, 48],
         }
 
-    assert observed_interface == expected_interface
+    for chain in expected_interface.keys():
+        assert sorted(observed_interface[chain]) == sorted(expected_interface[chain])
 
 
 def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
@@ -287,7 +289,8 @@ def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
         "B": [4, 3, 2, 33, 32, 5, 6, 34, 35, 31, 7, 30],
         }
 
-    assert observed_interface == expected_interface
+    for chain in expected_interface.keys():
+        assert sorted(observed_interface[chain]) == sorted(expected_interface[chain])
 
 
 def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
@@ -319,14 +322,15 @@ def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
             ],
         "B": [500],
         }
+    
+    for chain in expected_interface.keys():
+        assert sorted(observed_interface[chain]) == sorted(expected_interface[chain])
 
-    assert observed_interface == expected_interface
 
-
-def test_load_contacts(protprot_caprimodule, protprot_input_list):
+def test_load_contacts(protprot_input_list):
     """Test loading contacts."""
     protprot_complex = protprot_input_list[0]
-    observed_con_set = protprot_caprimodule.load_contacts(
+    observed_con_set = load_contacts(
         protprot_complex, cutoff=5.0
         )
     expected_con_set = {

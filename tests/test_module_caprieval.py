@@ -44,6 +44,19 @@ def protprot_input_list():
 
 
 @pytest.fixture
+def protprot_1bkd_input_list():
+    """
+    Prot-prot input for target 1bkd.
+
+    Heterogeneous ensemble and big protein.
+    """
+    return [
+        PDBFile(Path(golden_data, "protprot_1bkd_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protprot_1bkd_2.pdb"), path=golden_data)
+        ]
+
+
+@pytest.fixture
 def protdna_input_list():
     """Prot-DNA input."""
     return [
@@ -131,6 +144,24 @@ def protprot_caprimodule(protprot_input_list, params):
 
 
 @pytest.fixture
+def protprot_1bkd_caprimodule(protprot_1bkd_input_list, params):
+    """Protein-Protein CAPRI module for target 1BKD."""
+    reference = protprot_1bkd_input_list[0].rel_path
+    model = protprot_1bkd_input_list[1]
+    capri = CAPRI(
+        identificator=42,
+        reference=reference,
+        model=model,
+        path=golden_data,
+        params=params,
+        )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture
 def protprot_caprimodule_parallel(protprot_input_list):
     """Protein-Protein CAPRI module."""
     reference = protprot_input_list[0].rel_path
@@ -182,7 +213,40 @@ def test_protprot_dockq(protprot_caprimodule):
     protprot_caprimodule.lrmsd = 15.9
     protprot_caprimodule.calc_dockq()
     assert round_two_dec(protprot_caprimodule.dockq) == 0.10
-    
+
+
+def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
+    """Test protein-protein i-rmsd calculation."""
+    protprot_1bkd_caprimodule.calc_irmsd(cutoff=10.0)
+    assert round_two_dec(protprot_1bkd_caprimodule.irmsd) == 8.16
+
+
+def test_protprot_1bkd_lrmsd(protprot_1bkd_caprimodule):
+    """Test protein-protein l-rmsd calculation."""
+    protprot_1bkd_caprimodule.calc_lrmsd()
+    assert round_two_dec(protprot_1bkd_caprimodule.lrmsd) == 13.6
+
+
+def test_protprot_1bkd_ilrmsd(protprot_1bkd_caprimodule):
+    """Test protein-protein i-l-rmsd calculation."""
+    protprot_1bkd_caprimodule.calc_ilrmsd()
+    assert round_two_dec(protprot_1bkd_caprimodule.ilrmsd) == 5.71
+
+
+def test_protprot_1bkd_fnat(protprot_1bkd_caprimodule):
+    """Test protein-protein fnat calculation."""
+    protprot_1bkd_caprimodule.calc_fnat()
+    assert round_two_dec(protprot_1bkd_caprimodule.fnat) == 0.07
+
+
+def test_protprot_1bkd_dockq(protprot_1bkd_caprimodule):
+    """Test protein-protein dockq calculation."""
+    protprot_1bkd_caprimodule.irmsd = 8.16
+    protprot_1bkd_caprimodule.fnat = 0.07
+    protprot_1bkd_caprimodule.lrmsd = 13.6
+    protprot_1bkd_caprimodule.calc_dockq()
+    assert round_two_dec(protprot_1bkd_caprimodule.dockq) == 0.13
+
 
 def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""

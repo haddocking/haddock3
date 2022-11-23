@@ -34,6 +34,11 @@ def load_contacts(pdb_f, cutoff=5.0):
         PDB file of the model to have its atoms identified
     cutoff : float, optional
         Cutoff distance for the interface identification.
+
+    Returns
+    -------
+    set(con_list) : set
+        set of unique contacts
     """
     con_list = []
     if isinstance(pdb_f, PDBFile):

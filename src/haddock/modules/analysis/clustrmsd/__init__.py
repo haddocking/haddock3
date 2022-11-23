@@ -140,7 +140,9 @@ class HaddockModule(BaseHaddockModule):
                 self.output_models.append(pdb)
         
         # Write unclustered structures
-        write_structure_list(models, self.output_models)
+        write_structure_list(models,
+                             self.output_models,
+                             out_fname="clustrmsd.tsv")
 
         # Prepare clustrmsd.txt
         output_fname = Path('clustrmsd.txt')

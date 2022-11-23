@@ -13,7 +13,7 @@ from pathlib import Path
 from haddock import log
 
 
-def write_structure_list(input_models, clustered_models):
+def write_structure_list(input_models, clustered_models, out_fname):
     """
     Get the list of unclustered structures.
     
@@ -24,7 +24,7 @@ def write_structure_list(input_models, clustered_models):
     clustered_models : list
         list of clustered models
     """
-    output_fname = Path('clustfcc.tsv')
+    output_fname = Path(out_fname)
     output_str = f'rank\tmodel_name\tscore\tcluster_id{os.linesep}'
     structure_list = []
     # checking which input models have not been clustered

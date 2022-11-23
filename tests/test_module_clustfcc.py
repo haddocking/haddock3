@@ -29,7 +29,8 @@ def output_list():
         "protprot_complex_1.con",
         "protprot_complex_2.con",
         "clustfcc.txt",
-        "io.json"
+        "io.json",
+        "clustfcc.tsv"
         ]
 
 

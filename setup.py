@@ -80,6 +80,7 @@ setup(
             'haddock3-pp = haddock.clis.cli_pp:maincli',
             'haddock3-score = haddock.clis.cli_score:maincli',
             'haddock3-unpack = haddock.clis.cli_unpack:maincli',
+            'haddock3-analyse = haddock.clis.cli_analyse:maincli',
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

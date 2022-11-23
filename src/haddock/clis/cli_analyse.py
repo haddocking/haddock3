@@ -94,6 +94,8 @@ def ss_plots(ss_filename):
             continue
         plt_fname = f"{x_ax}_{y_ax}.png"
         plt.scatter(capri_df[x_ax], capri_df[y_ax])
+        plt.xlabel(NAMES_TO_PLOT[x_ax])
+        plt.ylabel(NAMES_TO_PLOT[y_ax])
         plt.savefig(plt_fname, dpi=200)
         plt.close()
 
@@ -213,6 +215,7 @@ def main(run_dir, modules, **kwargs):
     folder_paths = []
     for step in selected_steps:
         print(f"step {step}")
+        print(f"cwd pre step {os.getcwd()}")
         # posticipate this
         target_path = Path(run_dir, f"{step}_analysis")
         target_path.mkdir(parents=True, exist_ok=False)
@@ -220,7 +223,7 @@ def main(run_dir, modules, **kwargs):
 
         new_capri_dict = capri_dict.copy()
         for key in new_capri_dict:
-            if key.endswith("fname") and key is not None:
+            if key.endswith("fname") and new_capri_dict[key] not in ['', None]:
                 try:
                     shutil.copy(new_capri_dict[key], Path(target_path, "reference.pdb"))
                     new_capri_dict[key] = Path("reference.pdb")
@@ -228,7 +231,9 @@ def main(run_dir, modules, **kwargs):
                     sys.exit(f'file not found {new_capri_dict[key]}')
         os.chdir(target_path)
         io = ModuleIO()
-        filename = Path(f"/trinity/login/mgiulini/haddock3_dev/postprocessing/run1-test/{step}/io.json")
+        #filename = Path(f"/trinity/login/mgiulini/haddock3_dev/postprocessing/run1-test/{step}/io.json")
+        filename = Path("..", f"{step}/io.json")
+        log.info(f"filename {filename}")
         io.load(filename)
         caprieval_module = HaddockModule(
             order=1,

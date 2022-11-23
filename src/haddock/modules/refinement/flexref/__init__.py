@@ -48,9 +48,22 @@ class HaddockModule(BaseCNSModule):
         if sampling_factor > 100:
             self.log("[Warning] sampling_factor is larger than 100")
 
+        # checking the ambig_fname:
+        prev_ambig_fnames = [model.restr_fname for model in models_to_refine]
+        ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
+
+        model_idx = 0
         idx = 1
         for model in models_to_refine:
+            # assign ambig_fname
+            if ambig_fnames:
+                ambig_fname = ambig_fnames[model_idx]
+            else:
+                ambig_fname = self.params["ambig_fname"]
+            model_idx += 1
+
             for _ in range(self.params['sampling_factor']):
+                # prepare cns input
                 inp_file = prepare_cns_input(
                     idx,
                     model,
@@ -58,6 +71,7 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "flexref",
+                    ambig_fname=ambig_fname,
                     native_segid=True,
                     )
 
@@ -67,6 +81,7 @@ class HaddockModule(BaseCNSModule):
                 expected_pdb = prepare_expected_pdb(
                     model, idx, ".", "flexref"
                     )
+                expected_pdb.restr_fname = ambig_fname
                 self.output_models.append(expected_pdb)
 
                 job = CNSJob(inp_file, out_file, envvars=self.envvars)

@@ -8,6 +8,7 @@ from haddock import toppar_path as global_toppar
 from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.gear.expandable_parameters import populate_mol_parameters_in_module
 from haddock.libs.libio import working_directory
+from haddock.libs.libutil import sort_numbered_paths
 from haddock.modules import BaseHaddockModule
 
 
@@ -109,3 +110,41 @@ class BaseCNSModule(BaseHaddockModule):
             self.params["cns_exec"] = shutil.copyfile(_cns_exec, new_cns)
             shutil.copystat(_cns_exec, new_cns)
             self.params["cns_exec"] = Path("..", Path(_cns_exec).name)
+    
+    def get_ambig_fnames(self, prev_ambig_fnames):
+        """Get the correct ambiguous restraint names.
+        
+        Parameters
+        ----------
+        prev_ambig_fnames : list
+            list of ambig_fname files encoded in previous models
+
+        Returns
+        -------
+        ambig_fnames : list or None
+            list of ambig_fname files to be used by the CNS module
+        """
+        ambig_fname = self.params["ambig_fname"]
+        ambig_fnames = None
+        if ambig_fname:
+            if ambig_fname.name.endswith("tgz"):
+                exp_name = ambig_fname.name.split(".tbl.tgz")[0]
+                exp_dir = ambig_fname.parent
+                self.log(f"Searching for {exp_name}*tbl files in {exp_dir}")
+                path = self.params["ambig_fname"].parent
+                ambig_fnames = list(path.glob(f"{exp_name}*tbl"))
+                # abort execution if no files are found
+                if len(ambig_fnames) == 0:
+                    raise Exception(
+                        f"No {exp_name}*tbl files found in {exp_dir}"
+                        )
+                self.log(f"Found {len(ambig_fnames)} compatible tbl files")
+                ambig_fnames = sort_numbered_paths(*ambig_fnames)
+        else:
+            if self.params["previous_ambig"]:
+                # check if there is restraint information in all models
+                if None in prev_ambig_fnames:
+                    raise Exception("'previous_ambig' option selected but no available restraint information in models")  # noqa: E501
+                self.log("Using previously defined restraints")
+                ambig_fnames = prev_ambig_fnames.copy()
+        return ambig_fnames

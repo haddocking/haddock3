@@ -220,7 +220,6 @@ def test_protprot_dockq(protprot_caprimodule):
     protprot_caprimodule.calc_dockq()
     assert round_two_dec(protprot_caprimodule.dockq) == 0.10
 
-<<<<<<< HEAD
 
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
     """Test protein-protein i-rmsd calculation."""
@@ -254,8 +253,6 @@ def test_protprot_1bkd_dockq(protprot_1bkd_caprimodule):
     protprot_1bkd_caprimodule.calc_dockq()
     assert round_two_dec(protprot_1bkd_caprimodule.dockq) == 0.13
 
-=======
->>>>>>> main
 
 def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""

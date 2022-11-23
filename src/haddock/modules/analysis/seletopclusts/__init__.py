@@ -30,22 +30,25 @@ class HaddockModule(BaseHaddockModule):
             _msg = "top_models must be either > 0 or nan."
             self.finish_with_error(_msg)
 
-        if not isinstance(self.params["top_cluster"], list):
-            _msg = "top_cluster must be a list, it can be an empty one."
+        if not isinstance(self.params["top_cluster"], int):
+            _msg = "top_cluster must be an integer."
             self.finish_with_error(_msg)
 
         models_to_select = self.previous_io.retrieve_models()
 
         # how many models should we output?
         self.output_models = []
-        if not self.params["top_cluster"]:
-            target_rankings = list(set([p.clt_rank for p in models_to_select]))
+        target_rankings = list(set([p.clt_rank for p in models_to_select]))
+        if self.params["top_cluster"] >= len(target_rankings):
+            # select all clusters
             target_rankins_str = ",".join(map(str, target_rankings))
             self.log(f"Selecting all clusters: {target_rankins_str}")
         else:
-            target_rankings = list(set(self.params["top_cluster"]))
+            # select top_cluster clusters
+            target_rankings = list(range(1, self.params["top_cluster"] + 1))
             target_rankins_str = ",".join(map(str, target_rankings))
-            self.log(f"Selecting clusters: {target_rankins_str}")
+            self.log((f"Selecting top {self.params['top_cluster']} clusters: "
+                      f"{target_rankins_str}"))
 
         for target_ranking in target_rankings:
             if math.isnan(self.params["top_models"]):

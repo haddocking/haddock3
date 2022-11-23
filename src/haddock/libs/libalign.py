@@ -224,6 +224,8 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
             if line.startswith("ATOM"):
                 atom_name = line[12:16].strip()
                 resname = line[17:20].strip()
+                if resname in RES_TO_BE_IGNORED:
+                    continue
                 chain = line[21]
                 resnum = int(line[22:26])
                 x = float(line[30:38])

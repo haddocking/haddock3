@@ -99,7 +99,6 @@ class _ParamsToDict(Action):
 
         param_dict = {}
         for k, v in zip(params, values):
-            print(f"k {k} v {v}")
             try:
                 param_dict[k] = v
             except (ValueError, TypeError, SyntaxError):

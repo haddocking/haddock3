@@ -411,8 +411,9 @@ class CAPRI:
             data["self.model-cluster-ranking"] = None
         
         # energies
-        for key in self.model.unw_energies:
-            data[key] = self.model.unw_energies[key]
+        if self.model.unw_energies:
+            for key in self.model.unw_energies:
+                data[key] = self.model.unw_energies[key]
 
         output_fname = Path(self.path, self.output_ss_fname)
 

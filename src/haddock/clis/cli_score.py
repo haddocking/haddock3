@@ -18,7 +18,6 @@ Usage::
 """
 import argparse
 from haddock.libs.libcli import _ParamsToDict
-import ast
 import sys
 
 

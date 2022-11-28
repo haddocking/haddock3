@@ -1,10 +1,7 @@
-#!/usr/bin/env python3
 """
 Analyse a set of steps of a run.
 
-In HADDOCK3 you can analyze the successful steps of a run.
-
-Considering the example::
+Considering the example run::
 
     run1/
         0_topoaa/
@@ -19,29 +16,33 @@ USAGE::
     haddock3-analyse -r <run_dir> -m <num_modules>
     haddock3-analyse -r run1 -m 1 3
 
-Where, ``-m 1 3`` means that the analysis will be performed on ``1_rigidbody`` and ``3_flexref``.
+
+Where, ``-m 1 3`` means that the analysis will be performed on ``1_rigidbody``
+ and ``3_flexref``.
 """
-import os
-import sys
-import shutil
-from haddock import log
-from pathlib import Path
-import pandas as pd
-import numpy as np
 import argparse
+import os
+import shutil
+import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import plotly.colors as px_colors
 import plotly.express as px
 import plotly.graph_objects as go
-import plotly.colors as px_colors
-from haddock.libs.libcli import _ParamsToDict
 
-from haddock.modules import get_module_steps_folders, modules_names
-from haddock.modules.analysis.caprieval import HaddockModule
-from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
-from haddock.libs.libontology import ModuleIO
+from haddock import log
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.libs.libcli import _ParamsToDict
+from haddock.libs.libontology import ModuleIO
+from haddock.modules import get_module_steps_folders, modules_names
+from haddock.modules.analysis.caprieval import \
+    DEFAULT_CONFIG as caprieval_params
+from haddock.modules.analysis.caprieval import HaddockModule
 
-ANA_FOLDER = "analysis" # name of the analysis folder
-TOP_CLUSTER = 10 # number of top clusters to consider
+
+ANA_FOLDER = "analysis"  # name of the analysis folder
 
 SCATTER_PAIRS = [
     ("irmsd", "score"),
@@ -77,7 +78,7 @@ TITLE_NAMES = {
     "elec": "Eelec",
     "air": "Eair",
     "fnat": "FCC"
-}
+    }
 
 AXIS_NAMES = {
     "score": "HADDOCK score [a.u.]",
@@ -90,74 +91,121 @@ AXIS_NAMES = {
     "air": "Restraints Energy",
     "fnat": "Fraction of Common Contacts",
     "dockq": "DOCKQ",
-}
+    }
 
 
-def read_capri_table(capri_filename, comment = "#"):
+def read_capri_table(capri_filename, comment="#"):
+    """
+    Read capri table with pandas.
+    
+    Parameters
+    ----------
+    capri_filename : str or Path
+        capri single structure filename
+    comment : str
+        the string used to denote a commented line in capri tables
+    """
     capri_df = pd.read_csv(
         capri_filename,
         sep="\t",
         comment=comment)
     return capri_df
 
-def get_cluster_ranking(capri_clt_filename):
-    cluster_ranking = {}
-    capri_clt = read_capri_table(capri_clt_filename)
-    for n in range(min(TOP_CLUSTER,capri_clt.shape[0])):
-        cluster_ranking[capri_clt["cluster_id"].iloc[n]] = capri_clt["caprieval_rank"].iloc[n]
-    return cluster_ranking
+
+def get_cluster_ranking(capri_clt_filename, top_cluster):
+    """
+    Get capri cluster ranking.
+
+    Parameters
+    ----------
+    capri_clt_filename : str or Path
+        capri cluster filename
+    top_cluster : int
+        number of clusters to consider
+    """
+    cl_ranking = {}
+    dfcl = read_capri_table(capri_clt_filename)
+    for n in range(min(top_cluster, dfcl.shape[0])):
+        cl_ranking[dfcl["cluster_id"].iloc[n]] = dfcl["caprieval_rank"].iloc[n]
+    return cl_ranking
 
 
-def box_plots(clt_filename, cluster_ranking):
-    capri_df = read_capri_table(clt_filename, comment="#")
+def box_plots(capri_filename, cl_ranking):
+    """
+    Create box plots.
+
+    The idea is that for each of the top X-ranked clusters we create a box plot
+    showing how the basic statistics are distributed within each model.
+    
+    Parameters
+    ----------
+    capri_filename : str or Path
+        capri single structure filename
+    cl_ranking : dict
+        {cluster_id : cluster_rank} dictionary
+    """
+    # generating the correct dataframe
+    capri_df = read_capri_table(capri_filename, comment="#")
     gb_cluster = capri_df.groupby("cluster-id")
-    colors = px_colors.qualitative.Safe
+    gb_other = pd.DataFrame([])
+    gb_good = pd.DataFrame([])
+    for cl_id, cl_df in gb_cluster:
+        if cl_id not in cl_ranking.keys():
+            gb_other = pd.concat([gb_other, cl_df])
+        else:
+            cl_df["capri_rank"] = cl_ranking[cl_id]
+            gb_good = pd.concat([gb_good, cl_df])
+    gb_other["cluster-id"] = "Other"
+    gb_other["capri_rank"] = len(cl_ranking.keys()) + 1
+    gb_cluster = pd.concat([gb_good, gb_other])
+    
     for x_ax in AXIS_NAMES.keys():
         if x_ax not in capri_df.columns:
             log.info(f"x axis quantity {x_ax} not present in capri table")
             continue
-        fig = px.box(capri_df, x="cluster-id", y=f"{x_ax}", color="cluster-id", points="outliers")
-        for cl_id, cl_df in gb_cluster:
-            if cl_id == "-":
-                cl_name = "Unclustered"
-            else:
-                cl_name = f"Cluster {cl_id}"
-            #traces.append(
-            #    px.box(cl_df, x="cluster_id", y=f"{x_ax}")
-                #go.Box(boxmean=cl_id, y=cl_df[f"{x_ax}_std"], name=cl_name, marker_color=colors[cl_id])
-            #)
-        #for trace in traces:
-        #    fig.add_trace(trace)
+        fig = px.box(gb_cluster,
+                     x="capri_rank",
+                     y=f"{x_ax}",
+                     color="cluster-id",
+                     boxmode="overlay",
+                     points="outliers"
+                     )
+        # layout
         px_fname = f"{x_ax}_clt.html"
         fig.update_layout(
             xaxis=dict(
-                title="Cluster #",
+                title="Cluster rank",
                 tickfont_size=14,
                 titlefont_size=16,
-            ),
+                ),
             yaxis=dict(
                 title=AXIS_NAMES[x_ax],
                 titlefont_size=16,
                 tickfont_size=14,
-            ),
+                ),
             legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
             hoverlabel=dict(font_size=16, font_family="Helvetica"),
-        )
+            )
 
         fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
         
 
-        
-    
-
-def scatter_plots(ss_filename, cl_ranking):
+def scatter_plots(capri_filename, cl_ranking):
     """
-    ss_filename : str or Path
+    Create scatter plots.
+
+    The idea is that for each pair of variables of interest (SCATTER_PAIRS,
+     declared as global) we create a scatter plot.
+    If available, each scatter plot containts cluster information.
+
+    Parameters
+    ----------
+    capri_filename : str or Path
         capri single structure filename
     cl_ranking : dict
-
+        {cluster_id : cluster_rank} dictionary
     """
-    capri_df = read_capri_table(ss_filename, comment="#")
+    capri_df = read_capri_table(capri_filename, comment="#")
     for x_ax, y_ax in SCATTER_PAIRS:
         log.debug(f"x_ax, y_ax {x_ax}, {y_ax}")
         if x_ax not in capri_df.columns:
@@ -168,10 +216,13 @@ def scatter_plots(ss_filename, cl_ranking):
             continue
         
         gb_cluster = capri_df.groupby("cluster-id")
-        fig = go.Figure(layout= {"width": 1000, "height": 800})
+        gb_other = pd.DataFrame([])
+        fig = go.Figure(layout={"width": 1000, "height": 800})
         traces = []
         for cl_id, cl_df in gb_cluster:
-            if cl_id in cl_ranking.keys():
+            if cl_id not in cl_ranking.keys():
+                gb_other = pd.concat([gb_other, cl_df])
+            else:
                 if cl_id == "-":
                     cl_name = "Unclustered"
                 else:
@@ -182,13 +233,13 @@ def scatter_plots(ss_filename, cl_ranking):
                 colors = px_colors.qualitative.Safe
                 traces.append(
                     go.Scatter(
-                        x= cl_df[x_ax],
-                        y= cl_df[y_ax],
+                        x=cl_df[x_ax],
+                        y=cl_df[y_ax],
                         name=cl_name,
-                        mode= "markers",
-                        text= text_list,
-                        legendgroup= cl_name,
-                        marker_color= colors[cl_ranking[cl_id] - 1],
+                        mode="markers",
+                        text=text_list,
+                        legendgroup=cl_name,
+                        marker_color=colors[cl_ranking[cl_id] - 1],
                         hoverlabel=dict(
                             bgcolor=colors[cl_ranking[cl_id] - 1],
                             font_size=16,
@@ -196,7 +247,7 @@ def scatter_plots(ss_filename, cl_ranking):
                             )
                         )
                     )
-                clt_text= f"{cl_name}<br>"
+                clt_text = f"{cl_name}<br>"
                 if 'score' not in [x_ax, y_ax]:
                     clt_text += f"Score: {np.mean(cl_df['score']):.3f}<br>"
                 clt_text += f"{x_ax}: {x_mean:.3f}<br>{y_ax}: {y_mean:.3f}"
@@ -205,24 +256,24 @@ def scatter_plots(ss_filename, cl_ranking):
                     go.Scatter(
                         x=[x_mean],
                         y=[y_mean],
-                        # error bars
-                        error_x = dict(
+                        # error bars
+                        error_x=dict(
                             type='data',
                             array=[np.std(cl_df[x_ax])],
                             visible=True),
-                       error_y = dict(
-                           type='data',
-                           array=[np.std(cl_df[y_ax])],
-                           visible=True),
+                        error_y=dict(
+                            type='data',
+                            array=[np.std(cl_df[y_ax])],
+                            visible=True),
                         # color and text
                         marker_color=colors[cl_ranking[cl_id] - 1],
                         text=clt_text_list,
                         legendgroup=cl_name,
                         showlegend=False,
                         mode="markers",
-                        marker= dict(
-                           size=8, symbol="square-dot"
-                           ),
+                        marker=dict(
+                            size=10,
+                            symbol="square-dot"),
                         hovertemplate=f'<b>{clt_text}</b><extra></extra>',
                         hoverlabel=dict(
                             bgcolor=colors[cl_ranking[cl_id] - 1],
@@ -231,7 +282,29 @@ def scatter_plots(ss_filename, cl_ranking):
                             )
                         )
                     )
-
+        # append trace other
+        text_list_other = [f"Model: {gb_other['model'].iloc[n].split('/')[-1]}<br>Score: {gb_other['score'].iloc[n]}" for n in range(gb_other.shape[0])]  # noqa:E501
+        traces.append(
+            go.Scatter(
+                x=gb_other[x_ax],
+                y=gb_other[y_ax],
+                name="Other",
+                mode="markers",
+                text=text_list_other,
+                legendgroup="Other",
+                marker=dict(
+                    color="white",
+                    line=dict(
+                        width=2,
+                        color='DarkSlateGrey')
+                    ),
+                hoverlabel=dict(
+                    bgcolor="white",
+                    font_size=16,
+                    font_family="Helvetica"
+                    )
+                )
+            )
         for trace in traces:
             fig.add_trace(trace)
         px_fname = f"{x_ax}_{y_ax}.html"
@@ -259,6 +332,7 @@ def scatter_plots(ss_filename, cl_ranking):
 ap = argparse.ArgumentParser(
     prog="haddock3-analyse",
     description=__doc__,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
 ap.add_argument(
@@ -275,6 +349,15 @@ ap.add_argument(
     help="The number of the steps to copy.",
     required=True,
     type=int,
+    )
+
+ap.add_argument(
+    "-t",
+    "--top_cluster",
+    help="The number of clusters to show.",
+    required=False,
+    type=int,
+    default=10
     )
 
 ap.add_argument(
@@ -312,22 +395,37 @@ def maincli():
     """Execute main client."""
     cli(ap, main)
 
-def run_capri_analysis(capri_dict, target_path, step, run_dir):
+
+def run_capri_analysis(step, run_dir, capri_dict, target_path):
     """
+    Run the caprieval analysis.
+
+    Parameters
+    ----------
+    step : str
+        step name
+    run_dir : str or Path
+        path to run directory
+    capri_dict : dict
+        capri dictionary of parameters
+    target_path : Path
+        path to the output folder
     """
     new_capri_dict = capri_dict.copy()
     for key in new_capri_dict:
         if key.endswith("fname") and new_capri_dict[key] not in ['', None]:
             try:
-                shutil.copy(new_capri_dict[key], Path(target_path, "reference.pdb"))
+                ref_path = Path(target_path, "reference.pdb")
+                shutil.copy(new_capri_dict[key], ref_path)
                 new_capri_dict[key] = Path("reference.pdb")
             except FileNotFoundError:
                 sys.exit(f'file not found {new_capri_dict[key]}')
     os.chdir(target_path)
+    # retrieve json file with all information
     io = ModuleIO()
     filename = Path("..", f"{step}/io.json")
-    log.info(f"filename {filename}")
     io.load(filename)
+    # create capri
     caprieval_module = HaddockModule(
         order=1,
         path=Path(run_dir),
@@ -352,13 +450,13 @@ def get_steps(run_dir, modules):
         list of integers (i.e. the step IDs)
     """
     steps = get_module_steps_folders(run_dir)
-    log.info(f"steps {steps}")
+    log.info(f"Available steps {steps}")
     selected_steps = []
     for st in steps:
         splt_stepname = st.split("_")
         try:
             st_num = int(splt_stepname[0])
-        except Exception as e:
+        except Exception as e:  # noqa:F841
             log.info(f"found badly formatted step {st}, skipping..")
             continue
         st_name = "".join(splt_stepname[1:])
@@ -367,9 +465,12 @@ def get_steps(run_dir, modules):
     return selected_steps
 
 
-def analyse_step(step, run_dir, capri_dict, target_path):
+def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
     """
     Analyse a step.
+
+    If the step is a caprieval step, use the available capri files.
+    Otherwise, launch a capri analysis.
 
     Parameters
     ----------
@@ -386,9 +487,9 @@ def analyse_step(step, run_dir, capri_dict, target_path):
     
     target_path.mkdir(parents=True, exist_ok=False)
     if step.split("_")[1] != "caprieval":
-        run_capri_analysis(capri_dict, target_path, step, run_dir)
+        run_capri_analysis(capri_dict, run_dir, step, target_path)
     else:
-        log.info("step is caprieval, files should be already available")
+        log.info(f"step {step} is caprieval, files should be already available")
         ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
         clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(ss_fname, target_path)
@@ -399,17 +500,16 @@ def analyse_step(step, run_dir, capri_dict, target_path):
     ss_file = Path("capri_ss.tsv")
     clt_file = Path("capri_clt.tsv")
     if clt_file.exists():
-        cluster_ranking = get_cluster_ranking(clt_file)
+        cluster_ranking = get_cluster_ranking(clt_file, top_cluster)
     else:
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
-        log.info("scatter plotting")
+        log.info("Plotting results..")
         scatter_plots(ss_file, cluster_ranking)
-        log.info("box plotting")
         box_plots(ss_file, cluster_ranking)
 
 
-def main(run_dir, modules, **kwargs):
+def main(run_dir, modules, top_cluster, **kwargs):
     """
     Analyse CLI.
 
@@ -421,7 +521,10 @@ def main(run_dir, modules, **kwargs):
     modules : list of ints
         List of the integer prefix of the modules to copy.
     """
-    # create analysis folder
+    log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
+             f"with top_cluster = {top_cluster}")
+
+    # Create analysis folder
     ori_cwd = os.getcwd()
     outdir = Path(run_dir, ANA_FOLDER)
     try:
@@ -431,7 +534,7 @@ def main(run_dir, modules, **kwargs):
         sys.exit(1)
     log.info(f"Created directory: {str(outdir.resolve())}")
 
-    # reading steps
+    # Reading steps
     log.info("Reading input run directory")
     # get the module folders from the run_dir input
     selected_steps = get_steps(run_dir, modules)
@@ -446,15 +549,14 @@ def main(run_dir, modules, **kwargs):
         else:
             capri_dict[param] = kwargs[param]
             log.info(f"setting {param} to {kwargs[param]}")
-    log.debug(f"capri_dict is {capri_dict}")
-
-    # calling the analysis
+    
+    # analysis
     good_folder_paths, bad_folder_paths = [], []
     for step in selected_steps:
         target_path = Path(run_dir, f"{step}_analysis")
         error = False
         try:
-            analyse_step(step, run_dir, capri_dict, target_path)
+            analyse_step(step, run_dir, capri_dict, target_path, top_cluster)
         except Exception as e:
             error = True
             log.warning(
@@ -473,7 +575,7 @@ def main(run_dir, modules, **kwargs):
     log.info("moving files to analysis folder")
     for directory in good_folder_paths:
         shutil.move(directory, outdir)
-    # deleting unsuccesful runs
+
     if bad_folder_paths != []:
         log.info("cancelling unsuccesful analysis folders")
         for directory in bad_folder_paths:

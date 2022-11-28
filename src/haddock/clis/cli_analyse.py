@@ -104,6 +104,11 @@ def read_capri_table(capri_filename, comment="#"):
         capri single structure filename
     comment : str
         the string used to denote a commented line in capri tables
+
+    Returns
+    -------
+    capri_df : pandas DataFrame
+        dataframe of capri values
     """
     capri_df = pd.read_csv(
         capri_filename,
@@ -122,6 +127,11 @@ def get_cluster_ranking(capri_clt_filename, top_cluster):
         capri cluster filename
     top_cluster : int
         number of clusters to consider
+
+    Returns
+    -------
+    cl_ranking : dict
+        {cluster_id : cluster_rank} dictionary
     """
     cl_ranking = {}
     dfcl = read_capri_table(capri_clt_filename)
@@ -448,6 +458,11 @@ def get_steps(run_dir, modules):
         path to run directory
     modules : list
         list of integers (i.e. the step IDs)
+
+    Returns
+    -------
+    selected_steps : list
+        list of selected step names
     """
     steps = get_module_steps_folders(run_dir)
     log.info(f"Available steps {steps}")

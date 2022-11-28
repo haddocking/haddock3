@@ -487,7 +487,7 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
     
     target_path.mkdir(parents=True, exist_ok=False)
     if step.split("_")[1] != "caprieval":
-        run_capri_analysis(capri_dict, run_dir, step, target_path)
+        run_capri_analysis(step, run_dir, capri_dict, target_path)
     else:
         log.info(f"step {step} is caprieval, files should be already available")
         ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")

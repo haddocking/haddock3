@@ -1,6 +1,5 @@
 """Add functionalities for CLIs."""
-from argparse import ArgumentTypeError
-from argparse import Action
+from argparse import Action, ArgumentTypeError
 from functools import partial
 from pathlib import Path
 

@@ -17,8 +17,9 @@ Usage::
 
 """
 import argparse
-from haddock.libs.libcli import _ParamsToDict
 import sys
+
+from haddock.libs.libcli import _ParamsToDict
 
 
 ap = argparse.ArgumentParser(

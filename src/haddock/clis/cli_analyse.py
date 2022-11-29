@@ -219,10 +219,10 @@ def scatter_plots(capri_filename, cl_ranking):
     for x_ax, y_ax in SCATTER_PAIRS:
         log.debug(f"x_ax, y_ax {x_ax}, {y_ax}")
         if x_ax not in capri_df.columns:
-            log.info(f"x axis quantity {x_ax} not present in capri table")
+            log.warning(f"x axis quantity {x_ax} not present in capri table")
             continue
         if y_ax not in capri_df.columns:
-            log.info(f"y axis quantity {y_ax} not present in capri table")
+            log.warning(f"y axis quantity {y_ax} not present in capri table")
             continue
         
         gb_cluster = capri_df.groupby("cluster-id")
@@ -293,28 +293,29 @@ def scatter_plots(capri_filename, cl_ranking):
                         )
                     )
         # append trace other
-        text_list_other = [f"Model: {gb_other['model'].iloc[n].split('/')[-1]}<br>Score: {gb_other['score'].iloc[n]}" for n in range(gb_other.shape[0])]  # noqa:E501
-        traces.append(
-            go.Scatter(
-                x=gb_other[x_ax],
-                y=gb_other[y_ax],
-                name="Other",
-                mode="markers",
-                text=text_list_other,
-                legendgroup="Other",
-                marker=dict(
-                    color="white",
-                    line=dict(
-                        width=2,
-                        color='DarkSlateGrey')
-                    ),
-                hoverlabel=dict(
-                    bgcolor="white",
-                    font_size=16,
-                    font_family="Helvetica"
+        if not gb_other.empty:
+            text_list_other = [f"Model: {gb_other['model'].iloc[n].split('/')[-1]}<br>Score: {gb_other['score'].iloc[n]}" for n in range(gb_other.shape[0])]  # noqa:E501
+            traces.append(
+                go.Scatter(
+                    x=gb_other[x_ax],
+                    y=gb_other[y_ax],
+                    name="Other",
+                    mode="markers",
+                    text=text_list_other,
+                    legendgroup="Other",
+                    marker=dict(
+                        color="white",
+                        line=dict(
+                            width=2,
+                            color='DarkSlateGrey')
+                        ),
+                    hoverlabel=dict(
+                        bgcolor="white",
+                        font_size=16,
+                        font_family="Helvetica"
+                        )
                     )
                 )
-            )
         for trace in traces:
             fig.add_trace(trace)
         px_fname = f"{x_ax}_{y_ax}.html"
@@ -430,6 +431,7 @@ def run_capri_analysis(step, run_dir, capri_dict, target_path):
                 new_capri_dict[key] = Path("reference.pdb")
             except FileNotFoundError:
                 sys.exit(f'file not found {new_capri_dict[key]}')
+
     os.chdir(target_path)
     # retrieve json file with all information
     io = ModuleIO()
@@ -510,7 +512,8 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
         shutil.copy(ss_fname, target_path)
         shutil.copy(clt_fname, target_path)
         os.chdir(target_path)
-
+    
+    log.info(f"Capri file identified")
     # plotting
     ss_file = Path("capri_ss.tsv")
     clt_file = Path("capri_clt.tsv")

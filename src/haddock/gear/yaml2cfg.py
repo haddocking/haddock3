@@ -63,9 +63,9 @@ def _yaml2cfg_text(ycfg, module, explevel):
     exp_level_idx = exp_levels[explevel]
 
     for param_name, param in ycfg.items():
+        print(param_name, param)
 
-        # "default" is not in param when the key points to a subdictionary
-        # of parameters.
+        # treats parameters that are subdictionaries of parameters
         if isinstance(param, Mapping) and "default" not in param:
 
             params.append("")  # give extra space
@@ -77,6 +77,7 @@ def _yaml2cfg_text(ycfg, module, explevel):
             _ = _yaml2cfg_text(param, module=curr_module, explevel=explevel)
             params.append(_)
 
+        # treats normal parameters
         elif isinstance(param, Mapping):
 
             if exp_levels[param["explevel"]] > exp_level_idx:
@@ -94,9 +95,18 @@ def _yaml2cfg_text(ycfg, module, explevel):
 
                 comment.append(f"${_comment} {cvalue}")
 
-            params.append("{} = {!r}  # {}".format(
+            default_value = param["default"]
+
+            # boolean values have to be lower for compatibility with toml cfg
+            if isinstance(default_value, bool):
+                default_value = str(default_value).lower()
+                param_line = "{} = {}  # {}"
+            else:
+                param_line = "{} = {!r}  # {}"
+
+            params.append(param_line.format(
                 param_name,
-                param["default"],
+                default_value,
                 " / ".join(comment),
                 ))
 

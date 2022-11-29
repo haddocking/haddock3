@@ -513,7 +513,7 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
         shutil.copy(clt_fname, target_path)
         os.chdir(target_path)
     
-    log.info(f"Capri file identified")
+    log.info("CAPRI files identified")
     # plotting
     ss_file = Path("capri_ss.tsv")
     clt_file = Path("capri_clt.tsv")
@@ -541,12 +541,12 @@ def main(run_dir, modules, top_cluster, **kwargs):
     """
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
              f"with top_cluster = {top_cluster}")
-
+    os.chdir(run_dir)
     # Create analysis folder
     ori_cwd = os.getcwd()
-    outdir = Path(run_dir, ANA_FOLDER)
+    outdir = Path(ANA_FOLDER)
     try:
-        outdir.mkdir(parents=True, exist_ok=False)
+        outdir.mkdir(exist_ok=False)
     except FileExistsError:
         log.error(f"Directory {str(outdir.resolve())} already exists.")
         sys.exit(1)
@@ -555,7 +555,7 @@ def main(run_dir, modules, top_cluster, **kwargs):
     # Reading steps
     log.info("Reading input run directory")
     # get the module folders from the run_dir input
-    selected_steps = get_steps(run_dir, modules)
+    selected_steps = get_steps(Path("./"), modules)
     log.info(f"selected steps: {', '.join(selected_steps)}")
 
     # modifying the parameters
@@ -571,10 +571,10 @@ def main(run_dir, modules, top_cluster, **kwargs):
     # analysis
     good_folder_paths, bad_folder_paths = [], []
     for step in selected_steps:
-        target_path = Path(run_dir, f"{step}_analysis")
+        target_path = Path(Path("./"), f"{step}_analysis")
         error = False
         try:
-            analyse_step(step, run_dir, capri_dict, target_path, top_cluster)
+            analyse_step(step, Path("./"), capri_dict, target_path, top_cluster)
         except Exception as e:
             error = True
             log.warning(

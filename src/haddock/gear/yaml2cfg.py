@@ -63,7 +63,6 @@ def _yaml2cfg_text(ycfg, module, explevel):
     exp_level_idx = exp_levels[explevel]
 
     for param_name, param in ycfg.items():
-        print(param_name, param)
 
         # treats parameters that are subdictionaries of parameters
         if isinstance(param, Mapping) and "default" not in param:

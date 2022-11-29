@@ -49,7 +49,12 @@ class HaddockModule(BaseCNSModule):
             self.log("[Warning] sampling_factor is larger than 100")
         
         # checking the ambig_fname:
-        prev_ambig_fnames = [model.restr_fname for model in models_to_refine]
+        try:
+            prev_ambig_fnames = [mod.restr_fname for mod in models_to_refine]
+        except Exception as e:  # noqa:F841
+            # cannot extract restr_fname info from tuples
+            prev_ambig_fnames = [None for model in models_to_refine]
+
         ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
 
         model_idx = 0

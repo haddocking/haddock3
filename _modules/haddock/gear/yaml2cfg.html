@@ -255,8 +255,7 @@
 
     <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">ycfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-        <span class="c1"># &quot;default&quot; is not in param when the key points to a subdictionary</span>
-        <span class="c1"># of parameters.</span>
+        <span class="c1"># treats parameters that are subdictionaries of parameters</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;default&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">param</span><span class="p">:</span>
 
             <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>  <span class="c1"># give extra space</span>
@@ -268,6 +267,7 @@
             <span class="n">_</span> <span class="o">=</span> <span class="n">_yaml2cfg_text</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">curr_module</span><span class="p">,</span> <span class="n">explevel</span><span class="o">=</span><span class="n">explevel</span><span class="p">)</span>
             <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
 
+        <span class="c1"># treats normal parameters</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
 
             <span class="k">if</span> <span class="n">exp_levels</span><span class="p">[</span><span class="n">param</span><span class="p">[</span><span class="s2">&quot;explevel&quot;</span><span class="p">]]</span> <span class="o">&gt;</span> <span class="n">exp_level_idx</span><span class="p">:</span>
@@ -285,9 +285,18 @@
 
                 <span class="n">comment</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="si">{</span><span class="n">_comment</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">cvalue</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{!r}</span><span class="s2">  # </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">default_value</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">]</span>
+
+            <span class="c1"># boolean values have to be lower for compatibility with toml cfg</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">default_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">default_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">default_value</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">param_line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">param_line</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{!r}</span><span class="s2">  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+
+            <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">param_name</span><span class="p">,</span>
-                <span class="n">param</span><span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">],</span>
+                <span class="n">default_value</span><span class="p">,</span>
                 <span class="s2">&quot; / &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">comment</span><span class="p">),</span>
                 <span class="p">))</span>
 
@@ -367,7 +376,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Nov 22, 2022.
+        Last updated on Nov 30, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

@@ -229,6 +229,9 @@ def scatter_plots(capri_filename, cl_ranking):
         gb_other = pd.DataFrame([])
         fig = go.Figure(layout={"width": 1000, "height": 800})
         traces = []
+        # defining colors
+        colors = px_colors.qualitative.Alphabet
+        n_colors = len(colors)
         for cl_id, cl_df in gb_cluster:
             if cl_id not in cl_ranking.keys():
                 gb_other = pd.concat([gb_other, cl_df])
@@ -237,10 +240,10 @@ def scatter_plots(capri_filename, cl_ranking):
                     cl_name = "Unclustered"
                 else:
                     cl_name = f"Cluster {cl_id}"
+                color_idx = (cl_ranking[cl_id] - 1) % n_colors  # color index
                 x_mean = np.mean(cl_df[x_ax])
                 y_mean = np.mean(cl_df[y_ax])
                 text_list = [f"Model: {cl_df['model'].iloc[n].split('/')[-1]}<br>Score: {cl_df['score'].iloc[n]}" for n in range(cl_df.shape[0])]  # noqa:E501
-                colors = px_colors.qualitative.Safe
                 traces.append(
                     go.Scatter(
                         x=cl_df[x_ax],
@@ -249,9 +252,9 @@ def scatter_plots(capri_filename, cl_ranking):
                         mode="markers",
                         text=text_list,
                         legendgroup=cl_name,
-                        marker_color=colors[cl_ranking[cl_id] - 1],
+                        marker_color=colors[color_idx],
                         hoverlabel=dict(
-                            bgcolor=colors[cl_ranking[cl_id] - 1],
+                            bgcolor=colors[color_idx],
                             font_size=16,
                             font_family="Helvetica"
                             )
@@ -276,7 +279,7 @@ def scatter_plots(capri_filename, cl_ranking):
                             array=[np.std(cl_df[y_ax])],
                             visible=True),
                         # color and text
-                        marker_color=colors[cl_ranking[cl_id] - 1],
+                        marker_color=colors[color_idx],
                         text=clt_text_list,
                         legendgroup=cl_name,
                         showlegend=False,
@@ -286,7 +289,7 @@ def scatter_plots(capri_filename, cl_ranking):
                             symbol="square-dot"),
                         hovertemplate=f'<b>{clt_text}</b><extra></extra>',
                         hoverlabel=dict(
-                            bgcolor=colors[cl_ranking[cl_id] - 1],
+                            bgcolor=colors[color_idx],
                             font_size=16,
                             font_family="Helvetica"
                             )
@@ -547,10 +550,9 @@ def main(run_dir, modules, top_cluster, **kwargs):
     outdir = Path(ANA_FOLDER)
     try:
         outdir.mkdir(exist_ok=False)
+        log.info(f"Created directory: {str(outdir.resolve())}")
     except FileExistsError:
-        log.error(f"Directory {str(outdir.resolve())} already exists.")
-        sys.exit(1)
-    log.info(f"Created directory: {str(outdir.resolve())}")
+        log.warning(f"Directory {str(outdir.resolve())} already exists.")
 
     # Reading steps
     log.info("Reading input run directory")
@@ -571,7 +573,21 @@ def main(run_dir, modules, top_cluster, **kwargs):
     # analysis
     good_folder_paths, bad_folder_paths = [], []
     for step in selected_steps:
-        target_path = Path(Path("./"), f"{step}_analysis")
+        subfolder_name = f"{step}_analysis"
+        target_path = Path(Path("./"), subfolder_name)
+
+        # check if subfolder is already present
+        dest_path = Path(ANA_FOLDER, subfolder_name)
+        if dest_path.exists():
+            if len(os.listdir(dest_path)) != 0:
+                log.warning(f"{dest_path} exists and is not empty. "
+                            "Skipping analysis...")
+                continue
+            else:  # subfolder is empty, remove it.
+                log.info(f"Removing empty folder {dest_path}.")
+                shutil.rmtree(dest_path)
+
+        # run the analysis
         error = False
         try:
             analyse_step(step, Path("./"), capri_dict, target_path, top_cluster)
@@ -590,9 +606,10 @@ def main(run_dir, modules, top_cluster, **kwargs):
         os.chdir(ori_cwd)
 
     # moving files into analysis folder
-    log.info("moving files to analysis folder")
-    for directory in good_folder_paths:
-        shutil.move(directory, outdir)
+    if good_folder_paths != []:
+        log.info("moving files to analysis folder")
+        for directory in good_folder_paths:
+            shutil.move(directory, outdir)
 
     if bad_folder_paths != []:
         log.info("cancelling unsuccesful analysis folders")

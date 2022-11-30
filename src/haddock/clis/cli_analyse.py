@@ -217,7 +217,6 @@ def scatter_plots(capri_filename, cl_ranking):
     """
     capri_df = read_capri_table(capri_filename, comment="#")
     for x_ax, y_ax in SCATTER_PAIRS:
-        log.debug(f"x_ax, y_ax {x_ax}, {y_ax}")
         if x_ax not in capri_df.columns:
             log.warning(f"x axis quantity {x_ax} not present in capri table")
             continue
@@ -541,6 +540,9 @@ def main(run_dir, modules, top_cluster, **kwargs):
 
     modules : list of ints
         List of the integer prefix of the modules to copy.
+
+    top_cluster : int
+        Number of clusters to be considered
     """
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
              f"with top_cluster = {top_cluster}")

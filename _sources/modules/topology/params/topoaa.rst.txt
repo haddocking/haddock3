@@ -133,7 +133,7 @@ limit
 | *type*: boolean
 | *title*: Limit the number of input molecules.
 | *short description*: When TRUE, the topoaa module can accept any number of input molecules.
-| *long description*: Enable/disable the limit of input molecules for the topoaa module. Setting the limit to FALSE is useful when the topoaa module is followed by scoring modules such as emscoring, or other analysis modules. If topoaa is used in the middle of the workflow this parameter has no effect.
+| *long description*: Enable/disable the limit of input molecules for the topoaa module. Setting the limit to false is useful when the topoaa module is followed by scoring modules such as emscoring, or other analysis modules. If topoaa is used in the middle of the workflow this parameter has no effect.
 | *group*: 
 | *explevel*: expert
 

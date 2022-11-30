@@ -35,9 +35,9 @@ previous_ambig:
   type: boolean
   title: Boolean condition on the previous ambiguous distance restraints file
   short: Boolean condition on the previous ambiguous distance restraints file.
-    If True, use the the restraint information coming from the previous CNS module. If False, don't use previous information.
+    If true, use the the restraint information coming from the previous CNS module. If False, don't use previous information.
   long: Boolean condition on the ambiguous distance restraints file.
-    If True, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module.
+    If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module.
     If False, don't use previous information.
   group: 'distance restraints'
   explevel: expert

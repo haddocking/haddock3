@@ -544,6 +544,21 @@ def main(run_dir, modules, top_cluster, **kwargs):
     """
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
              f"with top_cluster = {top_cluster}")
+
+    # modifying the parameters
+    default_capri = read_from_yaml_config(caprieval_params)
+    capri_dict = default_capri.copy()
+    for param in kwargs:
+        if param not in default_capri:
+            sys.exit(f'* ERROR * Parameter {param!r} is not a valid `caprieval` parameter')  # noqa:E501
+        else:
+            if param.endswith("fname"):  # using full path for files
+                rel_path = Path(kwargs[param])
+                _param = rel_path.resolve()
+                kwargs[param] = _param
+            capri_dict[param] = kwargs[param]
+            log.info(f"setting {param} to {kwargs[param]}")
+
     os.chdir(run_dir)
     # Create analysis folder
     ori_cwd = os.getcwd()
@@ -560,16 +575,6 @@ def main(run_dir, modules, top_cluster, **kwargs):
     selected_steps = get_steps(Path("./"), modules)
     log.info(f"selected steps: {', '.join(selected_steps)}")
 
-    # modifying the parameters
-    default_capri = read_from_yaml_config(caprieval_params)
-    capri_dict = default_capri.copy()
-    for param in kwargs:
-        if param not in default_capri:
-            sys.exit(f'* ERROR * Parameter {param!r} is not a valid `caprieval` parameter')  # noqa:E501
-        else:
-            capri_dict[param] = kwargs[param]
-            log.info(f"setting {param} to {kwargs[param]}")
-    
     # analysis
     good_folder_paths, bad_folder_paths = [], []
     for step in selected_steps:

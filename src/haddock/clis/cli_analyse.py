@@ -186,12 +186,12 @@ def box_plots(capri_filename, cl_ranking):
             xaxis=dict(
                 title="Cluster rank",
                 tickfont_size=14,
-                titlefont_size=16,
+                titlefont_size=40,
                 ),
             yaxis=dict(
                 title=AXIS_NAMES[x_ax],
-                titlefont_size=16,
                 tickfont_size=14,
+                titlefont_size=40,
                 ),
             legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
             hoverlabel=dict(font_size=16, font_family="Helvetica"),
@@ -327,12 +327,12 @@ def scatter_plots(capri_filename, cl_ranking):
             xaxis=dict(
                 title=AXIS_NAMES[x_ax],
                 tickfont_size=14,
-                titlefont_size=16,
+                titlefont_size=40,
                 ),
             yaxis=dict(
                 title=AXIS_NAMES[y_ax],
-                titlefont_size=16,
                 tickfont_size=14,
+                titlefont_size=40,
                 ),
             legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
             hoverlabel=dict(font_size=16, font_family="Helvetica"),

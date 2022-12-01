@@ -4,6 +4,11 @@ Open a `terminal` window and navigate to the folder where you want to
 install HADDOCK3; for example: `software`. The current installation
 instructions are local and will affect only your user.
 
+Before starting with the installation of HADDOCK3, make sure to properly [install CNS](CNS.md).
+If you have installed a previous version of HADDOCK, you may already have a suitable version of CNS.
+Please do [check your CNS installation](CNS.md#5-Check-installation) before proceeding.
+
+
 ## 1. Clone this repository:
 
 Mind the `--recursive` flag when cloning!
@@ -20,7 +25,7 @@ cd -
 By the end of the above commands, you should be back to the `haddock3`
 main folder.
 
-## 2. Create a virtual environment with Python 3.9+ and install dependencies:
+## 2 Create a virtual environment with Python 3.9+ and install dependencies:
 
 You can use Python's `venv` or Anaconda depending on your choice.
 Commands are provided below:
@@ -52,10 +57,10 @@ python setup.py develop --no-deps
 mkdir -p bin/
 
 # on mac
-ln -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe bin/cns
 
 # on linux
-ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
 ```
 
 As long as you have the HADDOCK3 python environment activated, you can

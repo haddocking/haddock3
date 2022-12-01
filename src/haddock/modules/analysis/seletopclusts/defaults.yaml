@@ -1,11 +1,11 @@
 top_cluster:
-  default: []
-  type: list
-  minitems: 0
-  maxitems: 100
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  type: integer
+  default: 1000
+  min : 1
+  max : 99999
+  title: Number of clusters to consider 
+  short: Number of clusters to consider (ranked by score)
+  long: Number of clusters to consider (ranked by score)
   group: ''
   explevel: easy
 top_models:

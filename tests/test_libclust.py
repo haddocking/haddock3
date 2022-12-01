@@ -32,8 +32,8 @@ def test_write_structure_list(protprot_input_models):
     # fake clustering
     clustered_models = [protprot_input_models[0]]
     clustered_models[0].clt_id = 1
-    write_structure_list(protprot_input_models, clustered_models)
     cl_fname = "clustfcc.tsv"
+    write_structure_list(protprot_input_models, clustered_models, cl_fname)
     observed_file_content = open(cl_fname, "r").read()
     expected_file_content = (
         f'rank\tmodel_name\tscore\tcluster_id{os.linesep}'

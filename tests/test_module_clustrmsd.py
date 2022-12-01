@@ -19,6 +19,27 @@ from haddock.modules.analysis.rmsdmatrix import HaddockModule as HaddockRMSD
 from . import golden_data
 
 
+@pytest.fixture
+def output_list():
+    """Clustfcc output list."""
+    return [
+        "rmsd.matrix",
+        "rmsd_matrix.json"
+        "cluster.out",
+        "clustrmsd.txt",
+        "clustrmsd.tsv",
+        "io.json"
+        ]
+
+
+def remove_clustrmsd_files(output_list):
+    """Remove clustrmsd files."""
+    for f in output_list:
+        path_f = Path(f)
+        if path_f.exists():
+            os.unlink(path_f)
+
+
 def write_rmsd_matrix(output_name, rmsd_vec):
     """Write RMSD matrix."""
     with open(output_name, "w") as wf:
@@ -238,7 +259,7 @@ def test_correct_clusters(correct_rmsd_array):
 # TODO: add tests for the other categories of clustering
 
 
-def test_correct_output(input_protdna_models):
+def test_correct_output(input_protdna_models, output_list):
     """Test correct clustrmsd output."""
     rmsd_module = HaddockRMSD(
         order=2,
@@ -273,8 +294,4 @@ def test_correct_output(input_protdna_models):
 
     # TODO: check the content of clustrmsd.txt
 
-    os.unlink("io.json")
-    os.unlink("rmsd.matrix")
-    os.unlink("rmsd_matrix.json")
-    os.unlink(expected_out_filename)
-    os.unlink(expected_txt_filename)
+    remove_clustrmsd_files(output_list)

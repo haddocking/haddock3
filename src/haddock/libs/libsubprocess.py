@@ -2,10 +2,12 @@
 import os
 import shlex
 import subprocess
+from contextlib import suppress
 from pathlib import Path
 
 from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
+from haddock.libs.libio import gzip_files
 
 
 class BaseJob:
@@ -167,6 +169,13 @@ class CNSJob:
 
             out, error = p.communicate()
             p.kill()
+
+        gzip_files(self.input_file, remove_original=True)
+        gzip_files(self.output_file, remove_original=True)
+        with suppress(FileNotFoundError):
+            gzip_files(
+                Path(Path(self.output_file).stem).with_suffix('.seed'),
+                remove_original=True)
 
         if error:
             raise CNSRunningError(error)

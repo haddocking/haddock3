@@ -259,7 +259,7 @@ def compress_files_ext(path, ext, ncores=1, **kwargs):
     return False
 
 
-def gzip_files(file_, block_size=None, compresslevel=9):
+def gzip_files(file_, block_size=None, compresslevel=9, remove_original=False):
     """
     Gzip a file.
 
@@ -287,6 +287,9 @@ def gzip_files(file_, block_size=None, compresslevel=9):
         while content:
             gout.write(content)
             content = fin.read(block_size)
+
+    if remove_original:
+        Path(file_).unlink()
 
 
 def archive_files_ext(path, ext, compresslevel=9):

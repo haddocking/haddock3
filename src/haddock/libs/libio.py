@@ -480,3 +480,29 @@ def file_exists(
 
     # don't change to f-strings, .format has a purpose
     raise exception(emsg.format(str(path)))
+
+
+def pdb_path_exists(pdb_path):
+    """
+    Check if a pdb path exists.
+    
+    If not, checks for the existence of a gzipped pdb file and informs the user
+    that the file is gzipped
+
+    Parameters
+    ----------
+    pdb_path : pathlib.Path
+        path to the pdb
+    
+    Raises
+    ------
+    Exception
+        A PDB file not found exception
+    """
+    if not pdb_path.exists():
+        _msg = f"PDB file {pdb_path} not found."
+        gz_pdb_path = pdb_path.with_suffix(pdb_path.suffix + '.gz')
+        if gz_pdb_path.exists():
+            _msg += f" A compressed file ({gz_pdb_path}) exists though."
+        raise Exception(_msg)
+    return

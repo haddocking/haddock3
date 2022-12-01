@@ -29,6 +29,7 @@ from Bio.Align import substitution_matrices
 from Bio.Seq import Seq
 
 from haddock import log
+from haddock.libs.libio import pdb_path_exists
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libpdb import split_by_chain
 
@@ -259,6 +260,8 @@ def get_atoms(pdb):
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path
+    
+    pdb_path_exists(pdb)
 
     with open(pdb) as fh:
         for line in fh.readlines():

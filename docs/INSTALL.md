@@ -107,6 +107,7 @@ $ pip install mpi4py
 $ conda install -c conda-forge mpi4py
 ```
 
+Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html) instructions on how to run HADDOCK3 with MPI.
 
 # Installing third-party packages
 

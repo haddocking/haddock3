@@ -397,31 +397,6 @@ def glob_folder(folder, ext):
     return sort_numbered_paths(*list(map(Path, files)))
 
 
-#def parse_suffix(ext):
-#    """
-#    Represent a suffix of a file.
-#
-#    Examples
-#    --------
-#    >>> parse_suffix('.pdf')
-#    '.pdf'
-#
-#    >>> parse_suffix('pdf')
-#    '.pdf'
-#
-#    Parameters
-#    ----------
-#    ext : str
-#        String to extract the suffix from.
-#
-#    Returns
-#    -------
-#    str
-#        File extension with leading period.
-#    """
-#    return f'.{ext[ext.find(".") + 1:]}'
-
-
 def remove_files_with_ext(folder, ext):
     """
     Remove files with ``ext`` in folder.

@@ -57,7 +57,7 @@ def clean_output(path, ncores=1):
     # `unpack_compressed_and_archived_files` so that the
     # uncompressing routines when restarting the run work.
 
-    ## Files to delete
+    # Files to delete
     # deletes all except the first one
     files_to_delete = [
         '.inp',
@@ -75,9 +75,6 @@ def clean_output(path, ncores=1):
     files_to_archive = [
         '.seed',
         '.seed.gz',
-        #'.inp.gz',
-        #'.out',
-        #'.out.gz',
         '.con',
         ]
 

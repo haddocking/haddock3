@@ -56,7 +56,30 @@ def clean_output(path, ncores=1):
     # add any formats generated to
     # `unpack_compressed_and_archived_files` so that the
     # uncompressing routines when restarting the run work.
-    files_to_archive = ['seed', 'inp', 'out', 'con']
+
+    ## Files to delete
+    # deletes all except the first one
+    files_to_delete = [
+        '.inp',
+        '.inp.gz',
+        '.out',
+        '.out.gz',
+        ]
+
+    for extension in files_to_delete:
+        flist = glob_folder(path, extension)
+        for file_ in flist[1:]:
+            Path(file_).unlink()
+
+    # files to archive (all files in single .gz)
+    files_to_archive = [
+        '.seed',
+        '.seed.gz',
+        #'.inp.gz',
+        #'.out',
+        #'.out.gz',
+        '.con',
+        ]
 
     archive_ready = partial(_archive_and_remove_files, path=path)
     _ncores = min(ncores, len(files_to_archive))
@@ -65,7 +88,14 @@ def clean_output(path, ncores=1):
         for _ in imap:
             pass
 
-    files_to_compress = ['pdb', 'psf']
+    # files to compress in .gz
+    files_to_compress = [
+        '.inp',
+        '.out',
+        '.pdb',
+        '.psf',
+        ]
+
     for ftc in files_to_compress:
         found = compress_files_ext(path, ftc, ncores=ncores)
         if found:

@@ -239,6 +239,7 @@ def setup_run(
         unpack_compressed_and_archived_files(
             _step_folders,
             general_params["ncores"],
+            dec_all=True,
             )
 
     if starting_from_copy:

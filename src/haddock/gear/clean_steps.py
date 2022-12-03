@@ -106,7 +106,7 @@ def _archive_and_remove_files(fta, path):
 
 
 # eventually this function can be moved to `libs.libio` in case of future need.
-def unpack_compressed_and_archived_files(folders, ncores=1):
+def unpack_compressed_and_archived_files(folders, ncores=1, dec_all=False):
     """
     Unpack compressed and archived files in a folders.
 
@@ -126,8 +126,21 @@ def unpack_compressed_and_archived_files(folders, ncores=1):
     global UNPACK_FOLDERS
     UNPACK_FOLDERS.clear()
 
+    files_to_decompress = [
+        '.pdb.gz',
+        '.psf.gz',
+        '.seed.gz',
+        ]
+
     for folder in folders:
-        gz_files = glob_folder(folder, '.gz')
+        gz_files = []
+        for file_to_dec in files_to_decompress:
+            gz_files.extend(list(glob_folder(folder, file_to_dec)))
+
+        if dec_all:
+            for dec_all_files in ('.inp.gz', '.out.gz'):
+                gz_files.extend(list(glob_folder(folder, dec_all_files)))
+
         tar_files = glob_folder(folder, '.tgz')
 
         if gz_files or tar_files:

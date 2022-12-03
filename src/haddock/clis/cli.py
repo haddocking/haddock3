@@ -163,6 +163,7 @@ def main(
         restart_step = restart
         WorkflowManager_ = WorkflowManager
 
+    print(params)
     with (
             working_directory(other_params[RUNDIR]),
             log_error_and_exit(),

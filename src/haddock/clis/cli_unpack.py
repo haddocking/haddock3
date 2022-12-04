@@ -3,9 +3,10 @@
 Unpack the output of an HADDOCK3 run directory.
 
 The unpack process performs file unpacking and file decompressing
-operations. File with extension `seed`, `inp`, `out`, and `con` are
-unpacked from their `.tgz` files. While files with `.pdb.gz` and
-`.psf.gz` extension are uncompressed.
+operations.  File with extension `seed` and `con` are unpacked from
+their `.tgz` files.  While files with `.pdb.gz` and `.psf.gz` extension
+are uncompressed.  If `--all` is given, unpack also `.inp.gz` and
+`.out.gz` files.
 
 This CLI performs the opposite operations as the ``haddock3-clean``
 command-line.
@@ -20,8 +21,10 @@ Usage::
     haddock3-unpack -r <run_directory>
     haddock3-unpack run1
     haddock3-unpack run1/1_rigidbody
-    haddock3-clean run1 -n  # uses all cores
-    haddock3-clean run1 -n 2  # uses 2 cores
+    haddock3-unpack run1 -n  # uses all cores
+    haddock3-unpack run1 -n 2  # uses 2 cores
+    haddock3-unpack run1 -n 2 -a
+    haddock3-unpack run1 -n 2 --all
 """
 import argparse
 import sys
@@ -36,6 +39,15 @@ ap = argparse.ArgumentParser(
     )
 
 libcli.add_rundir_arg(ap)
+
+ap.add_argument(
+    '--all',
+    '-a',
+    dest='dec_all',
+    help="Unpack all files (includes `.inp` and `.out`).",
+    action='store_true',
+    )
+
 libcli.add_ncores_arg(ap)
 libcli.add_version_arg(ap)
 
@@ -60,7 +72,7 @@ def maincli():
     cli(ap, main)
 
 
-def main(run_dir, ncores=1):
+def main(run_dir, ncores=1, dec_all=False):
     """
     Unpack a HADDOCK3 run directory step folders.
 
@@ -97,7 +109,11 @@ def main(run_dir, ncores=1):
 
     if is_step_folder(run_dir):
         with log_time("unpacking took"):
-            unpack_compressed_and_archived_files([run_dir], ncores)
+            unpack_compressed_and_archived_files(
+                [run_dir],
+                ncores,
+                dec_all=dec_all,
+                )
 
     else:
         step_folders = [
@@ -105,7 +121,11 @@ def main(run_dir, ncores=1):
             for p in get_module_steps_folders(run_dir)
             ]
         with log_time("unpacking took"):
-            unpack_compressed_and_archived_files(step_folders, ncores)
+            unpack_compressed_and_archived_files(
+                step_folders,
+                ncores,
+                dec_all=dec_all,
+                )
 
     return
 

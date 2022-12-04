@@ -147,7 +147,13 @@ def copy_renum_step_folders(indir, destdir, steps):
 
     steps : list of (str or Path)
         The list of the folder names in `indir` to copy.
+
+    Returns
+    -------
+    list
+        The new paths created.
     """
+    new_steps = []
     step_names = (Path(step).name for step in steps)
     for i, step in enumerate(step_names):
         ori = Path(indir, step)
@@ -155,6 +161,8 @@ def copy_renum_step_folders(indir, destdir, steps):
         dest = Path(destdir, zero_fill.fill(_modname, i))
         shutil.copytree(ori, dest)
         log.info(f"Copied {str(ori)} -> {str(dest)}")
+        new_steps.append(dest)
+    return new_steps
 
 
 def renum_step_folders(folder):

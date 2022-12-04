@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Unpack output &mdash; haddock3 3.0.0 documentation</title>
+  <title>Unpack HADDOCK3 run &mdash; haddock3 3.0.0 documentation</title>
   
 
   
@@ -31,7 +31,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="HADDOCK3 MPI Run" href="climpi.html" />
-    <link rel="prev" title="Clean output Client" href="cliclean.html" /> 
+    <link rel="prev" title="Clean HADDOCK3 runs" href="cliclean.html" /> 
 
 </head>
 
@@ -72,7 +72,7 @@
         
           <li><a href="index.html">Command-line interfaces</a></li>
         
-      <li>Unpack output</li>
+      <li>Unpack HADDOCK3 run</li>
     
     
       <li class="breadcrumbs-aside">
@@ -151,8 +151,8 @@
 <li class="toctree-l2"><a class="reference internal" href="cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cliclean.html">Clean output Client</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cliclean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clidmn.html">Benchmark Daemon</a></li>
@@ -196,13 +196,14 @@
                     <div class="document">
                         
                             
-  <section id="unpack-output">
-<h1>Unpack output<a class="headerlink" href="#unpack-output" title="Permalink to this heading">¶</a></h1>
+  <section id="unpack-haddock3-run">
+<h1>Unpack HADDOCK3 run<a class="headerlink" href="#unpack-haddock3-run" title="Permalink to this heading">¶</a></h1>
 <p><p>Unpack the output of an HADDOCK3 run directory.</p>
 <p>The unpack process performs file unpacking and file decompressing
-operations. File with extension <cite>seed</cite>, <cite>inp</cite>, <cite>out</cite>, and <cite>con</cite> are
-unpacked from their <cite>.tgz</cite> files. While files with <cite>.pdb.gz</cite> and
-<cite>.psf.gz</cite> extension are uncompressed.</p>
+operations.  File with extension <cite>seed</cite> and <cite>con</cite> are unpacked from
+their <cite>.tgz</cite> files.  While files with <cite>.pdb.gz</cite> and <cite>.psf.gz</cite> extension
+are uncompressed.  If <cite>–all</cite> is given, unpack also <cite>.inp.gz</cite> and
+<cite>.out.gz</cite> files.</p>
 <p>This CLI performs the opposite operations as the <code class="docutils literal notranslate"><span class="pre">haddock3-clean</span></code>
 command-line.</p>
 <p>The &lt;run_directory&gt; can either be a whole HADDOCK3 run folder or a
@@ -213,12 +214,14 @@ threads to use.</p>
 <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="o">-</span><span class="n">r</span> <span class="o">&lt;</span><span class="n">run_directory</span><span class="o">&gt;</span>
 <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span>
 <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span><span class="o">/</span><span class="mi">1</span><span class="n">_rigidbody</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span>  <span class="c1"># uses all cores</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span>  <span class="c1"># uses 2 cores</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span>  <span class="c1"># uses all cores</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span>  <span class="c1"># uses 2 cores</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span> <span class="o">-</span><span class="n">a</span>
+<span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span> <span class="o">--</span><span class="nb">all</span>
 </pre></div>
 </div>
 </p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="p">[</span><span class="n">NCORES</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">run_dir</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">unpack</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">all</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="p">[</span><span class="n">NCORES</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">run_dir</span>
 </pre></div>
 </div>
 <section id="positional-arguments">
@@ -232,6 +235,10 @@ threads to use.</p>
 <section id="named-arguments">
 <h2>Named Arguments<a class="headerlink" href="#named-arguments" title="Permalink to this heading">¶</a></h2>
 <dl class="option-list">
+<dt><kbd>--all, -a</kbd></dt>
+<dd><p>Unpack all files (includes <cite>.inp</cite> and <cite>.out</cite>).</p>
+<p>Default: False</p>
+</dd>
 <dt><kbd>-n, --ncores</kbd></dt>
 <dd><p>The number of threads to use. Uses 1 if not specified. Uses all available threads if <cite>-n</cite> is given. Else, uses the number indicated, for example: <cite>-n 4</cite> will use 4 threads.</p>
 <p>Default: 1</p>
@@ -276,7 +283,7 @@ threads to use.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

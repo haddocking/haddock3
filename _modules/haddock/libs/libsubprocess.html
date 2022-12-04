@@ -144,8 +144,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean output Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
@@ -194,10 +194,12 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">haddock.core.defaults</span> <span class="kn">import</span> <span class="n">cns_exec</span> <span class="k">as</span> <span class="n">global_cns_exec</span>
 <span class="kn">from</span> <span class="nn">haddock.core.exceptions</span> <span class="kn">import</span> <span class="n">CNSRunningError</span><span class="p">,</span> <span class="n">JobRunningError</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">gzip_files</span>
 
 
 <div class="viewcode-block" id="BaseJob"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.BaseJob">[docs]</a><span class="k">class</span> <span class="nc">BaseJob</span><span class="p">:</span>
@@ -343,8 +345,29 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_cns_exec</span> <span class="o">=</span> <span class="n">cns_exec_path</span>
 
-<div class="viewcode-block" id="CNSJob.run"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.CNSJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run this CNS job script.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CNSJob.run"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.CNSJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">compress_inp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">compress_out</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">compress_seed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run this CNS job script.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        compress_inp : bool</span>
+<span class="sd">            Compress the *.inp file to &#39;.gz&#39; after the run. Defaults to</span>
+<span class="sd">            ``False``.</span>
+
+<span class="sd">        compress_out : bool</span>
+<span class="sd">            Compress the *.out file to &#39;.gz&#39; after the run. Defaults to</span>
+<span class="sd">            ``True``.</span>
+
+<span class="sd">        compress_seed : bool</span>
+<span class="sd">            Compress the *.seed file to &#39;.gz&#39; after the run. Defaults to</span>
+<span class="sd">            ``False``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">inp</span><span class="p">,</span> \
                 <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
 
@@ -359,6 +382,18 @@
 
             <span class="n">out</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
             <span class="n">p</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">compress_inp</span><span class="p">:</span>
+            <span class="n">gzip_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_file</span><span class="p">,</span> <span class="n">remove_original</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">compress_out</span><span class="p">:</span>
+            <span class="n">gzip_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">,</span> <span class="n">remove_original</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">compress_seed</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+                <span class="n">gzip_files</span><span class="p">(</span>
+                    <span class="n">Path</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.seed&#39;</span><span class="p">),</span>
+                    <span class="n">remove_original</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">CNSRunningError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
@@ -398,7 +433,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

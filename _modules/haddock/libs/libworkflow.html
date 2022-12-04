@@ -144,8 +144,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean output Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
@@ -218,7 +218,7 @@
         <span class="c1"># terminate is used to synchronize the `clean` option with the</span>
         <span class="c1"># `exit` module. If the `exit` module is removed in the future,</span>
         <span class="c1"># you can also remove and clean the `terminate` part here.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_terminated</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_terminated</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="WorkflowManager.run"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.WorkflowManager.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;High level workflow composer.&quot;&quot;&quot;</span>
@@ -371,7 +371,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

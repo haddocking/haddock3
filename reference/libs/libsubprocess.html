@@ -153,8 +153,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../clients/cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean output Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clidmn.html">Benchmark Daemon</a></li>
@@ -233,8 +233,20 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="haddock.libs.libsubprocess.CNSJob.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libsubprocess.html#CNSJob.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libsubprocess.CNSJob.run" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compress_inp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress_out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libsubprocess.html#CNSJob.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libsubprocess.CNSJob.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run this CNS job script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compress_inp</strong> (<em>bool</em>) – Compress the <a href="#id1"><span class="problematic" id="id2">*</span></a>.inp file to ‘.gz’ after the run. Defaults to
+<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>compress_out</strong> (<em>bool</em>) – Compress the <a href="#id3"><span class="problematic" id="id4">*</span></a>.out file to ‘.gz’ after the run. Defaults to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>compress_seed</strong> (<em>bool</em>) – Compress the <a href="#id5"><span class="problematic" id="id6">*</span></a>.seed file to ‘.gz’ after the run. Defaults to
+<code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -307,7 +319,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

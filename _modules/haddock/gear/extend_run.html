@@ -144,8 +144,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean output Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
@@ -339,14 +339,22 @@
 
 <span class="sd">    steps : list of (str or Path)</span>
 <span class="sd">        The list of the folder names in `indir` to copy.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        The new paths created.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_steps</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">step_names</span> <span class="o">=</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">step</span><span class="p">)</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">steps</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">step_names</span><span class="p">):</span>
         <span class="n">ori</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">indir</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
         <span class="n">_modname</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">dest</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">destdir</span><span class="p">,</span> <span class="n">zero_fill</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">_modname</span><span class="p">,</span> <span class="n">i</span><span class="p">))</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">ori</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Copied </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ori</span><span class="p">)</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Copied </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ori</span><span class="p">)</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">new_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dest</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">new_steps</span></div>
 
 
 <div class="viewcode-block" id="renum_step_folders"><a class="viewcode-back" href="../../../reference/gear/extend_run.html#haddock.gear.extend_run.renum_step_folders">[docs]</a><span class="k">def</span> <span class="nf">renum_step_folders</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
@@ -481,7 +489,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

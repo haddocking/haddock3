@@ -153,8 +153,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../clients/cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean output Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clidmn.html">Benchmark Daemon</a></li>
@@ -233,6 +233,26 @@ Zip files was not created.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libio.clean_suffix">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">clean_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#clean_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.clean_suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the preffix dot of an extension if exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ext</strong> (<em>str</em>) – The extension string.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_suffix</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span>
+<span class="go">&#39;pdb&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_suffix</span><span class="p">(</span><span class="s1">&#39;pdb&#39;</span><span class="p">)</span>
+<span class="go">&#39;pdb&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.compress_files_ext">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">compress_files_ext</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#compress_files_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.compress_files_ext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compress all files with same extension in folder to <cite>.gz</cite>.</p>
@@ -253,6 +273,26 @@ Zip files was not created.</p>
 </p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libio.dot_suffix">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">dot_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#dot_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.dot_suffix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the dot preffix to an extension if missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ext</strong> (<em>str</em>) – The extension string.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_suffix</span><span class="p">(</span><span class="s1">&#39;.pdb&#39;</span><span class="p">)</span>
+<span class="go">&#39;.pdb&#39;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">clean_suffix</span><span class="p">(</span><span class="s1">&#39;pdb&#39;</span><span class="p">)</span>
+<span class="go">&#39;.pdb&#39;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -324,7 +364,7 @@ preffix.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.gzip_files">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">gzip_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#gzip_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.gzip_files" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">gzip_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remove_original</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#gzip_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.gzip_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gzip a file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -347,29 +387,6 @@ preffix.</p></li>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><em>list of lists of strings</em> – The lines of the files.
 Input order is maintained.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.libio.parse_suffix">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">parse_suffix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#parse_suffix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.parse_suffix" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represent a suffix of a file.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_suffix</span><span class="p">(</span><span class="s1">&#39;.pdf&#39;</span><span class="p">)</span>
-<span class="go">&#39;.pdf&#39;</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_suffix</span><span class="p">(</span><span class="s1">&#39;pdf&#39;</span><span class="p">)</span>
-<span class="go">&#39;.pdf&#39;</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ext</strong> (<em>str</em>) – String to extract the suffix from.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – File extension with leading period.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -504,7 +521,7 @@ Must be synched with <cite>files</cite>.</p></li>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

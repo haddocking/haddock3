@@ -144,8 +144,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean output Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliclean.html">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/cliunpack.html">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
@@ -205,6 +205,46 @@
 <span class="kn">from</span> <span class="nn">haddock</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libontology</span> <span class="kn">import</span> <span class="n">PDBFile</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="n">sort_numbered_paths</span>
+
+
+<div class="viewcode-block" id="clean_suffix"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.clean_suffix">[docs]</a><span class="k">def</span> <span class="nf">clean_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove the preffix dot of an extension if exists.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ext : str</span>
+<span class="sd">        The extension string.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; clean_suffix(&#39;.pdb&#39;)</span>
+<span class="sd">    &#39;pdb&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; clean_suffix(&#39;pdb&#39;)</span>
+<span class="sd">    &#39;pdb&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ext</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;.&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dot_suffix"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.dot_suffix">[docs]</a><span class="k">def</span> <span class="nf">dot_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add the dot preffix to an extension if missing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ext : str</span>
+<span class="sd">        The extension string.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; clean_suffix(&#39;.pdb&#39;)</span>
+<span class="sd">    &#39;.pdb&#39;</span>
+
+<span class="sd">    &gt;&gt;&gt; clean_suffix(&#39;pdb&#39;)</span>
+<span class="sd">    &#39;.pdb&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">clean_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="read_lines"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.read_lines">[docs]</a><span class="k">def</span> <span class="nf">read_lines</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
@@ -451,7 +491,7 @@
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="gzip_files"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.gzip_files">[docs]</a><span class="k">def</span> <span class="nf">gzip_files</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
+<div class="viewcode-block" id="gzip_files"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.gzip_files">[docs]</a><span class="k">def</span> <span class="nf">gzip_files</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">remove_original</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gzip a file.</span>
 
@@ -478,7 +518,10 @@
         <span class="n">content</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span>  <span class="c1"># read the first</span>
         <span class="k">while</span> <span class="n">content</span><span class="p">:</span>
             <span class="n">gout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span></div>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">block_size</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">remove_original</span><span class="p">:</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span><span class="o">.</span><span class="n">unlink</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="archive_files_ext"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.archive_files_ext">[docs]</a><span class="k">def</span> <span class="nf">archive_files_ext</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
@@ -503,7 +546,10 @@
 <span class="sd">        ``False`` if no files with ``ext`` were found and, hence, the</span>
 <span class="sd">        Zip files was not created.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">files</span> <span class="o">=</span> <span class="n">glob_folder</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">glob_folder</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">clean_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">))</span>
+
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">clean_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">files</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
                 <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s1">.tgz&#39;</span><span class="p">),</span>
@@ -538,34 +584,9 @@
 <span class="sd">    list of Path objects</span>
 <span class="sd">        SORTED list of matching results.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ext</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;*</span><span class="si">{</span><span class="n">parse_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;*</span><span class="si">{</span><span class="n">dot_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
     <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">ext</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">sort_numbered_paths</span><span class="p">(</span><span class="o">*</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="n">files</span><span class="p">)))</span></div>
-
-
-<div class="viewcode-block" id="parse_suffix"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.parse_suffix">[docs]</a><span class="k">def</span> <span class="nf">parse_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represent a suffix of a file.</span>
-
-<span class="sd">    Examples</span>
-<span class="sd">    --------</span>
-<span class="sd">    &gt;&gt;&gt; parse_suffix(&#39;.pdf&#39;)</span>
-<span class="sd">    &#39;.pdf&#39;</span>
-
-<span class="sd">    &gt;&gt;&gt; parse_suffix(&#39;pdf&#39;)</span>
-<span class="sd">    &#39;.pdf&#39;</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    ext : str</span>
-<span class="sd">        String to extract the suffix from.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    str</span>
-<span class="sd">        File extension with leading period.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">ext</span><span class="p">[</span><span class="n">ext</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
 
 <div class="viewcode-block" id="remove_files_with_ext"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.remove_files_with_ext">[docs]</a><span class="k">def</span> <span class="nf">remove_files_with_ext</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">ext</span><span class="p">):</span>
@@ -706,7 +727,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

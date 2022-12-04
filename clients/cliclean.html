@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Clean output Client &mdash; haddock3 3.0.0 documentation</title>
+  <title>Clean HADDOCK3 runs &mdash; haddock3 3.0.0 documentation</title>
   
 
   
@@ -30,7 +30,7 @@
   <link rel="stylesheet" href="../_static/css/theme.min.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Unpack output" href="cliunpack.html" />
+    <link rel="next" title="Unpack HADDOCK3 run" href="cliunpack.html" />
     <link rel="prev" title="Copy steps to new run" href="clicp.html" /> 
 
 </head>
@@ -72,7 +72,7 @@
         
           <li><a href="index.html">Command-line interfaces</a></li>
         
-      <li>Clean output Client</li>
+      <li>Clean HADDOCK3 runs</li>
     
     
       <li class="breadcrumbs-aside">
@@ -151,8 +151,8 @@
 <li class="toctree-l2"><a class="reference internal" href="cliscore.html">Calculate score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clipp.html">PDB preprocessing client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clicp.html">Copy steps to new run</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Clean output Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cliunpack.html">Unpack output</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Clean HADDOCK3 runs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cliunpack.html">Unpack HADDOCK3 run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clidmn.html">Benchmark Daemon</a></li>
@@ -196,17 +196,18 @@
                     <div class="document">
                         
                             
-  <section id="clean-output-client">
-<h1>Clean output Client<a class="headerlink" href="#clean-output-client" title="Permalink to this heading">¶</a></h1>
+  <section id="clean-haddock3-runs">
+<h1>Clean HADDOCK3 runs<a class="headerlink" href="#clean-haddock3-runs" title="Permalink to this heading">¶</a></h1>
 <p><p>Clean the output of an HADDOCK3 run directory.</p>
 <p>The clean process performs file archiving and file compressing
-operations. File with extension <cite>seed</cite>, <cite>inp</cite>, <cite>out</cite>, and <cite>con</cite> are
-compressed and archived into <cite>.tgz</cite> files. While files with <cite>.pdb</cite> and
-<cite>.psf</cite> extension are compressed to <cite>.gz</cite> files. The original files are
-deleted.</p>
+operations.</p>
+<p>All <cite>.inp</cite> and <cite>.out</cite> files are deleted except for the first one, which
+is compressed to <cite>.gz</cite>. On the other hand, all <cite>.seed</cite> and <cite>.con</cite> files
+are compressed and archived to <cite>.tgz</cite> files. Finally, <cite>.pdb</cite> and <cite>.psf</cite>
+files are compressed to <cite>.gz</cite>.</p>
 <p>The &lt;run_directory&gt; can either be a whole HADDOCK3 run folder or a
-specific folder of the workflow step. &lt;ncores&gt; defined the number of
-threads to use.</p>
+specific folder of the workflow step. &lt;ncores&gt; defines the number of
+threads to use; by default uses a single core.</p>
 <p>Usage:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="o">-</span><span class="n">h</span>
 <span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="o">&lt;</span><span class="n">run_directory</span><span class="o">&gt;</span>
@@ -275,7 +276,7 @@ threads to use.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 01, 2022.
+        Last updated on Dec 04, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

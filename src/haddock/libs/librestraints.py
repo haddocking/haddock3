@@ -36,7 +36,7 @@ def validate_ambig_fname(ambig_fname, models):
         not_found += 1
     print(f"found {found} vs not_found {not_found} restraints")
     if found == 0:
-        raise Exception("No valid restraints are available. Aborting")
+        raise Exception(f"No valid restraints are available for models {models} in {ambig_fname}. Aborting")
     print(f"time for validating{time.time() - st_time}")
     return
 

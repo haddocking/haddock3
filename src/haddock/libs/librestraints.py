@@ -1,15 +1,21 @@
 """restraints-related functions."""
 
 import numpy as np
-import time
+from haddock import log
 from haddock.libs.libalign import get_atoms, load_coords
 
 
-def validate_ambig_fname(ambig_fname, models):
-    """validates ambig_fname"""
-    st_time = time.time()
-    print(f"validating {ambig_fname}")
-    restraints = parse_tbl(ambig_fname)
+def get_unique_resids(models):
+    """
+    Parameters
+    ----------
+    models : list of models
+
+    Returns
+    -------
+    chains : dict
+        dictionary of all the unique resids for each chain
+    """
     chains = {}
     for mod in models:
         # getting atoms and coords
@@ -26,24 +32,53 @@ def validate_ambig_fname(ambig_fname, models):
                 chains[ch] = list(unique_res_keys)
             else:
                 chains[ch].extend(list(unique_res_keys))
+    return chains
+
+def validate_ambig_fname(ambig_fname, models):
+    """
+    validate ambig_fname against input models.
+
+    At first the function extracts the restraints from ambig_fname and the
+    unique residue ids for each chain from the models. Then it checks for the
+    existence of each restraint in such dictionary.
+    
+    Parameters
+    ----------
+    ambig_fname : str or Path
+        restraints filename
+    models : list
+        list of models
+    """
+    log.debug(f"validating {ambig_fname}")
+    restraints = parse_tbl(ambig_fname)
+    resid_dict = get_unique_resids(models)
     # checking if restraints exist
     found, not_found = 0, 0
-    for res_one, res_two in restraints:
-        if res_one[0] in chains.keys() and res_two[0] in chains.keys():
-            if res_one[1] in chains[res_one[0]] and res_two[1] in chains[res_two[0]]:
+    for r_one, r_two in restraints:
+        if r_one[0] in resid_dict.keys() and r_two[0] in resid_dict.keys():
+            if r_one[1] in resid_dict[r_one[0]] and r_two[1] in resid_dict[r_two[0]]:
                 found += 1
                 continue
         not_found += 1
-    print(f"found {found} vs not_found {not_found} restraints")
+    if not_found != 0:
+        log.warning(f"{not_found} restraint were not valid for models {models} in {ambig_fname}. {found} are valid.")
+    else:
+        log.debug(f"{not_found} restraint were not valid for models {models} in {ambig_fname}. {found} are valid.")
     if found == 0:
         raise Exception(f"No valid restraints are available for models {models} in {ambig_fname}. Aborting")
-    print(f"time for validating{time.time() - st_time}")
     return
 
 
-def parse_tbl(restr_file):
-    """parsing tbl file"""
-    file_content = open(restr_file, "r").read().split("\n")
+def parse_tbl(ambig_fname):
+    """
+    parse .tbl file
+    
+    Parameters
+    ----------
+    ambig_fname : str or Path
+        restraints filename
+    """
+    file_content = open(ambig_fname, "r").read().split("\n")
     restr_pairs = []
     for ln in file_content:
         if ln != "":

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
+from haddock.libs.librestraints import validate_ambig_fname
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -66,6 +67,9 @@ class HaddockModule(BaseCNSModule):
             else:
                 ambig_fname = self.params["ambig_fname"]
             model_idx += 1
+            # validate ambig_fname
+            if ambig_fname:
+                validate_ambig_fname(ambig_fname, [model])
 
             for _ in range(self.params['sampling_factor']):
                 # prepare cns input

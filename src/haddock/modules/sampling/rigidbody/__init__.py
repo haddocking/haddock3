@@ -36,7 +36,7 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
-
+from haddock.libs.librestraints import validate_ambig_fname
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -99,11 +99,13 @@ class HaddockModule(BaseCNSModule):
         for combination in models_to_dock:
 
             for _i in range(sampling_factor):
-                # assign ambig_fname
+                # assigning and validating ambig_fname
                 if ambig_fnames:
                     ambig_fname = ambig_fnames[idx - 1]
                 else:
                     ambig_fname = self.params["ambig_fname"]
+                if ambig_fname:
+                    validate_ambig_fname(ambig_fname, combination)
                 # prepare cns input
                 inp_file = prepare_cns_input(
                     idx,

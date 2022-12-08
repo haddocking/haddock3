@@ -91,6 +91,7 @@ class HaddockModule(BaseCNSModule):
             ambig_fnames = [diff_ambig_fnames[n % n_diffs] for n in range(self.params["sampling"])]  # noqa: E501
         else:
             ambig_fnames = None
+        validated_pairs = []
         
         # Prepare the jobs
         idx = 1
@@ -99,13 +100,17 @@ class HaddockModule(BaseCNSModule):
         for combination in models_to_dock:
 
             for _i in range(sampling_factor):
-                # assigning and validating ambig_fname
+                # assign ambig_fname
                 if ambig_fnames:
                     ambig_fname = ambig_fnames[idx - 1]
                 else:
                     ambig_fname = self.params["ambig_fname"]
+                # validate ambig_fname
                 if ambig_fname:
-                    validate_ambig_fname(ambig_fname, combination)
+                    if (ambig_fname, combination) not in validated_pairs: 
+                        validate_ambig_fname(ambig_fname, combination)
+                        validated_pairs.append((ambig_fname, combination))
+                
                 # prepare cns input
                 inp_file = prepare_cns_input(
                     idx,

@@ -24,12 +24,12 @@ def parse_tbl(ambig_fname):
         if ln != "":
             splt_ln = ln.split()
             if splt_ln[0] == "assign":  # active residue
-                first_chain = splt_ln[-1].rstrip(')')
+                first_chain = splt_ln[6].rstrip(')')
                 first_resid = int(splt_ln[3])
                 first_partner = (first_chain, first_resid)
             elif splt_ln[0] == "(" and len(splt_ln) > 1:
                 if splt_ln[1] == "resid":  # partner residue
-                    sec_chain = splt_ln[-1].rstrip(')')
+                    sec_chain = splt_ln[5].rstrip(')')
                     sec_resid = int(splt_ln[2])
                     second_partner = (sec_chain, sec_resid)
                     restr_pairs.append((first_partner, second_partner))

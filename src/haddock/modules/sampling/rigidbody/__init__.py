@@ -33,10 +33,11 @@ from pathlib import Path
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import PDBFile
+from haddock.libs.librestraints import validate_ambig_fname
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
-from haddock.libs.librestraints import validate_ambig_fname
+
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -107,7 +108,7 @@ class HaddockModule(BaseCNSModule):
                     ambig_fname = self.params["ambig_fname"]
                 # validate ambig_fname
                 if ambig_fname:
-                    if (ambig_fname, combination) not in validated_pairs: 
+                    if (ambig_fname, combination) not in validated_pairs:
                         validate_ambig_fname(ambig_fname, combination)
                         validated_pairs.append((ambig_fname, combination))
                 

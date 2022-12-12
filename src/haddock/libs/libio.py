@@ -15,6 +15,46 @@ from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
 
 
+def clean_suffix(ext):
+    """
+    Remove the preffix dot of an extension if exists.
+
+    Parameters
+    ----------
+    ext : str
+        The extension string.
+
+    Examples
+    --------
+    >>> clean_suffix('.pdb')
+    'pdb'
+
+    >>> clean_suffix('pdb')
+    'pdb'
+    """
+    return ext.lstrip(r'.')
+
+
+def dot_suffix(ext):
+    """
+    Add the dot preffix to an extension if missing.
+
+    Parameters
+    ----------
+    ext : str
+        The extension string.
+
+    Examples
+    --------
+    >>> clean_suffix('.pdb')
+    '.pdb'
+
+    >>> clean_suffix('pdb')
+    '.pdb'
+    """
+    return '.' + clean_suffix(ext)
+
+
 def read_lines(func):
     """
     Open the file and read lines for the decorated function.
@@ -259,7 +299,7 @@ def compress_files_ext(path, ext, ncores=1, **kwargs):
     return False
 
 
-def gzip_files(file_, block_size=None, compresslevel=9):
+def gzip_files(file_, block_size=None, compresslevel=9, remove_original=False):
     """
     Gzip a file.
 
@@ -288,6 +328,9 @@ def gzip_files(file_, block_size=None, compresslevel=9):
             gout.write(content)
             content = fin.read(block_size)
 
+    if remove_original:
+        Path(file_).unlink()
+
 
 def archive_files_ext(path, ext, compresslevel=9):
     """
@@ -311,7 +354,10 @@ def archive_files_ext(path, ext, compresslevel=9):
         ``False`` if no files with ``ext`` were found and, hence, the
         Zip files was not created.
     """
-    files = glob_folder(path, ext)
+    files = glob_folder(path, clean_suffix(ext))
+
+    ext = clean_suffix(ext)
+
     if files:
         with tarfile.open(
                 Path(path, f'{ext}.tgz'),
@@ -346,34 +392,9 @@ def glob_folder(folder, ext):
     list of Path objects
         SORTED list of matching results.
     """
-    ext = f'*{parse_suffix(ext)}'
+    ext = f'*{dot_suffix(ext)}'
     files = glob.glob(str(Path(folder, ext)))
     return sort_numbered_paths(*list(map(Path, files)))
-
-
-def parse_suffix(ext):
-    """
-    Represent a suffix of a file.
-
-    Examples
-    --------
-    >>> parse_suffix('.pdf')
-    '.pdf'
-
-    >>> parse_suffix('pdf')
-    '.pdf'
-
-    Parameters
-    ----------
-    ext : str
-        String to extract the suffix from.
-
-    Returns
-    -------
-    str
-        File extension with leading period.
-    """
-    return f'.{ext[ext.find(".") + 1:]}'
 
 
 def remove_files_with_ext(folder, ext):

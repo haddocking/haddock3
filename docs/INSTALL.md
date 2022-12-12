@@ -4,7 +4,12 @@ Open a `terminal` window and navigate to the folder where you want to
 install HADDOCK3; for example: `software`. The current installation
 instructions are local and will affect only your user.
 
-## 1 Clone this repository:
+Before starting with the installation of HADDOCK3, make sure to properly [install CNS](CNS.md).
+If you have installed a previous version of HADDOCK, you may already have a suitable version of CNS.
+Please do [check your CNS installation](CNS.md#5-Check-installation) before proceeding.
+
+
+## 1. Clone this repository:
 
 Mind the `--recursive` flag when cloning!
 
@@ -40,22 +45,22 @@ conda env create -f requirements.yml
 conda activate haddock3
 ```
 
-## 3 Install the HADDOCK3 package and command line clients
+## 3. Install the HADDOCK3 package and command line clients
 
 ```bash
 python setup.py develop --no-deps
 ```
 
-## 4 Make a CNS binary shortcut to the expected path:
+## 4. Make a CNS binary shortcut to the expected path:
 
 ```bash
 mkdir -p bin/
 
 # on mac
-ln -s /PATH/TO/cns_solve-1.31-UU-MacIntel.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe bin/cns
 
 # on linux
-ln -s /PATH/TO/CNS_FOLDER/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
+ln -s /PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
 ```
 
 As long as you have the HADDOCK3 python environment activated, you can
@@ -64,7 +69,7 @@ HADDOCK3 from anywhere. To run HADDOCK3, follow the [usage
 guidelines](USAGE.md).
 
 
-## 5 Keep your installation up to date
+## 5. Keep your installation up to date
 
 Navigate to the `haddock3` installation folder (the one you cloned from
 GitHub). Ensure you have the `haddock3` python environment activated.
@@ -96,7 +101,18 @@ conda env update -f requirements.yml
 python setup.py develop --no-deps
 ```
 
-* * *
+
+## 6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI
+
+To use the mpi implementation of haddock3 you must have mpi4py installed in the haddock3 python environment, and OpenMPI in the host system.
+
+```bash
+$ pip install mpi4py
+# or
+$ conda install -c conda-forge mpi4py
+```
+
+Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html) instructions on how to run HADDOCK3 with MPI.
 
 # Installing third-party packages
 

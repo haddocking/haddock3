@@ -40,6 +40,24 @@ def add_rundir_arg(ap):
         )
 
 
+def add_ncores_arg(ap):
+    """Add number of cores option."""
+    ap.add_argument(
+        "-n",
+        "--ncores",
+        dest='ncores',
+        help=(
+            "The number of threads to use. Uses 1 if not specified. "
+            "Uses all available threads if `-n` is given. Else, uses the "
+            "number indicated, for example: `-n 4` will use 4 threads."
+            ),
+        type=int,
+        default=1,
+        const=None,
+        nargs='?',
+        )
+
+
 def add_output_dir_arg(ap):
     """Add output dir argument."""
     ap.add_argument(

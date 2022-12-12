@@ -361,15 +361,16 @@ class CAPRI:
 
     def calc_dockq(self):
         """Calculate the DockQ metric."""
-        if self.fnat and self.irmsd and self.lrmsd:
-            self.dockq = (
-                float(self.fnat)
-                + 1 / (1 + (self.irmsd / 1.5) * (self.irmsd / 1.5))
-                + 1 / (1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5))
-                ) / 3
-        else:
-            log.warning("DockQ cannot be calculated")
-
+        self.dockq = 0.0
+        if self.fnat:
+            self.dockq += float(self.fnat) / 3
+        if self.irmsd:
+            irmsd_denom = 1 + (self.irmsd / 1.5) * (self.irmsd / 1.5)
+            self.dockq += (1 / irmsd_denom) / 3
+        if self.lrmsd:
+            lrmsd_denom = 1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5)
+            self.dockq += (1 / lrmsd_denom) / 3
+        
     def has_cluster_info(self):
         """
         Check wether this object contains cluster information.
@@ -648,14 +649,14 @@ def rearrange_ss_capri_output(
     data = {}
     for ident in range(1, output_count + 1):
         out_file = Path(path, f"{keyword}_{ident}.tsv")
-        data[ident] = {}
-
-        # add this dummy data so we can rank it later
-        #  without messing up the order of the output
+        
+        # raise a warning if file does not exist.
         if not out_file.exists():
-            data[ident]['score'] = 99999.9
+            log.warning((f"Output file {out_file} does not exist. "
+                        "Caprieval will not be exhaustive..."))
             continue
 
+        data[ident] = {}
         header, content = out_file.read_text().split(os.linesep, 1)
 
         header_data = header.split('\t')
@@ -675,30 +676,27 @@ def rearrange_ss_capri_output(
         out_file.unlink()
 
     # Rank according to the score
-    score_rankkey_values = [(i, data[k]['score']) for i, k in enumerate(data)]
+    score_rankkey_values = [(k, data[k]['score']) for k in data.keys()]
     score_rankkey_values.sort(key=lambda x: x[1])
 
     for i, k in enumerate(score_rankkey_values):
-        idx, _ = k
-        data[idx + 1]["caprieval_rank"] = i + 1
-
-        if data[idx + 1]['score'] == 99999.9:
-            del data[idx + 1]
+        data_idx, _ = k
+        data[data_idx]["caprieval_rank"] = i + 1
 
     # Sort according to the sort key
-    rankkey_values = [(i, data[k][sort_key]) for i, k in enumerate(data)]
+    rankkey_values = [(k, data[k][sort_key]) for k in data.keys()]
     rankkey_values.sort(
         key=lambda x: x[1],
         reverse=True if not sort_ascending else False
         )
 
     _data = {}
-    for i, (k, _) in enumerate(rankkey_values):
-        _data[i + 1] = data[k + 1]
+    for i, (data_idx, _) in enumerate(rankkey_values):
+        _data[i + 1] = data[data_idx]
     data = _data
 
     if not data:
-        # This means there were only "dummy" values
+        # This means no files have been collected
         return
     else:
         write_nested_dic_to_file(data, output_name)
@@ -735,9 +733,10 @@ def capri_cluster_analysis(
         path
         ):
     """Consider the cluster results for the CAPRI evaluation."""
+    log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data
     clt_data = dict(((m.clt_rank, m.clt_id), []) for m in model_list)
-
+    
     # add models to each cluster
     for capri, model in zip(capri_list, model_list):
         clt_data[(model.clt_rank, model.clt_id)].append((capri, model))
@@ -804,10 +803,32 @@ def capri_cluster_analysis(
         data["fnat_std"] = fnat_stdev
         data["lrmsd"] = lrmsd_mean
         data["lrmsd_std"] = lrmsd_stdev
-        data["dockqn"] = dockq_mean
+        data["dockq"] = dockq_mean
         data["dockq_std"] = dockq_stdev
 
         output_dic[i] = data
+    
+    # Rank according to the score
+    score_rankkey_values = [(key, output_dic[key]['score'])
+                            for key in output_dic.keys()]
+    score_rankkey_values.sort(key=lambda x: x[1])
+    for i, k in enumerate(score_rankkey_values):
+        idx, _ = k
+        output_dic[idx]["caprieval_rank"] = i + 1
+
+    # Rank according to the sorting key
+    rankkey_values = [(key, output_dic[key][sort_key])
+                      for key in output_dic.keys()]
+    rankkey_values.sort(
+        key=lambda x: x[1],
+        reverse=True if not sort_ascending else False
+        )
+
+    _output_dic = {}
+    for i, k in enumerate(rankkey_values):
+        idx, _ = k
+        _output_dic[i + 1] = output_dic[idx]
+    output_dic = _output_dic
 
     output_fname = Path(path, output_fname)
 

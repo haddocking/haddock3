@@ -39,7 +39,6 @@ class HaddockModule(BaseCNSModule):
             self.finish_with_error(e)
 
         self.output_models = []
-        idx = 1
         sampling_factor = self.params["sampling_factor"]
         if sampling_factor > 1:
             self.log(f"sampling_factor={sampling_factor}")
@@ -48,9 +47,26 @@ class HaddockModule(BaseCNSModule):
             sampling_factor = 1
         if sampling_factor > 100:
             self.log("[Warning] sampling_factor is larger than 100")
+        
+        # checking the ambig_fname:
+        try:
+            prev_ambig_fnames = [mod.restr_fname for mod in models_to_refine]
+        except Exception as e:  # noqa:F841
+            # cannot extract restr_fname info from tuples
+            prev_ambig_fnames = [None for model in models_to_refine]
 
+        ambig_fnames = self.get_ambig_fnames(prev_ambig_fnames)
+
+        model_idx = 0
         idx = 1
         for model in models_to_refine:
+            # assign ambig_fname
+            if ambig_fnames:
+                ambig_fname = ambig_fnames[model_idx]
+            else:
+                ambig_fname = self.params["ambig_fname"]
+            model_idx += 1
+
             for _ in range(self.params['sampling_factor']):
                 inp_file = prepare_cns_input(
                     idx,
@@ -59,6 +75,7 @@ class HaddockModule(BaseCNSModule):
                     self.recipe_str,
                     self.params,
                     "emref",
+                    ambig_fname=ambig_fname,
                     native_segid=True,
                     )
                 out_file = f"emref_{idx}.out"
@@ -67,7 +84,7 @@ class HaddockModule(BaseCNSModule):
                 expected_pdb = prepare_expected_pdb(
                     model, idx, ".", "emref"
                     )
-
+                expected_pdb.restr_fname = ambig_fname
                 self.output_models.append(expected_pdb)
 
                 job = CNSJob(inp_file, out_file, envvars=self.envvars)

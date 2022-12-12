@@ -67,7 +67,8 @@ class HaddockModule(BaseHaddockModule):
             cmd = f"crysol {model.rel_path} {saxs_data} -lm {lm} -ns {ns}"
             if cst:
                 cmd += " -cst"
-            subprocess.call(cmd, shell=True)
+            subprocess.call(cmd, shell=True,
+                stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             # Read Chi^2 value
             fit_file = model.file_name.replace(".pdb", "00.fit")
@@ -77,15 +78,18 @@ class HaddockModule(BaseHaddockModule):
 
             # Calculate HADDOCKsaxs score
             if math.isnan(model.score):
-                self.log("No HADDOCK score from previous module")
-                self.log("Using Chi^2 value as score")
+                self.log(f"Using Chi^2 value as score for {model.file_name}")
                 haddock_score = model.chi2
             else:
-                self.log("Calculating HADDOCKsaxs score")
+                #self.log(f"Calculating HADDOCKsaxs score for {model.file_name}")
                 chi = math.sqrt(model.chi2)
                 haddock_score = (model.score * w_haddock) + (chi * w_saxs)
 
             model.score = haddock_score
+
+            fit_log = model.file_name.replace(".pdb", "00.log")
+            cmd = f"rm {fit_file} {fit_log}"
+            subprocess.call(cmd, shell=True)
 
         self.output_models = models_to_score
 

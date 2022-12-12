@@ -68,7 +68,7 @@ class HaddockModule(BaseHaddockModule):
             if cst:
                 cmd += " -cst"
             subprocess.call(cmd, shell=True,
-                stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                            stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             # Read Chi^2 value
             fit_file = model.file_name.replace(".pdb", "00.fit")
@@ -81,7 +81,6 @@ class HaddockModule(BaseHaddockModule):
                 self.log(f"Using Chi^2 value as score for {model.file_name}")
                 haddock_score = model.chi2
             else:
-                #self.log(f"Calculating HADDOCKsaxs score for {model.file_name}")
                 chi = math.sqrt(model.chi2)
                 haddock_score = (model.score * w_haddock) + (chi * w_saxs)
 

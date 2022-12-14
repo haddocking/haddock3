@@ -359,7 +359,7 @@ def get_engine(mode, params):
         return partial(
             Scheduler,
             ncores=params['ncores'],
-            max_ncores=params['max_cpus'],
+            max_cpus=params['max_cpus'],
             )
     elif mode == "mpi":
         return partial(MPIScheduler, ncores=params["ncores"])

@@ -3,14 +3,16 @@
 Clean the output of an HADDOCK3 run directory.
 
 The clean process performs file archiving and file compressing
-operations. File with extension `seed`, `inp`, `out`, and `con` are
-compressed and archived into `.tgz` files. While files with `.pdb` and
-`.psf` extension are compressed to `.gz` files. The original files are
-deleted.
+operations.
+
+All `.inp` and `.out` files are deleted except for the first one, which
+is compressed to `.gz`. On the other hand, all `.seed` and `.con` files
+are compressed and archived to `.tgz` files. Finally, `.pdb` and `.psf`
+files are compressed to `.gz`.
 
 The <run_directory> can either be a whole HADDOCK3 run folder or a
-specific folder of the workflow step. <ncores> defined the number of
-threads to use.
+specific folder of the workflow step. <ncores> defines the number of
+threads to use; by default uses a single core.
 
 Usage::
 

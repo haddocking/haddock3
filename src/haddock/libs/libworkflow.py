@@ -26,7 +26,7 @@ class WorkflowManager:
         # terminate is used to synchronize the `clean` option with the
         # `exit` module. If the `exit` module is removed in the future,
         # you can also remove and clean the `terminate` part here.
-        self._terminated = 0
+        self._terminated = None
 
     def run(self):
         """High level workflow composer."""

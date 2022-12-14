@@ -1,4 +1,4 @@
-Clean output Client
+Clean HADDOCK3 runs
 ===================
 
 .. argparse::

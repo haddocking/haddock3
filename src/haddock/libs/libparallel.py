@@ -32,7 +32,7 @@ class Worker(Process):
 class Scheduler:
     """Schedules tasks to run in multiprocessing."""
 
-    def __init__(self, tasks, ncores=None):
+    def __init__(self, tasks, ncores=None, max_cpus=False):
         """
         Schedule tasks to a defined number of processes.
 
@@ -47,11 +47,9 @@ class Scheduler:
             maximum number of CPUs allowed by
             `libs.libututil.parse_ncores` function.
         """
+        self.max_cpus = max_cpus
         self.num_tasks = len(tasks)
         self.num_processes = ncores  # first parses num_cores
-
-        # Do not waste resources
-        self.num_processes = min(self.num_processes, self.num_tasks)
 
         # Sort the tasks by input_file name and its length,
         #  so we know that 2 comes before 10
@@ -82,7 +80,11 @@ class Scheduler:
 
     @num_processes.setter
     def num_processes(self, n):
-        self._ncores = parse_ncores(n)
+        self._ncores = parse_ncores(
+            n,
+            njobs=self.num_tasks,
+            max_cpus=self.max_cpus,
+            )
         log.debug(f"Scheduler configured for {self._ncores} cpu cores.")
 
     def run(self):

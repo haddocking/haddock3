@@ -331,7 +331,12 @@
 <span class="sd">    int</span>
 <span class="sd">        A correct number of cores according to specifications.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">max_cpus</span> <span class="o">=</span> <span class="n">max_cpus</span> <span class="ow">or</span> <span class="nb">max</span><span class="p">(</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_cpus</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">max_cpus</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">max_cpus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">max_cpus</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">max_cpus</span> <span class="o">=</span> <span class="n">cpu_count</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">max_cpus</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;`max_cpus` not of valid type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">max_cpus</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">max_cpus</span>
@@ -575,7 +580,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 04, 2022.
+        Last updated on Dec 20, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

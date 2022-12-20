@@ -551,6 +551,7 @@
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span>
             <span class="n">Scheduler</span><span class="p">,</span>
             <span class="n">ncores</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ncores&#39;</span><span class="p">],</span>
+            <span class="n">max_cpus</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_cpus&#39;</span><span class="p">],</span>
             <span class="p">)</span>
     <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;mpi&quot;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">MPIScheduler</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">])</span>
@@ -662,7 +663,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 04, 2022.
+        Last updated on Dec 20, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

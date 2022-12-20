@@ -88,7 +88,7 @@ def test_yaml2cfg_test_no_header():
     result = yaml2cfg_text(ycfg, None, "all")
     assert isinstance(result, str)
 
-    p = Path('dummy_test.cfg')
+    p = Path('dummy_test_2.cfg')
     p.write_text(result)
 
     assert filecmp.cmp(

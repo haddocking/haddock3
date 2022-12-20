@@ -1,5 +1,5 @@
-Unpack output
-=============
+Unpack HADDOCK3 run
+===================
 
 .. argparse::
    :module: haddock.clis.cli_unpack

@@ -121,6 +121,7 @@ def main(run_dir, modules, output):
     """
     from pathlib import Path
 
+    from haddock.gear.clean_steps import unpack_compressed_and_archived_files
     from haddock.gear.extend_run import (
         copy_renum_step_folders,
         update_contents_of_new_steps,
@@ -145,7 +146,7 @@ def main(run_dir, modules, output):
 
     # copy folders over
     zero_fill.set_zerofill_number(len(selected_steps))
-    copy_renum_step_folders(run_dir, outdir, selected_steps)
+    new_step_folder = copy_renum_step_folders(run_dir, outdir, selected_steps)
 
     # copy data folders
     # `data_steps` are selected to avoid FileNotFoundError because some steps
@@ -160,6 +161,11 @@ def main(run_dir, modules, output):
 
     # update step names in files
     # update run dir names in files
+    unpack_compressed_and_archived_files(
+        new_step_folder,
+        ncores=1,
+        dec_all=True,
+        )
     update_contents_of_new_steps(selected_steps, run_dir, outdir)
 
     return

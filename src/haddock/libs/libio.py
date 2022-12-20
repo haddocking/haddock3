@@ -3,6 +3,7 @@ import contextlib
 import glob
 import gzip
 import os
+import stat
 import tarfile
 from functools import partial
 from multiprocessing import Pool
@@ -501,3 +502,28 @@ def file_exists(
 
     # don't change to f-strings, .format has a purpose
     raise exception(emsg.format(str(path)))
+
+
+def get_perm(fname):
+    """Get permissions of file."""
+    # https://stackoverflow.com/questions/6874970
+    return stat.S_IMODE(os.lstat(fname)[stat.ST_MODE])
+
+
+def make_writeable_recursive(path):
+    """
+    Add writing to a folder, its subfolders and files.
+
+    Parameters
+    ----------
+    path : str or Path
+        The path to add writing permissions.
+    """
+    # https://stackoverflow.com/questions/6874970
+    for root, dirs, files in os.walk(path, topdown=False):
+
+        for dir_ in [os.path.join(root, d) for d in dirs]:
+            os.chmod(dir_, get_perm(dir_) | os.ST_WRITE)
+
+        for file_ in [os.path.join(root, f) for f in files]:
+            os.chmod(file_, get_perm(file_) | os.ST_WRITE)

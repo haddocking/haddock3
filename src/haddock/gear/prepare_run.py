@@ -50,6 +50,7 @@ from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
+from haddock.libs.libio import make_writeable_recursive
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
@@ -306,6 +307,9 @@ def setup_run(
     else:
         # copies everything
         copy_input_files_to_data_dir(data_dir, modules_params)
+
+    # grant write permissions to data/ dir
+    make_writeable_recursive(data_dir)
 
     # return the modules' parameters and general parameters separately
     return modules_params, general_params

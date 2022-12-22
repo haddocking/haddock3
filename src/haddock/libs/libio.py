@@ -523,7 +523,7 @@ def make_writeable_recursive(path):
     for root, dirs, files in os.walk(path, topdown=False):
 
         for dir_ in [os.path.join(root, d) for d in dirs]:
-            os.chmod(dir_, get_perm(dir_) | os.ST_WRITE)
+            os.chmod(dir_, get_perm(dir_) | stat.S_IWUSR)
 
         for file_ in [os.path.join(root, f) for f in files]:
-            os.chmod(file_, get_perm(file_) | os.ST_WRITE)
+            os.chmod(file_, get_perm(file_) | stat.S_IWUSR)

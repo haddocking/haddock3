@@ -242,6 +242,7 @@
 <span class="kn">from</span> <span class="nn">haddock.gear.yaml2cfg</span> <span class="kn">import</span> <span class="n">read_from_yaml_config</span>
 <span class="kn">from</span> <span class="nn">haddock.gear.zerofill</span> <span class="kn">import</span> <span class="n">zero_fill</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libfunc</span> <span class="kn">import</span> <span class="n">not_none</span>
+<span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">make_writeable_recursive</span>
 <span class="kn">from</span> <span class="nn">haddock.libs.libutil</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">extract_keys_recursive</span><span class="p">,</span>
     <span class="n">recursive_dict_update</span><span class="p">,</span>
@@ -498,6 +499,9 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># copies everything</span>
         <span class="n">copy_input_files_to_data_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">modules_params</span><span class="p">)</span>
+
+    <span class="c1"># grant write permissions to data/ dir</span>
+    <span class="n">make_writeable_recursive</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
 
     <span class="c1"># return the modules&#39; parameters and general parameters separately</span>
     <span class="k">return</span> <span class="n">modules_params</span><span class="p">,</span> <span class="n">general_params</span></div>
@@ -1161,7 +1165,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 20, 2022.
+        Last updated on Dec 22, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

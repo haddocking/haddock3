@@ -344,6 +344,12 @@ true.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libio.get_perm">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">get_perm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#get_perm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.get_perm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get permissions of file.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.glob_folder">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">glob_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#glob_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.glob_folder" title="Permalink to this definition">¶</a></dt>
 <dd><p>List files with extention <cite>ext</cite> in <cite>folder</cite>.</p>
@@ -374,6 +380,17 @@ preffix.</p></li>
 (2*10**8).</p></li>
 <li><p><strong>compresslevel</strong> (<em>int</em>) – The compress level. Defaults to 9.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libio.make_writeable_recursive">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">make_writeable_recursive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#make_writeable_recursive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.make_writeable_recursive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add writing to a folder, its subfolders and files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str or Path</em>) – The path to add writing permissions.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -521,7 +538,7 @@ Must be synched with <cite>files</cite>.</p></li>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 20, 2022.
+        Last updated on Dec 22, 2022.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

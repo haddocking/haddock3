@@ -139,7 +139,12 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
     int
         A correct number of cores according to specifications.
     """
-    max_cpus = max_cpus or max(cpu_count() - 1, 1)
+    if max_cpus is None or max_cpus is False:
+        max_cpus = max(cpu_count() - 1, 1)
+    if max_cpus is True:
+        max_cpus = cpu_count()
+    elif not isinstance(max_cpus, int):
+        raise TypeError(f'`max_cpus` not of valid type: {type(max_cpus)}')
 
     if n is None:
         return max_cpus

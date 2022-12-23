@@ -1,4 +1,5 @@
 """Test libutil."""
+from os import cpu_count
 from pathlib import Path
 
 import pytest
@@ -8,6 +9,7 @@ from haddock.libs.libutil import (
     extract_keys_recursive,
     get_number_from_path_stem,
     non_negative_int,
+    parse_ncores,
     recursive_convert_paths_to_strings,
     recursive_dict_update,
     sort_numbered_paths,
@@ -171,3 +173,39 @@ def test_convert_paths_to_strings_recursive():
 
     r = recursive_convert_paths_to_strings(i)
     assert r == e
+
+
+@pytest.mark.parametrize(
+    'n,njobs,maxcpus,expected',
+    [
+        (10, 10, 10, 10),
+        (10, 10, 5, 5),
+        (1000, 1000, None, cpu_count() - 1),
+        (1000, 1000, False, cpu_count() - 1),
+        (1000, 1000, True, cpu_count()),
+        (1000, 10, True, cpu_count()),
+        (1000, 10, False, cpu_count() - 1),
+        (5, 10, False, min(5, cpu_count() - 1)),
+        (None, None, None, cpu_count() - 1),
+        ]
+    )
+def test_parse_ncores(n, njobs, maxcpus, expected):
+    """Test parse_ncores function."""
+    r = parse_ncores(n, njobs, maxcpus)
+    assert r == expected
+
+
+@pytest.mark.parametrize(
+    'maxcpus',
+    [
+        1.1,
+        {},
+        (1, 2),
+        set([1, 3]),
+        '1',
+        ]
+    )
+def test_parse_ncores_error(maxcpus):
+    """Test parse_ncores function."""
+    with pytest.raises(TypeError):
+        parse_ncores(max_cpus=maxcpus)

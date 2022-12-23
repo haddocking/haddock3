@@ -3,6 +3,7 @@ import contextlib
 import glob
 import gzip
 import os
+import stat
 import tarfile
 from functools import partial
 from multiprocessing import Pool
@@ -13,6 +14,46 @@ import yaml
 from haddock import log
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
+
+
+def clean_suffix(ext):
+    """
+    Remove the preffix dot of an extension if exists.
+
+    Parameters
+    ----------
+    ext : str
+        The extension string.
+
+    Examples
+    --------
+    >>> clean_suffix('.pdb')
+    'pdb'
+
+    >>> clean_suffix('pdb')
+    'pdb'
+    """
+    return ext.lstrip(r'.')
+
+
+def dot_suffix(ext):
+    """
+    Add the dot preffix to an extension if missing.
+
+    Parameters
+    ----------
+    ext : str
+        The extension string.
+
+    Examples
+    --------
+    >>> clean_suffix('.pdb')
+    '.pdb'
+
+    >>> clean_suffix('pdb')
+    '.pdb'
+    """
+    return '.' + clean_suffix(ext)
 
 
 def read_lines(func):
@@ -259,7 +300,7 @@ def compress_files_ext(path, ext, ncores=1, **kwargs):
     return False
 
 
-def gzip_files(file_, block_size=None, compresslevel=9):
+def gzip_files(file_, block_size=None, compresslevel=9, remove_original=False):
     """
     Gzip a file.
 
@@ -288,6 +329,9 @@ def gzip_files(file_, block_size=None, compresslevel=9):
             gout.write(content)
             content = fin.read(block_size)
 
+    if remove_original:
+        Path(file_).unlink()
+
 
 def archive_files_ext(path, ext, compresslevel=9):
     """
@@ -311,7 +355,10 @@ def archive_files_ext(path, ext, compresslevel=9):
         ``False`` if no files with ``ext`` were found and, hence, the
         Zip files was not created.
     """
-    files = glob_folder(path, ext)
+    files = glob_folder(path, clean_suffix(ext))
+
+    ext = clean_suffix(ext)
+
     if files:
         with tarfile.open(
                 Path(path, f'{ext}.tgz'),
@@ -346,34 +393,9 @@ def glob_folder(folder, ext):
     list of Path objects
         SORTED list of matching results.
     """
-    ext = f'*{parse_suffix(ext)}'
+    ext = f'*{dot_suffix(ext)}'
     files = glob.glob(str(Path(folder, ext)))
     return sort_numbered_paths(*list(map(Path, files)))
-
-
-def parse_suffix(ext):
-    """
-    Represent a suffix of a file.
-
-    Examples
-    --------
-    >>> parse_suffix('.pdf')
-    '.pdf'
-
-    >>> parse_suffix('pdf')
-    '.pdf'
-
-    Parameters
-    ----------
-    ext : str
-        String to extract the suffix from.
-
-    Returns
-    -------
-    str
-        File extension with leading period.
-    """
-    return f'.{ext[ext.find(".") + 1:]}'
 
 
 def remove_files_with_ext(folder, ext):
@@ -506,3 +528,29 @@ def pdb_path_exists(pdb_path):
             _msg += f" A compressed file ({gz_pdb_path}) exists though."
         raise Exception(_msg)
     return
+
+
+def get_perm(fname):
+    """Get permissions of file."""
+    # https://stackoverflow.com/questions/6874970
+    return stat.S_IMODE(os.lstat(fname)[stat.ST_MODE])
+
+
+def make_writeable_recursive(path):
+    """
+    Add writing to a folder, its subfolders and files.
+
+    Parameters
+    ----------
+    path : str or Path
+        The path to add writing permissions.
+    """
+    # https://stackoverflow.com/questions/6874970
+    for root, dirs, files in os.walk(path, topdown=False):
+
+        for dir_ in [os.path.join(root, d) for d in dirs]:
+            os.chmod(dir_, get_perm(dir_) | stat.S_IWUSR)
+
+        for file_ in [os.path.join(root, f) for f in files]:
+            os.chmod(file_, get_perm(file_) | stat.S_IWUSR)
+

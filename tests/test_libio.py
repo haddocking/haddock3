@@ -5,9 +5,10 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libio import (
+    clean_suffix,
+    dot_suffix,
     file_exists,
     folder_exists,
-    parse_suffix,
     read_from_yaml,
     write_dic_to_file,
     write_nested_dic_to_file,
@@ -60,10 +61,26 @@ def test_write_dic_to_file():
     [
         (".ext", ".ext"),
         ("ext", ".ext"),
+        (".out.gz", ".out.gz"),
+        ("out.gz", ".out.gz"),
         ]
     )
-def test_parse_suffix(in_, expected):
-    result = parse_suffix(in_)
+def test_dot_suffix(in_, expected):
+    result = dot_suffix(in_)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "in_,expected",
+    [
+        (".ext", "ext"),
+        ("ext", "ext"),
+        (".out.gz", "out.gz"),
+        ("out.gz", "out.gz"),
+        ]
+    )
+def test_clean_suffix(in_, expected):
+    result = clean_suffix(in_)
     assert result == expected
 
 

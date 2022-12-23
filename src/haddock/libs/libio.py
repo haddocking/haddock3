@@ -553,4 +553,3 @@ def make_writeable_recursive(path):
 
         for file_ in [os.path.join(root, f) for f in files]:
             os.chmod(file_, get_perm(file_) | stat.S_IWUSR)
-

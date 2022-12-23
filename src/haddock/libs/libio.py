@@ -526,6 +526,7 @@ def pdb_path_exists(pdb_path):
         gz_pdb_path = pdb_path.with_suffix(pdb_path.suffix + '.gz')
         if gz_pdb_path.exists():
             _msg += f" A compressed file ({gz_pdb_path}) exists though."
+            _msg += "Use haddock3-unpack to unpack the run."
         raise Exception(_msg)
     return
 

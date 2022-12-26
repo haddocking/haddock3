@@ -7,7 +7,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import h5py
-from Bio import pairwise2
+from Bio import pairwise2, SeqIO
+from Bio.Blast import NCBIWWW,NCBIXML
 import deeprank
 from deeprank.generate import *
 from deeprank.learn import NeuralNet
@@ -26,21 +27,42 @@ class CNN_score():
         self.chain2 = chain2
         self.output_dir = output_dir
         self.pssm_path = os.path.join(pdb_source, 'pssm')
-        
+              
         for chainID in [self.chain1, self.chain2]:
-            self.write_pssm(chainID)
-        for chainID in [self.chain1, self.chain2]:
+            pdb_code, chain_id = self.get_pdb_code(chainID)
+            self.write_pssm(chain_id, pdb_code, chainID)
             fpssm = [file for file in os.listdir(self.pssm_path) if f'{chainID}.'in file][0]
             pdbs = [file for file in os.listdir(self.pdb_source) if '.pdb' in file]
             for fpdb in pdbs:
                 self.write_mapped_pssm_pdb(fpssm, fpdb, chainID, self.pssm_path)
+
     
-    def write_pssm(self, chainID):
+    def get_pdb_code(self, chainID):
+        '''
+        get pdb_id from seq with blast
+        '''
+        fpdb = [f for f in os.listdir(self.pdb_source) if 'haddock.pdb' in f][0]
+        seq, _ = self.seq_from_pdb(fpdb, chainID)
+        result_handle = NCBIWWW.qblast("blastp", "nr", ''.join(seq))
+        if not os.path.isdir(self.output_dir):
+            os.mkdir(self.output_dir)
+        blast_p = os.path.join(self.output_dir, f'{chainID}_blast.xml')
+        save_file = open(blast_p, "w")
+        save_file.write(result_handle.read())
+        save_file.close()
+        result_handle = open(blast_p)
+        blast_record = NCBIXML.read(result_handle)
+        pdb_info = next((x for x in blast_record.alignments if len(x.accession)==6), None)
+        pdb_info = pdb_info.accession
+        pdb_code, chain_id = pdb_info.split('_')[0], pdb_info.split('_')[1]
+        return pdb_code, chain_id
+
+    def write_pssm(self, chain_id, pdb_code, chainID):
         '''
         query pssm database
         '''
-        pdb_code = [f for f in os.listdir(self.pdb_source) if '.pdb' in f][0].split('_')[0]
-        url = f'https://3dcons.cnb.csic.es/pssm_json/{pdb_code}/{chainID}'
+        #pdb_code = [f for f in os.listdir(self.pdb_source) if '.pdb' in f][0].split('_')[0]
+        url = f'https://3dcons.cnb.csic.es/pssm_json/{pdb_code}/{chain_id}'
         pssm_dict = requests.get(url, verify=False).json()
         if pssm_dict is not None:
             header = 'pdbresi pdbresn seqresi seqresn A R N D C Q E G H I L K M F P S T W Y V\n'
@@ -54,11 +76,11 @@ class CNN_score():
                 header += line
             if not os.path.isdir(self.pssm_path):
                 os.mkdir(self.pssm_path)
-            with open(os.path.join(self.pssm_path, f'{pdb_code}_{chainID}.pssm'), 'w') as f:
+            with open(os.path.join(self.pssm_path, f'{pdb_code}_{chain_id}_{chainID}.pssm'), 'w') as f:
                 f.write(header)
         else:
             raise ValueError(
-            "Please enter a valid pdb code and chainID")
+            "Please enter a valid pdb code and chain_id")
 
     def get_pssm(self, fpssm):
         '''
@@ -239,9 +261,7 @@ class CNN_score():
         create deeprank database
         '''
         comm = MPI.COMM_WORLD
-        if not os.path.isdir(self.output_dir):
-            os.mkdir(self.output_dir)
-        self.hdf_dir = os.path.join(self.output_dir, 'output.hdf5')
+        self.hdf_dir = os.path.join(self.output_dir, 'database.hdf5')
         database = DataGenerator(pdb_source= self.pdb_source, #path to the models  
                          pssm_source=self.pssm_path, #path to the pssm data
                          data_augmentation = None,
@@ -291,10 +311,11 @@ class CNN_score():
         result.index=['rank', 'pdb_name', 'predict_class', 'probility']
         result.to_csv(os.path.join(self.output_dir, 'deeprank.out'), encoding='utf-8', index=False)
 
+
 #test the class
 '''
 pdb_source = '/trinity/login/xxu/data/test_CNN/1E6E_4'
-outdir = '/trinity/login/xxu/data/test_CNN/1E6E_4/out'
+outdir = '/trinity/login/xxu/data/test_CNN/1E6E_4/output'
 CNN = CNN_score(pdb_source=pdb_source, chain1='A', chain2='B', output_dir=outdir)
 #CNN.write_pssm()
 #CNN.generate_pssm()
@@ -302,3 +323,5 @@ CNN.create_database()
 CNN.test_CNN()
 print(CNN.analysis_result())
 '''
+
+

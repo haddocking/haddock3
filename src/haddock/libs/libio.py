@@ -516,19 +516,23 @@ def pdb_path_exists(pdb_path):
     pdb_path : pathlib.Path
         path to the pdb
     
-    Raises
+    Returns
     ------
-    Exception
-        A PDB file not found exception
+    exists : bool
+        True if file exists
+    
+    msg : str or None
+        the error message
     """
+    exists, msg = True, None
     if not pdb_path.exists():
-        _msg = f"PDB file {pdb_path} not found."
+        msg = f"PDB file {pdb_path} not found."
         gz_pdb_path = pdb_path.with_suffix(pdb_path.suffix + '.gz')
         if gz_pdb_path.exists():
-            _msg += f" A compressed file ({gz_pdb_path}) exists though."
-            _msg += "Use haddock3-unpack to unpack the run."
-        raise Exception(_msg)
-    return
+            msg += f" A compressed file ({gz_pdb_path}) exists though."
+            msg += "Use haddock3-unpack to unpack the run."
+        exists = False
+    return exists, msg
 
 
 def get_perm(fname):

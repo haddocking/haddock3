@@ -261,7 +261,9 @@ def get_atoms(pdb):
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path
     
-    pdb_path_exists(pdb)
+    exists, msg = pdb_path_exists(pdb)
+    if not exists:
+        raise Exception(msg)
 
     with open(pdb) as fh:
         for line in fh.readlines():

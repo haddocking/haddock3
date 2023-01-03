@@ -1,4 +1,4 @@
-name: haddock3_full
+name: haddock3
 channels:
   - conda-forge
   - defaults

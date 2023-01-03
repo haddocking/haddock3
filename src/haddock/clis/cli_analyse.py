@@ -31,7 +31,7 @@ from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libcli import _ParamsToDict
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import box_plots, read_capri_table, scatter_plots
-from haddock.modules import get_module_steps_folders, modules_names
+from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \
     DEFAULT_CONFIG as caprieval_params
 from haddock.modules.analysis.caprieval import HaddockModule

@@ -520,7 +520,6 @@ def pdb_path_exists(pdb_path):
     ------
     exists : bool
         True if file exists
-    
     msg : str or None
         the error message
     """

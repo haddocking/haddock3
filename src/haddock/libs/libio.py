@@ -517,7 +517,7 @@ def pdb_path_exists(pdb_path):
         path to the pdb
     
     Returns
-    ------
+    -------
     exists : bool
         True if file exists
     msg : str or None

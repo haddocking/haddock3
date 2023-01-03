@@ -126,7 +126,7 @@ def get_cluster_ranking(capri_clt_filename, top_cluster):
     capri_clt_filename : str or Path
         capri cluster filename
     top_cluster : int
-        number of clusters to consider
+        Number of clusters to be considered
 
     Returns
     -------
@@ -409,7 +409,7 @@ def maincli():
     cli(ap, main)
 
 
-def run_capri_analysis(step, run_dir, capri_dict, target_path):
+def run_capri_analysis(step, run_dir, capri_dict):
     """
     Run the caprieval analysis.
 
@@ -421,20 +421,7 @@ def run_capri_analysis(step, run_dir, capri_dict, target_path):
         path to run directory
     capri_dict : dict
         capri dictionary of parameters
-    target_path : Path
-        path to the output folder
     """
-    new_capri_dict = capri_dict.copy()
-    for key in new_capri_dict:
-        if key.endswith("fname") and new_capri_dict[key] not in ['', None]:
-            try:
-                ref_path = Path(target_path, "reference.pdb")
-                shutil.copy(new_capri_dict[key], ref_path)
-                new_capri_dict[key] = Path("reference.pdb")
-            except FileNotFoundError:
-                sys.exit(f'file not found {new_capri_dict[key]}')
-
-    os.chdir(target_path)
     # retrieve json file with all information
     io = ModuleIO()
     filename = Path("..", f"{step}/io.json")
@@ -445,7 +432,7 @@ def run_capri_analysis(step, run_dir, capri_dict, target_path):
         path=Path(run_dir),
         initial_params=caprieval_params,
         )
-    caprieval_module.update_params(**new_capri_dict)
+    caprieval_module.update_params(**capri_dict)
     # update model info
     caprieval_module.previous_io = io
     # run capri module
@@ -483,6 +470,22 @@ def get_steps(run_dir, modules):
             selected_steps.append(st)
     return selected_steps
 
+def update_capri_dict(capri_dict, target_path):
+    """
+    make capri_dict specific to each step
+    
+    """
+    new_capri_dict = capri_dict.copy()
+    for key in new_capri_dict:
+        if key.endswith("fname") and new_capri_dict[key] not in ['', None]:
+            try:
+                ref_path = Path(target_path, "reference.pdb")
+                shutil.copy(new_capri_dict[key], ref_path)
+                new_capri_dict[key] = Path("reference.pdb")
+            except FileNotFoundError:
+                sys.exit(f'file not found {new_capri_dict[key]}')
+    return new_capri_dict
+
 
 def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
     """
@@ -501,19 +504,26 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
         capri dictionary of parameters
     target_path : Path
         path to the output folder
+    top_cluster : int
+        Number of clusters to be considered
     """
     log.info(f"Analysing step {step}")
     
     target_path.mkdir(parents=True, exist_ok=False)
-    if step.split("_")[1] != "caprieval":
-        run_capri_analysis(step, run_dir, capri_dict, target_path)
+    step_name = step.split("_")[1]
+    if step_name != "caprieval":
+        capri_dict = update_capri_dict(capri_dict, target_path)
     else:
         log.info(f"step {step} is caprieval, files should be already available")
         ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
         clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(ss_fname, target_path)
         shutil.copy(clt_fname, target_path)
-        os.chdir(target_path)
+        
+    os.chdir(target_path)
+    # if the step is not caprieval, caprieval must be run
+    if step_name != "caprieval":
+        run_capri_analysis(step, run_dir, capri_dict)
     
     log.info("CAPRI files identified")
     # plotting

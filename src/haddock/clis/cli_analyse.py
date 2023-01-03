@@ -470,10 +470,22 @@ def get_steps(run_dir, modules):
             selected_steps.append(st)
     return selected_steps
 
+
 def update_capri_dict(capri_dict, target_path):
     """
-    make capri_dict specific to each step
+    Make capri_dict specific to target_path.
+
+    Parameters
+    ----------
+    capri_dict : dict
+        capri dictionary of parameters
+    target_path : Path
+        path to the output folder
     
+    Returns
+    -------
+    new_capri_dict : dict
+        target_path-specifi capri dictionary of parameters
     """
     new_capri_dict = capri_dict.copy()
     for key in new_capri_dict:

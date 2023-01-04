@@ -218,8 +218,11 @@ def test_get_module_steps_folders():
     Path(rd, '2_nothing').mkdir()
     Path(rd, 'data').mkdir()
     result = get_module_steps_folders(rd)
-    shutil.rmtree(rd)
     assert result == ['0_topoaa', '1_rigidbody', '150_flexref']
+    # what if we provide a list of modules (for ex. in postprocessing)
+    result_analysis = get_module_steps_folders(rd, [1, 150])
+    assert result_analysis == ['1_rigidbody', '150_flexref']
+    shutil.rmtree(rd)
 
 
 @pytest.mark.parametrize(

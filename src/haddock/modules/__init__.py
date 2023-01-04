@@ -372,7 +372,7 @@ def get_engine(mode, params):
             )
 
 
-def get_module_steps_folders(folder):
+def get_module_steps_folders(folder, modules=None):
     """
     Return a sorted list of the step folders in a running directory.
 
@@ -406,6 +406,9 @@ def get_module_steps_folders(folder):
         (f for f in folders if step_folder_regex_re.search(f)),
         key=lambda x: int(x.split("_")[0]),
         )
+    if modules:
+        steps = [st for st in steps if int(st.split("_")[0]) in modules
+                 and st.split("_")[1] in modules_names]
     return steps
 
 

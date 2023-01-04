@@ -159,7 +159,7 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
         _msg = f"`n` is not positive, this is not possible: {n!r}"
         raise SetupError(_msg)
 
-    if njobs:
+    if njobs is not None:
         ncores = min(n, njobs, max_cpus)
         log.info(
             f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "

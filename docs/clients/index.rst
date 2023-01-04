@@ -21,3 +21,4 @@ The available CLIs are the following:
    climpi
    clibm
    clidmn
+   clianalyse

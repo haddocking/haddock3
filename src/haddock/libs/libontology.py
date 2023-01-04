@@ -65,9 +65,10 @@ class PDBFile(Persistent):
                  path='.',
                  score=NaN,
                  md5=None,
-                 restr_fname=None):
-
+                 restr_fname=None,
+                 unw_energies=None):
         super().__init__(file_name, Format.PDB, path, md5, restr_fname)
+        
         self.topology = topology
         self.score = score
         self.ori_name = None
@@ -75,6 +76,7 @@ class PDBFile(Persistent):
         self.clt_rank = None
         self.clt_model_rank = None
         self.len = score
+        self.unw_energies = unw_energies
 
     def __lt__(self, other):
         return self.score < other.score

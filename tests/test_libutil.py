@@ -183,8 +183,8 @@ def test_convert_paths_to_strings_recursive():
         (1000, 1000, None, cpu_count() - 1),
         (1000, 1000, False, cpu_count() - 1),
         (1000, 1000, True, cpu_count()),
-        (1000, 10, True, cpu_count()),
-        (1000, 10, False, cpu_count() - 1),
+        (1000, 1, True, 1),
+        (1000, 1, False, 1),
         (5, 10, False, min(5, cpu_count() - 1)),
         (None, None, None, cpu_count() - 1),
         ]

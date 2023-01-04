@@ -81,7 +81,7 @@ class CAPRI:
         """
         # Identify reference interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
-
+        print(f"ref_interface_resdic {ref_interface_resdic}")
         if len(ref_interface_resdic) == 0:
             log.warning("No reference interface found")
         else:
@@ -133,7 +133,6 @@ class CAPRI:
             self.atoms,
             numbering_dic=self.model2ref_numbering
             )
-        print(f"len ref_coord_dic.keys() {len(ref_coord_dic.keys())}")
 
         Q = []
         P = []
@@ -147,8 +146,8 @@ class CAPRI:
             if chain not in chain_ranges:
                 chain_ranges[chain] = []
             chain_ranges[chain].append(i)
+        
         chain_ranges = make_range(chain_ranges)
-        print(f"chain ranges {chain_ranges}")
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating lrmsd")
@@ -167,42 +166,32 @@ class CAPRI:
             Q = np.asarray(Q)
             P = np.asarray(P)
 
-            # write_coord_dic("ref.pdb", ref_coord_dic)
-            # write_coord_dic("model.pdb", mod_coord_dic)
+            # write_coords("ref_first.pdb", Q)
+            # write_coords("model_first.pdb", P)
 
-            write_coords("ref_first.pdb", Q)
-            write_coords("model_first.pdb", P)
             # get receptor and ligand coordinates
             Q_r_first = Q[r_start: r_end + 1]
             P_r_first = P[r_start: r_end + 1]
-            write_coords("ref_r_first.pdb", Q_r_first)
-            write_coords("model_r_first.pdb", P_r_first)
-            Q_l_first = Q[l_start: l_end + 1]
-            P_l_first = P[l_start: l_end + 1]
-            write_coords("ref_l_first.pdb", Q_l_first)
-            write_coords("model_l_first.pdb", P_l_first)
+            # write_coords("ref_r_first.pdb", Q_r_first)
+            # write_coords("model_r_first.pdb", P_r_first)
+            # Q_l_first = Q[l_start: l_end + 1]
+            # P_l_first = P[l_start: l_end + 1]
+            # write_coords("ref_l_first.pdb", Q_l_first)
+            # write_coords("model_l_first.pdb", P_l_first)
 
             # move to the origin of the receptor
-            print(f"centr P vs centroid Q {centroid(P)} vs {centroid(Q)}")
+            
             Q = Q - centroid(Q_r_first)
             P = P - centroid(P_r_first)
-            
 
             # get receptor coordinates
             Q_r = Q[r_start: r_end + 1]
             P_r = P[r_start: r_end + 1]
-            write_coords("ref_r_centr.pdb", Q_r)
-            write_coords("model_r_centr.pdb", P_r)
             # Center receptors and get rotation matrix
             # Q_r = Q_r - centroid(Q_r)
             # P_r = P_r - centroid(P_r)
 
             U_r = kabsch(P_r, Q_r)
-            print(f"U_r {U_r}")
-
-            # Center complexes at receptor centroids
-            #Q = Q - centroid(Q_r)
-            #P = P - centroid(P_r)
 
             # Apply rotation to complex
             #  - complex are now aligned by the receptor
@@ -455,7 +444,7 @@ class CAPRI:
         if self.params["irmsd"]:
             log.debug(f"id {self.identificator}, calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
-            log.debug(f" cutoff: {irmsd_cutoff}A")
+            log.info(f" cutoff: {irmsd_cutoff}A")
             self.calc_irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:

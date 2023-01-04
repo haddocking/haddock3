@@ -133,6 +133,7 @@ class CAPRI:
             self.atoms,
             numbering_dic=self.model2ref_numbering
             )
+        print(f"len ref_coord_dic.keys() {len(ref_coord_dic.keys())}")
 
         Q = []
         P = []
@@ -146,9 +147,8 @@ class CAPRI:
             if chain not in chain_ranges:
                 chain_ranges[chain] = []
             chain_ranges[chain].append(i)
-
         chain_ranges = make_range(chain_ranges)
-        
+        print(f"chain ranges {chain_ranges}")
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating lrmsd")
@@ -170,40 +170,53 @@ class CAPRI:
             # write_coord_dic("ref.pdb", ref_coord_dic)
             # write_coord_dic("model.pdb", mod_coord_dic)
 
-            # write_coords("ref.pdb", Q)
-            # write_coords("model.pdb", P)
+            write_coords("ref_first.pdb", Q)
+            write_coords("model_first.pdb", P)
+            # get receptor and ligand coordinates
+            Q_r_first = Q[r_start: r_end + 1]
+            P_r_first = P[r_start: r_end + 1]
+            write_coords("ref_r_first.pdb", Q_r_first)
+            write_coords("model_r_first.pdb", P_r_first)
+            Q_l_first = Q[l_start: l_end + 1]
+            P_l_first = P[l_start: l_end + 1]
+            write_coords("ref_l_first.pdb", Q_l_first)
+            write_coords("model_l_first.pdb", P_l_first)
 
-            # move to the origin
-            Q = Q - centroid(Q)
-            P = P - centroid(P)
+            # move to the origin of the receptor
+            print(f"centr P vs centroid Q {centroid(P)} vs {centroid(Q)}")
+            Q = Q - centroid(Q_r_first)
+            P = P - centroid(P_r_first)
+            
 
             # get receptor coordinates
-            Q_r = Q[r_start: r_end - 1]
-            P_r = P[r_start: r_end - 1]
-
+            Q_r = Q[r_start: r_end + 1]
+            P_r = P[r_start: r_end + 1]
+            write_coords("ref_r_centr.pdb", Q_r)
+            write_coords("model_r_centr.pdb", P_r)
             # Center receptors and get rotation matrix
             # Q_r = Q_r - centroid(Q_r)
             # P_r = P_r - centroid(P_r)
 
             U_r = kabsch(P_r, Q_r)
+            print(f"U_r {U_r}")
 
             # Center complexes at receptor centroids
-            Q = Q - centroid(Q_r)
-            P = P - centroid(P_r)
+            #Q = Q - centroid(Q_r)
+            #P = P - centroid(P_r)
 
             # Apply rotation to complex
             #  - complex are now aligned by the receptor
             P = np.dot(P, U_r)
 
-            # write_coords("ref.pdb", Q)
-            # write_coords("model.pdb", P)
+            write_coords("ref.pdb", Q)
+            write_coords("model.pdb", P)
 
             # Identify the ligand coordinates
-            Q_l = Q[l_start: l_end - 1]
-            P_l = P[l_start: l_end - 1]
+            Q_l = Q[l_start: l_end + 1]
+            P_l = P[l_start: l_end + 1]
 
-            # write_coords("ref_l.pdb", Q_l)
-            # write_coords("model_l.pdb", P_l)
+            write_coords("ref_l.pdb", Q_l)
+            write_coords("model_l.pdb", P_l)
 
             # Calculate the RMSD of the ligands
             self.lrmsd = calc_rmsd(P_l, Q_l)
@@ -897,22 +910,22 @@ class CAPRIError(Exception):
 #             fh.write(dummy_line)
 
 
-# # debug only
-# def write_coords(output_name, coor_list):
-#     """Add a dummy atom to a PDB file according to a list of coordinates."""
-#     with open(output_name, "w") as fh:
-#         for i, dummy_coord in enumerate(coor_list):
-#             atom_num = f"{i}".rjust(4, " ")
-#             resnum = f"{i}".rjust(3, " ")
-#             dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
-#             dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
-#             dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
-#             dummy_line = (
-#                 f"ATOM   {atom_num}  H   DUM X {resnum}   "
-#                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-#                 "        H  " + os.linesep
-#                 )
-#             fh.write(dummy_line)
+# debug only
+def write_coords(output_name, coor_list):
+    """Add a dummy atom to a PDB file according to a list of coordinates."""
+    with open(output_name, "w") as fh:
+        for i, dummy_coord in enumerate(coor_list):
+            atom_num = f"{i}".rjust(4, " ")
+            resnum = f"{i}".rjust(3, " ")
+            dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
+            dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
+            dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
+            dummy_line = (
+                f"ATOM   {atom_num}  H   DUM X {resnum}   "
+                f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
+                "        H  " + os.linesep
+                )
+            fh.write(dummy_line)
 
 
 # # debug only

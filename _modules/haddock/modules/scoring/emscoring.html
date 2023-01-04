@@ -151,6 +151,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a><ul>
@@ -207,7 +208,7 @@
 
 
 <div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/scoring/emscoring.html#haddock.modules.scoring.emscoring.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">ScoringModule</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;HADDOCK3 module to perform energy minimization scoring.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module to perform energy minimization scoring.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
@@ -217,11 +218,11 @@
 
 <div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/scoring/emscoring.html#haddock.modules.scoring.emscoring.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Confirm module is installed.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm module is installed.&quot;&quot;&quot;</span>
         <span class="k">return</span></div>
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="c1"># Pool of jobs to be executed by the CNS engine</span>
         <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -274,10 +275,10 @@
         <span class="c1"># Check for generated output, fail it not all expected files are found</span>
         <span class="k">for</span> <span class="n">pdb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">pdb</span><span class="o">.</span><span class="n">is_present</span><span class="p">():</span>
-                <span class="n">haddock_score</span> <span class="o">=</span> <span class="n">HaddockModel</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span><span class="o">.</span><span class="n">calc_haddock_score</span><span class="p">(</span>
-                    <span class="o">**</span><span class="n">weights</span>
-                    <span class="p">)</span>
-
+                <span class="n">haddock_model</span> <span class="o">=</span> <span class="n">HaddockModel</span><span class="p">(</span><span class="n">pdb</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
+                <span class="n">pdb</span><span class="o">.</span><span class="n">unw_energies</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">energies</span>
+                
+                <span class="n">haddock_score</span> <span class="o">=</span> <span class="n">haddock_model</span><span class="o">.</span><span class="n">calc_haddock_score</span><span class="p">(</span><span class="o">**</span><span class="n">weights</span><span class="p">)</span>
                 <span class="n">pdb</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">haddock_score</span>
 
         <span class="n">output_fname</span> <span class="o">=</span> <span class="s2">&quot;emscoring.tsv&quot;</span>
@@ -319,7 +320,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

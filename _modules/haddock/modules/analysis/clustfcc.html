@@ -151,6 +151,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../modules/index.html">Modules</a><ul>
@@ -211,7 +212,7 @@
 
 
 <div class="viewcode-block" id="HaddockModule"><a class="viewcode-back" href="../../../../modules/analysis/clustfcc.html#haddock.modules.analysis.clustfcc.HaddockModule">[docs]</a><span class="k">class</span> <span class="nc">HaddockModule</span><span class="p">(</span><span class="n">BaseHaddockModule</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;HADDOCK3 module for clustering with FCC.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;HADDOCK3 module for clustering with FCC.&quot;&quot;&quot;</span>
 
     <span class="n">name</span> <span class="o">=</span> <span class="n">RECIPE_PATH</span><span class="o">.</span><span class="n">name</span>
 
@@ -220,7 +221,7 @@
 
 <div class="viewcode-block" id="HaddockModule.confirm_installation"><a class="viewcode-back" href="../../../../modules/analysis/clustfcc.html#haddock.modules.analysis.clustfcc.HaddockModule.confirm_installation">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">confirm_installation</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Confirm if FCC is installed and available.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Confirm if FCC is installed and available.&quot;&quot;&quot;</span>
         <span class="n">dcfg</span> <span class="o">=</span> <span class="n">read_from_yaml_config</span><span class="p">(</span><span class="n">DEFAULT_CONFIG</span><span class="p">)</span>
         <span class="n">exec_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">FCC_path</span><span class="p">,</span> <span class="n">dcfg</span><span class="p">[</span><span class="s1">&#39;executable&#39;</span><span class="p">])</span>
 
@@ -233,7 +234,7 @@
         <span class="k">return</span></div>
 
     <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute module.&quot;&quot;&quot;</span>
         <span class="n">contact_executable</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">FCC_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;executable&#39;</span><span class="p">])</span>
 
         <span class="c1"># Get the models generated in previous step</span>
@@ -476,7 +477,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

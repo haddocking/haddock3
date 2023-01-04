@@ -158,6 +158,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules/index.html">Modules</a><ul>
@@ -409,6 +410,26 @@ Input order is maintained.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libio.pdb_path_exists">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">pdb_path_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#pdb_path_exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.pdb_path_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a pdb path exists.</p>
+<p>If not, checks for the existence of a gzipped pdb file and informs the user
+that the file is gzipped</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pdb_path</strong> (<em>pathlib.Path</em>) – path to the pdb</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>exists</strong> (<em>bool</em>) – True if file exists</p></li>
+<li><p><strong>msg</strong> (<em>str or None</em>) – the error message</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libio.read_from_yaml">
 <span class="sig-prename descclassname"><span class="pre">haddock.libs.libio.</span></span><span class="sig-name descname"><span class="pre">read_from_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libio.html#read_from_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libio.read_from_yaml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read a YAML file to a dictionary.</p>
@@ -538,7 +559,7 @@ Must be synched with <cite>files</cite>.</p></li>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

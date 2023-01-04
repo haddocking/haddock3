@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -194,55 +195,55 @@
 
 
 <div class="viewcode-block" id="HaddockError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.HaddockError">[docs]</a><span class="k">class</span> <span class="nc">HaddockError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Error in HADDOCK3.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in HADDOCK3.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="ConfigurationError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.ConfigurationError">[docs]</a><span class="k">class</span> <span class="nc">ConfigurationError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Error in the configuration file.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in the configuration file.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="ModuleError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.ModuleError">[docs]</a><span class="k">class</span> <span class="nc">ModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 module.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 module.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="StepError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.StepError">[docs]</a><span class="k">class</span> <span class="nc">StepError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 workflow step.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Error in a HADDOCK3 workflow step.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="JobRunningError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.JobRunningError">[docs]</a><span class="k">class</span> <span class="nc">JobRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;General job running error.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;General job running error.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="CNSRunningError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.CNSRunningError">[docs]</a><span class="k">class</span> <span class="nc">CNSRunningError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;CNS run error.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CNS run error.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="HaddockModuleError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.HaddockModuleError">[docs]</a><span class="k">class</span> <span class="nc">HaddockModuleError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;General error in a HADDOCK3 module.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;General error in a HADDOCK3 module.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="SetupError"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.SetupError">[docs]</a><span class="k">class</span> <span class="nc">SetupError</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set up error.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set up error.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="HaddockTermination"><a class="viewcode-back" href="../../../reference/core/exceptions.html#haddock.core.exceptions.HaddockTermination">[docs]</a><span class="k">class</span> <span class="nc">HaddockTermination</span><span class="p">(</span><span class="n">HaddockError</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Terminates HADDOCK.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Terminates HADDOCK.&quot;&quot;&quot;</span>
 
     <span class="k">pass</span></div>
 </pre></div>
@@ -279,7 +280,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

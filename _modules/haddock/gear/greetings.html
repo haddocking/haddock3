@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -213,7 +214,7 @@
 
 
 <div class="viewcode-block" id="get_initial_greeting"><a class="viewcode-back" href="../../../reference/gear/greetings.html#haddock.gear.greetings.get_initial_greeting">[docs]</a><span class="k">def</span> <span class="nf">get_initial_greeting</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Create initial greeting message.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create initial greeting message.&quot;&quot;&quot;</span>
     <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">microsecond</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">python_version</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span>
     <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
@@ -232,13 +233,13 @@
 
 
 <div class="viewcode-block" id="get_greetings"><a class="viewcode-back" href="../../../reference/gear/greetings.html#haddock.gear.greetings.get_greetings">[docs]</a><span class="k">def</span> <span class="nf">get_greetings</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">how_many</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">exclamation</span><span class="o">=</span><span class="s2">&quot;!&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get greeting messages.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get greeting messages.&quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">how_many</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">exclamation</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="get_adieu"><a class="viewcode-back" href="../../../reference/gear/greetings.html#haddock.gear.greetings.get_adieu">[docs]</a><span class="k">def</span> <span class="nf">get_adieu</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Create end-run greeting message.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create end-run greeting message.&quot;&quot;&quot;</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S&quot;</span><span class="p">)</span>
     <span class="n">bye</span> <span class="o">=</span> <span class="n">get_goodbye_greetings</span><span class="p">()</span>
     <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Finished at </span><span class="si">{</span><span class="n">end</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">bye</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -246,7 +247,7 @@
 
 
 <div class="viewcode-block" id="get_goodbye_help"><a class="viewcode-back" href="../../../reference/gear/greetings.html#haddock.gear.greetings.get_goodbye_help">[docs]</a><span class="k">def</span> <span class="nf">get_goodbye_help</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Create good-bye message with help.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create good-bye message with help.&quot;&quot;&quot;</span>
     <span class="n">end</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">/%m/%Y %H:%M:%S&quot;</span><span class="p">)</span>
     <span class="n">bye</span> <span class="o">=</span> <span class="n">get_goodbye_greetings</span><span class="p">()</span>
     <span class="n">message</span> <span class="o">=</span> <span class="p">(</span>
@@ -290,7 +291,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

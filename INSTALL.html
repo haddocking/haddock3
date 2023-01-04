@@ -154,6 +154,7 @@
 <li class="toctree-l2"><a class="reference internal" href="clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a><ul>
@@ -205,12 +206,12 @@ Please do <span class="xref myst">check your CNS installation</span> before proc
 <section id="clone-this-repository">
 <h2>1. Clone this repository:<a class="headerlink" href="#clone-this-repository" title="Permalink to this heading">¶</a></h2>
 <p>Mind the <code class="docutils literal notranslate"><span class="pre">--recursive</span></code> flag when cloning!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone --recursive https://github.com/haddocking/haddock3.git
-<span class="nb">cd</span> haddock3
-<span class="nb">cd</span> src/fcc/src
-chmod u+x Makefile
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>--recursive<span class="w"> </span>https://github.com/haddocking/haddock3.git
+<span class="nb">cd</span><span class="w"> </span>haddock3
+<span class="nb">cd</span><span class="w"> </span>src/fcc/src
+chmod<span class="w"> </span>u+x<span class="w"> </span>Makefile
 make
-<span class="nb">cd</span> -
+<span class="nb">cd</span><span class="w"> </span>-
 </pre></div>
 </div>
 <p>By the end of the above commands, you should be back to the <code class="docutils literal notranslate"><span class="pre">haddock3</span></code>
@@ -222,35 +223,35 @@ main folder.</p>
 Commands are provided below:</p>
 <section id="with-venv">
 <h3>with <code class="docutils literal notranslate"><span class="pre">venv</span></code><a class="headerlink" href="#with-venv" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv venv --python<span class="o">=</span><span class="m">3</span>.9
-<span class="nb">source</span> venv/bin/activate
-pip install -r requirements.txt
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>virtualenv<span class="w"> </span>venv<span class="w"> </span>--python<span class="o">=</span><span class="m">3</span>.9
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
 </section>
 <section id="with-conda">
 <h3>with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#with-conda" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda env create -f requirements.yml
-conda activate haddock3
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>requirements.yml
+conda<span class="w"> </span>activate<span class="w"> </span>haddock3
 </pre></div>
 </div>
 </section>
 </section>
 <section id="install-the-haddock3-package-and-command-line-clients">
 <h2>3. Install the HADDOCK3 package and command line clients<a class="headerlink" href="#install-the-haddock3-package-and-command-line-clients" title="Permalink to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python setup.py develop --no-deps
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>setup.py<span class="w"> </span>develop<span class="w"> </span>--no-deps
 </pre></div>
 </div>
 </section>
 <section id="make-a-cns-binary-shortcut-to-the-expected-path">
 <h2>4. Make a CNS binary shortcut to the expected path:<a class="headerlink" href="#make-a-cns-binary-shortcut-to-the-expected-path" title="Permalink to this heading">¶</a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir -p bin/
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>bin/
 
 <span class="c1"># on mac</span>
-ln -s /PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe bin/cns
+ln<span class="w"> </span>-s<span class="w"> </span>/PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe<span class="w"> </span>bin/cns
 
 <span class="c1"># on linux</span>
-ln -s /PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
+ln<span class="w"> </span>-s<span class="w"> </span>/PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe<span class="w"> </span>bin/cns
 </pre></div>
 </div>
 <p>As long as you have the HADDOCK3 python environment activated, you can
@@ -266,33 +267,33 @@ Please consider HADDOCK3 is under active development, as well as its
 dependencies. If the updating processing fails, it is safe to reinstall
 from scratch. Always refer to the latest installation guidelines.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># if you used `venv`</span>
-<span class="nb">source</span> venv/bin/activate
+<span class="nb">source</span><span class="w"> </span>venv/bin/activate
 
 <span class="c1"># if you used `conda`</span>
-conda activate haddock3
+conda<span class="w"> </span>activate<span class="w"> </span>haddock3
 </pre></div>
 </div>
 <p>Afterwards:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pull the latest source code from our repository to your computer</span>
-git pull
+git<span class="w"> </span>pull
 
 <span class="c1"># if you used venv to create the python environment, run:</span>
-pip install -r requirements.txt  --upgrade
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w">  </span>--upgrade
 
 <span class="c1"># if you used anaconda to create the python environment, run:</span>
-conda env update -f requirements.yml
+conda<span class="w"> </span>env<span class="w"> </span>update<span class="w"> </span>-f<span class="w"> </span>requirements.yml
 
 <span class="c1"># ensure all command-lines clients are installed</span>
-python setup.py develop --no-deps
+python<span class="w"> </span>setup.py<span class="w"> </span>develop<span class="w"> </span>--no-deps
 </pre></div>
 </div>
 </section>
 <section id="optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi">
 <h2>6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI<a class="headerlink" href="#optional-install-mpi-libraries-if-you-intend-to-run-haddock3-with-mpi" title="Permalink to this heading">¶</a></h2>
 <p>To use the mpi implementation of haddock3 you must have mpi4py installed in the haddock3 python environment, and OpenMPI in the host system.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ pip install mpi4py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>mpi4py
 <span class="c1"># or</span>
-$ conda install -c conda-forge mpi4py
+$<span class="w"> </span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>mpi4py
 </pre></div>
 </div>
 <p>Later, you can find <a class="reference external" href="https://www.bonvinlab.org/haddock3/tutorials/mpi.html">here</a> instructions on how to run HADDOCK3 with MPI.</p>
@@ -372,7 +373,7 @@ information.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

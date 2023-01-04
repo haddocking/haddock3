@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -196,7 +197,7 @@
 
 
 <div class="viewcode-block" id="v_rundir"><a class="viewcode-back" href="../../../reference/gear/validations.html#haddock.gear.validations.v_rundir">[docs]</a><span class="k">def</span> <span class="nf">v_rundir</span><span class="p">(</span><span class="n">rundir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Validate string defining the run directory.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate string defining the run directory.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rundir</span><span class="p">))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">valid_run_dir_chars</span><span class="p">):</span>
         <span class="n">emsg</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">RUNDIR</span><span class="si">!r}</span><span class="s2"> parameter can only have &quot;</span>
@@ -237,7 +238,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

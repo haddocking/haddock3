@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -210,7 +211,7 @@
 
 
 <div class="viewcode-block" id="WorkflowManager"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.WorkflowManager">[docs]</a><span class="k">class</span> <span class="nc">WorkflowManager</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Read and execute workflows.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read and execute workflows.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">workflow_params</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">other_params</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">start</span>
@@ -221,7 +222,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_terminated</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="WorkflowManager.run"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.WorkflowManager.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;High level workflow composer.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;High level workflow composer.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">recipe</span><span class="o">.</span><span class="n">steps</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">:],</span>
                 <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">):</span>
@@ -232,7 +233,7 @@
                 <span class="k">break</span></div>
 
 <div class="viewcode-block" id="WorkflowManager.clean"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.WorkflowManager.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">terminated</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Clean steps.</span>
 
 <span class="sd">        Parameters</span>
@@ -247,7 +248,7 @@
 
 
 <div class="viewcode-block" id="Workflow"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.Workflow">[docs]</a><span class="k">class</span> <span class="nc">Workflow</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Represent a set of stages to be executed by HADDOCK.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent a set of stages to be executed by HADDOCK.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modules_parameters</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">other_params</span><span class="p">):</span>
 
@@ -284,7 +285,7 @@
 
 
 <div class="viewcode-block" id="Step"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.Step">[docs]</a><span class="k">class</span> <span class="nc">Step</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Represents a Step of the Workflow.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a Step of the Workflow.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -299,7 +300,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="Step.execute"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.Step.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute simulation step.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute simulation step.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">working_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Import the module given by the mode or default</span>
@@ -330,7 +331,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;took </span><span class="si">{</span><span class="n">elapsed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Step.clean"><a class="viewcode-back" href="../../../reference/libs/libworkflow.html#haddock.libs.libworkflow.Step.clean">[docs]</a>    <span class="k">def</span> <span class="nf">clean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Clean step output.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clean step output.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;clean&quot;</span><span class="p">]:</span>
             <span class="k">with</span> <span class="n">log_time</span><span class="p">(</span><span class="s2">&quot;cleaning output files took&quot;</span><span class="p">):</span>
                 <span class="n">clean_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;ncores&quot;</span><span class="p">])</span>
@@ -371,7 +372,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

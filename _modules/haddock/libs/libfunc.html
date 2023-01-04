@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -199,7 +200,7 @@
 
 
 <div class="viewcode-block" id="chainf"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.chainf">[docs]</a><span class="k">def</span> <span class="nf">chainf</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="o">*</span><span class="n">funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">common</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Apply a sequence of functions to an initial value.</span>
 
 <span class="sd">    Example</span>
@@ -227,7 +228,7 @@
 
 
 <div class="viewcode-block" id="chainfs"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.chainfs">[docs]</a><span class="k">def</span> <span class="nf">chainfs</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">,</span> <span class="o">**</span><span class="n">common</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Store functions be executed on a value.</span>
 
 <span class="sd">    Example</span>
@@ -247,32 +248,32 @@
 
 
 <div class="viewcode-block" id="give_same"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.give_same">[docs]</a><span class="k">def</span> <span class="nf">give_same</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return what is given.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return what is given.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">value</span></div>
 
 
 <div class="viewcode-block" id="true"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.true">[docs]</a><span class="k">def</span> <span class="nf">true</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Give True regardless of the input.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Give True regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="false"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.false">[docs]</a><span class="k">def</span> <span class="nf">false</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Give False regardless of the input.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Give False regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="none"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.none">[docs]</a><span class="k">def</span> <span class="nf">none</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Give False regardless of the input.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Give False regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="nan"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.nan">[docs]</a><span class="k">def</span> <span class="nf">nan</span><span class="p">(</span><span class="o">*</span><span class="n">ignore</span><span class="p">,</span> <span class="o">**</span><span class="n">everything</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Give False regardless of the input.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Give False regardless of the input.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="not_none"><a class="viewcode-back" href="../../../reference/libs/libfunc.html#haddock.libs.libfunc.not_none">[docs]</a><span class="k">def</span> <span class="nf">not_none</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Give True if value is not None, or False otherwise.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Give True if value is not None, or False otherwise.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">is_not</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 </pre></div>
 
@@ -308,7 +309,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

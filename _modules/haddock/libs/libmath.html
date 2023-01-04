@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -195,7 +196,7 @@
 
 
 <div class="viewcode-block" id="RandomNumberGenerator"><a class="viewcode-back" href="../../../reference/libs/libmath.html#haddock.libs.libmath.RandomNumberGenerator">[docs]</a><span class="k">class</span> <span class="nc">RandomNumberGenerator</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate random numbers.</span>
 
 <span class="sd">    Python uses the Mersenne Twister as the core generator.</span>
@@ -203,17 +204,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">494</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;494 = sum([ord(i) for i in &#39;HADDOCK&#39;]).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;494 = sum([ord(i) for i in &#39;HADDOCK&#39;]).&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">random</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lower_limit</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span> <span class="n">upper_limit</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate a random number between range.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a random number between range.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower_limit</span><span class="p">,</span> <span class="n">upper_limit</span><span class="p">)</span>
 
 <div class="viewcode-block" id="RandomNumberGenerator.randint"><a class="viewcode-back" href="../../../reference/libs/libmath.html#haddock.libs.libmath.RandomNumberGenerator.randint">[docs]</a>    <span class="k">def</span> <span class="nf">randint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lower_limit</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_limit</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generate a random integer.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a random integer.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">()</span> <span class="o">*</span> <span class="p">(</span><span class="n">upper_limit</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="n">lower_limit</span></div></div>
 </pre></div>
 
@@ -249,7 +250,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

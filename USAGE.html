@@ -154,6 +154,7 @@
 <li class="toctree-l2"><a class="reference internal" href="clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a><ul>
@@ -203,29 +204,29 @@ instructions</span></a>.</p>
 <p>This is a minimal description of how to run HADDOCK3. We are currently
 creating detailed documentation and tutorials. The minimal HADDOCK3
 execution command is:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3 &lt;CONFIG WORKFLOW&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3<span class="w"> </span>&lt;CONFIG<span class="w"> </span>WORKFLOW&gt;
 </pre></div>
 </div>
 <p>Where the <code class="docutils literal notranslate"><span class="pre">&lt;CONFIG</span> <span class="pre">WORKFLOW&gt;</span></code> is a haddock3 configuration file
 describing the simulation workflow.</p>
 <p>You can inspect all <code class="docutils literal notranslate"><span class="pre">haddock3</span></code> options with:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3 -h
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3<span class="w"> </span>-h
 </pre></div>
 </div>
 <p>Inside the HADDOCK3 main folder, there is an <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder. There
 you will find several subfolder with examples for specific docking
 scenarios. Please experiment running those configuration files ending in
 <code class="docutils literal notranslate"><span class="pre">-test.cfg</span></code>. For example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> examples/docking-protein-protein
-haddock3 docking-protein-protein-test.cfg
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>examples/docking-protein-protein
+haddock3<span class="w"> </span>docking-protein-protein-test.cfg
 </pre></div>
 </div>
 <p>Feel free to open the <code class="docutils literal notranslate"><span class="pre">cfg</span></code> files with your preferred test editor, these
 are plain text files.</p>
 <p>To get the list of all possible parameters for each module:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3-cfg -h
-haddock3-cfg -m &lt;MODULE NAME&gt;
-haddock3-cfg -m rigidbody
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3-cfg<span class="w"> </span>-h
+haddock3-cfg<span class="w"> </span>-m<span class="w"> </span>&lt;MODULE<span class="w"> </span>NAME&gt;
+haddock3-cfg<span class="w"> </span>-m<span class="w"> </span>rigidbody
 </pre></div>
 </div>
 <p>We are actively working towards expanding our documentation pages.
@@ -267,7 +268,7 @@ here</a>.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

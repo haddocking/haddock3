@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -191,7 +192,7 @@
                             
   <h1>Source code for haddock.libs.libcli</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Add functionalities for CLIs.&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentTypeError</span>
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">Action</span><span class="p">,</span> <span class="n">ArgumentTypeError</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -213,7 +214,7 @@
 
 
 <div class="viewcode-block" id="add_version_arg"><a class="viewcode-back" href="../../../reference/libs/libcli.html#haddock.libs.libcli.add_version_arg">[docs]</a><span class="k">def</span> <span class="nf">add_version_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add version `-v` argument to client.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add version `-v` argument to client.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
@@ -224,7 +225,7 @@
 
 
 <div class="viewcode-block" id="add_rundir_arg"><a class="viewcode-back" href="../../../reference/libs/libcli.html#haddock.libs.libcli.add_rundir_arg">[docs]</a><span class="k">def</span> <span class="nf">add_rundir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add run directory option.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add run directory option.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;run_dir&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;The run directory.&quot;</span><span class="p">,</span>
@@ -233,7 +234,7 @@
 
 
 <div class="viewcode-block" id="add_ncores_arg"><a class="viewcode-back" href="../../../reference/libs/libcli.html#haddock.libs.libcli.add_ncores_arg">[docs]</a><span class="k">def</span> <span class="nf">add_ncores_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add number of cores option.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add number of cores option.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-n&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--ncores&quot;</span><span class="p">,</span>
@@ -251,7 +252,7 @@
 
 
 <div class="viewcode-block" id="add_output_dir_arg"><a class="viewcode-back" href="../../../reference/libs/libcli.html#haddock.libs.libcli.add_output_dir_arg">[docs]</a><span class="k">def</span> <span class="nf">add_output_dir_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add output dir argument.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add output dir argument.&quot;&quot;&quot;</span>
     <span class="n">ap</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-odir&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--output-directory&quot;</span><span class="p">,</span>
@@ -260,6 +261,42 @@
         <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span>
         <span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">_ParamsToDict</span><span class="p">(</span><span class="n">Action</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert command-line parameters in an argument to a dictionary.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    Where ``-x`` is an optional argument of the command-line client</span>
+<span class="sd">    interface.</span>
+
+<span class="sd">        &gt;&gt;&gt; par1 1 par2 &#39;my name&#39; par3 [1,2,3] par4 True</span>
+<span class="sd">        &gt;&gt;&gt; {&#39;par1&#39;: 1, &#39;par2&#39;: &#39;my name&#39;, &#39;par3&#39;: [1, 2, 3]}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">ivalues</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute.&quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">ivalues</span><span class="p">[::</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">ivalues</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;The parameters and value pairs &quot;</span>
+                <span class="s2">&quot;do not match for argument `-p`&quot;</span>
+                <span class="p">)</span>
+
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">param_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">SyntaxError</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> with invalid value </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dest</span><span class="p">,</span> <span class="n">param_dict</span><span class="p">)</span>
 </pre></div>
 
                         
@@ -294,7 +331,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

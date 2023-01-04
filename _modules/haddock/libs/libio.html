@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -209,7 +210,7 @@
 
 
 <div class="viewcode-block" id="clean_suffix"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.clean_suffix">[docs]</a><span class="k">def</span> <span class="nf">clean_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove the preffix dot of an extension if exists.</span>
 
 <span class="sd">    Parameters</span>
@@ -229,7 +230,7 @@
 
 
 <div class="viewcode-block" id="dot_suffix"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.dot_suffix">[docs]</a><span class="k">def</span> <span class="nf">dot_suffix</span><span class="p">(</span><span class="n">ext</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add the dot preffix to an extension if missing.</span>
 
 <span class="sd">    Parameters</span>
@@ -249,7 +250,7 @@
 
 
 <div class="viewcode-block" id="read_lines"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.read_lines">[docs]</a><span class="k">def</span> <span class="nf">read_lines</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Open the file and read lines for the decorated function.</span>
 
 <span class="sd">    Send to the decorated function the lines of the file in the form</span>
@@ -266,7 +267,7 @@
 
 
 <div class="viewcode-block" id="read_from_yaml"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.read_from_yaml">[docs]</a><span class="k">def</span> <span class="nf">read_from_yaml</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read a YAML file to a dictionary.</span>
 
 <span class="sd">    Used internally to read HADDOCK3&#39;s default configuration files.</span>
@@ -295,7 +296,7 @@
 
 
 <div class="viewcode-block" id="open_files_to_lines"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.open_files_to_lines">[docs]</a><span class="k">def</span> <span class="nf">open_files_to_lines</span><span class="p">(</span><span class="o">*</span><span class="n">files</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Open files to lines.</span>
 
 <span class="sd">    New-lines are stripped.</span>
@@ -311,7 +312,7 @@
 
 
 <div class="viewcode-block" id="save_lines_to_files"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.save_lines_to_files">[docs]</a><span class="k">def</span> <span class="nf">save_lines_to_files</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Save a list of list of lines to files.</span>
 
 <span class="sd">    The first list of strings in `lines` will be saved in the first file</span>
@@ -335,7 +336,7 @@
 
 
 <div class="viewcode-block" id="add_suffix_to_files"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.add_suffix_to_files">[docs]</a><span class="k">def</span> <span class="nf">add_suffix_to_files</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">suffix</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a suffix to file paths.</span>
 
 <span class="sd">    Yields</span>
@@ -358,7 +359,7 @@
         <span class="n">info_header</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a table from a dictionary.</span>
 
 <span class="sd">    Parameters</span>
@@ -401,7 +402,7 @@
         <span class="n">info_header</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>
         <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a table from a nested dictionary.</span>
 
 <span class="sd">    Parameters</span>
@@ -446,7 +447,7 @@
 <span class="c1"># thanks to @brianjimenez</span>
 <div class="viewcode-block" id="working_directory"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.working_directory">[docs]</a><span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
 <span class="k">def</span> <span class="nf">working_directory</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Change working directory and returns to previous on exit.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change working directory and returns to previous on exit.&quot;&quot;&quot;</span>
     <span class="n">prev_cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
     <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -456,7 +457,7 @@
 
 
 <div class="viewcode-block" id="compress_files_ext"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.compress_files_ext">[docs]</a><span class="k">def</span> <span class="nf">compress_files_ext</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compress all files with same extension in folder to `.gz`.</span>
 
 <span class="sd">    Do not archive the files in TAR, only compress files individually.</span>
@@ -493,7 +494,7 @@
 
 
 <div class="viewcode-block" id="gzip_files"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.gzip_files">[docs]</a><span class="k">def</span> <span class="nf">gzip_files</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">block_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">remove_original</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Gzip a file.</span>
 
 <span class="sd">    Parameters</span>
@@ -526,7 +527,7 @@
 
 
 <div class="viewcode-block" id="archive_files_ext"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.archive_files_ext">[docs]</a><span class="k">def</span> <span class="nf">archive_files_ext</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Archive all files with same extension in folder.</span>
 
 <span class="sd">    Parameters</span>
@@ -566,7 +567,7 @@
 
 
 <div class="viewcode-block" id="glob_folder"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.glob_folder">[docs]</a><span class="k">def</span> <span class="nf">glob_folder</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">ext</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    List files with extention `ext` in `folder`.</span>
 
 <span class="sd">    Does NOT perform recursive search.</span>
@@ -591,7 +592,7 @@
 
 
 <div class="viewcode-block" id="remove_files_with_ext"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.remove_files_with_ext">[docs]</a><span class="k">def</span> <span class="nf">remove_files_with_ext</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">ext</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove files with ``ext`` in folder.</span>
 
 <span class="sd">    Parameters</span>
@@ -615,7 +616,7 @@
         <span class="n">exception</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">,</span>
         <span class="n">emsg</span><span class="o">=</span><span class="s2">&quot;The folder </span><span class="si">{!r}</span><span class="s2"> does not exist or is not a folder.&quot;</span><span class="p">,</span>
         <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assert if a folder exist.</span>
 
 <span class="sd">    Parameters</span>
@@ -658,7 +659,7 @@
         <span class="n">exception</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">,</span>
         <span class="n">emsg</span><span class="o">=</span><span class="s2">&quot;`path` is not a file or does not exist&quot;</span><span class="p">,</span>
         <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Assert if file exist.</span>
 
 <span class="sd">    Parameters</span>
@@ -696,14 +697,44 @@
     <span class="k">raise</span> <span class="n">exception</span><span class="p">(</span><span class="n">emsg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span></div>
 
 
+<div class="viewcode-block" id="pdb_path_exists"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.pdb_path_exists">[docs]</a><span class="k">def</span> <span class="nf">pdb_path_exists</span><span class="p">(</span><span class="n">pdb_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a pdb path exists.</span>
+<span class="sd">    </span>
+<span class="sd">    If not, checks for the existence of a gzipped pdb file and informs the user</span>
+<span class="sd">    that the file is gzipped</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pdb_path : pathlib.Path</span>
+<span class="sd">        path to the pdb</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    exists : bool</span>
+<span class="sd">        True if file exists</span>
+<span class="sd">    msg : str or None</span>
+<span class="sd">        the error message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">exists</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pdb_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;PDB file </span><span class="si">{</span><span class="n">pdb_path</span><span class="si">}</span><span class="s2"> not found.&quot;</span>
+        <span class="n">gz_pdb_path</span> <span class="o">=</span> <span class="n">pdb_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">pdb_path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s1">&#39;.gz&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gz_pdb_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; A compressed file (</span><span class="si">{</span><span class="n">gz_pdb_path</span><span class="si">}</span><span class="s2">) exists though.&quot;</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;Use haddock3-unpack to unpack the run.&quot;</span>
+        <span class="n">exists</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="n">exists</span><span class="p">,</span> <span class="n">msg</span></div>
+
+
 <div class="viewcode-block" id="get_perm"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.get_perm">[docs]</a><span class="k">def</span> <span class="nf">get_perm</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get permissions of file.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get permissions of file.&quot;&quot;&quot;</span>
     <span class="c1"># https://stackoverflow.com/questions/6874970</span>
     <span class="k">return</span> <span class="n">stat</span><span class="o">.</span><span class="n">S_IMODE</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">lstat</span><span class="p">(</span><span class="n">fname</span><span class="p">)[</span><span class="n">stat</span><span class="o">.</span><span class="n">ST_MODE</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="make_writeable_recursive"><a class="viewcode-back" href="../../../reference/libs/libio.html#haddock.libs.libio.make_writeable_recursive">[docs]</a><span class="k">def</span> <span class="nf">make_writeable_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add writing to a folder, its subfolders and files.</span>
 
 <span class="sd">    Parameters</span>
@@ -753,7 +784,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

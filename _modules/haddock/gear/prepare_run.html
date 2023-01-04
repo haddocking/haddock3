@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -270,7 +271,7 @@
 
 <div class="viewcode-block" id="config_key_error"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.config_key_error">[docs]</a><span class="nd">@contextmanager</span>
 <span class="k">def</span> <span class="nf">config_key_error</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Raise ConfigurationError on KeyError.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Raise ConfigurationError on KeyError.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">yield</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
@@ -279,7 +280,7 @@
 
 
 <div class="viewcode-block" id="with_config_error"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.with_config_error">[docs]</a><span class="k">def</span> <span class="nf">with_config_error</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add config error context.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add config error context.&quot;&quot;&quot;</span>
     <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">config_key_error</span><span class="p">():</span>
@@ -289,7 +290,7 @@
 
 <span class="nd">@lru_cache</span>
 <span class="k">def</span> <span class="nf">_read_defaults</span><span class="p">(</span><span class="n">module_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read the defaults.yaml given a module name.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the defaults.yaml given a module name.&quot;&quot;&quot;</span>
     <span class="n">module_name_</span> <span class="o">=</span> <span class="n">get_module_name</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
     <span class="n">pdef</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
         <span class="n">haddock3_source_path</span><span class="p">,</span>
@@ -307,7 +308,7 @@
         <span class="n">restart_from</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">extend_run</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Set up an HADDOCK3 run.</span>
 
 <span class="sd">    This function sets up a HADDOCK3 considering the options `--restart`</span>
@@ -508,7 +509,7 @@
 
 
 <div class="viewcode-block" id="validate_params"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.validate_params">[docs]</a><span class="k">def</span> <span class="nf">validate_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Validate the parameter file.</span>
 
 <span class="sd">    #1 : checks for mandatory parameters</span>
@@ -519,7 +520,7 @@
 
 
 <div class="viewcode-block" id="check_mandatory_argments_are_present"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.check_mandatory_argments_are_present">[docs]</a><span class="k">def</span> <span class="nf">check_mandatory_argments_are_present</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Confirm order key exists in config.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Confirm order key exists in config.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">config_mandatory_general_parameters</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">arg</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
@@ -532,7 +533,7 @@
 
 <div class="viewcode-block" id="validate_modules_names"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.validate_modules_names">[docs]</a><span class="nd">@with_config_error</span>
 <span class="k">def</span> <span class="nf">validate_modules_names</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Validate all modules names are spelled correctly.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate all modules names are spelled correctly.&quot;&quot;&quot;</span>
     <span class="n">keys</span> <span class="o">=</span> \
         <span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> \
         <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">config_mandatory_general_parameters</span><span class="p">)</span> \
@@ -550,7 +551,7 @@
 
 <div class="viewcode-block" id="validate_modules_params"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.validate_modules_params">[docs]</a><span class="nd">@with_config_error</span>
 <span class="k">def</span> <span class="nf">validate_modules_params</span><span class="p">(</span><span class="n">modules_params</span><span class="p">,</span> <span class="n">max_mols</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Validate individual parameters for each module.</span>
 
 <span class="sd">    Raises</span>
@@ -592,13 +593,13 @@
             <span class="n">_msg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s1">&#39;The following parameters do not match any expected &#39;</span>
                 <span class="sa">f</span><span class="s1">&#39;parameters for module </span><span class="si">{</span><span class="n">module_name</span><span class="si">!r}</span><span class="s1">: </span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="si">}</span><span class="s1">&#39;</span>
-                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">pretty_print</span><span class="p">,</span> <span class="n">matched</span><span class="p">))</span><span class="si">}</span><span class="s1">.&#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">pretty_print</span><span class="p">,</span><span class="w"> </span><span class="n">matched</span><span class="p">))</span><span class="si">}</span><span class="s1">.&#39;</span>
                 <span class="p">)</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="n">_msg</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="check_if_modules_are_installed"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.check_if_modules_are_installed">[docs]</a><span class="k">def</span> <span class="nf">check_if_modules_are_installed</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Validate if third party-libraries are installed.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate if third party-libraries are installed.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">module_name</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="n">module_import_name</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
             <span class="s1">&#39;haddock&#39;</span><span class="p">,</span>
@@ -652,7 +653,7 @@
 
 <div class="viewcode-block" id="create_data_dir"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.create_data_dir">[docs]</a><span class="nd">@with_config_error</span>
 <span class="k">def</span> <span class="nf">create_data_dir</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create initial files for HADDOCK3 run.</span>
 
 <span class="sd">    Returns</span>
@@ -667,12 +668,12 @@
 
 <div class="viewcode-block" id="copy_molecules_to_topology"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.copy_molecules_to_topology">[docs]</a><span class="nd">@with_config_error</span>
 <span class="k">def</span> <span class="nf">copy_molecules_to_topology</span><span class="p">(</span><span class="n">molecules</span><span class="p">,</span> <span class="n">topoaa_params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Copy molecules to mandatory topology module.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy molecules to mandatory topology module.&quot;&quot;&quot;</span>
     <span class="n">topoaa_params</span><span class="p">[</span><span class="s1">&#39;molecules&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">Path</span><span class="p">,</span> <span class="n">transform_to_list</span><span class="p">(</span><span class="n">molecules</span><span class="p">)))</span></div>
 
 
 <div class="viewcode-block" id="copy_molecules_to_data_dir"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.copy_molecules_to_data_dir">[docs]</a><span class="k">def</span> <span class="nf">copy_molecules_to_data_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">topoaa_params</span><span class="p">,</span> <span class="n">preprocess</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Copy molecules to data directory and to topoaa parameters.</span>
 
 <span class="sd">    Parameters</span>
@@ -729,7 +730,7 @@
 
 
 <div class="viewcode-block" id="copy_input_files_to_data_dir"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.copy_input_files_to_data_dir">[docs]</a><span class="k">def</span> <span class="nf">copy_input_files_to_data_dir</span><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="n">modules_params</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Copy input files to data directory.</span>
 
 <span class="sd">    Parameters</span>
@@ -770,7 +771,7 @@
 
 
 <div class="viewcode-block" id="check_run_dir_exists"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.check_run_dir_exists">[docs]</a><span class="k">def</span> <span class="nf">check_run_dir_exists</span><span class="p">(</span><span class="n">run_dir</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check whether the run directory exists.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the run directory exists.&quot;&quot;&quot;</span>
     <span class="n">_p</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_dir</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">_p</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">_p</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -784,7 +785,7 @@
 
 
 <div class="viewcode-block" id="identify_modules"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.identify_modules">[docs]</a><span class="k">def</span> <span class="nf">identify_modules</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Identify keys (headings) belonging to HADDOCK3 modules.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify keys (headings) belonging to HADDOCK3 modules.&quot;&quot;&quot;</span>
     <span class="n">modules_keys</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">k</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -794,7 +795,7 @@
 
 
 <div class="viewcode-block" id="inject_in_modules"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.inject_in_modules">[docs]</a><span class="k">def</span> <span class="nf">inject_in_modules</span><span class="p">(</span><span class="n">modules_params</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Inject a parameter in each module.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inject a parameter in each module.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">modules_params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -805,7 +806,7 @@
 
 
 <div class="viewcode-block" id="validate_module_names_are_not_misspelled"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.validate_module_names_are_not_misspelled">[docs]</a><span class="k">def</span> <span class="nf">validate_module_names_are_not_misspelled</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Validate module names are not misspelled in step definitions.</span>
 
 <span class="sd">    Parameters</span>
@@ -828,7 +829,7 @@
 
 
 <div class="viewcode-block" id="validate_parameters_are_not_misspelled"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.validate_parameters_are_not_misspelled">[docs]</a><span class="k">def</span> <span class="nf">validate_parameters_are_not_misspelled</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">reference_parameters</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Validate general parameters are not misspelled.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate general parameters are not misspelled.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">param_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">reference_parameters</span><span class="p">:</span>
             <span class="n">matched</span> <span class="o">=</span> <span class="n">fuzzy_match</span><span class="p">([</span><span class="n">param_name</span><span class="p">],</span> <span class="n">reference_parameters</span><span class="p">)</span>
@@ -841,13 +842,13 @@
 
 <div class="viewcode-block" id="check_specific_validations"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.check_specific_validations">[docs]</a><span class="nd">@with_config_error</span>
 <span class="k">def</span> <span class="nf">check_specific_validations</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make specific validations.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make specific validations.&quot;&quot;&quot;</span>
     <span class="c1"># double check though this is confirmed already in the config reader</span>
     <span class="n">v_rundir</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">RUNDIR</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="get_expandable_parameters"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.get_expandable_parameters">[docs]</a><span class="k">def</span> <span class="nf">get_expandable_parameters</span><span class="p">(</span><span class="n">user_config</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">module_name</span><span class="p">,</span> <span class="n">max_mols</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get configuration expandable blocks.</span>
 
 <span class="sd">    Parameters</span>
@@ -917,7 +918,7 @@
 
 
 <div class="viewcode-block" id="populate_topology_molecule_params"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.populate_topology_molecule_params">[docs]</a><span class="k">def</span> <span class="nf">populate_topology_molecule_params</span><span class="p">(</span><span class="n">topoaa</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Populate topoaa `molX` subdictionaries.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Populate topoaa `molX` subdictionaries.&quot;&quot;&quot;</span>
     <span class="n">topoaa_dft</span> <span class="o">=</span> <span class="n">_read_defaults</span><span class="p">(</span><span class="s2">&quot;topoaa.1&quot;</span><span class="p">)</span>
 
     <span class="c1"># list of possible prot_segids</span>
@@ -945,7 +946,7 @@
 
 
 <div class="viewcode-block" id="populate_mol_parameters"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.populate_mol_parameters">[docs]</a><span class="k">def</span> <span class="nf">populate_mol_parameters</span><span class="p">(</span><span class="n">modules_params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Populate modules subdictionaries with the needed molecule `mol_` parameters.</span>
 
 <span class="sd">    The `mol_` prefixed parameters is a subclass of the expandable parameters.</span>
@@ -994,7 +995,7 @@
 
 
 <div class="viewcode-block" id="check_if_path_exists"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.check_if_path_exists">[docs]</a><span class="k">def</span> <span class="nf">check_if_path_exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if a path exists and raises an error if it does not exist.</span>
 
 <span class="sd">    For example given this path &quot;../config/project_01/file.txt&quot; it would find</span>
@@ -1040,7 +1041,7 @@
 
 
 <div class="viewcode-block" id="fuzzy_match"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.fuzzy_match">[docs]</a><span class="k">def</span> <span class="nf">fuzzy_match</span><span class="p">(</span><span class="n">user_input</span><span class="p">,</span> <span class="n">possibilities</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find the closest possibility to the user supplied input.</span>
 
 <span class="sd">    Parameters</span>
@@ -1073,7 +1074,7 @@
 
 
 <div class="viewcode-block" id="update_step_contents_to_step_names"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.update_step_contents_to_step_names">[docs]</a><span class="k">def</span> <span class="nf">update_step_contents_to_step_names</span><span class="p">(</span><span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">,</span> <span class="n">folder</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Update step folder names in files after the `--restart` option.</span>
 
 <span class="sd">    Runs over the folders defined in `new_names`.</span>
@@ -1110,7 +1111,7 @@
 
 
 <div class="viewcode-block" id="update_step_names_in_subfolders"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.update_step_names_in_subfolders">[docs]</a><span class="k">def</span> <span class="nf">update_step_names_in_subfolders</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Update step names in subfolders.</span>
 
 <span class="sd">    Some modules may generate subfolders. This function update</span>
@@ -1125,7 +1126,7 @@
 
 
 <div class="viewcode-block" id="update_step_names_in_file"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.update_step_names_in_file">[docs]</a><span class="k">def</span> <span class="nf">update_step_names_in_file</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update step names in file following the `--restart` option.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update step names in file following the `--restart` option.&quot;&quot;&quot;</span>
     <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
@@ -1165,7 +1166,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

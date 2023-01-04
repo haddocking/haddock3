@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -217,7 +218,7 @@
 
 
 <span class="k">class</span> <span class="nc">_ZeroFill</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Register the zero fill number.</span>
 
 <span class="sd">    Examples</span>
@@ -240,7 +241,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">zfnum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The zerofill number.</span>
 
 <span class="sd">        That is, the number of digits that the numeric prefix has.</span>
@@ -248,7 +249,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zfnum</span>
 
     <span class="k">def</span> <span class="nf">set_zerofill_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register the zerofill number given a certain number of steps.</span>
 
 <span class="sd">        Parameters</span>
@@ -259,7 +260,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_zfnum</span> <span class="o">=</span> <span class="n">get_zerofill_for_modules</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modules</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register the zerofill number for current run.</span>
 
 <span class="sd">        Zero fill number if available through the attribute: `zfnum`.</span>
@@ -273,7 +274,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_zfnum</span> <span class="o">=</span> <span class="n">get_zerofill_for_modules</span><span class="p">(</span><span class="n">modules</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fill a name with the corresponding zero filling.</span>
 
 <span class="sd">        Examples</span>
@@ -294,7 +295,7 @@
 
 
 <div class="viewcode-block" id="get_number_of_digits"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.get_number_of_digits">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_digits</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the number of digits of a number.</span>
 
 <span class="sd">    10 has two digits.</span>
@@ -305,7 +306,7 @@
 
 
 <div class="viewcode-block" id="get_zerofill_for_modules"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.get_zerofill_for_modules">[docs]</a><span class="k">def</span> <span class="nf">get_zerofill_for_modules</span><span class="p">(</span><span class="n">modules</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a the prefix zerofill for modules.</span>
 
 <span class="sd">    If there are 5 modules, zerofill digits is 1.</span>
@@ -322,7 +323,7 @@
 
 
 <div class="viewcode-block" id="make_zero_fill"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.make_zero_fill">[docs]</a><span class="k">def</span> <span class="nf">make_zero_fill</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a number string zero filled to the left.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a number string zero filled to the left.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span></div>
 </pre></div>
 
@@ -358,7 +359,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

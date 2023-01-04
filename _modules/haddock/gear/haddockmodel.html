@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -194,7 +195,7 @@
 
 
 <div class="viewcode-block" id="HaddockModel"><a class="viewcode-back" href="../../../reference/gear/haddockmodel.html#haddock.gear.haddockmodel.HaddockModel">[docs]</a><span class="k">class</span> <span class="nc">HaddockModel</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Represent HADDOCK model.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represent HADDOCK model.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdb_f</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">energies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_energies</span><span class="p">(</span><span class="n">pdb_f</span><span class="p">)</span>
@@ -237,7 +238,7 @@
         <span class="k">return</span> <span class="n">energy_dic</span>
 
 <div class="viewcode-block" id="HaddockModel.calc_haddock_score"><a class="viewcode-back" href="../../../reference/gear/haddockmodel.html#haddock.gear.haddockmodel.HaddockModel.calc_haddock_score">[docs]</a>    <span class="k">def</span> <span class="nf">calc_haddock_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">weights</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate the haddock score based on the weights and energies.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the haddock score based on the weights and energies.&quot;&quot;&quot;</span>
         <span class="n">weighted_terms</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">weights</span><span class="p">:</span>
             <span class="n">component_id</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -282,7 +283,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

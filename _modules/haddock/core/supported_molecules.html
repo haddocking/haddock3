@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -248,10 +249,10 @@
 
 
 <div class="viewcode-block" id="CNSTopologyResidue"><a class="viewcode-back" href="../../../reference/core/supported_molecules.html#haddock.core.supported_molecules.CNSTopologyResidue">[docs]</a><span class="k">class</span> <span class="nc">CNSTopologyResidue</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;CNS topology residue.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CNS topology residue.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        CNS topology residue.</span>
 
 <span class="sd">        This is not an actual topology. It is a namespace storing the</span>
@@ -289,22 +290,22 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">resname</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Residue name.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Residue name.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resname</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">charge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Residue total charge.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Residue total charge.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;List of residue atoms.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;List of residue atoms.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        List of elements for all atoms composing the molecule.</span>
 
 <span class="sd">        This list is ordered the same as ``atoms``.</span>
@@ -327,7 +328,7 @@
 
 
 <div class="viewcode-block" id="get_ion_element_from_atoms"><a class="viewcode-back" href="../../../reference/core/supported_molecules.html#haddock.core.supported_molecules.get_ion_element_from_atoms">[docs]</a><span class="k">def</span> <span class="nf">get_ion_element_from_atoms</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate the element name from the atom name for single atom ions.</span>
 
 <span class="sd">    Examples</span>
@@ -345,7 +346,7 @@
 
 
 <div class="viewcode-block" id="read_residues_from_top_file"><a class="viewcode-back" href="../../../reference/core/supported_molecules.html#haddock.core.supported_molecules.read_residues_from_top_file">[docs]</a><span class="k">def</span> <span class="nf">read_residues_from_top_file</span><span class="p">(</span><span class="n">topfile</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read the residues defined in CNS topology file.</span>
 
 <span class="sd">    This is a general implementation to read the basic information from</span>
@@ -431,7 +432,7 @@
 <span class="c1"># the residue names. So it is nice to have a function that retrieve them</span>
 <span class="c1"># from the respective named tuples.</span>
 <div class="viewcode-block" id="get_resnames"><a class="viewcode-back" href="../../../reference/core/supported_molecules.html#haddock.core.supported_molecules.get_resnames">[docs]</a><span class="k">def</span> <span class="nf">get_resnames</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a set of residue names.</span>
 
 <span class="sd">    Elements of the group must have a `resname` attribute.</span>
@@ -452,7 +453,7 @@
 <span class="c1"># where the topology files are not defined in the haddock3 code but in</span>
 <span class="c1"># the run folder</span>
 <div class="viewcode-block" id="read_supported_residues"><a class="viewcode-back" href="../../../reference/core/supported_molecules.html#haddock.core.supported_molecules.read_supported_residues">[docs]</a><span class="k">def</span> <span class="nf">read_supported_residues</span><span class="p">(</span><span class="n">source_path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read supported residues from a folder containing ``.top`` files.</span>
 
 <span class="sd">    The function expects the ``source_path`` to have the required files.</span>
@@ -700,7 +701,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

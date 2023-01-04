@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -201,7 +202,7 @@
 
 
 <div class="viewcode-block" id="MPIScheduler"><a class="viewcode-back" href="../../../reference/libs/libmpi.html#haddock.libs.libmpi.MPIScheduler">[docs]</a><span class="k">class</span> <span class="nc">MPIScheduler</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Schedules tasks to be executed via MPI.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedules tasks to be executed via MPI.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span> <span class="o">=</span> <span class="n">tasks</span>
@@ -209,7 +210,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">ncores</span> <span class="o">=</span> <span class="n">ncores</span>
 
 <div class="viewcode-block" id="MPIScheduler.run"><a class="viewcode-back" href="../../../reference/libs/libmpi.html#haddock.libs.libmpi.MPIScheduler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Send it to the haddock3-mpitask runner.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send it to the haddock3-mpitask runner.&quot;&quot;&quot;</span>
         <span class="n">pkl_tasks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pickle_tasks</span><span class="p">()</span>
         <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;mpirun -np </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ncores</span><span class="si">}</span><span class="s2"> haddock3-mpitask </span><span class="si">{</span><span class="n">pkl_tasks</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MPI cmd is </span><span class="si">{</span><span class="n">cmd</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -230,7 +231,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_pickle_tasks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pickle the tasks.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pickle the tasks.&quot;&quot;&quot;</span>
         <span class="n">fpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cwd</span><span class="p">,</span> <span class="s2">&quot;mpi.pkl&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pickling the tasks at </span><span class="si">{</span><span class="n">fpath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_handler</span><span class="p">:</span>
@@ -270,7 +271,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

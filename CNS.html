@@ -152,6 +152,7 @@
 <li class="toctree-l2"><a class="reference internal" href="clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a><ul>
@@ -200,13 +201,13 @@ Once you have <a class="reference internal" href="INSTALL.html"><span class="doc
 <h2>1 Download CNS<a class="headerlink" href="#download-cns" title="Permalink to this heading">¶</a></h2>
 <p>Downloading CNS requires a license, which academic users can <a class="reference external" href="http://cns-online.org/cns_request/">request for free</a>. You will be sent a password for the download via e-mail.
 Using the link provided in the same e-mail, download CNS (“Source installer (compilation required on your system)”) to the directory in which you want to install it (for example <code class="docutils literal notranslate"><span class="pre">software</span></code>). Navigate to this directory, then uncompress and extract the archive:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/software/
-gunzip cns_solve_1.3_all.tar.gz
-tar -xvf cns_solve_1.3_all.tar
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~/software/
+gunzip<span class="w"> </span>cns_solve_1.3_all.tar.gz
+tar<span class="w"> </span>-xvf<span class="w"> </span>cns_solve_1.3_all.tar
 </pre></div>
 </div>
 <p>Go to the CNS directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> cns_solve_1.3
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>cns_solve_1.3
 </pre></div>
 </div>
 <p>If you are using csh/tcsh, edit <code class="docutils literal notranslate"><span class="pre">cns_solve_env</span></code> to point to the correct location (the current directory):</p>
@@ -227,7 +228,7 @@ tar -xvf cns_solve_1.3_all.tar
 <p>HADDOCK requires some adjustments in CNS to function properly.
 The set of routines to add is provided in the haddock3 repository under <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">varia/cns1.3/</span></code></span>.
 Copy all of these files into the CNS source directory (<code class="docutils literal notranslate"><span class="pre">/PATH/TO/cns_solve_1.3/source/</span></code>), for example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp ~/software/haddock3/varia/cns1.3/* source/
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>~/software/haddock3/varia/cns1.3/*<span class="w"> </span>source/
 </pre></div>
 </div>
 </section>
@@ -235,11 +236,11 @@ Copy all of these files into the CNS source directory (<code class="docutils lit
 <h2>3 Compile CNS<a class="headerlink" href="#compile-cns" title="Permalink to this heading">¶</a></h2>
 <p>Make sure you are inside the main <code class="docutils literal notranslate"><span class="pre">cns_solve_1.3</span></code> directory.</p>
 <p>If a suitable compiler is installed on your system, the following command should start the compilation of CNS:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install
 </pre></div>
 </div>
 <p>If needed, you can specify the compiler you want to use by adding the <code class="docutils literal notranslate"><span class="pre">compiler</span></code> option, for example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make install <span class="nv">compiler</span><span class="o">=</span>gfortran
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>install<span class="w"> </span><span class="nv">compiler</span><span class="o">=</span>gfortran
 </pre></div>
 </div>
 <p>You should see the progress of the compilation, followed by a confirmation that an executable has been created. For example (with gfortran):</p>
@@ -252,11 +253,11 @@ Copy all of these files into the CNS source directory (<code class="docutils lit
 <h2>4 Source CNS<a class="headerlink" href="#source-cns" title="Permalink to this heading">¶</a></h2>
 <p>Lastly, CNS needs to be loaded in the current shell before it can be used.</p>
 <p>For csh/tcsh:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> cns_solve_env
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>cns_solve_env
 </pre></div>
 </div>
 <p>For sh/bash:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span> .cns_solve_env_sh
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">source</span><span class="w"> </span>.cns_solve_env_sh
 </pre></div>
 </div>
 </section>
@@ -294,7 +295,7 @@ Copy all of these files into the CNS source directory (<code class="docutils lit
 </div>
 <p>In this case, you will have to install a compiler. For more information, check the <a class="reference external" href="http://cns-online.org/v1.3/installation/frame.html">CNS Installation page</a>.
 One Fortran compiler that is easy (and free) to install is <code class="docutils literal notranslate"><span class="pre">gfortran</span></code>. It is part of the GNU Compiler Collection (GCC), which can be installed with one command if you have homebrew:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew install gcc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>gcc
 </pre></div>
 </div>
 <p>Alternatively, gfortran can be downloaded as a <a class="reference external" href="https://gcc.gnu.org/wiki/GFortranBinaries">separate binary</a>.</p>
@@ -361,7 +362,7 @@ LDFLAGS = -w $(EXT_LDFLAGS)
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -203,7 +204,7 @@
 
 
 <div class="viewcode-block" id="BaseJob"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.BaseJob">[docs]</a><span class="k">class</span> <span class="nc">BaseJob</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Base class for a subprocess job.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for a subprocess job.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">executable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">input_</span>
@@ -212,7 +213,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
 
 <div class="viewcode-block" id="BaseJob.run"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.BaseJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute job in subprocess.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute job in subprocess.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">make_cmd</span><span class="p">()</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outf</span><span class="p">:</span>
@@ -232,7 +233,7 @@
 
 
 <div class="viewcode-block" id="Job"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.Job">[docs]</a><span class="k">def</span> <span class="nf">Job</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate a standard job.</span>
 
 <span class="sd">    Runs with the following scheme:</span>
@@ -240,7 +241,7 @@
 <span class="sd">        $ cmd ARGS INPUT</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute subprocess job.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute subprocess job.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
             <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executable</span><span class="p">),</span>
             <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)),</span>  <span class="c1"># empty string if no args</span>
@@ -250,7 +251,7 @@
 
 
 <div class="viewcode-block" id="JobInputFirst"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.JobInputFirst">[docs]</a><span class="k">class</span> <span class="nc">JobInputFirst</span><span class="p">(</span><span class="n">BaseJob</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instantiate a subprocess job with inverted args and input.</span>
 
 <span class="sd">    Runs with the following scheme, INPUT comes first:</span>
@@ -259,7 +260,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="JobInputFirst.make_cmd"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.JobInputFirst.make_cmd">[docs]</a>    <span class="k">def</span> <span class="nf">make_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute job in subprocess.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute job in subprocess.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
             <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">executable</span><span class="p">),</span>
             <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="p">),</span>
@@ -269,7 +270,7 @@
 
 
 <div class="viewcode-block" id="CNSJob"><a class="viewcode-back" href="../../../reference/libs/libsubprocess.html#haddock.libs.libsubprocess.CNSJob">[docs]</a><span class="k">class</span> <span class="nc">CNSJob</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A CNS job script.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A CNS job script.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
@@ -278,7 +279,7 @@
             <span class="n">envvars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">cns_exec</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        CNS subprocess.</span>
 
 <span class="sd">        To execute the job, call the `.run()` method.</span>
@@ -313,12 +314,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;CNS environment vars.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CNS environment vars.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envvars</span>
 
     <span class="nd">@envvars</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">envvars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">envvars</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;CNS environment vars.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CNS environment vars.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_envvars</span> <span class="o">=</span> <span class="n">envvars</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_envvars</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;`envvars` must be a dictionary.&#39;</span><span class="p">)</span>
@@ -329,7 +330,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cns_exec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;CNS executable path.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CNS executable path.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cns_exec</span>
 
     <span class="nd">@cns_exec</span><span class="o">.</span><span class="n">setter</span>
@@ -351,7 +352,7 @@
             <span class="n">compress_out</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">compress_seed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run this CNS job script.</span>
 
 <span class="sd">        Parameters</span>
@@ -433,7 +434,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

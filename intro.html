@@ -154,6 +154,7 @@
 <li class="toctree-l2"><a class="reference internal" href="clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules/index.html">Modules</a><ul>
@@ -266,39 +267,39 @@ all categories and modules. Below is a summary of the available modules:</p>
 </li>
 </ul>
 <p>The HADDOCK3 workflows are defined in simple configuration text files, similar to the TOML format but with extra features. Here is an example of a configuration file that would reproduce the HADDOCK2.x rigid workflow:</p>
-<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">run_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;run1-protein-protein&quot;</span><span class="w"></span>
-<span class="n">ncores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span><span class="w"></span>
-<span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;local&quot;</span><span class="w"></span>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><span class="n">run_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;run1-protein-protein&quot;</span>
+<span class="n">ncores</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span>
+<span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
 
-<span class="c1"># molecules to be docked</span><span class="w"></span>
-<span class="n">molecules</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="p">[</span><span class="w"></span>
-<span class="w">    </span><span class="s">&quot;data/e2aP_1F3G.pdb&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="s">&quot;data/hpr_ensemble.pdb&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">]</span><span class="w"></span>
+<span class="c1"># molecules to be docked</span>
+<span class="n">molecules</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="p">[</span>
+<span class="w">    </span><span class="s">&quot;data/e2aP_1F3G.pdb&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s">&quot;data/hpr_ensemble.pdb&quot;</span>
+<span class="w">    </span><span class="p">]</span>
 
-<span class="k">[topoaa]</span><span class="w"></span>
+<span class="k">[topoaa]</span>
 
-<span class="k">[rigidbody]</span><span class="w"></span>
-<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/e2a-hpr_air.tbl&quot;</span><span class="w"></span>
+<span class="k">[rigidbody]</span>
+<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/e2a-hpr_air.tbl&quot;</span>
 
-<span class="k">[seletop]</span><span class="w"></span>
+<span class="k">[seletop]</span>
 
-<span class="k">[flexref]</span><span class="w"></span>
-<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/e2a-hpr_air.tbl&quot;</span><span class="w"></span>
+<span class="k">[flexref]</span>
+<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/e2a-hpr_air.tbl&quot;</span>
 
-<span class="k">[emref]</span><span class="w"></span>
-<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/e2a-hpr_air.tbl&quot;</span><span class="w"></span>
+<span class="k">[emref]</span>
+<span class="n">ambig_fname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;data/e2a-hpr_air.tbl&quot;</span>
 
-<span class="k">[clustfcc]</span><span class="w"></span>
+<span class="k">[clustfcc]</span>
 
-<span class="k">[caprieval]</span><span class="w"></span>
+<span class="k">[caprieval]</span>
 </pre></div>
 </div>
 <p>In this expample only very few parameters are defined as most correspond to the default ones defined for each module. The sampling in this case would be 1000 rigidbody models and 200 for the refinement stages. Clustering is based on the fraction of common contacts and the final clusters are analysed using the best model generated as a reference (the <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module).</p>
 <p>Detailed explanations on how to configure a workflow through the configuration files can be found
 <a href="https://github.com/haddocking/haddock3/blob/main/docs/tutorials/user_config.rst">here</a>.</p>
 <p>Having the configuration file ready, users can run HADDOCK3 with a single command-line input:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3 config-file.cfg
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>haddock3<span class="w"> </span>config-file.cfg
 </pre></div>
 </div>
 <p>You can find examples of HADDOCK3 workflows for the different biological
@@ -352,7 +353,7 @@ our lectures on YouTube:</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

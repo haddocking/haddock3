@@ -149,6 +149,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/climpi.html">HADDOCK3 MPI Run</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clibm.html">Benchmark Client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../clients/clidmn.html">Benchmark Daemon</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../clients/clianalyse.html">Analysis client</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../modules/index.html">Modules</a><ul>
@@ -199,7 +200,7 @@
 
 
 <div class="viewcode-block" id="split_tasks"><a class="viewcode-back" href="../../../reference/libs/libparallel.html#haddock.libs.libparallel.split_tasks">[docs]</a><span class="k">def</span> <span class="nf">split_tasks</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Split tasks into N-sized chunks.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split tasks into N-sized chunks.&quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">),</span> <span class="n">n</span><span class="p">):</span>
         <span class="n">chunk</span> <span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="n">j</span><span class="p">:</span><span class="n">n</span> <span class="o">+</span> <span class="n">j</span><span class="p">]</span>
@@ -207,7 +208,7 @@
 
 
 <div class="viewcode-block" id="Worker"><a class="viewcode-back" href="../../../reference/libs/libparallel.html#haddock.libs.libparallel.Worker">[docs]</a><span class="k">class</span> <span class="nc">Worker</span><span class="p">(</span><span class="n">Process</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Work on tasks.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Work on tasks.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Worker</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -215,17 +216,17 @@
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Worker ready with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">)</span><span class="si">}</span><span class="s2"> tasks&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Worker.run"><a class="viewcode-back" href="../../../reference/libs/libparallel.html#haddock.libs.libparallel.Worker.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute tasks.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute tasks.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tasks</span><span class="p">:</span>
             <span class="n">task</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> executed&quot;</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="Scheduler"><a class="viewcode-back" href="../../../reference/libs/libparallel.html#haddock.libs.libparallel.Scheduler">[docs]</a><span class="k">class</span> <span class="nc">Scheduler</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Schedules tasks to run in multiprocessing.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedules tasks to run in multiprocessing.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">,</span> <span class="n">ncores</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_cpus</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Schedule tasks to a defined number of processes.</span>
 
 <span class="sd">        Parameters</span>
@@ -267,7 +268,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">num_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of processors to use.&quot;&quot;&quot;</span>  <span class="c1"># noqa: D401</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of processors to use.&quot;&quot;&quot;</span>  <span class="c1"># noqa: D401</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ncores</span>
 
     <span class="nd">@num_processes</span><span class="o">.</span><span class="n">setter</span>
@@ -280,7 +281,7 @@
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Scheduler configured for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ncores</span><span class="si">}</span><span class="s2"> cpu cores.&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Scheduler.run"><a class="viewcode-back" href="../../../reference/libs/libparallel.html#haddock.libs.libparallel.Scheduler.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run tasks in parallel.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run tasks in parallel.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_list</span><span class="p">:</span>
                 <span class="c1"># Start the worker</span>
@@ -317,7 +318,7 @@
             <span class="k">raise</span> <span class="n">err</span></div>
 
 <div class="viewcode-block" id="Scheduler.terminate"><a class="viewcode-back" href="../../../reference/libs/libparallel.html#haddock.libs.libparallel.Scheduler.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Terminate tasks in a controlled way.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Terminate tasks in a controlled way.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_list</span><span class="p">:</span>
             <span class="n">worker</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
 
@@ -356,7 +357,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 22, 2022.
+        Last updated on Jan 04, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

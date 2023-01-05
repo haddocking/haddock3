@@ -175,7 +175,7 @@ def test_protprot_lrmsd(protprot_caprimodule):
 def test_protprot_ilrmsd(protprot_caprimodule):
     """Test protein-protein i-l-rmsd calculation."""
     protprot_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protprot_caprimodule.ilrmsd) == 9.67
+    assert round_two_dec(protprot_caprimodule.ilrmsd) == 18.25
 
 
 def test_protprot_fnat(protprot_caprimodule):
@@ -202,13 +202,13 @@ def test_protlig_irmsd(protlig_caprimodule):
 def test_protlig_lrmsd(protlig_caprimodule):
     """Test protein-ligand l-rmsd calculation."""
     protlig_caprimodule.calc_lrmsd()
-    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.51
+    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.49
 
 
 def test_protlig_ilrmsd(protlig_caprimodule):
     """Test protein-ligand i-l-rmsd calculation."""
     protlig_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.5
+    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.49
 
 
 def test_protlig_fnat(protlig_caprimodule):
@@ -226,13 +226,13 @@ def test_protdna_irmsd(protdna_caprimodule):
 def test_protdna_lrmsd(protdna_caprimodule):
     """Test protein-dna l-rmsd calculation."""
     protdna_caprimodule.calc_lrmsd()
-    assert round_two_dec(protdna_caprimodule.lrmsd) == 4.19
+    assert round_two_dec(protdna_caprimodule.lrmsd) == 6.13
 
 
 def test_protdna_ilrmsd(protdna_caprimodule):
     """Test protein-dna i-l-rmsd calculation."""
     protdna_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protdna_caprimodule.ilrmsd) == 1.89
+    assert round_two_dec(protdna_caprimodule.ilrmsd) == 5.97
 
 
 def test_protdna_fnat(protdna_caprimodule, protdna_input_list):

@@ -159,7 +159,7 @@ def protprot_caprimodule_parallel(protprot_input_list):
 def test_protprot_irmsd(protprot_caprimodule):
     """Test protein-protein i-rmsd calculation."""
     # using standard cutoff
-    protprot_caprimodule.calc_irmsd(cutoff = 10.0)
+    protprot_caprimodule.calc_irmsd(cutoff=10.0)
     assert round_two_dec(protprot_caprimodule.irmsd) == 8.33
     # using default cutoff = 5.0
     protprot_caprimodule.calc_irmsd()

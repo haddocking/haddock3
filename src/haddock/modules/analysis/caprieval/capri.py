@@ -81,7 +81,6 @@ class CAPRI:
         """
         # Identify reference interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
-        print(f"ref_interface_resdic {ref_interface_resdic}")
         if len(ref_interface_resdic) == 0:
             log.warning("No reference interface found")
         else:
@@ -169,15 +168,15 @@ class CAPRI:
             # write_coords("ref_first.pdb", Q)
             # write_coords("model_first.pdb", P)
 
-            # get receptor and ligand coordinates
+            # get receptor and ligand coordinates
             Q_r_first = Q[r_start: r_end + 1]
             P_r_first = P[r_start: r_end + 1]
-            #write_coords("ref_r_first.pdb", Q_r_first)
-            #write_coords("model_r_first.pdb", P_r_first)
-            Q_l_first = Q[l_start: l_end + 1]
-            P_l_first = P[l_start: l_end + 1]
-            #write_coords("ref_l_first.pdb", Q_l_first)
-            #write_coords("model_l_first.pdb", P_l_first)
+            # write_coords("ref_r_first.pdb", Q_r_first)
+            # write_coords("model_r_first.pdb", P_r_first)
+            # Q_l_first = Q[l_start: l_end + 1]
+            # P_l_first = P[l_start: l_end + 1]
+            # write_coords("ref_l_first.pdb", Q_l_first)
+            # write_coords("model_l_first.pdb", P_l_first)
 
             # move to the origin of the receptor
             
@@ -190,26 +189,24 @@ class CAPRI:
             # Center receptors and get rotation matrix
             # Q_r = Q_r - centroid(Q_r)
             # P_r = P_r - centroid(P_r)
-            #write_coords("ref_r_centr.pdb", Q_r)
-            #write_coords("model_r_centr.pdb", P_r)
+            # write_coords("ref_r_centr.pdb", Q_r)
+            # write_coords("model_r_centr.pdb", P_r)
 
             U_r = kabsch(P_r, Q_r)
-            print(U_r)
-            print(calc_rmsd(Q_r, np.dot(P_r, U_r)))
 
             # Apply rotation to complex
             #  - complex are now aligned by the receptor
             P = np.dot(P, U_r)
 
-            #write_coords("ref.pdb", Q)
-            #write_coords("model.pdb", P)
+            # write_coords("ref.pdb", Q)
+            # write_coords("model.pdb", P)
 
             # Identify the ligand coordinates
             Q_l = Q[l_start: l_end + 1]
             P_l = P[l_start: l_end + 1]
 
-            #write_coords("ref_l.pdb", Q_l)
-            #write_coords("model_l.pdb", P_l)
+            # write_coords("ref_l.pdb", Q_l)
+            # write_coords("model_l.pdb", P_l)
 
             # Calculate the RMSD of the ligands
             self.lrmsd = calc_rmsd(P_l, Q_l)
@@ -261,10 +258,10 @@ class CAPRI:
         
         chain_ranges = {}
         for i, segment in enumerate(sorted(common_keys)):
-             chain, _, _ = segment
-             if chain not in chain_ranges:
-                 chain_ranges[chain] = []
-             chain_ranges[chain].append(i)
+            chain, _, _ = segment
+            if chain not in chain_ranges:
+                chain_ranges[chain] = []
+            chain_ranges[chain].append(i)
 
         chain_ranges = make_range(chain_ranges)
         obs_chains = list(chain_ranges.keys())  # observed chains
@@ -294,16 +291,16 @@ class CAPRI:
             U_int = kabsch(P_r_int, Q_r_int)
             P_int = np.dot(P_int, U_int)
             # just for checks.
-            # the interface rmsd for the receptor interface should be zero
-            #Q_r_int = Q_int[r_start: r_end + 1]
-            #P_r_int = P_int[r_start: r_end + 1]
-            #r_rmsd = calc_rmsd(Q_r_int[r_start: r_end + 1], P_int[r_start: r_end + 1])
-            #print(r_rmsd)
+            # the interface rmsd for the rec interface should be almost zero
+            # Q_r_int = Q_int[r_start: r_end + 1]
+            # P_r_int = P_int[r_start: r_end + 1]
+            # r_rmsd = calc_rmsd(Q_r_int, P_int[r_start: r_end + 1])
+            # print(r_rmsd)
 
             Q_l_int = Q_int[l_start: l_end + 1]
             P_l_int = P_int[l_start: l_end + 1]
-            #write_coords("ref_l_int_fin.pdb", Q_l_int)
-            #write_coords("mod_l_int_fin.pdb", P_l_int)
+            # write_coords("ref_l_int_fin.pdb", Q_l_int)
+            # write_coords("mod_l_int_fin.pdb", P_l_int)
 
             # # this will be the interface-ligand-rmsd
             self.ilrmsd = calc_rmsd(P_l_int, Q_l_int)

@@ -81,6 +81,7 @@ class CAPRI:
         """
         # Identify reference interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
+
         if len(ref_interface_resdic) == 0:
             log.warning("No reference interface found")
         else:
@@ -223,7 +224,6 @@ class CAPRI:
         # Identify interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
         # Load interface coordinates
-        # ref_coord_dic, _ = load_coords(self.reference, self.atoms)
 
         ref_int_coord_dic, _ = load_coords(
             self.reference, self.atoms, ref_interface_resdic
@@ -866,21 +866,21 @@ class CAPRIError(Exception):
 
 
 # debug only
-def write_coords(output_name, coor_list):
-    """Add a dummy atom to a PDB file according to a list of coordinates."""
-    with open(output_name, "w") as fh:
-        for i, dummy_coord in enumerate(coor_list):
-            atom_num = f"{i}".rjust(4, " ")
-            resnum = f"{i}".rjust(3, " ")
-            dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
-            dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
-            dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
-            dummy_line = (
-                f"ATOM   {atom_num}  H   DUM X {resnum}   "
-                f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
-                "        H  " + os.linesep
-                )
-            fh.write(dummy_line)
+# def write_coords(output_name, coor_list):
+#     """Add a dummy atom to a PDB file according to a list of coordinates."""
+#     with open(output_name, "w") as fh:
+#         for i, dummy_coord in enumerate(coor_list):
+#             atom_num = f"{i}".rjust(4, " ")
+#             resnum = f"{i}".rjust(3, " ")
+#             dum_x = f"{dummy_coord[0]:.3f}".rjust(7, " ")
+#             dum_y = f"{dummy_coord[1]:.3f}".rjust(7, " ")
+#             dum_z = f"{dummy_coord[2]:.3f}".rjust(7, " ")
+#             dummy_line = (
+#                 f"ATOM   {atom_num}  H   DUM X {resnum}   "
+#                 f"  {dum_x} {dum_y} {dum_z}  1.00  1.00   "
+#                 "        H  " + os.linesep
+#                 )
+#             fh.write(dummy_line)
 
 
 # # debug only

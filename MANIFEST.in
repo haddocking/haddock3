@@ -6,6 +6,7 @@ include *.rst
 include LICENSE
 include requirements.txt
 include requirements.yml
+include requirements_full.yml
 
 exclude .gitmodules
 exclude .bumpversion.cfg

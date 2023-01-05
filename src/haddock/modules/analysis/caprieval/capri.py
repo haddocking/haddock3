@@ -224,19 +224,19 @@ class CAPRI:
         """
         # Identify interface
         ref_interface_resdic = self.identify_interface(self.reference, cutoff)
-
+        print(ref_interface_resdic)
         # Load interface coordinates
-        ref_coord_dic, _ = load_coords(self.reference, self.atoms)
+        # ref_coord_dic, _ = load_coords(self.reference, self.atoms)
 
         ref_int_coord_dic, _ = load_coords(
             self.reference, self.atoms, ref_interface_resdic
             )
 
-        mod_coord_dic, _ = load_coords(
-            self.model,
-            self.atoms,
-            numbering_dic=self.model2ref_numbering
-            )
+        #mod_coord_dic, _ = load_coords(
+        #    self.model,
+        #    self.atoms,
+        #    numbering_dic=self.model2ref_numbering
+        #    )
 
         mod_int_coord_dic, _ = load_coords(
             self.model,
@@ -264,20 +264,16 @@ class CAPRI:
 
         # write_coords("ref.pdb", Q_int)
         # write_coords("model.pdb", P_int)
-
-        # find atoms present in both molecules
-        Q = []
-        P = []
-        intersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
+        
         chain_ranges = {}
-        for i, segment in enumerate(intersection):
-            chain, _, _ = segment
-            if chain not in chain_ranges:
-                chain_ranges[chain] = []
-            chain_ranges[chain].append(i)
+        for i, segment in enumerate(sorted(common_keys)):
+             chain, _, _ = segment
+             if chain not in chain_ranges:
+                 chain_ranges[chain] = []
+             chain_ranges[chain].append(i)
 
         chain_ranges = make_range(chain_ranges)
-
+        print(f"chain_ranges {chain_ranges}")
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating ilrmsd")
@@ -285,64 +281,38 @@ class CAPRI:
             r_chain, l_chain = self.check_chains(obs_chains)
 
             l_start, l_end = chain_ranges[l_chain]
-
-            for k in sorted(ref_coord_dic.keys() & mod_coord_dic.keys()):
-                ref_xyz = ref_coord_dic[k]
-                mod_xyz = mod_coord_dic[k]
-
-                Q.append(ref_xyz)
-                P.append(mod_xyz)
-
-            Q = np.asarray(Q)
-            P = np.asarray(P)
+            r_start, r_end = chain_ranges[r_chain]
 
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
 
-            # put system at origin
-            Q_int = Q_int - centroid(Q_int)
-            P_int = P_int - centroid(P_int)
+            # put system at origin of the receptor interface
+            Q_r_int = Q_int[r_start: r_end + 1]
+            P_r_int = P_int[r_start: r_end + 1]
 
+            write_coords("ref_r_int.pdb", Q_r_int)
+            write_coords("mod_r_int.pdb", P_r_int)
+
+            Q_int = Q_int - centroid(Q_r_int)
+            P_int = P_int - centroid(P_r_int)
             # put interfaces at the origin
-            # Q_int = Q_int - centroid(Q_int)
-            # P_int = P_int - centroid(P_int)
 
-            # find the rotation that minimizes the interface rmsd
-            U_int = kabsch(P_int, Q_int)
+            # find the rotation that minimizes the receptor interface rmsd
+            U_int = kabsch(P_r_int, Q_r_int)
+            
             P_int = np.dot(P_int, U_int)
+            # just for checks.
+            # the interface rmsd for the receptor interface should be zero
+            # Q_r_int = Q_int[r_start: r_end + 1]
+            # P_r_int = P_int[r_start: r_end + 1]
+            # r_rmsd = calc_rmsd(Q_r_int[r_start: r_end + 1], P_int[r_start: r_end + 1])
+            # print(r_rmsd)
 
-            # write_coords("ref.pdb", Q_int)
-            # write_coords("model.pdb", P_int)
+            Q_l_int = Q_int[l_start: l_end + 1]
+            P_l_int = P_int[l_start: l_end + 1]
 
-            # # move the system to the centroid of the interfaces
-            Q = Q - centroid(Q)
-            P = P - centroid(P)
-
-            # write_coords("ref_1.pdb", Q)
-            # write_coords("model_1.pdb", P)
-
-            Q = Q - centroid(Q_int)
-            P = P - centroid(P_int)
-
-            # write_coords("ref_2.pdb", Q)
-            # write_coords("model_2.pdb", P)
-
-            # apply this rotation to the model
-            #  - complexes are now aligned by the interfaces
-            P = np.dot(P, U_int)
-
-            # write_coords("ref_i.pdb", Q)
-            # write_coords("model_i.pdb", P)
-
-            # Calculate the rmsd of the ligand
-            Q_l = Q[l_start: l_end - 1]
-            P_l = P[l_start: l_end - 1]
-
-            # write_coords("ref_l.pdb", Q_l)
-            # write_coords("model_l.pdb", P_l)
-
-            # this will be the interface-ligand-rmsd
-            self.ilrmsd = calc_rmsd(P_l, Q_l)
+            # # this will be the interface-ligand-rmsd
+            self.ilrmsd = calc_rmsd(P_l_int, Q_l_int)
             
     def calc_fnat(self, cutoff=5.0):
         """

@@ -865,7 +865,7 @@ class CAPRIError(Exception):
 #             fh.write(dummy_line)
 
 
-# debug only
+# # debug only
 # def write_coords(output_name, coor_list):
 #     """Add a dummy atom to a PDB file according to a list of coordinates."""
 #     with open(output_name, "w") as fh:

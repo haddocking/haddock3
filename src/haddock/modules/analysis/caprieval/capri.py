@@ -461,7 +461,7 @@ class CAPRI:
         if self.params["irmsd"]:
             log.debug(f"id {self.identificator}, calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
-            log.info(f" cutoff: {irmsd_cutoff}A")
+            log.debug(f" cutoff: {irmsd_cutoff}A")
             self.calc_irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:

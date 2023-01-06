@@ -105,6 +105,9 @@ DNA_ATOMS = [
     "O6",
     ]
 
+RNA_RES = ["A" , "G", "C", "U"]
+RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+
 DNA_FULL_DICT = {
     "DA": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4",
            "N3", "C2", "N1", "C6", "N6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],  # noqa: E501
@@ -115,6 +118,17 @@ DNA_FULL_DICT = {
     "DT": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
            "C2", "O2", "N3", "C4", "O4", "C5", "C7", "C2'", "C3'", "O3'"]
     }
+
+RNA_FULL_DICT = {
+    "A" : ["P", "OP1", "OP2",  "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'", "O2'", "C1'",
+           "N9", "C8", "N7", "C5", "C6", "N6", "N1", "C2", "N3", "C4"],
+    "G" : ["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'", "O2'", "C1'",
+           "N9", "C8", "N7", "C5", "C6", "O6", "N1", "C2", "N2", "N3", "C4"],
+    "C" : ["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'", "O2'", "C1'",
+           "N9", "C5", "C6", "O6", "N1", "C2", "N2", "N3", "C4", "N4"],
+    "U" : ["P", "OP1", "OP2",  "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'", "O2'", "C1'",
+           "N1", "C2", "O2", "N3", "C4", "O4", "C5", "C6"]
+}
 
 
 class ALIGNError(Exception):
@@ -293,9 +307,11 @@ def get_atoms(pdb, full=False):
     atom_dic = {}
     atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
+    atom_dic.update(dict((r, RNA_ATOMS) for r in RNA_RES))
     if full:
         atom_dic.update(PROT_SIDE_CHAINS_DICT)
         atom_dic.update(DNA_FULL_DICT)
+        atom_dic.update(RNA_FULL_DICT)
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path
@@ -309,9 +325,10 @@ def get_atoms(pdb, full=False):
                 if (
                         resname not in PROT_RES
                         and resname not in DNA_RES
+                        and resname not in RNA_RES
                         and resname not in RES_TO_BE_IGNORED
                         ):
-                    # its neither DNA nor protein, use the heavy atoms
+                    # its neither DNA/RNA nor protein, use the heavy atoms
                     # WARNING: Atoms that belong to unknown residues must
                     #  be bound to a residue name;
                     #   For example: residue NEP, also contains
@@ -632,7 +649,7 @@ def align_seq(reference, model, output_path):
         if not any(e for e in top_aln.aligned):
             # No alignment!
             log.warning(
-                f"No alignment for chain {ref_chain} is it protein/dna? "
+                f"No alignment for chain {ref_chain} is it protein/dna-rna? "
                 "Matching sequentially"
                 )
             if all(

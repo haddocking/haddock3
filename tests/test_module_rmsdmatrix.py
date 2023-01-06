@@ -82,7 +82,7 @@ def test_rmsd_dispatcher():
 
 
 def test_overall_rmsd(input_protdna_models):
-    """"""
+    """Test overall rmsdmatrix module."""
     rmsd_module = HaddockModule(
         order=2,
         path=Path("2_rmsdmatrix"),

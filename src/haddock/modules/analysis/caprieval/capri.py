@@ -2,12 +2,12 @@
 import os
 import shutil
 import tempfile
+from itertools import combinations
 from pathlib import Path
 
 import numpy as np
-from fccpy import read_pdb
-from fccpy.contacts import get_intermolecular_contacts
 from pdbtools import pdb_segxchain
+from scipy.spatial.distance import cdist
 
 from haddock import log
 from haddock.libs.libalign import (
@@ -22,6 +22,57 @@ from haddock.libs.libalign import (
     )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile
+
+
+def load_contacts(pdb_f, cutoff=5.0):
+    """
+    Load residue-based contacts.
+
+    Parameters
+    ----------
+    pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
+        PDB file of the model to have its atoms identified
+    cutoff : float, optional
+        Cutoff distance for the interface identification.
+
+    Returns
+    -------
+    set(con_list) : set
+        set of unique contacts
+    """
+    con_list = []
+    if isinstance(pdb_f, PDBFile):
+        pdb_f = pdb_f.rel_path
+    # get also side chains atoms
+    atoms = get_atoms(pdb_f, full=True)
+    ref_coord_dic, _ = load_coords(pdb_f, atoms)
+    # create coordinate arrays
+    coord_arrays, coord_ids = {}, {}
+    for atom in ref_coord_dic.keys():
+        chain = atom[0]
+        if chain not in coord_arrays.keys():  # initialize lists
+            coord_arrays[chain], coord_ids[chain] = [], []
+        coord_arrays[chain].append(ref_coord_dic[atom])
+        coord_ids[chain].append(atom[1])  # only the resid is appended
+    for chain in coord_arrays.keys():
+        coord_arrays[chain] = np.array(coord_arrays[chain])
+
+    # combinations of chains
+    unique_chain_combs = list(combinations(coord_arrays.keys(), 2))
+
+    # calculating contacts
+    for pair in unique_chain_combs:
+        # cycling over each coordinate of the first chain
+        for s in range(coord_arrays[pair[0]].shape[0]):
+            s_xyz = coord_arrays[pair[0]][s].reshape(1, 3)
+            s_cid = coord_ids[pair[0]][s]
+            dist = cdist(s_xyz, coord_arrays[pair[1]])
+            npw = np.where(dist < cutoff)
+            del dist
+            for k in range(npw[0].shape[0]):
+                con = (pair[0], s_cid, pair[1], coord_ids[pair[1]][npw[1][k]])
+                con_list.append(con)
+    return set(con_list)
 
 
 class CAPRI:
@@ -314,9 +365,9 @@ class CAPRI:
         cutoff : float
             The cutoff distance for the intermolecular contacts.
         """
-        ref_contacts = self.load_contacts(self.reference, cutoff)
+        ref_contacts = load_contacts(self.reference, cutoff)
         if len(ref_contacts) != 0:
-            model_contacts = self.load_contacts(self.model, cutoff)
+            model_contacts = load_contacts(self.model, cutoff)
             intersection = ref_contacts & model_contacts
             self.fnat = len(intersection) / float(len(ref_contacts))
         else:
@@ -410,7 +461,7 @@ class CAPRI:
         if self.params["irmsd"]:
             log.debug(f"id {self.identificator}, calculating I-RMSD")
             irmsd_cutoff = self.params["irmsd_cutoff"]
-            log.info(f" cutoff: {irmsd_cutoff}A")
+            log.debug(f" cutoff: {irmsd_cutoff}A")
             self.calc_irmsd(cutoff=irmsd_cutoff)
 
         if self.params["lrmsd"]:
@@ -491,43 +542,26 @@ class CAPRI:
         """
         if isinstance(pdb_f, PDBFile):
             pdb_f = pdb_f.rel_path
-        pdb = read_pdb(pdb_f)
 
         interface_resdic = {}
-        for atom_i, atom_j in get_intermolecular_contacts(pdb, cutoff):
+        contacts = load_contacts(pdb_f, cutoff)
 
-            if atom_i.chain not in interface_resdic:
-                interface_resdic[atom_i.chain] = []
-            if atom_j.chain not in interface_resdic:
-                interface_resdic[atom_j.chain] = []
+        for contact in contacts:
+            
+            first_chain, first_resid = contact[0], contact[1]
+            sec_chain, sec_resid = contact[2], contact[3]
 
-            if atom_i.resid not in interface_resdic[atom_i.chain]:
-                interface_resdic[atom_i.chain].append(atom_i.resid)
-            if atom_j.resid not in interface_resdic[atom_j.chain]:
-                interface_resdic[atom_j.chain].append(atom_j.resid)
+            if first_chain not in interface_resdic:
+                interface_resdic[first_chain] = []
+            if sec_chain not in interface_resdic:
+                interface_resdic[sec_chain] = []
+
+            if first_resid not in interface_resdic[first_chain]:
+                interface_resdic[first_chain].append(first_resid)
+            if sec_resid not in interface_resdic[sec_chain]:
+                interface_resdic[sec_chain].append(sec_resid)
 
         return interface_resdic
-
-    @staticmethod
-    def load_contacts(pdb_f, cutoff=5.0):
-        """
-        Load residue-based contacts.
-
-        Parameters
-        ----------
-        pdb_f : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
-            PDB file of the model to have its atoms identified
-        cutoff : float, optional
-            Cutoff distance for the interface identification.
-        """
-        con_list = []
-        if isinstance(pdb_f, PDBFile):
-            pdb_f = pdb_f.rel_path
-        structure = read_pdb(pdb_f)
-        for atom_i, atom_j in get_intermolecular_contacts(structure, cutoff):
-            con = (atom_i.chain, atom_i.resid, atom_j.chain, atom_j.resid)
-            con_list.append(con)
-        return set(con_list)
 
     @staticmethod
     def add_chain_from_segid(pdb_path):

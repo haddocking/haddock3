@@ -30,7 +30,12 @@ from haddock import log
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libcli import _ParamsToDict
 from haddock.libs.libontology import ModuleIO
-from haddock.libs.libplots import box_plots, read_capri_table, scatter_plots
+from haddock.libs.libplots import (
+    box_plots,
+    read_capri_table,
+    scatter_plots,
+    scatter_plots_png,
+    )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \
     DEFAULT_CONFIG as caprieval_params
@@ -93,6 +98,14 @@ ap.add_argument(
     required=False,
     type=int,
     default=10
+    )
+
+ap.add_argument(
+    "--png",
+    help="produce png images",
+    required=False,
+    type=bool,
+    default=False
     )
 
 ap.add_argument(
@@ -189,7 +202,7 @@ def update_capri_dict(capri_dict, target_path):
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
+def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png):
     """
     Analyse a step.
 
@@ -238,10 +251,12 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
     if ss_file.exists():
         log.info("Plotting results..")
         scatter_plots(ss_file, cluster_ranking)
-        box_plots(ss_file, cluster_ranking)
+        box_plots(ss_file, cluster_ranking, png)
+        if png:
+            scatter_plots_png(ss_file, cluster_ranking)
 
 
-def main(run_dir, modules, top_cluster, **kwargs):
+def main(run_dir, modules, top_cluster, png, **kwargs):
     """
     Analyse CLI.
 
@@ -309,7 +324,12 @@ def main(run_dir, modules, top_cluster, **kwargs):
         # run the analysis
         error = False
         try:
-            analyse_step(step, Path("./"), capri_dict, target_path, top_cluster)
+            analyse_step(step,
+                         Path("./"),
+                         capri_dict,
+                         target_path,
+                         top_cluster,
+                         png)
         except Exception as e:
             error = True
             log.warning(

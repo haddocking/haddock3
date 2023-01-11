@@ -1,5 +1,6 @@
 """Plotting functionalities."""
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.colors as px_colors
@@ -82,7 +83,7 @@ def read_capri_table(capri_filename, comment="#"):
     return capri_df
 
 
-def box_plots(capri_filename, cl_ranking):
+def box_plots(capri_filename, cl_ranking, png):
     """
     Create box plots.
 
@@ -107,10 +108,19 @@ def box_plots(capri_filename, cl_ranking):
         else:
             cl_df["capri_rank"] = cl_ranking[cl_id]
             gb_good = pd.concat([gb_good, cl_df])
+            
     gb_other["cluster-id"] = "Other"
     gb_other["capri_rank"] = len(cl_ranking.keys()) + 1
     gb_cluster = pd.concat([gb_good, gb_other])
+    # when png is true we already order everything according to capri_rank
+    if png:
+        gb_sorted = gb_cluster.sort_values("capri_rank")
+        gbcl = gb_sorted.groupby("cluster-id", sort=False)
+        legend_labels = [f"Cluster {el[0]}" for el in gbcl]
+        if not gb_other.empty:
+            legend_labels[-1] = "Other"
     
+    # iterate over the variables
     for x_ax in AXIS_NAMES.keys():
         if x_ax not in capri_df.columns:
             log.info(f"x axis quantity {x_ax} not present in capri table")
@@ -138,8 +148,27 @@ def box_plots(capri_filename, cl_ranking):
             legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
             hoverlabel=dict(font_size=16, font_family="Helvetica"),
             )
-
         fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
+        # create png boxplot if necessary
+        if png:
+            plt.figure(figsize=(20, 16))
+            plt_fname = f"{x_ax}_clt.png"
+            fig, ax = plt.subplots()
+            # box plot must take element 1 of groupby instance
+            bplot = ax.boxplot([el[1][x_ax] for el in gbcl],
+                               patch_artist=True,
+                               showmeans=False,
+                               )
+            colors = plt.cm.tab20.colors
+            for patch, color in zip(bplot['boxes'], colors):
+                patch.set_facecolor(color)
+            # plot details
+            ax.legend(bplot["boxes"], legend_labels, bbox_to_anchor=(1.0, 1.0))
+            plt.ylabel(AXIS_NAMES[x_ax])
+            plt.xlabel("Cluster rank")
+            plt.tight_layout()
+            plt.savefig(fname=plt_fname, dpi=200)
+            plt.close()
         
 
 def scatter_plots(capri_filename, cl_ranking):
@@ -158,7 +187,7 @@ def scatter_plots(capri_filename, cl_ranking):
         {cluster_id : cluster_rank} dictionary
     """
     capri_df = read_capri_table(capri_filename, comment="#")
-    for x_ax, y_ax in SCATTER_PAIRS:
+    for x_ax, y_ax in SCATTER_PAIRS[:1]:
         if x_ax not in capri_df.columns:
             log.warning(f"x axis quantity {x_ax} not present in capri table")
             continue
@@ -281,3 +310,75 @@ def scatter_plots(capri_filename, cl_ranking):
             )
 
         fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
+        
+
+def scatter_plots_png(capri_filename, cl_ranking):
+    """
+    Create scatter plots in png format.
+
+    analogous to scatter_plots, but here the plots are saved in png format.
+
+    Parameters
+    ----------
+    capri_filename : str or Path
+        capri single structure filename
+    cl_ranking : dict
+        {cluster_id : cluster_rank} dictionary
+    """
+    capri_df = read_capri_table(capri_filename, comment="#")
+    for x_ax, y_ax in SCATTER_PAIRS:
+        if x_ax not in capri_df.columns:
+            log.warning(f"x axis quantity {x_ax} not present in capri table")
+            continue
+        if y_ax not in capri_df.columns:
+            log.warning(f"y axis quantity {y_ax} not present in capri table")
+            continue
+        gb_cluster = capri_df.groupby("cluster-id")
+        gb_other = pd.DataFrame([])
+        # defining colors
+        colors = px_colors.qualitative.Alphabet
+        n_colors = len(colors)
+        plt.figure(figsize=(20, 16))
+        for cl_id, cl_df in gb_cluster:
+            if cl_id not in cl_ranking.keys():
+                gb_other = pd.concat([gb_other, cl_df])
+            else:
+                if cl_id == "-":
+                    cl_name = "Unclustered"
+                else:
+                    cl_name = f"Cluster {cl_id}"
+                color_idx = (cl_ranking[cl_id] - 1) % n_colors  # color index
+                plt.scatter(x=cl_df[x_ax],
+                            y=cl_df[y_ax],
+                            color=colors[color_idx],
+                            label=cl_name,
+                            s=40)
+        plt.title(f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}", fontsize=40)
+        plt.xlabel(AXIS_NAMES[x_ax], fontsize=40)
+        plt.ylabel(AXIS_NAMES[y_ax], fontsize=40)
+        plt.xticks(fontsize=20)
+        plt.yticks(fontsize=20)
+        legend = plt.legend(bbox_to_anchor=(1.0, 1.0), fontsize=30)
+        for handle in legend.legendHandles:
+            handle.set_sizes([150])
+        plt_fname = f"{x_ax}_{y_ax}.png"
+        plt.tight_layout()
+        plt.savefig(plt_fname, dpi=200)
+        plt.close()
+        # creating full picture
+        if not gb_other.empty:
+            plt.scatter(
+                x=gb_other[x_ax],
+                y=gb_other[y_ax],
+                color="gray",
+                label="Other",
+                s=10,
+                )
+            # details
+            legend = plt.legend(bbox_to_anchor=(1.0, 1.0), fontsize=30)
+            for handle in legend.legendHandles:
+                handle.set_sizes([150])
+            plt_fname = f"{x_ax}_{y_ax}_full.png"
+            plt.tight_layout()
+            plt.savefig(plt_fname, dpi=200)
+            plt.close()

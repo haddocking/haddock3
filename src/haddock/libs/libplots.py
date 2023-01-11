@@ -83,7 +83,7 @@ def read_capri_table(capri_filename, comment="#"):
     return capri_df
 
 
-def box_plots(capri_filename, cl_ranking, png):
+def box_plots(capri_filename, cl_ranking, png, dpi):
     """
     Create box plots.
 
@@ -96,6 +96,10 @@ def box_plots(capri_filename, cl_ranking, png):
         capri single structure filename
     cl_ranking : dict
         {cluster_id : cluster_rank} dictionary
+    png : bool
+        Produce png images.
+    dpi : int
+        DPI for png images.
     """
     # generating the correct dataframe
     capri_df = read_capri_table(capri_filename, comment="#")
@@ -169,7 +173,7 @@ def box_plots(capri_filename, cl_ranking, png):
             plt.ylabel(AXIS_NAMES[x_ax])
             plt.xlabel("Cluster rank")
             plt.tight_layout()
-            plt.savefig(fname=plt_fname, dpi=200)
+            plt.savefig(fname=plt_fname, dpi=dpi)
             plt.close()
         
 
@@ -314,7 +318,7 @@ def scatter_plots(capri_filename, cl_ranking):
         fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
         
 
-def scatter_plots_png(capri_filename, cl_ranking):
+def scatter_plots_png(capri_filename, cl_ranking, dpi):
     """
     Create scatter plots in png format.
 
@@ -326,6 +330,8 @@ def scatter_plots_png(capri_filename, cl_ranking):
         capri single structure filename
     cl_ranking : dict
         {cluster_id : cluster_rank} dictionary
+    dpi : int
+        DPI for png images.
     """
     capri_df = read_capri_table(capri_filename, comment="#")
     for x_ax, y_ax in SCATTER_PAIRS:
@@ -365,7 +371,7 @@ def scatter_plots_png(capri_filename, cl_ranking):
             handle.set_sizes([150])
         plt_fname = f"{x_ax}_{y_ax}.png"
         plt.tight_layout()
-        plt.savefig(plt_fname, dpi=200)
+        plt.savefig(plt_fname, dpi=dpi)
 
         # creating full picture
         if not gb_other.empty:
@@ -382,6 +388,6 @@ def scatter_plots_png(capri_filename, cl_ranking):
                 handle.set_sizes([150])
             plt_fname = f"{x_ax}_{y_ax}_full.png"
             plt.tight_layout()
-            plt.savefig(plt_fname, dpi=200)
+            plt.savefig(plt_fname, dpi=dpi)
         plt.close()
         

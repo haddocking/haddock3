@@ -109,6 +109,14 @@ ap.add_argument(
     )
 
 ap.add_argument(
+    "--dpi",
+    help="dpi for png images",
+    required=False,
+    type=int,
+    default=200
+    )
+
+ap.add_argument(
     "-p",
     "--other-params",
     dest="other_params",
@@ -202,7 +210,7 @@ def update_capri_dict(capri_dict, target_path):
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png):
+def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
     """
     Analyse a step.
 
@@ -221,6 +229,10 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png):
         path to the output folder
     top_cluster : int
         Number of clusters to be considered
+    png : bool
+        Produce png images.
+    dpi : int
+        DPI for png images.
     """
     log.info(f"Analysing step {step}")
     
@@ -251,12 +263,12 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png):
     if ss_file.exists():
         log.info("Plotting results..")
         scatter_plots(ss_file, cluster_ranking)
-        box_plots(ss_file, cluster_ranking, png)
+        box_plots(ss_file, cluster_ranking, png, dpi)
         if png:
-            scatter_plots_png(ss_file, cluster_ranking)
+            scatter_plots_png(ss_file, cluster_ranking, dpi)
 
 
-def main(run_dir, modules, top_cluster, png, **kwargs):
+def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
     """
     Analyse CLI.
 
@@ -269,11 +281,17 @@ def main(run_dir, modules, top_cluster, png, **kwargs):
         List of the integer prefix of the modules to copy.
 
     top_cluster : int
-        Number of clusters to be considered
+        Number of clusters to be considered.
+
+    png : bool
+        Produce png images.
+    
+    dpi : int
+        DPI for png images.
     """
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
              f"with top_cluster = {top_cluster}")
-
+    
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
     capri_dict = default_capri.copy()
@@ -329,7 +347,8 @@ def main(run_dir, modules, top_cluster, png, **kwargs):
                          capri_dict,
                          target_path,
                          top_cluster,
-                         png)
+                         png,
+                         dpi)
         except Exception as e:
             error = True
             log.warning(

@@ -162,6 +162,8 @@ def box_plots(capri_filename, cl_ranking, png):
             colors = plt.cm.tab20.colors
             for patch, color in zip(bplot['boxes'], colors):
                 patch.set_facecolor(color)
+            for median, color in zip(bplot['medians'], colors):
+                median.set_color(color)
             # plot details
             ax.legend(bplot["boxes"], legend_labels, bbox_to_anchor=(1.0, 1.0))
             plt.ylabel(AXIS_NAMES[x_ax])
@@ -364,7 +366,7 @@ def scatter_plots_png(capri_filename, cl_ranking):
         plt_fname = f"{x_ax}_{y_ax}.png"
         plt.tight_layout()
         plt.savefig(plt_fname, dpi=200)
-        plt.close()
+
         # creating full picture
         if not gb_other.empty:
             plt.scatter(
@@ -381,4 +383,5 @@ def scatter_plots_png(capri_filename, cl_ranking):
             plt_fname = f"{x_ax}_{y_ax}_full.png"
             plt.tight_layout()
             plt.savefig(plt_fname, dpi=200)
-            plt.close()
+        plt.close()
+        

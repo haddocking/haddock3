@@ -31,10 +31,9 @@ from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libcli import _ParamsToDict
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import (
-    box_plots,
+    box_plot_handler,
     read_capri_table,
-    scatter_plots,
-    scatter_plots_png,
+    scatter_plot_handler,
     )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \
@@ -262,10 +261,8 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatter_plots(ss_file, cluster_ranking)
-        box_plots(ss_file, cluster_ranking, png, dpi)
-        if png:
-            scatter_plots_png(ss_file, cluster_ranking, dpi)
+        scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
+        box_plot_handler(ss_file, cluster_ranking, png, dpi)
 
 
 def main(run_dir, modules, top_cluster, png, dpi, **kwargs):

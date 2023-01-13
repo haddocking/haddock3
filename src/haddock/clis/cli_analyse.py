@@ -30,7 +30,11 @@ from haddock import log
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libcli import _ParamsToDict
 from haddock.libs.libontology import ModuleIO
-from haddock.libs.libplots import box_plots, read_capri_table, scatter_plots
+from haddock.libs.libplots import (
+    box_plot_handler,
+    read_capri_table,
+    scatter_plot_handler,
+    )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \
     DEFAULT_CONFIG as caprieval_params
@@ -93,6 +97,22 @@ ap.add_argument(
     required=False,
     type=int,
     default=10
+    )
+
+ap.add_argument(
+    "--png",
+    help="produce png images",
+    required=False,
+    type=bool,
+    default=False
+    )
+
+ap.add_argument(
+    "--dpi",
+    help="dpi for png images",
+    required=False,
+    type=int,
+    default=200
     )
 
 ap.add_argument(
@@ -189,7 +209,7 @@ def update_capri_dict(capri_dict, target_path):
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
+def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
     """
     Analyse a step.
 
@@ -208,6 +228,10 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
         path to the output folder
     top_cluster : int
         Number of clusters to be considered
+    png : bool
+        Produce png images.
+    dpi : int
+        DPI for png images.
     """
     log.info(f"Analysing step {step}")
     
@@ -237,11 +261,11 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster):
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatter_plots(ss_file, cluster_ranking)
-        box_plots(ss_file, cluster_ranking)
+        scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
+        box_plot_handler(ss_file, cluster_ranking, png, dpi)
 
 
-def main(run_dir, modules, top_cluster, **kwargs):
+def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
     """
     Analyse CLI.
 
@@ -254,11 +278,17 @@ def main(run_dir, modules, top_cluster, **kwargs):
         List of the integer prefix of the modules to copy.
 
     top_cluster : int
-        Number of clusters to be considered
+        Number of clusters to be considered.
+
+    png : bool
+        Produce png images.
+    
+    dpi : int
+        DPI for png images.
     """
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
              f"with top_cluster = {top_cluster}")
-
+    
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
     capri_dict = default_capri.copy()
@@ -309,7 +339,13 @@ def main(run_dir, modules, top_cluster, **kwargs):
         # run the analysis
         error = False
         try:
-            analyse_step(step, Path("./"), capri_dict, target_path, top_cluster)
+            analyse_step(step,
+                         Path("./"),
+                         capri_dict,
+                         target_path,
+                         top_cluster,
+                         png,
+                         dpi)
         except Exception as e:
             error = True
             log.warning(

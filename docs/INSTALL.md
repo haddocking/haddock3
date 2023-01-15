@@ -68,8 +68,9 @@ guidelines](USAGE.md).
 
 Navigate to the `haddock3` installation folder (the one you cloned from
 GitHub). Ensure you have the `haddock3` python environment activated.
-Please consider HADDOCK3 is under active development, as well as its
-dependencies. If the updating processing fails, it is safe to reinstall
+Please keep in mind that HADDOCK3, as well as its
+dependencies, are under active development.
+If the updating processing fails, it is safest to reinstall
 from scratch. Always refer to the latest installation guidelines.
 
 ```bash
@@ -131,7 +132,7 @@ pip install deap scipy mgzip biopython
 export GDOCK_PATH=some-folder
 ```
 
-**Important**: These are not the full `gdock`'s installation
-instructions as here only the model generation is used. Please check the
+**Important**: These are not the full `gdock` installation
+instructions as only the model generation is used here. Please check the
 [repository page](https://github.com/rvhonorato/gdock) for more
 information.

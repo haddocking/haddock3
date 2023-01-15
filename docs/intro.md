@@ -3,11 +3,11 @@
 HADDOCK3 is the next generation integrative modelling software in the
 long-lasting HADDOCK project. It represents a complete rethinking and rewriting
 of the HADDOCK2.X series, implementing a new way to interact with HADDOCK and
-offering new features to users who can now define custom workflows. 
+offering new features to users who can now define custom workflows.
 
 In the previous HADDOCK2.x versions, users had access to a highly
 parameterisable yet rigid simulation pipeline composed of three steps:
-`ridig-body docking (it0)`, `semi-flexible refinemnt (it1)`, and `final refinement (itw)`. 
+`ridig-body docking (it0)`, `semi-flexible refinement (it1)`, and `final refinement (itw)`.
 
 ![HADDOCK 2.x workflow](figs/HADDOCK2-stages.png)
 
@@ -92,9 +92,9 @@ ambig_fname = "data/e2a-hpr_air.tbl"
 [caprieval]
 ```
 
-In this expample only very few parameters are defined as most correspond to the default ones defined for each module. The sampling in this case would be 1000 rigidbody models and 200 for the refinement stages. Clustering is based on the fraction of common contacts and the final clusters are analysed using the best model generated as a reference (the `caprieval` module).
+In this example only very few parameters are defined as most correspond to the default ones defined for each module. The sampling in this case would be 1000 rigidbody models and 200 for the refinement stages. Clustering is based on the fraction of common contacts and the final clusters are analysed using the best model generated as a reference (the `caprieval` module).
 
-Detailed explanations on how to configure a workflow through the configuration files can be found 
+Detailed explanations on how to configure a workflow through the configuration files can be found
 <a href="https://github.com/haddocking/haddock3/blob/main/docs/tutorials/user_config.rst">here</a>.
 
 Having the configuration file ready, users can run HADDOCK3 with a single command-line input:
@@ -107,7 +107,7 @@ You can find examples of HADDOCK3 workflows for the different biological
 systems in the `examples` [subfolder][examples] of the HADDOCK3 folder.
 
 HADDOCK3 will start running (different execution modes are available using
-either local resources (threads) or in HPC mode using a batch queuing system -
+either local resources (threads) or in HPC mode using a batch queuing system) -
 for details, see [here][queue]. See examples in the `examples` [subfolder][examples]
 for configuration files ending in `-full.cfg`.
 

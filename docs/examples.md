@@ -25,7 +25,7 @@ The following examples are currently provided:
 
 An antibody-antigen docking example making use only of the knowledge of the hypervariables (HV) loops on the antibody to guide the docking. This is the same complex used in our [HADDOCK2.4 webserver tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-antibody-antigen/); refer to it for more details. Three different ways of using the knowledge of the HV loop residues are illustrated:
 
-- __CDR-accessible__: using ambiguous distance restraints (AIRs) between the HV loop residues and the solvent-accesible residues of the antigen. Those are defined in the `ambig.tbl` file provided in the `data` directory
+- __CDR-accessible__: using ambiguous distance restraints (AIRs) between the HV loop residues and the solvent-accessible residues of the antigen. Those are defined in the `ambig.tbl` file provided in the `data` directory
 - __ranairCDR__: using random AIRs sampled from the HV loops on the antibody and the solvent-accessible residues on the antigen. The random AIRs are used during the rigidbody docking sampling phase and replaced by contact AIRs during refinement.
 - __CDR-NMR-CSP__: using ambiguous distance restraints (AIRs) between the HV loop residues and the epitope residues identified by NMR.
 
@@ -96,7 +96,7 @@ The `caprieval` module is called at various stages during the workflow to assess
 
 ## docking-protein-peptide
 
-The protein-peptide docking example makes use of the knowledge of the binding site on the protein to guide the docking. The active site residues are defined as active and the peptide as passive (the corresponding AIRs are defined in the `ambig.tbl` file in the `data` directory). This example follows the protocol described in our protein-peptide docking article ([Trellet et. al. PLoS ONE 8, e58769 (2013)](https://dx.plos.org/10.1371/journal.pone.0058769)). For the peptide, an ensemble of three conformations (alpha-helix, polyproline-II and extended) is provided as starting point for the docking. Those were build using PyMol (instructions on how to do that can be found [here](https://www.bonvinlab.org/education/molmod_online/simulation/#preparing-the-system)).
+The protein-peptide docking example makes use of the knowledge of the binding site on the protein to guide the docking. The active site residues are defined as active and the peptide as passive (the corresponding AIRs are defined in the `ambig.tbl` file in the `data` directory). This example follows the protocol described in our protein-peptide docking article ([Trellet et. al. PLoS ONE 8, e58769 (2013)](https://dx.plos.org/10.1371/journal.pone.0058769)). For the peptide, an ensemble of three conformations (alpha-helix, polyproline-II and extended) is provided as starting point for the docking. Those were built using PyMol (instructions on how to do that can be found [here](https://www.bonvinlab.org/education/molmod_online/simulation/#preparing-the-system)).
 
 Three different workflows are illustrated:
 
@@ -111,7 +111,7 @@ The `caprieval` module is called at various stages during the workflow to assess
 
 ## docking-protein-protein
 
-The protein-protein docking example makes use of the NMR chemical shift perturbation data providing information on the residues of binding site to guide the docking. The NMR-identified residues are defined as active and with their surface neighbors as passive (the corresponding AIRs are defined in the `e2a-hpr_air.tbl` file in the `data` directory). This system is the same as described in our [HADDOCK2.4 basic protein-protein docking tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-protein-protein-basic/). For the second molecule (HPR), an ensemble of 10 conformations (taken from the NMR solution structure of this protein) is used as starting point for the docking. Refer to above tutorial for more details about the system and restraints.
+The protein-protein docking example makes use of the NMR chemical shift perturbation data providing information on the residues of binding site to guide the docking. The NMR-identified residues are defined as active with their surface neighbors as passive (the corresponding AIRs are defined in the `e2a-hpr_air.tbl` file in the `data` directory). This system is the same as described in our [HADDOCK2.4 basic protein-protein docking tutorial](https://www.bonvinlab.org/education/HADDOCK24/HADDOCK24-protein-protein-basic/). For the second molecule (HPR), an ensemble of 10 conformations (taken from the NMR solution structure of this protein) is used as starting point for the docking. Refer to above tutorial for more details about the system and restraints.
 
 Three different workflows are illustrated:
 
@@ -128,14 +128,14 @@ The `caprieval` module is called at various stages during the workflow to assess
 
 This example illustrates the refinement of a complex. In that case the molecules are kept in their original positions and the complex is subjected to a short flexible refinement in explicit solvent with the `mdref` module. The same complex as for the `docking-protein-protein` example is used. The molecules are defined separately in the config file (and could consist each of an ensemble, provided the two ensembles have exactly the same number of models).
 
-In this example all parameters are left to their default settings, except for manually defining the histidines protonation states and setting the `sampling_factor` to 10, which means that from each starting complex 10 models will be generated with different random seeds for initiating the molecular dynamics phase.
+In this example all parameters are left to their default settings, except for manually defining the histidines' protonation states and setting the `sampling_factor` to 10, which means that from each starting complex 10 models will be generated with different random seeds for initiating the molecular dynamics phase.
 
 The `caprieval` module is called at the end to assess the quality of the models with respect to the known reference structure.
 
 
 ## scoring
 
-This example illustrates the use of HADDOCK3 for scoring purpose. In contrast to HADDOCK2.4, HADDOCK3 can score a heterogenous set of complexes within one run/workflow. In this example, four different types of complexes are scored within the same workflow:
+This example illustrates the use of HADDOCK3 for scoring purposes. In contrast to HADDOCK2.4, HADDOCK3 can score a heterogenous set of complexes within one run/workflow. In this example, four different types of complexes are scored within the same workflow:
 
 - an ensemble of 5 models taken from CAPRI Target161
 - a protein-DNA complex (model taken from our protein-DNA docking example)
@@ -147,5 +147,5 @@ Two scoring workflows are illustrated:
 1) Only a short energy minimisation is performed on each model (`emscoring-test.cfg`).
 2) A short molecular dynamics simulation in explicit solvent (water) is performed on each model. In that case contact AIRs (`contactairs = true`), dihedral angle restraints on secondary structure element (`ssdihed = alphabeta`) and DNA restraints (`dnarest_on = true`) are automatically defined (`mdscoring-test.cfg`).
 
-The model listing with their associated HADDOCK score can be found in a `.tsv` file in the stage 01 directory of the respective runs.
+The model listings with their associated HADDOCK scores can be found in a `.tsv` file in the stage 01 directory of the respective runs.
 

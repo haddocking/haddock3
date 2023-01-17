@@ -1917,7 +1917,7 @@ keepwater:
   group: 'sampling'
   explevel: guru
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99

@@ -164,7 +164,7 @@ nemsteps
 tolerance
 ~~~~~~~~~
 
-| *default*: 0
+| *default*: 5
 | *type*: integer
 | *title*: Failure tolerance percentage
 | *short description*: Percentage of allowed failures for a module to successfully complete

@@ -7,7 +7,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>A brieft introduction to HADDOCK3 &mdash; haddock3 3.0.0 documentation</title>
+  <title>A brief introduction to HADDOCK3 &mdash; haddock3 3.0.0 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
     
       <li><a href="index.html">Docs</a></li>
         
-      <li>A brieft introduction to HADDOCK3</li>
+      <li>A brief introduction to HADDOCK3</li>
     
     
       <li class="breadcrumbs-aside">
@@ -106,7 +106,7 @@
                             
                             
                                 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">A brieft introduction to HADDOCK3</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">A brief introduction to HADDOCK3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALL.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="INSTALL.html#clone-this-repository">1. Clone this repository:</a></li>
 <li class="toctree-l2"><a class="reference internal" href="INSTALL.html#create-a-virtual-environment-with-python-3-9-and-install-dependencies">2 Create a virtual environment with Python 3.9+ and install dependencies:</a></li>
@@ -195,24 +195,24 @@
                     <div class="document">
                         
                             
-  <section id="a-brieft-introduction-to-haddock3">
-<h1>A brieft introduction to HADDOCK3<a class="headerlink" href="#a-brieft-introduction-to-haddock3" title="Permalink to this heading">¶</a></h1>
+  <section id="a-brief-introduction-to-haddock3">
+<h1>A brief introduction to HADDOCK3<a class="headerlink" href="#a-brief-introduction-to-haddock3" title="Permalink to this heading">¶</a></h1>
 <p>HADDOCK3 is the next generation integrative modelling software in the
 long-lasting HADDOCK project. It represents a complete rethinking and rewriting
 of the HADDOCK2.X series, implementing a new way to interact with HADDOCK and
 offering new features to users who can now define custom workflows.</p>
 <p>In the previous HADDOCK2.x versions, users had access to a highly
 parameterisable yet rigid simulation pipeline composed of three steps:
-<code class="docutils literal notranslate"><span class="pre">ridig-body</span> <span class="pre">docking</span> <span class="pre">(it0)</span></code>, <code class="docutils literal notranslate"><span class="pre">semi-flexible</span> <span class="pre">refinemnt</span> <span class="pre">(it1)</span></code>, and <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">refinement</span> <span class="pre">(itw)</span></code>.</p>
+<code class="docutils literal notranslate"><span class="pre">ridig-body</span> <span class="pre">docking</span> <span class="pre">(it0)</span></code>, <code class="docutils literal notranslate"><span class="pre">semi-flexible</span> <span class="pre">refinement</span> <span class="pre">(it1)</span></code>, and <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">refinement</span> <span class="pre">(itw)</span></code>.</p>
 <p><img alt="HADDOCK 2.x workflow" src="_images/HADDOCK2-stages.png" /></p>
 <p>In HADDOCK3, users have the freedom to configure docking workflows into
-functional pipelines by combining the different HADDOCK3’s modules, thus
+functional pipelines by combining the different HADDOCK3 modules, thus
 adapting the workflows to their projects. HADDOCK3 has therefore developed to
 truthfully work like a puzzle of many pieces (simulation modules) that users can
 combine freely. To this end, the “old” HADDOCK machinery has been modularised,
-and several new modules added, including third-party software additions. As a
+and several new modules added, including third-party software. As a
 result, the modularisation achieved in HADDOCK3 allows users to duplicate steps
-within one workflow (e.g., to repeat twice the <code class="docutils literal notranslate"><span class="pre">it1</span></code> stage of the HADDOCK2.x
+within one workflow (e.g., to repeat the <code class="docutils literal notranslate"><span class="pre">it1</span></code> stage of the HADDOCK2.x
 rigid workflow).</p>
 <p>Note that, for simplification purposes, at this time, not all functionalities of
 HADDOCK2.x have been ported to HADDOCK3, which does not (yet) support NMR RDC,
@@ -238,7 +238,7 @@ all categories and modules. Below is a summary of the available modules:</p>
 <li><p><strong>Sampling modules</strong></p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">rigidbody</span></code>: <em>Rigid body energy minimisation with CNS (<code class="docutils literal notranslate"><span class="pre">it0</span></code> in haddock2.x).</em></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lightdock</span></code>: <em>Third-party glow-worm swam optimisationdocking software.</em></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lightdock</span></code>: <em>Third-party Glow-worm Swarm Optimisation (GSO) docking software.</em></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">gdock</span></code>: <em>Third-party genetic algorithm-based docking software.</em></p></li>
 </ul>
 </li>
@@ -295,7 +295,7 @@ all categories and modules. Below is a summary of the available modules:</p>
 <span class="k">[caprieval]</span>
 </pre></div>
 </div>
-<p>In this expample only very few parameters are defined as most correspond to the default ones defined for each module. The sampling in this case would be 1000 rigidbody models and 200 for the refinement stages. Clustering is based on the fraction of common contacts and the final clusters are analysed using the best model generated as a reference (the <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module).</p>
+<p>In this example only very few parameters are defined as most correspond to the default ones defined for each module. The sampling in this case would be 1000 rigidbody models and 200 for the refinement stages. Clustering is based on the fraction of common contacts and the final clusters are analysed using the best model generated as a reference (the <code class="docutils literal notranslate"><span class="pre">caprieval</span></code> module).</p>
 <p>Detailed explanations on how to configure a workflow through the configuration files can be found
 <a href="https://github.com/haddocking/haddock3/blob/main/docs/tutorials/user_config.rst">here</a>.</p>
 <p>Having the configuration file ready, users can run HADDOCK3 with a single command-line input:</p>
@@ -305,7 +305,7 @@ all categories and modules. Below is a summary of the available modules:</p>
 <p>You can find examples of HADDOCK3 workflows for the different biological
 systems in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> <a class="reference external" href="https://github.com/haddocking/haddock3/tree/main/examples">subfolder</a> of the HADDOCK3 folder.</p>
 <p>HADDOCK3 will start running (different execution modes are available using
-either local resources (threads) or in HPC mode using a batch queuing system -
+either local resources (threads) or in HPC mode using a batch queuing system) -
 for details, see <a class="reference external" href="https://github.com/haddocking/haddock3/blob/87e7c81ab6827d331d0c00bb9fa1b1d742344ef6/src/haddock/modules/defaults.yaml#L26-L40">here</a>. See examples in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> <a class="reference external" href="https://github.com/haddocking/haddock3/tree/main/examples">subfolder</a>
 for configuration files ending in <code class="docutils literal notranslate"><span class="pre">-full.cfg</span></code>.</p>
 <p>Finally, HADDOCK3 has several advanced features that allow users additional
@@ -353,7 +353,7 @@ our lectures on YouTube:</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Jan 17, 2023.
+        Last updated on Jan 18, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

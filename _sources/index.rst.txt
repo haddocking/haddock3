@@ -5,10 +5,10 @@ Welcome to HADDOCK3 Documentation!
    :start-after: .. start-description
    :end-before: .. end-description
 
-You can read now through the **contents** bellow.
+You can now read through the **content** below.
 
 
-Contents
+Content
 ========
 
 .. toctree::

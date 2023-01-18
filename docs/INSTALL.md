@@ -27,7 +27,7 @@ main folder.
 
 ## 2 Create a virtual environment with Python 3.9+ and install dependencies:
 
-You can use Python's `venv` or Anaconda depending on your choice.
+You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:
 
 ### with `venv`
@@ -73,8 +73,9 @@ guidelines](USAGE.md).
 
 Navigate to the `haddock3` installation folder (the one you cloned from
 GitHub). Ensure you have the `haddock3` python environment activated.
-Please consider HADDOCK3 is under active development, as well as its
-dependencies. If the updating processing fails, it is safe to reinstall
+Please keep in mind that HADDOCK3, as well as its
+dependencies, are under active development.
+If the updating processing fails, it is safest to reinstall
 from scratch. Always refer to the latest installation guidelines.
 
 ```bash
@@ -116,15 +117,15 @@ Later, you can find [here](https://www.bonvinlab.org/haddock3/tutorials/mpi.html
 
 # Installing third-party packages
 
-HADDOCK3 can integrate third-party software in its workflows. However,
-we are not responsible for the proper installation of such packages, but
+HADDOCK3 can integrate third-party software in its workflows.
+We are not responsible for the proper installation of such packages, but
 we help you install them. Below, you will find a list of all third-party
 packages HADDOCK3 can use and guidelines for their proper installation.
 
 ## `lightdock`
 
-To install to [lightdock](https://github.com/lightdock/lightdock) follow
-the instructions in the project's website. Remember to install it under
+To install [lightdock](https://github.com/lightdock/lightdock) follow
+the instructions on the project's website. Remember to install it under
 the same Python environment you created for HADDOCK3. If you have any
 doubts, please let us know.
 
@@ -147,7 +148,7 @@ pip install deap scipy mgzip biopython
 export GDOCK_PATH=some-folder
 ```
 
-**Important**: These are not the full `gdock`'s installation
-instructions as here only the model generation is used. Please check the
+**Important**: These are not the full `gdock` installation
+instructions as only the model generation is used here. Please check the
 [repository page](https://github.com/rvhonorato/gdock) for more
 information.

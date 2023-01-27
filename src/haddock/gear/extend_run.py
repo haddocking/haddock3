@@ -256,7 +256,11 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     for ns in new_steps:
         new_step = Path(newdir, ns)
         for file_ in new_step.iterdir():
-            text = file_.read_text()
+            try:
+                text = file_.read_text()
+            except UnicodeDecodeError as err:
+                log.warning(f"Failed to read file {file_}. Error is {err}")
+                continue
             for s1, s2 in zip(selected_steps, new_steps):
                 text = text.replace(s1, s2)
             text = text.replace(olddir.name, newdir.name)

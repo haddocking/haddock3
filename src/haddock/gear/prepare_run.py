@@ -934,7 +934,11 @@ def update_step_names_in_subfolders(folder, prev_names, new_names):
 
 def update_step_names_in_file(file_, prev_names, new_names):
     """Update step names in file following the `--restart` option."""
-    text = file_.read_text()
+    try:
+        text = file_.read_text()
+    except UnicodeDecodeError as err:
+        log.warning(f"Failed to read file {file_}. Error is {err}")
+        return
     for s1, s2 in zip(prev_names, new_names):
         text = text.replace(s1, s2)
     file_.write_text(text)

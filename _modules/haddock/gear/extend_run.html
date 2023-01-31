@@ -449,7 +449,11 @@
     <span class="k">for</span> <span class="n">ns</span> <span class="ow">in</span> <span class="n">new_steps</span><span class="p">:</span>
         <span class="n">new_step</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">newdir</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">file_</span> <span class="ow">in</span> <span class="n">new_step</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">UnicodeDecodeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to read file </span><span class="si">{</span><span class="n">file_</span><span class="si">}</span><span class="s2">. Error is </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">continue</span>
             <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">selected_steps</span><span class="p">,</span> <span class="n">new_steps</span><span class="p">):</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
             <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">olddir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">newdir</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -490,7 +494,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Jan 18, 2023.
+        Last updated on Jan 31, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

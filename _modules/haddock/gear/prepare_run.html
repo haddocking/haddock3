@@ -1127,7 +1127,11 @@
 
 <div class="viewcode-block" id="update_step_names_in_file"><a class="viewcode-back" href="../../../reference/gear/prepare_run.html#haddock.gear.prepare_run.update_step_names_in_file">[docs]</a><span class="k">def</span> <span class="nf">update_step_names_in_file</span><span class="p">(</span><span class="n">file_</span><span class="p">,</span> <span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update step names in file following the `--restart` option.&quot;&quot;&quot;</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">UnicodeDecodeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to read file </span><span class="si">{</span><span class="n">file_</span><span class="si">}</span><span class="s2">. Error is </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
     <span class="k">for</span> <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">prev_names</span><span class="p">,</span> <span class="n">new_names</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">s1</span><span class="p">,</span> <span class="n">s2</span><span class="p">)</span>
     <span class="n">file_</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
@@ -1166,7 +1170,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Jan 18, 2023.
+        Last updated on Jan 31, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

@@ -6,6 +6,7 @@ import pandas as pd
 import plotly.colors as px_colors
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 from haddock import log
 
@@ -63,7 +64,7 @@ AXIS_NAMES = {
 def read_capri_table(capri_filename, comment="#"):
     """
     Read capri table with pandas.
-    
+
     Parameters
     ----------
     capri_filename : str or Path
@@ -136,7 +137,7 @@ def update_layout_plotly(fig, x_label, y_label, title=None):
         "hoverlabel": dict(font_size=16, font_family="Helvetica")
         }
     fig.update_layout(px_dict)
-    return
+    return fig
 
 
 def update_layout_matplotlib(x_label, y_label):
@@ -165,7 +166,7 @@ def update_layout_matplotlib(x_label, y_label):
 def box_plot_plotly(gb_full, y_ax):
     """
     Create a scatter plot in plotly.
-    
+
     Parameters
     ----------
     gb_full : pandas DataFrame
@@ -181,17 +182,17 @@ def box_plot_plotly(gb_full, y_ax):
                  points="outliers"
                  )
     # layout
-    update_layout_plotly(fig, "Cluster rank", AXIS_NAMES[y_ax])
+    fig = update_layout_plotly(fig, "Cluster rank", AXIS_NAMES[y_ax])
     # save figure
     px_fname = f"{y_ax}_clt.html"
     fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
-    return
+    return fig
 
 
 def box_plot_matplotlib(gbcl, y_ax, legend_labels, dpi):
     """
     Create a scatter plot in plotly.
-    
+
     Parameters
     ----------
     gbcl : pandas DataFrameGroupBy
@@ -202,7 +203,7 @@ def box_plot_matplotlib(gbcl, y_ax, legend_labels, dpi):
         list of legend labels
     dpi : int
         DPI for png images.
-    
+
     """
     plt.figure(figsize=(20, 16))
     fig, ax = plt.subplots()
@@ -217,7 +218,7 @@ def box_plot_matplotlib(gbcl, y_ax, legend_labels, dpi):
         patch.set_facecolor(color)
     for median, color in zip(bplot['medians'], colors):
         median.set_color(color)
-    
+
     # plot details
     ax.legend(bplot["boxes"], legend_labels, bbox_to_anchor=(1.0, 1.0))
     plt.ylabel(AXIS_NAMES[y_ax])
@@ -240,7 +241,7 @@ def box_plot_data(capri_df, cl_rank):
         capri table dataframe
     cl_rank : dict
         {cluster_id : cluster_rank} dictionary
-    
+
     Returns
     -------
     gb_full : pandas DataFrame
@@ -257,7 +258,7 @@ def box_plot_data(capri_df, cl_rank):
         else:
             cl_df["capri_rank"] = cl_rank[cl_id]
             gb_good = pd.concat([gb_good, cl_df])
-            
+
     gb_other["cluster-id"] = "Other"
     gb_other["capri_rank"] = len(cl_rank.keys()) + 1
     gb_full = pd.concat([gb_good, gb_other])
@@ -270,7 +271,7 @@ def box_plot_handler(capri_filename, cl_rank, png, dpi):
 
     The idea is that for each of the top X-ranked clusters we create a box plot
     showing how the basic statistics are distributed within each model.
-    
+
     Parameters
     ----------
     capri_filename : str or Path
@@ -285,7 +286,7 @@ def box_plot_handler(capri_filename, cl_rank, png, dpi):
     # generating the correct dataframe
     capri_df = read_capri_table(capri_filename, comment="#")
     gb_full, gb_other = box_plot_data(capri_df, cl_rank)
-    
+
     if png:
         # when png is true we have to manually sort according to capri_rank
         gb_sorted = gb_full.sort_values("capri_rank")
@@ -293,22 +294,24 @@ def box_plot_handler(capri_filename, cl_rank, png, dpi):
         legend_labels = [f"Cluster {el[0]}" for el in gbcl]
         if not gb_other.empty:
             legend_labels[-1] = "Other"
-    
+
     # iterate over the variables
+    fig_list = []
     for y_ax in AXIS_NAMES.keys():
         if not in_capri(y_ax, capri_df.columns):
             continue
-        box_plot_plotly(gb_full, y_ax)
+        fig = box_plot_plotly(gb_full, y_ax)
+        fig_list.append(fig)
         # create png boxplot if necessary
         if png:
             box_plot_matplotlib(gbcl, y_ax, legend_labels, dpi)
-    return
+    return fig_list
 
 
 def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors):
     """
     Create a scatter plot in plotly.
-    
+
     Parameters
     ----------
     gb_cluster : pandas DataFrameGroupBy
@@ -426,7 +429,7 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors):
 def scatter_plot_matplotlib(gbcl, gb_other, cl_rank, x_ax, y_ax, colors, dpi):
     """
     Create a scatter plot in matplotlib.
-    
+
     Parameters
     ----------
     gbcl : pandas DataFrameGroupBy
@@ -489,7 +492,7 @@ def scatter_plot_data(capri_df, cl_rank):
         capri table dataframe
     cl_rank : dict
         {cluster_id : cluster_rank} dictionary
-    
+
     Returns
     -------
     gb_cluster : pandas DataFrameGroupBy
@@ -526,7 +529,7 @@ def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
     """
     capri_df = read_capri_table(capri_filename, comment="#")
     gb_cluster, gb_other = scatter_plot_data(capri_df, cl_rank)
-    
+
     # defining colors
     colors = px_colors.qualitative.Alphabet
     for x_ax, y_ax in SCATTER_PAIRS:
@@ -549,3 +552,24 @@ def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
                                     colors,
                                     dpi)
     return
+
+
+def report_generator(fig_list):
+    fig = make_subplots(rows=2, cols=5, shared_xaxes='all')
+    for i, sub_fig in enumerate(fig_list):
+        if i < 5:
+            row_index = 1
+            col_index = i + 1
+        else:
+            row_index = 2
+            col_index = i - 4
+        # hide legend in each trace
+        for j, trace in enumerate(sub_fig.data):
+            trace.update(legendgroup=str(j))
+            if i !=0:
+                trace.update(showlegend=False)
+        fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
+        fig.update_xaxes(title_text=sub_fig.layout.xaxis.title.text, row=row_index, col=col_index)
+        fig.update_yaxes(title_text=sub_fig.layout.yaxis.title.text, row=row_index, col=col_index)
+    fig.update_layout(title_text="Box plots", overwrite=True, height=700)
+    fig.write_html("report.html", full_html=False, include_plotlyjs='cdn')

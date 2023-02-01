@@ -34,6 +34,7 @@ from haddock.libs.libplots import (
     box_plot_handler,
     read_capri_table,
     scatter_plot_handler,
+    report_generator,
     )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \
@@ -191,7 +192,7 @@ def update_capri_dict(capri_dict, target_path):
         capri dictionary of parameters
     target_path : Path
         path to the output folder
-    
+
     Returns
     -------
     new_capri_dict : dict
@@ -234,7 +235,7 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         DPI for png images.
     """
     log.info(f"Analysing step {step}")
-    
+
     target_path.mkdir(parents=True, exist_ok=False)
     step_name = step.split("_")[1]
     if step_name != "caprieval":
@@ -245,12 +246,12 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(ss_fname, target_path)
         shutil.copy(clt_fname, target_path)
-        
+
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if step_name != "caprieval":
         run_capri_analysis(step, run_dir, capri_dict)
-    
+
     log.info("CAPRI files identified")
     # plotting
     ss_file = Path("capri_ss.tsv")
@@ -262,7 +263,8 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
     if ss_file.exists():
         log.info("Plotting results..")
         scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
-        box_plot_handler(ss_file, cluster_ranking, png, dpi)
+        fig_list = box_plot_handler(ss_file, cluster_ranking, png, dpi)
+        report_generator(fig_list)
 
 
 def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
@@ -282,13 +284,13 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
 
     png : bool
         Produce png images.
-    
+
     dpi : int
         DPI for png images.
     """
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
              f"with top_cluster = {top_cluster}")
-    
+
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
     capri_dict = default_capri.copy()
@@ -356,7 +358,7 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
             bad_folder_paths.append(target_path)
         else:
             good_folder_paths.append(target_path)
-        
+
         # going back
         os.chdir(ori_cwd)
 

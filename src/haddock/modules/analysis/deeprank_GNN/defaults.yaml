@@ -1,0 +1,20 @@
+pdb_path:
+  default: pdb_folder
+  type: string
+  title: PDB file directory
+  group: analysis
+  explevel: easy
+
+pssm_path:
+  default: pssm_path
+  type: string
+  title: pssm file directory
+  group: analysis
+  explevel: easy
+
+output_dir:
+  default: output
+  type: string
+  title: output file directory
+  group: analysis
+  explevel: easy

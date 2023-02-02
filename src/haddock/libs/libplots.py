@@ -182,7 +182,7 @@ def box_plot_plotly(gb_full, y_ax):
                  points="outliers"
                  )
     # layout
-    fig = update_layout_plotly(fig, "Cluster rank", AXIS_NAMES[y_ax])
+    update_layout_plotly(fig, "Cluster rank", AXIS_NAMES[y_ax])
     # save figure
     px_fname = f"{y_ax}_clt.html"
     fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
@@ -423,7 +423,7 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors):
                          TITLE_NAMES[y_ax],
                          title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}")
     fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
-    return
+    return fig
 
 
 def scatter_plot_matplotlib(gbcl, gb_other, cl_rank, x_ax, y_ax, colors, dpi):
@@ -532,17 +532,19 @@ def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
 
     # defining colors
     colors = px_colors.qualitative.Alphabet
+    fig_list = []
     for x_ax, y_ax in SCATTER_PAIRS:
         if not in_capri(x_ax, capri_df.columns):
             continue
         if not in_capri(y_ax, capri_df.columns):
             continue
-        scatter_plot_plotly(gb_cluster,
-                            gb_other,
-                            cl_rank,
-                            x_ax,
-                            y_ax,
-                            colors)
+        fig = scatter_plot_plotly(gb_cluster,
+                                gb_other,
+                                cl_rank,
+                                x_ax,
+                                y_ax,
+                                colors)
+        fig_list.append(fig)
         if png:
             scatter_plot_matplotlib(gb_cluster,
                                     gb_other,
@@ -551,25 +553,48 @@ def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
                                     y_ax,
                                     colors,
                                     dpi)
-    return
+    return fig_list
 
 
-def report_generator(fig_list):
-    fig = make_subplots(rows=2, cols=5, shared_xaxes='all')
-    for i, sub_fig in enumerate(fig_list):
-        if i < 5:
-            row_index = 1
-            col_index = i + 1
-        else:
-            row_index = 2
-            col_index = i - 4
-        # hide legend in each trace
+def report_generator(boxes, scatters, step):
+    # Calculate grid size for subplots
+    number_of_plots = len(AXIS_NAMES)
+    number_of_clusters = len(boxes[0].data)
+    number_of_cols = 5
+    number_of_rows = int(np.ceil(number_of_plots / number_of_cols))
+    if number_of_clusters > 5:
+        number_of_cols = 2
+        number_of_rows = int(np.ceil(number_of_plots / number_of_cols))
+    report_boxes_handler(boxes, number_of_rows, number_of_cols, step)
+
+
+def report_boxes_handler(boxes, number_of_rows, number_of_cols, plot_name):
+    fig = make_subplots(rows=number_of_rows, cols=number_of_cols, shared_xaxes='all')
+    for i, sub_fig in enumerate(boxes):
+        col_index = int((i % number_of_cols) + 1)
+        row_index = int(np.floor(i / number_of_cols) + 1)
+        # group legends
         for j, trace in enumerate(sub_fig.data):
             trace.update(legendgroup=str(j))
+            # hide legend of plots except one
             if i !=0:
                 trace.update(showlegend=False)
         fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
-        fig.update_xaxes(title_text=sub_fig.layout.xaxis.title.text, row=row_index, col=col_index)
-        fig.update_yaxes(title_text=sub_fig.layout.yaxis.title.text, row=row_index, col=col_index)
-    fig.update_layout(title_text="Box plots", overwrite=True, height=700)
-    fig.write_html("report.html", full_html=False, include_plotlyjs='cdn')
+        fig.update_yaxes(
+            title_text=sub_fig.layout.yaxis.title.text,
+            row=row_index,
+            col=col_index,
+            )
+        # x title only on the last row
+        fig.update_xaxes(
+            title_text=sub_fig.layout.xaxis.title.text,
+            row=number_of_rows,
+            col=col_index,
+            )
+        legend_title_text = sub_fig.layout.legend.title.text
+    fig.update_layout(
+        title_text=f"Box plots of {plot_name}",
+        legend_title_text = legend_title_text,
+        legend=dict(groupclick="toggleitem"),
+        height=700)
+    fig.write_html("report_box_plots.html", full_html=False, include_plotlyjs='cdn')

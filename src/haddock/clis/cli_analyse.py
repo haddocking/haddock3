@@ -262,9 +262,9 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
-        fig_list = box_plot_handler(ss_file, cluster_ranking, png, dpi)
-        report_generator(fig_list)
+        scatters = scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
+        boxes = box_plot_handler(ss_file, cluster_ranking, png, dpi)
+        report_generator(boxes, scatters, step)
 
 
 def main(run_dir, modules, top_cluster, png, dpi, **kwargs):

@@ -583,12 +583,9 @@ def report_boxes_handler(boxes, number_of_rows, number_of_cols, plot_name):
     for i, sub_fig in enumerate(boxes):
         col_index = int((i % number_of_cols) + 1)
         row_index = int(np.floor(i / number_of_cols) + 1)
-        # group legends
-        for j, trace in enumerate(sub_fig.data):
-            trace.update(legendgroup=str(j))
-            # hide legend of plots except one
-            if i !=0:
-                trace.update(showlegend=False)
+        # hide legend of plots except one
+        if i !=0:
+            sub_fig.for_each_trace(lambda trace:trace.update(showlegend=False))
         fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
         fig.update_yaxes(
             title_text=sub_fig.layout.yaxis.title.text,
@@ -614,12 +611,9 @@ def report_scatters_handler(scatters, number_of_rows, number_of_cols, plot_name)
     for i, sub_fig in enumerate(scatters):
         col_index = int((i % number_of_cols) + 1)
         row_index = int(np.floor(i / number_of_cols) + 1)
-        # group legends
-        for j, trace in enumerate(sub_fig.data):
-            trace.update(legendgroup=str(j))
-            # hide legend of plots except one
-            if i !=0:
-                trace.update(showlegend=False)
+        # hide legend of plots except one
+        if i !=0:
+            sub_fig.for_each_trace(lambda trace:trace.update(showlegend=False))
         fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
         fig.update_yaxes(
             title_text=sub_fig.layout.yaxis.title.text,

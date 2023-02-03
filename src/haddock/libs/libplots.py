@@ -556,16 +556,26 @@ def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
     return fig_list
 
 
-def report_generator(boxes, scatters, step):
+def _report_grid(plot_list):
     # Calculate grid size for subplots
-    number_of_plots = len(AXIS_NAMES)
-    number_of_clusters = len(boxes[0].data)
+    number_of_plots = len(plot_list)
+    number_of_clusters = len({trace.legendgroup for trace in plot_list[0].data})
     number_of_cols = 5
     number_of_rows = int(np.ceil(number_of_plots / number_of_cols))
     if number_of_clusters > 5:
         number_of_cols = 2
         number_of_rows = int(np.ceil(number_of_plots / number_of_cols))
+    return number_of_rows, number_of_cols
+
+
+def report_generator(boxes, scatters, step):
+    # Combine boxes
+    number_of_rows, number_of_cols = _report_grid(boxes)
     report_boxes_handler(boxes, number_of_rows, number_of_cols, step)
+
+    # Combine scatters
+    number_of_rows, number_of_cols = _report_grid(scatters)
+    report_scatters_handler(scatters, number_of_rows, number_of_cols, step)
 
 
 def report_boxes_handler(boxes, number_of_rows, number_of_cols, plot_name):
@@ -595,6 +605,36 @@ def report_boxes_handler(boxes, number_of_rows, number_of_cols, plot_name):
     fig.update_layout(
         title_text=f"Box plots of {plot_name}",
         legend_title_text = legend_title_text,
-        legend=dict(groupclick="toggleitem"),
         height=700)
     fig.write_html("report_box_plots.html", full_html=False, include_plotlyjs='cdn')
+
+
+def report_scatters_handler(scatters, number_of_rows, number_of_cols, plot_name):
+    fig = make_subplots(rows=number_of_rows, cols=number_of_cols, shared_xaxes=False)
+    for i, sub_fig in enumerate(scatters):
+        col_index = int((i % number_of_cols) + 1)
+        row_index = int(np.floor(i / number_of_cols) + 1)
+        # group legends
+        for j, trace in enumerate(sub_fig.data):
+            trace.update(legendgroup=str(j))
+            # hide legend of plots except one
+            if i !=0:
+                trace.update(showlegend=False)
+        fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
+        fig.update_yaxes(
+            title_text=sub_fig.layout.yaxis.title.text,
+            row=row_index,
+            col=col_index,
+            )
+        # x title only on the last row
+        fig.update_xaxes(
+            title_text=sub_fig.layout.xaxis.title.text,
+            row=row_index,
+            col=col_index,
+            )
+        legend_title_text = sub_fig.layout.legend.title.text
+    fig.update_layout(
+        title_text=f"Scatter plots of {plot_name}",
+        legend_title_text = legend_title_text,
+        height=700)
+    fig.write_html("report_scatter_plots.html", full_html=False, include_plotlyjs='cdn')

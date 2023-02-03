@@ -568,67 +568,41 @@ def _report_grid(plot_list):
     return number_of_rows, number_of_cols
 
 
+def report_plots_handler(plots, plot_title, shared_xaxes=False):
+    number_of_rows, number_of_cols = _report_grid(plots)
+    fig = make_subplots(rows=number_of_rows, cols=number_of_cols, shared_xaxes=shared_xaxes)
+    for i, sub_fig in enumerate(plots):
+        col_index = int((i % number_of_cols) + 1)
+        row_index = int(np.floor(i / number_of_cols) + 1)
+        # hide legend of plots except one
+        if i !=0:
+            sub_fig.for_each_trace(lambda trace:trace.update(showlegend=False))
+        fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
+        fig.update_yaxes(
+            title_text=sub_fig.layout.yaxis.title.text,
+            row=row_index,
+            col=col_index,
+            )
+        # x title only on the last row
+        if shared_xaxes == "all":
+            row_index = number_of_rows
+        fig.update_xaxes(
+            title_text=sub_fig.layout.xaxis.title.text,
+            row=row_index,
+            col=col_index,
+            )
+        legend_title_text = sub_fig.layout.legend.title.text
+    fig.update_layout(
+        title_text=plot_title,
+        legend_title_text = legend_title_text,
+        height=700)
+    fig.write_html(f"report_{plot_title.replace(' ', '_')}.html", full_html=False, include_plotlyjs='cdn')
+
+
 def report_generator(boxes, scatters, step):
     # Combine boxes
-    number_of_rows, number_of_cols = _report_grid(boxes)
-    report_boxes_handler(boxes, number_of_rows, number_of_cols, step)
-
+    plot_title = f"Box plots of {step}"
+    report_plots_handler(boxes, plot_title, shared_xaxes="all")
     # Combine scatters
-    number_of_rows, number_of_cols = _report_grid(scatters)
-    report_scatters_handler(scatters, number_of_rows, number_of_cols, step)
-
-
-def report_boxes_handler(boxes, number_of_rows, number_of_cols, plot_name):
-    fig = make_subplots(rows=number_of_rows, cols=number_of_cols, shared_xaxes='all')
-    for i, sub_fig in enumerate(boxes):
-        col_index = int((i % number_of_cols) + 1)
-        row_index = int(np.floor(i / number_of_cols) + 1)
-        # hide legend of plots except one
-        if i !=0:
-            sub_fig.for_each_trace(lambda trace:trace.update(showlegend=False))
-        fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
-        fig.update_yaxes(
-            title_text=sub_fig.layout.yaxis.title.text,
-            row=row_index,
-            col=col_index,
-            )
-        # x title only on the last row
-        fig.update_xaxes(
-            title_text=sub_fig.layout.xaxis.title.text,
-            row=number_of_rows,
-            col=col_index,
-            )
-        legend_title_text = sub_fig.layout.legend.title.text
-    fig.update_layout(
-        title_text=f"Box plots of {plot_name}",
-        legend_title_text = legend_title_text,
-        height=700)
-    fig.write_html("report_box_plots.html", full_html=False, include_plotlyjs='cdn')
-
-
-def report_scatters_handler(scatters, number_of_rows, number_of_cols, plot_name):
-    fig = make_subplots(rows=number_of_rows, cols=number_of_cols, shared_xaxes=False)
-    for i, sub_fig in enumerate(scatters):
-        col_index = int((i % number_of_cols) + 1)
-        row_index = int(np.floor(i / number_of_cols) + 1)
-        # hide legend of plots except one
-        if i !=0:
-            sub_fig.for_each_trace(lambda trace:trace.update(showlegend=False))
-        fig.add_traces(sub_fig.data, rows=row_index, cols=col_index)
-        fig.update_yaxes(
-            title_text=sub_fig.layout.yaxis.title.text,
-            row=row_index,
-            col=col_index,
-            )
-        # x title only on the last row
-        fig.update_xaxes(
-            title_text=sub_fig.layout.xaxis.title.text,
-            row=row_index,
-            col=col_index,
-            )
-        legend_title_text = sub_fig.layout.legend.title.text
-    fig.update_layout(
-        title_text=f"Scatter plots of {plot_name}",
-        legend_title_text = legend_title_text,
-        height=700)
-    fig.write_html("report_scatter_plots.html", full_html=False, include_plotlyjs='cdn')
+    plot_title = f"Scatter plots of {step}"
+    report_plots_handler(scatters, plot_title)

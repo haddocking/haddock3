@@ -163,7 +163,7 @@ def update_layout_matplotlib(x_label, y_label):
     return
 
 
-def box_plot_plotly(gb_full, y_ax):
+def box_plot_plotly(gb_full, y_ax, cl_rank):
     """
     Create a scatter plot in plotly.
 
@@ -174,10 +174,18 @@ def box_plot_plotly(gb_full, y_ax):
     y_ax : str
         variable to plot
     """
-    fig = px.box(gb_full,
+    colors = px_colors.qualitative.Alphabet
+    color_map = {}
+    for cl_id in sorted(cl_rank.keys()):
+        color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
+        color_map[f"{cl_id}"] = colors[color_idx]
+    # to use color_discrete_map, cluster-id column should be str not int
+    gb_full_string= gb_full.astype({"cluster-id":"string"})
+    fig = px.box(gb_full_string,
                  x="capri_rank",
                  y=f"{y_ax}",
                  color="cluster-id",
+                 color_discrete_map=color_map,
                  boxmode="overlay",
                  points="outliers"
                  )
@@ -300,7 +308,7 @@ def box_plot_handler(capri_filename, cl_rank, png, dpi):
     for y_ax in AXIS_NAMES.keys():
         if not in_capri(y_ax, capri_df.columns):
             continue
-        fig = box_plot_plotly(gb_full, y_ax)
+        fig = box_plot_plotly(gb_full, y_ax, cl_rank)
         fig_list.append(fig)
         # create png boxplot if necessary
         if png:

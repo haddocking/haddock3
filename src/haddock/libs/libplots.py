@@ -578,7 +578,13 @@ def _report_grid(plot_list):
 
 def report_plots_handler(plots, plot_title, shared_xaxes=False):
     number_of_rows, number_of_cols = _report_grid(plots)
-    fig = make_subplots(rows=number_of_rows, cols=number_of_cols, shared_xaxes=shared_xaxes)
+    fig = make_subplots(
+        rows=number_of_rows,
+        cols=number_of_cols,
+        shared_xaxes=shared_xaxes,
+        vertical_spacing=(0.3 / number_of_rows) + 0.01, # add 0.01 spacing
+        horizontal_spacing=(0.2 / number_of_cols) + 0.01, # add 0.01 spacing
+        )
     for i, sub_fig in enumerate(plots):
         col_index = int((i % number_of_cols) + 1)
         row_index = int(np.floor(i / number_of_cols) + 1)
@@ -603,7 +609,7 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
     fig.update_layout(
         title_text=plot_title,
         legend_title_text = legend_title_text,
-        height=700)
+        height=900)
     return fig
 
 

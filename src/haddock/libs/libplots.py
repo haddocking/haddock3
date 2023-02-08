@@ -582,8 +582,8 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
         rows=number_of_rows,
         cols=number_of_cols,
         shared_xaxes=shared_xaxes,
-        vertical_spacing=(0.3 / number_of_rows) + 0.01, # add 0.01 spacing
-        horizontal_spacing=(0.2 / number_of_cols) + 0.01, # add 0.01 spacing
+        vertical_spacing=(0.4 / number_of_rows),
+        horizontal_spacing=(0.3 / number_of_cols),
         )
     for i, sub_fig in enumerate(plots):
         col_index = int((i % number_of_cols) + 1)
@@ -596,6 +596,8 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
             title_text=sub_fig.layout.yaxis.title.text,
             row=row_index,
             col=col_index,
+            title_standoff=5,
+            automargin=True,
             )
         # x title only on the last row
         if shared_xaxes == "all":
@@ -604,6 +606,8 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
             title_text=sub_fig.layout.xaxis.title.text,
             row=row_index,
             col=col_index,
+            title_standoff=5,
+            automargin=True,
             )
         legend_title_text = sub_fig.layout.legend.title.text
     fig.update_layout(

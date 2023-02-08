@@ -596,13 +596,20 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
         title_text=plot_title,
         legend_title_text = legend_title_text,
         height=700)
-    fig.write_html(f"report_{plot_title.replace(' ', '_')}.html", full_html=False, include_plotlyjs='cdn')
+    return fig
 
 
 def report_generator(boxes, scatters, step):
-    # Combine boxes
-    plot_title = f"Box plots of {step}"
-    report_plots_handler(boxes, plot_title, shared_xaxes="all")
     # Combine scatters
     plot_title = f"Scatter plots of {step}"
-    report_plots_handler(scatters, plot_title)
+    figures = [report_plots_handler(scatters, plot_title)]
+    # Combine boxes
+    plot_title = f"Box plots of {step}"
+    figures.append(report_plots_handler(boxes, plot_title, shared_xaxes="all"))
+    report_filename = "report.html"
+    report = open(report_filename, 'w')
+    report.write("<html><head></head><body>" + "\n")
+    for figure in figures:
+        inner_html = figure.to_html(full_html=False, include_plotlyjs='cdn')
+        report.write(inner_html)
+    report.write("</body></html>" + "\n")

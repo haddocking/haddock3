@@ -663,7 +663,9 @@ def report_generator(boxes, scatters, table, step):
     report_filename = "report.html"
     report = open(report_filename, 'w')
     report.write("<html><head></head><body>" + "\n")
+    include_plotlyjs = 'cdn'
     for figure in figures:
-        inner_html = figure.to_html(full_html=False, include_plotlyjs='cdn')
+        inner_html = figure.to_html(full_html=False, include_plotlyjs=include_plotlyjs)
         report.write(inner_html)
+        include_plotlyjs = False
     report.write("</body></html>" + "\n")

@@ -620,13 +620,14 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
 
 
 def _clean_capri_table(dfcl):
+    dfcl = dfcl.sort_values(by=["cluster_id"])
     # what metrics are in both dfcl and AXIS_NAMES
     col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).to_list()
     # columns of the final table
     table_col = ["Cluster ID", "Cluster size"]
     dfcl_string = dfcl.applymap(str)
     for col_name in col_list:
-        dfcl_string[col_name] = dfcl_string[col_name]+" \u00B1 "+dfcl_string[f"{col_name}_std"]
+        dfcl_string[col_name] = dfcl_string[col_name] + " \u00B1 " + dfcl_string[f"{col_name}_std"]
         dfcl_string.rename(columns={col_name:AXIS_NAMES[col_name]}, inplace=True)
         table_col.append(AXIS_NAMES[col_name])
     dfcl_string.rename(columns={"cluster_id":"Cluster ID", "n":"Cluster size"}, inplace=True)

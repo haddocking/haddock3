@@ -173,6 +173,8 @@ def box_plot_plotly(gb_full, y_ax, cl_rank):
         data to box plot
     y_ax : str
         variable to plot
+    cl_rank : dict
+        {cluster_id : cluster_rank} dictionary
     """
     colors = px_colors.qualitative.Alphabet
     color_map = {}
@@ -617,10 +619,43 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
     return fig
 
 
-def report_generator(boxes, scatters, step):
+def _clean_capri_table(dfcl):
+    # what metrics are in both dfcl and AXIS_NAMES
+    col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).to_list()
+    # columns of the final table
+    table_col = ["Cluster ID", "Cluster size"]
+    dfcl_string = dfcl.applymap(str)
+    for col_name in col_list:
+        dfcl_string[col_name] = dfcl_string[col_name]+" \u00B1 "+dfcl_string[f"{col_name}_std"]
+        dfcl_string.rename(columns={col_name:AXIS_NAMES[col_name]}, inplace=True)
+        table_col.append(AXIS_NAMES[col_name])
+    dfcl_string.rename(columns={"cluster_id":"Cluster ID", "n":"Cluster size"}, inplace=True)
+    return dfcl_string[table_col]
+
+
+def clt_table_handler(clt_file):
+    dfcl = read_capri_table(clt_file)
+    table_df = _clean_capri_table(dfcl)
+    table = go.Table(
+        columnwidth = 200,
+        header=dict(values=list(table_df.columns),
+        align='left'),
+        cells=dict(values=table_df.transpose().values.tolist(),
+        # fill_color='lavender',
+        align='left',
+        height=40),
+        )
+    fig = go.Figure(layout={"height": 400})
+    fig.add_table(cells=table.cells, header=table.header)
+    fig.write_html("clt_table.html", full_html=False, include_plotlyjs='cdn')
+    return fig
+
+
+def report_generator(boxes, scatters, table, step):
+    figures = [table]
     # Combine scatters
     plot_title = f"Scatter plots of {step}"
-    figures = [report_plots_handler(scatters, plot_title)]
+    figures.append(report_plots_handler(scatters, plot_title))
     # Combine boxes
     plot_title = f"Box plots of {step}"
     figures.append(report_plots_handler(boxes, plot_title, shared_xaxes="all"))

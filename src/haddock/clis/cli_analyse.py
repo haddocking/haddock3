@@ -34,6 +34,7 @@ from haddock.libs.libplots import (
     box_plot_handler,
     read_capri_table,
     scatter_plot_handler,
+    clt_table_handler,
     report_generator,
     )
 from haddock.modules import get_module_steps_folders
@@ -264,7 +265,8 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         log.info("Plotting results..")
         scatters = scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
         boxes = box_plot_handler(ss_file, cluster_ranking, png, dpi)
-        report_generator(boxes, scatters, step)
+        table = clt_table_handler(clt_file)
+        report_generator(boxes, scatters, table, step)
 
 
 def main(run_dir, modules, top_cluster, png, dpi, **kwargs):

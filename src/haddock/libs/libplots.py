@@ -636,6 +636,16 @@ def find_best_struct(ss_file, number_of_struct=4):
     return best_struct_df
 
 
+# TODO links to be fixed!
+def _add_links(best_struct_df):
+    table_df = best_struct_df.copy()
+    vis_text = "Visibility"
+    for col_name in table_df.columns[1:]:
+        dl_text = "<a href=../" + best_struct_df[col_name] + ">Download</a>"
+        table_df[col_name] =  dl_text + ", " + vis_text
+    return table_df
+
+
 def clean_capri_table(dfcl):
     dfcl = dfcl.sort_values(by=["cluster_id"])
     # what metrics are in both dfcl and AXIS_NAMES
@@ -654,6 +664,7 @@ def clt_table_handler(clt_file, ss_file):
     dfcl = read_capri_table(clt_file)
     statistics_df = clean_capri_table(dfcl)
     structs_df = find_best_struct(ss_file, number_of_struct=4)
+    structs_df = _add_links(structs_df)
     fig = make_subplots(
         rows=2,
         cols=1,
@@ -666,7 +677,6 @@ def clt_table_handler(clt_file, ss_file):
             header=dict(values=list(df.columns),
             align='left'),
             cells=dict(values=df.transpose().values.tolist(),
-            # fill_color='lavender',
             align='left',
             height=40),
             )

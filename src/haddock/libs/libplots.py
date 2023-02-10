@@ -619,35 +619,61 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False):
     return fig
 
 
-def _clean_capri_table(dfcl):
+def find_best_struct(ss_file, number_of_struct=4):
+    dfss = read_capri_table(ss_file)
+    dfss = dfss.sort_values(by=["cluster-id", "model-cluster-ranking"])
+    best_struct_df = dfss.groupby("cluster-id").head(number_of_struct).copy()
+    number_of_cluster = len(best_struct_df["cluster-id"].unique())
+    col_names = [
+        f"Nr {number + 1} best structure" for number in range(number_of_struct)
+        ] * number_of_cluster
+    best_struct_df = best_struct_df.assign(Structure=col_names)
+    best_struct_df = best_struct_df.pivot_table(
+        index=["cluster-id"], columns=['Structure'], values="model", aggfunc=lambda x:x,
+        )
+    best_struct_df.reset_index(inplace=True)
+    best_struct_df.rename(columns={"cluster-id":"Cluster ID"}, inplace=True)
+    return best_struct_df
+
+
+def clean_capri_table(dfcl):
     dfcl = dfcl.sort_values(by=["cluster_id"])
     # what metrics are in both dfcl and AXIS_NAMES
-    col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).to_list()
+    col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).tolist()
     # columns of the final table
     table_col = ["Cluster ID", "Cluster size"]
-    dfcl_string = dfcl.applymap(str)
     for col_name in col_list:
-        dfcl_string[col_name] = dfcl_string[col_name] + " \u00B1 " + dfcl_string[f"{col_name}_std"]
-        dfcl_string.rename(columns={col_name:AXIS_NAMES[col_name]}, inplace=True)
+        dfcl[AXIS_NAMES[col_name]] = dfcl[col_name].astype(str) + " ± " + dfcl[f"{col_name}_std"].astype(str)
         table_col.append(AXIS_NAMES[col_name])
-    dfcl_string.rename(columns={"cluster_id":"Cluster ID", "n":"Cluster size"}, inplace=True)
-    return dfcl_string[table_col]
+    dfcl.drop(columns=col_list, inplace=True)
+    dfcl.rename(columns={"cluster_id":"Cluster ID", "n":"Cluster size"}, inplace=True)
+    return dfcl[table_col]
 
 
-def clt_table_handler(clt_file):
+def clt_table_handler(clt_file, ss_file):
     dfcl = read_capri_table(clt_file)
-    table_df = _clean_capri_table(dfcl)
-    table = go.Table(
-        columnwidth = 200,
-        header=dict(values=list(table_df.columns),
-        align='left'),
-        cells=dict(values=table_df.transpose().values.tolist(),
-        # fill_color='lavender',
-        align='left',
-        height=40),
+    statistics_df = clean_capri_table(dfcl)
+    structs_df = find_best_struct(ss_file, number_of_struct=4)
+    fig = make_subplots(
+        rows=2,
+        cols=1,
+        specs=[[{"type": "table"}], [{"type": "table"}]],
+        vertical_spacing=0.1,
         )
-    fig = go.Figure(layout={"height": 400})
-    fig.add_table(cells=table.cells, header=table.header)
+    for i, df in enumerate([statistics_df, structs_df]):
+        table = go.Table(
+            columnwidth = 200,
+            header=dict(values=list(df.columns),
+            align='left'),
+            cells=dict(values=df.transpose().values.tolist(),
+            # fill_color='lavender',
+            align='left',
+            height=40),
+            )
+        fig.add_trace(table, row=i+1, col=1)
+    fig.update_layout(
+        title_text="Summary",
+        height=700)
     fig.write_html("clt_table.html", full_html=False, include_plotlyjs='cdn')
     return fig
 
@@ -655,6 +681,7 @@ def clt_table_handler(clt_file):
 def report_generator(boxes, scatters, table, step):
     figures = [table]
     # Combine scatters
+    # TODO fix number of rows and share axes for scatters with horizontal scrolling
     plot_title = f"Scatter plots of {step}"
     figures.append(report_plots_handler(scatters, plot_title))
     # Combine boxes

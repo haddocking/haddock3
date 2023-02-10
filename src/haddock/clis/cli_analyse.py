@@ -265,7 +265,7 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         log.info("Plotting results..")
         scatters = scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
         boxes = box_plot_handler(ss_file, cluster_ranking, png, dpi)
-        table = clt_table_handler(clt_file)
+        table = clt_table_handler(clt_file, ss_file)
         report_generator(boxes, scatters, table, step)
 
 

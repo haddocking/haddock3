@@ -4,7 +4,7 @@ version = "3.0.0-beta.3"
 description = ""
 authors = ["Alexandre Bonvin <a.m.j.j.Bonvin@uu.nl>"]
 maintainers = []
-readme = ["README.md", "CHANGELOG.md"]
+readme = "README.md"
 license = "Apache License 2.0"
 
 [tool.poetry.dependencies]

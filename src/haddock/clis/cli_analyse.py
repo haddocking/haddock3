@@ -34,10 +34,9 @@ from haddock.libs.libplots import (
     box_plot_handler,
     read_capri_table,
     scatter_plot_handler,
-    )
+)
 from haddock.modules import get_module_steps_folders
-from haddock.modules.analysis.caprieval import \
-    DEFAULT_CONFIG as caprieval_params
+from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
@@ -67,19 +66,44 @@ def get_cluster_ranking(capri_clt_filename, top_cluster):
     return cl_ranking
 
 
+def update_paths(capri_ss_filename, toch="../", toadd="../../"):
+    """
+    Update paths in capri_ss_filename.
+
+    Parameters
+    ----------
+    capri_ss_filename : str or Path
+        capri ss filename
+    toch : str
+        string to be replaced
+    toadd : str
+        string to be added
+    """
+    new_lines = []
+    with open(capri_ss_filename, "r") as rfile:
+        for ln in rfile:
+            new_ln = ln.replace(toch, toadd)
+            new_lines.append(new_ln)
+
+    with open(capri_ss_filename, "w") as wfile:
+        for ln in new_lines:
+            wfile.write(ln)
+    return
+
+
 # Command line interface parser
 ap = argparse.ArgumentParser(
     prog="haddock3-analyse",
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 ap.add_argument(
     "-r",
     "--run-dir",
     help="The input run directory.",
     required=True,
-    )
+)
 
 ap.add_argument(
     "-m",
@@ -88,7 +112,7 @@ ap.add_argument(
     help="The number of the steps to copy.",
     required=True,
     type=int,
-    )
+)
 
 ap.add_argument(
     "-t",
@@ -96,24 +120,16 @@ ap.add_argument(
     help="The number of clusters to show.",
     required=False,
     type=int,
-    default=10
-    )
+    default=10,
+)
 
 ap.add_argument(
-    "--png",
-    help="produce png images",
-    required=False,
-    type=bool,
-    default=False
-    )
+    "--png", help="produce png images", required=False, type=bool, default=False
+)
 
 ap.add_argument(
-    "--dpi",
-    help="dpi for png images",
-    required=False,
-    type=int,
-    default=200
-    )
+    "--dpi", help="dpi for png images", required=False, type=int, default=200
+)
 
 ap.add_argument(
     "-p",
@@ -123,11 +139,11 @@ ap.add_argument(
         "Any other parameter of the `caprieval` module."
         "For example: -p reference_fname target.pdb."
         "You can give any number of parameters."
-        ),
+    ),
     action=_ParamsToDict,
     default={},
     nargs="*",
-    )
+)
 
 
 def _ap():
@@ -173,7 +189,7 @@ def run_capri_analysis(step, run_dir, capri_dict):
         order=1,
         path=Path(run_dir),
         initial_params=caprieval_params,
-        )
+    )
     caprieval_module.update_params(**capri_dict)
     # update model info
     caprieval_module.previous_io = io
@@ -191,7 +207,7 @@ def update_capri_dict(capri_dict, target_path):
         capri dictionary of parameters
     target_path : Path
         path to the output folder
-    
+
     Returns
     -------
     new_capri_dict : dict
@@ -199,13 +215,13 @@ def update_capri_dict(capri_dict, target_path):
     """
     new_capri_dict = capri_dict.copy()
     for key in new_capri_dict:
-        if key.endswith("fname") and new_capri_dict[key] not in ['', None]:
+        if key.endswith("fname") and new_capri_dict[key] not in ["", None]:
             try:
                 ref_path = Path(target_path, "reference.pdb")
                 shutil.copy(new_capri_dict[key], ref_path)
                 new_capri_dict[key] = Path("reference.pdb")
             except FileNotFoundError:
-                sys.exit(f'file not found {new_capri_dict[key]}')
+                sys.exit(f"file not found {new_capri_dict[key]}")
     return new_capri_dict
 
 
@@ -234,7 +250,7 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         DPI for png images.
     """
     log.info(f"Analysing step {step}")
-    
+
     target_path.mkdir(parents=True, exist_ok=False)
     step_name = step.split("_")[1]
     if step_name != "caprieval":
@@ -245,12 +261,12 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(ss_fname, target_path)
         shutil.copy(clt_fname, target_path)
-        
+
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if step_name != "caprieval":
         run_capri_analysis(step, run_dir, capri_dict)
-    
+
     log.info("CAPRI files identified")
     # plotting
     ss_file = Path("capri_ss.tsv")
@@ -282,19 +298,23 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
 
     png : bool
         Produce png images.
-    
+
     dpi : int
         DPI for png images.
     """
-    log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
-             f"with top_cluster = {top_cluster}")
-    
+    log.info(
+        f"Running haddock3-analyse on {run_dir}, modules {modules}, "
+        f"with top_cluster = {top_cluster}"
+    )
+
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
     capri_dict = default_capri.copy()
     for param in kwargs:
         if param not in default_capri:
-            sys.exit(f'* ERROR * Parameter {param!r} is not a valid `caprieval` parameter')  # noqa:E501
+            sys.exit(
+                f"* ERROR * Parameter {param!r} is not a valid `caprieval` parameter"
+            )  # noqa:E501
         else:
             if param.endswith("fname"):  # using full path for files
                 rel_path = Path(kwargs[param])
@@ -329,8 +349,9 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
         dest_path = Path(ANA_FOLDER, subfolder_name)
         if dest_path.exists():
             if len(os.listdir(dest_path)) != 0:
-                log.warning(f"{dest_path} exists and is not empty. "
-                            "Skipping analysis...")
+                log.warning(
+                    f"{dest_path} exists and is not empty. " "Skipping analysis..."
+                )
                 continue
             else:  # subfolder is empty, remove it.
                 log.info(f"Removing empty folder {dest_path}.")
@@ -339,24 +360,20 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
         # run the analysis
         error = False
         try:
-            analyse_step(step,
-                         Path("./"),
-                         capri_dict,
-                         target_path,
-                         top_cluster,
-                         png,
-                         dpi)
+            analyse_step(
+                step, Path("./"), capri_dict, target_path, top_cluster, png, dpi
+            )
         except Exception as e:
             error = True
             log.warning(
                 f"""Could not execute the analysis for step {step}.
                 The following error occurred {e}"""
-                )
+            )
         if error:
             bad_folder_paths.append(target_path)
         else:
             good_folder_paths.append(target_path)
-        
+
         # going back
         os.chdir(ori_cwd)
 
@@ -371,6 +388,13 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
         for directory in bad_folder_paths:
             if directory.exists():
                 shutil.rmtree(directory)
+
+    # substituting the correct paths in the capri_ss files
+    for directory in good_folder_paths:
+        ss_file = Path(outdir, directory, "capri_ss.tsv")
+        if ss_file.exists():
+            log.info(f"updating paths in {ss_file}")
+            update_paths(ss_file, "../", "../../")
 
     return
 

@@ -42,6 +42,8 @@ jobs:
 
     - name: unit tests
       run: tox -e test
+      env:
+        CNS_EXEC: ${{ github.workspace }}/bin/cns
 
     # from https://github.com/codecov/codecov-action
     - name: Upload coverage to Codecov

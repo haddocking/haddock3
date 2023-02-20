@@ -41,12 +41,14 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: true
 
-      - run: poetry install --no-interaction --no-root
-      - run: |
-          poetry run pytest --cov --cov-report=term-missing --cov-append --cov-config=.coveragerc --hypothesis-show-statistics
-          poetry run coverage xml
+      - name: Install dependencies
+        run: poetry install
 
-      # from https://github.com/codecov/codecov-action
+      - name: Run tests
+        run: poetry run pytest --cov --cov-report=term-missing --cov-append --hypothesis-show-statistics
+        env:
+          CNS_EXEC: ${{ github.workspace }}/bin/cns
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:

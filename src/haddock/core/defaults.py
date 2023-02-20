@@ -2,6 +2,7 @@
 import string
 import sys
 from pathlib import Path
+import os
 
 import yaml
 
@@ -9,11 +10,18 @@ from haddock import core_path, haddock3_repository_path, log
 
 
 # Locate the CNS binary
-cns_exec = Path(haddock3_repository_path, "bin", "cns")
+cns_exec = os.getenv("CNS_EXEC")
+if cns_exec is None:
+    log.error(
+        'CNS_EXEC not defined. '
+        'Please check the install instructions.'
+        )
+    sys.exit()
+cns_exec = Path(cns_exec)
+
 if not cns_exec.exists():
     log.error(
-        'CNS executable `bin/cns` not found. '
-        'Did you installed HADDOCK3 properly?'
+        'CNS_EXEC points to a non-existing file. '
         )
     sys.exit()
 

@@ -14,9 +14,18 @@ stable beta version.
 ## 1. Installation
 
 To install HADDOCK3 follow the instructions in the [INSTALL](docs/INSTALL.md)
-file.
+file for detailed instructions.
 
-## 2. Documentation
+The short version:
+
+```bash
+git clone --recursive https://github.com/haddocking/haddock3.git && cd haddock3
+cd src/fcc/src && make && cd -
+pip install .
+CNS_EXEC= haddock3 -h
+```
+
+## 2. Developer Documentation
 
 HADDOCK3-beta documentation is hosted online at https://www.bonvinlab.org/haddock3/.
 The documentation is rendered and update at every commit to the `main` branch. So,

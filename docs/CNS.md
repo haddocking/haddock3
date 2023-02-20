@@ -113,6 +113,24 @@ The command to exit CNS is `STOP`.
 
 You now have a suitable CNS executable to finish [installing HADDOCK3](INSTALL.md).
 
+## 6 Define `CNS_EXEC`
+
+To use CNS with HADDOCK3, you will need to define the `CNS_EXEC` environment variable to point to the CNS executable you just compiled.
+
+Add this to your `~/.bash_profile` or `~/.bashrc` file or equivalent:
+
+For csh/tcsh:
+
+```bash
+setenv CNS_EXEC /PATH/TO/cns_solve_1.3/cns_solve-2206031450.exe
+```
+
+For sh/bash:
+
+```bash
+export CNS_EXEC=/PATH/TO/cns_solve_1.3/cns_solve-2206031450.exe
+```
+
 ***
 
 # Troubleshooting

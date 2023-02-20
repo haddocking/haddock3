@@ -9,23 +9,26 @@ If you have installed a previous version of HADDOCK, you may already have a suit
 Please do [check your CNS installation](CNS.md#5-Check-installation) before proceeding.
 
 
-## 1. Clone this repository:
+## 1 Clone this repository
 
 Mind the `--recursive` flag when cloning!
 
 ```bash
 git clone --recursive https://github.com/haddocking/haddock3.git
 cd haddock3
-cd src/fcc/src
-chmod u+x Makefile
-make
-cd -
 ```
+
+## 2 Compile the `fcc` module
+
+```bash
+cd src/fcc/src && make && cd -
+```
+
 
 By the end of the above commands, you should be back to the `haddock3`
 main folder.
 
-## 2 Create a virtual environment with Python 3.9+ and install dependencies:
+## 3 Create a virtual environment
 
 You can use Python's `venv` or `conda` depending on your choice.
 Commands are provided below:
@@ -35,33 +38,42 @@ Commands are provided below:
 ```bash
 virtualenv venv --python=3.9
 source venv/bin/activate
-pip install -r requirements.txt
 ```
 
 ### with `conda`
 
 ```bash
-conda env create -f requirements.yml
+conda env create -n venv python=3.9
 conda activate haddock3
 ```
 
-## 3. Install the HADDOCK3 package and command line clients
+## 4 Install HADDOCK3
 
-```bash
-python setup.py develop --no-deps
+```
+pip install .
 ```
 
-## 4. Make a CNS binary shortcut to the expected path:
+## 5 Define the `CNS_EXEC` system variable
+
+HADDOCK uses the CNS software as its molecular engine. To facilitate
+the installation process, HADDOCK3 will look for the CNS executable
+as defined in the `CNS_EXEC` system variable.
+
+Make sure to check the [how-to-install-CNS](CNS.md) for more information.
+
+You can define this variable in the terminal, or in your `.bashrc` or
+`.bash_profile` file. For example:
 
 ```bash
-mkdir -p bin/
-
-# on mac
-ln -s /PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe bin/cns
-
-# on linux
-ln -s /PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
+export CNS_EXEC=/PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe
 ```
+
+Alternatively you can define it at runtime, for example:
+
+```bash
+CNS_EXEC=/PATH/TO/CNS haddock3 [options] [arguments]
+```
+
 
 As long as you have the HADDOCK3 python environment activated, you can
 navigate away from the HADDOCK3 installation folder. You can run
@@ -91,21 +103,12 @@ Afterwards:
 ```bash
 # pull the latest source code from our repository to your computer
 git pull
-
-# if you used venv to create the python environment, run:
-pip install -r requirements.txt  --upgrade
-
-# if you used anaconda to create the python environment, run:
-conda env update -f requirements.yml
-
-# ensure all command-lines clients are installed
-python setup.py develop --no-deps
+pip install . --upgrade
 ```
 
+## 6 (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI
 
-## 6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI
-
-To use the mpi implementation of haddock3 you must have mpi4py installed in the haddock3 python environment, and OpenMPI in the host system.
+To use the MPI implementation of haddock3 you must have `mpi4py` installed in the python environment and OpenMPI in the host system.
 
 ```bash
 $ pip install mpi4py

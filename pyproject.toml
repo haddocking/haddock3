@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "haddock"
+version = "3.0.0-beta.3"
+description = ""
+authors = ["Alexandre Bonvin <a.m.j.j.Bonvin@uu.nl>"]
+maintainers = []
+readme = ["README.md", "CHANGELOG.md"]
+license = "Apache License 2.0"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+pdb-tools = "2.5.0"
+biopython = "1.79"
+numpy = "1.22.2"
+pyyaml = "6.0"
+scipy = "1.8.0"
+toml = "0.10.2"
+pandas = "1.5.1"
+plotly = "5.11.0"
+fccpy = {git = "https://github.com/joaorodrigues/fcc", branch ="fcc2"}
+jsonpickle = "2.1.0"
+
+[tool.poetry.group.mpi]
+optional = true
+
+[tool.poetry.group.mpi.dependencies]
+mpi4py = "^3.1.4"
+
+[tool.poetry.scripts]
+haddock3 = "haddock.clis.cli:maincli"
+haddock3-mpitask = "haddock.clis.cli_mpi:maincli"
+haddock3-bm = "haddock.clis.cli_bm:maincli"
+haddock3-cfg = "haddock.clis.cli_cfg:maincli"
+haddock3-clean = "haddock.clis.cli_clean:maincli"
+haddock3-copy = "haddock.clis.cli_cp:maincli"
+haddock3-dmn = "haddock.clis.cli_dmn:maincli"
+haddock3-pp = "haddock.clis.cli_pp:maincli"
+haddock3-score = "haddock.clis.cli_score:maincli"
+haddock3-unpack = "haddock.clis.cli_unpack:maincli"
+haddock3-analyse = "haddock.clis.cli_analyse:maincli"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

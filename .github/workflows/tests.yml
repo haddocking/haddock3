@@ -36,10 +36,10 @@ jobs:
         cd -
 
     - uses: snok/install-poetry@v1
-        with:
-          version: 1.3.2
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+      with:
+        version: 1.3.2
+        virtualenvs-create: true
+        virtualenvs-in-project: true
 
     - run: poetry install --no-interaction --no-root
     - run: |

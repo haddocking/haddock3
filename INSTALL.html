@@ -231,8 +231,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </section>
 <section id="with-conda">
 <h3>with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#with-conda" title="Permalink to this heading">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>requirements.yml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>haddock3<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.9
 conda<span class="w"> </span>activate<span class="w"> </span>haddock3
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 </pre></div>
 </div>
 </section>
@@ -374,7 +375,7 @@ information.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Feb 20, 2023.
+        Last updated on Feb 21, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

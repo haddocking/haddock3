@@ -1,5 +1,6 @@
 """Plotting functionalities."""
 
+from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -723,10 +724,14 @@ def find_best_struct(ss_file, number_of_struct=4):
 # TODO links to be fixed!
 def _add_links(best_struct_df):
     table_df = best_struct_df.copy()
-    vis_text = "Visibility"
     for col_name in table_df.columns[1:]:
-        dl_text = "<a href=../" + best_struct_df[col_name] + ">Download</a>"
-        table_df[col_name] =  dl_text + ", " + vis_text
+        file_name = best_struct_df[col_name].apply(lambda row: Path(row).name)
+        # href empty for local files
+        # TODO fix links to Download and Visibility
+        # we can use html href syntax but html should be responsive!
+        dl_text = "Download"
+        vis_text = "Visibility"
+        table_df[col_name] = file_name + ", " + dl_text + ", " + vis_text
     return table_df
 
 

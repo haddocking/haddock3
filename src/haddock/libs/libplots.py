@@ -619,8 +619,8 @@ def _report_grid_size(plot_list):
     number_of_cols = SCATTER_MATRIX_SIZE[1]
     number_of_rows = int(np.ceil(number_of_plots / number_of_cols))
     # enable horizontal scroll
-    width = 800 if number_of_clusters > 5 else 400
-    height = 800 if number_of_clusters > 5 else 400
+    width = 600 if number_of_clusters > 5 else 350
+    height = 600 if number_of_clusters > 5 else 350
     return number_of_rows, number_of_cols, width, height
 
 
@@ -809,7 +809,7 @@ def clt_table_handler(clt_file, ss_file):
         fig.add_trace(table, row=i+1, col=1)
     fig.update_layout(
         title_text="Summary",
-        height=500)
+        height=600)
     fig.write_html("clt_table.html", full_html=False, include_plotlyjs='cdn')
     return fig
 

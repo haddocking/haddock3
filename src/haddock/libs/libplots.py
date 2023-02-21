@@ -590,7 +590,7 @@ def _report_grid_size(plot_list):
     """
     Calculate the size of the grid in the report.
 
-    By size, it means the number of rows, the number of columns, and the width
+    By size, it means the number of rows/columns, and the width/height
     of an individual plot. In the report, some of the axes are shared. The
     settings for sharing axes depends on the type (scatters or boxes). The
     number of columns is set to the number of columns in SCATTER_MATRIX_SIZE. If
@@ -609,6 +609,8 @@ def _report_grid_size(plot_list):
         number of columns in the grid
     width : int
         the width of an individual plot
+    height: int
+        the height of an individual plot
     """
     # Calculate grid size for subplots
     number_of_plots = len(plot_list)
@@ -617,8 +619,9 @@ def _report_grid_size(plot_list):
     number_of_cols = SCATTER_MATRIX_SIZE[1]
     number_of_rows = int(np.ceil(number_of_plots / number_of_cols))
     # enable horizontal scroll
-    width = 500 if number_of_clusters > 5 else 300
-    return number_of_rows, number_of_cols, width
+    width = 800 if number_of_clusters > 5 else 400
+    height = 800 if number_of_clusters > 5 else 400
+    return number_of_rows, number_of_cols, width, height
 
 
 def report_plots_handler(plots, plot_title, shared_xaxes=False, shared_yaxes=False):
@@ -644,7 +647,7 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False, shared_yaxes=Fal
     fig :
         an instance of plotly.graph_objects.Figure
     """
-    number_of_rows, number_of_cols, width = _report_grid_size(plots)
+    number_of_rows, number_of_cols, width, height = _report_grid_size(plots)
     fig = make_subplots(
         rows=number_of_rows,
         cols=number_of_cols,
@@ -681,8 +684,8 @@ def report_plots_handler(plots, plot_title, shared_xaxes=False, shared_yaxes=Fal
     fig.update_layout(
         title_text=plot_title,
         legend_title_text = legend_title_text,
-        height=900,
-        width = width * number_of_rows)
+        height= height * number_of_rows,
+        width = width * number_of_cols)
     return fig
 
 
@@ -796,7 +799,7 @@ def clt_table_handler(clt_file, ss_file):
         )
     for i, df in enumerate([statistics_df, structs_df]):
         table = go.Table(
-            columnwidth = 200,
+            columnwidth = 100,
             header=dict(values=list(df.columns),
             align='left'),
             cells=dict(values=df.transpose().values.tolist(),
@@ -806,7 +809,7 @@ def clt_table_handler(clt_file, ss_file):
         fig.add_trace(table, row=i+1, col=1)
     fig.update_layout(
         title_text="Summary",
-        height=700)
+        height=500)
     fig.write_html("clt_table.html", full_html=False, include_plotlyjs='cdn')
     return fig
 

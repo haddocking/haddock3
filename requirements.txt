@@ -9,4 +9,4 @@ toml==0.10.2
 tox==3.24.5
 pandas==1.5.1
 plotly==5.11.0
-matplotlib-base==3.6.2
+matplotlib==3.7.0

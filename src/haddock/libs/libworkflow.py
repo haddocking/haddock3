@@ -5,6 +5,7 @@ from pathlib import Path
 from time import time
 
 from haddock import log
+from haddock.clis.cli_analyse import main as cli_analyse
 from haddock.core.exceptions import HaddockError, HaddockTermination, StepError
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.config import get_module_name
@@ -52,6 +53,15 @@ class WorkflowManager:
         terminated = self._terminated if terminated is None else terminated
         for step in self.recipe.steps[:terminated]:
             step.clean()
+    
+    def postprocess(self, other_params):
+        """Postprocess the workflow."""
+        capri_steps = []
+        for step in self.recipe.steps:
+            if step.module_name == "caprieval":
+                capri_steps.append(step.order)
+        # call cli_analyse (no need for capri_dicts, it's all precalculated)
+        cli_analyse("./", capri_steps, top_cluster=10, png=False, dpi=None)
 
 
 class Workflow:

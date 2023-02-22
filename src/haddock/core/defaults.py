@@ -13,7 +13,7 @@ cns_exec = Path(haddock3_repository_path, "bin", "cns")
 if not cns_exec.exists():
     log.error(
         'CNS executable `bin/cns` not found. '
-        'Did you installed HADDOCK3 properly?'
+        'Please check the install instructions.'
         )
     sys.exit()
 

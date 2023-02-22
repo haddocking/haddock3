@@ -735,6 +735,8 @@ def capri_cluster_analysis(
         path
         ):
     """Consider the cluster results for the CAPRI evaluation."""
+    capri_keys = ["irmsd", "fnat", "lrmsd", "dockq"]
+    model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
     log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data
     clt_data = dict(((m.clt_rank, m.clt_id), []) for m in model_list)
@@ -744,49 +746,12 @@ def capri_cluster_analysis(
         clt_data[(model.clt_rank, model.clt_id)].append((capri, model))
 
     output_dic = {}
+    
     for i, element in enumerate(clt_data):
         data = {}
         number_of_models_in_cluster = len(clt_data[element])
-        # TODO: Refactor these ugly try/excepts
-        try:
-            score_array = [
-                e[1].score for e in clt_data[element][:clt_threshold]]
-            score_mean, score_stdev = calc_stats(score_array)
-        except KeyError:
-            score_mean = float("nan")
-            score_stdev = float("nan")
 
-        try:
-            irmsd_array = [
-                e[0].irmsd for e in clt_data[element][:clt_threshold]]
-            irmsd_mean, irmsd_stdev = calc_stats(irmsd_array)
-        except KeyError:
-            irmsd_mean = float("nan")
-            irmsd_stdev = float("nan")
-
-        try:
-            fnat_array = [e[0].fnat for e in clt_data[element][:clt_threshold]]
-            fnat_mean, fnat_stdev = calc_stats(fnat_array)
-        except KeyError:
-            fnat_mean = float("nan")
-            fnat_stdev = float("nan")
-
-        try:
-            lrmsd_array = [
-                e[0].lrmsd for e in clt_data[element][:clt_threshold]]
-            lrmsd_mean, lrmsd_stdev = calc_stats(lrmsd_array)
-        except KeyError:
-            lrmsd_mean = float("nan")
-            lrmsd_stdev = float("nan")
-
-        try:
-            dockq_array = [
-                e[0].dockq for e in clt_data[element][:clt_threshold]]
-            dockq_mean, dockq_stdev = calc_stats(dockq_array)
-        except KeyError:
-            dockq_mean = float("nan")
-            dockq_stdev = float("nan")
-
+        # rank, cluster id, number of models in cluster
         data["cluster_rank"] = element[0]
         data["cluster_id"] = element[1]
         data["n"] = number_of_models_in_cluster
@@ -796,17 +761,38 @@ def capri_cluster_analysis(
             data["under_eval"] = "yes"
         else:
             data["under_eval"] = "-"
+        
+        # score
+        try:
+            score_array = [
+                e[1].score for e in clt_data[element][:clt_threshold]]
+            data["score"], data["score_std"] = calc_stats(score_array)
+        except KeyError:
+            data["score"] = float("nan")
+            data["score_std"] = float("nan")
+        
+        # capri keys
+        for key in capri_keys:
+            std_key = f"{key}_std"
+            try:
+                key_array = [
+                    vars(e[0])[key] for e in clt_data[element][:clt_threshold]]
+                data[key], data[std_key] = calc_stats(key_array)
+            except KeyError:
+                data[key] = float("nan")
+                data[std_key] = float("nan")
 
-        data["score"] = score_mean
-        data["score_std"] = score_stdev
-        data["irmsd"] = irmsd_mean
-        data["irmsd_std"] = irmsd_stdev
-        data["fnat"] = fnat_mean
-        data["fnat_std"] = fnat_stdev
-        data["lrmsd"] = lrmsd_mean
-        data["lrmsd_std"] = lrmsd_stdev
-        data["dockq"] = dockq_mean
-        data["dockq_std"] = dockq_stdev
+        # model keys
+        for key in model_keys:
+            std_key = f"{key}_std"
+            if clt_data[element][0][1].unw_energies:
+                try:
+                    key_array = [
+                        vars(e[1])["unw_energies"][key] for e in clt_data[element][:clt_threshold]]
+                    data[key], data[std_key] = calc_stats(key_array)
+                except KeyError:
+                    data[key] = float("nan")
+                    data[std_key] = float("nan")
 
         output_dic[i] = data
     

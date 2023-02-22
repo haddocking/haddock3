@@ -197,54 +197,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.clis.cli">
-<span id="run-haddock3"></span><h1>Run HADDOCK3<a class="headerlink" href="#module-haddock.clis.cli" title="Permalink to this heading">¶</a></h1>
-<p>Run HADDOCK3 docking simulation.</p>
-<p>This is the main command-line client to run HADDOCK3 docking
-simulations. To prepare a simulation, setup configuration file defining
-a HADDOCK3 workflow and use this command-line client to execute that
-workflow.</p>
-<p>Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span> <span class="o">-</span><span class="n">h</span>
-<span class="n">haddock3</span> <span class="o">&lt;</span><span class="n">CONFIG</span> <span class="n">FILE</span><span class="o">&gt;</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">restart</span> <span class="n">RESTART</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">extend</span><span class="o">-</span><span class="n">run</span> <span class="n">EXTEND_RUN</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">setup</span><span class="p">]</span>
-                <span class="p">[</span><span class="o">--</span><span class="n">log</span><span class="o">-</span><span class="n">level</span> <span class="p">{</span><span class="n">DEBUG</span><span class="p">,</span><span class="n">INFO</span><span class="p">,</span><span class="n">WARNING</span><span class="p">,</span><span class="n">ERROR</span><span class="p">,</span><span class="n">CRITICAL</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span>
-                <span class="n">recipe</span>
-</pre></div>
-</div>
-<section id="positional-arguments">
-<h2>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>recipe</kbd></dt>
-<dd><p>The input recipe file path</p>
-</dd>
-</dl>
-</section>
-<section id="named-arguments">
-<h2>Named Arguments<a class="headerlink" href="#named-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>--restart</kbd></dt>
-<dd><p>Restart the run from a given step. Previous folders from
-the selected step onward will be deleted.</p>
-</dd>
-<dt><kbd>--extend-run</kbd></dt>
-<dd><p>Start a run from a run directory previously prepared with the <cite>haddock3-copy</cite> CLI. Provide the run directory created with <cite>haddock3-copy</cite> CLI.</p>
-</dd>
-<dt><kbd>--setup</kbd></dt>
-<dd><p>Only setup the run, do not execute</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>--log-level</kbd></dt>
-<dd><p>Possible choices: DEBUG, INFO, WARNING, ERROR, CRITICAL</p>
-<p>Default: “INFO”</p>
-</dd>
-<dt><kbd>-v, --version</kbd></dt>
-<dd><p>show version</p>
-</dd>
-</dl>
-</section>
+  <section id="run-haddock3">
+<h1>Run HADDOCK3<a class="headerlink" href="#run-haddock3" title="Permalink to this heading">¶</a></h1>
 </section>
 
 
@@ -280,7 +234,7 @@ the selected step onward will be deleted.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Feb 21, 2023.
+        Last updated on Feb 22, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

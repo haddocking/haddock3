@@ -814,8 +814,8 @@ def clt_table_handler(clt_file, ss_file):
     """
     Create a figure include tables.
 
-    The idea is to create tidy tables that report statistics recored in
-    capri_clt.tsv file and best structures recored in capri_ss.tsv file. By
+    The idea is to create tidy tables that report statistics available in
+    capri_clt.tsv and capri_ss.tsv files. By
     running the command `analyse`, a clt_table.html file
     is created in analyse dir.
 

@@ -108,11 +108,11 @@ ap.add_argument(
     )
 
 ap.add_argument(
-    "--dpi",
-    help="dpi for png images",
+    "--scale",
+    help="scale for png images",
     required=False,
-    type=int,
-    default=200
+    type=float,
+    default=1.0
     )
 
 ap.add_argument(
@@ -183,7 +183,7 @@ def run_capri_analysis(step, run_dir, capri_dict):
 
 def update_capri_dict(default_capri, kwargs):
     """
-    Update capri dictionary
+    Update capri dictionary.
 
     Parameters
     ----------
@@ -240,7 +240,7 @@ def update_paths_in_capri_dict(capri_dict, target_path):
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
+def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, scale):  # noqa:E501
     """
     Analyse a step.
 
@@ -261,8 +261,8 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         Number of clusters to be considered
     png : bool
         Produce png images.
-    dpi : int
-        DPI for png images.
+    scale : int
+        scale for png images.
     """
     log.info(f"Analysing step {step}")
     
@@ -292,11 +292,11 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
-        box_plot_handler(ss_file, cluster_ranking, png, dpi)
+        scatter_plot_handler(ss_file, cluster_ranking, png, scale)
+        box_plot_handler(ss_file, cluster_ranking, png, scale)
 
 
-def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
+def main(run_dir, modules, top_cluster, png, scale, **kwargs):
     """
     Analyse CLI.
 
@@ -314,8 +314,8 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
     png : bool
         Produce png images.
     
-    dpi : int
-        DPI for png images.
+    scale : int
+        scale for png images.
     """
     log.level = 20
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
@@ -367,7 +367,7 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
                          target_path,
                          top_cluster,
                          png,
-                         dpi)
+                         scale)
         except Exception as e:
             error = True
             log.warning(

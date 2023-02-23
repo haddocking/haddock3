@@ -722,6 +722,10 @@ def find_best_struct(ss_file, number_of_struct=4):
     """
     dfss = read_capri_table(ss_file)
     dfss = dfss.sort_values(by=["cluster-id", "model-cluster-ranking"])
+    # TODO need a check for "Unclustered"
+    # possible number of structures, can be different per each cluster
+    max_number_of_struct = dfss.groupby("cluster-id").count()["model-cluster-ranking"].min()
+    number_of_struct = min(number_of_struct, max_number_of_struct)
     best_struct_df = dfss.groupby("cluster-id").head(number_of_struct).copy()
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
     col_names = [

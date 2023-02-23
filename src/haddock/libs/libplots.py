@@ -723,15 +723,33 @@ def find_best_struct(ss_file, number_of_struct=4):
     dfss = read_capri_table(ss_file)
     dfss = dfss.sort_values(by=["cluster-id", "model-cluster-ranking"])
     # TODO need a check for "Unclustered"
-    # possible number of structures, can be different per each cluster
-    max_number_of_struct = dfss.groupby("cluster-id").count()["model-cluster-ranking"].min()
+
+    # count values within each cluster
+    # and select the column model-cluster-ranking
+    dfss_grouped = dfss.groupby("cluster-id").count()["model-cluster-ranking"]
+
+    # number of structs can be different per each cluster,
+    # so min value is picked here
+    max_number_of_struct = dfss_grouped.min()
+
+    # number_of_struct cannot be greater than max_number_of_struct
     number_of_struct = min(number_of_struct, max_number_of_struct)
+
+    # select the best `number_of_struct` e.g. 4 structures for each cluster
     best_struct_df = dfss.groupby("cluster-id").head(number_of_struct).copy()
+
+    # define names for best structures, e.g.
+    # Nr 1 best structure, Nr 2 best structure, ...
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
     col_names = [
         f"Nr {number + 1} best structure" for number in range(number_of_struct)
         ] * number_of_cluster
+
+    # add a new column `Structure` to the dataframe
     best_struct_df = best_struct_df.assign(Structure=col_names)
+
+    # reshape data frame where columns are
+    # cluster-id, model,.., Nr 1 best structure, Nr 2 best structure, ...
     best_struct_df = best_struct_df.pivot_table(
         index=["cluster-id"],
         columns=["Structure"],

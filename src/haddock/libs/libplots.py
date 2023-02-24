@@ -138,7 +138,7 @@ def update_layout_plotly(fig, x_label, y_label, title=None):
     return
 
 
-def box_plot_plotly(gb_full, y_ax, png, scale):
+def box_plot_plotly(gb_full, y_ax, format, scale):
     """
     Create a scatter plot in plotly.
     
@@ -148,10 +148,10 @@ def box_plot_plotly(gb_full, y_ax, png, scale):
         data to box plot
     y_ax : str
         variable to plot
-    png : bool
-        if True, save png image
+    format : str
+        Produce images in the selected format.
     scale : int
-        scale of png image
+        scale of image
     """
     fig = px.box(gb_full,
                  x="capri_rank",
@@ -167,9 +167,9 @@ def box_plot_plotly(gb_full, y_ax, png, scale):
     # save figure
     px_fname = f"{y_ax}_clt.html"
     fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
-    # create png boxplot if necessary
-    if png:
-        fig.write_image(f"{y_ax}_clt.png", scale=scale)
+    # create format boxplot if necessary
+    if format:
+        fig.write_image(f"{y_ax}_clt.{format}", scale=scale)
     return
 
 
@@ -205,7 +205,7 @@ def box_plot_data(capri_df, cl_rank):
     return gb_full
 
 
-def box_plot_handler(capri_filename, cl_rank, png, scale):
+def box_plot_handler(capri_filename, cl_rank, format, scale):
     """
     Create box plots.
 
@@ -218,10 +218,10 @@ def box_plot_handler(capri_filename, cl_rank, png, scale):
         capri single structure filename
     cl_rank : dict
         {cluster_id : cluster_rank} dictionary
-    png : bool
-        Produce png images.
+    format : str
+        Produce images in the selected format.
     scale : int
-        scale for png images.
+        scale for images.
     """
     # generating the correct dataframe
     capri_df = read_capri_table(capri_filename, comment="#")
@@ -231,11 +231,11 @@ def box_plot_handler(capri_filename, cl_rank, png, scale):
     for y_ax in AXIS_NAMES.keys():
         if not in_capri(y_ax, capri_df.columns):
             continue
-        box_plot_plotly(gb_full, y_ax, png, scale)
+        box_plot_plotly(gb_full, y_ax, format, scale)
     return
 
 
-def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, png, scale):  # noqa:E501
+def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, format, scale):  # noqa:E501
     """
     Create a scatter plot in plotly.
     
@@ -253,10 +253,10 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, png, 
         name of the y column
     colors : list
         list of colors to be used
-    png : bool
-        Produce png images.
+    format : str
+        Produce images in the selected format.
     scale : int
-        scale for png images.
+        scale for images.
     """
     fig = go.Figure(layout={"width": 1000, "height": 800})
     traces = []
@@ -354,9 +354,9 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, png, 
                          TITLE_NAMES[y_ax],
                          title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}")
     fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
-    # create png boxplot if necessary
-    if png:
-        fig.write_image(f"{x_ax}_{y_ax}.png", scale=scale)
+    # create format boxplot if necessary
+    if format:
+        fig.write_image(f"{x_ax}_{y_ax}.{format}", scale=scale)
     return
 
 
@@ -386,7 +386,7 @@ def scatter_plot_data(capri_df, cl_rank):
     return gb_cluster, gb_other
 
 
-def scatter_plot_handler(capri_filename, cl_rank, png, scale):
+def scatter_plot_handler(capri_filename, cl_rank, format, scale):
     """
     Create scatter plots.
 
@@ -400,10 +400,10 @@ def scatter_plot_handler(capri_filename, cl_rank, png, scale):
         capri single structure filename
     cl_rank : dict
         {cluster_id : cluster_rank} dictionary
-    png : bool
-        Produce png images.
+    format : str
+        Produce images in the selected format.
     scale : int
-        scale for png images.
+        scale for images.
     """
     capri_df = read_capri_table(capri_filename, comment="#")
     gb_cluster, gb_other = scatter_plot_data(capri_df, cl_rank)
@@ -421,6 +421,6 @@ def scatter_plot_handler(capri_filename, cl_rank, png, scale):
                             x_ax,
                             y_ax,
                             colors,
-                            png,
+                            format,
                             scale)
     return

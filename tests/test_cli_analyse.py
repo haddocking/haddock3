@@ -59,6 +59,8 @@ def test_main(example_capri_ss, example_capri_clt):
     """Test cli_analyse main."""
     # build fake run_dir
     run_dir = "example_dir"
+    if os.path.isdir(run_dir):
+        shutil.rmtree(run_dir)
     step_name = "2_caprieval"
     step_dir = Path(run_dir, step_name)
     os.mkdir(run_dir)
@@ -67,7 +69,7 @@ def test_main(example_capri_ss, example_capri_clt):
     shutil.copy(example_capri_clt, Path(step_dir, "capri_clt.tsv"))
 
     # run haddock3-analyse
-    main(run_dir, [2], 5, png=False, scale=None)
+    main(run_dir, [2], 5, format=None, scale=None)
 
     # check analysis directory exists
     ana_dir = Path(run_dir, "analysis/")

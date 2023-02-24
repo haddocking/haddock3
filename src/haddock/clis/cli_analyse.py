@@ -100,16 +100,17 @@ ap.add_argument(
     )
 
 ap.add_argument(
-    "--png",
-    help="produce png images",
+    "--format",
+    help="produce images in the desired format",
     required=False,
-    type=bool,
-    default=False
+    type=str,
+    default=None,
+    choices=["png", "pdf", "svg", "jpeg", "webp"]
     )
 
 ap.add_argument(
     "--scale",
-    help="scale for png images",
+    help="scale for images",
     required=False,
     type=float,
     default=1.0
@@ -240,7 +241,7 @@ def update_paths_in_capri_dict(capri_dict, target_path):
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, scale):  # noqa:E501
+def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, scale):  # noqa:E501
     """
     Analyse a step.
 
@@ -259,10 +260,10 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, scale
         path to the output folder
     top_cluster : int
         Number of clusters to be considered
-    png : bool
-        Produce png images.
+    format : str
+        Produce images in the selected format.
     scale : int
-        scale for png images.
+        scale for images.
     """
     log.info(f"Analysing step {step}")
     
@@ -292,11 +293,11 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, scale
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatter_plot_handler(ss_file, cluster_ranking, png, scale)
-        box_plot_handler(ss_file, cluster_ranking, png, scale)
+        scatter_plot_handler(ss_file, cluster_ranking, format, scale)
+        box_plot_handler(ss_file, cluster_ranking, format, scale)
 
 
-def main(run_dir, modules, top_cluster, png, scale, **kwargs):
+def main(run_dir, modules, top_cluster, format, scale, **kwargs):
     """
     Analyse CLI.
 
@@ -311,11 +312,11 @@ def main(run_dir, modules, top_cluster, png, scale, **kwargs):
     top_cluster : int
         Number of clusters to be considered.
 
-    png : bool
-        Produce png images.
+    format : str
+        Produce images in the selected format.
     
     scale : int
-        scale for png images.
+        scale for images.
     """
     log.level = 20
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
@@ -366,7 +367,7 @@ def main(run_dir, modules, top_cluster, png, scale, **kwargs):
                          capri_dict,
                          target_path,
                          top_cluster,
-                         png,
+                         format,
                          scale)
         except Exception as e:
             error = True

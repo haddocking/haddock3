@@ -279,11 +279,8 @@ conda<span class="w"> </span>activate<span class="w"> </span>haddock3
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># pull the latest source code from our repository to your computer</span>
 git<span class="w"> </span>pull
 
-<span class="c1"># if you used venv to create the python environment, run:</span>
+<span class="c1"># update the dependencies by running:</span>
 pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w">  </span>--upgrade
-
-<span class="c1"># if you used anaconda to create the python environment, run:</span>
-conda<span class="w"> </span>env<span class="w"> </span>update<span class="w"> </span>-f<span class="w"> </span>requirements.yml
 
 <span class="c1"># ensure all command-lines clients are installed</span>
 python<span class="w"> </span>setup.py<span class="w"> </span>develop<span class="w"> </span>--no-deps
@@ -375,7 +372,7 @@ information.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Feb 22, 2023.
+        Last updated on Feb 27, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
         </div>
     </div>  

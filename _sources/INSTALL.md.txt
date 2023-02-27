@@ -93,11 +93,8 @@ Afterwards:
 # pull the latest source code from our repository to your computer
 git pull
 
-# if you used venv to create the python environment, run:
+# update the dependencies by running:
 pip install -r requirements.txt  --upgrade
-
-# if you used anaconda to create the python environment, run:
-conda env update -f requirements.yml
 
 # ensure all command-lines clients are installed
 python setup.py develop --no-deps

@@ -17,44 +17,9 @@ Usage::
 
 """
 import argparse
-import ast
 import sys
 
-
-class _ParamsToDict(argparse.Action):
-    """
-    Convert command-line parameters in an argument to a dictionary.
-
-    Example
-    -------
-
-    Where ``-x`` is an optional argument of the command-line client
-    interface.
-
-        >>> par1 1 par2 'my name' par3 [1,2,3] par4 True
-        >>> {'par1': 1, 'par2': 'my name', 'par3': [1, 2, 3]}
-
-    """
-
-    def __call__(self, parser, namespace, ivalues, option_string=None):
-        """Execute."""
-        params = ivalues[::2]
-        values = ivalues[1::2]
-
-        if len(params) != len(values):
-            raise parser.error(
-                "The parameters and value pairs "
-                "do not match for argument `-p`"
-                )
-
-        param_dict = {}
-        for k, v in zip(params, values):
-            try:
-                param_dict[k] = ast.literal_eval(v)
-            except (ValueError, TypeError, SyntaxError):
-                raise parser.error(f"Parameter {k} with invalid value {v}")
-
-        setattr(namespace, self.dest, param_dict)
+from haddock.libs.libcli import _ParamsToDict
 
 
 ap = argparse.ArgumentParser(

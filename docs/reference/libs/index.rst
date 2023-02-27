@@ -18,6 +18,7 @@ Here, you will find documentation for general haddock3 functionalities.
    libontology
    libparallel
    libpdb
+   libplots
    libstructure
    libsubprocess
    libutil

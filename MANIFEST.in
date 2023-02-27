@@ -6,6 +6,7 @@ include *.rst
 include LICENSE
 include requirements.txt
 include requirements.yml
+include requirements_full.yml
 
 exclude .gitmodules
 exclude .bumpversion.cfg
@@ -27,3 +28,9 @@ exclude docs/modules/general_module_params.rst
 global-exclude *.py[cod] __pycache__/* *.so *.dylib 
 global-exclude tags
 global-exclude *.swp
+
+# recursive include of varia files
+recursive-include varia *.f
+recursive-include varia *.inc
+recursive-include varia *.lua
+recursive-include varia *.md

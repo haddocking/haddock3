@@ -30,6 +30,17 @@ ambig_fname:
     Note that this file can contain both ambiguous and unambiguous restraints.
   group: 'distance restraints'
   explevel: easy
+previous_ambig:
+  default: false
+  type: boolean
+  title: Boolean condition on the previous ambiguous distance restraints file
+  short: Boolean condition on the previous ambiguous distance restraints file.
+    If true, use the the restraint information coming from the previous CNS module. If false, don't use previous information.
+  long: Boolean condition on the ambiguous distance restraints file.
+    If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module.
+    If false, don't use previous information.
+  group: 'distance restraints'
+  explevel: expert
 unambig_fname:
   default: ''
   type: file
@@ -1906,7 +1917,7 @@ keepwater:
   group: 'sampling'
   explevel: guru
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99

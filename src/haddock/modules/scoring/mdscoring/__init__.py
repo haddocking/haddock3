@@ -58,6 +58,7 @@ class HaddockModule(ScoringModule):
             # fill the ori_name field of expected_pdb
             expected_pdb.ori_name = model.file_name
             expected_pdb.md5 = model.md5
+            expected_pdb.restr_fname = model.restr_fname
 
             self.output_models.append(expected_pdb)
 
@@ -79,10 +80,10 @@ class HaddockModule(ScoringModule):
         # Check for generated output, fail it not all expected files are found
         for pdb in self.output_models:
             if pdb.is_present():
-                haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
-                    **weights
-                    )
-
+                haddock_model = HaddockModel(pdb.file_name)
+                pdb.unw_energies = haddock_model.energies
+                
+                haddock_score = haddock_model.calc_haddock_score(**weights)
                 pdb.score = haddock_score
 
         output_fname = "mdscoring.tsv"

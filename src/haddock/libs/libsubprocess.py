@@ -2,10 +2,12 @@
 import os
 import shlex
 import subprocess
+from contextlib import suppress
 from pathlib import Path
 
 from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
+from haddock.libs.libio import gzip_files
 
 
 class BaseJob:
@@ -151,8 +153,29 @@ class CNSJob:
 
         self._cns_exec = cns_exec_path
 
-    def run(self):
-        """Run this CNS job script."""
+    def run(
+            self,
+            compress_inp=False,
+            compress_out=True,
+            compress_seed=False,
+            ):
+        """
+        Run this CNS job script.
+
+        Parameters
+        ----------
+        compress_inp : bool
+            Compress the *.inp file to '.gz' after the run. Defaults to
+            ``False``.
+
+        compress_out : bool
+            Compress the *.out file to '.gz' after the run. Defaults to
+            ``True``.
+
+        compress_seed : bool
+            Compress the *.seed file to '.gz' after the run. Defaults to
+            ``False``.
+        """
         with open(self.input_file) as inp, \
                 open(self.output_file, 'w+') as outf:
 
@@ -167,6 +190,18 @@ class CNSJob:
 
             out, error = p.communicate()
             p.kill()
+
+        if compress_inp:
+            gzip_files(self.input_file, remove_original=True)
+
+        if compress_out:
+            gzip_files(self.output_file, remove_original=True)
+
+        if compress_seed:
+            with suppress(FileNotFoundError):
+                gzip_files(
+                    Path(Path(self.output_file).stem).with_suffix('.seed'),
+                    remove_original=True)
 
         if error:
             raise CNSRunningError(error)

@@ -3,13 +3,16 @@
 Clean the output of an HADDOCK3 run directory.
 
 The clean process performs file archiving and file compressing
-operations. File with extension `seed`, `inp`, `out`, and `con` are
-compressed and archived into `.tgz` files. While files with `.pdb` and
-`.psf` extension are compressed to `.gz` files. The original files are
-deleted.
+operations.
+
+All `.inp` and `.out` files are deleted except for the first one, which
+is compressed to `.gz`. On the other hand, all `.seed` and `.con` files
+are compressed and archived to `.tgz` files. Finally, `.pdb` and `.psf`
+files are compressed to `.gz`.
 
 The <run_directory> can either be a whole HADDOCK3 run folder or a
-specific folder of the workflow step.
+specific folder of the workflow step. <ncores> defines the number of
+threads to use; by default uses a single core.
 
 Usage::
 
@@ -17,11 +20,13 @@ Usage::
     haddock3-clean <run_directory>
     haddock3-clean run1
     haddock3-clean run1/1_rigidbody
+    haddock3-clean run1 -n  # uses all cores
+    haddock3-clean run1 -n 2  # uses 2 cores
 """
 import argparse
 import sys
 
-from haddock.libs.libcli import add_rundir_arg, add_version_arg
+from haddock.libs import libcli
 
 
 # Command line interface parser
@@ -30,8 +35,9 @@ ap = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-add_rundir_arg(ap)
-add_version_arg(ap)
+libcli.add_rundir_arg(ap)
+libcli.add_ncores_arg(ap)
+libcli.add_version_arg(ap)
 
 
 def _ap():
@@ -54,7 +60,7 @@ def maincli():
     cli(ap, main)
 
 
-def main(run_dir, ncores=None):
+def main(run_dir, ncores=1):
     """
     Clean a HADDOCK3 directory.
 
@@ -68,7 +74,7 @@ def main(run_dir, ncores=None):
 
     ncores : int, or None
         The number of cores to use. If ``None``, use all possible threads.
-        Defaults to ``None``.
+        Defaults to 1.
 
     See Also
     --------

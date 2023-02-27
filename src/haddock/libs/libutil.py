@@ -139,7 +139,12 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
     int
         A correct number of cores according to specifications.
     """
-    max_cpus = max_cpus or max(cpu_count() - 1, 1)
+    if max_cpus is None or max_cpus is False:
+        max_cpus = max(cpu_count() - 1, 1)
+    if max_cpus is True:
+        max_cpus = cpu_count()
+    elif not isinstance(max_cpus, int):
+        raise TypeError(f'`max_cpus` not of valid type: {type(max_cpus)}')
 
     if n is None:
         return max_cpus
@@ -154,7 +159,7 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
         _msg = f"`n` is not positive, this is not possible: {n!r}"
         raise SetupError(_msg)
 
-    if njobs:
+    if njobs is not None:
         ncores = min(n, njobs, max_cpus)
         log.info(
             f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "

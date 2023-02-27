@@ -6,6 +6,7 @@ import os
 import shutil
 import string
 import sys
+import tarfile
 from contextlib import contextmanager, suppress
 from copy import copy
 from functools import lru_cache, wraps
@@ -49,6 +50,7 @@ from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
+from haddock.libs.libio import make_writeable_recursive
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
@@ -238,6 +240,7 @@ def setup_run(
         unpack_compressed_and_archived_files(
             _step_folders,
             general_params["ncores"],
+            dec_all=True,
             )
 
     if starting_from_copy:
@@ -304,6 +307,9 @@ def setup_run(
     else:
         # copies everything
         copy_input_files_to_data_dir(data_dir, modules_params)
+
+    # grant write permissions to data/ dir
+    make_writeable_recursive(data_dir)
 
     # return the modules' parameters and general parameters separately
     return modules_params, general_params
@@ -560,9 +566,15 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
                     pf = Path(data_dir, end_path)
                     pf.mkdir(exist_ok=True)
                     check_if_path_exists(value)
-                    shutil.copy(value, Path(pf, name))
+                    target_path = Path(pf, name)
+                    shutil.copy(value, target_path)
                     _p = Path(rel_data_dir, end_path, name)
                     modules_params[module][parameter] = _p
+                    # account for input .tgz files
+                    if name.endswith("tgz"):
+                        log.info(f"Uncompressing tar {value}")
+                        with tarfile.open(target_path) as fin:
+                            fin.extractall(pf)
 
 
 def check_run_dir_exists(run_dir):
@@ -922,7 +934,11 @@ def update_step_names_in_subfolders(folder, prev_names, new_names):
 
 def update_step_names_in_file(file_, prev_names, new_names):
     """Update step names in file following the `--restart` option."""
-    text = file_.read_text()
+    try:
+        text = file_.read_text()
+    except UnicodeDecodeError as err:
+        log.warning(f"Failed to read file {file_}. Error is {err}")
+        return
     for s1, s2 in zip(prev_names, new_names):
         text = text.replace(s1, s2)
     file_.write_text(text)

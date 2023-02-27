@@ -23,6 +23,16 @@ ncores:
     Note that is truncated to the total number of available CPUs minus 1.
   group: 'execution'
   explevel: easy
+max_cpus:
+  default: true
+  type: boolean
+  title: The max number of CPUs allowed.
+  short: By default the max number of CPUs allowed is the max available on the system.
+  long: If you want to spare a minimum amount of resources for daily tasks, set max_cpus
+    to false; in that case the maximum number of CPUs allowed will be the total available
+    in the machine minus 1. This calculation is done automatically.
+  group: 'execution'
+  explevel: expert
 mode:
   default: local
   type: string

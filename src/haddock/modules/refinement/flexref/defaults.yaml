@@ -77,7 +77,6 @@ amb_cool1:
   short: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the SA.
   long: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
   group: 'distance restraints'
-  group: 'distance restraints'
   explevel: expert
 amb_cool2:
   default: 50

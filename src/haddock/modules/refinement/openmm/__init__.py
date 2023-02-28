@@ -1,5 +1,6 @@
 """OpenMM refinement module for HADDOCK3."""
 import os
+import shutil
 from contextlib import suppress
 from pathlib import Path
 
@@ -35,7 +36,8 @@ class HaddockModule(BaseHaddockModule):
             "solvation_boxes",
             "intermediates",
             "md_raw_output",
-            "openmm_output"
+            "openmm_output",
+            "simulation_stats"
             ]
 
         directory_dict = {}
@@ -45,6 +47,17 @@ class HaddockModule(BaseHaddockModule):
             directory_dict[dir] = dir
         
         return directory_dict
+    
+    def remove_directories(self):
+        """Remove unnecessary directories full of heavy files."""
+        directory_list = [
+            "pdbfixer",
+            "md_raw_output",
+            "solvation_boxes",
+            ]
+        for dir in directory_list:
+            shutil.rmtree(dir)
+        return
 
     @classmethod
     def confirm_installation(cls):
@@ -102,6 +115,10 @@ class HaddockModule(BaseHaddockModule):
         
         self.output_models = [PDBFile(ensemble_name)]
         self.export_output_models()
+
+        # deleting unnecessary directories
+        self.log('Removing unnecessary directories...')
+        self.remove_directories()
 
         self.log('Completed OpenMM module run.')
         self.log('If you want to continue the haddock3 workflow after the OpenMM module, the next module should be topoaa, to rebuild the molecular topologies.')  # noqa: E501

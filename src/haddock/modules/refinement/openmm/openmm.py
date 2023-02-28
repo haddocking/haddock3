@@ -1,6 +1,6 @@
 """Refinement module using OpenMM.
 
-This potential of OpenMM can be exploited to perform potentially different
+The potential of OpenMM can be exploited to perform potentially different
  tasks, such as:
 - refine the models obtained from a thorough docking run;
 - refine the models in the middle of a docking run. For example, it can be used
@@ -20,7 +20,7 @@ See examples in `examples/thirdparty/openmm` folder.
 import os
 from pathlib import Path
 
-from openmm import LangevinMiddleIntegrator, Vec3
+from openmm import LangevinMiddleIntegrator, MonteCarloBarostat
 from openmm.app import (
     PME,
     ForceField,
@@ -28,48 +28,15 @@ from openmm.app import (
     PDBReporter,
     PDBxFile,
     Simulation,
+    statedatareporter,
     )
 from openmm.app.pdbfile import PDBFile as openmmpdbfile
-from openmm.unit import kelvin, nanometer, nanometers, picosecond, picoseconds
+from openmm.unit import kelvin, nanometer, nanometers, picosecond, picoseconds, atmosphere, molar  # noqa: E501
 from pdbfixer import PDBFixer
-from pdbtools import pdb_delresname
+from pdbtools import pdb_delhetatm
 
 from haddock import log
 from haddock.libs.libontology import PDBFile
-
-
-def move_atoms(atom_positions, boxsize_nm, addition=True):
-    """
-    Shift atoms positions.
-    
-    Parameters
-    ----------
-    atom_positions : list
-        list of atom positions
-
-    boxsize_nm : float
-        size of the box in nanometers
-    
-    Returns
-    -------
-    shifted_positions : list
-        list of shifted atom positions
-    """
-    shifted_positions = []
-    if addition:
-        sign = 1.0
-    else:
-        sign = -1.0
-
-    shift = sign * boxsize_nm / 2 * 10
-    for Vector3 in atom_positions:
-        cent_vector = Vec3(Vector3.x * 10 + shift,
-                           Vector3.y * 10 + shift,
-                           Vector3.z * 10 + shift
-                           )
-        shifted_positions.append(cent_vector)
-
-    return shifted_positions
 
 
 class OPENMM:
@@ -118,17 +85,6 @@ class OPENMM:
         elif self.params["constraints"] == "HAngles":
             from openmm.app import HAngles as constraints
         return constraints
-
-    def contains_xray_cell_data(self):
-        """Determine if the model pdb contains xray cell data."""
-        pdb_filepath = self.get_pdb_filepath()
-        openmmpdb = openmmpdbfile(pdb_filepath)
-        modeller = Modeller(openmmpdb.topology, openmmpdb.positions)
-        if (modeller.topology.getUnitCellDimensions() is None):
-            xray_cell_data = False
-        else:
-            xray_cell_data = True
-        return xray_cell_data
 
     def get_pdb_filepath(self, folder=None):
         """
@@ -179,6 +135,7 @@ class OPENMM:
         solvent_model : str
             One of the OpenMM's solvent models.
         """
+        log.info(f'Building solvation box for file: {self.model.file_name}')
         pdb_filepath = self.get_pdb_filepath(self.directory_dict["pdbfixer"])
         forcefield = self.params["forcefield"]
         try:
@@ -192,47 +149,35 @@ class OPENMM:
             modeller.deleteWater()
             modeller.addHydrogens(usedForcefield, pH=7.0)
             # check the existence of xray cell data
-            if self.xray_cell_data:
-                xray_padding = self.params['xray_cell_padding'] * nanometers
-                # with neutralize=False it doesn't neutralize
-                modeller.addSolvent(usedForcefield,
-                                    padding=xray_padding)
-            else:
-                boxsize_nm = self.params['solvent_boxsize_nm']
-                box_size = Vec3(boxsize_nm,
-                                boxsize_nm,
-                                boxsize_nm) * nanometers
-                modeller.addSolvent(usedForcefield,
-                                    boxSize=box_size,
-                                    neutralize=False
-                                    )
-
+            padding = self.params['padding'] * nanometers
+            ions_conc = self.params['ion_concentration'] * molar
+            # with neutralize=False it doesn't neutralize
+            log.info(f"Solvating and adding ions to the system:"
+                     f"padding {padding}, ions conc. : {ions_conc}")
+            modeller.addSolvent(usedForcefield,
+                                padding=padding,
+                                neutralize=True,
+                                ionicStrength=ions_conc)
             # Add required extra particles for forcefield,
             # e.g. Drude particles.
             if self.params['add_extra_particles_for_forcefield']:
                 log.info("adding extra particles")
                 modeller.addExtraParticles(forcefield)
-            # check centering atoms
-            if self.params['center_atoms']:
-                log.info("centering atoms")
-                AtomPositions = move_atoms(modeller.positions, 10)
-            else:
-                log.info("centering of atoms is not performed")
-                AtomPositions = modeller.positions
             # write solvation box
             box_path = os.path.join(self.directory_dict["solvation_boxes"],
                                     self.model.file_name
                                     )
             openmmpdbfile.writeFile(modeller.topology,
-                                    AtomPositions,
+                                    modeller.positions,
                                     open(box_path, 'w')
                                     )
 
         except Exception as e:
             log.info(f"BUILDING SOLVATION BOX ERROR: {e}")
 
-    def remove_water_molecules(self):
+    def remove_water_and_ions(self):
         """Remove water from the output of an explicit solvent run."""
+        log.info(f"Removing water and ions from {self.model.file_name}")
         input_filepath = os.path.join(self.directory_dict["md_raw_output"],
                                       self.output_filename
                                       )
@@ -240,10 +185,10 @@ class OPENMM:
                                        self.output_filename
                                        )
         with open(input_filepath, 'r') as fh:
-            pdbYieldedLines = pdb_delresname.run(fh, 'HOH')
+            pdbYieldedLines = pdb_delhetatm.run(fh)
             with open(output_filepath, 'w') as writefh:
                 writefh.writelines(pdbYieldedLines)
-
+        
     def run_openmm(self, inputPDBfile, output_directory, solvent_model):
         """
         Run openmm simulation of the model pdb.
@@ -289,14 +234,47 @@ class OPENMM:
 
         # simulation
         simulation = Simulation(pdb.topology, system, integrator)
+        simulation.reporters.append(
+            statedatareporter.StateDataReporter(
+                f"simulation_stats/observables_{self.identificator}.dat",
+                50,
+                step=True,
+                totalEnergy=True,
+                potentialEnergy=True,
+                temperature=True,
+                volume=True,
+                density=True,
+                )
+            )
+
         platform = simulation.context.getPlatform()
         log.info(f"Running on platform {platform.getName()}")
         log.info(f"Estimated platform speed: {platform.getSpeed()}")
         simulation.context.setPositions(pdb.positions)
         simulation.minimizeEnergy()
-        log.info(f"Running equilibration for {self.model.file_name}")
-        simulation.step(self.params['equilibration_timesteps'])
+        log.info(f"Running NVT equilibration for {self.model.file_name}")
+
+        # warming up the system with a NVT equilibration
+        eq_steps = self.params['equilibration_timesteps']
+        log.info(f"Warming up the system to {self.params['temperature_kelvin']}"
+                 f" K in {eq_steps} steps")
+        nvt_sims = 10
+        delta_temp = self.params['temperature_kelvin'] / nvt_sims
+        for n in range(nvt_sims):
+            temperature = (delta_temp + (n * delta_temp)) * kelvin
+            integrator.setTemperature(temperature)
+            simulation.step(int(eq_steps / nvt_sims))
+        
+        # NPT simulation:
+        system.addForce(
+            MonteCarloBarostat(
+                1 * atmosphere,
+                self.params['temperature_kelvin'] * kelvin
+                )
+            )
+        simulation.context.reinitialize(True)
         output_filepath = os.path.join(output_directory, self.output_filename)
+        log.info(f"output file: {output_filepath}")
         simulation.reporters.append(PDBReporter(output_filepath,
                                     self.params['simulation_timesteps'])
                                     )
@@ -312,13 +290,8 @@ class OPENMM:
                 PDBReporter(int_filepath,
                             steps_intermediate)
                 )
-        # simulation.reporters.append(StateDataReporter(sys.stdout,
-        # 100,
-        # step=True,
-        # potentialEnergy=True,
-        # temperature=True)
-        # )
-        # # Report system state of the simulation.
+        # running real simulation
+        log.info(f"Running simulation for {self.model.file_name}")
         simulation.step(self.params['simulation_timesteps'])
         log.info(f'OpenMM simulation successful for: {output_filepath}')
 
@@ -328,10 +301,7 @@ class OPENMM:
         self.openmm_pdbfixer()
         # explicit solvent simulation
         if not self.params['implicit_solvent']:
-            # solvation box
-            log.info(f'Building solvation box for file: {self.model.file_name}')
-            # check if pdb contains xray cell data
-            self.xray_cell_data = self.contains_xray_cell_data()
+            # define solvent model and create solvation box
             solvent_model = self.params['explicit_solvent_model']
             self.create_solvation_box(solvent_model)
             # output files and string
@@ -354,4 +324,4 @@ class OPENMM:
 
         # Remove water molecules if implicit_solvent is False.
         if not self.params['implicit_solvent']:
-            self.remove_water_molecules()
+            self.remove_water_and_ions()

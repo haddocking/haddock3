@@ -73,7 +73,7 @@ add_extra_particles_for_forcefield:
   explevel: easy
 
 timestep_ps:
-  default: 0.004
+  default: 0.002
   type: float
   precision: 3
   min: 0
@@ -123,17 +123,6 @@ simulation_timesteps:
   group: ''
   explevel: easy
 
-center_atoms:
-  default: false
-  type: boolean
-  title: Move atoms to the center of the solvation box.
-  short: Move atoms to the center of the solvation box. The pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.
-  long: Move atoms to the center of the solvation box. The pdb is placed around the origin, and water molecules of the solvation box are build up from the origin.
-        Not centering the atoms shouldn't be a problem if periodic boundary conditions are deployed, but employing it also prevents the molecule from jumping around
-        the boundary while visually inspecting the simulation in e.g. PyMOL.
-  group: ''
-  explevel: easy
-
 temperature_kelvin:
   default: 300
   type: integer
@@ -142,18 +131,6 @@ temperature_kelvin:
   title: Average temperature.
   short: Average temperature used by e.g. the integrator or by for temperature coupling.
   long: Average temperature used by e.g. the integrator or by for temperature coupling.
-  group: ''
-  explevel: easy
-
-solvent_boxsize_nm:
-  default: 10
-  type: integer
-  min: 1
-  max: 100
-  title: Solvent boxsize in nm.
-  short: Solvent boxsize in nm used to build the water solvation box around the molecule.
-  long: Solvent boxsize in nm used to build the water solvation box around the molecule.
-        Value is used when the crystallographic cell size is removed in the pipeline.
   group: ''
   explevel: easy
 
@@ -178,17 +155,16 @@ save_intermediate:
   group: ''
   explevel: easy
 
-xray_cell_padding:
+padding:
   default: 1.0
   type: float
   precision: 3
   min: 0
   max: 10
-  title: Contains xray crystallography cell data solvationbox padding nm.
-  short: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm.
-  long: If the xray crystallography cell data size is available, add an additional solvationbox padding in nm.
-        If the molecules contained inside xray crystallography cell are close to the cell edge, with periodic boundary conditions the atoms of the one side
-        of the molecule will interact with the other side of itself.
+  title: Padding value in nanometers.
+  short: Padding value in nanometers.
+  long: Padding value in nanometers. This is used to create the solvation box by adding water molecules around the molecule up to this padding distance. 
+    When performing a long refinement of a complex, increase this parameter as the molecules will likely move away from each other.
   group: ''
   explevel: easy
 
@@ -209,5 +185,14 @@ seed:
   title: Simulation seed.
   short: Set a non-random seed for the simulation.
   long: Set a non-random seed for the simulation. This defines how the velocities are created, but has no effect on the randomicity of the solvation box.
+  group: ''
+  explevel: easy
+
+ion_concentration:
+  default: 0.15
+  type: float
+  title: Ion concentration.
+  short: Ion concentration in Molar.
+  long: Ion concentration in Molar.
   group: ''
   explevel: easy

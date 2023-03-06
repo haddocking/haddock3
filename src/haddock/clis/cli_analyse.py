@@ -67,6 +67,31 @@ def get_cluster_ranking(capri_clt_filename, top_cluster):
     return cl_ranking
 
 
+def update_paths(capri_ss_filename, toch="../", toadd="../../"):
+    """
+    Update paths in capri_ss_filename.
+
+    Parameters
+    ----------
+    capri_ss_filename : str or Path
+        capri ss filename
+    toch : str
+        string to be replaced
+    toadd : str
+        string to be added
+    """
+    new_lines = []
+    with open(capri_ss_filename, "r") as rfile:
+        for ln in rfile:
+            new_ln = ln.replace(toch, toadd)
+            new_lines.append(new_ln)
+
+    with open(capri_ss_filename, "w") as wfile:
+        for ln in new_lines:
+            wfile.write(ln)
+    return
+
+
 # Command line interface parser
 ap = argparse.ArgumentParser(
     prog="haddock3-analyse",
@@ -394,6 +419,13 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
         for directory in bad_folder_paths:
             if directory.exists():
                 shutil.rmtree(directory)
+
+    # substituting the correct paths in the capri_ss files
+    for directory in good_folder_paths:
+        ss_file = Path(outdir, directory, "capri_ss.tsv")
+        if ss_file.exists():
+            log.info(f"updating paths in {ss_file}")
+            update_paths(ss_file, "../", "../../")
 
     os.chdir(ori_cwd)
     return

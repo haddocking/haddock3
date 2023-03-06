@@ -125,19 +125,20 @@ ap.add_argument(
     )
 
 ap.add_argument(
-    "--png",
-    help="produce png images",
+    "--format",
+    help="produce images in the desired format",
     required=False,
-    type=bool,
-    default=False
+    type=str,
+    default=None,
+    choices=["png", "pdf", "svg", "jpeg", "webp"]
     )
 
 ap.add_argument(
-    "--dpi",
-    help="dpi for png images",
+    "--scale",
+    help="scale for images",
     required=False,
-    type=int,
-    default=200
+    type=float,
+    default=1.0
     )
 
 ap.add_argument(
@@ -206,7 +207,38 @@ def run_capri_analysis(step, run_dir, capri_dict):
     caprieval_module._run()
 
 
-def update_capri_dict(capri_dict, target_path):
+def update_capri_dict(default_capri, kwargs):
+    """
+    Update capri dictionary.
+
+    Parameters
+    ----------
+    default_capri : dict
+        default capri dictionary of parameters
+    kwargs : dict
+        dictionary of input elements
+
+    Returns
+    -------
+    capri_dict : dict
+        updated capri dictionary of parameters
+    """
+    capri_dict = default_capri.copy()
+    for param in kwargs:
+        if param not in default_capri:
+            sys.exit(f'* ERROR * Parameter {param!r} is not a valid `caprieval` parameter')  # noqa:E501
+        else:
+            if param.endswith("fname"):  # using full path for files
+                rel_path = Path(kwargs[param])
+                _param = rel_path.resolve()
+                kwargs[param] = _param
+            capri_dict[param] = kwargs[param]
+            log.info(f"setting {param} to {kwargs[param]}")
+
+    return capri_dict
+
+
+def update_paths_in_capri_dict(capri_dict, target_path):
     """
     Make capri_dict specific to target_path.
 
@@ -220,7 +252,7 @@ def update_capri_dict(capri_dict, target_path):
     Returns
     -------
     new_capri_dict : dict
-        target_path-specifi capri dictionary of parameters
+        target_path-specific capri dictionary of parameters
     """
     new_capri_dict = capri_dict.copy()
     for key in new_capri_dict:
@@ -234,7 +266,7 @@ def update_capri_dict(capri_dict, target_path):
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
+def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, scale):  # noqa:E501
     """
     Analyse a step.
 
@@ -253,17 +285,17 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         path to the output folder
     top_cluster : int
         Number of clusters to be considered
-    png : bool
-        Produce png images.
-    dpi : int
-        DPI for png images.
+    format : str
+        Produce images in the selected format.
+    scale : int
+        scale for images.
     """
     log.info(f"Analysing step {step}")
     
     target_path.mkdir(parents=True, exist_ok=False)
     step_name = step.split("_")[1]
     if step_name != "caprieval":
-        capri_dict = update_capri_dict(capri_dict, target_path)
+        capri_dict = update_paths_in_capri_dict(capri_dict, target_path)
     else:
         log.info(f"step {step} is caprieval, files should be already available")
         ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
@@ -286,11 +318,11 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, png, dpi):
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatter_plot_handler(ss_file, cluster_ranking, png, dpi)
-        box_plot_handler(ss_file, cluster_ranking, png, dpi)
+        scatter_plot_handler(ss_file, cluster_ranking, format, scale)
+        box_plot_handler(ss_file, cluster_ranking, format, scale)
 
 
-def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
+def main(run_dir, modules, top_cluster, format, scale, **kwargs):
     """
     Analyse CLI.
 
@@ -305,32 +337,23 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
     top_cluster : int
         Number of clusters to be considered.
 
-    png : bool
-        Produce png images.
+    format : str
+        Produce images in the selected format.
     
-    dpi : int
-        DPI for png images.
+    scale : int
+        scale for images.
     """
+    log.level = 20
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
              f"with top_cluster = {top_cluster}")
-    
+    ori_cwd = os.getcwd()
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
-    capri_dict = default_capri.copy()
-    for param in kwargs:
-        if param not in default_capri:
-            sys.exit(f'* ERROR * Parameter {param!r} is not a valid `caprieval` parameter')  # noqa:E501
-        else:
-            if param.endswith("fname"):  # using full path for files
-                rel_path = Path(kwargs[param])
-                _param = rel_path.resolve()
-                kwargs[param] = _param
-            capri_dict[param] = kwargs[param]
-            log.info(f"setting {param} to {kwargs[param]}")
-
+    capri_dict = update_capri_dict(default_capri, kwargs)
+    
     os.chdir(run_dir)
     # Create analysis folder
-    ori_cwd = os.getcwd()
+    rundir_cwd = os.getcwd()
     outdir = Path(ANA_FOLDER)
     try:
         outdir.mkdir(exist_ok=False)
@@ -369,8 +392,8 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
                          capri_dict,
                          target_path,
                          top_cluster,
-                         png,
-                         dpi)
+                         format,
+                         scale)
         except Exception as e:
             error = True
             log.warning(
@@ -383,7 +406,7 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
             good_folder_paths.append(target_path)
         
         # going back
-        os.chdir(ori_cwd)
+        os.chdir(rundir_cwd)
 
     # moving files into analysis folder
     if good_folder_paths != []:
@@ -404,6 +427,7 @@ def main(run_dir, modules, top_cluster, png, dpi, **kwargs):
             log.info(f"updating paths in {ss_file}")
             update_paths(ss_file, "../", "../../")
 
+    os.chdir(ori_cwd)
     return
 
 

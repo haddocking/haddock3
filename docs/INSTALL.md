@@ -41,8 +41,9 @@ pip install -r requirements.txt
 ### with `conda`
 
 ```bash
-conda env create -f requirements.yml
+conda create -n haddock3 python=3.9
 conda activate haddock3
+pip install -r requirements.txt
 ```
 
 ## 3. Install the HADDOCK3 package and command line clients
@@ -92,11 +93,8 @@ Afterwards:
 # pull the latest source code from our repository to your computer
 git pull
 
-# if you used venv to create the python environment, run:
+# update the dependencies by running:
 pip install -r requirements.txt  --upgrade
-
-# if you used anaconda to create the python environment, run:
-conda env update -f requirements.yml
 
 # ensure all command-lines clients are installed
 python setup.py develop --no-deps

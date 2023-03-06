@@ -207,14 +207,14 @@ fantastic project. There are several ways to contribute:</p>
 <li><p>write more unittests (we dare you to do that :godmode:)</p></li>
 </ul>
 <p>Before attempting any development, please install HADDOCK3 following the
-instructions in the <a class="reference internal" href="INSTALL.html"><span class="doc std std-doc">INSTALL</span></a> file. Afterwards, follow the
+instructions in the <a class="reference internal" href="INSTALL.html"><span class="std std-doc">INSTALL</span></a> file. Afterwards, follow the
 instructions in this file.</p>
 <section id="contributing-new-code">
 <h2>1. Contributing new code<a class="headerlink" href="#contributing-new-code" title="Permalink to this heading">¶</a></h2>
 <p>HADDOCK3 has two main testing workflows. Here, within the repository, we
 test the HADDOCK3’s Python shell, code style, and package building.  Our
 Continuous Integration (CI) pipeline is based on
-<a class="reference external" href="https://tox.wiki/en/latest/index.html">tox</a> and GitHub Actions. We will
+<a class="reference external" href="https://tox.wiki/en/latest/index.html" title="tox">tox</a> and GitHub Actions. We will
 explain you how to use them.</p>
 <p>To contribute to the HADDOCK3’s Python shell, follow these steps:</p>
 <ol class="arabic simple">
@@ -253,7 +253,7 @@ survival of the codebase. Suggestions are always welcomed.</p></li>
 (should) to ensure the integrity of the python shell as a whole:</p>
 <ol class="arabic simple">
 <li><p>Navigate to any of the examples folder and run the <code class="docutils literal notranslate"><span class="pre">-test.cfg</span></code>
-file (see <a class="reference internal" href="USAGE.html"><span class="doc std std-doc">USAGE</span></a>).</p></li>
+file (see <a class="reference internal" href="USAGE.html"><span class="std std-doc">USAGE</span></a>).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">*-test.cfg</span></code> runs are meant for testing purposes only. The
 <code class="docutils literal notranslate"><span class="pre">examples/</span></code> folder also contain <code class="docutils literal notranslate"><span class="pre">*-full.cfg</span></code> files for production runs.
 You don’t need to run these for testin.</p></li>
@@ -325,7 +325,7 @@ there. You will see that all folders and files follow a pattern.</p></li>
 Normally, each file has the tests for each <code class="docutils literal notranslate"><span class="pre">*.py</span></code> file in the source. If
 you create new <code class="docutils literal notranslate"><span class="pre">*.py</span></code> files you should create a new test file of the
 same name, <code class="docutils literal notranslate"><span class="pre">test_new_file_name.py</span></code>. Aim at 100% test coverage for the
-code you have created. Write tests according to <a class="reference external" href="https://docs.pytest.org/">pytest</a>. You
+code you have created. Write tests according to <a class="reference external" href="https://docs.pytest.org/" title="pytest">pytest</a>. You
 can see examples in our <code class="docutils literal notranslate"><span class="pre">test_*.py</span></code> files. You can run the tests using
 the <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">test</span></code> commands explained above. Or, if you want to run the
 tests for a singly file use <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">test</span> <span class="pre">--</span> <span class="pre">tests/test_myfile.py</span></code>.</p>
@@ -340,7 +340,7 @@ developing new functionalities. How?</p>
 <li><p>Use the Python standard library as much as possible.</p></li>
 <li><p>Numpy is always allowed.</p></li>
 <li><p>If you need to implement heavy calculations, it is best you use
-<a class="reference external" href="https://numba.pydata.org/">Numba</a> instead of C libraries. Talk with us before.</p></li>
+<a class="reference external" href="https://numba.pydata.org/" title="Numba">Numba</a> instead of C libraries. Talk with us before.</p></li>
 <li><p>You need a small function from a large library. Try to reimplement it
 yourself with the Python standard library.</p>
 <ol class="arabic simple">
@@ -370,7 +370,7 @@ dependency</em>. Talk with us before.</p></li>
 <p>HADDOCK3 follows nice code style rules. These are <em>almost</em> hard rules,
 but there is some room for exceptions - common sense prevails. When
 developing code, run <code class="docutils literal notranslate"><span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">lint</span></code> to inspect if your code follows our
-conventions. We use <a class="reference external" href="https://flake8.pycqa.org/en/latest/">flake8</a> with the <a class="reference external" href="https://github.com/haddocking/haddock3/blob/b44304f0a1509d44d9689d7e2e4124f0ae3af0a1/tox.ini#L116-L130">following rules</a> and
+conventions. We use <a class="reference external" href="https://flake8.pycqa.org/en/latest/" title="flake8">flake8</a> with the <a class="reference external" href="https://github.com/haddocking/haddock3/blob/b44304f0a1509d44d9689d7e2e4124f0ae3af0a1/tox.ini#L116-L130">following rules</a> and
 docstrings follow <a class="reference external" href="https://numpydoc.readthedocs.io/en/latest/format.html">numpydoc</a> style. You can hold on our code
 for style. Nevertheless, here’s a dummy code snippet for your reference.
 Line have a soft max of 80 chars.</p>
@@ -545,9 +545,6 @@ file.</p></li>
         };
     </script>
     <script type="text/javascript" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sphinx_highlight.js"></script>
     <script type="text/javascript" src="_static/js/theme.js"></script>
@@ -555,8 +552,8 @@ file.</p></li>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Feb 28, 2023.
-        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.
+        Last updated on Mar 06, 2023.
+        Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.
         </div>
     </div>  
 

@@ -1,5 +1,6 @@
 """Plotting functionalities."""
 
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import plotly.colors as px_colors
@@ -561,12 +562,12 @@ def report_plots_handler(
     return fig
 
 
-def find_best_struct(ss_file, number_of_struct=4):
+def find_best_struct(ss_file, number_of_struct=10):
     """
     Find best structures.
 
     It inspects model-cluster-ranking recorded in capri_ss.tsv file and finds
-    the best models (models with lower ranks). By default, it selects the 4 best
+    the best models (models with lower ranks). By default, it selects the 10 best
     models.
 
     Parameters

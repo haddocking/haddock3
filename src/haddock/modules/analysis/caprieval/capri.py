@@ -422,7 +422,7 @@ class CAPRI:
         else:
             data["cluster-id"] = None
             data["cluster-ranking"] = None
-            data["self.model-cluster-ranking"] = None
+            data["model-cluster-ranking"] = None
         
         # energies
         if self.model.unw_energies:

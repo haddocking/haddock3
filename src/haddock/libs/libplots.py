@@ -1,7 +1,5 @@
 """Plotting functionalities."""
 
-from pathlib import Path
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.colors as px_colors
@@ -142,30 +140,7 @@ def update_layout_plotly(fig, x_label, y_label, title=None):
     return fig
 
 
-def update_layout_matplotlib(x_label, y_label):
-    """
-    Update layout of matplotlib plot.
-
-    Parameters
-    ----------
-    x_label : str
-        x axis name
-    y_label : str
-        y axis name
-    """
-    plt.title(f"{x_label} vs {y_label}", fontsize=40)
-    plt.xlabel(x_label, fontsize=40)
-    plt.ylabel(y_label, fontsize=40)
-    plt.xticks(fontsize=20)
-    plt.yticks(fontsize=20)
-    legend = plt.legend(bbox_to_anchor=(1.0, 1.0), fontsize=30)
-    for handle in legend.legendHandles:
-        handle.set_sizes([150])
-    plt.tight_layout()
-    return
-
-
-def box_plot_plotly(gb_full, y_ax, cl_rank):
+def box_plot_plotly(gb_full, y_ax, format, scale):
     """
     Create a scatter plot in plotly.
 
@@ -175,79 +150,34 @@ def box_plot_plotly(gb_full, y_ax, cl_rank):
         data to box plot
     y_ax : str
         variable to plot
-    cl_rank : dict
-        {cluster_id : cluster_rank} dictionary
+    format : str
+        Produce images in the selected format.
+    scale : int
+        scale of image
 
     Returns
     -------
-    fig :
-        an instance of plotly.graph_objects.Figure
+    fig_list : list
+        a list of figures
     """
-    colors = px_colors.qualitative.Alphabet
-    color_map = {}
-    for cl_id in sorted(cl_rank.keys()):
-        color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
-        color_map[f"{cl_id}"] = colors[color_idx]
-    # to use color_discrete_map, cluster-id column should be str not int
-    gb_full_string = gb_full.astype({"cluster-id": "string"})
-    fig = px.box(
-        gb_full_string,
-        x="capri_rank",
-        y=f"{y_ax}",
-        color="cluster-id",
-        color_discrete_map=color_map,
-        boxmode="overlay",
-        points="outliers",
-        )
+    fig = px.box(gb_full,
+                 x="capri_rank",
+                 y=f"{y_ax}",
+                 color="cluster-id",
+                 boxmode="overlay",
+                 points="outliers",
+                 width=1000,
+                 height=800,
+                 )
     # layout
     update_layout_plotly(fig, "Cluster rank", AXIS_NAMES[y_ax])
     # save figure
     px_fname = f"{y_ax}_clt.html"
-    fig.write_html(px_fname, full_html=False, include_plotlyjs="cdn")
+    fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
+    # create format boxplot if necessary
+    if format:
+        fig.write_image(f"{y_ax}_clt.{format}", scale=scale)
     return fig
-
-
-def box_plot_matplotlib(gbcl, y_ax, legend_labels, dpi):
-    """
-    Create a scatter plot in plotly.
-
-    Parameters
-    ----------
-    gbcl : pandas DataFrameGroupBy
-        capri data grouped by cluster-id
-    y_ax : str
-        variable to plot
-    legend_labels : list
-        list of legend labels
-    dpi : int
-        DPI for png images.
-
-    """
-    plt.figure(figsize=(20, 16))
-    fig, ax = plt.subplots()
-    # box plot must take element 1 of groupby instance
-    bplot = ax.boxplot(
-        [el[1][y_ax] for el in gbcl],
-        patch_artist=True,
-        showmeans=False,
-        )
-    # assigning colors to boxes and medians
-    colors = plt.cm.tab20.colors
-    for patch, color in zip(bplot["boxes"], colors):
-        patch.set_facecolor(color)
-    for median, color in zip(bplot["medians"], colors):
-        median.set_color(color)
-
-    # plot details
-    ax.legend(bplot["boxes"], legend_labels, bbox_to_anchor=(1.0, 1.0))
-    plt.ylabel(AXIS_NAMES[y_ax])
-    plt.xlabel("Cluster rank")
-    plt.tight_layout()
-    # save figure
-    plt_fname = f"{y_ax}_clt.png"
-    plt.savefig(fname=plt_fname, dpi=dpi)
-    plt.close()
-    return
 
 
 def box_plot_data(capri_df, cl_rank):
@@ -265,8 +195,6 @@ def box_plot_data(capri_df, cl_rank):
     -------
     gb_full : pandas DataFrame
         DataFrame of all the clusters to be plotted
-    gb_other : pandas DataFrame
-        DataFrame of clusters not in the top cluster ranking
     """
     gb_cluster = capri_df.groupby("cluster-id")
     gb_other = pd.DataFrame([])
@@ -281,11 +209,12 @@ def box_plot_data(capri_df, cl_rank):
     gb_other["cluster-id"] = "Other"
     gb_other["capri_rank"] = len(cl_rank.keys()) + 1
     gb_full = pd.concat([gb_good, gb_other])
-    return gb_full, gb_other
+    return gb_full
 
 
-def box_plot_handler(capri_filename, cl_rank, png, dpi):
-    """Create box plots.
+def box_plot_handler(capri_filename, cl_rank, format, scale):
+    """
+    Create box plots.
 
     The idea is that for each of the top X-ranked clusters we create a box plot
     showing how the basic statistics are distributed within each model.
@@ -296,42 +225,26 @@ def box_plot_handler(capri_filename, cl_rank, png, dpi):
         capri single structure filename
     cl_rank : dict
         {cluster_id : cluster_rank} dictionary
-    png : bool
-        Produce png images.
-    dpi : int
-        DPI for png images.
-
-    Returns
-    -------
-    fig_list : list
-        a list of figures
+    format : str
+        Produce images in the selected format.
+    scale : int
+        scale for images.
     """
     # generating the correct dataframe
     capri_df = read_capri_table(capri_filename, comment="#")
-    gb_full, gb_other = box_plot_data(capri_df, cl_rank)
-
-    if png:
-        # when png is true we have to manually sort according to capri_rank
-        gb_sorted = gb_full.sort_values("capri_rank")
-        gbcl = gb_sorted.groupby("cluster-id", sort=False)
-        legend_labels = [f"Cluster {el[0]}" for el in gbcl]
-        if not gb_other.empty:
-            legend_labels[-1] = "Other"
-
+    gb_full = box_plot_data(capri_df, cl_rank)
+    
     # iterate over the variables
     fig_list = []
     for y_ax in AXIS_NAMES.keys():
         if not in_capri(y_ax, capri_df.columns):
             continue
-        fig = box_plot_plotly(gb_full, y_ax, cl_rank)
+        fig = box_plot_plotly(gb_full, y_ax, format, scale)
         fig_list.append(fig)
-        # create png boxplot if necessary
-        if png:
-            box_plot_matplotlib(gbcl, y_ax, legend_labels, dpi)
     return fig_list
 
 
-def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors):
+def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, format, scale):  # noqa:E501
     """
     Create a scatter plot in plotly.
 
@@ -349,6 +262,10 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors):
         name of the y column
     colors : list
         list of colors to be used
+    format : str
+        Produce images in the selected format.
+    scale : int
+        scale for images.
 
     Returns
     -------
@@ -449,72 +366,15 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors):
     for trace in traces:
         fig.add_trace(trace)
     px_fname = f"{x_ax}_{y_ax}.html"
-    update_layout_plotly(
-        fig,
-        TITLE_NAMES[x_ax],
-        TITLE_NAMES[y_ax],
-        title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}",
-        )
-    fig.write_html(px_fname, full_html=False, include_plotlyjs="cdn")
+    update_layout_plotly(fig,
+                         TITLE_NAMES[x_ax],
+                         TITLE_NAMES[y_ax],
+                         title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}")
+    fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
+    # create format boxplot if necessary
+    if format:
+        fig.write_image(f"{x_ax}_{y_ax}.{format}", scale=scale)
     return fig
-
-
-def scatter_plot_matplotlib(gbcl, gb_other, cl_rank, x_ax, y_ax, colors, dpi):
-    """
-    Create a scatter plot in matplotlib.
-
-    Parameters
-    ----------
-    gbcl : pandas DataFrameGroupBy
-        capri DataFrame grouped by cluster-id.
-    gb_other : pandas DataFrame
-        DataFrame of clusters not in the top cluster ranking.
-    cl_rank : dict
-        {cluster_id : cluster_rank} dictionary.
-    x_ax : str
-        name of the x column.
-    y_ax : str
-        name of the y column.
-    colors : list
-        list of colors to be used.
-    dpi : int
-        DPI for png images.
-    """
-    plt.figure(figsize=(20, 16))
-    for cl_id, cl_df in gbcl:
-        if cl_id not in cl_rank.keys():
-            gb_other = pd.concat([gb_other, cl_df])
-        else:
-            if cl_id == "-":
-                cl_name = "Unclustered"
-            else:
-                cl_name = f"Cluster {cl_id}"
-            color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
-            plt.scatter(
-                x=cl_df[x_ax],
-                y=cl_df[y_ax],
-                color=colors[color_idx],
-                label=cl_name,
-                s=40,
-                )
-    update_layout_matplotlib(TITLE_NAMES[x_ax], TITLE_NAMES[y_ax])
-    plt_fname = f"{x_ax}_{y_ax}.png"
-    plt.savefig(plt_fname, dpi=dpi)
-    # creating full picture
-    if not gb_other.empty:
-        plt.scatter(
-            x=gb_other[x_ax],
-            y=gb_other[y_ax],
-            color="gray",
-            label="Other",
-            s=10,
-            )
-        # details
-        update_layout_matplotlib(TITLE_NAMES[x_ax], TITLE_NAMES[y_ax])
-        plt_fname = f"{x_ax}_{y_ax}_full.png"
-        plt.savefig(plt_fname, dpi=dpi)
-    plt.close()
-    return
 
 
 def scatter_plot_data(capri_df, cl_rank):
@@ -543,7 +403,7 @@ def scatter_plot_data(capri_df, cl_rank):
     return gb_cluster, gb_other
 
 
-def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
+def scatter_plot_handler(capri_filename, cl_rank, format, scale):
     """
     Create scatter plots.
 
@@ -557,10 +417,10 @@ def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
         capri single structure filename
     cl_rank : dict
         {cluster_id : cluster_rank} dictionary
-    png : bool
-        Produce png images.
-    dpi : int
-        DPI for png images.
+    format : str
+        Produce images in the selected format.
+    scale : int
+        scale for images.
 
     Returns
     -------
@@ -578,14 +438,15 @@ def scatter_plot_handler(capri_filename, cl_rank, png, dpi):
             continue
         if not in_capri(y_ax, capri_df.columns):
             continue
-        fig = scatter_plot_plotly(
-            gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors
-            )
+        fig = scatter_plot_plotly(gb_cluster,
+                            gb_other,
+                            cl_rank,
+                            x_ax,
+                            y_ax,
+                            colors,
+                            format,
+                            scale)
         fig_list.append(fig)
-        if png:
-            scatter_plot_matplotlib(
-                gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, dpi
-                )
     return fig_list
 
 

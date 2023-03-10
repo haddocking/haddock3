@@ -440,13 +440,13 @@ def scatter_plot_handler(capri_filename, cl_rank, format, scale):
         if not in_capri(y_ax, capri_df.columns):
             continue
         fig = scatter_plot_plotly(gb_cluster,
-                            gb_other,
-                            cl_rank,
-                            x_ax,
-                            y_ax,
-                            colors,
-                            format,
-                            scale)
+                                  gb_other,
+                                  cl_rank,
+                                  x_ax,
+                                  y_ax,
+                                  colors,
+                                  format,
+                                  scale)
         fig_list.append(fig)
     return fig_list
 
@@ -567,8 +567,8 @@ def find_best_struct(ss_file, number_of_struct=10):
     Find best structures.
 
     It inspects model-cluster-ranking recorded in capri_ss.tsv file and finds
-    the best models (models with lower ranks). By default, it selects the 10 best
-    models.
+    the best models (models with lower ranks).
+    By default, it selects the 10 best models.
 
     Parameters
     ----------
@@ -603,8 +603,9 @@ def find_best_struct(ss_file, number_of_struct=10):
     # define names for best structures, e.g.
     # Nr 1 best structure, Nr 2 best structure, ...
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
+    # zero pad number so after pivot columns are sorted correctly
     col_names = [
-        f"Nr {number + 1} best structure" for number in range(number_of_struct)
+        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)
         ] * number_of_cluster
 
     # add a new column `Structure` to the dataframe
@@ -623,17 +624,19 @@ def find_best_struct(ss_file, number_of_struct=10):
     return best_struct_df
 
 
-# TODO links to be fixed!
 def _add_links(best_struct_df):
+    def format_cell(row):
+        # TODO add Download link
+        # TODO add PDB viewer link
+        # plotly renders a tag as text not as HTML,
+        # need to switch to Dash+markdown or make table html ourselves
+        # name = Path(row).name
+        # return f'<a href="../{row}" target="_blank" rel="noreferer">{name}</a>'
+        return Path(row).name
+
     table_df = best_struct_df.copy()
     for col_name in table_df.columns[1:]:
-        file_name = best_struct_df[col_name].apply(lambda row: Path(row).name)
-        # href empty for local files
-        # TODO fix links to Download and Visibility
-        # we can use html href syntax but html should be responsive!
-        dl_text = "Download"
-        vis_text = "Visibility"
-        table_df[col_name] = file_name + ", " + dl_text + ", " + vis_text
+        table_df[col_name] = best_struct_df[col_name].apply(format_cell)
     return table_df
 
 
@@ -654,7 +657,7 @@ def clean_capri_table(dfcl):
     dfcl : pandas DataFrame
         DataFrame of capri table with new column names
     """
-    dfcl = dfcl.sort_values(by=["cluster_id"])
+    dfcl = dfcl.sort_values(by=["score"])
     # what metrics are in both dfcl and AXIS_NAMES
     col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).tolist()
     # columns of the final table
@@ -677,9 +680,7 @@ def clt_table_handler(clt_file, ss_file):
     Create a figure include tables.
 
     The idea is to create tidy tables that report statistics available in
-    capri_clt.tsv and capri_ss.tsv files. By
-    running the command `analyse`, a clt_table.html file
-    is created in analyse dir.
+    capri_clt.tsv and capri_ss.tsv files.
 
     Parameters
     ----------
@@ -695,8 +696,14 @@ def clt_table_handler(clt_file, ss_file):
     """
     dfcl = read_capri_table(clt_file)
     statistics_df = clean_capri_table(dfcl)
-    structs_df = find_best_struct(ss_file, number_of_struct=4)
+    structs_df = find_best_struct(ss_file, number_of_struct=10)
     structs_df = _add_links(structs_df)
+    
+    # Order structs by best (lowest score) cluster on top
+    structs_df = structs_df.set_index('Cluster ID')
+    structs_df = structs_df.reindex(index=statistics_df['Cluster ID'])
+    structs_df = structs_df.reset_index()
+
     fig = make_subplots(
         rows=2,
         cols=1,
@@ -713,7 +720,6 @@ def clt_table_handler(clt_file, ss_file):
             )
         fig.add_trace(table, row=i + 1, col=1)
     fig.update_layout(title_text="Summary", height=600)
-    fig.write_html("clt_table.html", full_html=False, include_plotlyjs="cdn")
     return fig
 
 
@@ -745,13 +751,15 @@ def report_generator(boxes, scatters, table, step):
     plot_title = f"Box plots of {step}"
     figures.append(report_plots_handler(boxes, plot_title, shared_xaxes="all"))
     report_filename = "report.html"
-    report = open(report_filename, "w")
-    report.write("<html><head></head><body>" + "\n")
-    include_plotlyjs = "cdn"
-    for figure in figures:
-        inner_html = figure.to_html(
-            full_html=False, include_plotlyjs=include_plotlyjs
-            )
-        report.write(inner_html)
-        include_plotlyjs = False
-    report.write("</body></html>" + "\n")
+    with open(report_filename, "w") as report:
+        report.write('<!DOCTYPE html><html lang="en"><head>')
+        report.write(f'<title>Analysis report of step {step}</title>')
+        report.write('</head><body>')
+        include_plotlyjs = "cdn"
+        for figure in figures:
+            inner_html = figure.to_html(
+                full_html=False, include_plotlyjs=include_plotlyjs
+                )
+            report.write(inner_html)
+            include_plotlyjs = False
+        report.write("</body></html>")

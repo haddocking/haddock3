@@ -174,7 +174,7 @@ def get_pair(nmodels, idx):
     if (nmodels < 0 or idx < 0):
         err = "get_pair cannot accept negative numbers"
         err += f"Input is {nmodels} , {idx}"
-        raise Exception(err)
+        raise ValueError(err)
     # solve the second degree equation
     b = 1 - (2 * nmodels)
     i = (-b - np.sqrt(b ** 2 - 8 * idx)) // 2

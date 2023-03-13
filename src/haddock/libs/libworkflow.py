@@ -54,14 +54,14 @@ class WorkflowManager:
         for step in self.recipe.steps[:terminated]:
             step.clean()
     
-    def postprocess(self, other_params):
+    def postprocess(self):
         """Postprocess the workflow."""
         capri_steps = []
         for step in self.recipe.steps:
             if step.module_name == "caprieval":
                 capri_steps.append(step.order)
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
-        cli_analyse("./", capri_steps, top_cluster=10, png=False, dpi=None)
+        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None)
 
 
 class Workflow:

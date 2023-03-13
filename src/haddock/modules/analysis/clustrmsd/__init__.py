@@ -44,6 +44,7 @@ from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
+    get_cluster_center,
     get_dendrogram,
     read_matrix,
     )
@@ -83,7 +84,7 @@ class HaddockModule(BaseHaddockModule):
         if np.isnan(self.params["tolerance"]):
             self.log("tolerance is not defined")
             if crit == "maxclust":
-                tol = len(models) // 4 + 1
+                tol = max(len(models) // 4 + 1, 2)
             else:
                 tol = np.mean(dendrogram[:, 2])
             self.log(f"Setting tolerance to {tol:.2f} for criterion {crit}")
@@ -98,8 +99,10 @@ class HaddockModule(BaseHaddockModule):
         cluster_list = get_clusters(dendrogram, tol, crit)
         clusters = np.unique(cluster_list)
         log.info(f"clusters = {clusters}")
-        # TODO: getting cluster centers. is this really necessary?
-
+        
+        # initialising cluster centers
+        n_obs = len(cluster_list)
+        cluster_centers = {}
         # preparing output
         clt_dic = {}
         log.info('Saving output to cluster.out')
@@ -107,11 +110,13 @@ class HaddockModule(BaseHaddockModule):
         with open(cluster_out, 'w') as fh:
             for cl_id in clusters:
                 fh.write(f"Cluster {cl_id} -> ")
-                npw = np.where(cluster_list == cl_id)
-                clt_dic[cl_id] = [models[n] for n in npw[0]]
-                for el in npw[0][:-1]:
-                    fh.write(str(el + 1) + " ")
-                fh.write(str(npw[0][-1] + 1))
+                npw = np.where(cluster_list == cl_id)[0]
+                clt_dic[cl_id] = [models[n] for n in npw]
+                clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
+                cluster_centers[cl_id] = models[clt_center].file_name
+                for el in npw[:-1]:
+                    fh.write(f"{el + 1} ")
+                fh.write(f"{npw[-1] + 1}")
                 fh.write(os.linesep)
         # rank the clusters
         threshold = self.params['threshold']
@@ -178,10 +183,15 @@ class HaddockModule(BaseHaddockModule):
             output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
             for model_ranking, element in enumerate(model_score_l, start=1):
                 score, pdb = element
-                
-                output_str += (
-                    f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                    f"{os.linesep}")
+                # is the model the cluster center?
+                if pdb.file_name == cluster_centers[cluster_id]:
+                    output_str += (
+                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
+                        f"{os.linesep}")
+                else:
+                    output_str += (
+                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
+                        f"{os.linesep}")
         output_str += (
             "-----------------------------------------------"
             f"{os.linesep}")

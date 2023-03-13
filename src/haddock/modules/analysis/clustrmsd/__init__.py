@@ -139,7 +139,7 @@ class HaddockModule(BaseHaddockModule):
             # rank the models
             for model_ranking, pdb in enumerate(clt_dic[cluster_id],
                                                 start=1):
-                pdb.clt_id = cluster_id
+                pdb.clt_id = int(cluster_id)
                 pdb.clt_rank = cluster_rank
                 pdb.clt_model_rank = model_ranking
                 self.output_models.append(pdb)

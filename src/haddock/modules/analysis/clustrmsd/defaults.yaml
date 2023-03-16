@@ -46,7 +46,7 @@ tolerance:
   max: 9999
   precision: 3
   title: Numeric value for clustering
-  short: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cophenetic distance
-  long: No long description yet
+  short: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
+  long: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
   group: ''
   explevel: easy

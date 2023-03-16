@@ -43,6 +43,7 @@ from haddock.libs.libclust import write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
+    apply_threshold,
     get_clusters,
     get_cluster_center,
     get_dendrogram,
@@ -77,10 +78,14 @@ class HaddockModule(BaseHaddockModule):
         rmsd_matrix = read_matrix(
             self.matrix_json.input[0]
             )
-        # getting clusters_list
+        # loading parameters
         linkage_type = self.params["linkage"]
-        dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
         crit = self.params["criterion"]
+        threshold = self.params['threshold']
+        
+        # getting clusters_list
+        dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
+        # setting tolerance
         if np.isnan(self.params["tolerance"]):
             self.log("tolerance is not defined")
             if crit == "maxclust":
@@ -96,12 +101,15 @@ class HaddockModule(BaseHaddockModule):
             else:
                 raise Exception(f"unknown criterion {crit}")
         log.info(f"tolerance {tol}")
-        cluster_list = get_clusters(dendrogram, tol, crit)
-        clusters = np.unique(cluster_list)
+        cluster_arr = get_clusters(dendrogram, tol, crit)
+        if crit == "distance":
+            cluster_arr = apply_threshold(cluster_arr, threshold)
+        unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
+        clusters = [c for c in unq_clusters if c != -1]
         log.info(f"clusters = {clusters}")
         
         # initialising cluster centers
-        n_obs = len(cluster_list)
+        n_obs = len(cluster_arr)
         cluster_centers = {}
         # preparing output
         clt_dic = {}
@@ -109,17 +117,17 @@ class HaddockModule(BaseHaddockModule):
         cluster_out = Path('cluster.out')
         with open(cluster_out, 'w') as fh:
             for cl_id in clusters:
-                fh.write(f"Cluster {cl_id} -> ")
-                npw = np.where(cluster_list == cl_id)[0]
-                clt_dic[cl_id] = [models[n] for n in npw]
-                clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
-                cluster_centers[cl_id] = models[clt_center].file_name
-                for el in npw[:-1]:
-                    fh.write(f"{el + 1} ")
-                fh.write(f"{npw[-1] + 1}")
-                fh.write(os.linesep)
+                if cl_id != -1:
+                    npw = np.where(cluster_arr == cl_id)[0]
+                    clt_dic[cl_id] = [models[n] for n in npw]
+                    fh.write(f"Cluster {cl_id} -> ")
+                    clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
+                    cluster_centers[cl_id] = models[clt_center].file_name
+                    for el in npw[:-1]:
+                        fh.write(f"{el + 1} ")
+                    fh.write(f"{npw[-1] + 1}")
+                    fh.write(os.linesep)
         # rank the clusters
-        threshold = self.params['threshold']
         score_dic = {}
         for clt_id in clt_dic:
             score_l = [p.score for p in clt_dic[clt_id]]

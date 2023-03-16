@@ -60,8 +60,40 @@ def get_dendrogram(rmsd_matrix, linkage_type):
 def get_clusters(dendrogram, tolerance, criterion):
     """Obtain the clusters."""
     log.info('Clustering dendrogram...')
-    cluster_list = fcluster(dendrogram, t=tolerance, criterion=criterion)
-    return cluster_list
+    cluster_arr = fcluster(dendrogram, t=tolerance, criterion=criterion)
+    return cluster_arr
+
+
+def apply_threshold(cluster_arr, threshold):
+    """
+    Apply threshold to cluster list.
+    
+    Parameters
+    ----------
+    cluster_arr : np.ndarray
+        Array of clusters.
+    threshold : int
+        Threshold value on cluster population.
+    
+    Returns
+    -------
+    cluster_arr : np.ndarray
+        Array of clusters (unclustered structures are labelled with -1)
+    """
+    new_cluster_arr = cluster_arr.copy()
+    log.info(f"Applying threshold {threshold} to cluster list")
+    cluster_pops = np.unique(cluster_arr, return_counts=True)
+    uncl_idx = np.where(cluster_pops[1] < threshold)[0]
+    invalid_clusters = cluster_pops[0][uncl_idx]
+    log.info(f"Invalid clusters: {invalid_clusters}")
+    # replacing invalid clusters with -1
+    uncl_models = 0
+    for cl_idx, cl_id in enumerate(new_cluster_arr):
+        if cl_id in invalid_clusters:
+            new_cluster_arr[cl_idx] = -1
+            uncl_models += 1
+    log.info(f"Threshold applied, {uncl_models} models left unclustered")
+    return new_cluster_arr
 
 
 def cond_index(i, j, n):
@@ -86,12 +118,12 @@ def get_cluster_center(npw, n_obs, rmsd_matrix):
 
     Parameters
     ----------
-    clusters : list
-        List of clusters.
-    cluster_list : list
-        List of clustered observations.
-    rmsd_matrix : array
-        List of RMSD values.
+    npw: np.ndarray
+        Indexes of the cluster over cluster_list array
+    n_obs : int
+        Number of overall observations (models).
+    rmsd_matrix : np.ndarray
+        RMSD matrix.
 
     Returns
     -------

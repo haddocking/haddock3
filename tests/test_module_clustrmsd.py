@@ -9,6 +9,7 @@ from haddock.libs.libontology import ModuleIO, PDBFile, RMSDFile
 from haddock.modules.analysis.clustrmsd import DEFAULT_CONFIG as clustrmsd_pars
 from haddock.modules.analysis.clustrmsd import HaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
+    apply_threshold,
     cond_index,
     get_clusters,
     get_cluster_center,
@@ -325,3 +326,17 @@ def test_cond_index():
     obs_c_idxs = [cond_index(idxs[n], jdxs[n], n_obs) for n in range(len_idxs)]
     exp_c_idxs = [0, 1, 17, 44]
     assert obs_c_idxs == exp_c_idxs
+
+
+def test_apply_threshold():
+    """Test apply_threshold function."""
+    # defining cluster_arr
+    cluster_arr = np.array([1, 1, 4, 1, 1, 2, 1, 1, 3, 1])
+    # using a threshold of 2
+    obs_cluster_arr = apply_threshold(cluster_arr, 2)
+    exp_cluster_arr = np.array([1, 1, -1, 1, 1, -1, 1, 1, -1, 1])
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+    # using a threshold of 1
+    obs_cluster_arr = apply_threshold(cluster_arr, threshold=1)
+    exp_cluster_arr = np.array([1, 1, 4, 1, 1, 2, 1, 1, 3, 1])
+    assert (obs_cluster_arr == exp_cluster_arr).all()

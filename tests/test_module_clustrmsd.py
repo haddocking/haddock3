@@ -14,6 +14,7 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
     get_cluster_center,
     get_dendrogram,
+    iterate_threshold,
     read_matrix,
     )
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
@@ -339,4 +340,12 @@ def test_apply_threshold():
     # using a threshold of 1
     obs_cluster_arr = apply_threshold(cluster_arr, threshold=1)
     exp_cluster_arr = np.array([1, 1, 4, 1, 1, 2, 1, 1, 3, 1])
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+
+
+def test_iterate_threshold():
+    """Test iterate_threshold function."""
+    cluster_arr = np.array([1, 1, 2, 3, 4])
+    obs_cluster_arr = iterate_threshold(cluster_arr, threshold=4)
+    exp_cluster_arr = np.array([1, 1, -1, -1, -1])
     assert (obs_cluster_arr == exp_cluster_arr).all()

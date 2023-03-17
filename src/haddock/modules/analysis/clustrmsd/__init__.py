@@ -43,7 +43,7 @@ from haddock.libs.libclust import write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
-    apply_threshold,
+    iterate_threshold,
     get_clusters,
     get_cluster_center,
     get_dendrogram,
@@ -102,8 +102,12 @@ class HaddockModule(BaseHaddockModule):
                 raise Exception(f"unknown criterion {crit}")
         log.info(f"tolerance {tol}")
         cluster_arr = get_clusters(dendrogram, tol, crit)
+
+        # when crit == distance, apply clustering threshold
         if crit == "distance":
-            cluster_arr = apply_threshold(cluster_arr, threshold)
+            cluster_arr = iterate_threshold(cluster_arr, threshold)
+
+        # print clusters
         unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
         clusters = [c for c in unq_clusters if c != -1]
         log.info(f"clusters = {clusters}")

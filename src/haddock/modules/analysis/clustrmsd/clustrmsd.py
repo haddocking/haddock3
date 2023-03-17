@@ -96,6 +96,33 @@ def apply_threshold(cluster_arr, threshold):
     return new_cluster_arr
 
 
+def iterate_threshold(cluster_arr, threshold):
+    """
+    Iterate over the threshold values until we find at least one valid cluster.
+
+    Parameters
+    ----------
+    cluster_arr : np.ndarray
+        Array of clusters.
+    threshold : int
+        Threshold value on cluster population.
+
+    Returns
+    -------
+    new_cluster_arr : np.ndarray
+        Array of clusters (unclustered structures are labelled with -1)
+    """
+    for curr_thr in range(threshold, 0, -1):
+        log.info(f'Clustering with threshold={curr_thr}')
+        new_cluster_arr = apply_threshold(cluster_arr, curr_thr)
+        ncl = len(np.unique(new_cluster_arr))
+        if ncl <= 1:  # contains -1 (unclustered)
+            log.warning(f'No clusters found with threshold={curr_thr}')
+        else:
+            break
+    return new_cluster_arr
+
+
 def cond_index(i, j, n):
     """
     Get the condensed index from two matrix indexes.

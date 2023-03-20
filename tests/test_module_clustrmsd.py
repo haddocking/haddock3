@@ -9,8 +9,12 @@ from haddock.libs.libontology import ModuleIO, PDBFile, RMSDFile
 from haddock.modules.analysis.clustrmsd import DEFAULT_CONFIG as clustrmsd_pars
 from haddock.modules.analysis.clustrmsd import HaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
+    apply_threshold,
+    cond_index,
     get_clusters,
+    get_cluster_center,
     get_dendrogram,
+    iterate_threshold,
     read_matrix,
     )
 from haddock.modules.analysis.rmsdmatrix import DEFAULT_CONFIG as rmsd_pars
@@ -24,7 +28,7 @@ def output_list():
     """Clustfcc output list."""
     return [
         "rmsd.matrix",
-        "rmsd_matrix.json"
+        "rmsd_matrix.json",
         "cluster.out",
         "clustrmsd.txt",
         "clustrmsd.tsv",
@@ -160,10 +164,10 @@ def test_read_matrix_input(correct_rmsd_vec):
     write_rmsd_matrix(output_name, rmsd_vec)
 
     # testing input : has to be RMSDFile
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         read_matrix(output_name)
     
-    with pytest.raises(Exception):
+    with pytest.raises(TypeError):
         read_matrix(Path(output_name))
 
     os.unlink(output_name)
@@ -182,8 +186,8 @@ def test_read_matrix_binomial(short_rmsd_vec):
 
     matrix_json = read_rmsd_json(json_name)
 
-    with pytest.raises(Exception):
-        read_matrix(matrix_json)
+    with pytest.raises(ValueError):
+        read_matrix(matrix_json.input[0])
     
     os.unlink(json_name)
     os.unlink(output_name)
@@ -202,8 +206,8 @@ def test_read_matrix_npairs(correct_rmsd_vec):
 
     matrix_json = read_rmsd_json(json_name)
 
-    with pytest.raises(Exception):
-        read_matrix(matrix_json)
+    with pytest.raises(ValueError):
+        read_matrix(matrix_json.input[0])
     
     os.unlink(json_name)
     os.unlink(output_name)
@@ -221,9 +225,9 @@ def test_read_matrix_malformed(malformed_rmsd_vec):
     save_rmsd_json(output_name, json_name, 3)
 
     matrix_json = read_rmsd_json(json_name)
-
-    with pytest.raises(Exception):
-        read_matrix(matrix_json)
+    
+    with pytest.raises(ValueError):
+        read_matrix(matrix_json.input[0])
     
     os.unlink(json_name)
     os.unlink(output_name)
@@ -285,13 +289,63 @@ def test_correct_output(input_protdna_models, output_list):
 
     assert expected_txt_filename in ls
 
-    expected_out_content = "Cluster 1 -> 1 2"
+    expected_out_content = f"Cluster 1 -> 1{os.linesep}Cluster 2 -> 2"
     expected_out_content += os.linesep
 
     observed_out_content = open(expected_out_filename).read()
 
     assert observed_out_content == expected_out_content
 
-    # TODO: check the content of clustrmsd.txt
-
     remove_clustrmsd_files(output_list)
+
+
+def test_get_cluster_center(correct_rmsd_array):
+    """Test get_cluster_center function."""
+    obs_clt_center = get_cluster_center(
+        npw=[0, 1, 2, 3],
+        n_obs=4,
+        rmsd_matrix=correct_rmsd_array
+        )
+    exp_clt_center = 2
+    assert obs_clt_center == exp_clt_center
+    # [1,2,3] cluster. 2 is still the center
+    obs_clt_center = get_cluster_center(
+        npw=[1, 2, 3],
+        n_obs=4,
+        rmsd_matrix=correct_rmsd_array
+        )
+    exp_clt_center = 2
+    assert obs_clt_center == exp_clt_center
+
+
+def test_cond_index():
+    """Test cond_index function."""
+    n_obs = 10
+    idxs = [0, 0, 2, 8]
+    jdxs = [1, 2, 3, 9]
+    len_idxs = len(idxs)
+    obs_c_idxs = [cond_index(idxs[n], jdxs[n], n_obs) for n in range(len_idxs)]
+    exp_c_idxs = [0, 1, 17, 44]
+    assert obs_c_idxs == exp_c_idxs
+
+
+def test_apply_threshold():
+    """Test apply_threshold function."""
+    # defining cluster_arr
+    cluster_arr = np.array([1, 1, 4, 1, 1, 2, 1, 1, 3, 1])
+    # using a threshold of 2
+    obs_cluster_arr = apply_threshold(cluster_arr, 2)
+    exp_cluster_arr = np.array([1, 1, -1, 1, 1, -1, 1, 1, -1, 1])
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+    # using a threshold of 1
+    obs_cluster_arr = apply_threshold(cluster_arr, threshold=1)
+    exp_cluster_arr = np.array([1, 1, 4, 1, 1, 2, 1, 1, 3, 1])
+    assert (obs_cluster_arr == exp_cluster_arr).all()
+
+
+def test_iterate_threshold():
+    """Test iterate_threshold function."""
+    cluster_arr = np.array([1, 1, 2, 3, 4])
+    obs_cluster_arr = iterate_threshold(cluster_arr, threshold=4)
+    exp_cluster_arr = np.array([1, 1, -1, -1, -1])
+    assert (obs_cluster_arr == exp_cluster_arr).all()

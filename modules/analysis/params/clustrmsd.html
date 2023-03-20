@@ -201,8 +201,8 @@
 <div class="line"><em>default</em>: 4</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Clustering population threshold</div>
-<div class="line"><em>short description</em>: No short description yet</div>
-<div class="line"><em>long description</em>: No long description yet</div>
+<div class="line"><em>short description</em>: Threshold employed to exclude clusters with less than this number of members</div>
+<div class="line"><em>long description</em>: Threshold employed to exclude clusters with less than this number of members. When criterion is maxclust, this value is ignored.</div>
 <div class="line"><em>group</em>:</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -213,8 +213,8 @@
 <div class="line"><em>default</em>: nan</div>
 <div class="line"><em>type</em>: float</div>
 <div class="line"><em>title</em>: Numeric value for clustering</div>
-<div class="line"><em>short description</em>: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cophenetic distance</div>
-<div class="line"><em>long description</em>: No long description yet</div>
+<div class="line"><em>short description</em>: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance</div>
+<div class="line"><em>long description</em>: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance</div>
 <div class="line"><em>group</em>:</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -237,7 +237,7 @@
 <section id="linkage">
 <h2>linkage<a class="headerlink" href="#linkage" title="Permalink to this heading">¶</a></h2>
 <div class="line-block">
-<div class="line"><em>default</em>: ‘single’</div>
+<div class="line"><em>default</em>: ‘average’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Linkage type</div>
 <div class="line"><em>short description</em>: How to lump together clusters in hierarchical clustering</div>
@@ -278,7 +278,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Mar 13, 2023.
+        Last updated on Mar 20, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.1.3.
         </div>
     </div>  

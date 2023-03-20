@@ -9,8 +9,8 @@ threshold
 | *default*: 4
 | *type*: integer
 | *title*: Clustering population threshold
-| *short description*: No short description yet
-| *long description*: No long description yet
+| *short description*: Threshold employed to exclude clusters with less than this number of members
+| *long description*: Threshold employed to exclude clusters with less than this number of members. When criterion is maxclust, this value is ignored.
 | *group*: 
 | *explevel*: easy
 
@@ -20,8 +20,8 @@ tolerance
 | *default*: nan
 | *type*: float
 | *title*: Numeric value for clustering
-| *short description*: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cophenetic distance
-| *long description*: No long description yet
+| *short description*: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
+| *long description*: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
 | *group*: 
 | *explevel*: easy
 
@@ -43,7 +43,7 @@ criterion
 linkage
 ~~~~~~~
 
-| *default*: 'single'
+| *default*: 'average'
 | *type*: string
 | *title*: Linkage type
 | *short description*: How to lump together clusters in hierarchical clustering

@@ -52,13 +52,13 @@ TITLE_NAMES = {
 
 AXIS_NAMES = {
     "score": "HADDOCK score [a.u.]",
-    "irmsd": "interface RMSD [A]",
-    "lrmsd": "ligand RMSD [A]",
-    "ilrmsd": "interface-ligand RMSD [A]",
-    "desolv": "Desolvation Energy",
     "vdw": "Van der Waals Energy",
     "elec": "Electrostatic Energy",
     "air": "Restraints Energy",
+    "desolv": "Desolvation Energy",
+    "irmsd": "interface RMSD [A]",
+    "lrmsd": "ligand RMSD [A]",
+    "ilrmsd": "interface-ligand RMSD [A]",
     "fnat": "Fraction of Common Contacts",
     "dockq": "DOCKQ",
     }
@@ -234,7 +234,7 @@ def box_plot_handler(capri_filename, cl_rank, format, scale):
     # generating the correct dataframe
     capri_df = read_capri_table(capri_filename, comment="#")
     gb_full = box_plot_data(capri_df, cl_rank)
-    
+
     # iterate over the variables
     fig_list = []
     for y_ax in AXIS_NAMES.keys():
@@ -698,7 +698,7 @@ def clt_table_handler(clt_file, ss_file):
     statistics_df = clean_capri_table(dfcl)
     structs_df = find_best_struct(ss_file, number_of_struct=10)
     structs_df = _add_links(structs_df)
-    
+
     # Order structs by best (lowest score) cluster on top
     structs_df = structs_df.set_index('Cluster ID')
     structs_df = structs_df.reindex(index=statistics_df['Cluster ID'])

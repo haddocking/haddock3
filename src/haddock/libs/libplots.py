@@ -141,7 +141,7 @@ def update_layout_plotly(fig, x_label, y_label, title=None):
     return fig
 
 
-def box_plot_plotly(gb_full, y_ax, format, scale):
+def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
     """
     Create a scatter plot in plotly.
 
@@ -151,6 +151,8 @@ def box_plot_plotly(gb_full, y_ax, format, scale):
         data to box plot
     y_ax : str
         variable to plot
+    cl_rank : dict
+        {cluster_id : cluster_rank} dictionary
     format : str
         Produce images in the selected format.
     scale : int
@@ -161,10 +163,19 @@ def box_plot_plotly(gb_full, y_ax, format, scale):
     fig_list : list
         a list of figures
     """
-    fig = px.box(gb_full,
+    colors = px_colors.qualitative.Alphabet
+    color_map = {}
+    for cl_id in sorted(cl_rank.keys()):
+        color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
+        color_map[f"{cl_id}"] = colors[color_idx]
+    # to use color_discrete_map, cluster-id column should be str not int
+    gb_full_string = gb_full.astype({"cluster-id": "string"})
+
+    fig = px.box(gb_full_string,
                  x="capri_rank",
                  y=f"{y_ax}",
                  color="cluster-id",
+                 color_discrete_map=color_map,
                  boxmode="overlay",
                  points="outliers",
                  width=1000,
@@ -240,7 +251,7 @@ def box_plot_handler(capri_filename, cl_rank, format, scale):
     for y_ax in AXIS_NAMES.keys():
         if not in_capri(y_ax, capri_df.columns):
             continue
-        fig = box_plot_plotly(gb_full, y_ax, format, scale)
+        fig = box_plot_plotly(gb_full, y_ax, cl_rank, format, scale)
         fig_list.append(fig)
     return fig_list
 

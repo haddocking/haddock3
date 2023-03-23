@@ -34,6 +34,8 @@ from haddock.libs.libplots import (
     box_plot_handler,
     read_capri_table,
     scatter_plot_handler,
+    clt_table_handler,
+    report_generator,
     )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \
@@ -248,7 +250,7 @@ def update_paths_in_capri_dict(capri_dict, target_path):
         capri dictionary of parameters
     target_path : Path
         path to the output folder
-    
+
     Returns
     -------
     new_capri_dict : dict
@@ -291,7 +293,7 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
         scale for images.
     """
     log.info(f"Analysing step {step}")
-    
+
     target_path.mkdir(parents=True, exist_ok=False)
     step_name = step.split("_")[1]
     if step_name != "caprieval":
@@ -302,12 +304,12 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
         clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(ss_fname, target_path)
         shutil.copy(clt_fname, target_path)
-        
+
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
     if step_name != "caprieval":
         run_capri_analysis(step, run_dir, capri_dict)
-    
+
     log.info("CAPRI files identified")
     # plotting
     ss_file = Path("capri_ss.tsv")
@@ -318,8 +320,10 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
         raise Exception(f"clustering file {clt_file} does not exist")
     if ss_file.exists():
         log.info("Plotting results..")
-        scatter_plot_handler(ss_file, cluster_ranking, format, scale)
-        box_plot_handler(ss_file, cluster_ranking, format, scale)
+        scatters = scatter_plot_handler(ss_file, cluster_ranking, format, scale)
+        boxes = box_plot_handler(ss_file, cluster_ranking, format, scale)
+        table = clt_table_handler(clt_file, ss_file)
+        report_generator(boxes, scatters, table, step)
 
 
 def main(run_dir, modules, top_cluster, format, scale, **kwargs):
@@ -404,7 +408,7 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
             bad_folder_paths.append(target_path)
         else:
             good_folder_paths.append(target_path)
-        
+
         # going back
         os.chdir(rundir_cwd)
 

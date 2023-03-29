@@ -33,10 +33,4 @@ class HaddockModule(BaseHaddockModule):
             individualize=True
             )
         output_dir = os.path.join(models[0].path.split('0_topoaa')[0], '1_deeprank_GNN')
-        #GNN = GNN_score(pdb_path = models[0].path, pssm_path = self.params['pssm_path'], output_dir = os.path.join(output_dir, self.params['output_dir']))
-        GNN = GNN_score(pdb_path = self.params['pdb_path'], pssm_path = self.params['pssm_path'], output_dir = os.path.join(output_dir, self.params['output_dir']))
-        GNN.generate_graph()
-        predict_output = GNN.predict()
-        print(predict_output)
-        return predict_output
-  
+        GNN = GNN_score(pdb_path = self.params['pdb_path'], output_dir = os.path.join(output_dir, self.params['output_dir']))

@@ -637,13 +637,10 @@ def find_best_struct(ss_file, number_of_struct=10):
 
 def _add_links(best_struct_df):
     def format_cell(row):
-        # TODO add Download link
+        # TODO handle .gz extension
         # TODO add PDB viewer link
-        # plotly renders a tag as text not as HTML,
-        # need to switch to Dash+markdown or make table html ourselves
-        # name = Path(row).name
-        # return f'<a href="../{row}" target="_blank" rel="noreferer">{name}</a>'
-        return Path(row).name
+        name = Path(row).name
+        return f'<a href="../{row}">{name}</a>'
 
     table_df = best_struct_df.copy()
     for col_name in table_df.columns[1:]:

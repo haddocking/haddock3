@@ -642,8 +642,7 @@ def _add_links(best_struct_df):
         # TODO handle .gz extension
         # TODO add PDB viewer link
         name = Path(row).name
-        # return f'<div><button onclick="alert(\'{name}\')">view</button><br><a href="../{row}">{name}</a></div>'
-        return f'<a href=\"data:text/html,%3Ch1%3EHello%2C%20World%21%3C%2Fh1%3E\">{name}</a>'
+        return f'<a href="../{row}">{name}</a>'
 
     table_df = best_struct_df.copy()
     for col_name in table_df.columns[1:]:

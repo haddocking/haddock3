@@ -634,13 +634,16 @@ def find_best_struct(ss_file, number_of_struct=10):
     best_struct_df.rename(columns={"cluster-id": "Cluster ID"}, inplace=True)
     return best_struct_df
 
+def _viewerUrl(row: str):
+    return 'data:text/html,%3Ch1%3EHello%2C%20World%21%3C%2Fh1%3E'
 
 def _add_links(best_struct_df):
     def format_cell(row):
         # TODO handle .gz extension
         # TODO add PDB viewer link
         name = Path(row).name
-        return f'<a href="../{row}">{name}</a>'
+        # return f'<div><button onclick="alert(\'{name}\')">view</button><br><a href="../{row}">{name}</a></div>'
+        return f'<a href=\"data:text/html,%3Ch1%3EHello%2C%20World%21%3C%2Fh1%3E\">{name}</a>'
 
     table_df = best_struct_df.copy()
     for col_name in table_df.columns[1:]:
@@ -730,6 +733,48 @@ def clt_table_handler(clt_file, ss_file):
     fig.update_layout(title_text="Summary", height=600)
     return fig
 
+def structureViewer():
+    return """\
+        <button onclick="openViewer('../bla.pdb')">View bla.pdb</button>
+        <script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js"></script>
+        <script>
+            var dialog;
+            var stage;
+            function openViewer(filename) {
+                dialog.showModal();
+                stage.loadFile("/3_seletopclusts/cluster_1_model_1.pdb.gz").then(function (o) {
+                    o.addRepresentation("ball+stick", { color: "atomindex" })
+                    o.autoView()
+                    stage.handleResize();
+                })
+            }
+            function closeViewer() {
+                dialog.close();
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                // Setup to load data from rawgit
+                NGL.DatasourceRegistry.add(
+                    "data", new NGL.StaticDatasource( "//cdn.rawgit.com/arose/ngl/v2.1.0/data/" )
+                );
+
+                // Create NGL Stage object
+                stage = new NGL.Stage( "viewport" );
+
+                // Handle window resizing
+                window.addEventListener( "resize", function( event ){
+                    stage.handleResize();
+                }, false );
+
+                dialog = document.getElementById("structureViewerDialog");
+            })
+        </script>
+        <dialog id="structureViewerDialog">
+            <div id="viewport" style="width:800px; height:600px;"></div>
+            <button onclick="closeViewer()">X</button>
+        </dialog>
+    """
+
 
 def report_generator(boxes, scatters, table, step):
     """
@@ -770,4 +815,5 @@ def report_generator(boxes, scatters, table, step):
                 )
             report.write(inner_html)
             include_plotlyjs = False
+        report.write(structureViewer())
         report.write("</body></html>")

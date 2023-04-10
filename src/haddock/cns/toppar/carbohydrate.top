@@ -47,6 +47,7 @@ REMARKS A23: alpha(2,3) link from GAL to SIA, SIB
 REMARKS A23S: alpha(2,3) link from SIA to GAL
 REMARKS A26: alpha(2,6) link from GAL to SIA, SIB
 REMARKS A26S: alpha(2,6)  link from SIA, SIB to GAL
+REMARKS A28S: alpha(2,8)  link from SIA, SIB to SIA, SIB
 REMARKS RAM: alpha-L-rhamnose
 REMARKS GXL: alpha-L-galactopyranose
 REMARKS B13: beta(1,3)  link from beta-D-sugar to any
@@ -2012,6 +2013,33 @@ END
 
 !-------------------------------------------------------------------
 
+PRESidue A11 {alpha(1,1) link}
+ MODIfy  ATOM +O1   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C1            CHARge= 0.10  END
+ DELEte  ATOM +HO1                         END
+ MODIfy  ATOM -C1   TYPE=CCA CHARge= 0.30  END 
+ DELEte  ATOM -O1                          END
+ DELEte  ATOM -HO1                         END
+
+ ADD BOND -C1  +O1 
+
+ ADD ANGle +C1  +O1  -C1  
+ ADD ANGle +O1  -C1  -H1  
+ ADD ANGle +O1  -C1  -O5  
+ ADD ANGle +O1  -C1  -C2  
+
+ ADD DIHEdral  +C1  +O1  -C1  -H1 
+ ADD DIHEdral  +C1  +O1  -C1  -O5 
+ ADD DIHEdral  +C1  +O1  -C1  -C2 
+
+ {re-specify alpha-anomer ATB 12/26/10 - except FUC}
+! IMPRoper -C1 -O5 +O1 -C2    ! alpha-anomer definition using non-hydrogen atoms
+ IMPRoper -H1 -O5 +O1 -C2    ! alpha-anomer definition using non-hydrogen atoms
+
+END
+
+!-------------------------------------------------------------------
+
 PRESidue A12 {alpha(1,2) link}
  MODIfy  ATOM +O2   TYPE=OAS CHARge=-0.40  END 
  MODIfy  ATOM +C2            CHARge= 0.10  END
@@ -2354,6 +2382,31 @@ PRESidue A26S {alpha(2,6) link for SIA}
  ADD DIHEdral  +O6  -C2  -C1  -O1A
  
  IMPRoper -C1 +O6 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
+
+END
+
+
+PRESidue A28S {alpha(2,8) link for SIA}
+ MODIfy  ATOM +O8   TYPE=OAS CHARge=-0.40  END 
+ MODIfy  ATOM +C8            CHARge= 0.00  END
+ DELEte  ATOM +HO8                         END
+ MODIfy  ATOM -C2            CHARge= 0.24  END 
+ DELEte  ATOM -O2                          END
+ DELEte  ATOM -HO2                         END
+
+ ADD BOND -C2  +O8 
+
+ ADD ANGle +C8  +O8  -C2  
+ ADD ANGle +O8  -C2  -C1  
+ ADD ANGle +O8  -C2  -O6  
+ ADD ANGle +O8  -C2  -C3  
+
+ ADD DIHEdral  +C8  +O8  -C2  -C1 
+ ADD DIHEdral  +C8  +O8  -C2  -O6 
+ ADD DIHEdral  +C8  +O8  -C2  -C3  
+ ADD DIHEdral  +O8  -C2  -C1  -O1A
+ 
+ IMPRoper -C1 +O8 -O5 -C2    ! alpha-anomer definition using non-hydrogen atoms
 
 END
 

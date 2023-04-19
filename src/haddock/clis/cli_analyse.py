@@ -322,8 +322,8 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
         log.info("Plotting results..")
         scatters = scatter_plot_handler(ss_file, cluster_ranking, format, scale)
         boxes = box_plot_handler(ss_file, cluster_ranking, format, scale)
-        table = clt_table_handler(clt_file, ss_file)
-        report_generator(boxes, scatters, table, step)
+        tables = clt_table_handler(clt_file, ss_file)
+        report_generator(boxes, scatters, tables, step)
 
 
 def main(run_dir, modules, top_cluster, format, scale, **kwargs):
@@ -343,7 +343,7 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
 
     format : str
         Produce images in the selected format.
-    
+
     scale : int
         scale for images.
     """
@@ -354,7 +354,7 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
     capri_dict = update_capri_dict(default_capri, kwargs)
-    
+
     os.chdir(run_dir)
     # Create analysis folder
     rundir_cwd = os.getcwd()

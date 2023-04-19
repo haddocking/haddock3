@@ -634,9 +634,6 @@ def find_best_struct(ss_file, number_of_struct=10):
     best_struct_df.rename(columns={"cluster-id": "Cluster ID"}, inplace=True)
     return best_struct_df
 
-def _viewerUrl(row: str):
-    return 'data:text/html,%3Ch1%3EHello%2C%20World%21%3C%2Fh1%3E'
-
 
 def _add_links(best_struct_df):
     def format_cell(row):
@@ -644,6 +641,66 @@ def _add_links(best_struct_df):
         # TODO add PDB viewer link
         name = Path(row).name
         return f'<a href="../{row}">{name}</a>'
+
+    table_df = best_struct_df.copy()
+    for col_name in table_df.columns[1:]:
+        table_df[col_name] = best_struct_df[col_name].apply(format_cell)
+    return table_df
+
+
+def _ngl_viewer(file_name):
+    return f"""<script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js"></script>
+            <script>
+                var dialog;
+                var stage;
+                var file_name = "{file_name}";
+
+                document.addEventListener("DOMContentLoaded", function () {{
+                    // Setup to load data from rawgit
+                    NGL.DatasourceRegistry.add(
+                        "data", new NGL.StaticDatasource( "//cdn.rawgit.com/arose/ngl/v2.1.0/data/" )
+                    );
+
+                    // Create NGL Stage object
+                    stage = new NGL.Stage( "viewport" );
+
+                    // Handle window resizing
+                    window.addEventListener( "resize", function( event ){{
+                        stage.handleResize();
+                    }}, false );
+
+                    dialog = document.getElementById("structureViewerDialog");
+                    dialog.showModal();
+                    stage.loadFile(file_name).then(function (o) {{
+                        o.addRepresentation("ball+stick", {{color: "atomindex"}});
+                        o.autoView();
+                        stage.handleResize();
+                    }});
+                }});
+            </script>
+            <body>
+                <dialog id="structureViewerDialog">
+                    <div id="viewport" style="width:800px; height:600px;"></div>
+                </dialog>
+            </body>"""
+
+
+def _write_viewers(file_path):
+    viewer_filename = f"{file_path.name}.html"
+    with open(viewer_filename, "w") as viewer:
+        viewer.write('<!DOCTYPE html><html lang="en"><head>')
+        viewer.write('<title>Analysis viewer of step </title>')
+        viewer.write('</head><body>')
+        corrected_path = f"../{file_path}.gz"
+        viewer.write(_ngl_viewer(corrected_path))
+        viewer.write("</body></html>")
+
+
+def _add_viewers(best_struct_df):
+    def format_cell(row):
+        name = Path(row).name
+        _write_viewers(Path(row))
+        return f'<a href="{name}.html">{name}</a>'
 
     table_df = best_struct_df.copy()
     for col_name in table_df.columns[1:]:
@@ -770,52 +827,10 @@ def clt_table_handler(clt_file, ss_file):
     links_df = links_df.reset_index()
     links_fig = _create_table(links_df)
     links_fig.update_layout(title_text="Structures", height=600)
-    struct_df = links_df
+    #TODO Order
+    struct_df = _add_viewers(structs_df)
     structs_fig = _add_menus(links_fig, links_df, struct_df)
     return [statistics_fig, structs_fig]
-
-
-def structureViewer():
-    return """\
-        <button onclick="openViewer('../bla.pdb')">View bla.pdb</button>
-        <script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js"></script>
-        <script>
-            var dialog;
-            var stage;
-            function openViewer(filename) {
-                dialog.showModal();
-                stage.loadFile("/3_seletopclusts/cluster_1_model_1.pdb.gz").then(function (o) {
-                    o.addRepresentation("ball+stick", { color: "atomindex" })
-                    o.autoView()
-                    stage.handleResize();
-                })
-            }
-            function closeViewer() {
-                dialog.close();
-            }
-
-            document.addEventListener("DOMContentLoaded", function () {
-                // Setup to load data from rawgit
-                NGL.DatasourceRegistry.add(
-                    "data", new NGL.StaticDatasource( "//cdn.rawgit.com/arose/ngl/v2.1.0/data/" )
-                );
-
-                // Create NGL Stage object
-                stage = new NGL.Stage( "viewport" );
-
-                // Handle window resizing
-                window.addEventListener( "resize", function( event ){
-                    stage.handleResize();
-                }, false );
-
-                dialog = document.getElementById("structureViewerDialog");
-            })
-        </script>
-        <dialog id="structureViewerDialog">
-            <div id="viewport" style="width:800px; height:600px;"></div>
-            <button onclick="closeViewer()">X</button>
-        </dialog>
-    """
 
 
 def report_generator(boxes, scatters, tables, step):
@@ -857,5 +872,4 @@ def report_generator(boxes, scatters, tables, step):
                 )
             report.write(inner_html)
             include_plotlyjs = False
-        report.write(structureViewer())
         report.write("</body></html>")

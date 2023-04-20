@@ -301,8 +301,14 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
     else:
         log.info(f"step {step} is caprieval, files should be already available")
         ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
-        clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(ss_fname, target_path)
+
+        # substituting the correct paths in the capri_ss files
+        target_ss_file = Path(target_path, f"capri_ss.tsv")
+        log.info(f"updating paths in {target_ss_file}")
+        update_paths(target_ss_file, "../", "../../")
+
+        clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(clt_fname, target_path)
 
     os.chdir(target_path)
@@ -423,13 +429,6 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
         for directory in bad_folder_paths:
             if directory.exists():
                 shutil.rmtree(directory)
-
-    # substituting the correct paths in the capri_ss files
-    for directory in good_folder_paths:
-        ss_file = Path(outdir, directory, "capri_ss.tsv")
-        if ss_file.exists():
-            log.info(f"updating paths in {ss_file}")
-            update_paths(ss_file, "../", "../../")
 
     os.chdir(ori_cwd)
     return

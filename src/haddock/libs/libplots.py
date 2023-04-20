@@ -635,25 +635,12 @@ def find_best_struct(ss_file, number_of_struct=10):
     return best_struct_df
 
 
-def _add_links(best_struct_df):
-    def format_cell(row):
-        # TODO handle .gz extension
-        # TODO add PDB viewer link
-        name = Path(row).name
-        return f'<a href="../{row}">{name}</a>'
-
-    table_df = best_struct_df.copy()
-    for col_name in table_df.columns[1:]:
-        table_df[col_name] = best_struct_df[col_name].apply(format_cell)
-    return table_df
-
-
-def _ngl_viewer(file_name):
+def _ngl_viewer():
+    # http://nglviewer.org/ngl/gallery/
     return f"""<script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js"></script>
             <script>
                 var dialog;
                 var stage;
-                var file_name = "{file_name}";
 
                 document.addEventListener("DOMContentLoaded", function () {{
                     // Setup to load data from rawgit
@@ -669,42 +656,42 @@ def _ngl_viewer(file_name):
                         stage.handleResize();
                     }}, false );
 
+                }});
+
+                function showStructure(file_name) {{
                     dialog = document.getElementById("structureViewerDialog");
                     dialog.showModal();
                     stage.loadFile(file_name).then(function (o) {{
-                        o.addRepresentation("ball+stick", {{color: "atomindex"}});
+                        o.addRepresentation("cartoon");
                         o.autoView();
                         stage.handleResize();
                     }});
-                }});
+                }}
             </script>
             <body>
                 <dialog id="structureViewerDialog">
                     <div id="viewport" style="width:800px; height:600px;"></div>
+                    <form>
+                        <button value="cancel" formmethod="dialog">X</button>
+                    </form>
                 </dialog>
             </body>"""
 
 
-def _write_viewers(file_path):
-    viewer_filename = f"{file_path.name}.html"
-    with open(viewer_filename, "w") as viewer:
-        viewer.write('<!DOCTYPE html><html lang="en"><head>')
-        viewer.write('<title>Analysis viewer of step </title>')
-        viewer.write('</head><body>')
-        corrected_path = f"../{file_path}.gz"
-        viewer.write(_ngl_viewer(corrected_path))
-        viewer.write("</body></html>")
-
-
-def _add_viewers(best_struct_df):
+def _add_viewers(df):
     def format_cell(row):
-        name = Path(row).name
-        _write_viewers(Path(row))
-        return f'<a href="{name}.html">{name}</a>'
+        pdb_file = Path(row)
+        correct_path = Path(f"{row}.gz") if not pdb_file.exists() else pdb_file
+        return f'''\
+            <p>File: {correct_path.name}\
+            <br>Download: <a href="{str(correct_path)}">&#8595;</a>\
+            <br>View: <a onClick="showStructure('{str(correct_path)}')"
+            style="cursor:pointer;">&#x1F441;</a></p>\
+            '''
 
-    table_df = best_struct_df.copy()
+    table_df = df.copy()
     for col_name in table_df.columns[1:]:
-        table_df[col_name] = best_struct_df[col_name].apply(format_cell)
+        table_df[col_name] = df[col_name].apply(format_cell)
     return table_df
 
 
@@ -733,7 +720,7 @@ def clean_capri_table(dfcl):
     for col_name in col_list:
         mean_value = dfcl[col_name].astype(str)
         std_value = dfcl[f"{col_name}_std"].astype(str)
-        dfcl[AXIS_NAMES[col_name]] = (mean_value + " ± " + std_value)
+        dfcl[AXIS_NAMES[col_name]] = (mean_value + " &#177; " + std_value)
         table_col.append(AXIS_NAMES[col_name])
     dfcl.drop(columns=col_list, inplace=True)
     dfcl.rename(
@@ -743,53 +730,11 @@ def clean_capri_table(dfcl):
     return dfcl[table_col]
 
 
-def _create_table(df):
-    return go.Figure(go.Table(
-            columnwidth=100,
-            header=dict(values=list(df.columns), align="left"),
-            cells=dict(
-                values=df.transpose().values.tolist(), align="left", height=40
-                ),
-            )
+def _pandas_df_to_htm_table(df, table_id):
+    # TODO use classes arg for css styles
+    return df.to_html(
+        table_id=table_id, index= False, index_names=False, escape=False,
         )
-
-
-def _add_menus(fig, links_df, struct_df):
-    download_data = links_df.transpose().values.tolist()
-    view_data = struct_df.transpose().values.tolist()
-
-    # Add dropdown
-    fig.update_layout(
-        updatemenus=[
-            dict(
-                type = "buttons",
-                direction = "left",
-                buttons=[
-                    dict(
-                        args=[{'cells': {'values': download_data}}],
-                        label="Download",
-                        method="update",
-                    ),
-                    dict(
-                        args=[{'cells': {'values': view_data}}],
-                        label="View",
-                        method="update",
-                    )
-                ],
-                pad={"r": 10, "t": 10},
-                showactive=True,
-                x=0.2,
-                xanchor="left",
-                y=1.12,
-                yanchor="top"
-            ),
-        ],
-        annotations=[
-            dict(text="Download the file using the link or view the structure:", showarrow=False,
-            x=0, y=1.07, yref="paper", align="left")
-        ]
-    )
-    return fig
 
 
 def clt_table_handler(clt_file, ss_file):
@@ -811,26 +756,28 @@ def clt_table_handler(clt_file, ss_file):
     fig :
         an instance of plotly.graph_objects.Figure
     """
+    # TODO be able to sort inside the table
+    # TODO add some of the ngl tools e.g. rotate, show water
     # table of statistics
     dfcl = read_capri_table(clt_file)
     statistics_df = clean_capri_table(dfcl)
-    statistics_fig = _create_table(statistics_df)
-    statistics_fig.update_layout(title_text="Summary of statistics", height=600)
+    # Convert dataframe to html table
+    statistics_table = _pandas_df_to_htm_table(statistics_df, table_id="statistics")
 
     # table of structures
     structs_df = find_best_struct(ss_file, number_of_struct=10)
-    links_df = _add_links(structs_df)
 
     # Order structs by best (lowest score) cluster on top
-    links_df = links_df.set_index('Cluster ID')
-    links_df = links_df.reindex(index=statistics_df['Cluster ID'])
-    links_df = links_df.reset_index()
-    links_fig = _create_table(links_df)
-    links_fig.update_layout(title_text="Structures", height=600)
-    #TODO Order
+    structs_df = structs_df.set_index('Cluster ID')
+    structs_df = structs_df.reindex(index=statistics_df['Cluster ID'])
+    structs_df = structs_df.reset_index()
+
+    # Add download links and viewer
     struct_df = _add_viewers(structs_df)
-    structs_fig = _add_menus(links_fig, links_df, struct_df)
-    return [statistics_fig, structs_fig]
+    # Convert dataframe to html table
+    struct_table = _pandas_df_to_htm_table(struct_df, table_id="structures")
+
+    return [statistics_table, struct_table]
 
 
 def report_generator(boxes, scatters, tables, step):
@@ -846,8 +793,8 @@ def report_generator(boxes, scatters, tables, step):
         list of box plots generated by box_plot_handler
     scatters: list
         list of scatter plots generated by scatter_plot_handler
-    table: figure
-        a figure including tables generated by clt_table_handler
+    table: list
+        a list including tables generated by clt_table_handler
     """
     figures = tables
     # Combine scatters
@@ -867,9 +814,13 @@ def report_generator(boxes, scatters, tables, step):
         report.write('</head><body>')
         include_plotlyjs = "cdn"
         for figure in figures:
-            inner_html = figure.to_html(
-                full_html=False, include_plotlyjs=include_plotlyjs
-                )
+            if isinstance(figure, str): # tables
+                inner_html = figure
+            else: # plots
+                inner_html = figure.to_html(
+                    full_html=False, include_plotlyjs=include_plotlyjs
+                    )
+                include_plotlyjs = False
             report.write(inner_html)
-            include_plotlyjs = False
+        report.write(_ngl_viewer())
         report.write("</body></html>")

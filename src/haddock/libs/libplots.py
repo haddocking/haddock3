@@ -694,14 +694,18 @@ def _add_viewers(df):
         return html_code
 
     def _format_cell(row):
-        pdb_file = Path(row)
-        correct_path = pdb_file if pdb_file.exists() else Path(f"{row}.gz")
-        correct_path_str = str(correct_path)
+        # Check if extension is pdb or gz
+        correct_file = row if Path(row).exists() else f"{row}.gz"
+
+        # Correct path because after running analyse
+        # files are moved to analysis folder
+        correct_path = f"../{correct_file}"
+
         # Generate html code
         html_code = "<p>"
-        html_code += _generate_download_link(correct_path_str)
+        html_code += _generate_download_link(correct_path)
         html_code += "&nbsp;" # add space
-        html_code += _generate_view_link(correct_path_str)
+        html_code += _generate_view_link(correct_path)
         html_code += "</p>"
         return html_code
 
@@ -775,9 +779,6 @@ def clt_table_handler(clt_file, ss_file):
     fig :
         an instance of plotly.graph_objects.Figure
     """
-    # TODO be able to sort inside the table
-    # TODO add some of the ngl tools e.g. rotate, show water
-    # TODO merge two table and transpose it
     # table of statistics
     dfcl = read_capri_table(clt_file)
     statistics_df = clean_capri_table(dfcl)
@@ -808,6 +809,7 @@ def _css_styles_for_report():
         border-collapse: collapse;
         width: 100%;
         font-size: 16px;
+        overflow: auto;
         }
     .table th {
         font-weight: bold;
@@ -861,7 +863,7 @@ def _generate_html_body(figures):
                 full_html=False, include_plotlyjs=include_plotlyjs
             )
             include_plotlyjs = False
-        body += "<br>"
+        body += "<br>" # add a break between tables and plots
         body += inner_html
     body += _ngl_viewer()
     body += "</body>"
@@ -900,4 +902,8 @@ def report_generator(boxes, scatters, tables, step):
         # TODO enbale toggling clusters between plots and tables
         # TODO enable downloading all pdb files, and plots in one-go
         # TODO enable select 4 best structures
+        # TODO be able to sort inside the table using cluster ID
+        # TODO add some of the ngl tools e.g. rotate, show water
+        # TODO merge two table and transpose it
+        # TODO when download file, rename it
         report.write(html_report)

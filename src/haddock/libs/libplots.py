@@ -633,60 +633,81 @@ def find_best_struct(ss_file, number_of_struct=10):
 
 def _ngl_viewer():
     # http://nglviewer.org/ngl/gallery/
-    return f"""<script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js"></script>
-            <script>
-                var dialog;
-                var stage;
+    ngl_script = ("""
+        <script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js"></script>
+        <script>
+            var dialog;
+            var stage;
 
-                document.addEventListener("DOMContentLoaded", function () {{
-                    // Setup to load data from rawgit
-                    NGL.DatasourceRegistry.add(
-                        "data", new NGL.StaticDatasource( "//cdn.rawgit.com/arose/ngl/v2.1.0/data/" )
-                    );
+            document.addEventListener("DOMContentLoaded", function () {
+                // Setup to load data from rawgit
+                NGL.DatasourceRegistry.add(
+                    "data", new NGL.StaticDatasource("//cdn.rawgit.com/arose/ngl/v2.1.0/data/")
+                );
 
-                    // Create NGL Stage object
-                    stage = new NGL.Stage( "viewport" );
+                // Create NGL Stage object
+                stage = new NGL.Stage("viewport");
 
-                    // Handle window resizing
-                    window.addEventListener( "resize", function( event ){{
-                        stage.handleResize();
-                    }}, false );
+                // Handle window resizing
+                window.addEventListener("resize", function(event){
+                    stage.handleResize();
+                }, false);
 
-                }});
+            });
 
-                function showStructure(file_name) {{
-                    dialog = document.getElementById("structureViewerDialog");
-                    dialog.showModal();
-                    stage.loadFile(file_name).then(function (o) {{
-                        o.addRepresentation("cartoon");
-                        o.autoView();
-                        stage.handleResize();
-                    }});
-                }}
-            </script>
-            <body>
-                <dialog id="structureViewerDialog">
-                    <div id="viewport" style="width:800px; height:600px;"></div>
-                    <form>
-                        <button value="cancel" formmethod="dialog">X</button>
-                    </form>
-                </dialog>
-            </body>"""
+            function showStructure(file_name) {
+                dialog = document.getElementById("structureViewerDialog");
+                dialog.showModal();
+                stage.loadFile(file_name).then(function (o) {
+                    o.addRepresentation("cartoon");
+                    o.autoView();
+                    stage.handleResize();
+                });
+            }
+        </script>
+    """)
+    ngl_dialog = ("""
+        <body>
+            <dialog id="structureViewerDialog">
+                <div id="viewport" style="width:800px; height:600px;"></div>
+                <form>
+                    <button value="cancel" formmethod="dialog">X</button>
+                </form>
+            </dialog>
+        </body>
+    """)
+    return ngl_script + ngl_dialog
 
 
 def _add_viewers(df):
-    def format_cell(row):
+    def _generate_download_link(file_name):
+        html_code = "&#8595;" # add icon
+        html_code += "&nbsp;" # add space
+        html_code += f'<a href="{file_name}">Download</a>' # add link
+        return html_code
+
+    def _generate_view_link(file_name):
+        html_code = "&#x1F441;" # add icon
+        html_code += "&nbsp;" # add space
+        event = f'''onClick="showStructure(\'{file_name}\')"''' # create event
+        html_code += f'<a {event} style="cursor:pointer;">View</a>'# add link
+        return html_code
+
+    def _format_cell(row):
         pdb_file = Path(row)
-        correct_path = Path(f"{row}.gz") if not pdb_file.exists() else pdb_file
-        return f'''\
-            <p>&#8595;&nbsp;<a href="{str(correct_path)}">Download</a>&nbsp;\
-            <a onClick="showStructure('{str(correct_path)}')"
-            style="cursor:pointer;">&#x1F441; View</a></p>\
-            '''
+        correct_path = pdb_file if pdb_file.exists() else Path(f"{row}.gz")
+        correct_path_str = str(correct_path)
+        # Generate html code
+        html_code = "<p>"
+        html_code += _generate_download_link(correct_path_str)
+        html_code += "&nbsp;" # add space
+        html_code += _generate_view_link(correct_path_str)
+        html_code += "</p>"
+        return html_code
 
     table_df = df.copy()
     for col_name in table_df.columns[1:]:
-        table_df[col_name] = df[col_name].apply(format_cell)
+        table_df[col_name] = df[col_name].apply(_format_cell)
     return table_df
 
 
@@ -756,6 +777,7 @@ def clt_table_handler(clt_file, ss_file):
     """
     # TODO be able to sort inside the table
     # TODO add some of the ngl tools e.g. rotate, show water
+    # TODO merge two table and transpose it
     # table of statistics
     dfcl = read_capri_table(clt_file)
     statistics_df = clean_capri_table(dfcl)
@@ -772,6 +794,7 @@ def clt_table_handler(clt_file, ss_file):
 
     # Add download links and viewer
     struct_df = _add_viewers(structs_df)
+
     # Convert dataframe to html table
     struct_table = _pandas_df_to_html_table(struct_df, table_id="structures")
 
@@ -784,7 +807,7 @@ def _css_styles_for_report():
         font-family: Arial, sans-serif;
         border-collapse: collapse;
         width: 100%;
-        font-size: 12px;
+        font-size: 16px;
         }
     .table th {
         font-weight: bold;
@@ -808,6 +831,41 @@ def _css_styles_for_report():
 
     '''
     return f'<style>{custom_css}</style>'
+
+
+def _generate_html_report(step, figures):
+    html_report = "<!DOCTYPE html><html lang='en'>"
+    html_report += _generate_html_head(step)
+    html_report += _generate_html_body(figures)
+    html_report += "</html>"
+    return html_report
+
+
+def _generate_html_head(step):
+    head = "<head>"
+    head += f"<title>Analysis report of step {step}</title>"
+    head += f"<p class='title'>Analysis report of step {step}</p>"
+    head += _css_styles_for_report()
+    head += "</head>"
+    return head
+
+
+def _generate_html_body(figures):
+    body = "<body>"
+    include_plotlyjs = "cdn"
+    for figure in figures:
+        if isinstance(figure, str): # tables
+            inner_html = figure
+        else: # plots
+            inner_html = figure.to_html(
+                full_html=False, include_plotlyjs=include_plotlyjs
+            )
+            include_plotlyjs = False
+        body += "<br>"
+        body += inner_html
+    body += _ngl_viewer()
+    body += "</body>"
+    return body
 
 
 def report_generator(boxes, scatters, tables, step):
@@ -835,24 +893,11 @@ def report_generator(boxes, scatters, tables, step):
         )
     # Combine boxes"
     figures.append(report_plots_handler(boxes, shared_xaxes="all"))
-    report_filename = "report.html"
-    with open(report_filename, "w", encoding="utf-8") as report:
-        # TODO move html code to a function
-        report.write("<!DOCTYPE html><html lang='en'><head>")
-        report.write(f"<title>Analysis report of step {step}</title>")
-        report.write(f"<p class='title'>Analysis report of step {step}</p>")
-        report.write(_css_styles_for_report())
-        report.write("</head><body>")
-        include_plotlyjs = "cdn"
-        for figure in figures:
-            if isinstance(figure, str): # tables
-                inner_html = figure
-            else: # plots
-                inner_html = figure.to_html(
-                    full_html=False, include_plotlyjs=include_plotlyjs
-                    )
-                include_plotlyjs = False
-            report.write("<br>")
-            report.write(inner_html)
-        report.write(_ngl_viewer())
-        report.write("</body></html>")
+
+    # Write everything to a html file
+    html_report = _generate_html_report(step, figures)
+    with open("report.html", "w", encoding="utf-8") as report:
+        # TODO enbale toggling clusters between plots and tables
+        # TODO enable downloading all pdb files, and plots in one-go
+        # TODO enable select 4 best structures
+        report.write(html_report)

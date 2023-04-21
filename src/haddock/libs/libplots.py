@@ -837,6 +837,7 @@ def report_generator(boxes, scatters, tables, step):
     figures.append(report_plots_handler(boxes, shared_xaxes="all"))
     report_filename = "report.html"
     with open(report_filename, "w", encoding="utf-8") as report:
+        # TODO move html code to a function
         report.write("<!DOCTYPE html><html lang='en'><head>")
         report.write(f"<title>Analysis report of step {step}</title>")
         report.write(f"<p class='title'>Analysis report of step {step}</p>")
@@ -845,7 +846,6 @@ def report_generator(boxes, scatters, tables, step):
         include_plotlyjs = "cdn"
         for figure in figures:
             if isinstance(figure, str): # tables
-                inner_html = "<p> table </p>"
                 inner_html = figure
             else: # plots
                 inner_html = figure.to_html(

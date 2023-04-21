@@ -755,7 +755,7 @@ def _pandas_df_to_html_table(df, table_id):
         table_id=table_id,
         index= False,
         index_names=False,
-        classes="table",
+        classes=["table"],
         escape=False,
         )
 
@@ -809,7 +809,6 @@ def _css_styles_for_report():
         border-collapse: collapse;
         width: 100%;
         font-size: 16px;
-        overflow: auto;
         }
     .table th {
         font-weight: bold;
@@ -817,14 +816,24 @@ def _css_styles_for_report():
         padding: 8px;
         border: 1px solid #ddd;
         text-align: left;
+        height: 10px;
         }
     .table td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: left;
+        height: 10px;
         }
     .table tr:nth-child(even) {
         background-color: #f2f2f2;
+        }
+    .scrollable-table {
+        height: 250px;
+        overflow-y: scroll;
+        }
+    .scrollable-table th {
+        position: sticky;
+        top: 0;
         }
     .title {
         font-family: Arial, sans-serif;
@@ -857,7 +866,7 @@ def _generate_html_body(figures):
     include_plotlyjs = "cdn"
     for figure in figures:
         if isinstance(figure, str): # tables
-            inner_html = figure
+            inner_html = f'''<div class="scrollable-table">{figure}</div>'''
         else: # plots
             inner_html = figure.to_html(
                 full_html=False, include_plotlyjs=include_plotlyjs

@@ -1,13 +1,14 @@
 """HADDOCK3 modules to score modules."""
 from os import linesep
 
+from haddock.core.typing import FilePath
 from haddock.modules.base_cns_module import BaseCNSModule
 
 
 class ScoringModule(BaseCNSModule):
     """Parent class for Scoring modules."""
 
-    def output(self, output_fname, sep="\t"):
+    def output(self, output_fname: FilePath, sep: str = "\t") -> None:
         """Save the output in comprehensive tables."""
         # prepares header
         header = sep.join(

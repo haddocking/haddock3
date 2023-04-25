@@ -18,6 +18,14 @@ from pathlib import Path
 
 from haddock import log
 from haddock.core.defaults import RUNDIR
+from haddock.core.typing import (
+    ArgumentParser,
+    Callable,
+    FilePath,
+    LogLevel,
+    Namespace,
+    Optional,
+    )
 from haddock.gear.extend_run import EXTEND_RUN_DEFAULT, add_extend_run
 from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.libcli import add_version_arg, arg_file_exist
@@ -47,33 +55,33 @@ add_loglevel_arg(ap)
 add_version_arg(ap)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
 def main(
-        recipe,
-        restart=None,
-        extend_run=EXTEND_RUN_DEFAULT,
-        setup_only=False,
-        log_level="INFO",
-        ):
+        recipe: FilePath,
+        restart: Optional[int] = None,
+        extend_run: Optional[FilePath] = EXTEND_RUN_DEFAULT,
+        setup_only: bool = False,
+        log_level: LogLevel = "INFO",
+        ) -> None:
     """
     Run an HADDOCK3 workflow.
 
@@ -141,7 +149,7 @@ def main(
     # here we the io.StringIO handler log information, and reset the log
     # handlers to fit the CLI and HADDOCK3 specifications.
     log_temporary = log.handlers[-1].stream.getvalue()
-    _run_dir = other_params[RUNDIR]
+    _run_dir: str = other_params[RUNDIR]
     log_file = Path(_run_dir, log_file_name)
     add_log_for_CLI(log, log_level, log_file)
 
@@ -164,10 +172,9 @@ def main(
         WorkflowManager_ = WorkflowManager
 
     with (
-            working_directory(other_params[RUNDIR]),
+            working_directory(_run_dir),
             log_error_and_exit(),
             ):
-
         workflow = WorkflowManager_(
             workflow_params=params,
             start=restart_step,

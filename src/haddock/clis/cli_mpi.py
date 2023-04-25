@@ -16,6 +16,15 @@ import argparse
 import pickle
 import sys
 
+from haddock.core.typing import (
+    AnyT,
+    ArgumentParser,
+    Callable,
+    FilePath,
+    Namespace,
+    )
+from haddock.libs.libsubprocess import CNSJob
+
 
 try:
     from mpi4py import MPI
@@ -29,7 +38,7 @@ except ImportError as e:
 COMM = MPI.COMM_WORLD
 
 
-def split_tasks(task_l, n):
+def split_tasks(task_l: list[AnyT], n: int) -> list[list[AnyT]]:
     """Split tasks into equal lenght chunks."""
     return [task_l[_i::n] for _i in range(n)]
 
@@ -48,22 +57,22 @@ ap.add_argument(
     )
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
@@ -71,7 +80,7 @@ def maincli():
 # ========================================================================#
 
 
-def main(pickled_tasks):
+def main(pickled_tasks: FilePath) -> None:
     """Execute the tasks."""
     if COMM.rank == 0:
         with open(pickled_tasks, "rb") as pkl:
@@ -82,8 +91,9 @@ def main(pickled_tasks):
 
     jobs = COMM.scatter(jobs, root=0)
 
-    results = []
+    results: list[FilePath] = []
     for job in jobs:
+        job: CNSJob
         job.run()
         results.append(job.input_file)
 

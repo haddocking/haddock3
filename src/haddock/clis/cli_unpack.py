@@ -29,6 +29,13 @@ Usage::
 import argparse
 import sys
 
+from haddock.core.typing import (
+    ArgumentParser,
+    Callable,
+    FilePath,
+    Namespace,
+    Optional,
+    )
 from haddock.libs import libcli
 
 
@@ -52,27 +59,29 @@ libcli.add_ncores_arg(ap)
 libcli.add_version_arg(ap)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def main(run_dir, ncores=1, dec_all=False):
+def main(run_dir: FilePath,
+         ncores: Optional[int] = 1,
+         dec_all: bool = False) -> None:
     """
     Unpack a HADDOCK3 run directory step folders.
 

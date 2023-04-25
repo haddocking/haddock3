@@ -10,10 +10,18 @@ from collections.abc import Mapping
 
 from haddock import _hidden_level, config_expert_levels
 from haddock.core.exceptions import ConfigurationError
+from haddock.core.typing import (
+    ExpertLevel,
+    FilePath,
+    Optional,
+    ParamDict,
+    ParamMap,
+    )
 from haddock.libs.libio import read_from_yaml
 
 
-def yaml2cfg_text(ymlcfg, module, explevel):
+def yaml2cfg_text(ymlcfg: ParamMap, module: Optional[str],
+                  explevel: ExpertLevel) -> str:
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -32,7 +40,7 @@ def yaml2cfg_text(ymlcfg, module, explevel):
         level and those of inferior hierarchy. If you give "all", all
         parameters will be considered.
     """
-    new_config = []
+    new_config: list[str] = []
     if module is not None:
         new_config.append(f"[{module}]")
 
@@ -41,7 +49,8 @@ def yaml2cfg_text(ymlcfg, module, explevel):
     return os.linesep.join(new_config) + os.linesep
 
 
-def _yaml2cfg_text(ycfg, module, explevel):
+def _yaml2cfg_text(ycfg: ParamMap, module: Optional[str],
+                   explevel: ExpertLevel) -> str:
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -55,7 +64,7 @@ def _yaml2cfg_text(ycfg, module, explevel):
         This configuration should NOT have the expertise levels. It
         expectes the first level of keys to be the parameter name.
     """
-    params = []
+    params: list[str] = []
     exp_levels = {
         _el: i
         for i, _el in enumerate(config_expert_levels + ("all", _hidden_level))
@@ -84,7 +93,7 @@ def _yaml2cfg_text(ycfg, module, explevel):
                 # superior to the one request:
                 continue
 
-            comment = []
+            comment: list[str] = []
             for _comment, cvalue in param.items():
                 if _comment in ("default", "explevel", "short", "long", "type"):
                     continue
@@ -119,18 +128,18 @@ def _yaml2cfg_text(ycfg, module, explevel):
     return os.linesep.join(params)
 
 
-def read_from_yaml_config(cfg_file):
+def read_from_yaml_config(cfg_file: FilePath) -> ParamDict:
     """Read config from yaml by collapsing the expert levels."""
     ycfg = read_from_yaml(cfg_file)
     # there's no need to make a deep copy here, a shallow copy suffices.
-    cfg = {}
+    cfg: ParamDict = {}
     cfg.update(flat_yaml_cfg(ycfg))
     return cfg
 
 
-def flat_yaml_cfg(cfg):
+def flat_yaml_cfg(cfg: ParamMap) -> ParamDict:
     """Flat a yaml config."""
-    new = {}
+    new: ParamDict = {}
     for param, values in cfg.items():
         try:
             new_value = values["default"]

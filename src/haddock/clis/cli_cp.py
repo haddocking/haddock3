@@ -47,6 +47,7 @@ import os
 import sys
 
 from haddock import log
+from haddock.core.typing import ArgumentParser, Callable, FilePath, Namespace
 from haddock.libs.libcli import add_version_arg
 
 
@@ -82,27 +83,27 @@ ap.add_argument(
 add_version_arg(ap)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def main(run_dir, modules, output):
+def main(run_dir: FilePath, modules: list[int], output: FilePath) -> None:
     """
     Copy steps from a run directory to a new run directory.
 

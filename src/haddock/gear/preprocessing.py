@@ -115,6 +115,16 @@ from haddock.core.supported_molecules import (
     supported_single_ions_atoms_map,
     supported_single_ions_resnames_map,
     )
+from haddock.core.typing import (
+    Any,
+    Callable,
+    Container,
+    Generator,
+    Iterable,
+    LineIterSource,
+    Optional,
+    Union,
+    )
 from haddock.libs.libfunc import chainf
 from haddock.libs.libio import read_lines
 from haddock.libs.libpdb import (
@@ -139,7 +149,7 @@ class ModelsDifferError(HaddockError):
     pass
 
 
-def _report(log_msg):
+def _report(log_msg: str) -> Callable[..., Any]:
     """
     Add report functionality to the function (decorator).
 
@@ -155,9 +165,12 @@ def _report(log_msg):
     **Important:** Do NOT use ``_report`` with infinite generators,
     such as ``itertools.cycle``.
     """
-    def decorator(function):
+    def decorator(function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
-        def wrapper(lines, *args, report=False, **kwargs):
+        def wrapper(lines: Iterable[Any],
+                    *args: Any,
+                    report: bool = False,
+                    **kwargs: Any) -> Any:
 
             if report:
                 in_lines = list(lines)
@@ -196,7 +209,7 @@ def _report(log_msg):
     return decorator
 
 
-def _open_or_give(inputdata):
+def _open_or_give(inputdata: Iterable[LineIterSource]) -> list[list[str]]:
     """
     Adapt input to the functions.
 
@@ -234,11 +247,11 @@ def _open_or_give(inputdata):
     TypeError
         In any other circumstances.
     """
-    def get_line(lines):
+    def get_line(lines: Iterable[str]) -> list[str]:
         """Ignore empty lines."""
         return [line.rstrip(linesep) for line in lines if line]
 
-    lines = []
+    lines: list[list[str]] = []
     for idata in inputdata:
 
         if isinstance(idata, (Path, str)):
@@ -258,7 +271,8 @@ def _open_or_give(inputdata):
 
 
 @read_lines
-def read_additional_residues(lines, *ignore, **everything):
+def read_additional_residues(lines: Iterable[str], *ignore: Any,
+                             **everything: Any) -> tuple[str, ...]:
     """
     Read additional residues listed in a ``*.top`` filename.
 
@@ -299,7 +313,7 @@ def read_additional_residues(lines, *ignore, **everything):
     """
     # https://regex101.com/r/1H44kO/1
     res_regex = re.compile(r'^(RESIdue|residue|RESI) ([A-Z0-9]{1,3}).*$')
-    residues = []
+    residues: list[str] = []
     for line in map(str.strip, lines):
         name = res_regex.findall(line)
         if name:
@@ -309,10 +323,10 @@ def read_additional_residues(lines, *ignore, **everything):
 
 
 def process_pdbs(
-        *inputdata,
-        dry=False,
-        user_supported_residues=None,
-        ):
+        *inputdata: LineIterSource,
+        dry: bool = False,
+        user_supported_residues: Optional[Iterable[str]] = None,
+        ) -> list[list[str]]:
     """
     Process PDB file contents for compatibility with HADDOCK3.
 
@@ -440,7 +454,8 @@ wrep_rstrip = _report("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  
 
 
 @_report("Replacing HETATM to ATOM for residue {!r}")
-def replace_HETATM_to_ATOM(fhandler, res):
+def replace_HETATM_to_ATOM(fhandler: Iterable[str],
+                           res: str) -> Generator[str, None, None]:
     """
     Replace record `HETATM` to `ATOM` for `res`.
 
@@ -467,7 +482,8 @@ def replace_HETATM_to_ATOM(fhandler, res):
 
 
 @_report("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
-def replace_residue(fhandler, resin, resout):
+def replace_residue(fhandler: Iterable[str], resin: str,
+                    resout: str) -> Generator[str, None, None]:
     """
     Replace residue by another and changes ``HETATM`` to ``ATOM`` if needed.
 
@@ -547,11 +563,11 @@ See Also
 
 @_report("Remove unsupported molecules")
 def remove_unsupported_molecules(
-        lines,
-        haddock3_defined=None,
-        user_defined=None,
-        line_startswith=('ATOM', 'HETATM'),
-        ):
+        lines: Iterable[str],
+        haddock3_defined: Optional[set[str]] = None,
+        user_defined: Optional[set[str]] = None,
+        line_startswith: Union[str, tuple[str, ...]] = ('ATOM', 'HETATM'),
+        ) -> Generator[str, None, None]:
     """
     Remove HADDOCK3 unsupported molecules.
 
@@ -598,7 +614,7 @@ def remove_unsupported_molecules(
     allowed = set.union(haddock3_defined, user_defined)
 
     # find a way to report this
-    not_allowed_found = set()
+    not_allowed_found: set[str] = set()
 
     for line in lines:
         if line.startswith(line_startswith):
@@ -648,7 +664,7 @@ See Also
 
 
 @_report("Add charges to ions.")
-def add_charges_to_ions(fhandler):
+def add_charges_to_ions(fhandler: Iterable[str]) -> Generator[str, None, None]:
     """
     Add charges to ions according to HADDOCK3 specifications.
 
@@ -725,7 +741,7 @@ def add_charges_to_ions(fhandler):
             yield line  # lines that are not atoms
 
 
-def _process_ion_case_resname(line):
+def _process_ion_case_resname(line: str) -> str:
     """
     Process ion information based on resnames.
 
@@ -750,7 +766,7 @@ def _process_ion_case_resname(line):
     return new_line
 
 
-def _process_ion_case_atom(line):
+def _process_ion_case_atom(line: str) -> str:
     """
     Process ion information based on atom names.
 
@@ -780,7 +796,7 @@ def _process_ion_case_atom(line):
     return new_line
 
 
-def _process_ion_case_element_charge(line):
+def _process_ion_case_element_charge(line: str) -> str:
     """
     Process ion information based on element and charge.
 
@@ -805,7 +821,8 @@ def _process_ion_case_element_charge(line):
 
 
 @_report("Convert record: {!r} to {!r}.")
-def convert_record(fhandler, record, other_record, residues):
+def convert_record(fhandler: Iterable[str], record: str, other_record: str,
+                   residues: Container[str]) -> Generator[str, None, None]:
     """
     Convert on record to another for specified residues.
 
@@ -866,7 +883,7 @@ See Also
 # Functions operating in the whole PDB
 
 @_report("Solving chain/seg ID issues.")
-def solve_no_chainID_no_segID(lines):
+def solve_no_chainID_no_segID(lines: Iterable[str]) -> Iterable[str]:
     """
     Solve inconsistencies with chainID and segID.
 
@@ -915,7 +932,7 @@ def solve_no_chainID_no_segID(lines):
 # maybe not an automatic.. maybe used as a CLI
 # maybe is a place to have a CHECK instead of a autoprocess
 @_report("Homogenizes chains")
-def homogenize_chains(lines):
+def homogenize_chains(lines: list[str]) -> list[str]:
     """
     Homogenize chainIDs within the same PDB.
 
@@ -942,7 +959,7 @@ def homogenize_chains(lines):
 
 # Functions operating in all PDBs at once
 
-def correct_equal_chain_segids(structures):
+def correct_equal_chain_segids(structures: list[list[str]]) -> list[list[str]]:
     """
     Correct for repeated chainID in the input PDB files.
 
@@ -968,10 +985,10 @@ def correct_equal_chain_segids(structures):
     remaining_chars = \
         it.cycle(sorted(set(_ascii_letters).difference(all_chain_ids)))
 
-    chain_ids = []
-    new_structures = []
+    chain_ids: list[Iterable[str]] = []
+    new_structures: list[list[str]] = []
     for lines in structures:
-        new_lines = None
+        new_lines: Optional[list[str]] = None
 
         # read chain IDs from the structure
         chain_id = read_chainids(lines)
@@ -997,7 +1014,7 @@ def correct_equal_chain_segids(structures):
 
 # this id bad
 @_report("Check models are the same")
-def models_should_have_the_same_labels(lines):
+def models_should_have_the_same_labels(lines: Iterable[str]) -> Iterable[str]:
     """
     Confirm models have the same labels.
 
@@ -1031,8 +1048,8 @@ def models_should_have_the_same_labels(lines):
         return lines
 
     # captures all the models
-    models = {}
-    new_model = []
+    models: dict[Optional[int], set[str]] = {}
+    new_model: list[str] = []
     new_model_id = None
     for line in lines:
         if line.startswith("MODEL"):

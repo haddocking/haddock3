@@ -1,4 +1,3 @@
-
 """
 Library of functions to perform sequence and structural alignments.
 
@@ -29,8 +28,9 @@ from Bio.Align import substitution_matrices
 from Bio.Seq import Seq
 
 from haddock import log
+from haddock.core.typing import AtomsDict, FilePath, Literal, NDFloat, Optional
 from haddock.libs.libio import pdb_path_exists
-from haddock.libs.libontology import PDBFile
+from haddock.libs.libontology import PDBFile, PDBPath
 from haddock.libs.libpdb import split_by_chain
 
 
@@ -135,12 +135,12 @@ RNA_FULL_DICT = {
 class ALIGNError(Exception):
     """Raised when something goes wrong with the ALIGNMENT library."""
 
-    def __init__(self, msg=""):
+    def __init__(self, msg: object = "") -> None:
         self.msg = msg
         super().__init__(self.msg)
 
 
-def calc_rmsd(V, W):
+def calc_rmsd(V: NDFloat, W: NDFloat) -> float:
     """
     Calculate the RMSD from two vectors.
 
@@ -159,7 +159,7 @@ def calc_rmsd(V, W):
     return rmsd
 
 
-def kabsch(P, Q):
+def kabsch(P: NDFloat, Q: NDFloat) -> NDFloat:
     """
     Find the rotation matrix using Kabsch algorithm.
 
@@ -187,7 +187,7 @@ def kabsch(P, Q):
     return U
 
 
-def centroid(X):
+def centroid(X: NDFloat) -> NDFloat:
     """
     Get the centroid.
 
@@ -204,7 +204,23 @@ def centroid(X):
     return C
 
 
-def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
+CoordsDict = dict[tuple[str, int, str], NDFloat]
+
+ResDict = dict[str, list[int]]
+
+
+NumberDict = dict[str, dict[int, int]]
+
+
+ChainsRange = dict[str, tuple[int, int]]
+
+
+def load_coords(
+        pdb_f: PDBPath,
+        atoms: AtomsDict,
+        filter_resdic: Optional[ResDict] = None,
+        numbering_dic: Optional[NumberDict] = None
+        ) -> tuple[CoordsDict, ChainsRange]:
     """
     Load coordinates from PDB.
 
@@ -229,8 +245,8 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
     chain_ranges: dict
         dictionary of chain ranges
     """
-    coord_dic = {}
-    chain_dic = {}
+    coord_dic: CoordsDict = {}
+    chain_dic: ResDict = {}
     idx = 0
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
@@ -278,20 +294,20 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
                     coord_dic[identifier] = coords
                     chain_dic[chain].append(idx)
                     idx += 1
-    chain_ranges = {}
-    for chain in chain_dic:
-        if not chain_dic[chain]:
+    chain_ranges: ChainsRange = {}
+    for chain, indice in chain_dic.items():
+        if not indice:
             # this may happen when filter_resdic is defined on a different set
             # of chains
             raise ALIGNError(f"Chain matching error on {pdb_f}, chain {chain}")
         else:
-            min_idx = min(chain_dic[chain])
-            max_idx = max(chain_dic[chain])
+            min_idx = min(indice)
+            max_idx = max(indice)
             chain_ranges[chain] = (min_idx, max_idx)
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb, full=False):
+def get_atoms(pdb: PDBPath, full: bool = False) -> AtomsDict:
     """
     Identify what is the molecule type of each PDB.
 
@@ -305,10 +321,10 @@ def get_atoms(pdb, full=False):
     atom_dic : dict
         dictionary of atoms
     """
-    atom_dic = {}
-    atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
-    atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
-    atom_dic.update(dict((r, RNA_ATOMS) for r in RNA_RES))
+    atom_dic: AtomsDict = {}
+    atom_dic.update((r, PROT_ATOMS) for r in PROT_RES)
+    atom_dic.update((r, DNA_ATOMS) for r in DNA_RES)
+    atom_dic.update((r, RNA_ATOMS) for r in RNA_RES)
     if full:
         atom_dic.update(PROT_SIDE_CHAINS_DICT)
         atom_dic.update(DNA_FULL_DICT)
@@ -316,7 +332,7 @@ def get_atoms(pdb, full=False):
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path
-    
+
     exists, msg = pdb_path_exists(pdb)
     if not exists:
         raise Exception(msg)
@@ -349,7 +365,17 @@ def get_atoms(pdb, full=False):
     return atom_dic
 
 
-def pdb2fastadic(pdb_f):
+ResCode = Literal["C", "D", "S", "Q", "K", "I", "P", "T", "F", "N", "G", "H",
+                  "L", "R", "W", "A", "V", "E", "Y", "M", "A", "G", "C", "T",
+                  "X"]
+"""
+The single letter code of a residue.
+
+Unrecognized residues' code is `X`.
+"""
+
+
+def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, ResCode]]:
     """
     Write the sequence as a fasta.
 
@@ -390,7 +416,8 @@ def pdb2fastadic(pdb_f):
             ("DT", "T"),
             ]
         )
-    seq_dic = {}
+
+    seq_dic: dict[str, dict[int, ResCode]] = {}
 
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
@@ -413,7 +440,8 @@ def pdb2fastadic(pdb_f):
     return seq_dic
 
 
-def get_align(method, lovoalign_exec):
+def get_align(method: str,
+              lovoalign_exec: FilePath) -> partial[dict[str, dict[int, int]]]:
     """
     Get the alignment function.
 
@@ -447,7 +475,12 @@ def get_align(method, lovoalign_exec):
     return align_func
 
 
-def align_strct(reference, model, output_path, lovoalign_exec=None):
+def align_strct(
+        reference: PDBFile,
+        model: PDBFile,
+        output_path: FilePath,
+        lovoalign_exec: Optional[FilePath] = None
+        ) -> dict[str, dict[int, int]]:
     """
     Structuraly align and get numbering relationship.
 
@@ -480,13 +513,13 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
     if not os.access(lovoalign_exec, os.X_OK):
         raise ALIGNError(f"{lovoalign_exec!r} for LovoAlign is not executable")
 
-    numbering_dic = {}
-    protein_a_dic = dict(
-        (str(e.stem).split("_")[-1], e) for e in split_by_chain(reference)
-        )
-    protein_b_dic = dict(
-        (str(e.stem).split("_")[-1], e) for e in split_by_chain(model)
-        )
+    numbering_dic: dict[str, dict[int, int]] = {}
+    protein_a_dic = {
+        e.stem.split("_")[-1]: e for e in split_by_chain(reference.rel_path)
+        }
+    protein_b_dic = {
+        e.stem.split("_")[-1]: e for e in split_by_chain(model.rel_path)
+        }
 
     # check if chain ids match
     if protein_a_dic.keys() != protein_b_dic.keys():
@@ -596,7 +629,8 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
     return numbering_dic
 
 
-def align_seq(reference, model, output_path):
+def align_seq(reference: PDBPath, model: PDBPath,
+              output_path: FilePath) -> dict[str, dict[int, int]]:
     """
     Sequence align and get the numbering relationship.
 
@@ -620,7 +654,7 @@ def align_seq(reference, model, output_path):
         # TODO: Implement chain-matching here
         return False
 
-    align_dic = {}
+    align_dic: dict[str, dict[int, int]] = {}
     for ref_chain, model_chain in zip(seqdic_ref, seqdic_model):
 
         if ref_chain != model_chain:
@@ -663,7 +697,7 @@ def align_seq(reference, model, output_path):
                 # this sequence contains only ligands, do it manually
                 if len(seq_ref) != len(seq_model):
                     # we cannot handle this
-                    raise f"Cannot align chain {model_chain}"
+                    raise AlignError(f"Cannot align chain {model_chain}")
                 for ref_res, model_res in zip(
                         seqdic_ref[ref_chain],
                         seqdic_model[model_chain]):
@@ -704,7 +738,8 @@ def align_seq(reference, model, output_path):
     return align_dic
 
 
-def make_range(chain_range_dic):
+def make_range(
+        chain_range_dic: dict[str, list[int]]) -> dict[str, tuple[int, int]]:
     """
     Expand a chain dictionary into ranges.
 
@@ -718,7 +753,7 @@ def make_range(chain_range_dic):
     chain_ranges : dict
         dictionary of chain ranges (one tuple per chain)
     """
-    chain_ranges = {}
+    chain_ranges: dict[str, tuple[int, int]] = {}
     for chain in chain_range_dic:
         min_idx = min(chain_range_dic[chain])
         max_idx = max(chain_range_dic[chain])
@@ -726,7 +761,8 @@ def make_range(chain_range_dic):
     return chain_ranges
 
 
-def dump_as_izone(fname, numbering_dic):
+def dump_as_izone(fname: FilePath,
+                  numbering_dic: dict[str, dict[int, int]]) -> None:
     """
     Dump the numbering dictionary as .izone.
 
@@ -755,6 +791,6 @@ def dump_as_izone(fname, numbering_dic):
 class AlignError(Exception):
     """Raised when something goes wrong with the Alignment library."""
 
-    def __init__(self, msg=""):
+    def __init__(self, msg: object = "") -> None:
         self.msg = msg
         super().__init__(self.msg)

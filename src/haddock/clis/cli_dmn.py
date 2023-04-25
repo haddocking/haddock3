@@ -22,12 +22,14 @@ import sys
 import time
 from pathlib import Path
 
+from haddock.core.typing import ArgumentParser, Callable, Namespace, Optional
 
-# options for the different job queue systems supported
+
 workload_manager_launch = {
     'slurm': 'sbatch',
     'torque': 'qsub',
     }
+"""options for the different job queue systems supported"""
 
 
 # prepares client arguments
@@ -76,7 +78,7 @@ ap.add_argument(
     )
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
@@ -95,7 +97,7 @@ class Job:
         The command to launch the job. For example `sbatch`.
     """
 
-    def __init__(self, job_f, launch_command):
+    def __init__(self, job_f: Path, launch_command: str) -> None:
         self.job_filename = job_f
 
         self.launch_command = launch_command
@@ -117,7 +119,7 @@ class Job:
             self.check_available
             ]
 
-    def get_status(self):
+    def get_status(self) -> Optional[str]:
         """
         Get job status.
 
@@ -132,16 +134,16 @@ class Job:
                 break
         return self.status
 
-    def submit(self):
+    def submit(self) -> None:
         """
         Submit job.
 
         Run command `$launch_command $job_filename`.
         """
-        subprocess.run([self.launch_command, str(self.job_filename)])
-        print('Job sent: ', [self.launch_command, str(self.job_filename)])
+        subprocess.run(cmds := [self.launch_command, str(self.job_filename)])
+        print('Job sent: ', cmds)
 
-    def restart(self):
+    def restart(self) -> None:
         """
         Restart the status of the job to `AVAILABLE`.
 
@@ -154,7 +156,7 @@ class Job:
         self.check_available.touch(exist_ok=True)
 
 
-def get_current_jobs(grep='BM5'):
+def get_current_jobs(grep: str = 'BM5') -> int:
     """
     Get current number of jobs for which job-name has the `grep` word.
 
@@ -183,7 +185,7 @@ def get_current_jobs(grep='BM5'):
     return njobs
 
 
-def calc_size(job_path):
+def calc_size(job_path: Path) -> int:
     """
     Calculate the size of the job.
 
@@ -199,7 +201,8 @@ def calc_size(job_path):
     return size
 
 
-def filter_by_status(job_list, status='AVAILABLE'):
+def filter_by_status(job_list: list[Job],
+                     status: str = 'AVAILABLE') -> list[Job]:
     """
     Filter jobs by their status.
 
@@ -221,29 +224,29 @@ def filter_by_status(job_list, status='AVAILABLE'):
 
 # command-line client helper functions
 # load_args, cli, maincli
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
 def main(
-        benchmark_path,
-        job_limit=10,
-        manager='slurm',
-        restart=False,
-        sort_first=False,
-        ):
+        benchmark_path: Path,
+        job_limit: int = 10,
+        manager: str = 'slurm',
+        restart: bool = False,
+        sort_first: bool = False,
+        ) -> None:
     """
     Execute the benchmark daemon.
 

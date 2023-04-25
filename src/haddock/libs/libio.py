@@ -12,11 +12,20 @@ from pathlib import Path
 import yaml
 
 from haddock import log
+from haddock.core.typing import (
+    Any,
+    Callable,
+    FilePath,
+    Generator,
+    Iterable,
+    Mapping,
+    Optional,
+    )
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
 
 
-def clean_suffix(ext):
+def clean_suffix(ext: str) -> str:
     """
     Remove the preffix dot of an extension if exists.
 
@@ -36,7 +45,7 @@ def clean_suffix(ext):
     return ext.lstrip(r'.')
 
 
-def dot_suffix(ext):
+def dot_suffix(ext: str) -> str:
     """
     Add the dot preffix to an extension if missing.
 
@@ -56,14 +65,14 @@ def dot_suffix(ext):
     return '.' + clean_suffix(ext)
 
 
-def read_lines(func):
+def read_lines(func: Callable[..., Any]) -> Callable[..., Any]:
     """
     Open the file and read lines for the decorated function.
 
     Send to the decorated function the lines of the file in the form
     of list.
     """
-    def wrapper(fpath, *args, **kwargs):
+    def wrapper(fpath: FilePath, *args: Any, **kwargs: Any) -> Any:
         lines = Path(fpath).read_text().split(os.linesep)
         return func(lines, *args, **kwargs)
     # manual wrapping for displaying documentation properly
@@ -73,7 +82,7 @@ def read_lines(func):
     return wrapper
 
 
-def read_from_yaml(yaml_file):
+def read_from_yaml(yaml_file: FilePath) -> dict[Any, Any]:
     """
     Read a YAML file to a dictionary.
 
@@ -102,7 +111,7 @@ def read_from_yaml(yaml_file):
     return ycfg
 
 
-def open_files_to_lines(*files):
+def open_files_to_lines(*files: FilePath) -> list[list[str]]:
     """
     Open files to lines.
 
@@ -118,7 +127,8 @@ def open_files_to_lines(*files):
     return [f.read_text().split(os.linesep) for f in f_paths]
 
 
-def save_lines_to_files(files, lines):
+def save_lines_to_files(files: Iterable[FilePath],
+                        lines: Iterable[Iterable[str]]) -> None:
     """
     Save a list of list of lines to files.
 
@@ -142,7 +152,8 @@ def save_lines_to_files(files, lines):
     return
 
 
-def add_suffix_to_files(files, suffix):
+def add_suffix_to_files(files: Iterable[FilePath],
+                        suffix: str) -> Generator[Path, None, None]:
     """
     Add a suffix to file paths.
 
@@ -161,11 +172,11 @@ def add_suffix_to_files(files, suffix):
 
 
 def write_dic_to_file(
-        data_dict,
-        output_fname,
-        info_header="",
-        sep="\t",
-        ):
+        data_dict: Mapping[Any, Any],
+        output_fname: FilePath,
+        info_header: str = "",
+        sep: str = "\t",
+        ) -> None:
     """
     Create a table from a dictionary.
 
@@ -185,7 +196,7 @@ def write_dic_to_file(
 
     with open(output_fname, "w") as out_fh:
         out_fh.write(header + os.linesep)
-        row_l = []
+        row_l: list[str] = []
         for element in data_dict:
             value = data_dict[element]
             if isinstance(value, Path):
@@ -203,12 +214,10 @@ def write_dic_to_file(
         out_fh.write(sep.join(row_l) + os.linesep)
 
 
-def write_nested_dic_to_file(
-        data_dict,
-        output_fname,
-        info_header="",
-        sep="\t"
-        ):
+def write_nested_dic_to_file(data_dict: Mapping[Any, Any],
+                             output_fname: FilePath,
+                             info_header: str = "",
+                             sep: str = "\t") -> None:
     """
     Create a table from a nested dictionary.
 
@@ -233,7 +242,7 @@ def write_nested_dic_to_file(
     with open(output_fname, "w") as out_fh:
         out_fh.write(header + os.linesep)
         for row in data_dict:
-            row_l = []
+            row_l: list[str] = []
             for element in data_dict[row]:
                 value = data_dict[row][element]
                 if isinstance(value, Path):
@@ -253,7 +262,7 @@ def write_nested_dic_to_file(
 
 # thanks to @brianjimenez
 @contextlib.contextmanager
-def working_directory(path):
+def working_directory(path: FilePath) -> Generator[None, None, None]:
     """Change working directory and returns to previous on exit."""
     prev_cwd = Path.cwd()
     os.chdir(path)
@@ -263,7 +272,10 @@ def working_directory(path):
         os.chdir(prev_cwd)
 
 
-def compress_files_ext(path, ext, ncores=1, **kwargs):
+def compress_files_ext(path: FilePath,
+                       ext: str,
+                       ncores: int = 1,
+                       **kwargs: Any) -> bool:
     """
     Compress all files with same extension in folder to `.gz`.
 
@@ -300,7 +312,10 @@ def compress_files_ext(path, ext, ncores=1, **kwargs):
     return False
 
 
-def gzip_files(file_, block_size=None, compresslevel=9, remove_original=False):
+def gzip_files(file_: FilePath,
+               block_size: Optional[int] = None,
+               compresslevel: int = 9,
+               remove_original: bool = False) -> None:
     """
     Gzip a file.
 
@@ -333,7 +348,9 @@ def gzip_files(file_, block_size=None, compresslevel=9, remove_original=False):
         Path(file_).unlink()
 
 
-def archive_files_ext(path, ext, compresslevel=9):
+def archive_files_ext(path: FilePath,
+                      ext: str,
+                      compresslevel: int = 9) -> bool:
     """
     Archive all files with same extension in folder.
 
@@ -373,7 +390,7 @@ def archive_files_ext(path, ext, compresslevel=9):
     return False
 
 
-def glob_folder(folder, ext):
+def glob_folder(folder: FilePath, ext: str) -> list[Path]:
     """
     List files with extention `ext` in `folder`.
 
@@ -395,10 +412,10 @@ def glob_folder(folder, ext):
     """
     ext = f'*{dot_suffix(ext)}'
     files = glob.glob(str(Path(folder, ext)))
-    return sort_numbered_paths(*list(map(Path, files)))
+    return sort_numbered_paths(*(Path(file) for file in files))
 
 
-def remove_files_with_ext(folder, ext):
+def remove_files_with_ext(folder: FilePath, ext: str) -> None:
     """
     Remove files with ``ext`` in folder.
 
@@ -419,10 +436,10 @@ def remove_files_with_ext(folder, ext):
 
 
 def folder_exists(
-        path,
-        exception=ValueError,
-        emsg="The folder {!r} does not exist or is not a folder.",
-        ):
+        path: FilePath,
+        exception: type[Exception] = ValueError,
+        emsg: str = "The folder {!r} does not exist or is not a folder.",
+        ) -> Path:
     """
     Assert if a folder exist.
 
@@ -462,10 +479,10 @@ def folder_exists(
 
 
 def file_exists(
-        path,
-        exception=ValueError,
-        emsg="`path` is not a file or does not exist",
-        ):
+        path: FilePath,
+        exception: type[Exception] = ValueError,
+        emsg: str = "`path` is not a file or does not exist",
+        ) -> Path:
     """
     Assert if file exist.
 
@@ -504,7 +521,7 @@ def file_exists(
     raise exception(emsg.format(str(path)))
 
 
-def pdb_path_exists(pdb_path):
+def pdb_path_exists(pdb_path: Path) -> tuple[bool, Optional[str]]:
     """
     Check if a pdb path exists.
     
@@ -534,13 +551,13 @@ def pdb_path_exists(pdb_path):
     return exists, msg
 
 
-def get_perm(fname):
+def get_perm(fname: FilePath) -> int:
     """Get permissions of file."""
     # https://stackoverflow.com/questions/6874970
     return stat.S_IMODE(os.lstat(fname)[stat.ST_MODE])
 
 
-def make_writeable_recursive(path):
+def make_writeable_recursive(path: FilePath) -> None:
     """
     Add writing to a folder, its subfolders and files.
 
@@ -552,8 +569,8 @@ def make_writeable_recursive(path):
     # https://stackoverflow.com/questions/6874970
     for root, dirs, files in os.walk(path, topdown=False):
 
-        for dir_ in [os.path.join(root, d) for d in dirs]:
+        for dir_ in (os.path.join(root, d) for d in dirs):
             os.chmod(dir_, get_perm(dir_) | stat.S_IWUSR)
 
-        for file_ in [os.path.join(root, f) for f in files]:
+        for file_ in (os.path.join(root, f) for f in files):
             os.chmod(file_, get_perm(file_) | stat.S_IWUSR)

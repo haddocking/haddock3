@@ -7,6 +7,7 @@ from time import time
 from haddock import log
 from haddock.clis.cli_analyse import main as cli_analyse
 from haddock.core.exceptions import HaddockError, HaddockTermination, StepError
+from haddock.core.typing import Any, ModuleParams, Optional
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.config import get_module_name
 from haddock.gear.zerofill import zero_fill
@@ -21,7 +22,10 @@ from haddock.modules import (
 class WorkflowManager:
     """Read and execute workflows."""
 
-    def __init__(self, workflow_params, start=0, **other_params):
+    def __init__(self,
+                 workflow_params: ModuleParams,
+                 start: Optional[int] = 0,
+                 **other_params: Any) -> None:
         self.start = 0 if start is None else start
         self.recipe = Workflow(workflow_params, start=0, **other_params)
         # terminate is used to synchronize the `clean` option with the
@@ -29,7 +33,7 @@ class WorkflowManager:
         # you can also remove and clean the `terminate` part here.
         self._terminated = None
 
-    def run(self):
+    def run(self) -> None:
         """High level workflow composer."""
         for i, step in enumerate(
                 self.recipe.steps[self.start:],
@@ -40,7 +44,7 @@ class WorkflowManager:
                 self._terminated = i
                 break
 
-    def clean(self, terminated=None):
+    def clean(self, terminated: Optional[int] = None) -> None:
         """
         Clean steps.
 
@@ -53,10 +57,10 @@ class WorkflowManager:
         terminated = self._terminated if terminated is None else terminated
         for step in self.recipe.steps[:terminated]:
             step.clean()
-    
-    def postprocess(self):
+
+    def postprocess(self) -> None:
         """Postprocess the workflow."""
-        capri_steps = []
+        capri_steps: list[int] = []
         for step in self.recipe.steps:
             if step.module_name == "caprieval":
                 capri_steps.append(step.order)
@@ -67,7 +71,12 @@ class WorkflowManager:
 class Workflow:
     """Represent a set of stages to be executed by HADDOCK."""
 
-    def __init__(self, modules_parameters, start=0, **other_params):
+    def __init__(self,
+                 modules_parameters: ModuleParams,
+                 start: Optional[int] = 0,
+                 **other_params: Any) -> None:
+        if start is None:
+            start = 0
 
         # filter out those parameters not belonging to the modules
         general_modules = {
@@ -77,7 +86,7 @@ class Workflow:
             }
 
         # Create the list of steps contained in this workflow
-        self.steps = []
+        self.steps: list[Step] = []
         _items = enumerate(modules_parameters.items(), start=start)
         for num_stage, (stage_name, params) in _items:
             stage_name = get_module_name(stage_name)
@@ -106,17 +115,17 @@ class Step:
 
     def __init__(
             self,
-            module_name,
-            order=None,
-            **config_params,
-            ):
+            module_name: str,
+            order: Optional[int] = None,
+            **config_params: Any,
+            ) -> None:
         self.config = config_params
         self.module_name = module_name
         self.order = order
         self.working_path = Path(zero_fill.fill(self.module_name, self.order))
         self.module = None
 
-    def execute(self):
+    def execute(self) -> None:
         """Execute simulation step."""
         self.working_path.resolve().mkdir(parents=False, exist_ok=False)
 
@@ -147,7 +156,7 @@ class Step:
         elapsed = convert_seconds_to_min_sec(end - start)
         self.module.log(f"took {elapsed}")
 
-    def clean(self):
+    def clean(self) -> None:
         """Clean step output."""
         if self.module is None and self.config["clean"]:
             with log_time("cleaning output files took"):

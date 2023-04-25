@@ -1,6 +1,7 @@
 """Plotting functionalities."""
 
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import plotly.colors as px_colors
@@ -9,6 +10,14 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from haddock import log
+from haddock.core.typing import (
+    DataFrameGroupBy,
+    Figure,
+    FilePath,
+    ImgFormat,
+    Optional,
+    Union,
+    )
 
 
 SCATTER_PAIRS = [
@@ -63,8 +72,18 @@ AXIS_NAMES = {
     "dockq": "DOCKQ",
     }
 
+ClRank = dict[int, int]
+"""
+A dict representing clusters' rank.
 
-def read_capri_table(capri_filename, comment="#"):
+key  (int): cluster's id
+
+value(int): cluster's rank
+"""
+
+
+def read_capri_table(capri_filename: FilePath,
+                     comment: str = "#") -> pd.DataFrame:
     """
     Read capri table with pandas.
 
@@ -84,7 +103,7 @@ def read_capri_table(capri_filename, comment="#"):
     return capri_df
 
 
-def in_capri(column, df_columns):
+def in_capri(column: str, df_columns: pd.Index) -> bool:
     """
     Check if the selected column is in the set of available columns.
 
@@ -107,7 +126,10 @@ def in_capri(column, df_columns):
     return resp
 
 
-def update_layout_plotly(fig, x_label, y_label, title=None):
+def update_layout_plotly(fig: Figure,
+                         x_label: str,
+                         y_label: str,
+                         title: Optional[str] = None) -> Figure:
     """
     Update layout of plotly plot.
 
@@ -141,7 +163,9 @@ def update_layout_plotly(fig, x_label, y_label, title=None):
     return fig
 
 
-def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
+def box_plot_plotly(gb_full: pd.DataFrame, y_ax: str, cl_rank: dict[int, int],
+                    format: Optional[ImgFormat],
+                    scale: Optional[float]) -> Figure:
     """
     Create a scatter plot in plotly.
 
@@ -164,7 +188,7 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
         a list of figures
     """
     colors = px_colors.qualitative.Alphabet
-    color_map = {}
+    color_map: dict[str, str] = {}
     for cl_id in sorted(cl_rank.keys()):
         color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
         color_map[f"{cl_id}"] = colors[color_idx]
@@ -192,7 +216,7 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
     return fig
 
 
-def box_plot_data(capri_df, cl_rank):
+def box_plot_data(capri_df: pd.DataFrame, cl_rank: ClRank) -> pd.DataFrame:
     """
     Retrieve box plot data.
 
@@ -224,7 +248,9 @@ def box_plot_data(capri_df, cl_rank):
     return gb_full
 
 
-def box_plot_handler(capri_filename, cl_rank, format, scale):
+def box_plot_handler(capri_filename: FilePath, cl_rank: ClRank,
+                     format: Optional[ImgFormat],
+                     scale: Optional[float]) -> list[Figure]:
     """
     Create box plots.
 
@@ -247,7 +273,7 @@ def box_plot_handler(capri_filename, cl_rank, format, scale):
     gb_full = box_plot_data(capri_df, cl_rank)
 
     # iterate over the variables
-    fig_list = []
+    fig_list: list[Figure] = []
     for y_ax in AXIS_NAMES.keys():
         if not in_capri(y_ax, capri_df.columns):
             continue
@@ -256,7 +282,10 @@ def box_plot_handler(capri_filename, cl_rank, format, scale):
     return fig_list
 
 
-def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, format, scale):  # noqa:E501
+def scatter_plot_plotly(gb_cluster: DataFrameGroupBy, gb_other: pd.DataFrame,
+                        cl_rank: ClRank, x_ax: str, y_ax: str,
+                        colors: list[str], format: Optional[ImgFormat],
+                        scale: Optional[float]) -> Figure:
     """
     Create a scatter plot in plotly.
 
@@ -285,7 +314,7 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
         an instance of plotly.graph_objects.Figure
     """
     fig = go.Figure(layout={"width": 1000, "height": 800})
-    traces = []
+    traces: list[go.Scatter] = []
     n_colors = len(colors)
     for cl_id, cl_df in gb_cluster:
         if cl_id in cl_rank.keys():
@@ -389,7 +418,9 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
     return fig
 
 
-def scatter_plot_data(capri_df, cl_rank):
+def scatter_plot_data(
+        capri_df: pd.DataFrame,
+        cl_rank: ClRank) -> tuple[DataFrameGroupBy, pd.DataFrame]:
     """
     Retrieve scatter plot data.
 
@@ -415,7 +446,9 @@ def scatter_plot_data(capri_df, cl_rank):
     return gb_cluster, gb_other
 
 
-def scatter_plot_handler(capri_filename, cl_rank, format, scale):
+def scatter_plot_handler(capri_filename: FilePath, cl_rank: ClRank,
+                         format: Optional[ImgFormat],
+                         scale: Optional[float]) -> list[Figure]:
     """
     Create scatter plots.
 
@@ -444,7 +477,7 @@ def scatter_plot_handler(capri_filename, cl_rank, format, scale):
 
     # defining colors
     colors = px_colors.qualitative.Alphabet
-    fig_list = []
+    fig_list: list[Figure] = []
     for x_ax, y_ax in SCATTER_PAIRS:
         if not in_capri(x_ax, capri_df.columns):
             continue
@@ -462,7 +495,7 @@ def scatter_plot_handler(capri_filename, cl_rank, format, scale):
     return fig_list
 
 
-def _report_grid_size(plot_list):
+def _report_grid_size(plot_list: list[Figure]) -> tuple[int, int, int, int]:
     """
     Calculate the size of the grid in the report.
 
@@ -501,12 +534,10 @@ def _report_grid_size(plot_list):
     return number_of_rows, number_of_cols, width, height
 
 
-def report_plots_handler(
-        plots,
-        plot_title,
-        shared_xaxes=False,
-        shared_yaxes=False
-        ):
+def report_plots_handler(plots: list[Figure],
+                         plot_title: str,
+                         shared_xaxes: Union[bool, str] = False,
+                         shared_yaxes: Union[bool, str] = False) -> Figure:
     """
     Create a figure that holds subplots.
 
@@ -573,7 +604,8 @@ def report_plots_handler(
     return fig
 
 
-def find_best_struct(ss_file, number_of_struct=10):
+def find_best_struct(ss_file: FilePath,
+                     number_of_struct: int = 10) -> pd.DataFrame:
     """
     Find best structures.
 
@@ -616,7 +648,8 @@ def find_best_struct(ss_file, number_of_struct=10):
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
     # zero pad number so after pivot columns are sorted correctly
     col_names = [
-        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)
+        f"Nr {(number + 1):02d} best structure"
+        for number in range(number_of_struct)
         ] * number_of_cluster
 
     # add a new column `Structure` to the dataframe
@@ -635,14 +668,14 @@ def find_best_struct(ss_file, number_of_struct=10):
     return best_struct_df
 
 
-def _add_links(best_struct_df):
-    def format_cell(row):
+def _add_links(best_struct_df: pd.DataFrame) -> pd.DataFrame:
+    def format_cell(row: FilePath) -> str:
         # TODO add Download link
         # TODO add PDB viewer link
         # plotly renders a tag as text not as HTML,
         # need to switch to Dash+markdown or make table html ourselves
         # name = Path(row).name
-        # return f'<a href="../{row}" target="_blank" rel="noreferer">{name}</a>'
+        # return f'<a href="../{row}" target="_blank" rel="noreferer">{name}</a>' # noqa: E501
         return Path(row).name
 
     table_df = best_struct_df.copy()
@@ -651,7 +684,7 @@ def _add_links(best_struct_df):
     return table_df
 
 
-def clean_capri_table(dfcl):
+def clean_capri_table(dfcl: pd.DataFrame) -> pd.DataFrame:
     """
     Craete a tidy capri table for the report.
 
@@ -686,7 +719,7 @@ def clean_capri_table(dfcl):
     return dfcl[table_col]
 
 
-def clt_table_handler(clt_file, ss_file):
+def clt_table_handler(clt_file: FilePath, ss_file: FilePath) -> Figure:
     """
     Create a figure include tables.
 
@@ -734,7 +767,8 @@ def clt_table_handler(clt_file, ss_file):
     return fig
 
 
-def report_generator(boxes, scatters, table, step):
+def report_generator(boxes: list[Figure], scatters: list[Figure],
+                     table: Figure, step: str) -> None:
     """
     Create a figure include plots and tables.
 

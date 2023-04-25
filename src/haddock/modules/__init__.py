@@ -9,6 +9,17 @@ from pathlib import Path
 from haddock import EmptyPath, log, modules_defaults_path
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
+from haddock.core.typing import (
+    Any,
+    Container,
+    FilePath,
+    Generator,
+    Literal,
+    Optional,
+    ParamDict,
+    ParamMap,
+    Union,
+    )
 from haddock.gear import config
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -16,7 +27,7 @@ from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libhpc import HPCScheduler
 from haddock.libs.libio import folder_exists, working_directory
 from haddock.libs.libmpi import MPIScheduler
-from haddock.libs.libontology import ModuleIO
+from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libtimer import log_time
 from haddock.libs.libutil import recursive_dict_update
@@ -58,10 +69,8 @@ config_readers = {
     ".cfg": config.load,
     }
 
-_step_folder_regex = tuple(
-    r"[0-9]+_" + mod_name
-    for mod_name in modules_category.keys()
-    )
+_step_folder_regex = tuple(r"[0-9]+_" + mod_name
+                           for mod_name in modules_category.keys())
 step_folder_regex = "(" + "|".join(_step_folder_regex) + ")"
 """
 String for regular expression to match module folders in a run directory.
@@ -84,21 +93,21 @@ Example: https://regex101.com/r/roHls9/1
 
 
 @contextmanager
-def _not_valid_config():
+def _not_valid_config() -> Generator[None, None, None]:
     try:
         yield
     except KeyError as err:
-        emsg = (
-            "The configuration file extension is not supported. "
-            f"Supported types are {', '.join(config_readers.keys())}."
-            )
+        emsg = ("The configuration file extension is not supported. "
+                f"Supported types are {', '.join(config_readers.keys())}.")
         raise ConfigurationError(emsg) from err
 
 
 class BaseHaddockModule(ABC):
     """HADDOCK3 module's base class."""
 
-    def __init__(self, order, path, params_fname):
+    name: str
+
+    def __init__(self, order: int, path: Path, params_fname: FilePath) -> None:
         """
         HADDOCK3 modules base class.
 
@@ -119,20 +128,22 @@ class BaseHaddockModule(ABC):
             extension = Path(params_fname).suffix
             self._original_params = config_readers[extension](params_fname)
 
-        self._params = {}
+        self._params: ParamDict = {}
         self.update_params(update_from_cfg_file=params_fname)
 
     @property
-    def params(self):
+    def params(self) -> ParamDict:
         """Configuration parameters."""  # noqa: D401
         return self._params
 
-    def reset_params(self):
+    def reset_params(self) -> None:
         """Reset parameters to the ones used to instantiate the class."""
         self._params.clear()
         self.update_params(**self._original_params)
 
-    def update_params(self, update_from_cfg_file=None, **params):
+    def update_params(self,
+                      update_from_cfg_file: Optional[FilePath] = None,
+                      **params: Any) -> None:
         """
         Update the modules parameters.
 
@@ -164,10 +175,8 @@ class BaseHaddockModule(ABC):
         >>> m.update_params(...)
         """
         if update_from_cfg_file and params:
-            _msg = (
-                "You can not provide both `update_from_cfg_file` "
-                "and key arguments."
-                )
+            _msg = ("You can not provide both `update_from_cfg_file` "
+                    "and key arguments.")
             raise TypeError(_msg)
 
         if update_from_cfg_file:
@@ -176,21 +185,21 @@ class BaseHaddockModule(ABC):
                 params = config_readers[extension](update_from_cfg_file)
 
         # the updating order is relevant
-        _n = recursive_dict_update(
-            non_mandatory_general_parameters_defaults,
-            self._params)
+        _n = recursive_dict_update(non_mandatory_general_parameters_defaults,
+                                   self._params)
         self._params = recursive_dict_update(_n, params)
         self._fill_emptypaths()
         self._confirm_fnames_exist()
 
-    def save_config(self, path):
+    def save_config(self, path: FilePath) -> None:
         """Save current parameters to a HADDOCK3 config file."""
         # creates this dictionary for the config to have the module name
         # key in brackets, for example:
         #
         # [topoaa]
         # ...
-        ignore = config_mandatory_general_parameters.union(non_mandatory_general_parameters_defaults)  # noqa: 501
+        ignore = config_mandatory_general_parameters.union(
+            non_mandatory_general_parameters_defaults)  # noqa: 501
         params = deepcopy(self.params)
 
         with suppress(KeyError):
@@ -199,7 +208,7 @@ class BaseHaddockModule(ABC):
 
         config.save({self.name: params}, path)
 
-    def add_parent_to_paths(self):
+    def add_parent_to_paths(self) -> None:
         """Add parent path to paths."""
         # convert paths to relative by appending parent
         for key, value in self.params.items():
@@ -208,7 +217,11 @@ class BaseHaddockModule(ABC):
                     self.params[key] = Path('..', value)
         return
 
-    def run(self, **params):
+    @abstractmethod
+    def _run(self) -> None:
+        ...
+
+    def run(self, **params: Any) -> None:
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
@@ -220,7 +233,7 @@ class BaseHaddockModule(ABC):
 
         log.info(f'Module [{self.name}] finished.')
 
-    def clean_output(self):
+    def clean_output(self) -> None:
         """
         Clean module output folder.
 
@@ -233,7 +246,7 @@ class BaseHaddockModule(ABC):
 
     @classmethod
     @abstractmethod
-    def confirm_installation(self):
+    def confirm_installation(cls) -> None:
         """
         Confirm the third-party software needed for the module is installed.
 
@@ -241,7 +254,7 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def export_output_models(self, faulty_tolerance=0):
+    def export_output_models(self, faulty_tolerance: int = 0) -> None:
         """
         Export output to the ModuleIO interface.
 
@@ -258,6 +271,7 @@ class BaseHaddockModule(ABC):
             raises an error if 20% of the expected output is missing (not
             saved to disk).
         """
+        self.output_models: Union[list[PDBFile], dict[int, PDBFile]]
         assert self.output_models, "`self.output_models` cannot be empty."
         io = ModuleIO()
         io.add(self.output_models, "o")
@@ -269,7 +283,7 @@ class BaseHaddockModule(ABC):
             self.finish_with_error(_msg)
         io.save()
 
-    def finish_with_error(self, reason="Module has failed."):
+    def finish_with_error(self, reason: object = "Module has failed.") -> None:
         """Finish with error message."""
         if isinstance(reason, Exception):
             raise RuntimeError("Module has failed.") from reason
@@ -277,7 +291,8 @@ class BaseHaddockModule(ABC):
         else:
             raise RuntimeError(reason)
 
-    def _load_previous_io(self, filename=MODULE_IO_FILE):
+    def _load_previous_io(self,
+                          filename: FilePath = MODULE_IO_FILE) -> ModuleIO:
         if self.order == 0:
             self._num_of_input_molecules = 0
             return ModuleIO()
@@ -292,7 +307,7 @@ class BaseHaddockModule(ABC):
 
         return io
 
-    def previous_path(self):
+    def previous_path(self) -> Path:
         """Give the path from the previous calculation."""
         previous = get_module_steps_folders(self.path.resolve().parent)
 
@@ -301,7 +316,7 @@ class BaseHaddockModule(ABC):
         except IndexError:
             return self.path
 
-    def log(self, msg, level='info'):
+    def log(self, msg: str, level: str = 'info') -> None:
         """
         Log a message with a common header.
 
@@ -318,20 +333,25 @@ class BaseHaddockModule(ABC):
         """
         getattr(log, level)(f'[{self.name}] {msg}')
 
-    def _confirm_fnames_exist(self):
+    def _confirm_fnames_exist(self) -> None:
         for param, value in self._params.items():
             if param.endswith('_fname') and value:
                 if not Path(value).exists():
                     raise FileNotFoundError(f'File not found: {str(value)!r}')
 
-    def _fill_emptypaths(self):
+    def _fill_emptypaths(self) -> None:
         """Fill empty paths."""
         for param, value in list(self._params.items()):
             if param.endswith('_fname') and not value:
                 self._params[param] = EmptyPath()
 
 
-def get_engine(mode, params):
+EngineMode = Literal["hpc", "local", "mpi"]
+
+
+def get_engine(
+        mode: EngineMode, params: ParamMap
+        ) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
     """
     Create an engine to run the jobs.
 
@@ -368,11 +388,12 @@ def get_engine(mode, params):
         available_engines = ("hpc", "local", "mpi")
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
-            f"Available options are {', '.join(available_engines)}"
-            )
+            f"Available options are {', '.join(available_engines)}")
 
 
-def get_module_steps_folders(folder, modules=None):
+def get_module_steps_folders(
+        folder: FilePath,
+        modules: Optional[Container[int]] = None) -> list[str]:
     """
     Return a sorted list of the step folders in a running directory.
 
@@ -407,12 +428,14 @@ def get_module_steps_folders(folder, modules=None):
         key=lambda x: int(x.split("_")[0]),
         )
     if modules:
-        steps = [st for st in steps if int(st.split("_")[0]) in modules
-                 and st.split("_")[1] in modules_names]
+        steps = [
+            st for st in steps if int(st.split("_")[0]) in modules
+            and st.split("_")[1] in modules_names
+            ]
     return steps
 
 
-def is_step_folder(path):
+def is_step_folder(path: FilePath) -> bool:
     """
     Assess whether a folder is a possible step folder.
 

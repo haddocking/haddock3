@@ -1,9 +1,10 @@
 """Module to define specific validations in Haddock3."""
 from haddock.core.defaults import RUNDIR, valid_run_dir_chars
 from haddock.core.exceptions import ConfigurationError
+from haddock.core.typing import FilePath
 
 
-def v_rundir(rundir):
+def v_rundir(rundir: FilePath) -> None:
     """Validate string defining the run directory."""
     if set(str(rundir)) - set(valid_run_dir_chars):
         emsg = (

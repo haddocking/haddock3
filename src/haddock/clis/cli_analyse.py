@@ -27,15 +27,27 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import (
+    Any,
+    ArgumentParser,
+    Callable,
+    FilePath,
+    ImgFormat,
+    Namespace,
+    Optional,
+    ParamDict,
+    ParamMap,
+    )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libcli import _ParamsToDict
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import (
+    ClRank,
     box_plot_handler,
-    read_capri_table,
-    scatter_plot_handler,
     clt_table_handler,
+    read_capri_table,
     report_generator,
+    scatter_plot_handler,
     )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \
@@ -46,7 +58,8 @@ from haddock.modules.analysis.caprieval import HaddockModule
 ANA_FOLDER = "analysis"  # name of the analysis folder
 
 
-def get_cluster_ranking(capri_clt_filename, top_cluster):
+def get_cluster_ranking(capri_clt_filename: FilePath,
+                        top_cluster: int) -> ClRank:
     """
     Get capri cluster ranking.
 
@@ -62,14 +75,16 @@ def get_cluster_ranking(capri_clt_filename, top_cluster):
     cl_ranking : dict
         {cluster_id : cluster_rank} dictionary
     """
-    cl_ranking = {}
+    cl_ranking: ClRank = {}
     dfcl = read_capri_table(capri_clt_filename)
     for n in range(min(top_cluster, dfcl.shape[0])):
         cl_ranking[dfcl["cluster_id"].iloc[n]] = dfcl["caprieval_rank"].iloc[n]
     return cl_ranking
 
 
-def update_paths(capri_ss_filename, toch="../", toadd="../../"):
+def update_paths(capri_ss_filename: FilePath,
+                 toch: str = "../",
+                 toadd: str = "../../") -> None:
     """
     Update paths in capri_ss_filename.
 
@@ -82,7 +97,7 @@ def update_paths(capri_ss_filename, toch="../", toadd="../../"):
     toadd : str
         string to be added
     """
-    new_lines = []
+    new_lines: list[str] = []
     with open(capri_ss_filename, "r") as rfile:
         for ln in rfile:
             new_ln = ln.replace(toch, toadd)
@@ -158,28 +173,29 @@ ap.add_argument(
     )
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = vars(load_args(ap))
     kwargs = cmd.pop("other_params")
     main(**cmd, **kwargs)
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def run_capri_analysis(step, run_dir, capri_dict):
+def run_capri_analysis(step: str, run_dir: FilePath,
+                       capri_dict: ParamMap) -> None:
     """
     Run the caprieval analysis.
 
@@ -209,7 +225,7 @@ def run_capri_analysis(step, run_dir, capri_dict):
     caprieval_module._run()
 
 
-def update_capri_dict(default_capri, kwargs):
+def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
     """
     Update capri dictionary.
 
@@ -240,7 +256,8 @@ def update_capri_dict(default_capri, kwargs):
     return capri_dict
 
 
-def update_paths_in_capri_dict(capri_dict, target_path):
+def update_paths_in_capri_dict(capri_dict: ParamDict,
+                               target_path: FilePath) -> ParamDict:
     """
     Make capri_dict specific to target_path.
 
@@ -268,7 +285,9 @@ def update_paths_in_capri_dict(capri_dict, target_path):
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, scale):  # noqa:E501
+def analyse_step(step: str, run_dir: FilePath, capri_dict: ParamDict,
+                 target_path: Path, top_cluster: int,
+                 format: Optional[ImgFormat], scale: Optional[float]) -> None:
     """
     Analyse a step.
 
@@ -326,7 +345,9 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
         report_generator(boxes, scatters, table, step)
 
 
-def main(run_dir, modules, top_cluster, format, scale, **kwargs):
+def main(run_dir: FilePath, modules: list[int], top_cluster: int,
+         format: Optional[ImgFormat], scale: Optional[float],
+         **kwargs: Any) -> None:
     """
     Analyse CLI.
 
@@ -354,7 +375,7 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
     capri_dict = update_capri_dict(default_capri, kwargs)
-    
+
     os.chdir(run_dir)
     # Create analysis folder
     rundir_cwd = os.getcwd()
@@ -372,7 +393,8 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
     log.info(f"selected steps: {', '.join(selected_steps)}")
 
     # analysis
-    good_folder_paths, bad_folder_paths = [], []
+    good_folder_paths: list[Path] = []
+    bad_folder_paths: list[Path] = []
     for step in selected_steps:
         subfolder_name = f"{step}_analysis"
         target_path = Path(Path("./"), subfolder_name)

@@ -1,5 +1,5 @@
 """Add functionalities for CLIs."""
-from argparse import Action, ArgumentTypeError
+from argparse import Action, ArgumentParser, ArgumentTypeError
 from functools import partial
 from pathlib import Path
 
@@ -20,7 +20,7 @@ arg_folder_exist = partial(
     )
 
 
-def add_version_arg(ap):
+def add_version_arg(ap: ArgumentParser) -> None:
     """Add version `-v` argument to client."""
     ap.add_argument(
         "-v",
@@ -31,7 +31,7 @@ def add_version_arg(ap):
         )
 
 
-def add_rundir_arg(ap):
+def add_rundir_arg(ap: ArgumentParser) -> None:
     """Add run directory option."""
     ap.add_argument(
         "run_dir",
@@ -40,7 +40,7 @@ def add_rundir_arg(ap):
         )
 
 
-def add_ncores_arg(ap):
+def add_ncores_arg(ap: ArgumentParser) -> None:
     """Add number of cores option."""
     ap.add_argument(
         "-n",
@@ -58,7 +58,7 @@ def add_ncores_arg(ap):
         )
 
 
-def add_output_dir_arg(ap):
+def add_output_dir_arg(ap: ArgumentParser) -> None:
     """Add output dir argument."""
     ap.add_argument(
         "-odir",
@@ -85,7 +85,7 @@ class _ParamsToDict(Action):
 
     """
 
-    def __call__(self, parser, namespace, ivalues, option_string=None):
+    def __call__(self, parser, namespace, ivalues, option_string=None) -> None:
         """Execute."""
         params = ivalues[::2]
         values = ivalues[1::2]

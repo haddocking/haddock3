@@ -6,7 +6,7 @@ from os.path import dirname, join
 from setuptools import find_packages, setup
 
 
-def read(*names, **kwargs):
+def read(*names, **kwargs) -> str:
     """Read description files."""
     path = join(dirname(__file__), *names)
     with open(path, encoding=kwargs.get('encoding', 'utf8')) as fh:

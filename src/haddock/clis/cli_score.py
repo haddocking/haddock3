@@ -19,6 +19,13 @@ Usage::
 import argparse
 import sys
 
+from haddock.core.typing import (
+    Any,
+    ArgumentParser,
+    Callable,
+    FilePath,
+    Namespace,
+    )
 from haddock.libs.libcli import _ParamsToDict
 
 
@@ -70,35 +77,35 @@ ap.add_argument(
     )
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = vars(load_args(ap))
     kwargs = cmd.pop("other_params")
     main(**cmd, **kwargs)
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
 def main(
-        pdb_file,
-        full=False,
-        outputpdb=False,
-        outputpsf=False,
-        keep_all=False,
-        **kwargs,
-        ):
+        pdb_file: FilePath,
+        full: bool = False,
+        outputpdb: bool = False,
+        outputpsf: bool = False,
+        keep_all: bool = False,
+        **kwargs: Any,
+        ) -> None:
     """
     Calculate the score of a complex using the ``emscoring`` module.
 
@@ -150,17 +157,17 @@ def main(
     default_emscoring = read_from_yaml_config(DEFAULT_CONFIG)
     ems_dict = default_emscoring.copy()
     n_warnings = 0
-    for param in kwargs:
+    for param, value in kwargs.items():
         if param not in default_emscoring:
             sys.exit(f'* ERROR * Parameter {param!r} is not a valid `emscoring` parameter')  # noqa:E501
-        if kwargs[param] != default_emscoring[param]:
-            print(f"* ATTENTION * Value ({kwargs[param]}) of parameter {param} different from default ({default_emscoring[param]})")  # noqa:E501
-            ems_dict[param] = kwargs[param]
+        if value != default_emscoring[param]:
+            print(f"* ATTENTION * Value ({value}) of parameter {param} different from default ({default_emscoring[param]})")  # noqa:E501
+            ems_dict[param] = value
             n_warnings += 1
-    
+
     if n_warnings != 0:
         print("* ATTENTION * Non-default parameter values were used. They should be properly reported if the output data are used for publication.")  # noqa:E501
-    
+
     params = {
         "topoaa": {"molecules": [input_pdb]},
         "emscoring": ems_dict,

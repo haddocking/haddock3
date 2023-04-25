@@ -53,12 +53,14 @@ from copy import copy
 from pathlib import Path
 
 from haddock import toppar_path
+from haddock.core.typing import FilePath, Iterable
 
 
 class CNSTopologyResidue:
     """CNS topology residue."""
 
-    def __init__(self, resname, charge, atoms):
+    def __init__(self, resname: str, charge: float,
+                 atoms: Iterable[str]) -> None:
         """
         CNS topology residue.
 
@@ -86,32 +88,32 @@ class CNSTopologyResidue:
         self._atoms = tuple(atoms)
         return
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"{self.__class__.__name__}({self.resname!r}, "
             f"{self.charge!r}, {self.atoms!r})"
             )
 
     @property
-    def resname(self):
+    def resname(self) -> str:
         """Residue name."""
         return self._resname
 
     @property
-    def charge(self):
+    def charge(self) -> float:
         """Residue total charge."""
         return self._charge
 
     @property
-    def atoms(self):
-        """List of residue atoms."""
+    def atoms(self) -> tuple[str, ...]:
+        """Tuple of residue atoms."""
         return self._atoms
 
     @property
-    def elements(self):
+    def elements(self) -> tuple[str, ...]:
         """
         List of elements for all atoms composing the molecule.
 
@@ -130,11 +132,11 @@ class CNSTopologyResidue:
             raise AttributeError(emsg) from err
 
     @elements.setter
-    def elements(self, elements):
+    def elements(self, elements: tuple[str, ...]) -> None:
         self._elements = elements
 
 
-def get_ion_element_from_atoms(atoms):
+def get_ion_element_from_atoms(atoms: Iterable[str]) -> tuple[str, ...]:
     """
     Generate the element name from the atom name for single atom ions.
 
@@ -152,7 +154,7 @@ def get_ion_element_from_atoms(atoms):
     return tuple(ele)
 
 
-def read_residues_from_top_file(topfile):
+def read_residues_from_top_file(topfile: FilePath) -> list[CNSTopologyResidue]:
     """
     Read the residues defined in CNS topology file.
 
@@ -185,7 +187,8 @@ def read_residues_from_top_file(topfile):
     return _read_residues_from_top_file(lines)
 
 
-def _read_residues_from_top_file(lines):
+def _read_residues_from_top_file(
+        lines: Iterable[str]) -> list[CNSTopologyResidue]:
     # regular expression to parse information from atom lines
     atom_regex = (
         r"^ATOM +([A-Z0-9\'\+\-]{1,4}) +.* +(?:charge|CHARGE|CHARge) *= *"
@@ -193,7 +196,9 @@ def _read_residues_from_top_file(lines):
         )
 
     # helper variables for the for-loop
-    atoms, charges, residues = [], [], []
+    atoms: list[str] = []
+    charges: list[str] = []
+    residues: list[CNSTopologyResidue] = []
     in_residue = False
 
     # all lines are striped before looping
@@ -238,7 +243,8 @@ def _read_residues_from_top_file(lines):
 # what we will need to inspect if the residues are allowed or not are
 # the residue names. So it is nice to have a function that retrieve them
 # from the respective named tuples.
-def get_resnames(group):
+def get_resnames(
+        group: Iterable[CNSTopologyResidue]) -> dict[str, CNSTopologyResidue]:
     """
     Make a set of residue names.
 
@@ -250,8 +256,8 @@ def get_resnames(group):
 
     Returns
     -------
-    set
-        Set of residue names.
+    dict
+        Dict of residue name and residue pairs.
     """
     return {i.resname: i for i in group}
 
@@ -259,7 +265,8 @@ def get_resnames(group):
 # this function is necessary because of the `self_contained` option
 # where the topology files are not defined in the haddock3 code but in
 # the run folder
-def read_supported_residues(source_path):
+def read_supported_residues(
+        source_path: FilePath) -> tuple[dict[str, CNSTopologyResidue], ...]:
     """
     Read supported residues from a folder containing ``.top`` files.
 

@@ -10,6 +10,16 @@ from pdbtools import pdb_segxchain
 from scipy.spatial.distance import cdist
 
 from haddock import log
+from haddock.core.typing import (
+    AtomsDict,
+    FilePath,
+    Iterable,
+    NDFloat,
+    Optional,
+    ParamDict,
+    ParamMap,
+    Union,
+    )
 from haddock.libs.libalign import (
     AlignError,
     calc_rmsd,
@@ -21,10 +31,20 @@ from haddock.libs.libalign import (
     make_range,
     )
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
-from haddock.libs.libontology import PDBFile
+from haddock.libs.libontology import PDBFile, PDBPath
 
 
-def load_contacts(pdb_f, cutoff=5.0):
+Contact = tuple[str, int, str, int]
+"""
+A residue-based contact.It's a tuple consist of
+
+(chain name A,residue number of chain A,
+
+chain name B, residue number of chain B)
+"""
+
+
+def load_contacts(pdb_f: PDBPath, cutoff: float = 5.0) -> set[Contact]:
     """
     Load residue-based contacts.
 
@@ -40,14 +60,15 @@ def load_contacts(pdb_f, cutoff=5.0):
     set(con_list) : set
         set of unique contacts
     """
-    con_list = []
+    con_list: list[Contact] = []
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
     atoms = get_atoms(pdb_f, full=True)
     ref_coord_dic, _ = load_coords(pdb_f, atoms)
     # create coordinate arrays
-    coord_arrays, coord_ids = {}, {}
+    coord_arrays: dict[str, NDFloat] = {}
+    coord_ids: dict[str, list[int]] = {}
     for atom in ref_coord_dic.keys():
         chain = atom[0]
         if chain not in coord_arrays.keys():  # initialize lists
@@ -70,7 +91,8 @@ def load_contacts(pdb_f, cutoff=5.0):
             npw = np.where(dist < cutoff)
             del dist
             for k in range(npw[0].shape[0]):
-                con = (pair[0], s_cid, pair[1], coord_ids[pair[1]][npw[1][k]])
+                con: Contact = (pair[0], s_cid, pair[1],
+                                coord_ids[pair[1]][npw[1][k]])
                 con_list.append(con)
     return set(con_list)
 
@@ -80,12 +102,12 @@ class CAPRI:
 
     def __init__(
             self,
-            identificator,
-            model,
-            path,
-            reference,
-            params,
-            ):
+            identificator: str,
+            model: PDBPath,
+            path: Path,
+            reference: PDBPath,
+            params: ParamMap,
+            ) -> None:
         """
         Initialize the class.
 
@@ -103,7 +125,10 @@ class CAPRI:
             The parameters for the CAPRI evaluation.
         """
         self.reference = reference
-        self.model = model
+        if not isinstance(model, PDBFile):
+            self.model = PDBFile(model)
+        else:
+            self.model = model
         self.path = path
         self.params = params
         self.irmsd = float('nan')
@@ -112,8 +137,8 @@ class CAPRI:
         self.fnat = float('nan')
         self.dockq = float('nan')
         self.atoms = self._load_atoms(model, reference)
-        self.r_chain = params["receptor_chain"]
-        self.l_chain = params["ligand_chain"]
+        self.r_chain: str = params["receptor_chain"]
+        self.l_chain: str = params["ligand_chain"]
         self.model2ref_numbering = None
         self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
         self.output_clt_fname = Path(f"capri_clt_{identificator}.tsv")
@@ -122,7 +147,7 @@ class CAPRI:
         self.identificator = identificator
         self.core_model_idx = identificator
 
-    def calc_irmsd(self, cutoff=5.0):
+    def calc_irmsd(self, cutoff: float = 5.0) -> None:
         """Calculate the I-RMSD.
 
         Parameters
@@ -153,7 +178,7 @@ class CAPRI:
             #  we will use atoms that are present in both
             P = []
             Q = []
-            
+
             for k in ref_coord_dic.keys() & mod_coord_dic.keys():
                 ref_xyz = ref_coord_dic[k]
                 mod_xyz = mod_coord_dic[k]
@@ -175,7 +200,7 @@ class CAPRI:
             # write_coords("model_aln.pdb", P)
             # write_coords("ref_aln.pdb", Q)
 
-    def calc_lrmsd(self):
+    def calc_lrmsd(self) -> None:
         """Calculate the L-RMSD."""
         ref_coord_dic, _ = load_coords(self.reference, self.atoms)
 
@@ -197,7 +222,7 @@ class CAPRI:
             if chain not in chain_ranges:
                 chain_ranges[chain] = []
             chain_ranges[chain].append(i)
-        
+
         chain_ranges = make_range(chain_ranges)
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
@@ -231,7 +256,7 @@ class CAPRI:
             # write_coords("model_l_first.pdb", P_l_first)
 
             # move to the origin of the receptor
-            
+
             Q = Q - centroid(Q_r_first)
             P = P - centroid(P_r_first)
 
@@ -263,7 +288,7 @@ class CAPRI:
             # Calculate the RMSD of the ligands
             self.lrmsd = calc_rmsd(P_l, Q_l)
 
-    def calc_ilrmsd(self, cutoff=10.0):
+    def calc_ilrmsd(self, cutoff: float = 10.0) -> None:
         """
         Calculate the Interface Ligand RMSD.
 
@@ -306,7 +331,7 @@ class CAPRI:
 
         # write_coords("ref.pdb", Q_int)
         # write_coords("model.pdb", P_int)
-        
+
         chain_ranges = {}
         for i, segment in enumerate(sorted(common_keys)):
             chain, _, _ = segment
@@ -338,7 +363,7 @@ class CAPRI:
             # find the rotation that minimizes the receptor interface rmsd
             Q_r_int = Q_int[r_start: r_end + 1]
             P_r_int = P_int[r_start: r_end + 1]
-            
+
             U_int = kabsch(P_r_int, Q_r_int)
             P_int = np.dot(P_int, U_int)
             # just for checks.
@@ -355,8 +380,8 @@ class CAPRI:
 
             # # this will be the interface-ligand-rmsd
             self.ilrmsd = calc_rmsd(P_l_int, Q_l_int)
-            
-    def calc_fnat(self, cutoff=5.0):
+
+    def calc_fnat(self, cutoff: float = 5.0) -> None:
         """
         Calculate the frequency of native contacts.
 
@@ -373,7 +398,7 @@ class CAPRI:
         else:
             log.warning("No reference contacts found")
 
-    def calc_dockq(self):
+    def calc_dockq(self) -> None:
         """Calculate the DockQ metric."""
         self.dockq = 0.0
         if self.fnat:
@@ -384,8 +409,8 @@ class CAPRI:
         if self.lrmsd:
             lrmsd_denom = 1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5)
             self.dockq += (1 / lrmsd_denom) / 3
-        
-    def has_cluster_info(self):
+
+    def has_cluster_info(self) -> bool:
         """
         Check wether this object contains cluster information.
 
@@ -399,7 +424,7 @@ class CAPRI:
             has_cluster_info = True
         return has_cluster_info
 
-    def make_output(self):
+    def make_output(self) -> None:
         """Output the CAPRI results to a .tsv file."""
         data = {}
         # keep always "model" the first key
@@ -423,7 +448,7 @@ class CAPRI:
             data["cluster-id"] = None
             data["cluster-ranking"] = None
             data["model-cluster-ranking"] = None
-        
+
         # energies
         if self.model.unw_energies:
             for key in self.model.unw_energies:
@@ -433,7 +458,7 @@ class CAPRI:
 
         write_dic_to_file(data, output_fname)
 
-    def run(self):
+    def run(self) -> None:
         """Get the CAPRI metrics."""
         try:
             align_func = get_align(
@@ -480,7 +505,7 @@ class CAPRI:
 
         self.make_output()
 
-    def check_chains(self, obs_chains):
+    def check_chains(self, obs_chains: list[str]) -> tuple[str, str]:
         """Check observed chains against the expected ones."""
         r_found, l_found = False, False
         obs_chains_cp = obs_chains.copy()
@@ -506,7 +531,7 @@ class CAPRI:
         return r_chain, l_chain
 
     @staticmethod
-    def _load_atoms(model, reference):
+    def _load_atoms(model: PDBPath, reference: PDBPath) -> AtomsDict:
         """
         Load atoms from a model and reference.
 
@@ -524,13 +549,14 @@ class CAPRI:
         """
         model_atoms = get_atoms(model)
         reference_atoms = get_atoms(reference)
-        atoms_dict = {}
+        atoms_dict: AtomsDict = {}
         atoms_dict.update(model_atoms)
         atoms_dict.update(reference_atoms)
         return atoms_dict
 
     @staticmethod
-    def identify_interface(pdb_f, cutoff=5.0):
+    def identify_interface(pdb_f: PDBPath,
+                           cutoff: float = 5.0) -> dict[str, list[int]]:
         """Identify the interface.
 
         Parameters
@@ -543,13 +569,12 @@ class CAPRI:
         if isinstance(pdb_f, PDBFile):
             pdb_f = pdb_f.rel_path
 
-        interface_resdic = {}
+        interface_resdic: dict[str, list[int]] = {}
         contacts = load_contacts(pdb_f, cutoff)
 
         for contact in contacts:
-            
-            first_chain, first_resid = contact[0], contact[1]
-            sec_chain, sec_resid = contact[2], contact[3]
+
+            first_chain, first_resid, sec_chain, sec_resid = contact
 
             if first_chain not in interface_resdic:
                 interface_resdic[first_chain] = []
@@ -564,7 +589,7 @@ class CAPRI:
         return interface_resdic
 
     @staticmethod
-    def add_chain_from_segid(pdb_path):
+    def add_chain_from_segid(pdb_path: PDBPath) -> Path:
         """
         Replace the chainID with the segID.
 
@@ -573,6 +598,8 @@ class CAPRI:
         pdb_path : PosixPath or :py:class:`haddock.libs.libontology.PDBFile`
             PDB file to be replaced
         """
+        if isinstance(pdb_path, PDBFile):
+            pdb_path = pdb_path.rel_path
         temp_f = tempfile.NamedTemporaryFile(delete=False, mode="w+t")
         with open(pdb_path) as fh:
             for line in list(pdb_segxchain.run(fh)):
@@ -583,9 +610,9 @@ class CAPRI:
         return new_pdb_path
 
 
-def merge_data(capri_jobs):
+def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
     """Merge CAPRI data."""
-    capri_dic = {}
+    capri_dic: dict[str, dict[str, float]] = {}
     for ident in range(1, len(capri_jobs) + 1):
         out_file = Path(f"capri_ss_{ident}.tsv")
         if not out_file.exists():
@@ -604,7 +631,9 @@ def merge_data(capri_jobs):
 
     for j in capri_jobs:
         for m in capri_dic:
-            if m == j.model.file_name:
+            jm = j.model
+            file_name = jm.name if isinstance(jm, Path) else jm.file_name
+            if m == file_name:
                 # add the data
                 j.irmsd = capri_dic[m]['irmsd']
                 j.fnat = capri_dic[m]['fnat']
@@ -616,12 +645,12 @@ def merge_data(capri_jobs):
 
 
 def rearrange_ss_capri_output(
-        output_name,
-        output_count,
-        sort_key,
-        sort_ascending,
-        path
-        ):
+        output_name: str,
+        output_count: int,
+        sort_key: str,
+        sort_ascending: bool,
+        path: FilePath
+        ) -> None:
     """
     Combine different capri outputs in a single file.
 
@@ -648,10 +677,10 @@ def rearrange_ss_capri_output(
         raise Exception(f'Keyword {keyword} does not exist.')
 
     # Load the information of each intermediate file
-    data = {}
+    data: dict[int, ParamDict] = {}
     for ident in range(1, output_count + 1):
         out_file = Path(path, f"{keyword}_{ident}.tsv")
-        
+
         # raise a warning if file does not exist.
         if not out_file.exists():
             log.warning((f"Output file {out_file} does not exist. "
@@ -678,7 +707,7 @@ def rearrange_ss_capri_output(
         out_file.unlink()
 
     # Rank according to the score
-    score_rankkey_values = [(k, data[k]['score']) for k in data.keys()]
+    score_rankkey_values = [(k, v['score']) for k, v in data.items()]
     score_rankkey_values.sort(key=lambda x: x[1])
 
     for i, k in enumerate(score_rankkey_values):
@@ -686,7 +715,7 @@ def rearrange_ss_capri_output(
         data[data_idx]["caprieval_rank"] = i + 1
 
     # Sort according to the sort key
-    rankkey_values = [(k, data[k][sort_key]) for k in data.keys()]
+    rankkey_values = [(k, v[sort_key]) for k, v in data.items()]
     rankkey_values.sort(
         key=lambda x: x[1],
         reverse=True if not sort_ascending else False
@@ -704,7 +733,7 @@ def rearrange_ss_capri_output(
         write_nested_dic_to_file(data, output_name)
 
 
-def calc_stats(data):
+def calc_stats(data) -> tuple[float, float]:
     """
     Calculate the mean and stdev.
 
@@ -725,33 +754,37 @@ def calc_stats(data):
     return mean, stdev
 
 
+CltData = dict[tuple[Optional[int], Union[int, str, None]],
+               list[tuple[CAPRI, PDBFile]]]
+
+
 def capri_cluster_analysis(
-        capri_list,
-        model_list,
-        output_fname,
-        clt_threshold,
-        sort_key,
-        sort_ascending,
-        path
-        ):
+        capri_list: Iterable[CAPRI],
+        model_list: Iterable[PDBFile],
+        output_fname: FilePath,
+        clt_threshold: float,
+        sort_key: str,
+        sort_ascending: bool,
+        path: FilePath
+        ) -> None:
     """Consider the cluster results for the CAPRI evaluation."""
     capri_keys = ["irmsd", "fnat", "lrmsd", "dockq"]
     model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
     log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data
-    clt_data = dict(((m.clt_rank, m.clt_id), []) for m in model_list)
-    
+    clt_data: CltData = dict(((m.clt_rank, m.clt_id), []) for m in model_list)
+
     # add models to each cluster
     for capri, model in zip(capri_list, model_list):
         clt_data[(model.clt_rank, model.clt_id)].append((capri, model))
 
-    output_dic = {}
-    
+    output_dic: dict[int, ParamDict] = {}
+
     for i, element in enumerate(clt_data):
-        data = {}
+        data: ParamDict = {}
         number_of_models_in_cluster = len(clt_data[element])
 
-        # rank, cluster id, number of models in cluster
+        # rank, cluster id, number of models in cluster
         data["cluster_rank"] = element[0]
         data["cluster_id"] = element[1]
         data["n"] = number_of_models_in_cluster
@@ -761,8 +794,8 @@ def capri_cluster_analysis(
             data["under_eval"] = "yes"
         else:
             data["under_eval"] = "-"
-        
-        # score
+
+        # score
         try:
             score_array = [
                 e[1].score for e in clt_data[element][:clt_threshold]]
@@ -770,7 +803,7 @@ def capri_cluster_analysis(
         except KeyError:
             data["score"] = float("nan")
             data["score_std"] = float("nan")
-        
+
         # capri keys
         for key in capri_keys:
             std_key = f"{key}_std"
@@ -788,25 +821,27 @@ def capri_cluster_analysis(
             if clt_data[element][0][1].unw_energies:
                 try:
                     key_array = [
-                        vars(e[1])["unw_energies"][key] for e in clt_data[element][:clt_threshold]]
+                        vars(e[1])["unw_energies"][key]
+                        for e in clt_data[element][:clt_threshold]
+                        ]
                     data[key], data[std_key] = calc_stats(key_array)
                 except KeyError:
                     data[key] = float("nan")
                     data[std_key] = float("nan")
 
         output_dic[i] = data
-    
+
     # Rank according to the score
-    score_rankkey_values = [(key, output_dic[key]['score'])
-                            for key in output_dic.keys()]
+    score_rankkey_values = [(key, v['score'])
+                            for key, v in output_dic.items()]
     score_rankkey_values.sort(key=lambda x: x[1])
     for i, k in enumerate(score_rankkey_values):
         idx, _ = k
         output_dic[idx]["caprieval_rank"] = i + 1
 
     # Rank according to the sorting key
-    rankkey_values = [(key, output_dic[key][sort_key])
-                      for key in output_dic.keys()]
+    rankkey_values = [(key, v[sort_key])
+                      for key, v in output_dic.items()]
     rankkey_values.sort(
         key=lambda x: x[1],
         reverse=True if not sort_ascending else False
@@ -858,7 +893,7 @@ def capri_cluster_analysis(
 class CAPRIError(Exception):
     """Raised when something goes wrong with the CAPRI class."""
 
-    def __init__(self, msg=""):
+    def __init__(self, msg: str = "") -> None:
         self.msg = msg
         super().__init__(self.msg)
 

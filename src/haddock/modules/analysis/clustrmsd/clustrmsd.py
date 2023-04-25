@@ -8,7 +8,7 @@ from haddock import log
 from haddock.libs.libontology import RMSDFile
 
 
-def read_matrix(rmsd_matrix):
+def read_matrix(rmsd_matrix: RMSDFile):
     """
     Read the RMSD matrix.
     
@@ -57,14 +57,14 @@ def get_dendrogram(rmsd_matrix, linkage_type):
     return Z
 
 
-def get_clusters(dendrogram, tolerance, criterion):
+def get_clusters(dendrogram, tolerance, criterion: str):
     """Obtain the clusters."""
     log.info('Clustering dendrogram...')
     cluster_arr = fcluster(dendrogram, t=tolerance, criterion=criterion)
     return cluster_arr
 
 
-def apply_threshold(cluster_arr, threshold):
+def apply_threshold(cluster_arr, threshold: int):
     """
     Apply threshold to cluster list.
     
@@ -96,7 +96,7 @@ def apply_threshold(cluster_arr, threshold):
     return new_cluster_arr
 
 
-def iterate_threshold(cluster_arr, threshold):
+def iterate_threshold(cluster_arr, threshold: int):
     """
     Iterate over the threshold values until we find at least one valid cluster.
 
@@ -123,7 +123,7 @@ def iterate_threshold(cluster_arr, threshold):
     return new_cluster_arr
 
 
-def cond_index(i, j, n):
+def cond_index(i: int, j: int, n: int) -> float:
     """
     Get the condensed index from two matrix indexes.
 
@@ -139,7 +139,7 @@ def cond_index(i, j, n):
     return n * (n - 1) / 2 - (n - i) * (n - i - 1) / 2 + j - i - 1
 
 
-def get_cluster_center(npw, n_obs, rmsd_matrix):
+def get_cluster_center(npw, n_obs: int, rmsd_matrix):
     """
     Get the cluster centers.
 

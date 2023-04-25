@@ -39,14 +39,15 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
+from haddock.core.typing import FilePath
 from haddock.libs.libclust import write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
-    iterate_threshold,
-    get_clusters,
     get_cluster_center,
+    get_clusters,
     get_dendrogram,
+    iterate_threshold,
     read_matrix,
     )
 
@@ -60,17 +61,20 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         super().__init__(order, path, initial_params)
 
         self.matrix_json = self._load_previous_io("rmsd_matrix.json")
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if contact executable is compiled."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models()
@@ -82,7 +86,7 @@ class HaddockModule(BaseHaddockModule):
         linkage_type = self.params["linkage"]
         crit = self.params["criterion"]
         threshold = self.params['threshold']
-        
+
         # getting clusters_list
         dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
         # setting tolerance
@@ -111,7 +115,7 @@ class HaddockModule(BaseHaddockModule):
         unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
         clusters = [c for c in unq_clusters if c != -1]
         log.info(f"clusters = {clusters}")
-        
+
         # initialising cluster centers
         n_obs = len(cluster_arr)
         cluster_centers = {}
@@ -139,7 +143,7 @@ class HaddockModule(BaseHaddockModule):
             denom = float(min(threshold, len(score_l)))
             top4_score = sum(score_l[:threshold]) / denom
             score_dic[clt_id] = top4_score
-        
+
         sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
 
         # Add this info to the models
@@ -155,7 +159,7 @@ class HaddockModule(BaseHaddockModule):
                 pdb.clt_rank = cluster_rank
                 pdb.clt_model_rank = model_ranking
                 self.output_models.append(pdb)
-        
+
         # Write unclustered structures
         write_structure_list(models,
                              self.output_models,
@@ -171,14 +175,14 @@ class HaddockModule(BaseHaddockModule):
         output_str += f"> tolerance={tol:.2f}{os.linesep}"
         output_str += f"> threshold={threshold}{os.linesep}"
         output_str += os.linesep
-        
+
         output_str += (
             f"-----------------------------------------------{os.linesep}")
         output_str += os.linesep
         output_str += f'Total # of clusters: {len(clusters)}{os.linesep}'
         for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
             cluster_id, _ = _e
-            
+
             model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
             model_score_l.sort()
             top_score = score_dic[cluster_id]

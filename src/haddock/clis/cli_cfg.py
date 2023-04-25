@@ -19,6 +19,13 @@ import os
 import sys
 
 from haddock import config_expert_levels
+from haddock.core.typing import (
+    ArgumentParser,
+    Callable,
+    ExpertLevel,
+    Namespace,
+    Optional,
+    )
 from haddock.modules import modules_category
 
 
@@ -54,18 +61,18 @@ ap.add_argument(
     )
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
 # command-line client helper functions
 # load_args, cli, maincli
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
 
@@ -85,12 +92,14 @@ def cli(ap, main):
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def main(module=None, explevel="all", global_params=True):
+def main(module: Optional[str] = None,
+         explevel: ExpertLevel = "all",
+         global_params: bool = True) -> None:
     """
     Extract the defaults in the form of a run configuration file.
 
@@ -154,7 +163,7 @@ def main(module=None, explevel="all", global_params=True):
 
     sys.stdout.write(new_config)
 
-    return 0
+    return
 
 
 if __name__ == "__main__":

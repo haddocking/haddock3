@@ -5,6 +5,7 @@ import re
 from functools import partial
 from pathlib import Path
 
+from haddock.core.typing import FilePath, Optional, ParamDict, ParamMap
 from haddock.libs import libpdb
 from haddock.libs.libcns import (
     generate_default_header,
@@ -24,12 +25,12 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
 def generate_topology(
-        input_pdb,
-        recipe_str,
-        defaults,
-        mol_params,
-        default_params_path=None,
-        ):
+        input_pdb: Path,
+        recipe_str: str,
+        defaults: ParamMap,
+        mol_params: ParamMap,
+        default_params_path: Optional[FilePath] = None,
+        ) -> Path:
     """Generate a HADDOCK topology file from input_pdb."""
     # generate params headers
     general_param = load_workflow_params(**defaults)
@@ -73,19 +74,22 @@ class HaddockModule(BaseCNSModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         cns_script = RECIPE_PATH / "cns" / "generate-topology.cns"
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if module is installed."""
         return
 
     @staticmethod
-    def get_md5(ensemble_f):
+    def get_md5(ensemble_f: FilePath) -> dict[int, str]:
         """Get MD5 hash of a multi-model PDB file."""
-        md5_dic = {}
+        md5_dic: dict[int, str] = {}
         text = Path(ensemble_f).read_text()
         lines = text.split(os.linesep)
         REMARK_lines = (line for line in lines if line.startswith('REMARK'))
@@ -109,7 +113,7 @@ class HaddockModule(BaseCNSModule):
 
         return md5_dic
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         if self.order == 0:
             # topoaa is the first step in the workflow
@@ -119,12 +123,12 @@ class HaddockModule(BaseCNSModule):
             # in case topoaa is not the first step, the topology is rebuilt for
             # each retrieved model
             _molecules = self.previous_io.retrieve_models()
-            molecules_paths = [mol.rel_path for mol in _molecules]
+            molecules_paths: list[Path] = [mol.rel_path for mol in _molecules]
             molecules = make_molecules(molecules_paths, no_parent=True)
 
         # extracts `input` key from params. The `input` keyword needs to
         # be treated separately
-        mol_params = {}
+        mol_params: ParamDict = {}
         for k in list(self.params.keys()):
             if k.startswith("mol") and k[3:].isdigit():
                 mol_params[k] = self.params.pop(k)
@@ -142,10 +146,10 @@ class HaddockModule(BaseCNSModule):
             mol_params_get = partial(operator.getitem, mol_params_keys, -1)
 
         # Pool of jobs to be executed by the CNS engine
-        jobs = []
+        jobs: list[CNSJob] = []
 
-        models_dic = {}
-        ens_dic = {}
+        models_dic: dict[int, list[Path]] = {}
+        ens_dic: dict[int, dict[int, str]] = {}
         for i, molecule in enumerate(molecules, start=1):
             self.log(f"Molecule {i}: {molecule.file_name.name}")
             models_dic[i] = []
@@ -217,7 +221,7 @@ class HaddockModule(BaseCNSModule):
 
         # Check for generated output, fail it not all expected files
         #  are found
-        expected = {}
+        expected: dict[int, dict[int, PDBFile]] = {}
         for i in models_dic:
             expected[i] = {}
             md5_dic = ens_dic[i]

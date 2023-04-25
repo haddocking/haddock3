@@ -49,6 +49,14 @@ from functools import partial
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import (
+    Any,
+    ArgumentParser,
+    Callable,
+    FilePath,
+    Namespace,
+    Union,
+    )
 from haddock.libs.libhpc import create_job_header_funcs
 
 
@@ -59,7 +67,7 @@ capital_and_digits = tuple(string.digits + string.ascii_uppercase)
 
 
 # client helper functions
-def _dir_path(path):
+def _dir_path(path: FilePath) -> Path:
     path = Path(path)
     if not path.is_dir():
         _p = str(path.resolve())
@@ -67,7 +75,9 @@ def _dir_path(path):
     return path
 
 
-def _is_valid(f, cap_and_dig=capital_and_digits):
+def _is_valid(
+        f: Path,
+        cap_and_dig: Union[str, tuple[str, ...]] = capital_and_digits) -> bool:
     """Assert if directory is a valid model directory."""
     _is_valid = \
         f.name.startswith(cap_and_dig) \
@@ -75,7 +85,7 @@ def _is_valid(f, cap_and_dig=capital_and_digits):
     return _is_valid
 
 
-def get_conda_path():
+def get_conda_path() -> Path:
     """Get conda source path."""
     return Path(
         Path(sys.executable).parents[3],
@@ -83,12 +93,9 @@ def get_conda_path():
         )
 
 
-def create_cfg_test_daemon(
-        run_dir,
-        receptor_f,
-        ligand_f,
-        *ignore,
-        **everythinelse):
+def create_cfg_test_daemon(run_dir: FilePath, receptor_f: FilePath,
+                           ligand_f: FilePath, *ignore: Any,
+                           **everythinelse: Any) -> str:
     """
     Create HADDOCK3 configuration file that only generates the topology.
 
@@ -111,7 +118,8 @@ molecules = [
 
 
 # FIXME: This should not be hardcoded here
-def create_cfg_ti(run_dir, receptor_f, ligand_f, ambig_f, target_f):
+def create_cfg_ti(run_dir: FilePath, receptor_f: FilePath, ligand_f: FilePath,
+                  ambig_f: FilePath, target_f: FilePath) -> str:
     """
     Create HADDOCK3 configuration file for the first scenario.
 
@@ -175,19 +183,19 @@ reference = {str(target_f)!r}
 
 
 def create_job(
-        create_job_header,
-        create_job_body,
-        create_job_tail,
-        job_name_prefix,
-        scenario_name,
-        job_name_suffix,
-        queue_name,
-        ncores,
-        work_dir,
-        run_dir,
+        create_job_header: Callable[..., str],
+        create_job_body: Callable[[FilePath, FilePath, FilePath], str],
+        create_job_tail: Callable[[FilePath, FilePath, FilePath], str],
+        job_name_prefix: str,
+        scenario_name: str,
+        job_name_suffix: str,
+        queue_name: str,
+        ncores: int,
+        work_dir: Path,
+        run_dir: Path,
         #
-        config_file,
-        ):
+        config_file: FilePath,
+        ) -> str:
     """
     Create the job file.
 
@@ -270,7 +278,8 @@ def create_job(
     return job_header + job_body + job_tail
 
 
-def setup_haddock3_job(available_flag, running_flag, conf_f):
+def setup_haddock3_job(available_flag: FilePath, running_flag: FilePath,
+                       conf_f: FilePath) -> str:
     """
     Write body for the job script.
 
@@ -308,7 +317,8 @@ rm {str(running_flag)}
     return job_body
 
 
-def process_job_execution_status(stderr, done_tag, fail_tag):
+def process_job_execution_status(stderr: FilePath, done_tag: FilePath,
+                                 fail_tag: FilePath) -> str:
     """
     Add execution status tail to job.
 
@@ -337,7 +347,9 @@ fi
     return tail
 
 
-def process_target(source_path, result_path, create_job_func, scenarios):
+def process_target(source_path: Path, result_path: FilePath,
+                   create_job_func: Callable[..., str],
+                   scenarios: dict[str, Callable[..., str]]) -> None:
     """
     Process each model example for benchmarking.
 
@@ -434,14 +446,14 @@ def process_target(source_path, result_path, create_job_func, scenarios):
 
 
 def make_daemon_job(
-        create_job_func,
-        workdir,
-        target_dir,
-        job_name='HD3-dmn',
-        stdout_path='daemon.out',
-        stderr_path='daemon.err',
-        queue='short',
-        ):
+        create_job_func: Callable[..., str],
+        workdir: FilePath,
+        target_dir: FilePath,
+        job_name: str = 'HD3-dmn',
+        stdout_path: FilePath = 'daemon.out',
+        stderr_path: FilePath = 'daemon.err',
+        queue: str = 'short',
+        ) -> str:
     """Make a daemon-ready job."""
     job_header = create_job_func(
         job_name=job_name,
@@ -557,36 +569,36 @@ ap.add_argument(
     )
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
 # client helper functions
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
 def main(
-        benchmark_path,
-        output_path,
-        workload_manager='slurm',
-        ncores=48,
-        queue_name='medium',
-        test_daemon=False,
-        suffix='BM5',
-        ):
+        benchmark_path: Path,
+        output_path: FilePath,
+        workload_manager: str = 'slurm',
+        ncores: int = 48,
+        queue_name: str = 'medium',
+        test_daemon: bool = False,
+        suffix: str = 'BM5',
+        ) -> None:
     """
     Create configuration and job scripts for HADDOCK3 benchmarking.
 

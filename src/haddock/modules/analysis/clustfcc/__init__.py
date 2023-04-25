@@ -6,6 +6,7 @@ import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
+from haddock.core.typing import FilePath
 from haddock.libs.libclust import write_structure_list
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
@@ -21,11 +22,14 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if FCC is installed and available."""
         dcfg = read_from_yaml_config(DEFAULT_CONFIG)
         exec_path = Path(FCC_path, dcfg['executable'])
@@ -38,7 +42,7 @@ class HaddockModule(BaseHaddockModule):
 
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         contact_executable = Path(FCC_path, self.params['executable'])
 
@@ -49,7 +53,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Calculate the contacts for each model
         log.info('Calculating contacts')
-        contact_jobs = []
+        contact_jobs: list[JobInputFirst] = []
         for model in models_to_cluster:
             pdb_f = Path(model.rel_path)
             contact_f = Path(model.file_name.replace('.pdb', '.con'))
@@ -64,8 +68,8 @@ class HaddockModule(BaseHaddockModule):
         contact_engine = Scheduler(contact_jobs, ncores=self.params['ncores'])
         contact_engine.run()
 
-        contact_file_l = []
-        not_found = []
+        contact_file_l: list[str] = []
+        not_found: list[str] = []
         for job in contact_jobs:
             if not job.output.exists():
                 # NOTE: If there is no output, most likely the models are not in

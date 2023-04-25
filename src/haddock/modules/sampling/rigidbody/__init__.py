@@ -30,6 +30,7 @@ sure to sample enough the possible interaction space.
 """
 from pathlib import Path
 
+from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input
 from haddock.libs.libontology import PDBFile
@@ -47,19 +48,22 @@ class HaddockModule(BaseCNSModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         cns_script = Path(RECIPE_PATH, "cns", "rigidbody.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm module is installed."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Pool of jobs to be executed by the CNS engine
-        jobs = []
+        jobs: list[CNSJob] = []
 
         # Get the models generated in previous step
         try:
@@ -91,10 +95,10 @@ class HaddockModule(BaseCNSModule):
             ambig_fnames = [diff_ambig_fnames[n % n_diffs] for n in range(self.params["sampling"])]  # noqa: E501
         else:
             ambig_fnames = None
-        
+
         # Prepare the jobs
         idx = 1
-        self.output_models = []
+        self.output_models: list[PDBFile] = []
         self.log("Preparing jobs...")
         for combination in models_to_dock:
 
@@ -142,7 +146,7 @@ class HaddockModule(BaseCNSModule):
         # Get the weights according to CNS parameters
         _weight_keys = ("w_vdw", "w_elec", "w_desolv", "w_air", "w_bsa")
         weights = {e: self.params[e] for e in _weight_keys}
-        
+
         for model in self.output_models:
             if model.is_present():
                 # Score the model
@@ -151,5 +155,5 @@ class HaddockModule(BaseCNSModule):
 
                 haddock_score = haddock_model.calc_haddock_score(**weights)
                 model.score = haddock_score
-                
+
         self.export_output_models(faulty_tolerance=self.params["tolerance"])

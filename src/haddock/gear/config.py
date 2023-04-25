@@ -63,6 +63,7 @@ import toml
 from haddock import EmptyPath
 from haddock.core.defaults import RUNDIR
 from haddock.core.exceptions import ConfigurationError
+from haddock.core.typing import FilePath, ParamDict, ParamMap, ParamMapT, Union
 from haddock.libs.libutil import (
     recursive_convert_paths_to_strings,
     transform_to_list,
@@ -109,7 +110,7 @@ class ConfigFormatError(Exception):
 
 
 # main public API
-def load(fpath):
+def load(fpath: FilePath) -> ParamDict:
     """
     Load an HADDOCK3 configuration file to a dictionary.
 
@@ -136,7 +137,7 @@ def load(fpath):
         raise ConfigurationError('Something is wrong with the config file.') from err  # noqa: E501
 
 
-def loads(cfg_str):
+def loads(cfg_str: str) -> ParamDict:
     """
     Read a string representing a config file to a dictionary.
 
@@ -162,9 +163,9 @@ def loads(cfg_str):
         The order of the keys matters as it defines the order of the
         steps in the workflow.
     """
-    new_lines = []
+    new_lines: list[str] = []
     cfg_lines = cfg_str.split(os.linesep)
-    counter = {}
+    counter: dict[str, int] = {}
 
     # this for-loop normalizes all headers regardless of their input format.
     for line in cfg_lines:
@@ -213,7 +214,7 @@ def loads(cfg_str):
     return final_cfg
 
 
-def convert_variables_to_paths(cfg):
+def convert_variables_to_paths(cfg: ParamMapT) -> ParamMapT:
     """
     Convert config variables to paths.
 
@@ -242,7 +243,7 @@ def convert_variables_to_paths(cfg):
     return cfg
 
 
-def convert_to_path(value):
+def convert_to_path(value: FilePath) -> Union[Path, EmptyPath]:
     """Convert a variable to Path if variable evaluates to true."""
     if value:
         return Path(value)
@@ -250,7 +251,7 @@ def convert_to_path(value):
         return EmptyPath()
 
 
-def match_path_criteria(param):
+def match_path_criteria(param: str) -> bool:
     """
     Confirm a parameter should be converted to path.
 
@@ -260,7 +261,7 @@ def match_path_criteria(param):
     return param.endswith('_fname') or param in _keys_that_accept_files
 
 
-def get_module_name(name):
+def get_module_name(name: str) -> str:
     """
     Get the module name according to the config parser.
 
@@ -269,7 +270,7 @@ def get_module_name(name):
     return name.split('.')[0]
 
 
-def save(params, path, pure_toml=False):
+def save(params: ParamMap, path: FilePath, pure_toml: bool = False) -> None:
     """
     Write a dictionary to a HADDOCK3 config file.
 
@@ -297,7 +298,7 @@ def save(params, path, pure_toml=False):
 
     cfg_str = toml.dumps(params).split(os.linesep)
 
-    new_lines = []
+    new_lines: list[str] = []
     for line in cfg_str:
 
         if group := _main_quoted_header_re.match(line):

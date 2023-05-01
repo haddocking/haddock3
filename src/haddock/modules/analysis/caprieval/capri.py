@@ -751,7 +751,7 @@ def capri_cluster_analysis(
         data = {}
         number_of_models_in_cluster = len(clt_data[element])
 
-        # rank, cluster id, number of models in cluster
+        # rank, cluster id, number of models in cluster
         data["cluster_rank"] = element[0]
         data["cluster_id"] = element[1]
         data["n"] = number_of_models_in_cluster
@@ -762,7 +762,7 @@ def capri_cluster_analysis(
         else:
             data["under_eval"] = "-"
         
-        # score
+        # score
         try:
             score_array = [
                 e[1].score for e in clt_data[element][:clt_threshold]]
@@ -788,7 +788,7 @@ def capri_cluster_analysis(
             if clt_data[element][0][1].unw_energies:
                 try:
                     key_array = [
-                        vars(e[1])["unw_energies"][key] for e in clt_data[element][:clt_threshold]]
+                        vars(e[1])["unw_energies"][key] for e in clt_data[element][:clt_threshold]]  # noqa: E501
                     data[key], data[std_key] = calc_stats(key_array)
                 except KeyError:
                     data[key] = float("nan")

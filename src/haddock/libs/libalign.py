@@ -663,7 +663,7 @@ def align_seq(reference, model, output_path):
                 # this sequence contains only ligands, do it manually
                 if len(seq_ref) != len(seq_model):
                     # we cannot handle this
-                    raise f"Cannot align chain {model_chain}"
+                    raise Exception(f"Cannot align chain {model_chain}")
                 for ref_res, model_res in zip(
                         seqdic_ref[ref_chain],
                         seqdic_model[model_chain]):

@@ -509,7 +509,7 @@
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdb</span><span class="p">,</span> <span class="n">PDBFile</span><span class="p">):</span>
         <span class="n">pdb</span> <span class="o">=</span> <span class="n">pdb</span><span class="o">.</span><span class="n">rel_path</span>
-    
+
     <span class="n">exists</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">pdb_path_exists</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -856,7 +856,8 @@
                 <span class="c1"># this sequence contains only ligands, do it manually</span>
                 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_ref</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">seq_model</span><span class="p">):</span>
                     <span class="c1"># we cannot handle this</span>
-                    <span class="k">raise</span> <span class="sa">f</span><span class="s2">&quot;Cannot align chain </span><span class="si">{</span><span class="n">model_chain</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="c1"># FIXME: This should raise a proper exception instead</span>
+                    <span class="k">raise</span> <span class="sa">f</span><span class="s2">&quot;Cannot align chain </span><span class="si">{</span><span class="n">model_chain</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># noqa: B016</span>
                 <span class="k">for</span> <span class="n">ref_res</span><span class="p">,</span> <span class="n">model_res</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
                         <span class="n">seqdic_ref</span><span class="p">[</span><span class="n">ref_chain</span><span class="p">],</span>
                         <span class="n">seqdic_model</span><span class="p">[</span><span class="n">model_chain</span><span class="p">]):</span>

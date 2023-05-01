@@ -1,18 +1,20 @@
 """Test haddock3-analyse client."""
+import os
+import shutil
+from pathlib import Path
+
 import pytest
 
 from haddock.clis.cli_analyse import (
-    main,
     get_cluster_ranking,
-    update_capri_dict
+    main,
+    update_capri_dict,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules.analysis.caprieval import \
     DEFAULT_CONFIG as caprieval_params
-from pathlib import Path
+
 from . import golden_data
-import os
-import shutil
 
 
 @pytest.fixture

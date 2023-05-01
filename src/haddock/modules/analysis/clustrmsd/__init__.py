@@ -43,10 +43,10 @@ from haddock.libs.libclust import write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
-    iterate_threshold,
-    get_clusters,
     get_cluster_center,
+    get_clusters,
     get_dendrogram,
+    iterate_threshold,
     read_matrix,
     )
 

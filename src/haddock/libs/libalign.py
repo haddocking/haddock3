@@ -316,7 +316,7 @@ def get_atoms(pdb, full=False):
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path
-    
+
     exists, msg = pdb_path_exists(pdb)
     if not exists:
         raise Exception(msg)
@@ -663,7 +663,8 @@ def align_seq(reference, model, output_path):
                 # this sequence contains only ligands, do it manually
                 if len(seq_ref) != len(seq_model):
                     # we cannot handle this
-                    raise f"Cannot align chain {model_chain}"
+                    # FIXME: This should raise a proper exception instead
+                    raise f"Cannot align chain {model_chain}"  # noqa: B016
                 for ref_res, model_res in zip(
                         seqdic_ref[ref_chain],
                         seqdic_model[model_chain]):

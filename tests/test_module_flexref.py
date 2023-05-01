@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 
 from haddock.libs.libontology import PDBFile
-from haddock.modules.base_cns_module import RestraintError
 from haddock.modules.refinement.flexref import DEFAULT_CONFIG as flexref_pars
 from haddock.modules.refinement.flexref import HaddockModule
 
@@ -47,5 +46,6 @@ def test_prev_fnames(input_models):
     #  should cause an exception
     input_models[0].restr_fname = None
     prev_ambig_fnames = [model.restr_fname for model in input_models]
-    with pytest.raises(RestraintError):
+    # FIXME: this should be a more specific exception
+    with pytest.raises(Exception):  # noqa: B017
         obs_ambig_fnames = flexref_module.get_ambig_fnames(prev_ambig_fnames)

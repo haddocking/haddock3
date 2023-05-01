@@ -153,7 +153,7 @@ class CAPRI:
             #  we will use atoms that are present in both
             P = []
             Q = []
-            
+
             for k in ref_coord_dic.keys() & mod_coord_dic.keys():
                 ref_xyz = ref_coord_dic[k]
                 mod_xyz = mod_coord_dic[k]
@@ -197,7 +197,7 @@ class CAPRI:
             if chain not in chain_ranges:
                 chain_ranges[chain] = []
             chain_ranges[chain].append(i)
-        
+
         chain_ranges = make_range(chain_ranges)
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
@@ -231,7 +231,7 @@ class CAPRI:
             # write_coords("model_l_first.pdb", P_l_first)
 
             # move to the origin of the receptor
-            
+
             Q = Q - centroid(Q_r_first)
             P = P - centroid(P_r_first)
 
@@ -306,7 +306,7 @@ class CAPRI:
 
         # write_coords("ref.pdb", Q_int)
         # write_coords("model.pdb", P_int)
-        
+
         chain_ranges = {}
         for i, segment in enumerate(sorted(common_keys)):
             chain, _, _ = segment
@@ -338,7 +338,7 @@ class CAPRI:
             # find the rotation that minimizes the receptor interface rmsd
             Q_r_int = Q_int[r_start: r_end + 1]
             P_r_int = P_int[r_start: r_end + 1]
-            
+
             U_int = kabsch(P_r_int, Q_r_int)
             P_int = np.dot(P_int, U_int)
             # just for checks.
@@ -355,7 +355,7 @@ class CAPRI:
 
             # # this will be the interface-ligand-rmsd
             self.ilrmsd = calc_rmsd(P_l_int, Q_l_int)
-            
+
     def calc_fnat(self, cutoff=5.0):
         """
         Calculate the frequency of native contacts.
@@ -384,7 +384,7 @@ class CAPRI:
         if self.lrmsd:
             lrmsd_denom = 1 + (self.lrmsd / 8.5) * (self.lrmsd / 8.5)
             self.dockq += (1 / lrmsd_denom) / 3
-        
+
     def has_cluster_info(self):
         """
         Check wether this object contains cluster information.
@@ -423,7 +423,7 @@ class CAPRI:
             data["cluster-id"] = None
             data["cluster-ranking"] = None
             data["model-cluster-ranking"] = None
-        
+
         # energies
         if self.model.unw_energies:
             for key in self.model.unw_energies:
@@ -547,7 +547,7 @@ class CAPRI:
         contacts = load_contacts(pdb_f, cutoff)
 
         for contact in contacts:
-            
+
             first_chain, first_resid = contact[0], contact[1]
             sec_chain, sec_resid = contact[2], contact[3]
 
@@ -651,7 +651,7 @@ def rearrange_ss_capri_output(
     data = {}
     for ident in range(1, output_count + 1):
         out_file = Path(path, f"{keyword}_{ident}.tsv")
-        
+
         # raise a warning if file does not exist.
         if not out_file.exists():
             log.warning((f"Output file {out_file} does not exist. "
@@ -740,17 +740,16 @@ def capri_cluster_analysis(
     log.info(f"Rearranging cluster information into {output_fname}")
     # get the cluster data
     clt_data = dict(((m.clt_rank, m.clt_id), []) for m in model_list)
-    
+
     # add models to each cluster
     for capri, model in zip(capri_list, model_list):
         clt_data[(model.clt_rank, model.clt_id)].append((capri, model))
 
     output_dic = {}
-    
+
     for i, element in enumerate(clt_data):
         data = {}
         number_of_models_in_cluster = len(clt_data[element])
-
         # rank, cluster id, number of models in cluster
         data["cluster_rank"] = element[0]
         data["cluster_id"] = element[1]
@@ -761,7 +760,6 @@ def capri_cluster_analysis(
             data["under_eval"] = "yes"
         else:
             data["under_eval"] = "-"
-        
         # score
         try:
             score_array = [
@@ -770,7 +768,7 @@ def capri_cluster_analysis(
         except KeyError:
             data["score"] = float("nan")
             data["score_std"] = float("nan")
-        
+
         # capri keys
         for key in capri_keys:
             std_key = f"{key}_std"
@@ -788,14 +786,14 @@ def capri_cluster_analysis(
             if clt_data[element][0][1].unw_energies:
                 try:
                     key_array = [
-                        vars(e[1])["unw_energies"][key] for e in clt_data[element][:clt_threshold]]  # noqa: E501
+                        vars(e[1])["unw_energies"][key] for e in clt_data[element][:clt_threshold]] # noqa
                     data[key], data[std_key] = calc_stats(key_array)
                 except KeyError:
                     data[key] = float("nan")
                     data[std_key] = float("nan")
 
         output_dic[i] = data
-    
+
     # Rank according to the score
     score_rankkey_values = [(key, output_dic[key]['score'])
                             for key in output_dic.keys()]

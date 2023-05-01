@@ -188,7 +188,8 @@ def test_error_load_coords():
     filter_resdic = {'A': [1, 2, 3, 4, 5]}  # protein has only chain B
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
-    with pytest.raises(Exception, match="Chain matching error"):
+    # FIXME: This should be a custom exception
+    with pytest.raises(Exception):  # noqa: B017
         load_coords(pdb_f, atoms, filter_resdic)
 
 

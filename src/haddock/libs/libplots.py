@@ -617,7 +617,7 @@ def find_best_struct(ss_file, number_of_struct=10):
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
     # zero pad number so after pivot columns are sorted correctly
     col_names = [
-        f"Nr {(num + 1):02d} best structure" for num in range(number_of_struct)
+        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)  # noqa: E501
         ] * number_of_cluster
 
     # add a new column `Structure` to the dataframe
@@ -643,7 +643,7 @@ def _add_links(best_struct_df):
         # plotly renders a tag as text not as HTML,
         # need to switch to Dash+markdown or make table html ourselves
         # name = Path(row).name
-        # return f'<a href="../{row}" target="_blank" rel="noreferer">{name}</a>'  # noqa: E501
+        # return f'<a href="../{row}" target="_blank" rel="noreferer">{name}</a>' # noqa: E501
         return Path(row).name
 
     table_df = best_struct_df.copy()

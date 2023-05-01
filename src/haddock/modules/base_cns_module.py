@@ -144,15 +144,7 @@ class BaseCNSModule(BaseHaddockModule):
             if self.params["previous_ambig"]:
                 # check if there is restraint information in all models
                 if None in prev_ambig_fnames:
-                    raise RestraintError("'previous_ambig' option selected but no available restraint information in models")  # noqa: E501
+                    raise Exception("'previous_ambig' option selected but no available restraint information in models")  # noqa: E501
                 self.log("Using previously defined restraints")
                 ambig_fnames = prev_ambig_fnames.copy()
         return ambig_fnames
-
-
-class RestraintError(Exception):
-    """Raised when something goes wrong with the Restraints definition."""
-
-    def __init__(self, msg=""):
-        self.msg = msg
-        super().__init__(self.msg)

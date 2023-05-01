@@ -41,8 +41,7 @@ def load_contacts(pdb_f, cutoff=5.0):
         set of unique contacts
     """
     con_list = []
-    if isinstance(pdb_f, PDBFile):
-        pdb_f = pdb_f.rel_path
+    pdb_f = Path(pdb_f)
     # get also side chains atoms
     atoms = get_atoms(pdb_f, full=True)
     ref_coord_dic, _ = load_coords(pdb_f, atoms)
@@ -540,8 +539,7 @@ class CAPRI:
         cutoff : float, optional
             Cutoff distance for the interface identification.
         """
-        if isinstance(pdb_f, PDBFile):
-            pdb_f = pdb_f.rel_path
+        pdb_f = Path(pdb_f)
 
         interface_resdic = {}
         contacts = load_contacts(pdb_f, cutoff)

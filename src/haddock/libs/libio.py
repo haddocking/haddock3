@@ -188,10 +188,8 @@ def write_dic_to_file(
         row_l = []
         for element in data_dict:
             value = data_dict[element]
-            if isinstance(value, Path):
-                row_l.append(str(value))
-            elif isinstance(value, PDBFile):
-                row_l.append(str(value.rel_path))
+            if isinstance(value, (Path, PDBFile)):
+                row_l.append(os.fspath(value))
             elif isinstance(value, int):
                 row_l.append(f"{value}")
             elif isinstance(value, str):
@@ -236,10 +234,8 @@ def write_nested_dic_to_file(
             row_l = []
             for element in data_dict[row]:
                 value = data_dict[row][element]
-                if isinstance(value, Path):
-                    row_l.append(str(value))
-                elif isinstance(value, PDBFile):
-                    row_l.append(str(value.rel_path))
+                if isinstance(value, (Path, PDBFile)):
+                    row_l.append(os.fspath(value))
                 elif isinstance(value, int):
                     row_l.append(f"{value}")
                 elif isinstance(value, str):

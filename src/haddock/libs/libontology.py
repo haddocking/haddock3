@@ -55,6 +55,9 @@ class Persistent:
         """Check if the persisent file exists on disk."""
         return self.rel_path.resolve().exists()
 
+    def __fspath__(self) -> str:
+        return str(self.rel_path)
+
 
 class PDBFile(Persistent):
     """Represent a PDB file."""

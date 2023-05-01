@@ -232,8 +232,7 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
     coord_dic = {}
     chain_dic = {}
     idx = 0
-    if isinstance(pdb_f, PDBFile):
-        pdb_f = pdb_f.rel_path
+    pdb_f = Path(pdb_f)
     with open(pdb_f, "r") as fh:
         for line in fh.readlines():
             if line.startswith("ATOM"):
@@ -314,8 +313,7 @@ def get_atoms(pdb, full=False):
         atom_dic.update(DNA_FULL_DICT)
         atom_dic.update(RNA_FULL_DICT)
 
-    if isinstance(pdb, PDBFile):
-        pdb = pdb.rel_path
+    pdb = Path(pdb)
     
     exists, msg = pdb_path_exists(pdb)
     if not exists:
@@ -392,8 +390,7 @@ def pdb2fastadic(pdb_f):
         )
     seq_dic = {}
 
-    if isinstance(pdb_f, PDBFile):
-        pdb_f = pdb_f.rel_path
+    pdb_f = Path(pdb_f)
 
     with open(pdb_f) as fh:
         for line in fh.readlines():

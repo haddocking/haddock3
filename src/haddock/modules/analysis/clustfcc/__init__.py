@@ -51,7 +51,7 @@ class HaddockModule(BaseHaddockModule):
         log.info('Calculating contacts')
         contact_jobs = []
         for model in models_to_cluster:
-            pdb_f = Path(model.rel_path)
+            pdb_f = Path(model)
             contact_f = Path(model.file_name.replace('.pdb', '.con'))
             job = JobInputFirst(
                 pdb_f,

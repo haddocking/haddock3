@@ -1,5 +1,6 @@
 sphinx>=2
 sphinx-argparse
+sphinxcontrib-applehelp
 karma-sphinx-theme
 CommonMark
 mock

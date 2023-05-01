@@ -310,7 +310,9 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     do (harm = 0)  (attribute store5 = $nchain1) 
 end loop nloop1
 
-minimize powell nstep=$nemsteps drop=10 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10 end
+end if
 
 ! second round of minimization with weak harmonic restraints on non interface backbone atoms
 do (harm = 0)  (all)
@@ -322,7 +324,9 @@ while ($nchain1 < $data.ncomponents) loop nloop1
     do (harm = 0)  (attribute store5 = $nchain1) 
 end loop nloop1
 
-minimize powell nstep=$nemsteps drop=10 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10 end
+end if
 
 ! final minimization without harmonic restraints
 

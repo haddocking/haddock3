@@ -366,7 +366,10 @@ fix sele=(resn SHA) end
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP*)) end
 
 ! energy minimization
-minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+end if
+
 fix sele=(not all) end
 
 ! get initial energy
@@ -444,7 +447,9 @@ end if
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP* or resn XAN)) end
 
 ! energy minimization
-minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+end if
 
 ! final energy
 fix sele=(not all) end

@@ -116,7 +116,9 @@ fix sele = (not all) end
 
 ! Short minimization
 
-mini powell nstep $nemsteps drop=10 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10 end
+end if
 
 {* ======================= calculate free molecules internal energy ============ *}
 

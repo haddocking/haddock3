@@ -783,7 +783,6 @@ def capri_cluster_analysis(
     for i, element in enumerate(clt_data):
         data: ParamDict = {}
         number_of_models_in_cluster = len(clt_data[element])
-
         # rank, cluster id, number of models in cluster
         data["cluster_rank"] = element[0]
         data["cluster_id"] = element[1]
@@ -794,7 +793,6 @@ def capri_cluster_analysis(
             data["under_eval"] = "yes"
         else:
             data["under_eval"] = "-"
-
         # score
         try:
             score_array = [

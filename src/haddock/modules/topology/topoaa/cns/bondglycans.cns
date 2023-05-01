@@ -22,10 +22,11 @@ display
 define 
 (
   {- define all alpha anomer carbo residues for the links below -}
-  alpha=   ( resname GLC or resname GLA or resname MAN or resname NDG or resname A2G or resname FUC or resname FCA );
+  alpha=   ( resname GLC or resname GLA or resname MAN or resname NDG or resname A2G or resname FUC or resname FCA or resname NDG);
 
   {- define all beta anomer carbo residues for the links below -}
-  beta=    ( resname BGC or resname GAL or resname BMA or resname NAG or resname NGA or resname FUL or resname FCB or resname XYP );
+  beta=    ( resname BGC or resname GAL or resname BMA or resname NAG or resname NGA or resname FUL or resname FCB or resname XYP 
+          or resname NAG or resname NGA);
 
   {- Maximum distance between linkable atoms -}
   carbo_dist= 2.75;
@@ -83,8 +84,44 @@ for $id1 in id ( (resname NAG or resname NDG or resname BGC) and name C1 and kno
 
 end loop B1Na
 
-{- A23: GAL to SIA, SIB -}
-for $id1 in id ( resname GAL and name C2 and known ) loop A23a
+{- A11: GLC to GLC -}
+for $id1 in id ( (resname GLC) and name C1 and known ) loop A11a
+
+  show (segid) (id $id1)
+  evaluate ($segid1=$result)
+  show (resid) (id $id1)
+  evaluate ($resid1=$result)
+
+  for $id2 in id ( (resname GLC) and name O1 and known ) loop A11b
+
+    show (segid) (id $id2)
+    evaluate ($segid2=$result)
+    show (resid) (id $id2)
+    evaluate ($resid2=$result)
+
+    show (x) ( id $id1 ) evaluate ($x1=$result)
+    show (y) ( id $id1 ) evaluate ($y1=$result)
+    show (z) ( id $id1 ) evaluate ($z1=$result)
+    show (x) ( id $id2 ) evaluate ($x2=$result)
+    show (y) ( id $id2 ) evaluate ($y2=$result)
+    show (z) ( id $id2 ) evaluate ($z2=$result)
+    evaluate ($distance=sqrt( ($x1-$x2)^2 + ($y1-$y2)^2 + ($z1-$z2)^2 ))
+
+    if ( $distance <= &carbo_dist ) then
+       evaluate ($npatch=$npatch+1)
+       evaluate ($seg1.$npatch=$segid1)
+       evaluate ($seg2.$npatch=$segid2)
+       evaluate ($res1.$npatch=$resid1)
+       evaluate ($res2.$npatch=$resid2)
+       evaluate ($pres.$npatch="A11")
+   end if
+
+  end loop A11b
+
+end loop A11a
+
+{- A23: GAL, NGA to SIA, SIB -}
+for $id1 in id ( (resname GAL or resname NGA) and name C2 and known ) loop A23a
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)
@@ -119,7 +156,7 @@ for $id1 in id ( resname GAL and name C2 and known ) loop A23a
 
 end loop A23a
 
-{- A23: SIA,SIB to GAL -}
+{- A23: SIA,SIB to GAL,NGA -}
 for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
 
   show (segid) (id $id1)
@@ -127,7 +164,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
   show (resid) (id $id1)
   evaluate ($resid1=$result)
 
-  for $id2 in id ( resname GAL and name O3 and known ) loop A23d
+  for $id2 in id ( (resname GAL or resname NGA) and name O3 and known ) loop A23d
 
     show (segid) (id $id2)
     evaluate ($segid2=$result)
@@ -155,8 +192,8 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A23c
 
 end loop A23c
 
-{- A26: GAL to SIA,SIB -}
-for $id1 in id ( resname GAL and name C2 and known ) loop A26a
+{- A26: GAL,NGA to SIA,SIB -}
+for $id1 in id ( (resname GAL or resname NGA) and name C2 and known ) loop A26a
 
   show (segid) (id $id1)
   evaluate ($segid1=$result)
@@ -191,7 +228,7 @@ for $id1 in id ( resname GAL and name C2 and known ) loop A26a
 
 end loop A26a
 
-{- A26: SIA,SIB to GAL -}
+{- A26: SIA,SIB to GAL,NGA -}
 for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A26c
 
   show (segid) (id $id1)
@@ -199,7 +236,7 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A26c
   show (resid) (id $id1)
   evaluate ($resid1=$result)
 
-  for $id2 in id ( resname GAL and name O6 and known ) loop A26d
+  for $id2 in id ( (resname GAL or resname NGA) and name O6 and known ) loop A26d
 
     show (segid) (id $id2)
     evaluate ($segid2=$result)
@@ -227,6 +264,42 @@ for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A26c
 
 end loop A26c
 
+{- A28: SIA,SIB to SIA,SIB -}
+for $id1 in id ( (resname SIA or resname SIB) and name C2 and known ) loop A28a
+
+  show (segid) (id $id1)
+  evaluate ($segid1=$result)
+  show (resid) (id $id1)
+  evaluate ($resid1=$result)
+
+  for $id2 in id ( (resname SIA or resname SIB) and name O8 and known ) loop A28b
+
+    show (segid) (id $id2)
+    evaluate ($segid2=$result)
+    show (resid) (id $id2)
+    evaluate ($resid2=$result)
+
+    show (x) ( id $id1 ) evaluate ($x1=$result)
+    show (y) ( id $id1 ) evaluate ($y1=$result)
+    show (z) ( id $id1 ) evaluate ($z1=$result)
+    show (x) ( id $id2 ) evaluate ($x2=$result)
+    show (y) ( id $id2 ) evaluate ($y2=$result)
+    show (z) ( id $id2 ) evaluate ($z2=$result)
+    evaluate ($distance=sqrt( ($x1-$x2)^2 + ($y1-$y2)^2 + ($z1-$z2)^2 ))
+
+    if ( $distance <= &carbo_dist ) then
+       evaluate ($npatch=$npatch+1)
+       evaluate ($seg1.$npatch=$segid1)
+       evaluate ($seg2.$npatch=$segid2)
+       evaluate ($res1.$npatch=$resid1)
+       evaluate ($res2.$npatch=$resid2)
+       evaluate ($pres.$npatch="A28S")
+   end if
+
+  end loop A28b
+
+end loop A28a
+
 {- now the beta-anomer to any links -}
 {- for B12: beta(1,2)  link from beta-anomer to any -}
 ident (store2) ( ( &alpha or &beta ) and name O2 and known ) 
@@ -234,6 +307,8 @@ ident (store2) ( ( &alpha or &beta ) and name O2 and known )
 ident (store3) ( ( &alpha or &beta ) and name O3 and known ) 
 {- for B14: beta(1,4)  link from beta-anomer to any -}
 ident (store4) ( ( &alpha or &beta ) and name O4 and known ) 
+{- for B16: beta(1,6)  link from beta-anomer to any -}
+ident (store6) ( ( &alpha or &beta ) and name O4 and known ) 
 
 for $id1 in id ( &beta and name C1 and known ) loop B1
 
@@ -363,6 +438,46 @@ for $id1 in id ( &beta and name C1 and known ) loop B1
     end if
 
   end loop B14
+
+  for $id2 in id ( recall6 ) loop B16
+
+    show (segid) (id $id2)
+    evaluate ($segid2=$result)
+    show (resid) (id $id2)
+    evaluate ($resid2=$result)
+    
+    evaluate ($identical=false)
+    if ($resid1 = $resid2) then
+        if ($segid1 = $segid2) then
+           evaluate ($identical=true)
+        end if
+    end if
+
+    if ($identical=false) then
+
+      show (x) ( id $id1 ) evaluate ($x1=$result)
+      show (y) ( id $id1 ) evaluate ($y1=$result)
+      show (z) ( id $id1 ) evaluate ($z1=$result)
+      show (x) ( id $id2 ) evaluate ($x2=$result)
+      show (y) ( id $id2 ) evaluate ($y2=$result)
+      show (z) ( id $id2 ) evaluate ($z2=$result)
+      evaluate ($distance=sqrt( ($x1-$x2)^2 + ($y1-$y2)^2 + ($z1-$z2)^2 ))
+
+      if ( $distance <= &carbo_dist ) then
+          evaluate ($npatch=$npatch+1)
+          evaluate ($seg1.$npatch=$segid1)
+          evaluate ($seg2.$npatch=$segid2)
+          evaluate ($res1.$npatch=$resid1)
+          evaluate ($res2.$npatch=$resid2)
+          if ($resname1="FUL") then
+             evaluate ($pres.$npatch="B16L")
+          else
+             evaluate ($pres.$npatch="B16")
+          end if
+      end if
+    end if
+
+  end loop B16
 
 end loop B1
 

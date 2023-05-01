@@ -46,5 +46,6 @@ def test_prev_fnames(input_models):
     #  should cause an exception
     input_models[0].restr_fname = None
     prev_ambig_fnames = [model.restr_fname for model in input_models]
-    with pytest.raises(Exception):
+    # FIXME: this should be a more specific exception
+    with pytest.raises(Exception):  # noqa: B017
         obs_ambig_fnames = flexref_module.get_ambig_fnames(prev_ambig_fnames)

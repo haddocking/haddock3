@@ -50,11 +50,13 @@ class HaddockModule(BaseHaddockModule):
             self.log((f"Selecting top {self.params['top_cluster']} clusters: "
                       f"{target_rankins_str}"))
 
+        # select the models to export
+        models_to_export = []
         for target_ranking in target_rankings:
             if math.isnan(self.params["top_models"]):
                 for pdb in models_to_select:
                     if pdb.clt_rank == target_ranking:
-                        self.output_models.append(pdb)
+                        models_to_export.append(pdb)
             else:
                 for model_ranking in range(1, self.params["top_models"] + 1):
                     for pdb in models_to_select:
@@ -67,20 +69,28 @@ class HaddockModule(BaseHaddockModule):
                                 f"> cluster_{target_ranking}_"
                                 f"model_{model_ranking}.pdb"
                                 )
-                            self.output_models.append(pdb)
-
+                            models_to_export.append(pdb)
+        
+        # dump the models to disk and change their attributes
         with open('seletopclusts.txt', 'w') as fh:
             fh.write("rel_path\tori_name\tcluster_name\tmd5" + os.linesep)
-            for model in self.output_models:
-                name = Path(
+            for model in models_to_export:
+                name = (
                     f"cluster_{model.clt_rank}_model"
                     f"_{model.clt_model_rank}.pdb")
-                name.write_text(model.rel_path.read_text())
-
+                # writing name
                 fh.write(
                     f"{model.rel_path}\t"
                     f"{model.ori_name}\t"
                     f"{name}\t"
                     f"{model.md5}" + os.linesep)
+                # changing attributes
+                name_path = Path(name)
+                name_path.write_text(model.rel_path.read_text())
+                model.file_name = name
+                model.full_name = name
+                model.rel_path = Path('..', Path(self.path).name, name)
+                model.path = str(Path(self.path).resolve())
 
+        self.output_models = models_to_export
         self.export_output_models()

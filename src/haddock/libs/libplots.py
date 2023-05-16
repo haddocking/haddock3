@@ -753,8 +753,8 @@ def clean_capri_table(dfcl):
 def _pandas_df_to_html_table(df, table_id):
     return df.to_html(
         table_id=table_id,
-        index= False,
-        index_names=False,
+        index= True,
+        index_names=True,
         classes=["table"],
         escape=False,
         )
@@ -782,24 +782,23 @@ def clt_table_handler(clt_file, ss_file):
     # table of statistics
     dfcl = read_capri_table(clt_file)
     statistics_df = clean_capri_table(dfcl)
-    # Convert dataframe to html table
-    statistics_table = _pandas_df_to_html_table(statistics_df, table_id="statistics")
 
     # table of structures
     structs_df = find_best_struct(ss_file, number_of_struct=10)
 
     # Order structs by best (lowest score) cluster on top
-    structs_df = structs_df.set_index('Cluster ID')
-    structs_df = structs_df.reindex(index=statistics_df['Cluster ID'])
-    structs_df = structs_df.reset_index()
+    structs_df = structs_df.set_index("Cluster ID")
+    structs_df = structs_df.reindex(index=statistics_df["Cluster ID"]).reset_index()
 
     # Add download links and viewer
-    struct_df = _add_viewers(structs_df)
+    structs_links_df = _add_viewers(structs_df)
 
-    # Convert dataframe to html table
-    struct_table = _pandas_df_to_html_table(struct_df, table_id="structures")
+    # Merge and convert dataframe to html table
+    df_merged = pd.merge(statistics_df, structs_links_df, on=["Cluster ID"])
+    df_merged = df_merged.set_index("Cluster ID")
+    table = _pandas_df_to_html_table(df_merged.T, table_id="table")
 
-    return [statistics_table, struct_table]
+    return [table]
 
 
 def _css_styles_for_report():
@@ -913,6 +912,5 @@ def report_generator(boxes, scatters, tables, step):
         # TODO enable select 4 best structures
         # TODO be able to sort inside the table using cluster ID
         # TODO add some of the ngl tools e.g. rotate, show water
-        # TODO merge two table and transpose it
         # TODO when download file, rename it
         report.write(html_report)

@@ -808,6 +808,8 @@ def _css_styles_for_report():
         border-collapse: collapse;
         width: 100%;
         font-size: 16px;
+        height: 500px;
+        overflow-y: auto;
         }
     .table th {
         font-weight: bold;
@@ -816,6 +818,9 @@ def _css_styles_for_report():
         border: 1px solid #ddd;
         text-align: left;
         height: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 1;
         }
     .table td {
         border: 1px solid #ddd;
@@ -826,17 +831,31 @@ def _css_styles_for_report():
     .table tr:nth-child(even) {
         background-color: #f2f2f2;
         }
-    .scrollable-table {
-        height: 250px;
-        overflow-y: scroll;
-        }
-    .scrollable-table th {
+    .table thead th {
         position: sticky;
         top: 0;
+        z-index: 1;
+        }
+    .table thead th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        }
+    .table tbody th {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        }
+    .table thead tr th:first-child,
+    .table tbody tr td:first-child {
+        width: 300px;
+        min-width: 300px;
+        max-width: 300px;
         }
     .title {
         font-family: Arial, sans-serif;
-        font-size: 16px;
+        font-size: 32px;
+        font-weight: bold;
         }
 
     '''
@@ -865,7 +884,7 @@ def _generate_html_body(figures):
     include_plotlyjs = "cdn"
     for figure in figures:
         if isinstance(figure, str): # tables
-            inner_html = f'''<div class="scrollable-table">{figure}</div>'''
+            inner_html = f'''<div class="table">{figure}</div>'''
         else: # plots
             inner_html = figure.to_html(
                 full_html=False, include_plotlyjs=include_plotlyjs

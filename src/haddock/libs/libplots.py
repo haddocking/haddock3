@@ -948,9 +948,4 @@ def report_generator(boxes, scatters, tables, step):
     # Write everything to a html file
     html_report = _generate_html_report(step, figures)
     with open("report.html", "w", encoding="utf-8") as report:
-        # TODO enbale toggling clusters between plots and tables
-        # TODO enable downloading all pdb files, and plots in one-go
-        # TODO enable select 4 best structures
-        # TODO be able to sort inside the table using cluster ID
-        # TODO add some of the ngl tools e.g. rotate, show water
         report.write(html_report)

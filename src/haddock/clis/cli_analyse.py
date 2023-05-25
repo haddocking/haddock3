@@ -32,10 +32,10 @@ from haddock.libs.libcli import _ParamsToDict
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import (
     box_plot_handler,
-    read_capri_table,
-    scatter_plot_handler,
     clt_table_handler,
+    read_capri_table,
     report_generator,
+    scatter_plot_handler,
     )
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import \

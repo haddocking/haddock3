@@ -11,8 +11,8 @@ from haddock.modules.analysis.clustrmsd import HaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     apply_threshold,
     cond_index,
-    get_clusters,
     get_cluster_center,
+    get_clusters,
     get_dendrogram,
     iterate_threshold,
     read_matrix,

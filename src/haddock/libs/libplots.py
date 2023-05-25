@@ -1,6 +1,7 @@
 """Plotting functionalities."""
 
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import plotly.colors as px_colors
@@ -612,7 +613,7 @@ def find_best_struct(ss_file, number_of_struct=10):
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
     # zero pad number so after pivot columns are sorted correctly
     col_names = [
-        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)
+        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)  # noqa: E501
         ] * number_of_cluster
 
     # add a new column `Structure` to the dataframe

@@ -635,7 +635,8 @@ def find_best_struct(ss_file, number_of_struct=10):
 def _ngl_viewer():
     # http://nglviewer.org/ngl/gallery/
     ngl_script = ("""
-        <script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js"></script>
+        <script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js">
+        </script>
         <script>
             var dialog;
             var stage;
@@ -643,7 +644,10 @@ def _ngl_viewer():
             document.addEventListener("DOMContentLoaded", function () {
                 // Setup to load data from rawgit
                 NGL.DatasourceRegistry.add(
-                    "data", new NGL.StaticDatasource("//cdn.rawgit.com/arose/ngl/v2.1.0/data/")
+                    "data",
+                    new NGL.StaticDatasource(
+                        "//cdn.rawgit.com/arose/ngl/v2.1.0/data/"
+                        )
                 );
 
                 // Create NGL Stage object
@@ -682,23 +686,26 @@ def _ngl_viewer():
 
 def _add_viewers(df):
     def _generate_download_link(file_name, dl_name):
-        html_code = "&#8595;" # add icon
-        html_code += "&nbsp;" # add space
-        html_code += f'<a href="{file_name}" download="{dl_name}">Download</a>' # add link
+        html_code = "&#8595;"  # add icon
+        html_code += "&nbsp;"  # add space
+        html_code += f'<a href="{file_name}" download="{dl_name}">Download</a>'
         return html_code
 
     def _generate_view_link(file_name):
-        html_code = "&#x1F441;" # add icon
-        html_code += "&nbsp;" # add space
-        event = f'''onClick="showStructure(\'{file_name}\')"''' # create event
-        html_code += f'<a {event} style="cursor:pointer;">View</a>'# add link
+        html_code = "&#x1F441;"  # add icon
+        html_code += "&nbsp;"  # add space
+        event = f'''onClick="showStructure(\'{file_name}\')"'''  # create event
+        html_code += f'<a {event} style="cursor:pointer;">View</a>'  # add link
         return html_code
 
     def _format_cell(row):
         file_name, dl_name = row.split(",")
 
         # Check if extension is pdb or gz
-        correct_file = file_name if Path(file_name).exists() else f"{file_name}.gz"
+        if Path(file_name).exists():
+            correct_file = file_name
+        else:
+            correct_file = f"{file_name}.gz"
 
         # Correct path because after running analyse
         # files are moved to analysis folder
@@ -710,7 +717,7 @@ def _add_viewers(df):
         # Generate html code
         html_code = "<p>"
         html_code += _generate_download_link(correct_path, dl_name)
-        html_code += "&nbsp;" # add space
+        html_code += "&nbsp;"  # add space
         html_code += _generate_view_link(correct_path)
         html_code += "</p>"
         return html_code
@@ -719,10 +726,11 @@ def _add_viewers(df):
     for col_name in table_df.columns[1:]:
         str_number = col_name.split(" ")[1]
         # Downloaded file name should include cluster id and structure id
-        # Add zero pad number to cluster number for consistency with structure number
+        # Add zero pad number to cluster number for consistency with structure
+        # number
         dl_names = [
             f'cluster{id:02d}_structure{str_number}' for id in df["Cluster ID"]
-        ]
+            ]
         df[col_name] = df[col_name] + "," + dl_names
         table_df[col_name] = df[col_name].apply(_format_cell)
     return table_df
@@ -766,7 +774,7 @@ def clean_capri_table(dfcl):
 def _pandas_df_to_html_table(df, table_id):
     return df.to_html(
         table_id=table_id,
-        index= True,
+        index=True,
         index_names=True,
         classes=["table"],
         escape=False,
@@ -801,7 +809,8 @@ def clt_table_handler(clt_file, ss_file):
 
     # Order structs by best (lowest score) cluster on top
     structs_df = structs_df.set_index("Cluster ID")
-    structs_df = structs_df.reindex(index=statistics_df["Cluster ID"]).reset_index()
+    structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])
+    structs_df = structs_df.reset_index()
 
     # Add download links and viewer
     structs_links_df = _add_viewers(structs_df)
@@ -896,14 +905,14 @@ def _generate_html_body(figures):
     body = "<body>"
     include_plotlyjs = "cdn"
     for figure in figures:
-        if isinstance(figure, str): # tables
+        if isinstance(figure, str):  # tables
             inner_html = f'''<div class="table">{figure}</div>'''
-        else: # plots
+        else:  # plots
             inner_html = figure.to_html(
                 full_html=False, include_plotlyjs=include_plotlyjs
-            )
+                )
             include_plotlyjs = False
-        body += "<br>" # add a break between tables and plots
+        body += "<br>"  # add a break between tables and plots
         body += inner_html
     body += _ngl_viewer()
     body += "</body>"

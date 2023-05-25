@@ -570,6 +570,13 @@ def report_plots_handler(
     return fig
 
 
+def _fix_uncluster_name(row):
+    name = row
+    if name == "-":
+        name = "Unclustered"
+    return name
+
+
 def find_best_struct(ss_file, number_of_struct=10):
     """
     Find best structures.
@@ -629,6 +636,11 @@ def find_best_struct(ss_file, number_of_struct=10):
         )
     best_struct_df.reset_index(inplace=True)
     best_struct_df.rename(columns={"cluster-id": "Cluster ID"}, inplace=True)
+
+    # unclustered id is "-", it is replaced by "Unclustered"
+    best_struct_df["Cluster ID"] = best_struct_df["Cluster ID"].apply(
+        _fix_uncluster_name
+        )
     return best_struct_df
 
 
@@ -728,9 +740,13 @@ def _add_viewers(df):
         # Downloaded file name should include cluster id and structure id
         # Add zero pad number to cluster number for consistency with structure
         # number
-        dl_names = [
-            f'cluster{id:02d}_structure{str_number}' for id in df["Cluster ID"]
-            ]
+        dl_names = []
+        for id in df["Cluster ID"]:
+            if id == "Unclustered":
+                dl_name = f'unclustered_structure{str_number}'
+            else:
+                dl_name = f'cluster{id:02d}_structure{str_number}'
+        dl_names.append(dl_name)
         df[col_name] = df[col_name] + "," + dl_names
         table_df[col_name] = df[col_name].apply(_format_cell)
     return table_df
@@ -768,6 +784,9 @@ def clean_capri_table(dfcl):
         columns={"cluster_id": "Cluster ID", "n": "Cluster size"},
         inplace=True,
         )
+
+    # unclustered id is "-", it is replaced by "Unclustered"
+    dfcl["Cluster ID"] = dfcl["Cluster ID"].apply(_fix_uncluster_name)
     return dfcl[table_col]
 
 
@@ -819,7 +838,6 @@ def clt_table_handler(clt_file, ss_file):
     df_merged = pd.merge(statistics_df, structs_links_df, on=["Cluster ID"])
     df_merged = df_merged.set_index("Cluster ID")
     table = _pandas_df_to_html_table(df_merged.T, table_id="table")
-
     return [table]
 
 

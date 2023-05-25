@@ -713,18 +713,13 @@ def _add_viewers(df):
     def _format_cell(row):
         file_name, dl_name = row.split(",")
 
-        # Check if extension is pdb or gz
-        if Path(file_name).exists():
-            correct_file = file_name
-        else:
-            correct_file = f"{file_name}.gz"
-
         # Correct path because after running analyse
         # files are moved to analysis folder
-        correct_path = f"../{correct_file}"
+        correct_path = f"../{file_name}"
 
-        # Correct download name
-        dl_name = dl_name + "".join(Path(correct_file).suffixes)
+        # Add suffix to download name
+        suffix = Path(file_name).suffix
+        dl_name = dl_name + suffix
 
         # Generate html code
         html_code = "<p>"

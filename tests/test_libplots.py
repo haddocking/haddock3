@@ -80,7 +80,7 @@ def test_find_best_struct_unclustered(example_capri_ss_dashcluster):
 
     expected = pd.DataFrame(
         {
-            "Cluster ID": {0: "-"},
+            "Cluster ID": {0: "Unclustered"},
             "Nr 01 best structure": {0: "../../01_rigidbody/rigidbody_6.pdb"},
             "Nr 02 best structure": {0: "../../01_rigidbody/rigidbody_16.pdb"},
             "Nr 03 best structure": {0: "../../01_rigidbody/rigidbody_20.pdb"},

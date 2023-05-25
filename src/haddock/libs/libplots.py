@@ -680,10 +680,10 @@ def _ngl_viewer():
 
 
 def _add_viewers(df):
-    def _generate_download_link(file_name):
+    def _generate_download_link(file_name, dl_name):
         html_code = "&#8595;" # add icon
         html_code += "&nbsp;" # add space
-        html_code += f'<a href="{file_name}">Download</a>' # add link
+        html_code += f'<a href="{file_name}" download="{dl_name}">Download</a>' # add link
         return html_code
 
     def _generate_view_link(file_name):
@@ -694,16 +694,21 @@ def _add_viewers(df):
         return html_code
 
     def _format_cell(row):
+        file_name, dl_name = row.split(",")
+
         # Check if extension is pdb or gz
-        correct_file = row if Path(row).exists() else f"{row}.gz"
+        correct_file = file_name if Path(file_name).exists() else f"{file_name}.gz"
 
         # Correct path because after running analyse
         # files are moved to analysis folder
         correct_path = f"../{correct_file}"
 
+        # Correct download name
+        dl_name = dl_name + "".join(Path(correct_file).suffixes)
+
         # Generate html code
         html_code = "<p>"
-        html_code += _generate_download_link(correct_path)
+        html_code += _generate_download_link(correct_path, dl_name)
         html_code += "&nbsp;" # add space
         html_code += _generate_view_link(correct_path)
         html_code += "</p>"
@@ -711,6 +716,13 @@ def _add_viewers(df):
 
     table_df = df.copy()
     for col_name in table_df.columns[1:]:
+        str_number = col_name.split(" ")[1]
+        # Downloaded file name should include cluster id and structure id
+        # Add zero pad number to cluster number for consistency with structure number
+        dl_names = [
+            f'cluster{id:02d}_structure{str_number}' for id in df["Cluster ID"]
+        ]
+        df[col_name] = df[col_name] + "," + dl_names
         table_df[col_name] = df[col_name].apply(_format_cell)
     return table_df
 
@@ -931,5 +943,4 @@ def report_generator(boxes, scatters, tables, step):
         # TODO enable select 4 best structures
         # TODO be able to sort inside the table using cluster ID
         # TODO add some of the ngl tools e.g. rotate, show water
-        # TODO when download file, rename it
         report.write(html_report)

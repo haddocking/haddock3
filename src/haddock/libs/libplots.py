@@ -168,14 +168,19 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
     color_map = {}
     for cl_id in sorted(cl_rank.keys()):
         color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
-        color_map[f"{cl_id}"] = colors[color_idx]
-    # to use color_discrete_map, cluster-id column should be str not int
-    gb_full_string = gb_full.astype({"cluster-id": "string"})
+        rn = "-" if cl_id == "-" else float(cl_rank[cl_id])
+        color_map[f"{rn}"] = colors[color_idx]
+
+    # to use color_discrete_map, cluster-ranking column should be str not int
+    gb_full_string = gb_full.astype({"cluster-ranking": "string"})
+    gb_full_string.rename(
+        columns={"cluster-ranking": "Cluster Rank"}, inplace=True
+        )
 
     fig = px.box(gb_full_string,
                  x="capri_rank",
                  y=f"{y_ax}",
-                 color="cluster-id",
+                 color="Cluster Rank",
                  color_discrete_map=color_map,
                  boxmode="overlay",
                  points="outliers",
@@ -183,7 +188,7 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
                  height=800,
                  )
     # layout
-    update_layout_plotly(fig, "Cluster rank", AXIS_NAMES[y_ax])
+    update_layout_plotly(fig, "Cluster Rank", AXIS_NAMES[y_ax])
     # save figure
     px_fname = f"{y_ax}_clt.html"
     fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
@@ -293,7 +298,7 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
             if cl_id == "-":
                 cl_name = "Unclustered"
             else:
-                cl_name = f"Cluster {cl_id}"
+                cl_name = f"Cluster {cl_rank[cl_id]}"  # use rank
             color_idx = (cl_rank[cl_id] - 1) % n_colors  # color index
             x_mean = np.mean(cl_df[x_ax])
             y_mean = np.mean(cl_df[y_ax])

@@ -678,6 +678,7 @@ def _ngl_viewer():
                 stage.loadFile(file_name).then(function (o) {
                     o.addRepresentation("cartoon");
                     o.autoView();
+                    stage.setParameters({backgroundColor: "white"});
                     stage.handleResize();
                 });
             }

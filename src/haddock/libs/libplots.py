@@ -570,11 +570,11 @@ def report_plots_handler(
     return fig
 
 
-def _fix_uncluster_name(row):
-    name = row
-    if name == "-":
-        name = "Unclustered"
-    return name
+def _fix_uncluster_rank(row):
+    rank = row
+    if rank == "-":
+        rank = "Unclustered"
+    return rank
 
 
 def find_best_struct(ss_file, number_of_struct=10):
@@ -626,20 +626,23 @@ def find_best_struct(ss_file, number_of_struct=10):
     # add a new column `Structure` to the dataframe
     best_struct_df = best_struct_df.assign(Structure=col_names)
 
-    # reshape data frame where columns are
-    # cluster-id, model,.., Nr 1 best structure, Nr 2 best structure, ...
+    # reshape data frame where columns are cluster-id, cluster-ranking,
+    # model,.., Nr 1 best structure, Nr 2 best structure, ...
     best_struct_df = best_struct_df.pivot_table(
-        index=["cluster-id"],
+        index=["cluster-id", "cluster-ranking"],
         columns=["Structure"],
         values="model",
         aggfunc=lambda x: x,
         )
+
     best_struct_df.reset_index(inplace=True)
-    best_struct_df.rename(columns={"cluster-id": "Cluster ID"}, inplace=True)
+    # Rename columns
+    columns = {"cluster-id": "Cluster ID", "cluster-ranking": "Cluster Rank"}
+    best_struct_df.rename(columns=columns, inplace=True)
 
     # unclustered id is "-", it is replaced by "Unclustered"
-    best_struct_df["Cluster ID"] = best_struct_df["Cluster ID"].apply(
-        _fix_uncluster_name
+    best_struct_df["Cluster Rank"] = best_struct_df["Cluster Rank"].apply(
+        _fix_uncluster_rank
         )
     return best_struct_df
 
@@ -731,18 +734,18 @@ def _add_viewers(df):
         return html_code
 
     table_df = df.copy()
-    for col_name in table_df.columns[1:]:
+    for col_name in table_df.columns[2:]:
         str_number = col_name.split(" ")[1]
-        # Downloaded file name should include cluster id and structure id
-        # Add zero pad number to cluster number for consistency with structure
-        # number
+        # Downloaded file name should include cluster id and model (or
+        # structure) id Add zero pad number to cluster number for consistency
+        # with model (or structure) number
         dl_names = []
-        for id in df["Cluster ID"]:
+        for id in df["Cluster Rank"]:
             if id == "Unclustered":
-                dl_name = f'unclustered_structure{str_number}'
+                dl_name = f'unclustered_model{str_number}'
             else:
-                dl_name = f'cluster{id:02d}_structure{str_number}'
-        dl_names.append(dl_name)
+                dl_name = f'cluster{id:02d}_model{str_number}'
+            dl_names.append(dl_name)
         df[col_name] = df[col_name] + "," + dl_names
         table_df[col_name] = df[col_name].apply(_format_cell)
     return table_df
@@ -769,7 +772,7 @@ def clean_capri_table(dfcl):
     # what metrics are in both dfcl and AXIS_NAMES
     col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).tolist()
     # columns of the final table
-    table_col = ["Cluster ID", "Cluster size"]
+    table_col = ["Cluster ID", "Cluster Rank", "Cluster size"]
     for col_name in col_list:
         mean_value = dfcl[col_name].astype(str)
         std_value = dfcl[f"{col_name}_std"].astype(str)
@@ -777,12 +780,16 @@ def clean_capri_table(dfcl):
         table_col.append(AXIS_NAMES[col_name])
     dfcl.drop(columns=col_list, inplace=True)
     dfcl.rename(
-        columns={"cluster_id": "Cluster ID", "n": "Cluster size"},
+        columns={
+            "cluster_id": "Cluster ID",
+            "cluster_rank": "Cluster Rank",
+            "n": "Cluster size"
+            },
         inplace=True,
         )
 
     # unclustered id is "-", it is replaced by "Unclustered"
-    dfcl["Cluster ID"] = dfcl["Cluster ID"].apply(_fix_uncluster_name)
+    dfcl["Cluster Rank"] = dfcl["Cluster Rank"].apply(_fix_uncluster_rank)
     return dfcl[table_col]
 
 
@@ -831,8 +838,12 @@ def clt_table_handler(clt_file, ss_file):
     structs_links_df = _add_viewers(structs_df)
 
     # Merge and convert dataframe to html table
-    df_merged = pd.merge(statistics_df, structs_links_df, on=["Cluster ID"])
-    df_merged = df_merged.set_index("Cluster ID")
+    df_merged = pd.merge(
+        statistics_df, structs_links_df, on=["Cluster ID", "Cluster Rank"]
+        )
+
+    # The header of the table would be the cluster rank instead of id
+    df_merged = df_merged.set_index("Cluster Rank")
     table = _pandas_df_to_html_table(df_merged.T, table_id="table")
     return [table]
 

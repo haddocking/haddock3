@@ -434,10 +434,11 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
         report_file = Path(outdir, directory, "report.html")
         log.info(f"View the results in {report_file}")
         info_msg = ("To view structures or download the structure files, "
-                    f"in the {outdir} directory and in a terminal run the "
-                    "command `python -m http.server`. By default, http "
-                    "server runs on `http://0.0.0.0:8000/`. Open the link in "
-                    f"a web browser. Then browse the file {report_file}.")
+                    f"in a terminal run the command "
+                    f"`python -m http.server --directory {rundir_cwd}`. "
+                    "By default, http server runs on `http://0.0.0.0:8000/`. "
+                    f"Open the link http://0.0.0.0:8000/{report_file} "
+                    "in a web browser.")
         log.info(info_msg)
     os.chdir(ori_cwd)
     return

@@ -736,11 +736,11 @@ def _add_viewers(df):
         dl_name = dl_name + suffix
 
         # Generate html code
-        html_code = "<p>"
+        html_code = "<span>"
         html_code += _generate_download_link(correct_path, dl_name)
         html_code += "&nbsp;"  # add space
         html_code += _generate_view_link(correct_path)
-        html_code += "</p>"
+        html_code += "</span>"
         return html_code
 
     table_df = df.copy()
@@ -930,7 +930,7 @@ def _generate_html_report(step, figures):
 def _generate_html_head(step):
     head = "<head>"
     head += f"<title>Analysis report of step {step}</title>"
-    head += f"<p class='title'>Analysis report of step {step}</p>"
+    head += f"<span class='title'>Analysis report of step {step}</span>"
     head += _css_styles_for_report()
     head += "</head>"
     return head

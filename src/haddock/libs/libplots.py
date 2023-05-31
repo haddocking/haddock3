@@ -662,13 +662,6 @@ def _ngl_viewer():
             var stage;
 
             document.addEventListener("DOMContentLoaded", function () {
-                // Setup to load data from rawgit
-                NGL.DatasourceRegistry.add(
-                    "data",
-                    new NGL.StaticDatasource(
-                        "//cdn.rawgit.com/arose/ngl/v2.1.0/data/"
-                        )
-                );
 
                 // Create NGL Stage object
                 stage = new NGL.Stage("viewport");

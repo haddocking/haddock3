@@ -697,10 +697,21 @@ def _ngl_viewer():
             <dialog id="structureViewerDialog">
                 <div id="viewport" style="width:800px; height:600px;"></div>
                 <form>
-                    <button value="cancel" formmethod="dialog">X</button>
+                    <button value="cancel"
+                            formmethod="dialog"
+                            class="cancel-button">
+                            X
+                    </button>
                 </form>
             </dialog>
         </body>
+        <style>
+            .cancel-button {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+        </style>
     """)
     return ngl_script + ngl_dialog
 

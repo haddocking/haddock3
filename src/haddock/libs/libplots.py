@@ -680,8 +680,11 @@ def _ngl_viewer():
 
             });
 
-            function showStructure(file_name) {
+            function showStructure(file_name, dl_name) {
                 dialog = document.getElementById("structureViewerDialog");
+                dialog.querySelector("#dl").href = file_name;
+                dialog.querySelector("#dl").text = dl_name;
+                dialog.querySelector("#dl").setAttribute("download", dl_name);
                 dialog.showModal();
                 stage.loadFile(file_name).then(function (o) {
                     o.addRepresentation("cartoon");
@@ -697,21 +700,17 @@ def _ngl_viewer():
             <dialog id="structureViewerDialog">
                 <div id="viewport" style="width:800px; height:600px;"></div>
                 <form>
-                    <button value="cancel"
-                            formmethod="dialog"
-                            class="cancel-button">
+                    <a id="dl"
+                        style="position: absolute; top: 10px; left: 10px;">
+                    </a>
+                    <button style="position: absolute; top: 10px; right: 10px;"
+                            value="cancel"
+                            formmethod="dialog">
                             X
                     </button>
                 </form>
             </dialog>
         </body>
-        <style>
-            .cancel-button {
-                position: absolute;
-                top: 10px;
-                right: 10px;
-            }
-        </style>
     """)
     return ngl_script + ngl_dialog
 
@@ -726,7 +725,9 @@ def _add_viewers(df):
     def _generate_view_link(file_name):
         html_code = "&#x1F441;"  # add icon
         html_code += "&nbsp;"  # add space
-        event = f'''onClick="showStructure(\'{file_name}\')"'''  # create event
+
+        # create event
+        event = f'''onClick="showStructure(\'{file_name}\', \'{dl_name}\')"'''
         html_code += f'<a {event} style="cursor:pointer;">View</a>'  # add link
         return html_code
 

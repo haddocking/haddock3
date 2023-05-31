@@ -715,7 +715,7 @@ def _add_viewers(df):
         html_code += f'<a href="{file_name}" download="{dl_name}">Download</a>'
         return html_code
 
-    def _generate_view_link(file_name):
+    def _generate_view_link(file_name, dl_name):
         html_code = "&#x1F441;"  # add icon
         html_code += "&nbsp;"  # add space
 
@@ -739,22 +739,22 @@ def _add_viewers(df):
         html_code = "<span>"
         html_code += _generate_download_link(correct_path, dl_name)
         html_code += "&nbsp;"  # add space
-        html_code += _generate_view_link(correct_path)
+        html_code += _generate_view_link(correct_path, dl_name)
         html_code += "</span>"
         return html_code
 
     table_df = df.copy()
     for col_name in table_df.columns[2:]:
         str_number = col_name.split(" ")[1]
-        # Downloaded file name should include cluster id and model (or
+        # Downloaded file name should include cluster rank and model (or
         # structure) id Add zero pad number to cluster number for consistency
         # with model (or structure) number
         dl_names = []
-        for id in df["Cluster Rank"]:
-            if id == "Unclustered":
+        for rn in df["Cluster Rank"]:
+            if rn == "Unclustered":
                 dl_name = f'unclustered_model{str_number}'
             else:
-                dl_name = f'cluster{id:02d}_model{str_number}'
+                dl_name = f'cluster{rn:02d}_model{str_number}'
             dl_names.append(dl_name)
         df[col_name] = df[col_name] + "," + dl_names
         table_df[col_name] = df[col_name].apply(_format_cell)

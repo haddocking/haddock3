@@ -865,7 +865,7 @@ def _css_styles_for_report():
         border-collapse: collapse;
         width: 100%;
         font-size: 16px;
-        height: 500px;
+        height: auto;
         overflow-y: auto;
         }
     .table th {
@@ -930,7 +930,7 @@ def _generate_html_report(step, figures):
 def _generate_html_head(step):
     head = "<head>"
     head += f"<title>Analysis report of step {step}</title>"
-    head += f"<span class='title'>Analysis report of step {step}</span>"
+    head += f"<p class='title'>Analysis report of step {step}</p>"
     head += _css_styles_for_report()
     head += "</head>"
     return head

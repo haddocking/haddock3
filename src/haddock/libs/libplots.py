@@ -164,19 +164,24 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
     fig_list : list
         a list of figures
     """
-    colors = px_colors.qualitative.Alphabet
+    colors = px_colors.qualitative.Dark24
     color_map = {}
     for cl_id in sorted(cl_rank.keys()):
         color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
-        rn = "-" if cl_id == "-" else float(cl_rank[cl_id])
+
+        # Note: the rank format (float/int) in "cl_rank" is different from
+        # gb_full["cluster-ranking"]
+        rn = gb_full[gb_full["cluster-id"]==cl_id]["cluster-ranking"].unique()[0]
         color_map[f"{rn}"] = colors[color_idx]
+
+        # Choose (almost) the same color as scatter plots for "Other"
+        color_map["Other"] = "#DDDBDA"
 
     # to use color_discrete_map, cluster-ranking column should be str not int
     gb_full_string = gb_full.astype({"cluster-ranking": "string"})
     gb_full_string.rename(
         columns={"cluster-ranking": "Cluster Rank"}, inplace=True
         )
-
     fig = px.box(gb_full_string,
                  x="capri_rank",
                  y=f"{y_ax}",
@@ -226,6 +231,7 @@ def box_plot_data(capri_df, cl_rank):
 
     gb_other["cluster-id"] = "Other"
     gb_other["capri_rank"] = len(cl_rank.keys()) + 1
+    gb_other["cluster-ranking"] = "Other"
     gb_full = pd.concat([gb_good, gb_other])
     return gb_full
 
@@ -449,7 +455,7 @@ def scatter_plot_handler(capri_filename, cl_rank, format, scale):
     gb_cluster, gb_other = scatter_plot_data(capri_df, cl_rank)
 
     # defining colors
-    colors = px_colors.qualitative.Alphabet
+    colors = px_colors.qualitative.Dark24
     fig_list = []
     for x_ax, y_ax in SCATTER_PAIRS:
         if not in_capri(x_ax, capri_df.columns):

@@ -4,7 +4,7 @@ import shutil
 from contextlib import suppress
 from pathlib import Path
 
-from pdbtools.pdb_mkensemble import run as make_ensemble
+# from pdbtools.pdb_mkensemble import run as make_ensemble
 
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
@@ -99,19 +99,19 @@ class HaddockModule(BaseHaddockModule):
         openmm_engine = Scheduler(openmm_jobs, ncores=ncores)
         openmm_engine.run()
 
-        #self.log('Creating output ensemble...')
+        # self.log('Creating output ensemble...')
         # export models
         output_pdbs = list(Path(directory_dict["openmm_output"]).glob('*.pdb'))
 
         # Check if at least one output file was generated
         if len(output_pdbs) == 0:
             raise Exception("No output models generated. Check Openmm Execution.")  # noqa: E501
-        #ensemble_name = "openmm_ensemble.pdb"
-        #ensemble = make_ensemble(output_pdbs)  # ensemble is a generator
-        #with open(ensemble_name, "w") as wfile:
-        #    for line in ensemble:
-        #        wfile.write(line)
-        #self.log(f'Output ensemble {ensemble_name} created.')
+        # ensemble_name = "openmm_ensemble.pdb"
+        # ensemble = make_ensemble(output_pdbs)  # ensemble is a generator
+        # with open(ensemble_name, "w") as wfile:
+        #     for line in ensemble:
+        #         wfile.write(line)
+        # self.log(f'Output ensemble {ensemble_name} created.')
         
         # Setting the output variable
         self.output_models = [PDBFile(openmmout)

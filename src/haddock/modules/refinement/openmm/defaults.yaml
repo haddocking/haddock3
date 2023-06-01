@@ -250,7 +250,7 @@ solv_eq_max_temperature_kelvin:
   explevel: expert
 
 solv_eq_stepsize_fs:
-  default: 2
+  default: 2.0
   precision: 1
   min: 0.5
   max: 4

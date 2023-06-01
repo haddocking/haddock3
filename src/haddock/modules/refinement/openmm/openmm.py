@@ -151,12 +151,14 @@ class OPENMM:
         fixer.findMissingAtoms()
         fixer.addMissingAtoms()
         # calling PDBFixer
-        output_filepath = os.path.join(self.directory_dict["pdbfixer"],
-                                       self.model.file_name
+        output_filepath = os.path.join(
+                                   self.directory_dict["pdbfixer"],
+                                   self.model.file_name
                                        )
-        openmmpdbfile.writeFile(fixer.topology,
-                                fixer.positions,
-                                open(output_filepath, 'w')
+        openmmpdbfile.writeFile(
+                              fixer.topology,
+                              fixer.positions,
+                              open(output_filepath, 'w')
                                 )
 
     def create_solvation_box(self, solvent_model: str) -> str:
@@ -167,6 +169,11 @@ class OPENMM:
         ----------
         solvent_model : str
             One of the OpenMM's solvent models.
+            
+        Return
+        ----------
+        box_path : str
+            Path to the solvated system
         """
         log.info(f'Building solvation box for file: {self.model.file_name}')
         pdb_filepath = self.get_pdb_filepath(self.directory_dict["pdbfixer"])
@@ -189,22 +196,26 @@ class OPENMM:
             # with neutralize=False it doesn't neutralize
             log.info(f"Solvating and adding ions to the system:"
                      f"padding {padding}, ions conc. : {ions_conc}")
-            modeller.addSolvent(usedForcefield,
-                                padding=padding,
-                                neutralize=True,
-                                ionicStrength=ions_conc)
+            modeller.addSolvent(
+                              usedForcefield,
+                              padding=padding,
+                              neutralize=True,
+                              ionicStrength=ions_conc
+                                )
             # Add required extra particles for forcefield,
             # e.g. Drude particles.
             if self.params['add_extra_particles_for_forcefield']:
                 log.info("adding extra particles")
                 modeller.addExtraParticles(forcefield)
             # write solvation box
-            box_path = os.path.join(self.directory_dict["solvation_boxes"],
-                                    self.model.file_name
+            box_path = os.path.join(
+                                self.directory_dict["solvation_boxes"],
+                                self.model.file_name
                                     )
-            openmmpdbfile.writeFile(modeller.topology,
-                                    modeller.positions,
-                                    open(box_path, 'w')
+            openmmpdbfile.writeFile(
+                                 modeller.topology,
+                                 modeller.positions,
+                                 open(box_path, 'w')
                                     )
             
             return box_path
@@ -309,10 +320,13 @@ class OPENMM:
                 qtemp = n * delta_temp
                 integrator.setTemperature(qtemp * kelvin)
                 simulation.step(delta_steps)
-            # Do few simulation steps at max temperature
             integrator.setTemperature(max_temperature * kelvin)
-            while not ((max_temperature - 10) <= self._get_simulation_temperature(simulation, statereporter._dof) <= (max_temperature + 10)):
-                simulation.step(50)
+            # Makes sure temperature of the system is reached
+            self._stabilize_temperature(simulation,
+                                        max_temperature,
+                                        statereporter._dof,
+                                        tolerence=10.0,
+                                        steps=50)
             # Print log info
             log.info(
                   "Running solvent equilibration phase "
@@ -323,6 +337,7 @@ class OPENMM:
                   f"{self.params['solv_eq_max_temperature_kelvin']} K "
                   f"(stepsize={self.params['solv_eq_stepsize_fs']} fs)..."
                   )
+            # Do few simulation steps at max temperature
             simulation.step(eq_steps)
             # Progressively freeze the system
             log.info(f"Cooling down the system...")
@@ -351,6 +366,33 @@ class OPENMM:
             strerr = traceback.format_exc()
             log.error(f"EQUILIBRATING SOLVATION BOX ERROR FOR {pdb_filepath}:\n"
                       f"{strerr}")
+            
+    def _stabilize_temperature(self, system, temperature: float,
+                               dof: int, tolerence: float=5.0,
+                               steps: int=50):
+        """
+        Make sure the simulated system reached the desired temperature
+        
+        Parameters
+        ----------
+        system : py:class:`openmm.System`
+            An openmm system
+        temperature : float
+            The temperature hoped to be reached
+        dof : int
+            The degree of freedom obtained from the statereporter._dof
+        tolerence : float
+            The tolerence allowed for the temperature
+        steps : int
+            The number of steps to do before checking again that
+            temperature was reached
+        """
+        # Makes sure temperature of the system is reached
+        while not ((temperature - tolerence) <= \
+              self._get_simulation_temperature(simulation, dof) <= \
+              (max_temperature + tolerence)):
+            # Do several simulation steps
+            simulation.step(steps)
 
     def _gen_restrain_force(self, atoms: list, positions: list,
                             subset: list=[]):
@@ -590,8 +632,14 @@ class OPENMM:
             qtemp = n * delta_temp
             integrator.setTemperature(qtemp * kelvin)
             simulation.step(int(eq_steps / nvt_sims))
-        while not ((qtemp - 5) <= self._get_simulation_temperature(simulation, statereporter._dof) <= (qtemp + 5)):
-            simulation.step(50)
+        # Makes sure temperature of the system is reached
+        self._stabilize_temperature(
+                            simulation,
+                            qtemp,
+                            statereporter._dof,
+                            tolerence=5.0,
+                            steps=50
+                            )
         log.info(f"Temperature of {self.params['temperature_kelvin']} K "
                  f"reached in {simulation.context.getStepCount()} steps")
 
@@ -601,13 +649,15 @@ class OPENMM:
         self._write_current_pdb(simulation, eq_pdb_filepath)
         output_files['equilibrated'] = eq_pdb_filepath
         
-        # NPT simulation (isothermal-isobaric ensemble)
-        simulation.system.addForce(
-            MonteCarloBarostat(
-                1 * atmosphere,
-                self.params['temperature_kelvin'] * kelvin
-                )
-            )
+        ## NPT simulation (isothermal-isobaric ensemble)
+        ## FIXME : Once the MonteCarloBarostat will no more split
+        ## chains appart in different periodic boxes, please uncomment it
+        #simulation.system.addForce(
+        #    MonteCarloBarostat(
+        #        1 * atmosphere,
+        #        self.params['temperature_kelvin'] * kelvin
+        #        )
+        #    )
         simulation.context.reinitialize(True)
 
         # Running real simulation

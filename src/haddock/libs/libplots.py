@@ -859,6 +859,13 @@ def clt_table_handler(clt_file, ss_file):
 
 
 def _css_styles_for_report():
+    """
+    Generate custom CSS styles for an analysis report.
+
+    Returns
+    -------
+    The CSS styles as a string.
+    """
     custom_css = '''
     .table {
         font-family: Arial, sans-serif;
@@ -920,6 +927,23 @@ def _css_styles_for_report():
 
 
 def _generate_html_report(step, figures):
+    """
+    Generate an HTML report for a specific step of analysis, including figures.
+
+    Parameters
+    ----------
+    step : str
+        The step number.
+    figures : list
+        A list of figures to include in the HTML body.
+        Each figure can be either a string representing a table or a
+        plotly.graph_objects.Figure object.
+
+    Returns
+    -------
+    html_report : str
+        The generated HTML report as a string.
+    """
     html_report = "<!DOCTYPE html><html lang='en'>"
     html_report += _generate_html_head(step)
     html_report += _generate_html_body(figures)
@@ -928,6 +952,19 @@ def _generate_html_report(step, figures):
 
 
 def _generate_html_head(step):
+    """
+    Generate the HTML head section for an analysis report.
+
+    Parameters
+    ----------
+    step : str
+        The step number.
+
+    Returns
+    -------
+    head : str
+        The HTML head section as a string.
+    """
     head = "<head>"
     head += f"<title>Analysis report of step {step}</title>"
     head += f"<p class='title'>Analysis report of step {step}</p>"
@@ -937,6 +974,21 @@ def _generate_html_head(step):
 
 
 def _generate_html_body(figures):
+    """
+    Generate an HTML body section containing figures for an analysis report.
+
+    Parameters
+    ----------
+    figures : list
+        A list of figures to include in the HTML body.
+        Each figure can be either a string representing a table or a
+        plotly.graph_objects.Figure object.
+
+    Returns
+    -------
+    body : str
+        The generated HTML body as a string.
+    """
     body = "<body>"
     include_plotlyjs = "cdn"
     for figure in figures:

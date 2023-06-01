@@ -111,11 +111,12 @@ class HaddockModule(BaseHaddockModule):
         #with open(ensemble_name, "w") as wfile:
         #    for line in ensemble:
         #        wfile.write(line)
-
         #self.log(f'Output ensemble {ensemble_name} created.')
         
+        # Setting the output variable
         self.output_models = [PDBFile(openmmout)
                               for openmmout in sorted(output_pdbs)]
+        # Generating standardized haddock3 outputs
         self.export_output_models()
 
         # deleting unnecessary directories

@@ -136,7 +136,7 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 10
+  max: 20
   title: Number of simulation replicas.
   short: Number of simulation replicas.
   long: Number of simulation replicas.

@@ -1,4 +1,5 @@
 """Test prepare run module."""
+import shutil
 from math import isnan
 from pathlib import Path
 
@@ -11,12 +12,15 @@ from haddock.gear.prepare_run import (
     get_expandable_parameters,
     populate_mol_parameters,
     populate_topology_molecule_params,
+    update_step_contents_to_step_names,
     validate_module_names_are_not_misspelled,
     validate_parameters_are_not_misspelled,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules import modules_names
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG
+
+from . import data_folder, steptmp
 
 
 DEFAULT_DICT = read_from_yaml_config(DEFAULT_CONFIG)
@@ -117,22 +121,22 @@ def test_populate_topoaa_molecules_4():
 def test_populate_mol_params():
     """Test populate mol."""
     params = {
-        "topoaa": {"molecules": ["file1.pdb", "file2.pdb", "file3.pdb"]},
-        "flexref": {"mol_fix_origin_2": True},
-        "caprieval": {},
+        "topoaa.1": {"molecules": ["file1.pdb", "file2.pdb", "file3.pdb"]},
+        "flexref.1": {"mol_fix_origin_2": True},
+        "caprieval.1": {},
         }
 
     populate_mol_parameters(params)
-    assert "mol_fix_origin_1" in params["flexref"]
-    assert "mol_fix_origin_2" in params["flexref"]
-    assert "mol_fix_origin_3" in params["flexref"]
-    assert not ("mol_fix_origin_4" in params["flexref"])
-    assert params["flexref"]["mol_fix_origin_2"] is True
-    assert "mol_shape_1" in params["flexref"]
-    assert "mol_shape_2" in params["flexref"]
-    assert "mol_shape_3" in params["flexref"]
-    assert not ("mol_shape_4" in params["flexref"])
-    assert not params["caprieval"]
+    assert "mol_fix_origin_1" in params["flexref.1"]
+    assert "mol_fix_origin_2" in params["flexref.1"]
+    assert "mol_fix_origin_3" in params["flexref.1"]
+    assert not ("mol_fix_origin_4" in params["flexref.1"])
+    assert params["flexref.1"]["mol_fix_origin_2"] is True
+    assert "mol_shape_1" in params["flexref.1"]
+    assert "mol_shape_2" in params["flexref.1"]
+    assert "mol_shape_3" in params["flexref.1"]
+    assert not ("mol_shape_4" in params["flexref.1"])
+    assert not params["caprieval.1"]
 
 
 def test_check_if_path_exists():
@@ -219,3 +223,21 @@ def test_validate_params_error():
     ref = ["param1", "param2", "param3"]
     with pytest.raises(ValueError):
         validate_parameters_are_not_misspelled(params, ref)
+
+
+def test_update_step_folders_from_restart():
+    output_tmp = Path(data_folder, "1_dummystep")
+    shutil.copytree(steptmp, output_tmp)
+    prev_names = ['0_dummystep']
+    next_names = ['1_dummystep']
+    update_step_contents_to_step_names(prev_names, next_names, data_folder)
+
+    file1 = Path(output_tmp, "file1.in").read_text()
+    assert '0_dummystep' not in file1
+    assert '1_dummystep' in file1
+
+    file2 = Path(output_tmp, "folder", "file2.in").read_text()
+    assert '0_dummystep' not in file2
+    assert '1_dummystep' in file2
+
+    shutil.rmtree(output_tmp)

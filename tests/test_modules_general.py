@@ -20,8 +20,6 @@ from haddock.modules import (
     get_module_steps_folders,
     is_step_folder,
     modules_category,
-    save_config,
-    save_config_ignored,
     )
 
 from . import working_modules
@@ -211,139 +209,6 @@ def test_category_hierarchy():
     assert categories_1 == categories_2
 
 
-# dummy parameters but with correct modules names
-case_1 = {
-    "run_dir": "folder1",
-    "molecules": ["mol1", "mol2"],
-    "cns_exec": "path1",
-    "ncores": 8,
-    "topoaa": {
-        "param1": 1,
-        "param2": 1.0,
-        "param3": False,
-        "param4": ["a", "b", "c"],
-        "sub1": {"param5": 50},
-        "param6": float('nan'),
-        "param7": "string",
-        },
-    }
-
-case_1_text = '''run_dir = "folder1"
-molecules = [
-    "mol1",
-    "mol2"
-    ]
-
-cns_exec = "path1"
-ncores = 8
-
-[topoaa]
-param1 = 1
-param2 = 1.0
-param3 = false
-param4 = [
-    "a",
-    "b",
-    "c"
-    ]
-
-param6 = nan
-param7 = "string"
-[topoaa.sub1]
-param5 = 50'''
-
-
-def test_save_config():
-    fpath = Path("save_config_test_case1.cfg")
-    save_config(case_1, fpath)
-    result = fpath.read_text()
-    assert result == case_1_text
-    fpath.unlink()
-
-
-case_topoaa = {
-    "topoaa": {
-        "param1": 1,
-        "param2": 1.0,
-        "param3": False,
-        "param4": ["a", "b", "c"],
-        "sub1": {"param5": 50},
-        "param6": float('nan'),
-        "param7": "string",
-        },
-    "rigidbody": {
-        "param1": 10,
-        },
-    }
-
-case_topoaa_txt = '''[topoaa]
-param1 = 1
-param2 = 1.0
-param3 = false
-param4 = [
-    "a",
-    "b",
-    "c"
-    ]
-
-param6 = nan
-param7 = "string"
-[topoaa.sub1]
-param5 = 50
-
-[rigidbody]
-param1 = 10'''
-
-
-def test_save_config_header():
-    fpath = Path("save_config_test_header.cfg")
-    save_config(case_topoaa, fpath)
-    result = fpath.read_text()
-    assert result == case_topoaa_txt
-    fpath.unlink()
-
-
-# dummy parameters but with correct modules names
-case_2 = {
-    "run_dir": "folder1",
-    "molecules": ["mol1", "mol2"],
-    "cns_exec": "path1",
-    "ncores": 8,
-    "topoaa": {
-        "param1": 1,
-        "param2": 1.0,
-        "param3": False,
-        "param4": ["a", "b", "c"],
-        "sub1": {"param5": 50},
-        "param6": float('nan'),
-        "param7": "string",
-        },
-    }
-
-case_2_text = '''[topoaa]
-param1 = 1
-param2 = 1.0
-param3 = false
-param4 = [
-    "a",
-    "b",
-    "c"
-    ]
-
-param6 = nan
-param7 = "string"
-[topoaa.sub1]
-param5 = 50'''
-
-
-def test_save_config_ignored():
-    fpath = Path("save_config_test.cfg")
-    save_config_ignored(case_2, fpath)
-    result = fpath.read_text()
-    assert result == case_2_text
-    fpath.unlink()
-
-
 def test_get_module_steps_folders():
     rd = Path("run_dir_test")
     rd.mkdir()
@@ -353,8 +218,11 @@ def test_get_module_steps_folders():
     Path(rd, '2_nothing').mkdir()
     Path(rd, 'data').mkdir()
     result = get_module_steps_folders(rd)
-    shutil.rmtree(rd)
     assert result == ['0_topoaa', '1_rigidbody', '150_flexref']
+    # what if we provide a list of modules (for ex. in postprocessing)
+    result_analysis = get_module_steps_folders(rd, [1, 150])
+    assert result_analysis == ['1_rigidbody', '150_flexref']
+    shutil.rmtree(rd)
 
 
 @pytest.mark.parametrize(

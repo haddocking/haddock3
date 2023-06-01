@@ -6,6 +6,7 @@ import os
 import shutil
 import string
 import sys
+import tarfile
 from contextlib import contextmanager, suppress
 from copy import copy
 from functools import lru_cache, wraps
@@ -19,7 +20,8 @@ from haddock.gear.clean_steps import (
     unpack_compressed_and_archived_files,
     update_unpacked_names,
     )
-from haddock.gear.config_reader import get_module_name, read_config
+from haddock.gear.config import get_module_name
+from haddock.gear.config import load as read_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
     get_multiple_index_groups,
@@ -48,6 +50,7 @@ from haddock.gear.validations import v_rundir
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libfunc import not_none
+from haddock.libs.libio import make_writeable_recursive
 from haddock.libs.libutil import (
     extract_keys_recursive,
     recursive_dict_update,
@@ -237,6 +240,7 @@ def setup_run(
         unpack_compressed_and_archived_files(
             _step_folders,
             general_params["ncores"],
+            dec_all=True,
             )
 
     if starting_from_copy:
@@ -251,18 +255,18 @@ def setup_run(
     else:
         copy_molecules_to_topology(
             general_params['molecules'],
-            modules_params['topoaa'],
+            modules_params['topoaa.1'],
             )
 
-        if len(modules_params["topoaa"]["molecules"]) > max_molecules_allowed:
+        if len(modules_params["topoaa.1"]["molecules"]) > max_molecules_allowed:
             raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
         zero_fill.read(modules_params)
 
-        populate_topology_molecule_params(modules_params["topoaa"])
+        populate_topology_molecule_params(modules_params["topoaa.1"])
         populate_mol_parameters(modules_params)
 
-        max_mols = len(modules_params["topoaa"]["molecules"])
+        max_mols = len(modules_params["topoaa.1"]["molecules"])
 
     if not from_scratch:
         _prev, _new = renum_step_folders(general_params[RUNDIR])
@@ -283,7 +287,7 @@ def setup_run(
     if scratch_rest0:
         copy_molecules_to_data_dir(
             data_dir,
-            modules_params["topoaa"],
+            modules_params["topoaa.1"],
             preprocess=general_params["preprocess"],
             )
 
@@ -303,6 +307,9 @@ def setup_run(
     else:
         # copies everything
         copy_input_files_to_data_dir(data_dir, modules_params)
+
+    # grant write permissions to data/ dir
+    make_writeable_recursive(data_dir)
 
     # return the modules' parameters and general parameters separately
     return modules_params, general_params
@@ -361,6 +368,7 @@ def validate_modules_params(modules_params, max_mols):
         in the defaults.cfg of the module.
     """
     for module_name, args in modules_params.items():
+        module_name = get_module_name(module_name)
         defaults = _read_defaults(module_name)
         if not defaults:
             continue
@@ -552,15 +560,21 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
         for parameter, value in params.items():
             if parameter.endswith('_fname'):
                 if value:
-                    name = value.name
+                    name = Path(value).name
                     # path is created here to avoid creating empty folders
                     # for those modules without '_fname' parameters
                     pf = Path(data_dir, end_path)
                     pf.mkdir(exist_ok=True)
                     check_if_path_exists(value)
-                    shutil.copy(value, Path(pf, name))
+                    target_path = Path(pf, name)
+                    shutil.copy(value, target_path)
                     _p = Path(rel_data_dir, end_path, name)
                     modules_params[module][parameter] = _p
+                    # account for input .tgz files
+                    if name.endswith("tgz"):
+                        log.info(f"Uncompressing tar {value}")
+                        with tarfile.open(target_path) as fin:
+                            fin.extractall(pf)
 
 
 def check_run_dir_exists(run_dir):
@@ -662,7 +676,7 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
     # for the `mol` parameter. Instead of defining a general recursive
     # function, I decided to add a simple if/else exception.
     # no other module should have subdictionaries has parameters
-    if module_name == "topoaa":
+    if get_module_name(module_name) == "topoaa":
         ap = set()  # allowed_parameters
         ap.update(_get_expandable(user_config, defaults, module_name, max_mols))
         for i in range(1, max_mols + 1):
@@ -701,7 +715,7 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
     allowed_params.update(read_multiple_idx_groups_user_config(user_config, type_2))  # noqa: E501
 
     with suppress(KeyError):
-        type_3 = type_simplest_ep[module_name]
+        type_3 = type_simplest_ep[get_module_name(module_name)]
         allowed_params.update(read_simplest_expandable(type_3, user_config))
 
     _ = read_mol_parameters(user_config, type_4, max_mols=max_mols)
@@ -712,7 +726,7 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
 
 def populate_topology_molecule_params(topoaa):
     """Populate topoaa `molX` subdictionaries."""
-    topoaa_dft = _read_defaults("topoaa")
+    topoaa_dft = _read_defaults("topoaa.1")
 
     # list of possible prot_segids
     uppers = list(string.ascii_uppercase)[::-1]
@@ -764,7 +778,7 @@ def populate_mol_parameters(modules_params):
         Alter the dictionary in place.
     """
     # the starting number of the `mol_` parameters is 1 by CNS definition.
-    num_mols = range(1, len(modules_params["topoaa"]["molecules"]) + 1)
+    num_mols = range(1, len(modules_params["topoaa.1"]["molecules"]) + 1)
     for module_name, _ in modules_params.items():
 
         # read the modules default parameters
@@ -868,7 +882,9 @@ def fuzzy_match(user_input, possibilities):
 
 def update_step_contents_to_step_names(prev_names, new_names, folder):
     """
-    Find-replace run directory and step name in step folders.
+    Update step folder names in files after the `--restart` option.
+
+    Runs over the folders defined in `new_names`.
 
     Parameters
     ----------
@@ -876,8 +892,9 @@ def update_step_contents_to_step_names(prev_names, new_names, folder):
         List of step names to find in file contents.
 
     new_names : list
-        List of new step names to place `prev_names`. Both lists need
-        to be synchronized.
+        List of new step names to replace `prev_names`. Both lists need
+        to be synchronized. That is, the first index of `prev_names` should
+        correspond to the old names of `new_names`.
 
     folder : str or Path
         Folder where the step folders are. Usually run directory or
@@ -891,7 +908,38 @@ def update_step_contents_to_step_names(prev_names, new_names, folder):
     for new_step in new_names:
         new_step_p = Path(folder, new_step)
         for file_ in new_step_p.iterdir():
-            text = file_.read_text()
-            for s1, s2 in zip(prev_names, new_names):
-                text = text.replace(s1, s2)
-            file_.write_text(text)
+
+            # goes recursive into the next folder
+            if file_.is_dir():
+                update_step_names_in_subfolders(file_, prev_names, new_names)
+
+            else:
+                update_step_names_in_file(file_, prev_names, new_names)
+
+
+def update_step_names_in_subfolders(folder, prev_names, new_names):
+    """
+    Update step names in subfolders.
+
+    Some modules may generate subfolders. This function update
+    its files accordingly to the `--restart` feature.
+    """
+    for file_ in folder.iterdir():
+        if file_.is_dir():
+            update_step_names_in_subfolders(file_, prev_names, new_names)
+        else:
+            update_step_names_in_file(file_, prev_names, new_names)
+    return
+
+
+def update_step_names_in_file(file_, prev_names, new_names):
+    """Update step names in file following the `--restart` option."""
+    try:
+        text = file_.read_text()
+    except UnicodeDecodeError as err:
+        log.warning(f"Failed to read file {file_}. Error is {err}")
+        return
+    for s1, s2 in zip(prev_names, new_names):
+        text = text.replace(s1, s2)
+    file_.write_text(text)
+    return

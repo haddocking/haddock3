@@ -213,12 +213,12 @@ kcont:
 # Group dihedral restraints
 #
 ssdihed:
-  default: none
+  default: ""
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - none
+    - ""
     - all
     - alpha
     - alphabeta
@@ -420,7 +420,7 @@ keepwater:
   group: 'sampling'
   explevel: guru
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99

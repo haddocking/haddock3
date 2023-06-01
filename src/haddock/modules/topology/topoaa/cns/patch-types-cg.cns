@@ -12,7 +12,7 @@
 !
 ! encode beads info
 evaluate ($bdnum = 0)
-for $id in id (name BB and (not (resn ALA or resn PRO or resn HYP))) loop cgt1
+for $id in id (name BB and (not (resn ALA or resn PRO or resn HY3 or resn HYP))) loop cgt1
     evaluate ($bdnum = $bdnum + 1)
     show (name) (id $id)
     evaluate ($bdname_$bdnum = $result)
@@ -51,6 +51,21 @@ for $id in id (name BB and resn PRO) loop cgt3
     evaluate ($ptype= "PTP"+encode($bfactor_$bdnum))
     patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
 end loop cgt3
+
+! encode beads info for HY3
+evaluate ($bdnum = 0)
+for $id in id (name BB and resn HY3) loop cgt4
+    evaluate ($bdnum = $bdnum + 1)
+    show (name) (id $id)
+    evaluate ($bdname_$bdnum = $result)
+    show (resid) (id $id)
+    evaluate ($bdresi_$bdnum = $result)
+    show (b) (id $id)
+    evaluate ($bfactor_$bdnum = $result)
+    evaluate ($ptype= "PTH"+encode($bfactor_$bdnum))
+    patch $ptype refe=NIL=(resid $bdresi_$bdnum) end
+end loop cgt4
+
 
 ! encode beads info for HYP
 evaluate ($bdnum = 0)

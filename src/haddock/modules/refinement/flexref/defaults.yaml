@@ -30,6 +30,17 @@ ambig_fname:
     Note that this file can contain both ambiguous and unambiguous restraints.
   group: 'distance restraints'
   explevel: easy
+previous_ambig:
+  default: false
+  type: boolean
+  title: Boolean condition on the previous ambiguous distance restraints file
+  short: Boolean condition on the previous ambiguous distance restraints file.
+    If true, use the the restraint information coming from the previous CNS module. If false, don't use previous information.
+  long: Boolean condition on the ambiguous distance restraints file.
+    If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module.
+    If false, don't use previous information.
+  group: 'distance restraints'
+  explevel: expert
 unambig_fname:
   default: ''
   type: file
@@ -65,7 +76,6 @@ amb_cool1:
   title: First cooling SA force constant for ambiguous distance restraints
   short: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the SA.
   long: Force constant applied to the distance restraints defined in ambig_fname during the first cooling phase of the simulatd annealing protocol. Molecules are treated as rigid bodies unless fully flexible segments are defined (see nfle_X parameter).
-  group: 'distance restraints'
   group: 'distance restraints'
   explevel: expert
 amb_cool2:
@@ -311,12 +321,12 @@ dihedrals_cool3:
   group: 'dihedral restraints'
   explevel: expert
 ssdihed:
-  default: none
+  default: ""
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - none
+    - ""
     - all
     - alpha
     - alphabeta
@@ -1906,7 +1916,7 @@ keepwater:
   group: 'sampling'
   explevel: guru
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99

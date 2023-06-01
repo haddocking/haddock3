@@ -13,6 +13,7 @@ The available CLIs are the following:
 
    clihd3
    clicfg
+   cliscore
    clipp
    clicp
    cliclean
@@ -20,3 +21,4 @@ The available CLIs are the following:
    climpi
    clibm
    clidmn
+   clianalyse

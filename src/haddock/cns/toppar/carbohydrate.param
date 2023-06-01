@@ -112,6 +112,7 @@ ANGLe OES  CCA  OAS   500.0   112.1
 ANGLe CCE  OAS  CCS   500.0   116.0
 ANGLe CCA  OAS  CCS   500.0   115.0
 ANGLe CCE  OAS  CC6   500.0   116.0
+ANGLe CCA  OAS  CCE   500.0   112.0 !alpha 1,1 link 
 ANGLe CCA  OAS  CC6   500.0   111.5 !alpha 1,6 link 
 ANGLe O    C    CCS   500.0   120.0 !Mo & Jensen, Acta B, 31, 2867 (1975), 8/30/93
 ANGLe C    CCS  HAS   500.0   109.5 !  8/30/93

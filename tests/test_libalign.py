@@ -188,7 +188,8 @@ def test_error_load_coords():
     filter_resdic = {'A': [1, 2, 3, 4, 5]}  # protein has only chain B
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
-    with pytest.raises(Exception):
+    # FIXME: This should be a custom exception
+    with pytest.raises(Exception):  # noqa: B017
         load_coords(pdb_f, atoms, filter_resdic)
 
 
@@ -295,6 +296,10 @@ def test_get_atoms():
             "C4",
             "O6",
             ],
+        "A": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
+        "G": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
+        "C": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
+        "U": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
         "G39": [
             "C1",
             "O1A",

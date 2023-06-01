@@ -176,6 +176,8 @@ def main(
 
         # Main loop of execution
         workflow.run()
+        if other_params["postprocess"]:
+            workflow.postprocess()
         workflow.clean()
 
     # Finish

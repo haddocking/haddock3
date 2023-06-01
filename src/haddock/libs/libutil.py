@@ -10,7 +10,7 @@ from functools import partial
 from os import cpu_count
 from pathlib import Path
 
-from haddock import log
+from haddock import EmptyPath, log
 from haddock.core.exceptions import SetupError
 from haddock.gear.greetings import get_goodbye_help
 
@@ -139,7 +139,12 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
     int
         A correct number of cores according to specifications.
     """
-    max_cpus = max_cpus or max(cpu_count() - 1, 1)
+    if max_cpus is None or max_cpus is False:
+        max_cpus = max(cpu_count() - 1, 1)
+    if max_cpus is True:
+        max_cpus = cpu_count()
+    elif not isinstance(max_cpus, int):
+        raise TypeError(f'`max_cpus` not of valid type: {type(max_cpus)}')
 
     if n is None:
         return max_cpus
@@ -154,7 +159,7 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
         _msg = f"`n` is not positive, this is not possible: {n!r}"
         raise SetupError(_msg)
 
-    if njobs:
+    if njobs is not None:
         ncores = min(n, njobs, max_cpus)
         log.info(
             f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "
@@ -321,3 +326,31 @@ def extract_keys_recursive(config):
             yield from extract_keys_recursive(value)
         else:
             yield param_name
+
+
+def recursive_convert_paths_to_strings(params):
+    """
+    Convert paths to strings recursively over a dictionary.
+
+    Parameters
+    ----------
+    params : dictionary
+
+    Returns
+    -------
+    dictionary
+        A copy of the original dictionary with paths converted to strings.
+    """
+    params = deepcopy(params)
+    for param, value in params.items():
+        if isinstance(value, (Path, EmptyPath)):
+            params[param] = str(value)
+        elif isinstance(value, collections.abc.Mapping):
+            params[param] = recursive_convert_paths_to_strings(value)
+        elif isinstance(value, (tuple, list)):
+            for i, v in enumerate(value):
+                if isinstance(v, (Path, EmptyPath)):
+                    value[i] = str(v)
+            params[param] = value
+
+    return params

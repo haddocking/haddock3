@@ -29,6 +29,7 @@ from Bio.Align import substitution_matrices
 from Bio.Seq import Seq
 
 from haddock import log
+from haddock.libs.libio import pdb_path_exists
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libpdb import split_by_chain
 
@@ -61,6 +62,30 @@ PROT_RES = [
 DNA_RES = ["DA", "DC", "DT", "DG"]
 # Backbone
 PROT_ATOMS = ["C", "N", "CA", "O"]
+# Side chains
+PROT_SIDE_CHAINS_DICT = {
+    "ALA": ["C", "N", "CA", "O", "CB"],
+    "ARG": ["C", "N", "CA", "O", "CB", "CG", "CD", "NE", "CZ", "NH1", "NH2"],
+    "ASN": ["C", "N", "CA", "O", "CB", "CG", "OD1", "ND2"],
+    "ASP": ["C", "N", "CA", "O", "CB", "CG", "OD1", "OD2"],
+    "CYS": ["C", "N", "CA", "O", "CB", "SG"],
+    "GLN": ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "NE2"],
+    "GLU": ["C", "N", "CA", "O", "CB", "CG", "CD", "OE1", "OE2"],
+    "GLY": ["C", "N", "CA", "O"],
+    "HIS": ["C", "N", "CA", "O", "CB", "CG", "ND1", "CD2", "CE1", "NE2"],
+    "ILE": ["C", "N", "CA", "O", "CB", "CG1", "CG2", "CD1"],
+    "LEU": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2"],
+    "LYS": ["C", "N", "CA", "O", "CB", "CG", "CD", "CE", "NZ"],
+    "MET": ["C", "N", "CA", "O", "CB", "CG", "SD", "CE"],
+    "PHE": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ"],
+    "PRO": ["C", "N", "CA", "O", "CB", "CG", "CD"],
+    "SER": ["C", "N", "CA", "O", "CB", "OG"],
+    "THR": ["C", "N", "CA", "O", "CB", "OG1", "CG2"],
+    "TRP": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "NE1", "CE2", "CE3", "CZ2", "CZ3", "CH2"],  # noqa: E501
+    "TYR": ["C", "N", "CA", "O", "CB", "CG", "CD1", "CD2", "CE1", "CE2", "CZ", "OH"],  # noqa: E501
+    "VAL": ["C", "N", "CA", "O", "CB", "CG1", "CG2"]
+    }
+
 # Bases
 DNA_ATOMS = [
     "C5",
@@ -80,6 +105,31 @@ DNA_ATOMS = [
     "C4",
     "O6",
     ]
+
+RNA_RES = ["A", "G", "C", "U"]
+RNA_ATOMS = ["P", "O5'", "C5'", "C4'", "C3'", "O3'"]
+
+DNA_FULL_DICT = {
+    "DA": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4",
+           "N3", "C2", "N1", "C6", "N6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],  # noqa: E501
+    "DG": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N9", "C4",
+           "N3", "C2", "N2", "N1", "C6", "O6", "C5", "N7", "C8", "C2'", "C3'", "O3'"],  # noqa: E501
+    "DC": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
+           "C2", "O2", "N3", "C4", "N4", "C5", "C2'", "C3'", "O3'"],
+    "DT": ["P", "O1P", "O2P", "O5'", "C5'", "C4'", "O4'", "C1'", "N1", "C6",
+           "C2", "O2", "N3", "C4", "O4", "C5", "C7", "C2'", "C3'", "O3'"]
+    }
+
+RNA_FULL_DICT = {
+    "A": ["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'",
+          "O2'", "C1'", "N9", "C8", "N7", "C5", "C6", "N6", "N1", "C2", "N3", "C4"],  # noqa: E501
+    "G": ["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'",
+          "O2'", "C1'", "N9", "C8", "N7", "C5", "C6", "O6", "N1", "C2", "N2", "N3", "C4"],  # noqa: E501
+    "C": ["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'",
+          "O2'", "C1'", "N9", "C5", "C6", "O6", "N1", "C2", "N2", "N3", "C4", "N4"],  # noqa: E501
+    "U": ["P", "OP1", "OP2", "O5'", "C5'", "C4'", "O4'", "C3'", "O3'", "C2'",
+          "O2'", "C1'", "N1", "C2", "O2", "N3", "C4", "O4", "C5", "C6"]
+    }
 
 
 class ALIGNError(Exception):
@@ -189,6 +239,8 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
             if line.startswith("ATOM"):
                 atom_name = line[12:16].strip()
                 resname = line[17:20].strip()
+                if resname in RES_TO_BE_IGNORED:
+                    continue
                 chain = line[21]
                 resnum = int(line[22:26])
                 x = float(line[30:38])
@@ -239,7 +291,7 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
     return coord_dic, chain_ranges
 
 
-def get_atoms(pdb):
+def get_atoms(pdb, full=False):
     """
     Identify what is the molecule type of each PDB.
 
@@ -256,9 +308,18 @@ def get_atoms(pdb):
     atom_dic = {}
     atom_dic.update(dict((r, PROT_ATOMS) for r in PROT_RES))
     atom_dic.update(dict((r, DNA_ATOMS) for r in DNA_RES))
+    atom_dic.update(dict((r, RNA_ATOMS) for r in RNA_RES))
+    if full:
+        atom_dic.update(PROT_SIDE_CHAINS_DICT)
+        atom_dic.update(DNA_FULL_DICT)
+        atom_dic.update(RNA_FULL_DICT)
 
     if isinstance(pdb, PDBFile):
         pdb = pdb.rel_path
+
+    exists, msg = pdb_path_exists(pdb)
+    if not exists:
+        raise Exception(msg)
 
     with open(pdb) as fh:
         for line in fh.readlines():
@@ -269,9 +330,10 @@ def get_atoms(pdb):
                 if (
                         resname not in PROT_RES
                         and resname not in DNA_RES
+                        and resname not in RNA_RES
                         and resname not in RES_TO_BE_IGNORED
                         ):
-                    # its neither DNA nor protein, use the heavy atoms
+                    # its neither DNA/RNA nor protein, use the heavy atoms
                     # WARNING: Atoms that belong to unknown residues must
                     #  be bound to a residue name;
                     #   For example: residue NEP, also contains
@@ -592,7 +654,7 @@ def align_seq(reference, model, output_path):
         if not any(e for e in top_aln.aligned):
             # No alignment!
             log.warning(
-                f"No alignment for chain {ref_chain} is it protein/dna? "
+                f"No alignment for chain {ref_chain} is it protein/dna-rna? "
                 "Matching sequentially"
                 )
             if all(
@@ -601,7 +663,8 @@ def align_seq(reference, model, output_path):
                 # this sequence contains only ligands, do it manually
                 if len(seq_ref) != len(seq_model):
                     # we cannot handle this
-                    raise f"Cannot align chain {model_chain}"
+                    # FIXME: This should raise a proper exception instead
+                    raise f"Cannot align chain {model_chain}"  # noqa: B016
                 for ref_res, model_res in zip(
                         seqdic_ref[ref_chain],
                         seqdic_model[model_chain]):

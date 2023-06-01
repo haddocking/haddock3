@@ -258,6 +258,7 @@ def prepare_cns_input(
         recipe_str,
         defaults,
         identifier,
+        ambig_fname="",
         native_segid=False,
         default_params_path=None,
         ):
@@ -273,6 +274,7 @@ def prepare_cns_input(
     """
     # read the default parameters
     default_params = load_workflow_params(**defaults)
+    default_params += write_eval_line('ambig_fname', ambig_fname)
 
     # write the PDBs
     pdb_list = [

@@ -39,11 +39,14 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
+from haddock.libs.libclust import write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
+    get_cluster_center,
     get_clusters,
     get_dendrogram,
+    iterate_threshold,
     read_matrix,
     )
 
@@ -75,14 +78,18 @@ class HaddockModule(BaseHaddockModule):
         rmsd_matrix = read_matrix(
             self.matrix_json.input[0]
             )
-        # getting clusters_list
+        # loading parameters
         linkage_type = self.params["linkage"]
-        dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
         crit = self.params["criterion"]
+        threshold = self.params['threshold']
+        
+        # getting clusters_list
+        dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
+        # setting tolerance
         if np.isnan(self.params["tolerance"]):
             self.log("tolerance is not defined")
             if crit == "maxclust":
-                tol = len(models) // 4 + 1
+                tol = max(len(models) // 4 + 1, 2)
             else:
                 tol = np.mean(dendrogram[:, 2])
             self.log(f"Setting tolerance to {tol:.2f} for criterion {crit}")
@@ -94,26 +101,37 @@ class HaddockModule(BaseHaddockModule):
             else:
                 raise Exception(f"unknown criterion {crit}")
         log.info(f"tolerance {tol}")
-        cluster_list = get_clusters(dendrogram, tol, crit)
-        clusters = np.unique(cluster_list)
-        log.info(f"clusters = {clusters}")
-        # TODO: getting cluster centers. is this really necessary?
+        cluster_arr = get_clusters(dendrogram, tol, crit)
 
+        # when crit == distance, apply clustering threshold
+        if crit == "distance":
+            cluster_arr = iterate_threshold(cluster_arr, threshold)
+
+        # print clusters
+        unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
+        clusters = [c for c in unq_clusters if c != -1]
+        log.info(f"clusters = {clusters}")
+        
+        # initialising cluster centers
+        n_obs = len(cluster_arr)
+        cluster_centers = {}
         # preparing output
         clt_dic = {}
         log.info('Saving output to cluster.out')
         cluster_out = Path('cluster.out')
         with open(cluster_out, 'w') as fh:
             for cl_id in clusters:
-                fh.write(f"Cluster {cl_id} -> ")
-                npw = np.where(cluster_list == cl_id)
-                clt_dic[cl_id] = [models[n] for n in npw[0]]
-                for el in npw[0][:-1]:
-                    fh.write(str(el + 1) + " ")
-                fh.write(str(npw[0][-1] + 1))
-                fh.write(os.linesep)
+                if cl_id != -1:
+                    npw = np.where(cluster_arr == cl_id)[0]
+                    clt_dic[cl_id] = [models[n] for n in npw]
+                    fh.write(f"Cluster {cl_id} -> ")
+                    clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
+                    cluster_centers[cl_id] = models[clt_center].file_name
+                    for el in npw[:-1]:
+                        fh.write(f"{el + 1} ")
+                    fh.write(f"{npw[-1] + 1}")
+                    fh.write(os.linesep)
         # rank the clusters
-        threshold = self.params['threshold']
         score_dic = {}
         for clt_id in clt_dic:
             score_l = [p.score for p in clt_dic[clt_id]]
@@ -133,11 +151,16 @@ class HaddockModule(BaseHaddockModule):
             # rank the models
             for model_ranking, pdb in enumerate(clt_dic[cluster_id],
                                                 start=1):
-                pdb.clt_id = cluster_id
+                pdb.clt_id = int(cluster_id)
                 pdb.clt_rank = cluster_rank
                 pdb.clt_model_rank = model_ranking
                 self.output_models.append(pdb)
         
+        # Write unclustered structures
+        write_structure_list(models,
+                             self.output_models,
+                             out_fname="clustrmsd.tsv")
+
         # Prepare clustrmsd.txt
         output_fname = Path('clustrmsd.txt')
         output_str = f'### clustrmsd output ###{os.linesep}'
@@ -172,10 +195,15 @@ class HaddockModule(BaseHaddockModule):
             output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
             for model_ranking, element in enumerate(model_score_l, start=1):
                 score, pdb = element
-                
-                output_str += (
-                    f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                    f"{os.linesep}")
+                # is the model the cluster center?
+                if pdb.file_name == cluster_centers[cluster_id]:
+                    output_str += (
+                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
+                        f"{os.linesep}")
+                else:
+                    output_str += (
+                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
+                        f"{os.linesep}")
         output_str += (
             "-----------------------------------------------"
             f"{os.linesep}")

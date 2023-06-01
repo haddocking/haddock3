@@ -3,9 +3,6 @@ remarks
 remarks this is a macro to define standard protein peptide bonds
 remarks and termini to generate a protein sequence.
 
-!added links for MSE (8-19-2011, ATB)
-!added links for CFE (6-5-2014, AB)
-
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
 set message=off echo=off end
 
@@ -13,6 +10,7 @@ checkversion 1.3
 
 link  ppgp head - GLY tail + PRO end
 link  ppgp head - GLY tail + HYP end
+link  ppgp head - GLY tail + HY3 end
 link  ppgg head - GLY tail + GLY end
 
 { special link to GLY}
@@ -57,6 +55,7 @@ link ppg1 head - TYP tail + GLY end
 link ppg1 head - PTR tail + GLY end
 link ppg1 head - TYS tail + GLY end
 link ppg1 head - HYP tail + GLY end
+link ppg1 head - HY3 tail + GLY end
 link ppg1 head - DDZ tail + GLY end
 link ppg1 head - QSR tail + GLY end
 link ppg1 head - PNS tail + GLY end
@@ -102,13 +101,14 @@ link ppg2 head - GLY tail + TYP end
 link ppg2 head - GLY tail + PTR end
 link ppg2 head - GLY tail + TYS end
 link ppg2 head - GLY tail + HYP end
+link ppg2 head - GLY tail + HY3 end
 link ppg2 head - GLY tail + DDZ end
 link ppg2 head - GLY tail + PNS end
 link ppg2 head - GLY tail + QSR end
 link pctn head - GLY tail + CTN end
 link pept head - GLY tail + NME end
  
-{ special link to PRO and HYP}
+{ special link to PRO}
 link pepp head - ACE tail + PRO end
 link pepp head - ALA tail + PRO end
 link pepp head - CYS tail + PRO end
@@ -150,9 +150,10 @@ link pepp head - TYP tail + PRO end
 link pepp head - PTR tail + PRO end
 link pepp head - TYS tail + PRO end
 link pepp head - HYP tail + PRO end
+link pepp head - HY3 tail + PRO end
 link pepp head - QSR tail + PRO end
  
-{ special link to PRO and HYP}
+{ special link to HYP}
 link pepp head - ACE tail + HYP end
 link pepp head - ALA tail + HYP end
 link pepp head - CYS tail + HYP end
@@ -194,10 +195,58 @@ link pepp head - TYP tail + HYP end
 link pepp head - PTR tail + HYP end
 link pepp head - TYS tail + HYP end
 link pepp head - HYP tail + HYP end
+link pepp head - HY3 tail + HYP end
 link pepp head - DDZ tail + HYP end
 link pepp head - PNS tail + HYP end
 link pepp head - QSR tail + HYP end
  
+{ special link to HYP}
+link pepp head - ACE tail + HY3 end
+link pepp head - ALA tail + HY3 end
+link pepp head - CYS tail + HY3 end
+link pepp head - CFE tail + HY3 end
+link pepp head - CYM tail + HY3 end
+link pepp head - CYF tail + HY3 end
+link pepp head - CYC tail + HY3 end
+link pepp head - CSP tail + HY3 end
+link pepp head - ASP tail + HY3 end
+link pepp head - ASH tail + HY3 end
+link pepp head - GLU tail + HY3 end
+link pepp head - GLH tail + HY3 end
+link pepp head - PHE tail + HY3 end
+link pepp head - HIS tail + HY3 end
+link pepp head - NEP tail + HY3 end
+link pepp head - ILE tail + HY3 end
+link pepp head - LYS tail + HY3 end
+link pepp head - ALY tail + HY3 end
+link pepp head - HLY tail + HY3 end
+link pepp head - MLY tail + HY3 end
+link pepp head - MLZ tail + HY3 end
+link pepp head - M3L tail + HY3 end
+link pepp head - LEU tail + HY3 end
+link pepp head - MET tail + HY3 end
+link pepp head - MSE tail + HY3 end
+link pepp head - ASN tail + HY3 end
+link pepp head - PRO tail + HY3 end
+link pepp head - GLN tail + HY3 end
+link pepp head - ARG tail + HY3 end
+link pepp head - SER tail + HY3 end
+link pepp head - SEP tail + HY3 end
+link pepp head - THR tail + HY3 end
+link pepp head - THP tail + HY3 end
+link pepp head - TOP tail + HY3 end
+link pepp head - VAL tail + HY3 end
+link pepp head - TRP tail + HY3 end
+link pepp head - TYR tail + HY3 end
+link pepp head - TYP tail + HY3 end
+link pepp head - PTR tail + HY3 end
+link pepp head - TYS tail + HY3 end
+link pepp head - HYP tail + HY3 end
+link pepp head - HY3 tail + HY3 end
+link pepp head - DDZ tail + HY3 end
+link pepp head - PNS tail + HY3 end
+link pepp head - QSR tail + HY3 end
+
 { peptide linkages for ACE }
 link pept head - ACE tail + ALA end
 link pept head - ACE tail + CYS end
@@ -239,6 +288,7 @@ link pept head - ACE tail + TYP end
 link pept head - ACE tail + PTR end
 link pept head - ACE tail + TYS end
 link pept head - ACE tail + HYP end
+link pept head - ACE tail + HY3 end
 link pept head - ACE tail + DDZ end
 link pept head - ACE tail + PNS end
 link pept head - ACE tail + QSR end
@@ -286,6 +336,7 @@ link pept head - ALA tail + TYP end
 link pept head - ALA tail + PTR end
 link pept head - ALA tail + TYS end
 link pept head - ALA tail + HYP end
+link pept head - ALA tail + HY3 end
 link pept head - ALA tail + DDZ end
 link pept head - ALA tail + PNS end
 link pept head - ALA tail + QSR end
@@ -333,6 +384,7 @@ link pept head - CYS tail + TYP end
 link pept head - CYS tail + PTR end
 link pept head - CYS tail + TYS end
 link pept head - CYS tail + HYP end
+link pept head - CYS tail + HY3 end
 link pept head - CYS tail + DDZ end
 link pept head - CYS tail + PNS end
 link pept head - CYS tail + QSR end
@@ -380,6 +432,7 @@ link pept head - CFE tail + TYP end
 link pept head - CFE tail + PTR end
 link pept head - CFE tail + TYS end
 link pept head - CFE tail + HYP end
+link pept head - CFE tail + HY3 end
 link pept head - CFE tail + DDZ end
 link pept head - CFE tail + PNS end
 link pept head - CFE tail + QSR end
@@ -427,6 +480,7 @@ link pept head - CYM tail + TYP end
 link pept head - CYM tail + PTR end
 link pept head - CYM tail + TYS end
 link pept head - CYM tail + HYP end
+link pept head - CYM tail + HY3 end
 link pept head - CYM tail + DDZ end
 link pept head - CYM tail + PNS end
 link pept head - CYM tail + QSR end
@@ -474,6 +528,7 @@ link pept head - CYF tail + TYP end
 link pept head - CYF tail + PTR end
 link pept head - CYF tail + TYS end
 link pept head - CYF tail + HYP end
+link pept head - CYF tail + HY3 end
 link pept head - CYF tail + DDZ end
 link pept head - CYF tail + PNS end
 link pept head - CYF tail + QSR end
@@ -521,6 +576,7 @@ link pept head - CYC tail + TYP end
 link pept head - CYC tail + PTR end
 link pept head - CYC tail + TYS end
 link pept head - CYC tail + HYP end
+link pept head - CYC tail + HY3 end
 link pept head - CYC tail + DDZ end
 link pept head - CYC tail + PNS end
 link pept head - CYC tail + QSR end
@@ -568,6 +624,7 @@ link pept head - CSP tail + TYP end
 link pept head - CSP tail + PTR end
 link pept head - CSP tail + TYS end
 link pept head - CSP tail + HYP end
+link pept head - CSP tail + HY3 end
 link pept head - CSP tail + DDZ end
 link pept head - CSP tail + PNS end
 link pept head - CSP tail + QSR end
@@ -615,6 +672,7 @@ link pept head - ASP tail + TYP end
 link pept head - ASP tail + PTR end
 link pept head - ASP tail + TYS end
 link pept head - ASP tail + HYP end
+link pept head - ASP tail + HY3 end
 link pept head - ASP tail + DDZ end
 link pept head - ASP tail + PNS end
 link pept head - ASP tail + QSR end
@@ -662,6 +720,7 @@ link pept head - ASH tail + TYP end
 link pept head - ASH tail + PTR end
 link pept head - ASH tail + TYS end
 link pept head - ASH tail + HYP end
+link pept head - ASH tail + HY3 end
 link pept head - ASH tail + DDZ end
 link pept head - ASH tail + PNS end
 link pept head - ASH tail + QSR end
@@ -709,6 +768,7 @@ link pept head - GLU tail + TYP end
 link pept head - GLU tail + PTR end
 link pept head - GLU tail + TYS end
 link pept head - GLU tail + HYP end
+link pept head - GLU tail + HY3 end
 link pept head - GLU tail + DDZ end
 link pept head - GLU tail + PNS end
 link pept head - GLU tail + QSR end
@@ -756,6 +816,7 @@ link pept head - GLH tail + TYP end
 link pept head - GLH tail + PTR end
 link pept head - GLH tail + TYS end
 link pept head - GLH tail + HYP end
+link pept head - GLH tail + HY3 end
 link pept head - GLH tail + DDZ end
 link pept head - GLH tail + PNS end
 link pept head - GLH tail + QSR end
@@ -803,6 +864,7 @@ link pept head - PHE tail + TYP end
 link pept head - PHE tail + PTR end
 link pept head - PHE tail + TYS end
 link pept head - PHE tail + HYP end
+link pept head - PHE tail + HY3 end
 link pept head - PHE tail + DDZ end
 link pept head - PHE tail + PNS end
 link pept head - PHE tail + QSR end
@@ -850,6 +912,7 @@ link pept head - HIS tail + TYP end
 link pept head - HIS tail + PTR end
 link pept head - HIS tail + TYS end
 link pept head - HIS tail + HYP end
+link pept head - HIS tail + HY3 end
 link pept head - HIS tail + DDZ end
 link pept head - HIS tail + PNS end
 link pept head - HIS tail + QSR end
@@ -897,6 +960,7 @@ link pept head - NEP tail + TYP end
 link pept head - NEP tail + PTR end
 link pept head - NEP tail + TYS end
 link pept head - NEP tail + HYP end
+link pept head - NEP tail + HY3 end
 link pept head - NEP tail + DDZ end
 link pept head - NEP tail + PNS end
 link pept head - NEP tail + QSR end
@@ -944,6 +1008,7 @@ link pept head - ILE tail + TYP end
 link pept head - ILE tail + PTR end
 link pept head - ILE tail + TYS end
 link pept head - ILE tail + HYP end
+link pept head - ILE tail + HY3 end
 link pept head - ILE tail + DDZ end
 link pept head - ILE tail + PNS end
 link pept head - ILE tail + QSR end
@@ -991,6 +1056,7 @@ link pept head - LYS tail + TYP end
 link pept head - LYS tail + PTR end
 link pept head - LYS tail + TYS end
 link pept head - LYS tail + HYP end
+link pept head - LYS tail + HY3 end
 link pept head - LYS tail + DDZ end
 link pept head - LYS tail + PNS end
 link pept head - LYS tail + QSR end
@@ -1038,6 +1104,7 @@ link pept head - ALY tail + TYP end
 link pept head - ALY tail + PTR end
 link pept head - ALY tail + TYS end
 link pept head - ALY tail + HYP end
+link pept head - ALY tail + HY3 end
 link pept head - ALY tail + DDZ end
 link pept head - ALY tail + PNS end
 link pept head - ALY tail + QSR end
@@ -1085,6 +1152,7 @@ link pept head - HLY tail + TYP end
 link pept head - HLY tail + PTR end
 link pept head - HLY tail + TYS end
 link pept head - HLY tail + HYP end
+link pept head - HLY tail + HY3 end
 link pept head - HLY tail + DDZ end
 link pept head - HLY tail + PNS end
 link pept head - HLY tail + QSR end
@@ -1132,6 +1200,7 @@ link pept head - MLY tail + TYP end
 link pept head - MLY tail + PTR end
 link pept head - MLY tail + TYS end
 link pept head - MLY tail + HYP end
+link pept head - MLY tail + HY3 end
 link pept head - MLY tail + DDZ end
 link pept head - MLY tail + PNS end
 link pept head - MLY tail + QSR end
@@ -1179,6 +1248,7 @@ link pept head - MLZ tail + TYP end
 link pept head - MLZ tail + PTR end
 link pept head - MLZ tail + TYS end
 link pept head - MLZ tail + HYP end
+link pept head - MLZ tail + HY3 end
 link pept head - MLZ tail + DDZ end
 link pept head - MLZ tail + PNS end
 link pept head - MLZ tail + QSR end
@@ -1226,6 +1296,7 @@ link pept head - M3L tail + TYP end
 link pept head - M3L tail + PTR end
 link pept head - M3L tail + TYS end
 link pept head - M3L tail + HYP end
+link pept head - M3L tail + HY3 end
 link pept head - M3L tail + DDZ end
 link pept head - M3L tail + PNS end
 link pept head - M3L tail + QSR end
@@ -1273,6 +1344,7 @@ link pept head - LEU tail + TYP end
 link pept head - LEU tail + PTR end
 link pept head - LEU tail + TYS end
 link pept head - LEU tail + HYP end
+link pept head - LEU tail + HY3 end
 link pept head - LEU tail + DDZ end
 link pept head - LEU tail + PNS end
 link pept head - LEU tail + QSR end
@@ -1319,6 +1391,7 @@ link pept head - MET tail + TYP end
 link pept head - MET tail + PTR end
 link pept head - MET tail + TYS end
 link pept head - MET tail + HYP end
+link pept head - MET tail + HY3 end
 link pept head - MET tail + DDZ end
 link pept head - MET tail + PNS end
 link pept head - MET tail + QSR end
@@ -1366,6 +1439,7 @@ link pept head - MSE tail + TYP end
 link pept head - MSE tail + PTR end
 link pept head - MSE tail + TYS end
 link pept head - MSE tail + HYP end
+link pept head - MSE tail + HY3 end
 link pept head - MSE tail + DDZ end
 link pept head - MSE tail + PNS end
 link pept head - MSE tail + QSR end
@@ -1413,6 +1487,7 @@ link pept head - ASN tail + TYP end
 link pept head - ASN tail + PTR end
 link pept head - ASN tail + TYS end
 link pept head - ASN tail + HYP end
+link pept head - ASN tail + HY3 end
 link pept head - ASN tail + DDZ end
 link pept head - ASN tail + PNS end
 link pept head - ASN tail + QSR end
@@ -1460,6 +1535,7 @@ link pept head - PRO tail + TYP end
 link pept head - PRO tail + PTR end
 link pept head - PRO tail + TYS end
 link pept head - PRO tail + HYP end
+link pept head - PRO tail + HY3 end
 link pept head - PRO tail + DDZ end
 link pept head - PRO tail + PNS end
 link pept head - PRO tail + QSR end
@@ -1507,6 +1583,7 @@ link pept head - GLN tail + TYP end
 link pept head - GLN tail + PTR end
 link pept head - GLN tail + TYS end
 link pept head - GLN tail + HYP end
+link pept head - GLN tail + HY3 end
 link pept head - GLN tail + DDZ end
 link pept head - GLN tail + PNS end
 link pept head - GLN tail + QSR end
@@ -1554,6 +1631,7 @@ link pept head - ARG tail + TYP end
 link pept head - ARG tail + PTR end
 link pept head - ARG tail + TYS end
 link pept head - ARG tail + HYP end
+link pept head - ARG tail + HY3 end
 link pept head - ARG tail + DDZ end
 link pept head - ARG tail + PNS end
 link pept head - ARG tail + QSR end
@@ -1601,6 +1679,7 @@ link pept head - SER tail + TYP end
 link pept head - SER tail + PTR end
 link pept head - SER tail + TYS end
 link pept head - SER tail + HYP end
+link pept head - SER tail + HY3 end
 link pept head - SER tail + DDZ end
 link pept head - SER tail + PNS end
 link pept head - SER tail + QSR end
@@ -1648,6 +1727,7 @@ link pept head - SEP tail + TYP end
 link pept head - SEP tail + PTR end
 link pept head - SEP tail + TYS end
 link pept head - SEP tail + HYP end
+link pept head - SEP tail + HY3 end
 link pept head - SEP tail + DDZ end
 link pept head - SEP tail + PNS end
 link pept head - SEP tail + QSR end
@@ -1695,6 +1775,7 @@ link pept head - THR tail + TYP end
 link pept head - THR tail + PTR end
 link pept head - THR tail + TYS end
 link pept head - THR tail + HYP end
+link pept head - THR tail + HY3 end
 link pept head - THR tail + DDZ end
 link pept head - THR tail + PNS end
 link pept head - THR tail + QSR end
@@ -1742,6 +1823,7 @@ link pept head - THP tail + TYP end
 link pept head - THP tail + PTR end
 link pept head - THP tail + TYS end
 link pept head - THP tail + HYP end
+link pept head - THP tail + HY3 end
 link pept head - THP tail + DDZ end
 link pept head - THP tail + PNS end
 link pept head - THP tail + QSR end
@@ -1789,6 +1871,7 @@ link pept head - TOP tail + TYP end
 link pept head - TOP tail + PTR end
 link pept head - TOP tail + TYS end
 link pept head - TOP tail + HYP end
+link pept head - TOP tail + HY3 end
 link pept head - TOP tail + DDZ end
 link pept head - TOP tail + PNS end
 link pept head - TOP tail + QSR end
@@ -1836,6 +1919,7 @@ link pept head - VAL tail + TYP end
 link pept head - VAL tail + PTR end
 link pept head - VAL tail + TYS end
 link pept head - VAL tail + HYP end
+link pept head - VAL tail + HY3 end
 link pept head - VAL tail + DDZ end
 link pept head - VAL tail + PNS end
 link pept head - VAL tail + QSR end
@@ -1883,6 +1967,7 @@ link pept head - TRP tail + TYP end
 link pept head - TRP tail + PTR end
 link pept head - TRP tail + TYS end
 link pept head - TRP tail + HYP end
+link pept head - TRP tail + HY3 end
 link pept head - TRP tail + DDZ end
 link pept head - TRP tail + PNS end
 link pept head - TRP tail + QSR end
@@ -1930,6 +2015,7 @@ link pept head - TYR tail + TYP end
 link pept head - TYR tail + PTR end
 link pept head - TYR tail + TYS end
 link pept head - TYR tail + HYP end
+link pept head - TYR tail + HY3 end
 link pept head - TYR tail + DDZ end
 link pept head - TYR tail + PNS end
 link pept head - TYR tail + QSR end
@@ -1977,6 +2063,7 @@ link pept head - TYP tail + TYP end
 link pept head - TYP tail + PTR end
 link pept head - TYP tail + TYS end
 link pept head - TYP tail + HYP end
+link pept head - TYP tail + HY3 end
 link pept head - TYP tail + DDZ end
 link pept head - TYP tail + PNS end
 link pept head - TYP tail + QSR end
@@ -2024,6 +2111,7 @@ link pept head - PTR tail + TYP end
 link pept head - PTR tail + PTR end
 link pept head - PTR tail + TYS end
 link pept head - PTR tail + HYP end
+link pept head - PTR tail + HY3 end
 link pept head - PTR tail + DDZ end
 link pept head - PTR tail + PNS end
 link pept head - PTR tail + QSR end
@@ -2071,6 +2159,7 @@ link pept head - TYS tail + TYP end
 link pept head - TYS tail + PTR end
 link pept head - TYS tail + TYS end
 link pept head - TYS tail + HYP end
+link pept head - TYS tail + HY3 end
 link pept head - TYS tail + DDZ end
 link pept head - TYS tail + PNS end
 link pept head - TYS tail + QSR end
@@ -2118,9 +2207,56 @@ link pept head - HYP tail + TYP end
 link pept head - HYP tail + PTR end
 link pept head - HYP tail + TYS end
 link pept head - HYP tail + HYP end
+link pept head - HYP tail + HY3 end
 link pept head - HYP tail + DDZ end
 link pept head - HYP tail + QSR end
 link pept head - HYP tail + PNS end
+
+{ peptide linkages for HY3 }
+link pept head - HY3 tail + ALA end
+link pept head - HY3 tail + CYS end
+link pept head - HY3 tail + CFE end
+link pept head - HY3 tail + CYM end
+link pept head - HY3 tail + CYF end
+link pept head - HY3 tail + CYC end
+link pept head - HY3 tail + CSP end
+link pept head - HY3 tail + ASP end
+link pept head - HY3 tail + ASH end
+link pept head - HY3 tail + GLU end
+link pept head - HY3 tail + GLH end
+link pept head - HY3 tail + PHE end
+link pept head - HY3 tail + HIS end
+link pept head - HY3 tail + NEP end
+link pept head - HY3 tail + ILE end
+link pept head - HY3 tail + LYS end
+link pept head - HY3 tail + ALY end
+link pept head - HY3 tail + HLY end
+link pept head - HY3 tail + MLY end
+link pept head - HY3 tail + MLZ end
+link pept head - HY3 tail + M3L end
+link pept head - HY3 tail + LEU end
+link pept head - HY3 tail + MET end
+link pept head - HY3 tail + MSE end
+link pept head - HY3 tail + ASN end
+link pept head - HY3 tail + PRO end
+link pept head - HY3 tail + GLN end
+link pept head - HY3 tail + ARG end
+link pept head - HY3 tail + SER end
+link pept head - HY3 tail + SEP end
+link pept head - HY3 tail + THR end
+link pept head - HY3 tail + THP end
+link pept head - HY3 tail + TOP end
+link pept head - HY3 tail + VAL end
+link pept head - HY3 tail + TRP end
+link pept head - HY3 tail + TYR end
+link pept head - HY3 tail + TYP end
+link pept head - HY3 tail + PTR end
+link pept head - HY3 tail + TYS end
+link pept head - HY3 tail + HYP end
+link pept head - HY3 tail + HY3 end
+link pept head - HY3 tail + DDZ end
+link pept head - HY3 tail + QSR end
+link pept head - HY3 tail + PNS end
 
 { peptide linkages for DDZ }
 link pept head - DDZ tail + ALA end
@@ -2211,6 +2347,7 @@ link pept head - PNS tail + TYP end
 link pept head - PNS tail + PTR end
 link pept head - PNS tail + TYS end
 link pept head - PNS tail + HYP end
+link pept head - PNS tail + HY3 end
 link pept head - PNS tail + DDZ end
 link pept head - PNS tail + PNS end
 link pept head - PNS tail + QSR end
@@ -2258,6 +2395,7 @@ link pept head - QSR tail + TYP end
 link pept head - QSR tail + PTR end
 link pept head - QSR tail + TYS end
 link pept head - QSR tail + HYP end
+link pept head - QSR tail + HY3 end
 link pept head - QSR tail + DDZ end
 link pept head - QSR tail + PNS end
 link pept head - QSR tail + QSR end
@@ -2266,6 +2404,7 @@ link pept head - QSR tail + NME end
 
 first PROP tail + PRO end
 first PROP tail + HYP end
+first PROP tail + HY3 end
 
 first ACET tail + ACE end
 
@@ -2310,6 +2449,7 @@ first NTER tail + TYP end
 first NTER tail + PTR end
 first NTER tail + TYS end
 first NTER tail + HYP end
+first NTER tail + HY3 end
 first NTER tail + DDZ end
 first NTER tail + PNS end
 first NTER tail + QSR end
@@ -2355,6 +2495,7 @@ last CTER head - TYP end
 last CTER head - PTR end
 last CTER head - TYS end
 last CTER head - HYP end
+last CTER head - HY3 end
 last CTER head - DDZ end
 last CTER head - PNS end
 last CTER head - QSR end

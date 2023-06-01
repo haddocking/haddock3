@@ -147,7 +147,13 @@ def copy_renum_step_folders(indir, destdir, steps):
 
     steps : list of (str or Path)
         The list of the folder names in `indir` to copy.
+
+    Returns
+    -------
+    list
+        The new paths created.
     """
+    new_steps = []
     step_names = (Path(step).name for step in steps)
     for i, step in enumerate(step_names):
         ori = Path(indir, step)
@@ -155,6 +161,8 @@ def copy_renum_step_folders(indir, destdir, steps):
         dest = Path(destdir, zero_fill.fill(_modname, i))
         shutil.copytree(ori, dest)
         log.info(f"Copied {str(ori)} -> {str(dest)}")
+        new_steps.append(dest)
+    return new_steps
 
 
 def renum_step_folders(folder):
@@ -248,7 +256,11 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     for ns in new_steps:
         new_step = Path(newdir, ns)
         for file_ in new_step.iterdir():
-            text = file_.read_text()
+            try:
+                text = file_.read_text()
+            except UnicodeDecodeError as err:
+                log.warning(f"Failed to read file {file_}. Error is {err}")
+                continue
             for s1, s2 in zip(selected_steps, new_steps):
                 text = text.replace(s1, s2)
             text = text.replace(olddir.name, newdir.name)

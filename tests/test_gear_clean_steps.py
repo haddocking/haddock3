@@ -32,15 +32,15 @@ def test_clean_output():
     # these are the files that SHOULD exist after packing
     files_that_should_exist = [
         Path("0_topoaa", "params.cfg"),
-        Path("0_topoaa", "inp.tgz"),
-        Path("0_topoaa", "out.tgz"),
+        Path("0_topoaa", "structure_1.inp.gz"),
+        Path("0_topoaa", "structure_1.out.gz"),
         Path("0_topoaa", "structure_1.pdb.gz"),
         Path("0_topoaa", "structure_1.psf.gz"),
 
         Path("1_rigidbody", "params.cfg"),
         Path("1_rigidbody", "io.json"),
-        Path("1_rigidbody", "inp.tgz"),
-        Path("1_rigidbody", "out.tgz"),
+        Path("1_rigidbody", "structure_1.inp.gz"),
+        Path("1_rigidbody", "structure_1.out.gz"),
         Path("1_rigidbody", "seed.tgz"),
         Path("1_rigidbody", "structure_1.pdb.gz"),
         Path("1_rigidbody", "structure_2.pdb.gz"),
@@ -87,13 +87,102 @@ def test_clean_output():
     # these are the files that SHOULD exist after unpacking
     files_that_should_exist = [
         Path("0_topoaa", "params.cfg"),
+        # Path("0_topoaa", "structure_1.inp"),
+        # Path("0_topoaa", "structure_1.out"),
+        Path("0_topoaa", "structure_1.pdb"),
+        Path("0_topoaa", "structure_1.psf"),
+        Path("0_topoaa", "structure_1.inp.gz"),
+        Path("0_topoaa", "structure_1.out.gz"),
+
+        Path("1_rigidbody", "params.cfg"),
+        Path("1_rigidbody", "io.json"),
+        # Path("1_rigidbody", "structure_1.inp"),
+        # Path("1_rigidbody", "structure_1.out"),
+        Path("1_rigidbody", "structure_1.pdb"),
+        Path("1_rigidbody", "structure_1.seed"),
+        Path("1_rigidbody", "structure_2.pdb"),
+        Path("1_rigidbody", "structure_2.seed"),
+
+        Path("2_clustfcc", "structure_1.con"),
+        Path("2_clustfcc", "structure_2.con"),
+        ]
+
+    # these are the files that should NOT exist after unpacking
+    files_that_should_not_exist = [
+        Path("0_topoaa", "structure_1.inp"),
+        Path("0_topoaa", "structure_1.out"),
+        Path("0_topoaa", "structure_1.pdb.gz"),
+        Path("0_topoaa", "structure_1.psf.gz"),
+
+        Path("1_rigidbody", "structure_1.inp"),
+        Path("1_rigidbody", "structure_1.out"),
+        Path("1_rigidbody", "seed.tgz"),
+        Path("1_rigidbody", "structure_1.pdb.gz"),
+        Path("1_rigidbody", "structure_2.pdb.gz"),
+
+        Path("2_clustfcc", "con.tgz"),
+        ]
+
+    # assert files actually exist
+    for file_ in files_that_should_exist:
+        assert Path(outdir, file_).exists()
+
+    # assert files do not exist
+    for file_ in files_that_should_not_exist:
+        assert not Path(outdir, file_).exists()
+
+    # removes the dir as it is no longer needed
+    shutil.rmtree(outdir)
+
+
+def test_clean_output_dec_all():
+    """Test correct clean and unpack functions."""
+    # defines the dir to compress
+    outdir = Path(clean_steps_folder, 'run1c')
+    # remove it just in case it remained in the testing environment
+    shutil.rmtree(outdir, ignore_errors=True)
+
+    # copies the directory to avoid messing with git stack
+    shutil.copytree(
+        Path(clean_steps_folder, 'run1'),
+        outdir,
+        )
+
+    # packs each folder separately
+    clean_output(Path(outdir, "0_topoaa"))
+    clean_output(Path(outdir, "1_rigidbody"))
+    clean_output(Path(outdir, "2_clustfcc"))
+
+    # these are the files that SHOULD exist after packing
+    files_that_should_exist = [
+        Path("0_topoaa", "params.cfg"),
+        Path("0_topoaa", "structure_1.inp.gz"),
+        Path("0_topoaa", "structure_1.out.gz"),
+        Path("0_topoaa", "structure_1.pdb.gz"),
+        Path("0_topoaa", "structure_1.psf.gz"),
+
+        Path("1_rigidbody", "params.cfg"),
+        Path("1_rigidbody", "io.json"),
+        Path("1_rigidbody", "structure_1.inp.gz"),
+        Path("1_rigidbody", "structure_1.out.gz"),
+        Path("1_rigidbody", "seed.tgz"),
+        Path("1_rigidbody", "structure_1.pdb.gz"),
+        Path("1_rigidbody", "structure_2.pdb.gz"),
+
+        Path("2_clustfcc", "con.tgz"),
+        ]
+
+    # assert if the files actually exist in the `outdir` folder
+    for file_ in files_that_should_exist:
+        assert Path(outdir, file_).exists()
+
+    # these are the files that should NOT exist after packing
+    files_that_should_not_exist = [
         Path("0_topoaa", "structure_1.inp"),
         Path("0_topoaa", "structure_1.out"),
         Path("0_topoaa", "structure_1.pdb"),
         Path("0_topoaa", "structure_1.psf"),
 
-        Path("1_rigidbody", "params.cfg"),
-        Path("1_rigidbody", "io.json"),
         Path("1_rigidbody", "structure_1.inp"),
         Path("1_rigidbody", "structure_1.out"),
         Path("1_rigidbody", "structure_1.pdb"),
@@ -107,15 +196,49 @@ def test_clean_output():
         Path("2_clustfcc", "structure_2.con"),
         ]
 
+    # asserts the files do NOT exist in the `outdir` folder
+    for file_ in files_that_should_not_exist:
+        assert not Path(outdir, file_).exists()
+
+    # now, unpacks the `outdir`. In other words, reverts the previous
+    # clean_output operation
+    unpack_compressed_and_archived_files([
+        Path(outdir, "0_topoaa"),
+        Path(outdir, "1_rigidbody"),
+        Path(outdir, "2_clustfcc"),
+        ],
+        dec_all=True)
+
+    # these are the files that SHOULD exist after FULL unpacking
+    files_that_should_exist = [
+        Path("0_topoaa", "params.cfg"),
+        Path("0_topoaa", "structure_1.inp"),
+        Path("0_topoaa", "structure_1.out"),
+        Path("0_topoaa", "structure_1.pdb"),
+        Path("0_topoaa", "structure_1.psf"),
+
+        Path("1_rigidbody", "params.cfg"),
+        Path("1_rigidbody", "io.json"),
+        Path("1_rigidbody", "structure_1.inp"),
+        Path("1_rigidbody", "structure_1.out"),
+        Path("1_rigidbody", "structure_1.pdb"),
+        Path("1_rigidbody", "structure_1.seed"),
+        Path("1_rigidbody", "structure_2.pdb"),
+        Path("1_rigidbody", "structure_2.seed"),
+
+        Path("2_clustfcc", "structure_1.con"),
+        Path("2_clustfcc", "structure_2.con"),
+        ]
+
     # these are the files that should NOT exist after unpacking
     files_that_should_not_exist = [
-        Path("0_topoaa", "inp.tgz"),
-        Path("0_topoaa", "out.tgz"),
+        Path("0_topoaa", "structure_1.inp.gz"),
+        Path("0_topoaa", "structure_1.out.gz"),
         Path("0_topoaa", "structure_1.pdb.gz"),
         Path("0_topoaa", "structure_1.psf.gz"),
 
-        Path("1_rigidbody", "inp.tgz"),
-        Path("1_rigidbody", "out.tgz"),
+        Path("1_rigidbody", "structure_1.inp.gz"),
+        Path("1_rigidbody", "structure_1.out.gz"),
         Path("1_rigidbody", "seed.tgz"),
         Path("1_rigidbody", "structure_1.pdb.gz"),
         Path("1_rigidbody", "structure_2.pdb.gz"),

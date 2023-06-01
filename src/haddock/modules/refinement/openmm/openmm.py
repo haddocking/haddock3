@@ -17,10 +17,18 @@ such as `flexref` or `emref` after the OpenMM module, you need to recreate the
 topologies by simply adding a `[topoaa]` step in the workflow.
 See examples in `examples/thirdparty/openmm` folder.
 """
+# Standard libarires importation
 import os
 from pathlib import Path
 
-from openmm import LangevinMiddleIntegrator, MonteCarloBarostat
+# Import OpenMM and pdbfixer third-party libraries
+#NOTE: >conda activate haddock3; conda install -c conda-forge libstdcxx-ng openmm pdbfixer
+from openmm import (
+    LangevinMiddleIntegrator,
+    MonteCarloBarostat,
+    CustomExternalForce,
+    CustomCentroidBondForce,
+    )
 from openmm.app import (
     PME,
     ForceField,
@@ -29,26 +37,43 @@ from openmm.app import (
     PDBxFile,
     Simulation,
     statedatareporter,
+    HBonds,
+    AllBonds,
+    HAngles,
     )
 from openmm.app.pdbfile import PDBFile as openmmpdbfile
-from openmm.unit import kelvin, nanometer, nanometers, picosecond, picoseconds, atmosphere, molar  # noqa: E501
+from openmm.unit import (
+    kelvin,
+    nanometer,
+    nanometers,
+    picosecond,
+    picoseconds,
+    femtoseconds,
+    atmosphere,
+    molar,
+    amu,
+    angstroms,
+    kilocalorie_per_mole,
+    MOLAR_GAS_CONSTANT_R,
+    )
 from pdbfixer import PDBFixer
-from pdbtools import pdb_delhetatm
 
+# Haddock libraries
+from pdbtools import pdb_delhetatm
+from pdbtools.pdb_mkensemble import run as make_ensemble
 from haddock import log
 from haddock.libs.libontology import PDBFile
-
 
 class OPENMM:
     """OPENMM class."""
 
     def __init__(
             self,
-            identificator,
+            identificator: str,
             model,
             path,
-            directory_dict,
-            params,
+            directory_dict: dict,
+            params: dict,
             ):
         """
         Initialize the class.
@@ -63,6 +88,14 @@ class OPENMM:
             Reference that defines where output should be saved.
         directory_dict : dict
             Dictionary of the directories handled by the openmm module.
+            {d:d for d in [
+                           "pdbfixer",
+                           "solvation_boxes",
+                           "intermediates",
+                           "md_raw_output",
+                           "openmm_output",
+                           "simulation_stats"
+                          ]}
         params : dict
             The openmm parameters.
         """
@@ -79,14 +112,14 @@ class OPENMM:
     def import_constraints(self):
         """Import right openmm constraints."""
         if self.params["constraints"] == "HBonds":
-            from openmm.app import HBonds as constraints
+            return HBonds
         elif self.params["constraints"] == "AllBonds":
-            from openmm.app import AllBonds as constraints
+            return AllBonds
         elif self.params["constraints"] == "HAngles":
-            from openmm.app import HAngles as constraints
-        return constraints
+            return HAngles
+        return None
 
-    def get_pdb_filepath(self, folder=None):
+    def get_pdb_filepath(self, folder: [bool, str]=None) -> str:
         """
         Get correct path to pdb file.
         
@@ -126,7 +159,7 @@ class OPENMM:
                                 open(output_filepath, 'w')
                                 )
 
-    def create_solvation_box(self, solvent_model):
+    def create_solvation_box(self, solvent_model: str) -> str:
         """
         Create solvation box for an explicit solvent simulation.
         
@@ -143,6 +176,8 @@ class OPENMM:
                 openmmpdb = PDBxFile(pdb_filepath)
             else:
                 openmmpdb = openmmpdbfile(pdb_filepath)
+            # Obtain initial input chains
+            self.input_chains = [chain.id for chain in openmmpdb.topology.chains()]
             # creating Modeller
             modeller = Modeller(openmmpdb.topology, openmmpdb.positions)
             usedForcefield = ForceField(forcefield, solvent_model)
@@ -171,25 +206,303 @@ class OPENMM:
                                     modeller.positions,
                                     open(box_path, 'w')
                                     )
+            
+            return box_path
 
         except Exception as e:
             log.info(f"BUILDING SOLVATION BOX ERROR: {e}")
 
-    def remove_water_and_ions(self):
-        """Remove water from the output of an explicit solvent run."""
-        log.info(f"Removing water and ions from {self.model.file_name}")
-        input_filepath = os.path.join(self.directory_dict["md_raw_output"],
-                                      self.output_filename
-                                      )
-        output_filepath = os.path.join(self.directory_dict["openmm_output"],
-                                       self.output_filename
-                                       )
+    def equilibrate_solvation_box(self, pdb_filepath: str,
+                                  solvent_model: str) -> str:
+        """
+        Tool function for the equilibration of water in presence of the protein
+        Here, the idea is to:
+        0. Check if something has to be done
+        1. Initiate the system
+        2. Construct restrain forces on protein atom positions
+        3. Run simulation under restrain
+        4. Save new coordinates file
+
+        Parameters
+        ----------
+        pdb_filepath : str
+            Path to a water boxed system
+        solvent_model : str
+            One of the OpenMM's solvent models.
+
+        Return
+        ----------
+        eq_pdb_filepath: str
+            Path to an equilibrated water boxed system, readdy of MD
+        """
+        # Check if spring constant > 0
+        if not self.params["solv_equilibration"]:
+            return pdb_filepath
+        
+        log.info(f"Equilibrating solvation box from {pdb_filepath}...")
+        try:
+           ## 1. Initiate the system and simulation objects
+            # Load structure coordinates
+            system_coordinates = openmmpdbfile(pdb_filepath)
+            # Initiate forcefiled object
+            forcefield = ForceField(self.params['forcefield'], solvent_model)
+            # system setup
+            # should give an ERROR when system_constraints = 'None'.
+            system = forcefield.createSystem(
+                system_coordinates.topology,
+                nonbondedMethod=PME,
+                nonbondedCutoff=1 * nanometer,
+                constraints=HAngles,
+                removeCMMotion=self.params['remove_center_of_mass_motion'],
+                rigidWater=self.params['rigid_water']
+                )
+            # Initiate intergrator
+            integrator = LangevinMiddleIntegrator(
+                    self.params['solv_eq_max_temperature_kelvin']*kelvin,
+                    1/picosecond,
+                    self.params['solv_eq_stepsize_fs']*femtoseconds
+                    )
+            # Set pseudo-random seed
+            integrator.setRandomNumberSeed(self.params["iniseed"])
+
+           ## 2. Add constraints to the protein atoms
+            log.info(f"Adding protein constraints")
+            # Check is spring canstant > 0
+            if self.params["solv_eq_spring_constant"] == 0:
+                rest_force = self._gen_restrain_force(
+                                     system_coordinates.topology.atoms(),
+                                     system_coordinates.positions)
+                # Add the restrain force to the system
+                system.addForce(rest_force)
+            # Initiate simulation object
+            simulation = Simulation(system_coordinates.topology,
+                                    system,
+                                    integrator)
+            # Initiate state reporter object
+            statereporter = statedatareporter.StateDataReporter(
+                    f'{self.directory_dict["simulation_stats"]}/solv_eq_observables_{self.identificator}.dat', # noqa : E501
+                    10,
+                    step=True,
+                    totalEnergy=True,
+                    potentialEnergy=True,
+                    temperature=True,
+                    volume=True,
+                    density=True,
+                    )
+            simulation.reporters.append(statereporter)
+            simulation.context.setPositions(system_coordinates.positions)
+
+           ## 3. Run simulation under constraints
+            # Process energy minimization prior to any dynamic simulation
+            log.info(f"Minimizing system energy")
+            simulation.minimizeEnergy()
+            # Set parameters
+            eq_steps = self.params['solv_eq_timesteps']
+            nvt_sims = 7
+            delta_steps = max(1, int(eq_steps / nvt_sims))
+            max_temperature = self.params['solv_eq_max_temperature_kelvin']
+            max_temperature = max_temperature
+            delta_temp = max_temperature / nvt_sims
+            # Progressively warmup the system
+            log.info(f"Warming system up...")
+            for n in range(1, nvt_sims):
+                qtemp = n * delta_temp
+                integrator.setTemperature(qtemp * kelvin)
+                simulation.step(delta_steps)
+            # Do few simulation steps at max temperature
+            integrator.setTemperature(max_temperature * kelvin)
+            while not ((max_temperature - 10) <= self._get_simulation_temperature(simulation, statereporter._dof) <= (max_temperature + 10)):
+                simulation.step(50)
+            # Print log info
+            log.info(
+                  "Running solvent equilibration phase "
+                  "under protein coordinate constraints:"
+                  )
+            log.info(
+                  f"For {self.params['solv_eq_timesteps']} timesteps at "
+                  f"{self.params['solv_eq_max_temperature_kelvin']} K "
+                  f"(stepsize={self.params['solv_eq_stepsize_fs']} fs)..."
+                  )
+            simulation.step(eq_steps)
+            # Progressively freeze the system
+            log.info(f"Cooling down the system...")
+            for n in range(nvt_sims-1, 0, -1):
+                qtemp = n * delta_temp
+                integrator.setTemperature(qtemp * kelvin)
+                simulation.step(delta_steps)
+
+           ## 4. Save new coordinates file
+            # Write finale frame structure
+            eq_pdb_filepath = os.path.join(
+                                self.directory_dict["solvation_boxes"],
+                                f'solvent_eq_{self.model.file_name}')
+            # Retrieve last coordinates
+            eq_state = simulation.context.getState(getPositions=True)
+            eq_positions = eq_state.getPositions()
+            openmmpdbfile.writeFile(simulation.topology,
+                                    eq_positions,
+                                    open(eq_pdb_filepath, 'w')
+                                    )
+            log.info(f"Equilibrated solvated system: {eq_pdb_filepath} !")
+            return eq_pdb_filepath
+
+        except Exception as e:
+            import traceback
+            strerr = traceback.format_exc()
+            log.error(f"EQUILIBRATING SOLVATION BOX ERROR FOR {pdb_filepath}:\n"
+                      f"{strerr}")
+
+    def _gen_restrain_force(self, atoms: list, positions: list,
+                            subset: list=[]):
+        """
+        Generate CustomExternalForce aiming at restraining protein coordinates
+
+        Parameters
+        ----------
+        atoms : list
+            List of the particules present in the topology of the system
+        positions : list
+            Initial position of the particules in the system
+        subset : list
+            List of atom indexes on which to apply the restrain force
+
+        Return
+        ----------
+        rest_force: :py:class:`openmm.openmm.CustomExternalForce`
+            Set CustomExternalForce object restraining protein position
+        """
+        # Initiate Custom Force to restrain positions
+        rest_force = CustomExternalForce('k*((x-x0)^2+(y-y0)^2+(z-z0)^2)')
+        # Define spring constant value
+        rest_force.addGlobalParameter(
+                          'k',
+                          20000*kilocalorie_per_mole/angstroms**2
+                          )
+        rest_force.addPerParticleParameter('x0')
+        rest_force.addPerParticleParameter('y0')
+        rest_force.addPerParticleParameter('z0')
+        # Set of atom indexes to work on
+        if subset == []:
+            subset = list(range(len(positions)))
+        # Loop over topology atoms
+        for atom in atoms:
+            # Filter out non-protein particles and hydrogens
+            if atom.element.symbol == 'H': # Hydrogen atom
+                continue
+            if atom.residue.name == 'HOH': # Water molecule
+                continue
+            if len(atom.residue.name) != 3: # Skip ions
+                continue
+            if not atom.index in subset:
+                continue
+            # Hold index of the restrained atom
+            rest_force.addParticle(atom.index, positions[atom.index])
+        return rest_force
+
+    def _gen_centroid_forces(self, system):
+        """Add centroid forces between protein monomers to the system
+        FIXME: Not functionning dur to issue of group definitions in 
+               the self._chain_centroid_force() function
+
+        Parameters
+        ----------
+        system : py:class:`openmm.System`
+            An openmm system
+        """
+        for i, chainid in enumerate(self.input_chains[:-1]):
+            for chain2 in self.input_chains[i+1:]:
+                new_force = self._chain_centroid_force(system, chainid, chain2)
+                system.addForce(new_force)
+
+    def _get_chain_atoms(self, system, chainid: str) -> list:
+        """Retrun list of atom ids belonging to a chain
+        
+        Parameters
+        ----------
+        system : py:class:`openmm.System`
+            An openmm system
+        chainid : str
+            Chain id on which atom ids must be retrieved from
+        """
+        for chain in system.topology.chains():
+            if chain.id == chainid:
+                return [atom.id for atom in chain.atoms()]
+        return []
+
+    def _chain_centroid_force(self, system, chain1: str, chain2: str):
+        """Set up a centroid force betweem two chains
+        FIXME: Not functionning ...        
+
+        Parameters
+        ----------
+        system : py:class:`openmm.System`
+            An openmm system
+        chain1 : str
+            One of system chain (hopfully a monomer) to apply the force on
+        chain2 : str
+            Second chain (hopfully a monomer) to apply the force on
+        """
+        centroid_force = CustomCentroidBondForce(2, "0.1*k*distance(g1,g2)^2")
+        centroid_force.addPerBondParameter("k")
+        gc1 = centroid_force.addGroup(self._get_chain_atoms(system, chain1))
+        gc2 = centroid_force.addGroup(self._get_chain_atoms(system, chain2))
+        centroid_force.addBond([gc1, gc2], [1])
+        return centroid_force
+
+    #NOTE: Add the function to StateustomCentroidBondForce
+    def _get_simulation_temperature(self, simulation, dof: int) -> float:
+        """
+        Computes/gather the current system temperature
+        NOTE: this function is similar to the lines of code found in 
+              the :py:class:`openmm.app.statedatareporter.StateDataReporter()`
+
+        Parameters
+        ----------
+        simulation : :py:class:`openmm.app.simulation.Simulation()`
+            The current simulation
+        dof : int
+            Value of the StateDataReporter._dof
+
+        Return
+        ----------
+        temperature_k : float
+            The current simulation temperature (in kelvin)
+        """
+        integrator = simulation.context.getIntegrator()
+        if hasattr(integrator, 'computeSystemTemperature'):
+            temperature = integrator.computeSystemTemperature()
+        else:
+            state = simulation.context.getState(getEnergy=True)
+            tempreature =  (2*state.getKineticEnergy()/(dof*MOLAR_GAS_CONSTANT_R))
+        tempreature_k = tempreature.value_in_unit(kelvin)
+        return tempreature_k
+
+    def remove_water_and_ions(self, input_filepath: str) -> str:
+        """Remove water from the output of an explicit solvent run.
+        Uses the pdb-tools.pdb_delhetatm() module to do this
+        NOTE: May produce an issue with TER atoms (Water + ions)
+        NOTE2: May lead to issue with modified AA e.g: phsophoserine, etc...
+
+        Parameters
+        ----------
+        input_filepath : str
+            Path to the file to be modified
+
+        Return
+        ----------
+        output_filepath : str
+            Path to the modified file not containing anymore HETATM
+        """
+        log.info(f"Removing water and ions from {input_filepath}")
+        output_filepath = input_filepath.replace('.pdb', '_nosolv.pdb')
         with open(input_filepath, 'r') as fh:
             pdbYieldedLines = pdb_delhetatm.run(fh)
             with open(output_filepath, 'w') as writefh:
                 writefh.writelines(pdbYieldedLines)
+        return output_filepath
         
-    def run_openmm(self, inputPDBfile, output_directory, solvent_model):
+    def run_openmm(self, inputPDBfile: str, output_directory: str, 
+                   solvent_model: str, replica_index: int) -> dict:
         """
         Run openmm simulation of the model pdb.
 
@@ -203,7 +516,18 @@ class OPENMM:
 
         solvent_model : str
             One of the OpenMM's solvent models.
+
+        Return
+        ---------- 
+        output_files : dict
+            Dict holding paths to configurations generated along the simulation
         """
+        # Initiate output dictionary
+        output_files = {}
+        # Split output path
+        fn, ext = os.path.splitext(self.output_filename)
+
+        # Load pdb
         pdb = openmmpdbfile(inputPDBfile)
         forcefield = ForceField(self.params['forcefield'], solvent_model)
         # system setup
@@ -223,20 +547,22 @@ class OPENMM:
             self.params['timestep_ps'] * picoseconds
             )
 
+        # Add the restrain force to the system
+        #self._gen_centroid_forces(pdb)
+
         # setting integrator seed
-        seed = self.params["seed"]
-        if seed != 0:
-            log.info(f"setting non-random seed = {self.params['seed']}")
-            integrator.setRandomNumberSeed(self.params["seed"])
+        replica_seed = self.params["iniseed"] * replica_index
+        if replica_seed != 0:
+            log.info(f"setting non-random seed = {replica_seed}")
+            integrator.setRandomNumberSeed(replica_seed)
         # retrieving integrator seed
         get_seed = integrator.getRandomNumberSeed()
         log.info(f"simulation seed {get_seed} for {self.model.file_name}")
 
         # simulation
         simulation = Simulation(pdb.topology, system, integrator)
-        simulation.reporters.append(
-            statedatareporter.StateDataReporter(
-                f"simulation_stats/observables_{self.identificator}.dat",
+        statereporter = statedatareporter.StateDataReporter(
+                f'{self.directory_dict["simulation_stats"]}/observables_{self.identificator}_{replica_index}.dat', # noqa : E501
                 50,
                 step=True,
                 totalEnergy=True,
@@ -245,7 +571,7 @@ class OPENMM:
                 volume=True,
                 density=True,
                 )
-            )
+        simulation.reporters.append(statereporter)
 
         platform = simulation.context.getPlatform()
         log.info(f"Running on platform {platform.getName()}")
@@ -254,46 +580,141 @@ class OPENMM:
         simulation.minimizeEnergy()
         log.info(f"Running NVT equilibration for {self.model.file_name}")
 
-        # warming up the system with a NVT equilibration
+        # warming up the system with a NVT equilibration (canonical ensemble)
         eq_steps = self.params['equilibration_timesteps']
         log.info(f"Warming up the system to {self.params['temperature_kelvin']}"
-                 f" K in {eq_steps} steps")
+                 f" K in ~{eq_steps} steps")
         nvt_sims = 10
         delta_temp = self.params['temperature_kelvin'] / nvt_sims
-        for n in range(nvt_sims):
-            temperature = (delta_temp + (n * delta_temp)) * kelvin
-            integrator.setTemperature(temperature)
+        for n in range(1, nvt_sims+1):
+            qtemp = n * delta_temp
+            integrator.setTemperature(qtemp * kelvin)
             simulation.step(int(eq_steps / nvt_sims))
+        while not ((qtemp - 5) <= self._get_simulation_temperature(simulation, statereporter._dof) <= (qtemp + 5)):
+            simulation.step(50)
+        log.info(f"Temperature of {self.params['temperature_kelvin']} K "
+                 f"reached in {simulation.context.getStepCount()} steps")
+
+        # Write
+        eq_pdb_filepath = os.path.join(self.directory_dict["intermediates"],
+                                       f'{fn}_eq_{replica_index}{ext}')
+        self._write_current_pdb(simulation, eq_pdb_filepath)
+        output_files['equilibrated'] = eq_pdb_filepath
         
-        # NPT simulation:
-        system.addForce(
+        # NPT simulation (isothermal-isobaric ensemble)
+        simulation.system.addForce(
             MonteCarloBarostat(
                 1 * atmosphere,
                 self.params['temperature_kelvin'] * kelvin
                 )
             )
         simulation.context.reinitialize(True)
-        output_filepath = os.path.join(output_directory, self.output_filename)
-        log.info(f"output file: {output_filepath}")
-        simulation.reporters.append(PDBReporter(output_filepath,
-                                    self.params['simulation_timesteps'])
-                                    )
-        # save intermediates
+
+        # Running real simulation
+        log.info(f"Running simulation for {self.model.file_name} for "
+                 f"{self.params['simulation_timesteps']} timesteps")
+
+        # Save intermediates
         if self.params['save_intermediate']:
-            int_filepath = os.path.join(self.directory_dict["intermediates"],
-                                        self.model.file_name
-                                        )
-            # get number of steps between each intermediate saved conf.
-            steps_intermediate = self.params['simulation_timesteps'] // \
-                self.params['save_intermediate']
-            simulation.reporters.append(
-                PDBReporter(int_filepath,
-                            steps_intermediate)
-                )
-        # running real simulation
-        log.info(f"Running simulation for {self.model.file_name}")
-        simulation.step(self.params['simulation_timesteps'])
+            # Initialize variables
+            done_steps = 0
+            output_files['intermediates'] = []
+            steps_intermediate = int(self.params['simulation_timesteps'] // \
+                self.params['save_intermediate'])
+            starting_step_inter = int(steps_intermediate / 2)
+
+            # Do few steps
+            simulation.step(starting_step_inter)
+            done_steps += starting_step_inter
+            # Define intermediates output file
+            int_filepath = os.path.join(
+                                self.directory_dict["intermediates"],
+                                f'{fn}_{replica_index}_{done_steps}steps{ext}')
+            self._write_current_pdb(simulation, int_filepath)
+            output_files['intermediates'].append(int_filepath)
+
+            # Loop over intermediate steps
+            for i in range(self.params['save_intermediate']-1):
+                simulation.step(steps_intermediate)
+                done_steps += steps_intermediate
+                # Define intermediates output file
+                int_filepath = os.path.join(
+                                 self.directory_dict["intermediates"],
+                                 f'{fn}_{replica_index}_{done_steps}steps{ext}'
+                                 )
+                self._write_current_pdb(simulation, int_filepath)
+                output_files['intermediates'].append(int_filepath)
+
+            # Do the remaining simulation steps
+            simulation.step(self.params['simulation_timesteps']-done_steps)
+        else:
+            simulation.step(self.params['simulation_timesteps'])
+
+        # Write final pdb file
+        output_filepath = os.path.join(output_directory,
+                                       f'{fn}_{replica_index}{ext}')
+        self._write_current_pdb(simulation, output_filepath)
+        output_files['final'] = output_filepath
+        # Log end of OpenMM simulation info
         log.info(f'OpenMM simulation successful for: {output_filepath}')
+        # Return data
+        return output_files
+
+    def _write_current_pdb(self, simulation, output_path: str,
+                           reference_pbb: [None, list]=None):
+        """Write the current position of atoms in the simulation
+
+        Parameters
+        ----------
+        simulation: :py:class:`openmm.app.simulation.Simulation`
+            An openmm simulation class
+
+        output_path : str
+            Path of the file where to write the pdb file
+        """
+        # Retrieve last state data
+        current_state = simulation.context.getState(getPositions=True)
+                                                    #enforcePeriodicBox=True)
+        # Write pdb file
+        openmmpdbfile.writeFile(simulation.topology,
+                                current_state.getPositions(),
+                                open(output_path, 'w')
+                                )
+
+    def generate_output_ensemble(self, replicas_outputs: list) -> str:
+        """Combines all replicas outputs into a single file
+
+        Parameters
+        ----------
+        replicas_outputs: list
+            list of dictionnary mapping to all simulation replicas outputs.
+
+        Return
+        ----------
+        final_openmm_output: str
+            Path to the ensemble (composed of the equilibrated, intermediates,
+            and final structure), for all replicas, generated by the module.
+        """
+        # Combines all outputs in a list
+        all_files = []
+        for sample in replicas_outputs:
+            for outputtype, outputpath in sample.items():
+                if isinstance(outputpath, str):
+                    all_files.append(outputpath)
+                elif isinstance(outputpath, list):
+                    all_files += outputpath
+        # Generate ensemble
+        ensemble_filepath = os.path.join(self.directory_dict["openmm_output"],
+                                         self.output_filename)
+        log.info(f'Generating ensemble from {len(all_files)} samples: {ensemble_filepath}') # noqa : E501
+        ensemble = make_ensemble(all_files)
+        with open(ensemble_filepath, "w") as wfile:
+            for line in ensemble:
+                wfile.write(line)
+        # Remove single structure files
+        for non_ensemble_fp in all_files:
+            os.remove(non_ensemble_fp)
+        return ensemble_filepath
 
     def run(self):
         """Run openmm simulation."""
@@ -303,11 +724,11 @@ class OPENMM:
         if not self.params['implicit_solvent']:
             # define solvent model and create solvation box
             solvent_model = self.params['explicit_solvent_model']
-            self.create_solvation_box(solvent_model)
-            # output files and string
-            pdbPath = os.path.join(self.directory_dict["solvation_boxes"],
-                                   self.model.file_name
-                                   )
+            # create solvation box
+            pdbPath = self.create_solvation_box(solvent_model)
+            # Eauilibrate this box around system
+            pdbPath = self.equilibrate_solvation_box(pdbPath, solvent_model)
+            # set variables
             output_folder = self.directory_dict["md_raw_output"]
             solvent = "explicit solvent"
         # implicit solvent simulation
@@ -320,8 +741,44 @@ class OPENMM:
             solvent = "implicit solvent"
 
         log.info(f'starting {solvent} openMM simulation with file: {pdbPath}')
-        self.run_openmm(pdbPath, output_folder, solvent_model)
+        
+        # Loop over samplings/replicas
+        replicas_outputs = []
+        for replica_ind in range(self.params['sampling_factor']):
+            replica_struct = self.run_openmm(pdbPath, output_folder,
+                                             solvent_model, replica_ind+1)
+            replicas_outputs.append(replica_struct)
 
-        # Remove water molecules if implicit_solvent is False.
-        if not self.params['implicit_solvent']:
-            self.remove_water_and_ions()
+        # Solvent removal procedure
+        if not self.params['implicit_solvent'] and \
+           not self.params['keep_solvent']:
+            # Loop over replicas
+            for replica_structs in replicas_outputs:
+                for outputtype in replica_structs.keys():
+                    # Remove solvent molecules from outputs
+                    if isinstance(replica_structs[outputtype], list):
+                        nosolv_output = [self.remove_water_and_ions(pdb)
+                                        for pdb in replica_structs[outputtype]]
+                        
+                    else:
+                        nosolv_output = self.remove_water_and_ions(
+                                                  replica_structs[outputtype]
+                                                  )
+                    # Modify paths in files mapper
+                    replica_structs[outputtype] = nosolv_output
+
+        # Post-process results and place them in appropriate directory       
+        if self.params['generate_ensemble']:
+            # Generate ensemble
+            final_ensemble = self.generate_output_ensemble(replicas_outputs)
+            #self.module_outputfiles.append(final_ensemble)
+        else:
+            # Generate list of final structures only
+            for replica_mapper in replicas_outputs:
+                raw_output = replica_mapper['final']
+                final_output = raw_output.replace(
+                                          self.directory_dict["md_raw_output"],
+                                          self.directory_dict["openmm_output"]
+                                          )
+                os.rename(raw_output, final_output)
+                #self.module_outputfiles.append(final_output)

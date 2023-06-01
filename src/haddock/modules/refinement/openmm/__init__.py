@@ -56,6 +56,7 @@ class HaddockModule(BaseHaddockModule):
             "solvation_boxes",
             ]
         for dir in directory_list:
+            self.log(f"Removing temporary directory {dir}")
             shutil.rmtree(dir)
         return
 
@@ -76,8 +77,8 @@ class HaddockModule(BaseHaddockModule):
         previous_models = self.previous_io.retrieve_models(
             individualize=True
             )
-
         previous_models.sort()
+
         # create directories
         directory_dict = self.create_directories()
 
@@ -97,23 +98,24 @@ class HaddockModule(BaseHaddockModule):
         ncores = self.params['ncores']
         openmm_engine = Scheduler(openmm_jobs, ncores=ncores)
         openmm_engine.run()
-        
-        self.log('Creating output ensemble...')
+
+        #self.log('Creating output ensemble...')
         # export models
         output_pdbs = list(Path(directory_dict["openmm_output"]).glob('*.pdb'))
 
-        # concatenating models in an ensemble placed in the main openmm folder
+        # Check if at least one output file was generated
         if len(output_pdbs) == 0:
             raise Exception("No output models generated. Check Openmm Execution.")  # noqa: E501
-        ensemble_name = "openmm_ensemble.pdb"
-        ensemble = make_ensemble(output_pdbs)  # ensemble is a generator
-        with open(ensemble_name, "w") as wfile:
-            for line in ensemble:
-                wfile.write(line)
+        #ensemble_name = "openmm_ensemble.pdb"
+        #ensemble = make_ensemble(output_pdbs)  # ensemble is a generator
+        #with open(ensemble_name, "w") as wfile:
+        #    for line in ensemble:
+        #        wfile.write(line)
 
-        self.log(f'Output ensemble {ensemble_name} created.')
+        #self.log(f'Output ensemble {ensemble_name} created.')
         
-        self.output_models = [PDBFile(ensemble_name)]
+        self.output_models = [PDBFile(openmmout)
+                              for openmmout in sorted(output_pdbs)]
         self.export_output_models()
 
         # deleting unnecessary directories

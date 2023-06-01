@@ -158,7 +158,7 @@ information.
 
 1. Install the latest version of openmm and pdbfixer
 ```
-conda install -c conda-forge openmm pdbfixer
+conda install -c conda-forge openmm pdbfixer libstdcxx-ng
 ```
 
 Openmm should automatically detect the fastest platform among those available

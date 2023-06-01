@@ -745,16 +745,18 @@ def _add_viewers(df):
 
     table_df = df.copy()
     for col_name in table_df.columns[2:]:
-        str_number = col_name.split(" ")[1]
+        # Remove leading zero number from model (or structure) number for
+        # consistency with cluster number
+        str_number = col_name.split(" ")[1].lstrip("0")
+
         # Downloaded file name should include cluster rank and model (or
-        # structure) id Add zero pad number to cluster number for consistency
-        # with model (or structure) number
+        # structure) id
         dl_names = []
         for rn in df["Cluster Rank"]:
             if rn == "Unclustered":
                 dl_name = f'unclustered_model{str_number}'
             else:
-                dl_name = f'cluster{rn:02d}_model{str_number}'
+                dl_name = f'cluster{rn}_model{str_number}'
             dl_names.append(dl_name)
         df[col_name] = df[col_name] + "," + dl_names
         table_df[col_name] = df[col_name].apply(_format_cell)

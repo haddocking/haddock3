@@ -171,17 +171,22 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
 
         # Note: the rank format (float/int) in "cl_rank" is different from
         # gb_full["cluster-ranking"]
-        rn = gb_full[gb_full["cluster-id"]==cl_id]["cluster-ranking"].unique()[0]
+        rns = gb_full[gb_full["cluster-id"]==cl_id]["cluster-ranking"]
+        rn = rns.unique()[0]
         color_map[f"{rn}"] = colors[color_idx]
 
-        # Choose (almost) the same color as scatter plots for "Other"
+        # Choose a different color for "Other" like in scatter plots
         color_map["Other"] = "#DDDBDA"
 
     # to use color_discrete_map, cluster-ranking column should be str not int
     gb_full_string = gb_full.astype({"cluster-ranking": "string"})
+
+    # Rename for a better name in legend
     gb_full_string.rename(
         columns={"cluster-ranking": "Cluster Rank"}, inplace=True
         )
+
+    # "Cluster Rank" is equivalent to "capri_rank"!
     fig = px.box(gb_full_string,
                  x="capri_rank",
                  y=f"{y_ax}",
@@ -233,6 +238,10 @@ def box_plot_data(capri_df, cl_rank):
     gb_other["capri_rank"] = len(cl_rank.keys()) + 1
     gb_other["cluster-ranking"] = "Other"
     gb_full = pd.concat([gb_good, gb_other])
+
+    # Sort based on "capri_rank"
+    gb_full.sort_values(by=["capri_rank"], inplace=True)
+
     return gb_full
 
 
@@ -299,7 +308,11 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
     fig = go.Figure(layout={"width": 1000, "height": 800})
     traces = []
     n_colors = len(colors)
-    for cl_id, cl_df in gb_cluster:
+    cl_rank_swap = {v: k for k, v in cl_rank.items()}
+
+    for cl_rn in sorted(cl_rank_swap.keys()):
+        cl_id = cl_rank_swap[cl_rn]
+        cl_df = gb_cluster.get_group(cl_id)
         if cl_id in cl_rank.keys():
             if cl_id == "-":
                 cl_name = "Unclustered"

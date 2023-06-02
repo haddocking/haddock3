@@ -171,7 +171,7 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
 
         # Note: the rank format (float/int) in "cl_rank" is different from
         # gb_full["cluster-ranking"]
-        rns = gb_full[gb_full["cluster-id"]==cl_id]["cluster-ranking"]
+        rns = gb_full[gb_full["cluster-id"] == cl_id]["cluster-ranking"]
         rn = rns.unique()[0]
         color_map[f"{rn}"] = colors[color_idx]
 

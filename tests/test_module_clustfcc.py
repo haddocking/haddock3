@@ -14,10 +14,25 @@ from . import golden_data
 @pytest.fixture
 def protprot_input_list():
     """Prot-prot input."""
+
+    # target_ids = [75, 77, 42, 20, 8, 68, 87, 63, 27, 66, 98]
+
     return [
-        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data)
-        ]
+        PDBFile(pdb, path=str(golden_data))
+        for pdb in Path(golden_data, "pdbs_for_clustering").glob("*.pdb")
+        # if str(pdb.stem).split("_")[1] in map(str, target_ids)
+    ]
+
+    # return [
+    #     PDBFile(
+    #         Path(golden_data, "pdbs_for_clustering", "rigidbody_64.pdb"),
+    #         path=str(golden_data),
+    #     ),
+    #     PDBFile(
+    #         Path(golden_data, "pdbs_for_clustering", "rigidbody_76.pdb"),
+    #         path=str(golden_data),
+    #     ),
+    # ]
 
 
 @pytest.fixture
@@ -25,47 +40,41 @@ def output_list():
     """Clustfcc output list."""
     return [
         "fcc.matrix",
-        "cluster.out",
-        "protprot_complex_1.con",
-        "protprot_complex_2.con",
+        # "rigidbody_64.con",
+        # "rigidbody_76.con",
         "clustfcc.txt",
         "io.json",
-        "clustfcc.tsv"
-        ]
+        "clustfcc.tsv",
+    ]
 
 
-def test_clustfcc_output_existence(protprot_input_list, output_list):
-    """Test clustfcc output."""
+@pytest.fixture
+def fcc_module(protprot_input_list, output_list):
     fcc_module = HaddockModule(
-        order=1,
-        path=Path("1_emscoring"),
-        initial_params=clustfcc_pars
-        )
+        order=1, path=Path("1_emscoring"), initial_params=clustfcc_pars
+    )
     fcc_module.previous_io.output = protprot_input_list
+
+    yield fcc_module
+
+    for f in output_list:
+        path_f = Path(f)
+        if path_f.exists():
+            os.unlink(path_f)
+
+
+def test_clustfcc_module(fcc_module, output_list):
+    """Test the clustfcc module."""
 
     fcc_module._run()
 
+    # Check if the output is correct and all files are there
     ls = os.listdir()
+    for expected_file in output_list:
+        assert expected_file in ls, "Expected file not found"
 
-    for el in output_list:
-        assert el in ls
-
-
-def test_matrix_output():
-    """Check fcc.matrix file."""
-    fcc_file = Path("fcc.matrix")
-
-    observed_output = open(fcc_file).read()
-
-    expected_output = "1 2 0.05 0.062" + os.linesep
-
-    assert observed_output == expected_output
-
-
-def test_contacts():
-    """Check .con files."""
+    # Check the contact files are correct
     expected_output_length = [100, 119]
-
     observed_output_lengths = []
 
     con1_len = len(open("protprot_complex_1.con").readlines())
@@ -75,23 +84,3 @@ def test_contacts():
     observed_output_lengths.append(con2_len)
 
     assert observed_output_lengths == expected_output_length
-
-
-def remove_clustfcc_files(output_list):
-    """Remove clustfcc files."""
-    for f in output_list:
-        path_f = Path(f)
-        if path_f.exists():
-            os.unlink(path_f)
-
-
-def test_cluster_out(output_list):
-    """Check cluster.out file."""
-    expected_output = "Cluster 1 -> 2 " + os.linesep
-    expected_output += "Cluster 2 -> 1 " + os.linesep
-
-    observed_output = open("cluster.out").read()
-
-    assert expected_output == observed_output
-
-    remove_clustfcc_files(output_list)

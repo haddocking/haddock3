@@ -75,6 +75,16 @@ ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     config_optional_general_parameters,
     )
 
+TYPES_MAPPER = {
+    'boolean': (bool),
+    'integer': (int, float),
+    'float': (float, int),
+    'double': (float),
+    'string': (str),
+    'list': (list),
+    'path': (str, Path),
+    }
+
 
 @contextmanager
 def config_key_error():
@@ -403,6 +413,122 @@ def validate_modules_params(modules_params, max_mols):
                 f'{os.linesep.join(map(pretty_print, matched))}.'
                 )
             raise ConfigurationError(_msg)
+
+        # Now that existance of the parameter was checked,
+        # it is time to validate the type and value taken by this param
+        validate_module_params_values(module_name, args)
+
+
+def validate_module_params_values(module_name, args: dict):
+    """Validate individual parameters for a module.
+
+    Parameters
+    ----------
+    module_name :
+        Name of the module to be analyzed
+    args : dict
+        Dictionnary of key/value present in user config file for a module
+
+    Raises
+    ------
+    ConfigError
+        If there is any parameter given by the user that is not following the
+        types or ranges/choices allowed in the defaults.cfg of the module.
+    """
+    # Load all parameters information from 'defaults.cfg'
+    default_conf_params = _read_defaults(module_name, default_only=False)
+    # Loop over user queried parameters keys/values
+    for key, val in args.items():
+        validate_value(default_conf_params, key, val)
+
+
+def validate_value(default_yaml: dict, key: str,
+                   value: [bool, int, float, str, list]):
+    """Validate queried value for a specific parameter of a module.
+
+    Parameters
+    ----------
+    default_yaml : dict
+        Dictionnary of key/value present in user config file for a module
+    key : str
+        Key to be analyzed
+    value : [bool, int, float, str, list]
+        The provided value for a parameter
+
+    Raises
+    ------
+    ConfigError
+        If there is any parameter given by the user that is not following the
+        types or ranges/choices allowed in the defaults.cfg of the module.
+    """
+    # Special case for molecules...
+    if key not in default_yaml.keys():
+        return
+    if 'group' in default_yaml[key].keys():
+        if default_yaml[key]['group'] == 'molecules':
+            return
+
+    # Series of checks
+    if (_msg := validate_param_type(default_yaml[key], value)):
+        raise ConfigurationError(f'Config error for parameter "{key}": {_msg}')
+    if (_msg := validate_param_range(default_yaml[key], value)):
+        raise ConfigurationError(f'Config error for parameter "{key}": {_msg}')
+    # FIXME: add more checks here ?
+
+
+def validate_param_type(param: dict,
+                        val: [bool, int, float, str, list]) -> [str, None]:
+    """Check if provided parameter type is similar to defined defaults ones.
+
+    Parameters
+    ----------
+    param : dict
+        Dictionnary of key/value present in user config file for a module
+    val : [bool, int, float, str, list]
+        The provided value for a parameter
+
+    Return
+    ------
+    May return a string explaining the issue with the provided value type
+    """
+    if 'type' not in param.keys():
+        return
+    # Load type from string to python class
+    try:
+        allowed_types = TYPES_MAPPER[param['type']]
+    except KeyError as e:
+        return f'Unrecognized type {e}'
+    # Check if both of the same type
+    if (query_type := type(val)) not in allowed_types:
+        return (f'Wrong provided type "{query_type}" with value "{val}". '
+                f'It should be of type "{param["type"]}" '
+                f'(e.g: {param["default"]})')
+
+
+def validate_param_range(param: dict,
+                         val: [bool, int, float, str, list]) -> [str, None]:
+    """Check if provided value is in range/choices defined for this parameter.
+
+    Parameters
+    ----------
+    param : dict
+        Dictionnary of key/value present in user config file for a module
+    val : [bool, int, float, str, list]
+        The provided value for a parameter
+
+    Return
+    ------
+    May return a string explaining the issue with the provided value range
+    """
+    # Case for choices
+    if 'choices' in param.keys():
+        if val not in (choices := param['choices']):
+            return f'Value "{val}" is not among the accepted choices: {choices}' # noqa : E501
+    # Case for ranges
+    elif 'min' in param.keys() and 'max' in param.keys():
+        if val < param['min'] or val > param['max']:
+            return (f'Value "{val}" is not in the allowed boundaries '
+                    f'ranging from {param["min"]} to {param["max"]}')
 
 
 def check_if_modules_are_installed(params):

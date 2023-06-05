@@ -202,7 +202,7 @@ def loads(cfg_str):
         elif group := _uppercase_bool_re.match(line):
             param = group[1]  # Catches 'param = '
             uppercase_bool = group[4]
-            new_line = f"{param}{uppercase_bool.lower()}" # Lower boolean value
+            new_line = f"{param}{uppercase_bool.lower()}"  # Lowercase bool
 
         else:
             new_line = line

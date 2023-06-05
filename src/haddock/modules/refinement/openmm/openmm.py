@@ -389,10 +389,9 @@ class OPENMM:
             temperature was reached
         """
         # Makes sure temperature of the system is reached
-        while not (
-            (temperature - tolerence)
-            <= self._get_simulation_temperature(simulation, dof)
-            <= (temperature + tolerence)):
+        while not ((temperature - tolerence)
+                   <= self._get_simulation_temperature(simulation, dof)
+                   <= (temperature + tolerence)):
             # Do several simulation steps
             simulation.step(steps)
 
@@ -494,7 +493,6 @@ class OPENMM:
         centroid_force.addBond([gc1, gc2], [1])
         return centroid_force
 
-    # NOTE: Add the function to StateustomCentroidBondForce
     def _get_simulation_temperature(self, simulation, dof: int) -> float:
         """
         Computes/gather the current system temperature.
@@ -661,8 +659,8 @@ class OPENMM:
             1 * atmosphere,
             self.params['temperature_kelvin'] * kelvin
             )
-        # FIXME : Once the MonteCarloBarostat will no more split
-        # chains appart in different periodic boxes, please uncomment it
+        # FIXME : Once the MonteCarloBarostat will no more split chains
+        # appart in different periodic boxes, please uncomment next line
         # simulation.system.addForce(_barostat)
 
         # Reinitialize the simulation

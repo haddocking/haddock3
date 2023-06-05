@@ -90,6 +90,12 @@ _sub_quoted_header_re = re.compile(
     re.ASCII,
     )
 
+# Captures parameter uppercase boolean
+_uppercase_bool_re = re.compile(
+    r'(_?\w+((_?\w+?)+)?\s*=\s*)(True|False)',
+    re.ASCII
+    )
+
 # Some parameters are paths. The configuration reader reads those as
 # pathlib.Path so that they are injected properly in the rest of the
 # workflow. In general, any parameter ending with `_fname` is a path,
@@ -192,6 +198,11 @@ def loads(cfg_str):
             name = group[1]
             count = counter[name]  # name should be already defined here
             new_line = f"['{name}.{count}'{group[2]}]"
+
+        elif group := _uppercase_bool_re.match(line):
+            param = group[1]  # Catches 'param = '
+            uppercase_bool = group[4]
+            new_line = f"{param}{uppercase_bool.lower()}" # Lower boolean value
 
         else:
             new_line = line

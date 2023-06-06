@@ -2,17 +2,18 @@
 import difflib
 import importlib
 import itertools as it
+import json
 import os
 import shutil
 import string
 import sys
 import tarfile
 from contextlib import contextmanager, suppress
-from copy import copy
+from copy import copy, deepcopy
 from functools import lru_cache, wraps
-from pathlib import Path
+from pathlib import Path, PosixPath
 
-from haddock import contact_us, haddock3_source_path, log
+from haddock import EmptyPath, contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
 from haddock.gear.clean_steps import (
@@ -22,6 +23,7 @@ from haddock.gear.clean_steps import (
     )
 from haddock.gear.config import get_module_name
 from haddock.gear.config import load as read_config
+from haddock.gear.config import save as save_config
 from haddock.gear.expandable_parameters import (
     get_mol_parameters,
     get_multiple_index_groups,
@@ -53,6 +55,7 @@ from haddock.libs.libfunc import not_none
 from haddock.libs.libio import make_writeable_recursive
 from haddock.libs.libutil import (
     extract_keys_recursive,
+    recursive_convert_paths_to_strings,
     recursive_dict_update,
     remove_dict_keys,
     transform_to_list,
@@ -76,13 +79,19 @@ ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     )
 
 TYPES_MAPPER = {
-    'boolean': (bool),
-    'integer': (int, float),
-    'float': (float, int),
-    'double': (float),
-    'string': (str),
-    'list': (list),
-    'path': (str, Path),
+    'boolean': (bool,),
+    'bool': (bool,),
+    'integer': (int, float,),
+    'int': (int, float,),
+    'long': (float, int,),
+    'float': (float, int,),
+    'double': (float,),
+    'string': (str,),
+    'str': (str,),
+    'list': (list,),
+    'array': (list,),
+    'path': (str, Path, PosixPath, EmptyPath,),
+    'file': (str, Path, PosixPath, EmptyPath,),
     }
 
 
@@ -106,7 +115,7 @@ def with_config_error(func):
 
 
 @lru_cache
-def _read_defaults(module_name):
+def _read_defaults(module_name, default_only=True):
     """Read the defaults.yaml given a module name."""
     module_name_ = get_module_name(module_name)
     pdef = Path(
@@ -117,7 +126,7 @@ def _read_defaults(module_name):
         'defaults.yaml',
         ).resolve()
 
-    return read_from_yaml_config(pdef)
+    return read_from_yaml_config(pdef, default_only=default_only)
 
 
 def setup_run(
@@ -183,12 +192,12 @@ def setup_run(
         A dictionary with the general run parameters.
     """
     # read the user config file from path
-    params = read_config(workflow_path)
+    config_files = read_config(workflow_path)
 
     # update default non-mandatory parameters with user params
     params = recursive_dict_update(
         config_optional_general_parameters_dict,
-        params)
+        config_files['final_cfg'])
 
     params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
@@ -294,6 +303,12 @@ def setup_run(
     # create datadir
     data_dir = create_data_dir(general_params[RUNDIR])
 
+    # Add workflow configuration file in data directory
+    enhanced_haddock_params = deepcopy(general_params)
+    enhanced_haddock_params.update(modules_params)
+    config_files['enhanced_haddock_params'] = enhanced_haddock_params
+    save_configuration_files(config_files, data_dir)
+
     if scratch_rest0:
         copy_molecules_to_data_dir(
             data_dir,
@@ -323,6 +338,74 @@ def setup_run(
 
     # return the modules' parameters and general parameters separately
     return modules_params, general_params
+
+
+def save_configuration_files(configs: dict, datadir: [str, Path]):
+    """Write a copy of configuration files (GitHub issue #578).
+
+    Parameters
+    ----------
+    configs : dict
+        Dictionnary holding the various configuration files
+        ['raw_input, 'cleaned_input', 'loaded_cleaned_input',
+         'final_cfg', 'enhanced_haddock_params']
+    datadir : str or :py:class:`libpath.Path`
+        Directory where to write the configuration
+    """
+    # Create directory
+    confpaths = Path(datadir, 'configurations/')
+    confpaths.mkdir(parents=True, exist_ok=True)
+    # Initiate files data
+    infofile = {
+        'raw_input': (
+            'An untouched copy of the raw input file, '
+            'as provided by the user.'),
+        'cleaned_input': (
+            'Pre-parsed input file where (eventually) '
+            'some indexing and modifications were '
+            'applied to ensure further processing.'),
+        'enhanced_haddock_params': (
+            'Final input file with detailed default parameters.'
+            )
+        }
+    added_files = {}
+    # Set list of configurations that wish to be saved
+    list_save_conf = [
+        'raw_input',
+        'cleaned_input',
+        'enhanced_haddock_params',
+        ]
+
+    # Loop over configuration files
+    for confname in list_save_conf:
+        try:
+            confdt = configs[confname]
+        except KeyError:
+            continue
+
+        toml_fpath = Path(confpaths, f'{confname}.toml')
+        if isinstance(confdt, dict):
+            # Save toml version
+            save_config(confdt, toml_fpath)
+            # Save json version
+            json_fpath = Path(confpaths, f'{confname}.json')
+            jsonconf = recursive_convert_paths_to_strings(confdt)
+            with open(json_fpath, 'w', encoding='utf-8') as f:
+                json.dump(jsonconf, f, indent=4)
+        else:
+            with open(toml_fpath, 'w') as f:
+                f.write(confdt)
+
+        added_files[confname] = toml_fpath
+
+    # Add README to help user
+    with open(Path(confpaths, 'README.txt'), 'w') as f:
+        f.write(f"{'#'*80}\n# Information about configuration "
+                f"files present in the same directory #\n{'#'*80}\n")
+        for confname in list_save_conf:
+            if confname not in added_files.keys():
+                continue
+            f.write(f'"{added_files[confname]}": {infofile[confname]}\n')
 
 
 def validate_params(params):
@@ -418,6 +501,12 @@ def validate_modules_params(modules_params, max_mols):
         # it is time to validate the type and value taken by this param
         validate_module_params_values(module_name, args)
 
+        # Update parameters with defaults ones
+        _missing_defaults = {param: default
+                             for param, default in defaults.items()
+                             if param not in args.keys()}
+        args.update(_missing_defaults)
+
 
 def validate_module_params_values(module_name, args: dict):
     """Validate individual parameters for a module.
@@ -497,7 +586,7 @@ def validate_param_type(param: dict,
     try:
         allowed_types = TYPES_MAPPER[param['type']]
     except KeyError as e:
-        return f'Unrecognized type {e}'
+        return f'Unrecognized default type "{e}"'
     # Check if both of the same type
     if (query_type := type(val)) not in allowed_types:
         return (f'Wrong provided type "{query_type}" with value "{val}". '
@@ -529,6 +618,22 @@ def validate_param_range(param: dict,
         if val < param['min'] or val > param['max']:
             return (f'Value "{val}" is not in the allowed boundaries '
                     f'ranging from {param["min"]} to {param["max"]}')
+    # Case for lists
+    elif 'minitems' in param.keys() and 'maxitems' in param.keys():
+        if ((nbitems := len(val)) < param['minitems']
+           or nbitems > param['maxitems']):
+            _desc = 'under' if nbitems < param['minitems'] else 'exceeding'
+            return (f'Number of items found in "{val}" is {_desc} the '
+                    'permitted limit. It should range from '
+                    f'{param["minitems"]} to {param["maxitems"]}')
+    # Case for strings
+    elif 'minchars' in param.keys() and 'maxchars' in param.keys():
+        if ((nbchars := len(val)) < param['minchars']
+           or nbchars > param['maxchars']):
+            _desc = 'under' if nbchars < param['minitems'] else 'exceeding'
+            return (f'Number of items found in "{val}" is {_desc} the '
+                    'permitted limit. It should range from '
+                    f'{param["minchars"]} to {param["maxchars"]}')
 
 
 def check_if_modules_are_installed(params):

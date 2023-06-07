@@ -655,7 +655,7 @@ class OPENMM:
         output_files['equilibrated'] = eq_pdb_filepath
         
         # NPT simulation (isothermal-isobaric ensemble)
-        _barostat = MonteCarloBarostat(
+        _barostat = MonteCarloBarostat( . # noqa : F841
             1 * atmosphere,
             self.params['temperature_kelvin'] * kelvin
             )

@@ -78,6 +78,7 @@ ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     config_optional_general_parameters,
     )
 
+# Dict mapping string types (in default.yaml) into python3 objects types
 TYPES_MAPPER = {
     'boolean': (bool,),
     'bool': (bool,),
@@ -116,7 +117,24 @@ def with_config_error(func):
 
 @lru_cache
 def _read_defaults(module_name, default_only=True):
-    """Read the defaults.yaml given a module name."""
+    """Read the defaults.yaml given a module name.
+    
+    Parameters
+    ----------
+    module_name : str
+        Name of the HADDOCK3 module
+    default_only : bool
+        If True, only the default value of each parameters found in the
+        default.yaml will be return, else all information are retrieved.
+
+    Return
+    ------
+    mod_default_config : dict
+        A dict holding default value for each parameters of the module if
+        default_only == True,
+        Else a dict of dict, contraining all information present in the
+        default.yaml file of the module.
+    """
     module_name_ = get_module_name(module_name)
     pdef = Path(
         haddock3_source_path,
@@ -125,8 +143,8 @@ def _read_defaults(module_name, default_only=True):
         module_name_,
         'defaults.yaml',
         ).resolve()
-
-    return read_from_yaml_config(pdef, default_only=default_only)
+    mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
+    return mod_default_config
 
 
 def setup_run(
@@ -307,7 +325,7 @@ def setup_run(
     enhanced_haddock_params = deepcopy(general_params)
     enhanced_haddock_params.update(modules_params)
     config_files['enhanced_haddock_params'] = enhanced_haddock_params
-    save_configuration_files(config_files, data_dir)
+    config_saves = save_configuration_files(config_files, data_dir)
 
     if scratch_rest0:
         copy_molecules_to_data_dir(
@@ -340,7 +358,7 @@ def setup_run(
     return modules_params, general_params
 
 
-def save_configuration_files(configs: dict, datadir: [str, Path]):
+def save_configuration_files(configs: dict, datadir: [str, Path]) -> dict:
     """Write a copy of configuration files (GitHub issue #578).
 
     Parameters
@@ -350,7 +368,12 @@ def save_configuration_files(configs: dict, datadir: [str, Path]):
         ['raw_input, 'cleaned_input', 'loaded_cleaned_input',
          'final_cfg', 'enhanced_haddock_params']
     datadir : str or :py:class:`libpath.Path`
-        Directory where to write the configuration
+        Directory where to write the configuration.
+
+    Return
+    ------
+    added_files : dict
+        Dictionary of paths leading to saved configuration files.
     """
     # Create directory
     confpaths = Path(datadir, 'configurations/')
@@ -399,13 +422,18 @@ def save_configuration_files(configs: dict, datadir: [str, Path]):
         added_files[confname] = toml_fpath
 
     # Add README to help user
-    with open(Path(confpaths, 'README.txt'), 'w') as f:
+    readmepath = Path(confpaths, 'README.txt')
+    with open(readmepath, 'w') as f:
         f.write(f"{'#'*80}\n# Information about configuration "
                 f"files present in the same directory #\n{'#'*80}\n")
         for confname in list_save_conf:
             if confname not in added_files.keys():
                 continue
             f.write(f'"{added_files[confname]}": {infofile[confname]}\n')
+    added_files['readme'] = readmepath
+
+    # Return mapper to added files
+    return added_files
 
 
 def validate_params(params):

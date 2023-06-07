@@ -525,7 +525,7 @@ def validate_modules_params(modules_params, max_mols):
                 )
             raise ConfigurationError(_msg)
 
-        # Now that existance of the parameter was checked,
+        # Now that existence of the parameter was checked,
         # it is time to validate the type and value taken by this param
         validate_module_params_values(module_name, args)
 

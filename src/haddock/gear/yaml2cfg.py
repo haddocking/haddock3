@@ -136,7 +136,7 @@ def read_from_yaml_config(cfg_file, default_only=True) -> dict:
         The full default configuration file as a dict
     OR
     cfg : dict
-        A dictionnary containing only the default parameters values
+        A dictionary containing only the default parameters values
     """
     ycfg = read_from_yaml(cfg_file)
     if default_only:

@@ -14,7 +14,9 @@
 
 evaluate ($eintfree = 0.0)
 
-minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+end if
 energy end
 
 evaluate ($eintfree = $bond + $angl + $impr + $dihe + $vdw + $elec)

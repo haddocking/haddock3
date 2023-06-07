@@ -51,9 +51,9 @@ def test_get_pair_error():
     """Test negative arguments to the get_pair() function."""
     neg_nmodels = -1
     neg_idx = -1
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         get_pair(neg_nmodels, 1)
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         get_pair(1, neg_idx)
 
 

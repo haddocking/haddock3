@@ -42,6 +42,6 @@ def write_structure_list(input_models, clustered_models, out_fname):
             f'{os.linesep}'
             )
     output_str += os.linesep
-    log.info('Saving structure list to clustfcc.tsv')
+    log.info(f'Saving structure list to {out_fname}')
     with open(output_fname, 'w') as out_fh:
         out_fh.write(output_str)

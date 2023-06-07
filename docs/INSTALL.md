@@ -15,14 +15,24 @@ Mind the `--recursive` flag when cloning!
 
 ```bash
 git clone --recursive https://github.com/haddocking/haddock3.git
+```
+
+Go to the **haddock3** directory
+
+```bash
 cd haddock3
+```
+
+and type the following commands to first install the [FCC]() source code provided
+
+```bash
 cd src/fcc/src
 chmod u+x Makefile
 make
 cd -
 ```
 
-By the end of the above commands, you should be back to the `haddock3`
+By the end of the above commands, you should be back to the **haddock3**
 main folder.
 
 ## 2 Create a virtual environment with Python 3.9+ and install dependencies:
@@ -64,16 +74,16 @@ ln -s /PATH/TO/cns_solve_1.3/mac-intel-darwin/source/cns_solve-2206031450.exe bi
 ln -s /PATH/TO/cns_solve_1.3/intel-x86_64bit-linux/source/cns_solve-2002171359.exe bin/cns
 ```
 
-As long as you have the HADDOCK3 python environment activated, you can
-navigate away from the HADDOCK3 installation folder. You can run
+As long as you have the `(haddock3)` python environment activated, you can
+navigate away from the **haddock3** installation folder. You can run
 HADDOCK3 from anywhere. To run HADDOCK3, follow the [usage
 guidelines](USAGE.md).
 
 
 ## 5. Keep your installation up to date
 
-Navigate to the `haddock3` installation folder (the one you cloned from
-GitHub). Ensure you have the `haddock3` python environment activated.
+Navigate to the **haddock3** installation folder (the one you cloned from
+GitHub). Ensure you have the `(haddock3)` python environment activated.
 Please keep in mind that HADDOCK3, as well as its
 dependencies, are under active development.
 If the updating processing fails, it is safest to reinstall
@@ -93,11 +103,8 @@ Afterwards:
 # pull the latest source code from our repository to your computer
 git pull
 
-# if you used venv to create the python environment, run:
+# update the dependencies by running:
 pip install -r requirements.txt  --upgrade
-
-# if you used anaconda to create the python environment, run:
-conda env update -f requirements.yml
 
 # ensure all command-lines clients are installed
 python setup.py develop --no-deps
@@ -106,7 +113,7 @@ python setup.py develop --no-deps
 
 ## 6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI
 
-To use the mpi implementation of haddock3 you must have mpi4py installed in the haddock3 python environment, and OpenMPI in the host system.
+To use the mpi implementation of haddock3 you must have mpi4py installed in the `(haddock3)` python environment, and OpenMPI in the host system.
 
 ```bash
 $ pip install mpi4py

@@ -325,7 +325,7 @@ def setup_run(
     enhanced_haddock_params = deepcopy(general_params)
     enhanced_haddock_params.update(modules_params)
     config_files['enhanced_haddock_params'] = enhanced_haddock_params
-    config_saves = save_configuration_files(config_files, data_dir)
+    config_saves = save_configuration_files(config_files, data_dir)  # noqa : F841
 
     if scratch_rest0:
         copy_molecules_to_data_dir(

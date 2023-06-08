@@ -25,41 +25,41 @@ from pathlib import Path
 # >conda activate haddock3
 # >conda install -c conda-forge libstdcxx-ng openmm pdbfixer
 from openmm import (
+    CustomCentroidBondForce,
+    CustomExternalForce,
     LangevinMiddleIntegrator,
     MonteCarloBarostat,
-    CustomExternalForce,
-    CustomCentroidBondForce,
     )
 from openmm.app import (
     PME,
+    AllBonds,
     ForceField,
+    HAngles,
+    HBonds,
     Modeller,
     PDBxFile,
     Simulation,
     statedatareporter,
-    HBonds,
-    AllBonds,
-    HAngles,
     )
 from openmm.app.pdbfile import PDBFile as openmmpdbfile
 from openmm.unit import (
+    MOLAR_GAS_CONSTANT_R,
+    angstroms,
+    atmosphere,
+    femtoseconds,
     kelvin,
+    kilocalorie_per_mole,
+    molar,
     nanometer,
     nanometers,
     picosecond,
     picoseconds,
-    femtoseconds,
-    atmosphere,
-    molar,
-    angstroms,
-    kilocalorie_per_mole,
-    MOLAR_GAS_CONSTANT_R,
     )
 from pdbfixer import PDBFixer
-
 # Haddock libraries
 from pdbtools import pdb_delhetatm
 from pdbtools.pdb_mkensemble import run as make_ensemble
+
 from haddock import log
 from haddock.libs.libontology import PDBFile
 
@@ -655,7 +655,7 @@ class OPENMM:
         output_files['equilibrated'] = eq_pdb_filepath
         
         # NPT simulation (isothermal-isobaric ensemble)
-        _barostat = MonteCarloBarostat( . # noqa : F841
+        _barostat = MonteCarloBarostat(  # noqa : F841
             1 * atmosphere,
             self.params['temperature_kelvin'] * kelvin
             )

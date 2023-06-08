@@ -4,13 +4,13 @@ import shutil
 from contextlib import suppress
 from pathlib import Path
 
-# from pdbtools.pdb_mkensemble import run as make_ensemble
-
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import run_subprocess
 from haddock.modules import BaseHaddockModule
 
+
+# from pdbtools.pdb_mkensemble import run as make_ensemble
 
 # allow general testing when OpenMM is not installed
 with suppress(ImportError):

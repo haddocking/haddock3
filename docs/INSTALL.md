@@ -58,11 +58,11 @@ pip install -r requirements.txt
 
 ## 3. Install the HADDOCK3 package and command line clients
 
-[Of note](## "Here we are still using the Depreacted `setup.py` command due to HPC, GRID and LOCAL compabilities with CNS.")
-
 ```bash
 python setup.py develop --no-deps
 ```
+
+Of note, here we are still using the depreacted `setup.py` command due to HPC, GRID and LOCAL compabilities with CNS.
 
 ## 4. Make a CNS binary shortcut to the expected path:
 
@@ -112,7 +112,7 @@ pip install -r requirements.txt  --upgrade
 python setup.py develop --no-deps
 ```
 
-[Of note](## "Here we are still using the Depreacted `setup.py` command due to HPC, GRID and LOCAL compabilities with CNS.")
+Of note, here we are still using the depreacted `setup.py` command due to HPC, GRID and LOCAL compabilities with CNS.
 
 
 ## 6. (Optional) Install MPI libraries if you intend to run HADDOCK3 with MPI

@@ -124,7 +124,7 @@ equilibration_timesteps:
 simulation_timesteps:
   default: 2000
   type: integer
-  min: 1
+  min: 0
   max: 1000000
   title: Simulation timesteps.
   short: Simulation timesteps performed during the simulation.

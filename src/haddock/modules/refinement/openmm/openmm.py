@@ -156,7 +156,8 @@ class OPENMM:
                                        )
         openmmpdbfile.writeFile(fixer.topology,
                                 fixer.positions,
-                                open(output_filepath, 'w')
+                                open(output_filepath, 'w'),
+                                keepIds=True
                                 )
 
     def create_solvation_box(self, solvent_model: str) -> str:
@@ -211,7 +212,8 @@ class OPENMM:
                                     )
             openmmpdbfile.writeFile(modeller.topology,
                                     modeller.positions,
-                                    open(box_path, 'w')
+                                    open(box_path, 'w'),
+                                    keepIds=True
                                     )
             
             return box_path
@@ -357,7 +359,8 @@ class OPENMM:
             openmmpdbfile.writeFile(
                 simulation.topology,
                 eq_positions,
-                open(eq_pdb_filepath, 'w')
+                open(eq_pdb_filepath, 'w'),
+                keepIds=True
                 )
             log.info(f"Equilibrated solvated system: {eq_pdb_filepath} !")
             return eq_pdb_filepath
@@ -574,6 +577,14 @@ class OPENMM:
         # Split output path
         fn, ext = os.path.splitext(self.output_filename)
 
+        # Make sure something has to be done...
+        if self.params['simulation_timesteps'] == 0:
+            output_filepath = os.path.join(output_directory,
+                                           f'{fn}_{replica_index}{ext}')
+            os.rename(inputPDBfile, output_filepath)
+            output_files['final'] = output_filepath
+            return output_files
+
         # Load pdb
         pdb = openmmpdbfile(inputPDBfile)
         forcefield = ForceField(self.params['forcefield'], solvent_model)
@@ -739,7 +750,8 @@ class OPENMM:
         # Write pdb file
         openmmpdbfile.writeFile(simulation.topology,
                                 current_state.getPositions(),
-                                open(output_path, 'w')
+                                open(output_path, 'w'),
+                                keepIds=True
                                 )
 
     def generate_output_ensemble(self, replicas_outputs: list) -> str:

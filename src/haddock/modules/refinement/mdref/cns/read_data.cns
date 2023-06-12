@@ -61,7 +61,7 @@ end
 !dihedral restraints:
 restraints dihedral 
     reset
-    nassign 20000 
+    nassign 50000 
 end
 fileexist $dihe_fname end
 if ($result eq true) then

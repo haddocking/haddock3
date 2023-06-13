@@ -370,7 +370,7 @@ class OPENMM:
             strerr = traceback.format_exc()
             log.error("EQUILIBRATING SOLVATION BOX ERROR FOR "
                       f"{pdb_filepath}:\n{strerr}")
-            
+
     def _stabilize_temperature(self, simulation, temperature: float,
                                dof: int, tolerence: float = 5.0,
                                steps: int = 50):
@@ -398,7 +398,8 @@ class OPENMM:
             # Do several simulation steps
             simulation.step(steps)
 
-    def _gen_restrain_force(self, atoms: list, positions: list,
+    @staticmethod
+    def _gen_restrain_force(atoms: list, positions: list,
                             subset: [bool, list] = None):
         """
         Generate CustomExternalForce aiming at restraining protein coordinates.
@@ -460,7 +461,8 @@ class OPENMM:
                 new_force = self._chain_centroid_force(system, chainid, chain2)
                 system.addForce(new_force)
 
-    def _get_chain_atoms(self, system, chainid: str) -> list:
+    @staticmethod
+    def _get_chain_atoms(system, chainid: str) -> list:
         """Retrun list of atom ids belonging to a chain.
         
         Parameters
@@ -496,7 +498,8 @@ class OPENMM:
         centroid_force.addBond([gc1, gc2], [1])
         return centroid_force
 
-    def _get_simulation_temperature(self, simulation, dof: int) -> float:
+    @staticmethod
+    def _get_simulation_temperature(simulation, dof: int) -> float:
         """
         Computes/gather the current system temperature.
 
@@ -526,7 +529,8 @@ class OPENMM:
         tempreature_k = temperature.value_in_unit(kelvin)
         return tempreature_k
 
-    def remove_water_and_ions(self, input_filepath: str) -> str:
+    @staticmethod
+    def remove_water_and_ions(input_filepath: str) -> str:
         """Remove water from the output of an explicit solvent run.
 
         Uses the pdb-tools.pdb_delhetatm() module to do this
@@ -730,7 +734,8 @@ class OPENMM:
         # Return data
         return output_files
 
-    def _write_current_pdb(self, simulation, output_path: str,
+    @staticmethod
+    def _write_current_pdb(simulation, output_path: str,
                            reference_pbb: [None, list] = None):
         """Write the current position of atoms in the simulation.
 

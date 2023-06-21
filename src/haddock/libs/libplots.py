@@ -196,6 +196,7 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
                  points="outliers",
                  width=1000,
                  height=800,
+                 hover_data=["caprieval_rank"],
                  )
     # layout
     update_layout_plotly(fig, "Cluster Rank", AXIS_NAMES[y_ax])
@@ -241,7 +242,6 @@ def box_plot_data(capri_df, cl_rank):
 
     # Sort based on "capri_rank"
     gb_full.sort_values(by=["capri_rank"], inplace=True)
-
     return gb_full
 
 
@@ -305,6 +305,18 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
     fig :
         an instance of plotly.graph_objects.Figure
     """
+    def _build_hover_text(df):
+        """Build a nice text for hover text."""
+        text_list = []
+        for _, row in df.iterrows():
+            model_text = f"Model: {row['model'].split('/')[-1]}"
+            score_text = f"Score: {row['score']}"
+            caprieval_rank_text = f"Caprieval rank: {row['caprieval_rank']}"
+            text_list.append(
+                f"{model_text}<br>{score_text}<br>{caprieval_rank_text}"
+                )
+        return text_list
+
     fig = go.Figure(layout={"width": 1000, "height": 800})
     traces = []
     n_colors = len(colors)
@@ -321,19 +333,13 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
             color_idx = (cl_rank[cl_id] - 1) % n_colors  # color index
             x_mean = np.mean(cl_df[x_ax])
             y_mean = np.mean(cl_df[y_ax])
-            # refactored due to E501 line too long
-            text_list = []
-            for n in range(cl_df.shape[0]):
-                model_text = cl_df['model'].iloc[n].split('/')[-1]
-                score_text = cl_df['score'].iloc[n]
-                text_list.append(f"Model: {model_text}<br>Score: {score_text}")
             traces.append(
                 go.Scatter(
                     x=cl_df[x_ax],
                     y=cl_df[y_ax],
                     name=cl_name,
                     mode="markers",
-                    text=text_list,
+                    text=_build_hover_text(cl_df),
                     legendgroup=cl_name,
                     marker_color=colors[color_idx],
                     hoverlabel=dict(
@@ -376,21 +382,13 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
                 )
     # append trace other
     if not gb_other.empty:
-        # refactored due to E501 line too long
-        text_list_other = []
-        for n in range(gb_other.shape[0]):
-            model_text = gb_other['model'].iloc[n].split('/')[-1]
-            score_text = gb_other['score'].iloc[n]
-            text_list_other.append(
-                f"Model: {model_text}<br>Score: {score_text}"
-                )
         traces.append(
             go.Scatter(
                 x=gb_other[x_ax],
                 y=gb_other[y_ax],
                 name="Other",
                 mode="markers",
-                text=text_list_other,
+                text=_build_hover_text(gb_other),
                 legendgroup="Other",
                 marker=dict(
                     color="white", line=dict(width=2, color="DarkSlateGrey")

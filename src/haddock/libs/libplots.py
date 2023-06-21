@@ -825,13 +825,10 @@ def clean_capri_table(dfcl):
 
 
 def _pandas_df_to_html_table(df, table_id):
-    return df.to_html(
-        table_id=table_id,
-        index=True,
-        index_names=True,
-        classes=["table"],
-        escape=False,
-        )
+    data = df.to_json()
+    columns = [{"key": str(name), "header": str(name)} for name in df.columns]
+    print(columns)
+    return data, columns
 
 
 def clt_table_handler(clt_file, ss_file):
@@ -888,55 +885,6 @@ def _css_styles_for_report():
     The CSS styles as a string.
     """
     custom_css = '''
-    .table {
-        font-family: Arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 16px;
-        height: auto;
-        overflow-y: auto;
-        }
-    .table th {
-        font-weight: bold;
-        background-color: #f2f2f2;
-        padding: 8px;
-        border: 1px solid #ddd;
-        text-align: left;
-        height: 10px;
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        }
-    .table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-        height: 10px;
-        }
-    .table tr:nth-child(even) {
-        background-color: #f2f2f2;
-        }
-    .table thead th {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        }
-    .table thead th:first-child {
-        position: sticky;
-        left: 0;
-        z-index: 2;
-        }
-    .table tbody th {
-        position: sticky;
-        left: 0;
-        z-index: 1;
-        }
-    .table thead tr th:first-child,
-    .table tbody tr td:first-child {
-        width: 300px;
-        min-width: 300px;
-        max-width: 300px;
-        }
     .title {
         font-family: Arial, sans-serif;
         font-size: 32px;
@@ -944,7 +892,8 @@ def _css_styles_for_report():
         }
 
     '''
-    return f'<style>{custom_css}</style>'
+    table_css = ' <link href="https://esm.sh/@i-vresse/haddock3-analysis-components/dist/style.css" rel="stylesheet" />'
+    return f'{table_css}<style>{custom_css}</style>'
 
 
 def _generate_html_report(step, figures):
@@ -1012,9 +961,36 @@ def _generate_html_body(figures):
     """
     body = "<body>"
     include_plotlyjs = "cdn"
+    table_index = 1
     for figure in figures:
-        if isinstance(figure, str):  # tables
-            inner_html = f'''<div class="table">{figure}</div>'''
+        if isinstance(figure, tuple):  # tables
+            table_index += 1
+            table_id = f"table{table_index}"
+            data, columns = figure
+            inner_html = f'''
+            <div id="{table_id}"></div>
+            <script type="importmap">
+            {{
+                "imports": {{
+                "react": "https://esm.sh/react",
+                "react-dom": "https://esm.sh/react-dom",
+                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components"
+                }}
+            }}
+            </script>
+            <script type="module">
+            import {{createRoot}} from "react-dom"
+            import {{createElement}} from "react"
+            import {{SortableTable}} from "@i-vresse/haddock3-analysis-components"
+
+            const data = {data}
+            const columns = {columns}
+
+            createRoot(document.getElementById('{table_id}')).render(
+                createElement(SortableTable, {{ data, columns }})
+                )
+            </script>
+            '''
         else:  # plots
             inner_html = figure.to_html(
                 full_html=False, include_plotlyjs=include_plotlyjs

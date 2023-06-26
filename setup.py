@@ -81,6 +81,7 @@ setup(
             'haddock3-score = haddock.clis.cli_score:maincli',
             'haddock3-unpack = haddock.clis.cli_unpack:maincli',
             'haddock3-analyse = haddock.clis.cli_analyse:maincli',
+            'haddock3-traceback = haddock.clis.cli_traceback:maincli',
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

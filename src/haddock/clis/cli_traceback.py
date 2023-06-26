@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 from haddock import log
-from haddock.libs.libontology import ModuleIO
+from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.modules import get_module_steps_folders
 
 
@@ -29,6 +29,41 @@ ANA_MODULES = ["caprieval",
                "rmsdmatrix",
                "clustrmsd",
                "clustfcc"]
+
+
+def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int):
+    """
+    Get the original name(s) of the PDB file.
+    
+    Parameters
+    ----------
+    n : int
+        Step number.
+    pdbfile : PDBFile
+        PDBFile object.
+    max_topo_len : int
+        Maximum length of the topologies found so far.
+    
+    Returns
+    -------
+    ori_names : list
+        List of original names.
+    max_topo_len : int
+        Maximum length of the topologies found so far.
+    """
+    if n != 0:  # not the first step, ori_name should be defined
+        ori_names = [pdbfile.ori_name]
+    else:  # first step, we get topology files instead of ori_name
+        # topology can either be a list of topologies or a single
+        # topology
+        if isinstance(pdbfile.topology, list):
+            ori_names = [el.file_name for el in pdbfile.topology]
+            if len(pdbfile.topology) > max_topo_len:
+                max_topo_len = len(pdbfile.topology)
+        else:
+            ori_names = [pdbfile.topology.file_name]
+            max_topo_len = 1
+    return ori_names, max_topo_len
 
 
 def traceback_dataframe(data_dict: dict,
@@ -164,6 +199,8 @@ def main(run_dir):
         # iterating through the pdbfiles to fill data_dict and rank_dict
         for i, pdbfile in enumerate(io.output):
             rank = np.where(ranks_argsort == i)[0][0] + 1
+            # getting the original names
+            ori_names, max_topo_len = get_ori_names(n, pdbfile, max_topo_len)
             if n != len(sel_step) - 1:
                 if pdbfile.file_name not in ls_values:
                     # this is the first step in which the pdbfile appears.
@@ -178,22 +215,17 @@ def main(run_dir):
                     # we've already seen this pdb before.
                     idx = ls_values.index(pdbfile.file_name)
                     key = list(data_dict.keys())[idx // delta]
-                # at which step are we?
-                if n != 0:  # not the first step, ori_name should be defined
-                    ori_names = [pdbfile.ori_name]
-                else:  # first step, we get topology files instead of ori_name
-                    ori_names = [el.file_name for el in pdbfile.topology]
-                    if len(pdbfile.topology) > max_topo_len:
-                        max_topo_len = len(pdbfile.topology)
+                 
                 # assignment
                 for el in ori_names:
                     data_dict[key].append(el)
                 rank_dict[key].append(rank)
-            else:
-                data_dict[pdbfile.file_name] = [pdbfile.ori_name]
+            else:  # last step of the workflow
+                data_dict[pdbfile.file_name] = [oname for oname in ori_names]
                 rank_dict[pdbfile.file_name] = [rank]
+                
         # print(f"rank_dict {rank_dict}")
-        # print(f"data_dict {data_dict}")
+        # print(f"data_dict {data_dict}, maxtopo {max_topo_len}")
     # dumping the data into a dataframe
     df_output = traceback_dataframe(data_dict,
                                     rank_dict,

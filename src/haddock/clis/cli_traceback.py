@@ -1,7 +1,8 @@
 """
-Traceback CLI. Given an input run directory, haddock3-traceback traces back 
-each model to the initial input molecules used, providing the rank of each
-intermediate structure.
+Traces back PDB files from a HADDOCK run directory.
+
+Given an input run directory, haddock3-traceback traces back each model to the
+initial input molecules used, providing the rank of each intermediate model.
 
 USAGE::
 
@@ -12,36 +13,63 @@ import argparse
 import sys
 from pathlib import Path
 
-from haddock import log
-from haddock.libs.libontology import ModuleIO
-from haddock.modules import get_module_steps_folders
 import numpy as np
 import pandas as pd
 
+from haddock import log
+from haddock.libs.libontology import ModuleIO
+from haddock.modules import get_module_steps_folders
+
+
 TRACK_FOLDER = "traceback"  # name of the traceback folder
 
+ANA_MODULES = ["caprieval",
+               "seletop",
+               "topoaa",
+               "rmsdmatrix",
+               "clustrmsd",
+               "clustfcc"]
 
-def traceback_dataframe(data_dict: dict, rank_dict: dict, sel_step: list, max_topo_len: int):
-    """
-    Creates traceback dataframe by combining together ranks and data.
-    """
 
+def traceback_dataframe(data_dict: dict,
+                        rank_dict: dict,
+                        sel_step: list,
+                        max_topo_len: int):
+    """
+    Create traceback dataframe by combining together ranks and data.
+
+    Parameters
+    ----------
+    data_dict : dict
+        Dictionary containing the data to be traced back.
+    rank_dict : dict
+        Dictionary containing the ranks of the data to be traced back.
+    sel_step : list
+        List of selected steps.
+    max_topo_len : int
+        Maximum length of the topologies.
+    
+    Returns
+    -------
+    df_ord : pandas.DataFrame
+        Dataframe containing the traceback data.
+    """
     # get last step of the workflow
     last_step = sel_step[-1]
     # data dict to dataframe
     df_data = pd.DataFrame.from_dict(data_dict, orient="index")
     df_data.reset_index(inplace=True)
-    # assign columns
+    # assign columns
     data_cols = [el for el in reversed(sel_step)]
     data_cols.extend([f"00_topo{i+1}" for i in range(max_topo_len)])
     df_data.columns = data_cols
 
-    # same for the rank_dict
+    # same for the rank_dict
     df_ranks = pd.DataFrame.from_dict(rank_dict, orient="index")
     df_ranks.reset_index(inplace=True)
-    ranks_col = [last_step] # the key to merge the dataframes
+    ranks_col = [last_step]  # the key to merge the dataframes
     ranks_col.extend([f"{el}_rank" for el in reversed(sel_step)])
-    df_ranks.columns=ranks_col
+    df_ranks.columns = ranks_col
 
     # merging the data and ranks dataframes
     df_merged = pd.merge(df_data, df_ranks, on=last_step)
@@ -51,6 +79,7 @@ def traceback_dataframe(data_dict: dict, rank_dict: dict, sel_step: list, max_to
     unk_records = df_ord[f'{last_step}'].str.startswith('unk')
     df_ord.loc[unk_records, last_step] = "-"
     return df_ord
+
 
 # Command line interface parser
 ap = argparse.ArgumentParser(
@@ -111,22 +140,21 @@ def main(run_dir):
     # get the module folders from the run_dir input
     all_steps = get_module_steps_folders(Path(run_dir))
     log.info(f"All_steps: {', '.join(all_steps)}")
-    analysis_modules = ["caprieval", "seletop", "topoaa", "rmsdmatrix", "clustrmsd", "clustfcc"]
-    sel_step = [st for st in all_steps if st.split("_")[1] not in analysis_modules]
+    sel_step = [st for st in all_steps if st.split("_")[1] not in ANA_MODULES]
     log.info(f"Steps to trace back: {', '.join(sel_step)}")
     
     data_dict, rank_dict = {}, {}
     unk_idx, max_topo_len = 0, 0
-    # this cycle goes through the steps in reverse order
-    for n in range(len(sel_step)-1,-1,-1):
-        delta = len(sel_step) - n - 1 # how many steps have we gone back?
+    # this cycle goes through the steps in reverse order
+    for n in range(len(sel_step) - 1, -1, -1):
+        delta = len(sel_step) - n - 1  # how many steps have we gone back?
         log.info(f"Tracing back step {sel_step[n]}")
         # loading the .json file
         json_path = Path(run_dir, sel_step[n], "io.json")
         io = ModuleIO()
         io.load(json_path)
-        # list all the values in the data_dict
-        ls_values = [x for l in data_dict.values() for x in l]
+        # list all the values in the data_dict
+        ls_values = [x for val in data_dict.values() for x in val]
         # getting and sorting the ranks for the current step folder
         ranks = []
         for pdbfile in io.output:
@@ -142,35 +170,39 @@ def main(run_dir):
                     # This means that it was discarded for the subsequent steps
                     # We need to add the pdbfile to the data_dict
                     key = f"unk{unk_idx}"
-                    data_dict[key] = ["-" for el in range(delta-1)]
+                    data_dict[key] = ["-" for el in range(delta - 1)]
                     data_dict[key].append(pdbfile.file_name)
                     rank_dict[key] = ["-" for el in range(delta)]
                     unk_idx += 1
                 else:
                     # we've already seen this pdb before.
                     idx = ls_values.index(pdbfile.file_name)
-                    key = list(data_dict.keys())[idx//delta]
-                # at which step are we?
-                if n != 0: # not the first step, ori_name should be defined
+                    key = list(data_dict.keys())[idx // delta]
+                # at which step are we?
+                if n != 0:  # not the first step, ori_name should be defined
                     ori_names = [pdbfile.ori_name]
-                else: # first step, we get topology files instead of ori_name
+                else:  # first step, we get topology files instead of ori_name
                     ori_names = [el.file_name for el in pdbfile.topology]
                     if len(pdbfile.topology) > max_topo_len:
                         max_topo_len = len(pdbfile.topology)
-                # assignment
+                # assignment
                 for el in ori_names:
                     data_dict[key].append(el)
                 rank_dict[key].append(rank)
             else:
                 data_dict[pdbfile.file_name] = [pdbfile.ori_name]
                 rank_dict[pdbfile.file_name] = [rank]
-        #print(f"rank_dict {rank_dict}")
-        #print(f"data_dict {data_dict}")
-    # dumping the data into a dataframe
-    df_output = traceback_dataframe(data_dict, rank_dict, sel_step, max_topo_len)
-    # dumping the dataframe
+        # print(f"rank_dict {rank_dict}")
+        # print(f"data_dict {data_dict}")
+    # dumping the data into a dataframe
+    df_output = traceback_dataframe(data_dict,
+                                    rank_dict,
+                                    sel_step,
+                                    max_topo_len)
+    # dumping the dataframe
     track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
-    log.info(f"Output dataframe {track_filename} created with shape {df_output.shape}")
+    log.info(f"Output dataframe {track_filename} "
+             f"created with shape {df_output.shape}")
     df_output.to_csv(track_filename, sep="\t", index=False)
     return
 

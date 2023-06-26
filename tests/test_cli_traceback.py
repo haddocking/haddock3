@@ -33,9 +33,9 @@ def test_main(rigid_json, flexref_json):
     
     if os.path.isdir(run_dir):
         shutil.rmtree(run_dir)
-    os.mkdir(run_dir)
-    os.mkdir(step_dirs[0])
-    os.mkdir(step_dirs[1])
+    # Loop over directories to be created
+    for d in [run_dir, *step_dirs]:
+        os.mkdir(d)
     shutil.copy(rigid_json, os.path.join(step_dirs[0], "io.json"))
     shutil.copy(flexref_json, os.path.join(step_dirs[1], "io.json"))
 

@@ -191,9 +191,7 @@ def main(run_dir):
         # list all the values in the data_dict
         ls_values = [x for val in data_dict.values() for x in val]
         # getting and sorting the ranks for the current step folder
-        ranks = []
-        for pdbfile in io.output:
-            ranks.append(pdbfile.score)
+        ranks = [pdbfile.score for pdbfile in io.output]
         ranks_argsort = np.argsort(ranks)
 
         # iterating through the pdbfiles to fill data_dict and rank_dict

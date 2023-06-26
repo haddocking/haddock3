@@ -1,0 +1,203 @@
+{
+    "input": [],
+    "output": [
+        {
+            "clt_id": null,
+            "clt_model_rank": null,
+            "clt_rank": null,
+            "created": "2023-06-26 11:15:03",
+            "file_name": "flexref_1.pdb",
+            "file_type": {
+                "py/reduce": [
+                    {
+                        "py/type": "haddock.libs.libontology.Format"
+                    },
+                    {
+                        "py/tuple": [
+                            "pdb"
+                        ]
+                    }
+                ]
+            },
+            "full_name": "flexref_1.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "rigidbody_2.pdb",
+            "path": "/trinity/login/mgiulini/haddock3/examples/docking-antibody-antigen/run1-CDR-NMR-CSP-test-new/5_flexref",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "5_flexref",
+                            "flexref_1.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "data",
+                            "5_flexref",
+                            "ambig-CDR-NMR-CSP.tbl"
+                        ]
+                    }
+                ]
+            },
+            "score": -242.31202000000002,
+            "topology": [
+                {
+                    "created": "2023-06-26 11:14:32",
+                    "file_name": "4G6K_fv_haddock.psf",
+                    "file_type": {
+                        "py/reduce": [
+                            {
+                                "py/type": "haddock.libs.libontology.Format"
+                            },
+                            {
+                                "py/tuple": [
+                                    "psf"
+                                ]
+                            }
+                        ]
+                    },
+                    "full_name": "4G6K_fv_haddock.psf",
+                    "md5": null,
+                    "path": "/trinity/login/mgiulini/haddock3/examples/docking-antibody-antigen/run1-CDR-NMR-CSP-test-new/0_topoaa",
+                    "py/object": "haddock.libs.libontology.TopologyFile",
+                    "rel_path": {
+                        "py/reduce": [
+                            {
+                                "py/type": "pathlib.PosixPath"
+                            },
+                            {
+                                "py/tuple": [
+                                    "..",
+                                    "0_topoaa",
+                                    "4G6K_fv_haddock.psf"
+                                ]
+                            }
+                        ]
+                    },
+                    "restr_fname": null
+                },
+                {
+                    "created": "2023-06-26 11:14:32",
+                    "file_name": "4I1B-matched_haddock.psf",
+                    "file_type": {
+                        "py/id": 9
+                    },
+                    "full_name": "4I1B-matched_haddock.psf",
+                    "md5": null,
+                    "path": "/trinity/login/mgiulini/haddock3/examples/docking-antibody-antigen/run1-CDR-NMR-CSP-test-new/0_topoaa",
+                    "py/object": "haddock.libs.libontology.TopologyFile",
+                    "rel_path": {
+                        "py/reduce": [
+                            {
+                                "py/type": "pathlib.PosixPath"
+                            },
+                            {
+                                "py/tuple": [
+                                    "..",
+                                    "0_topoaa",
+                                    "4I1B-matched_haddock.psf"
+                                ]
+                            }
+                        ]
+                    },
+                    "restr_fname": null
+                }
+            ],
+            "unw_energies": {
+                "air": 117.512,
+                "angles": 0.0,
+                "bonds": 0.0,
+                "bsa": 1363.37,
+                "cdih": 0.0,
+                "coup": 0.0,
+                "dani": 0.0,
+                "desolv": 11.779,
+                "dihe": 0.0,
+                "elec": -244.859,
+                "improper": 0.0,
+                "rdcs": 0.0,
+                "rg": 0.0,
+                "total": -134.696,
+                "vdw": -7.34952,
+                "vean": 0.0,
+                "xpcs": 0.0
+            }
+        },
+        {
+            "clt_id": null,
+            "clt_model_rank": null,
+            "clt_rank": null,
+            "created": "2023-06-26 11:15:03",
+            "file_name": "flexref_2.pdb",
+            "file_type": {
+                "py/id": 4
+            },
+            "full_name": "flexref_2.pdb",
+            "len": NaN,
+            "md5": null,
+            "ori_name": "rigidbody_4.pdb",
+            "path": "/trinity/login/mgiulini/haddock3/examples/docking-antibody-antigen/run1-CDR-NMR-CSP-test-new/5_flexref",
+            "py/object": "haddock.libs.libontology.PDBFile",
+            "rel_path": {
+                "py/reduce": [
+                    {
+                        "py/type": "pathlib.PosixPath"
+                    },
+                    {
+                        "py/tuple": [
+                            "..",
+                            "5_flexref",
+                            "flexref_2.pdb"
+                        ]
+                    }
+                ]
+            },
+            "restr_fname": {
+                "py/id": 6
+            },
+            "score": -191.67547,
+            "topology": [
+                {
+                    "py/id": 8
+                },
+                {
+                    "py/id": 11
+                }
+            ],
+            "unw_energies": {
+                "air": 180.926,
+                "angles": 0.0,
+                "bonds": 0.0,
+                "bsa": 1475.06,
+                "cdih": 0.0,
+                "coup": 0.0,
+                "dani": 0.0,
+                "desolv": 2.32073,
+                "dihe": 0.0,
+                "elec": -175.102,
+                "improper": 0.0,
+                "rdcs": 0.0,
+                "rg": 0.0,
+                "total": -16.4121,
+                "vdw": -22.2362,
+                "vean": 0.0,
+                "xpcs": 0.0
+            }
+        }
+    ]
+}

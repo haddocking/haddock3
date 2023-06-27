@@ -47,9 +47,9 @@ def test_emscoring_output(output_models):
     # expected output
     expected_outf_l = [
         ["structure", "original_name", "md5", "score"],
-        ["protdna_complex_1.pdb", "original_name_0.pdb", "None", "42.0"],
-        ["protdna_complex_2.pdb", "original_name_1.pdb", "None", "28.0"]]
-
+        ["protdna_complex_2.pdb", "original_name_1.pdb", "None", "28.0"],
+        ["protdna_complex_1.pdb", "original_name_0.pdb", "None", "42.0"]]
+        
     assert observed_outf_l == expected_outf_l
 
     os.unlink(output_fname)

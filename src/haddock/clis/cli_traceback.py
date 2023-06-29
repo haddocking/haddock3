@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 
 from haddock import log
+from haddock.libs import libcli
 from haddock.libs.libontology import ModuleIO, PDBFile
 from haddock.modules import get_module_steps_folders
 
@@ -123,16 +124,7 @@ ap = argparse.ArgumentParser(
     formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-ap.add_argument(
-    "-r",
-    "--run-dir",
-    help="The input run directory.",
-    required=True,
-    )
-
-
-def _ap():
-    return ap
+libcli.add_rundir_arg(ap)
 
 
 def load_args(ap):
@@ -182,8 +174,14 @@ def main(run_dir):
     unk_idx, max_topo_len = 0, 0
     # this cycle goes through the steps in reverse order
     for n in range(len(sel_step) - 1, -1, -1):
-        delta = len(sel_step) - n - 1  # how many steps have we gone back?
         log.info(f"Tracing back step {sel_step[n]}")
+        # correcting names in the dictionary. The ori_name must be complemented
+        # with the step folder name
+        for key in data_dict.keys():
+            if data_dict[key][-1] != "-":
+                data_dict[key][-1] = f"../{sel_step[n]}/{data_dict[key][-1]}"
+
+        delta = len(sel_step) - n - 1  # how many steps have we gone back?
         # loading the .json file
         json_path = Path(run_dir, sel_step[n], "io.json")
         io = ModuleIO()
@@ -200,18 +198,18 @@ def main(run_dir):
             # getting the original names
             ori_names, max_topo_len = get_ori_names(n, pdbfile, max_topo_len)
             if n != len(sel_step) - 1:
-                if pdbfile.file_name not in ls_values:
+                if str(pdbfile.rel_path) not in ls_values:
                     # this is the first step in which the pdbfile appears.
                     # This means that it was discarded for the subsequent steps
                     # We need to add the pdbfile to the data_dict
                     key = f"unk{unk_idx}"
                     data_dict[key] = ["-" for el in range(delta - 1)]
-                    data_dict[key].append(pdbfile.file_name)
+                    data_dict[key].append(str(pdbfile.rel_path))
                     rank_dict[key] = ["-" for el in range(delta)]
                     unk_idx += 1
                 else:
                     # we've already seen this pdb before.
-                    idx = ls_values.index(pdbfile.file_name)
+                    idx = ls_values.index(str(pdbfile.rel_path))
                     key = list(data_dict.keys())[idx // delta]
                  
                 # assignment
@@ -219,14 +217,24 @@ def main(run_dir):
                     data_dict[key].append(el)
                 rank_dict[key].append(rank)
             else:  # last step of the workflow
-                data_dict[pdbfile.file_name] = [oname for oname in ori_names]
-                rank_dict[pdbfile.file_name] = [rank]
+                data_dict[str(pdbfile.rel_path)] = [on for on in ori_names]
+                rank_dict[str(pdbfile.rel_path)] = [rank]
                 
         # print(f"rank_dict {rank_dict}")
         # print(f"data_dict {data_dict}, maxtopo {max_topo_len}")
+
+    # stripping away relative paths
+    final_data_dict = {}
+    for key in data_dict.keys():
+        new_key = key.split("/")[-1]
+        final_data_dict[new_key] = [el.split("/")[-1] for el in data_dict[key]]
+    final_rank_dict = {}
+    for key in rank_dict.keys():
+        new_key = key.split("/")[-1]
+        final_rank_dict[new_key] = rank_dict[key]
     # dumping the data into a dataframe
-    df_output = traceback_dataframe(data_dict,
-                                    rank_dict,
+    df_output = traceback_dataframe(final_data_dict,
+                                    final_rank_dict,
                                     sel_step,
                                     max_topo_len)
     # dumping the dataframe

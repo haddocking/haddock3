@@ -5,7 +5,7 @@ from haddock.modules.base_cns_module import BaseCNSModule
 
 
 class ScoringModule(BaseCNSModule):
-    """Parent class for Scoring models."""
+    """Parent class for Scoring modules."""
 
     def output(self, output_fname, sep="\t"):
         """Save the output in comprehensive tables."""

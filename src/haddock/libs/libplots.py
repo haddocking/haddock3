@@ -668,6 +668,7 @@ def find_best_struct(ss_file, number_of_struct=10):
     best_struct_df["Cluster Rank"] = best_struct_df["Cluster Rank"].apply(
         _fix_uncluster_rank
         )
+    print(col_names)
     return best_struct_df
 
 
@@ -755,11 +756,11 @@ def _add_viewers(df):
         dl_name = dl_name + suffix
 
         # Generate html code
-        html_code = "<span>"
+        html_code = "["
         html_code += _generate_download_link(correct_path, dl_name)
-        html_code += "&nbsp;"  # add space
+        html_code += ","
         html_code += _generate_view_link(correct_path, dl_name)
-        html_code += "</span>"
+        html_code += "]"
         return html_code
 
     table_df = df.copy()
@@ -803,12 +804,14 @@ def clean_capri_table(dfcl):
     # what metrics are in both dfcl and AXIS_NAMES
     col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).tolist()
     # columns of the final table
-    table_col = ["Cluster ID", "Cluster Rank", "Cluster size"]
+    table_col = ["Cluster ID", "Cluster Rank", "Cluster size", "stats"]
+    stats = ""
     for col_name in col_list:
-        mean_value = dfcl[col_name].astype(str)
-        std_value = dfcl[f"{col_name}_std"].astype(str)
-        dfcl[AXIS_NAMES[col_name]] = (mean_value + " &#177; " + std_value)
-        table_col.append(AXIS_NAMES[col_name])
+        mean_value = dfcl[col_name].values[0]
+        std_value = dfcl[f"{col_name}_std"].values[0]
+        # TODO fix last ,
+        stats += f"{AXIS_NAMES[col_name]}:{{mean: {mean_value}, std: {std_value}}}, "
+    dfcl["stats"] = f"{{{stats}}}"
     dfcl.drop(columns=col_list, inplace=True)
     dfcl.rename(
         columns={
@@ -824,11 +827,14 @@ def clean_capri_table(dfcl):
     return dfcl[table_col]
 
 
-def _pandas_df_to_html_table(df, table_id):
-    data = df.to_json()
-    columns = [{"key": str(name), "header": str(name)} for name in df.columns]
-    print(columns)
-    return data, columns
+def _pandas_df_to_html_table(df):
+    data = df.T.to_json()
+    headers = {str(name): str(name) for name in df.columns}
+    print(headers)
+    print("*******")
+    print(data) #TODO fix format and best records
+    1/0
+    return data, headers
 
 
 def clt_table_handler(clt_file, ss_file):
@@ -872,7 +878,8 @@ def clt_table_handler(clt_file, ss_file):
 
     # The header of the table would be the cluster rank instead of id
     df_merged = df_merged.set_index("Cluster Rank")
-    table = _pandas_df_to_html_table(df_merged.T, table_id="table")
+    df_merged.reset_index(inplace=True)
+    table = _pandas_df_to_html_table(df_merged)
     return [table]
 
 
@@ -966,7 +973,7 @@ def _generate_html_body(figures):
         if isinstance(figure, tuple):  # tables
             table_index += 1
             table_id = f"table{table_index}"
-            data, columns = figure
+            data, headers = figure
             inner_html = f'''
             <div id="{table_id}"></div>
             <script type="importmap">
@@ -981,13 +988,13 @@ def _generate_html_body(figures):
             <script type="module">
             import {{createRoot}} from "react-dom"
             import {{createElement}} from "react"
-            import {{SortableTable}} from "@i-vresse/haddock3-analysis-components"
+            import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
 
             const data = {data}
-            const columns = {columns}
+            const headers = {headers}
 
             createRoot(document.getElementById('{table_id}')).render(
-                createElement(SortableTable, {{ data, columns }})
+                createElement(ClusterTable, {{ data, headers }})
                 )
             </script>
             '''

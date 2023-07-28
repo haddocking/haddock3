@@ -1,5 +1,6 @@
 """Plotting functionalities."""
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -668,7 +669,6 @@ def find_best_struct(ss_file, number_of_struct=10):
     best_struct_df["Cluster Rank"] = best_struct_df["Cluster Rank"].apply(
         _fix_uncluster_rank
         )
-    print(col_names)
     return best_struct_df
 
 
@@ -756,11 +756,11 @@ def _add_viewers(df):
         dl_name = dl_name + suffix
 
         # Generate html code
-        html_code = "["
+        html_code = "<span>"
         html_code += _generate_download_link(correct_path, dl_name)
-        html_code += ","
+        html_code += "&nbsp;"  # add space
         html_code += _generate_view_link(correct_path, dl_name)
-        html_code += "]"
+        html_code += "</span>"
         return html_code
 
     table_df = df.copy()
@@ -804,14 +804,12 @@ def clean_capri_table(dfcl):
     # what metrics are in both dfcl and AXIS_NAMES
     col_list = dfcl.columns.intersection(list(AXIS_NAMES.keys())).tolist()
     # columns of the final table
-    table_col = ["Cluster ID", "Cluster Rank", "Cluster size", "stats"]
-    stats = ""
+    table_col = ["Cluster ID", "Cluster Rank", "Cluster size"]
     for col_name in col_list:
-        mean_value = dfcl[col_name].values[0]
-        std_value = dfcl[f"{col_name}_std"].values[0]
-        # TODO fix last ,
-        stats += f"{AXIS_NAMES[col_name]}:{{mean: {mean_value}, std: {std_value}}}, "
-    dfcl["stats"] = f"{{{stats}}}"
+        mean_value = dfcl[col_name].astype(str)
+        std_value = dfcl[f"{col_name}_std"].astype(str)
+        dfcl[AXIS_NAMES[col_name]] = (mean_value + ", " + std_value)
+        table_col.append(AXIS_NAMES[col_name])
     dfcl.drop(columns=col_list, inplace=True)
     dfcl.rename(
         columns={
@@ -827,14 +825,29 @@ def clean_capri_table(dfcl):
     return dfcl[table_col]
 
 
-def _pandas_df_to_html_table(df):
-    data = df.T.to_json()
+def _pandas_df_to_json(df):
+    # Create headers of the table
     headers = {str(name): str(name) for name in df.columns}
-    print(headers)
-    print("*******")
-    print(data) #TODO fix format and best records
-    1/0
-    return data, headers
+
+    # Create nested structure of data for the table
+    data = {}
+    for index, row in df.iterrows():
+        stats = {}
+        best = {}
+        for column_name, value in row.items():
+            if column_name in list(AXIS_NAMES.values()):
+                mean, std = value.split(", ")
+                stats[column_name] = {"mean": float(mean), "std": float(std)}
+            elif "best" in column_name:
+                best[column_name] = value
+            else:
+                data.setdefault(index, {})[column_name] = value
+        data.setdefault(index, {})["stats"] = stats
+        data.setdefault(index, {})["best"] = best
+
+    data_string = json.dumps(data, indent=2)
+    headers_string = json.dumps(headers, indent=2)
+    return data_string, headers_string
 
 
 def clt_table_handler(clt_file, ss_file):
@@ -879,7 +892,7 @@ def clt_table_handler(clt_file, ss_file):
     # The header of the table would be the cluster rank instead of id
     df_merged = df_merged.set_index("Cluster Rank")
     df_merged.reset_index(inplace=True)
-    table = _pandas_df_to_html_table(df_merged)
+    table = _pandas_df_to_json(df_merged)
     return [table]
 
 

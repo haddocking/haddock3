@@ -826,8 +826,14 @@ def clean_capri_table(dfcl):
 
 
 def _pandas_df_to_json(df):
+    json_plot_keys = {
+        "Cluster Rank": "rank",
+        "Cluster ID": "id",
+        "Cluster size": "size",
+    }
+
     # Create headers of the table
-    headers = {str(name): str(name) for name in df.columns}
+    headers = {json_plot_keys.get(name, name): name for name in df.columns}
 
     # Create nested structure of data for the table
     data = {}
@@ -841,7 +847,8 @@ def _pandas_df_to_json(df):
             elif "best" in column_name:
                 best[column_name] = value
             else:
-                data.setdefault(index, {})[column_name] = value
+                json_name = json_plot_keys.get(column_name, column_name)
+                data.setdefault(index, {})[json_name] = value
         data.setdefault(index, {})["stats"] = stats
         data.setdefault(index, {})["best"] = best
 
@@ -1003,11 +1010,11 @@ def _generate_html_body(figures):
             import {{createElement}} from "react"
             import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
 
-            const data = {data}
+            const clusters = {data}
             const headers = {headers}
 
             createRoot(document.getElementById('{table_id}')).render(
-                createElement(ClusterTable, {{ data, headers }})
+                createElement(ClusterTable, {{ clusters, headers, maxbest:10 }})
                 )
             </script>
             '''

@@ -7,7 +7,7 @@ from os.path import dirname, join
 from setuptools import find_packages, setup
 # Import warnings object for later filtering out
 from setuptools.command.easy_install import EasyInstallDeprecationWarning
-from setuptools.warnings import SetuptoolsDeprecationWarning
+from setuptools import SetuptoolsDeprecationWarning
 
 
 # Add warnings filtering to the Setup Deprecation Warnings

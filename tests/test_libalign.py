@@ -17,6 +17,7 @@ from haddock.libs.libalign import (
     load_coords,
     make_range,
     pdb2fastadic,
+    SeqAlign,
     )
 
 from . import golden_data
@@ -403,6 +404,21 @@ def test_align_seq():
         assert observed_aln == expected_aln
 
 
+def test_align_seq_chm():
+    """Test the sequence alignment with chain matching."""
+    ref = Path(golden_data, "protein.pdb")
+    mod = Path(golden_data, "protein_segid.pdb")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
+        expected_numb_dic = {"B": {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}}
+        expected_chm_dict = {"X": "B"}
+
+        assert observed_numb_dic == expected_numb_dic
+        assert observed_chm_dict == expected_chm_dict
+
+
 def test_make_range():
     """Test the expansion of a chain dic into ranges."""
     chain_range_dic = {"A": [1, 2, 4], "B": [100, 110, 200]}
@@ -429,3 +445,24 @@ def test_dump_as_izone():
             ]
 
         assert observed_izone == expected_izone
+
+    chm_ref2model_dict = {"B": "X"}
+    with tempfile.NamedTemporaryFile() as fp:
+
+        dump_as_izone(fp.name, numb_dic, chm_ref2model_dict)
+
+        assert Path(fp.name).stat().st_size != 0
+
+        observed_izone = open(fp.name).readlines()
+        expected_izone = [
+            f"ZONE B1:X101{os.linesep}",
+            f"ZONE B2:X102{os.linesep}",
+            f"ZONE B3:X110{os.linesep}",
+            f"ZONE B5:X112{os.linesep}",
+            ]
+        
+        assert observed_izone == expected_izone
+
+
+def test_SeqAlign():
+    dummy_SeqAlign = SeqAlign()

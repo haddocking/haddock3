@@ -439,7 +439,7 @@ def get_align(method, lovoalign_exec):
     align_func : functools.partial
         desired alignment function
     """
-    log.info(f"Using {method} alignment")
+    log.debug(f"Using {method} alignment")
     if method == "structure":
         align_func = partial(
             align_strct,
@@ -712,8 +712,8 @@ class SeqAlign:
                 "Matching sequentially"
                 )
             if all(
-                    "X" in s for s in self.seq_refs[align_id]) and all(
-                    "X" in s for s in self.seq_model[align_id]):
+                    "X" in s for s in self.seqs_ref[ref_ch]) and all(
+                    "X" in s for s in self.seqs_model[mod_ch]):
                 # this sequence contains only ligands, do it manually
                 if len(self.seqs_ref[ref_ch]) != len(self.seqs_model[mod_ch]):
                     # we cannot handle this

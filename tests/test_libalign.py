@@ -383,8 +383,9 @@ def test_align_seq():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
 
-        observed_numb_dic = align_seq(ref, mod, tmpdirname)
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
         expected_numb_dic = {"B": {101: 1, 102: 2, 110: 3, 112: 5}}
+        expected_chm_dict = {"B": "B"}
 
         assert observed_numb_dic == expected_numb_dic
 

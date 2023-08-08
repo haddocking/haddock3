@@ -537,10 +537,10 @@ def test_check_chains(protprot_caprimodule):
               ["C", "D"]]
     
     # assuming exp chains are A and B
-    exp_ch = [["A", "C"],
-              ["A", "B"],
-              ["A", "B"],
-              ["C", "D"]]
+    exp_ch = [["A", ["C"]],
+              ["A", ["B"]],
+              ["A", ["B", "S", "E"]],
+              ["C", ["D"]]]
 
     for n in range(len(obs_ch)):
         obs_r_chain, obs_l_chain = protprot_caprimodule.check_chains(obs_ch[n])

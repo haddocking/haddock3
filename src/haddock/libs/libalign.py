@@ -204,7 +204,7 @@ def centroid(X):
     return C
 
 
-def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
+def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None, model2ref_chain_dict=None):
     """
     Load coordinates from PDB.
 
@@ -229,6 +229,7 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
     chain_ranges: dict
         dictionary of chain ranges
     """
+    print(f"load_coords on pdb_f {pdb_f} with chain dict {model2ref_chain_dict}")
     coord_dic = {}
     chain_dic = {}
     idx = 0
@@ -241,13 +242,16 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
                 resname = line[17:20].strip()
                 if resname in RES_TO_BE_IGNORED:
                     continue
-                chain = line[21]
+                if model2ref_chain_dict:
+                    chain = model2ref_chain_dict[line[21]]
+                else:
+                    chain = line[21]
                 resnum = int(line[22:26])
                 x = float(line[30:38])
                 y = float(line[38:46])
                 z = float(line[46:54])
                 coords = np.asarray([x, y, z])
-                if numbering_dic:
+                if numbering_dic and model2ref_chain_dict:
                     try:
                         resnum = numbering_dic[chain][resnum]
                     except KeyError:
@@ -260,7 +264,9 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
                         continue
                 # identifier = f"{chain}.{resnum}.{atom_name}"
                 identifier = (chain, resnum, atom_name)
+                #print(f"identifier {identifier}")
                 if atom_name not in atoms[resname]:
+                    #print(f"not in atoms[resname] {atoms[resname]}")
                     continue
                 if chain not in chain_dic:
                     chain_dic[chain] = []
@@ -288,6 +294,7 @@ def load_coords(pdb_f, atoms, filter_resdic=None, numbering_dic=None):
             min_idx = min(chain_dic[chain])
             max_idx = max(chain_dic[chain])
             chain_ranges[chain] = (min_idx, max_idx)
+    #print(f"coord_dic {coord_dic} chain_ranges {chain_ranges}")
     return coord_dic, chain_ranges
 
 
@@ -430,7 +437,7 @@ def get_align(method, lovoalign_exec):
     align_func : functools.partial
         desired alignment function
     """
-    log.debug(f"Using {method} alignment")
+    log.info(f"Using {method} alignment")
     if method == "structure":
         align_func = partial(
             align_strct,
@@ -595,6 +602,179 @@ def align_strct(reference, model, output_path, lovoalign_exec=None):
 
     return numbering_dic
 
+def write_alignment(top_aln, output_path, ref_chain):
+    """
+    Write the alignment to a file.
+
+    Parameters
+    ----------
+    top_aln : Bio.Align.PairwiseAlignments
+        alignment object
+    
+    ref_chain : str
+        reference chain
+    """
+    aln_fname = Path(output_path, f"blosum62_{ref_chain}.aln")
+    log.debug(f"Writing alignment to {aln_fname.name}")
+    with open(aln_fname, "w") as fh:
+        fh.write(str(top_aln))
+    return aln_fname
+
+
+def sequence_alignment(seq_ref, seq_model):
+    aligner = Align.PairwiseAligner()
+    aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
+    alns = aligner.align(seq_ref, seq_model)
+    top_aln = alns[0]
+
+    identity = (
+                str(top_aln).count("|") / float(min(len(seq_ref), len(seq_model)))
+                ) * 100
+    
+    aligned_ref_segment, aligned_model_segment = top_aln.aligned
+    #print(f"aligned_ref_segment {aligned_ref_segment} and aligned_model_segment {aligned_model_segment}")
+    # this should always be true
+    assert len(aligned_ref_segment) == len(aligned_model_segment)
+
+    return identity, top_aln, aligned_ref_segment, aligned_model_segment
+
+
+#def postprocess_alignment(top_aln, identity, seq_ref, seq_model, ref_chain, model_chain, aligned_ref_segment, aligned_model_segment, align_dic, seqdic_ref, seqdic_model):
+#    print(f"running postprocess_alignment for {ref_chain} - {model_chain}")
+#    align_dic[ref_chain] = {}
+#    if not any(e for e in top_aln.aligned):
+#        # No alignment!
+#        log.warning(
+#            f"No alignment for chain {ref_chain} is it protein/dna-rna? "
+#            "Matching sequentially"
+#            )
+#        if all(
+#                "X" in s for s in seq_ref) and all(
+#                "X" in s for s in seq_model):
+#            # this sequence contains only ligands, do it manually
+#            if len(seq_ref) != len(seq_model):
+#                # we cannot handle this
+#                # FIXME: This should raise a proper exception instead
+#                raise f"Cannot align chain {model_chain}"  # noqa: B016
+#            for ref_res, model_res in zip(
+#                    seqdic_ref[ref_chain],
+#                    seqdic_model[model_chain]):
+#                align_dic[ref_chain].update({model_res: ref_res})
+#    else:
+#        if identity <= 40.0:
+#            # Identity is very low
+#            log.warning(
+#                f"Sequence identity of chain {ref_chain} is "
+#                f"{identity:.2f}%, please check the results carefully")
+#            # log.warning(
+#            #    "Please use alignment_method = \"structure\" instead")
+#        else:
+#            log.debug(
+#                f"Sequence identity between chain {ref_chain} "
+#                f" of reference and {model_chain} of model is "
+#                f"{identity:.2f}%")
+#        for ref_segment, model_segment in zip(
+#                aligned_ref_segment, aligned_model_segment):
+#            print(f"ref_segment {ref_segment} and model_segment {model_segment}")
+#            start_ref_segment, end_ref_segment = ref_segment
+#            start_model_segment, end_model_segment = model_segment
+#            reslist_ref = list(seqdic_ref[ref_chain].keys())[
+#                start_ref_segment:end_ref_segment]
+#            reslist_model = list(seqdic_model[model_chain].keys())[
+#                start_model_segment:end_model_segment]
+#            for _ref_res, _model_res in zip(reslist_ref, reslist_model):
+#                align_dic[ref_chain].update({_model_res: _ref_res})
+
+class SeqAlign:
+    """SeqAlign class."""
+
+    def __init__(
+            self,
+            ):
+        """
+        Initialize the class.
+
+        Parameters
+        ----------
+        """
+        self.align_dic = {}
+        self.model2ref_chain_dict = {}
+        self.seqdic_ref = None
+        self.seqdic_model = None
+        self.seqs_ref = {}
+        self.seqs_model = {}
+        self.identities = []
+        self.aligned_model_segments = []
+        self.aligned_ref_segments = []
+        self.top_alns = []
+
+    def postprocess_alignment(
+        self,
+        ref_chain,
+        model_chain,
+        align_id
+    ):
+        """
+        Postprocess the alignment.
+
+        Parameters
+        ----------
+        ref_chain : str
+            reference chain
+        
+        model_chain : str
+            model chain
+        
+        align_id : int
+            alignment id (index of the alignment)
+        """
+        print(f"running postprocess_alignment for {ref_chain} - {model_chain}")
+        self.align_dic[ref_chain] = {}
+        if not any(e for e in self.top_alns[align_id].aligned):
+            # No alignment!
+            log.warning(
+                f"No alignment for chain {ref_chain} is it protein/dna-rna? "
+                "Matching sequentially"
+                )
+            if all(
+                    "X" in s for s in self.seq_refs[align_id]) and all(
+                    "X" in s for s in self.seq_model[align_id]):
+                # this sequence contains only ligands, do it manually
+                if len(self.seqs_ref[ref_chain]) != len(self.seqs_model[model_chain]):
+                    # we cannot handle this
+                    # FIXME: This should raise a proper exception instead
+                    raise f"Cannot align chain {model_chain}"  # noqa: B016
+                for ref_res, model_res in zip(
+                        self.seqdic_ref[ref_chain],
+                        self.seqdic_model[model_chain]):
+                    self.align_dic[ref_chain].update({model_res: ref_res})
+        else:
+            identity = self.identities[align_id] 
+            if identity <= 40.0:
+                # Identity is very low
+                log.warning(
+                    f"Sequence identity of chain {ref_chain} is "
+                    f"{identity:.2f}%, please check the results carefully")
+                # log.warning(
+                #    "Please use alignment_method = \"structure\" instead")
+            else:
+                log.debug(
+                    f"Sequence identity between chain {ref_chain} "
+                    f" of reference and {model_chain} of model is "
+                    f"{identity:.2f}%")
+            for ref_segment, model_segment in zip(
+                    self.aligned_ref_segments[align_id], self.aligned_model_segments[align_id]):
+                print(f"ref_segment {ref_segment} and model_segment {model_segment}")
+                start_ref_segment, end_ref_segment = ref_segment
+                start_model_segment, end_model_segment = model_segment
+                reslist_ref = list(self.seqdic_ref[ref_chain].keys())[
+                    start_ref_segment:end_ref_segment]
+                reslist_model = list(self.seqdic_model[model_chain].keys())[
+                    start_model_segment:end_model_segment]
+                for _ref_res, _model_res in zip(reslist_ref, reslist_model):
+                    self.align_dic[ref_chain].update({_model_res: _ref_res})
+
+    
 
 def align_seq(reference, model, output_path):
     """
@@ -613,96 +793,146 @@ def align_seq(reference, model, output_path):
     align_dic : dict
         dictionary of sequence alignments (one per chain)
     """
-    seqdic_ref = pdb2fastadic(reference)
-    seqdic_model = pdb2fastadic(model)
+    print(f"running align_seq on {reference} and {model}")
+    SeqAlign_obj = SeqAlign()
+    SeqAlign_obj.seqdic_ref = pdb2fastadic(reference)
+    SeqAlign_obj.seqdic_model = pdb2fastadic(model)
+    model2ref_chain_dict = {}
+    
+    # assign sequences
+    seqs_ref = {}
+    seqs_model = {}
+    for ref_chain in SeqAlign_obj.seqdic_ref.keys():
+        SeqAlign_obj.seqs_ref[ref_chain] = Seq("".join(SeqAlign_obj.seqdic_ref[ref_chain].values()))
+    for model_chain in SeqAlign_obj.seqdic_model.keys():
+        SeqAlign_obj.seqs_model[model_chain] = Seq("".join(SeqAlign_obj.seqdic_model[model_chain].values()))
+    
+    # check if chain ids match
+    if SeqAlign_obj.seqdic_ref.keys() != SeqAlign_obj.seqdic_model.keys():
+        # they do not match, we need to do chain matching
+        n_partners = min(len(SeqAlign_obj.seqdic_ref.keys()), len(SeqAlign_obj.seqdic_model.keys()))
 
-    if seqdic_ref.keys() != seqdic_model.keys():
-        # TODO: Implement chain-matching here
-        return False
+        # unique combinations of chains
+        combs = []
+        for ref_key in SeqAlign_obj.seqdic_ref.keys():
+            for mod_key in SeqAlign_obj.seqdic_model.keys():
+                combs.append((ref_key, mod_key))
+        print(f"combs {combs}")
+        identities = []
+        aligned_model_segments = []
+        aligned_ref_segments = []
+        top_alns = []
+        # align
+        for ref_chain, model_chain in combs:
+            print(f"ref_chain {ref_chain} and model_chain {model_chain}")
 
-    align_dic = {}
-    for ref_chain, model_chain in zip(seqdic_ref, seqdic_model):
+            identity, top_aln, aligned_ref_segment, aligned_model_segment = sequence_alignment(SeqAlign_obj.seqs_ref[ref_chain], SeqAlign_obj.seqs_model[model_chain])
+            #print(f"identity {identity} aligned_ref_segment {aligned_ref_segment} aligned_model_segment {aligned_model_segment}")
+            identities.append(identity)
+            aligned_model_segments.append(aligned_model_segment)
+            aligned_ref_segments.append(aligned_ref_segment)
+            top_alns.append(top_aln)
+        matches = 0
+        align_dic = {}
+        
+        while matches < n_partners:
+            # get the best alignment
+            max_identity = max(identities)
+            max_identity_index = identities.index(max_identity)
+            # assignin chains
+            ref_chain, model_chain = combs[max_identity_index]
+            SeqAlign_obj.model2ref_chain_dict[model_chain] = ref_chain
+            SeqAlign_obj.aligned_ref_segments.append(aligned_ref_segments[max_identity_index])
+            SeqAlign_obj.aligned_model_segments.append(aligned_model_segments[max_identity_index])
+            SeqAlign_obj.identities.append(identities[max_identity_index])
+            SeqAlign_obj.top_alns.append(top_alns[max_identity_index])
+            
+            # writing the alignment
+            write_alignment(top_alns[max_identity_index], output_path, ref_chain)
 
-        if ref_chain != model_chain:
-            raise AlignError(
-                f"Chain mismatch: {ref_chain} != {model_chain}"
-                )
+            print(f"ref_chain {ref_chain} and model_chain {model_chain} have highest identity")
+            # postprocess alignment
+            SeqAlign_obj.postprocess_alignment(ref_chain, model_chain, matches)
+            # update identities to avoid double matches
+            identities = [identities[n] if combs[n][0] != ref_chain and combs[n][1] != model_chain else -1 for n in range(len(combs))]
+            matches += 1
+        return SeqAlign_obj.align_dic, SeqAlign_obj.model2ref_chain_dict
+    else:
+        # chains do match. no need to do chain matching
+        matches = 0
+        for ref_chain, model_chain in zip(SeqAlign_obj.seqdic_ref, SeqAlign_obj.seqdic_model):
+            SeqAlign_obj.model2ref_chain_dict[model_chain] = ref_chain
+            if ref_chain != model_chain:
+                raise AlignError(
+                    f"Chain mismatch: {ref_chain} != {model_chain}"
+                    )
 
-        align_dic[ref_chain] = {}
+            #align_dic[ref_chain] = {}
 
-        seq_ref = Seq("".join(seqdic_ref[ref_chain].values()))
-        seq_model = Seq("".join(seqdic_model[model_chain].values()))
+            seq_ref = SeqAlign_obj.seqs_ref[ref_chain]
+            seq_model = SeqAlign_obj.seqs_model[model_chain]
+            identity, top_aln, aligned_ref_segment, aligned_model_segment = sequence_alignment(seq_ref, seq_model)
+            SeqAlign_obj.identities.append(identity)
+            SeqAlign_obj.aligned_model_segments.append(aligned_model_segment)
+            SeqAlign_obj.aligned_ref_segments.append(aligned_ref_segment)
+            SeqAlign_obj.top_alns.append(top_aln)
+            # write alignment
+            write_alignment(top_aln, output_path, ref_chain)
+            # postprocess alignment
+            SeqAlign_obj.postprocess_alignment(ref_chain, model_chain, matches)
+            matches += 1
+            #if not any(e for e in top_aln.aligned):
+            #    # No alignment!
+            #    log.warning(
+            #        f"No alignment for chain {ref_chain} is it protein/dna-rna? "
+            #        "Matching sequentially"
+            #        )
+            #    if all(
+            #            "X" in s for s in seq_ref) and all(
+            #            "X" in s for s in seq_model):
+            #        # this sequence contains only ligands, do it manually
+            #        if len(seq_ref) != len(seq_model):
+            #            # we cannot handle this
+            #            # FIXME: This should raise a proper exception instead
+            #            raise f"Cannot align chain {model_chain}"  # noqa: B016
+            #        for ref_res, model_res in zip(
+            #                seqdic_ref[ref_chain],
+            #                seqdic_model[model_chain]):
+#
+            #            align_dic[ref_chain].update({model_res: ref_res})
+            #else:
+            #    if identity <= 40.0:
+            #        # Identity is very low
+            #        log.warning(
+            #            f"Sequence identity of chain {ref_chain} is "
+            #            f"{identity:.2f}%, please check the results carefully")
+            #        log.warning(
+            #            "Please use alignment_method = \"structure\" instead")
+            #    else:
+            #        log.debug(
+            #            f"Sequence identity between chain {ref_chain} "
+            #            f" of reference and {model} is "
+            #            f"{identity:.2f}%")
+            #    for ref_segment, model_segment in zip(
+            #            aligned_ref_segment, aligned_model_segment):
+#
+            #        start_ref_segment, end_ref_segment = ref_segment
+            #        start_model_segment, end_model_segment = model_segment
+#
+            #        reslist_ref = list(seqdic_ref[ref_chain].keys())[
+            #            start_ref_segment:end_ref_segment]
+#
+            #        reslist_model = list(seqdic_model[model_chain].keys())[
+            #            start_model_segment:end_model_segment]
+#
+            #        for _ref_res, _model_res in zip(reslist_ref, reslist_model):
+            #            align_dic[ref_chain].update({_model_res: _ref_res})
 
-        aligner = Align.PairwiseAligner()
-        aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
-        alns = aligner.align(seq_ref, seq_model)
-        top_aln = alns[0]
+        izone_fname = Path(output_path, "blosum62.izone")
+        log.debug(f"Saving .izone to {izone_fname.name}")
+        dump_as_izone(izone_fname, SeqAlign_obj.align_dic)
 
-        aln_fname = Path(output_path, f"blosum62_{ref_chain}.aln")
-        log.debug(f"Writing alignment to {aln_fname.name}")
-        with open(aln_fname, "w") as fh:
-            fh.write(str(top_aln))
-        aligned_ref_segment, aligned_model_segment = top_aln.aligned
-
-        # this should always be true
-        assert len(aligned_ref_segment) == len(aligned_model_segment)
-
-        identity = (
-            str(top_aln).count("|") / float(min(len(seq_ref), len(seq_model)))
-            ) * 100
-
-        if not any(e for e in top_aln.aligned):
-            # No alignment!
-            log.warning(
-                f"No alignment for chain {ref_chain} is it protein/dna-rna? "
-                "Matching sequentially"
-                )
-            if all(
-                    "X" in s for s in seq_ref) and all(
-                    "X" in s for s in seq_model):
-                # this sequence contains only ligands, do it manually
-                if len(seq_ref) != len(seq_model):
-                    # we cannot handle this
-                    # FIXME: This should raise a proper exception instead
-                    raise f"Cannot align chain {model_chain}"  # noqa: B016
-                for ref_res, model_res in zip(
-                        seqdic_ref[ref_chain],
-                        seqdic_model[model_chain]):
-
-                    align_dic[ref_chain].update({model_res: ref_res})
-        else:
-            if identity <= 40.0:
-                # Identity is very low
-                log.warning(
-                    f"Sequence identity of chain {ref_chain} is "
-                    f"{identity:.2f}%, please check the results carefully")
-                log.warning(
-                    "Please use alignment_method = \"structure\" instead")
-            else:
-                log.debug(
-                    f"Sequence identity between chain {ref_chain} "
-                    f" of {reference} and {model} is "
-                    f"{identity:.2f}%")
-            for ref_segment, model_segment in zip(
-                    aligned_ref_segment, aligned_model_segment):
-
-                start_ref_segment, end_ref_segment = ref_segment
-                start_model_segment, end_model_segment = model_segment
-
-                reslist_ref = list(seqdic_ref[ref_chain].keys())[
-                    start_ref_segment:end_ref_segment]
-
-                reslist_model = list(seqdic_model[model_chain].keys())[
-                    start_model_segment:end_model_segment]
-
-                for _ref_res, _model_res in zip(reslist_ref, reslist_model):
-                    align_dic[ref_chain].update({_model_res: _ref_res})
-
-    izone_fname = Path(output_path, "blosum62.izone")
-    log.debug(f"Saving .izone to {izone_fname.name}")
-    dump_as_izone(izone_fname, align_dic)
-
-    return align_dic
+        return SeqAlign_obj.align_dic, SeqAlign_obj.model2ref_chain_dict
 
 
 def make_range(chain_range_dic):

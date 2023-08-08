@@ -24,7 +24,7 @@ from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile
 
 
-def load_contacts(pdb_f, cutoff=5.0):
+def load_contacts(pdb_f, cutoff=5.0, numbering_dic=None, model2ref_chain_dict=None):
     """
     Load residue-based contacts.
 
@@ -45,7 +45,7 @@ def load_contacts(pdb_f, cutoff=5.0):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
     atoms = get_atoms(pdb_f, full=True)
-    ref_coord_dic, _ = load_coords(pdb_f, atoms)
+    ref_coord_dic, _ = load_coords(pdb_f, atoms, numbering_dic=numbering_dic, model2ref_chain_dict=model2ref_chain_dict)
     # create coordinate arrays
     coord_arrays, coord_ids = {}, {}
     for atom in ref_coord_dic.keys():
@@ -115,6 +115,7 @@ class CAPRI:
         self.r_chain = params["receptor_chain"]
         self.l_chain = params["ligand_chain"]
         self.model2ref_numbering = None
+        self.model2ref_chain_dict = None
         self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
         self.output_clt_fname = Path(f"capri_clt_{identificator}.tsv")
         # for parallelisation
@@ -145,8 +146,15 @@ class CAPRI:
                 self.model,
                 self.atoms,
                 ref_interface_resdic,
-                numbering_dic=self.model2ref_numbering
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict
                 )
+            #print(f"ref_coord_dic for irmsd:")
+            #for ch in ref_coord_dic:
+            #    print(f"{ch} {ref_coord_dic[ch]}")
+            #print(f"mod_coord_dic for irmsd:")
+            #for ch in mod_coord_dic:
+            #        print(f"{ch} {mod_coord_dic[ch]}")
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -182,9 +190,10 @@ class CAPRI:
         mod_coord_dic, _ = load_coords(
             self.model,
             self.atoms,
-            numbering_dic=self.model2ref_numbering
+            numbering_dic=self.model2ref_numbering,
+            model2ref_chain_dict=self.model2ref_chain_dict
             )
-
+        
         Q = []
         P = []
         # Note: this MUST be sorted since we will use the indexes to
@@ -203,10 +212,13 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating lrmsd")
         else:
-            r_chain, l_chain = self.check_chains(obs_chains)
+            r_chain, l_chains = self.check_chains(obs_chains)
             r_start, r_end = chain_ranges[r_chain]
-            l_start, l_end = chain_ranges[l_chain]
-
+            l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
+            l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
+            #l_start, l_end = chain_ranges[l_chain]
+            
+            print(f"r_start: {r_start}, r_end: {r_end} l_starts: {l_starts}, l_ends: {l_ends}")
             for k in intersection:
                 ref_xyz = ref_coord_dic[k]
                 mod_xyz = mod_coord_dic[k]
@@ -253,9 +265,17 @@ class CAPRI:
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
 
-            # Identify the ligand coordinates
-            Q_l = Q[l_start: l_end + 1]
-            P_l = P[l_start: l_end + 1]
+            # Identify the ligand coordinates concatenating all the ligand chains
+            Q_l = np.empty((0,3))
+            P_l = np.empty((0,3))
+            for l_start, l_end in zip(l_starts, l_ends):
+                #print(Q[l_start: l_end + 1])
+                Q_l = np.concatenate((Q_l, Q[l_start: l_end + 1]))
+                P_l = np.concatenate((P_l, P[l_start: l_end + 1]))
+            #print(f"Q_l: {Q_l}")
+            #print(f"P_l: {P_l}")
+            # Q_l = Q[l_start: l_end + 1]
+            # P_l = P[l_start: l_end + 1]
 
             # write_coords("ref_l.pdb", Q_l)
             # write_coords("model_l.pdb", P_l)
@@ -284,7 +304,8 @@ class CAPRI:
             self.model,
             self.atoms,
             ref_interface_resdic,
-            numbering_dic=self.model2ref_numbering
+            numbering_dic=self.model2ref_numbering,
+            model2ref_chain_dict=self.model2ref_chain_dict
             )
 
         # write_coord_dic("ref.pdb", ref_int_coord_dic)
@@ -313,16 +334,17 @@ class CAPRI:
             if chain not in chain_ranges:
                 chain_ranges[chain] = []
             chain_ranges[chain].append(i)
-
+        
         chain_ranges = make_range(chain_ranges)
         obs_chains = list(chain_ranges.keys())  # observed chains
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating ilrmsd")
         else:
-            r_chain, l_chain = self.check_chains(obs_chains)
-
-            l_start, l_end = chain_ranges[l_chain]
+            # r_chain, l_chain = self.check_chains(obs_chains)
+            r_chain, l_chains = self.check_chains(obs_chains)
             r_start, r_end = chain_ranges[r_chain]
+            l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
+            l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
 
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
@@ -347,9 +369,15 @@ class CAPRI:
             # P_r_int = P_int[r_start: r_end + 1]
             # r_rmsd = calc_rmsd(Q_r_int, P_int[r_start: r_end + 1])
             # print(r_rmsd)
-
-            Q_l_int = Q_int[l_start: l_end + 1]
-            P_l_int = P_int[l_start: l_end + 1]
+            # Identify the ligand coordinates concatenating all the ligand chains
+            Q_l_int = np.empty((0,3))
+            P_l_int = np.empty((0,3))
+            for l_start, l_end in zip(l_starts, l_ends):
+                Q_l_int = np.concatenate((Q_l_int, Q_int[l_start: l_end + 1]))
+                P_l_int = np.concatenate((P_l_int, P_int[l_start: l_end + 1]))
+            # prior to multibody:
+            # Q_l_int = Q_int[l_start: l_end + 1]
+            # P_l_int = P_int[l_start: l_end + 1]
             # write_coords("ref_l_int_fin.pdb", Q_l_int)
             # write_coords("mod_l_int_fin.pdb", P_l_int)
 
@@ -367,7 +395,12 @@ class CAPRI:
         """
         ref_contacts = load_contacts(self.reference, cutoff)
         if len(ref_contacts) != 0:
-            model_contacts = load_contacts(self.model, cutoff)
+            model_contacts = load_contacts(
+                self.model,
+                cutoff,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict = self.model2ref_chain_dict
+            )
             intersection = ref_contacts & model_contacts
             self.fnat = len(intersection) / float(len(ref_contacts))
         else:
@@ -440,7 +473,7 @@ class CAPRI:
                 method=self.params["alignment_method"],
                 lovoalign_exec=self.params["lovoalign_exec"]
                 )
-            self.model2ref_numbering = align_func(
+            self.model2ref_numbering, self.model2ref_chain_dict = align_func(
                 self.reference,
                 self.model,
                 self.path
@@ -451,7 +484,8 @@ class CAPRI:
                 f"and {self.model}, skipping..."
                 )
             return
-
+        print(f"model2ref_numbering {self.model2ref_numbering}")
+        print(f"model2ref_chain_dict {self.model2ref_chain_dict}")
         if self.params["fnat"]:
             log.debug(f"id {self.identificator}, calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
@@ -489,21 +523,26 @@ class CAPRI:
             obs_chains.remove(r_chain)
             r_found = True
         if self.l_chain in obs_chains:
-            l_chain = self.l_chain
-            obs_chains.remove(l_chain)
+            l_chains = [self.l_chain]
+            obs_chains.remove(self.l_chain)
             l_found = True
         # if one or both exp chains are not observed, use the observed chains
         if obs_chains != []:
-            exps = {self.r_chain, self.l_chain}
+            exps = (self.r_chain, self.l_chain)
             log.warning(f"observed chains != expected chains {exps}.")
             log.info(f"Sticking to observed chains {obs_chains_cp}")
+        # 
         if not r_found:
             r_chain = obs_chains[0]
             obs_chains.remove(r_chain)
         if not l_found:
-            l_chain = obs_chains[0]
+            l_chains = [el for el in obs_chains]
+        else:
+            if obs_chains != []:
+                log.warning("More than one chain found for the ligand")
+                l_chains.extend(obs_chains)
 
-        return r_chain, l_chain
+        return r_chain, l_chains
 
     @staticmethod
     def _load_atoms(model, reference):

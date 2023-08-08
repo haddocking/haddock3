@@ -462,7 +462,3 @@ def test_dump_as_izone():
             ]
         
         assert observed_izone == expected_izone
-
-
-def test_SeqAlign():
-    dummy_SeqAlign = SeqAlign()

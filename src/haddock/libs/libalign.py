@@ -856,7 +856,6 @@ def align_seq(reference, model, output_path):
             # update identities to avoid double matches
             identities = [identities[n] if combs[n][0] != ref_chain and combs[n][1] != model_chain else -1 for n in range(len(combs))]
             matches += 1
-        return SeqAlign_obj.align_dic, SeqAlign_obj.model2ref_chain_dict
     else:
         # chains do match. no need to do chain matching
         matches = 0
@@ -932,7 +931,7 @@ def align_seq(reference, model, output_path):
         log.debug(f"Saving .izone to {izone_fname.name}")
         dump_as_izone(izone_fname, SeqAlign_obj.align_dic)
 
-        return SeqAlign_obj.align_dic, SeqAlign_obj.model2ref_chain_dict
+    return SeqAlign_obj.align_dic, SeqAlign_obj.model2ref_chain_dict
 
 
 def make_range(chain_range_dic):

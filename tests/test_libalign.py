@@ -17,7 +17,6 @@ from haddock.libs.libalign import (
     load_coords,
     make_range,
     pdb2fastadic,
-    SeqAlign,
     )
 
 from . import golden_data
@@ -389,6 +388,7 @@ def test_align_seq():
         expected_chm_dict = {"B": "B"}
 
         assert observed_numb_dic == expected_numb_dic
+        assert observed_chm_dict == expected_chm_dict
 
         expected_aln_f = Path(tmpdirname, "blosum62_B.aln")
 

@@ -24,7 +24,11 @@ from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile
 
 
-def load_contacts(pdb_f, cutoff=5.0, numbering_dic=None, model2ref_chain_dict=None):
+def load_contacts(
+        pdb_f,
+        cutoff=5.0,
+        numbering_dic=None,
+        model2ref_chain_dict=None):
     """
     Load residue-based contacts.
 
@@ -45,7 +49,10 @@ def load_contacts(pdb_f, cutoff=5.0, numbering_dic=None, model2ref_chain_dict=No
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
     atoms = get_atoms(pdb_f, full=True)
-    ref_coord_dic, _ = load_coords(pdb_f, atoms, numbering_dic=numbering_dic, model2ref_chain_dict=model2ref_chain_dict)
+    ref_coord_dic, _ = load_coords(pdb_f,
+                                   atoms,
+                                   numbering_dic=numbering_dic,
+                                   model2ref_chain_dict=model2ref_chain_dict)
     # create coordinate arrays
     coord_arrays, coord_ids = {}, {}
     for atom in ref_coord_dic.keys():
@@ -149,12 +156,6 @@ class CAPRI:
                 numbering_dic=self.model2ref_numbering,
                 model2ref_chain_dict=self.model2ref_chain_dict
                 )
-            #print(f"ref_coord_dic for irmsd:")
-            #for ch in ref_coord_dic:
-            #    print(f"{ch} {ref_coord_dic[ch]}")
-            #print(f"mod_coord_dic for irmsd:")
-            #for ch in mod_coord_dic:
-            #        print(f"{ch} {mod_coord_dic[ch]}")
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -216,9 +217,7 @@ class CAPRI:
             r_start, r_end = chain_ranges[r_chain]
             l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
             l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
-            #l_start, l_end = chain_ranges[l_chain]
             
-            print(f"r_start: {r_start}, r_end: {r_end} l_starts: {l_starts}, l_ends: {l_ends}")
             for k in intersection:
                 ref_xyz = ref_coord_dic[k]
                 mod_xyz = mod_coord_dic[k]
@@ -265,15 +264,12 @@ class CAPRI:
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
 
-            # Identify the ligand coordinates concatenating all the ligand chains
-            Q_l = np.empty((0,3))
-            P_l = np.empty((0,3))
+            # Identify ligand coordinates concatenating all the ligand chains
+            Q_l = np.empty((0, 3))
+            P_l = np.empty((0, 3))
             for l_start, l_end in zip(l_starts, l_ends):
-                #print(Q[l_start: l_end + 1])
                 Q_l = np.concatenate((Q_l, Q[l_start: l_end + 1]))
                 P_l = np.concatenate((P_l, P[l_start: l_end + 1]))
-            #print(f"Q_l: {Q_l}")
-            #print(f"P_l: {P_l}")
             # Q_l = Q[l_start: l_end + 1]
             # P_l = P[l_start: l_end + 1]
 
@@ -369,9 +365,9 @@ class CAPRI:
             # P_r_int = P_int[r_start: r_end + 1]
             # r_rmsd = calc_rmsd(Q_r_int, P_int[r_start: r_end + 1])
             # print(r_rmsd)
-            # Identify the ligand coordinates concatenating all the ligand chains
-            Q_l_int = np.empty((0,3))
-            P_l_int = np.empty((0,3))
+            # Identify ligand coordinates concatenating all the ligand chains
+            Q_l_int = np.empty((0, 3))
+            P_l_int = np.empty((0, 3))
             for l_start, l_end in zip(l_starts, l_ends):
                 Q_l_int = np.concatenate((Q_l_int, Q_int[l_start: l_end + 1]))
                 P_l_int = np.concatenate((P_l_int, P_int[l_start: l_end + 1]))
@@ -399,8 +395,8 @@ class CAPRI:
                 self.model,
                 cutoff,
                 numbering_dic=self.model2ref_numbering,
-                model2ref_chain_dict = self.model2ref_chain_dict
-            )
+                model2ref_chain_dict=self.model2ref_chain_dict
+                )
             intersection = ref_contacts & model_contacts
             self.fnat = len(intersection) / float(len(ref_contacts))
         else:
@@ -484,8 +480,8 @@ class CAPRI:
                 f"and {self.model}, skipping..."
                 )
             return
-        print(f"model2ref_numbering {self.model2ref_numbering}")
-        print(f"model2ref_chain_dict {self.model2ref_chain_dict}")
+        # print(f"model2ref_numbering {self.model2ref_numbering}")
+        # print(f"model2ref_chain_dict {self.model2ref_chain_dict}")
         if self.params["fnat"]:
             log.debug(f"id {self.identificator}, calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
@@ -531,7 +527,7 @@ class CAPRI:
             exps = (self.r_chain, self.l_chain)
             log.warning(f"observed chains != expected chains {exps}.")
             log.info(f"Sticking to observed chains {obs_chains_cp}")
-        # 
+        
         if not r_found:
             r_chain = obs_chains[0]
             obs_chains.remove(r_chain)

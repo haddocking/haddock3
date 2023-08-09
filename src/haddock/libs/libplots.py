@@ -1,5 +1,6 @@
 """Plotting functionalities."""
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -805,7 +806,7 @@ def clean_capri_table(dfcl):
     for col_name in col_list:
         mean_value = dfcl[col_name].astype(str)
         std_value = dfcl[f"{col_name}_std"].astype(str)
-        dfcl[AXIS_NAMES[col_name]] = (mean_value + " &#177; " + std_value)
+        dfcl[AXIS_NAMES[col_name]] = (mean_value + ", " + std_value)
         table_col.append(AXIS_NAMES[col_name])
     dfcl.drop(columns=col_list, inplace=True)
     dfcl.rename(
@@ -822,19 +823,50 @@ def clean_capri_table(dfcl):
     return dfcl[table_col]
 
 
-def _pandas_df_to_html_table(df, table_id):
-    return df.to_html(
-        table_id=table_id,
-        index=True,
-        index_names=True,
-        classes=["table"],
-        escape=False,
-        )
+def _pandas_df_to_json(df):
+    """
+    Return data and headers of a data frame as Json strings.
+
+    To render a pandas data frame as a table in the analysis report, the data
+    and headers should be formated according to the structures defined by the
+    React components, see
+    https://github.com/i-VRESSE/haddock3-analysis-components/blob/main/src/components/ClusterTable.tsx#L3-L33.
+    """
+    json_plot_keys = {
+        "Cluster Rank": "rank",
+        "Cluster ID": "id",
+        "Cluster size": "size",
+        }
+
+    # Create a dictionary that contains the headers of the table
+    headers = {json_plot_keys.get(name, name): name for name in df.columns}
+
+    # Create a nested dictionary that contains the data of the table
+    data = {}
+    for index, row in df.iterrows():
+        stats = {}
+        best = {}
+        for column_name, value in row.items():
+            if column_name in list(AXIS_NAMES.values()):
+                mean, std = value.split(", ")
+                stats[column_name] = {"mean": float(mean), "std": float(std)}
+            elif "best" in column_name:
+                best[column_name] = value
+            else:
+                json_name = json_plot_keys.get(column_name, column_name)
+                data.setdefault(index, {})[json_name] = value
+        data.setdefault(index, {})["stats"] = stats
+        data.setdefault(index, {})["best"] = best
+
+    # Convert dictionary to json strings
+    data_string = json.dumps(data, indent=2)
+    headers_string = json.dumps(headers, indent=2)
+    return data_string, headers_string
 
 
 def clt_table_handler(clt_file, ss_file):
     """
-    Create a figure include tables.
+    Create a dataframe including data for tables.
 
     The idea is to create tidy tables that report statistics available in
     capri_clt.tsv and capri_ss.tsv files.
@@ -848,8 +880,8 @@ def clt_table_handler(clt_file, ss_file):
 
     Returns
     -------
-    fig :
-        an instance of plotly.graph_objects.Figure
+    df_merged : pandas DataFrame
+        a data frame including data for tables
     """
     # table of statistics
     dfcl = read_capri_table(clt_file)
@@ -866,15 +898,15 @@ def clt_table_handler(clt_file, ss_file):
     # Add download links and viewer
     structs_links_df = _add_viewers(structs_df)
 
-    # Merge and convert dataframe to html table
+    # Merge dataframes
     df_merged = pd.merge(
         statistics_df, structs_links_df, on=["Cluster ID", "Cluster Rank"]
         )
 
-    # The header of the table would be the cluster rank instead of id
+    # The header of the table should be the cluster rank instead of id
     df_merged = df_merged.set_index("Cluster Rank")
-    table = _pandas_df_to_html_table(df_merged.T, table_id="table")
-    return [table]
+    df_merged.reset_index(inplace=True)
+    return df_merged
 
 
 def _css_styles_for_report():
@@ -886,55 +918,6 @@ def _css_styles_for_report():
     The CSS styles as a string.
     """
     custom_css = '''
-    .table {
-        font-family: Arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 16px;
-        height: auto;
-        overflow-y: auto;
-        }
-    .table th {
-        font-weight: bold;
-        background-color: #f2f2f2;
-        padding: 8px;
-        border: 1px solid #ddd;
-        text-align: left;
-        height: 10px;
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        }
-    .table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-        height: 10px;
-        }
-    .table tr:nth-child(even) {
-        background-color: #f2f2f2;
-        }
-    .table thead th {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        }
-    .table thead th:first-child {
-        position: sticky;
-        left: 0;
-        z-index: 2;
-        }
-    .table tbody th {
-        position: sticky;
-        left: 0;
-        z-index: 1;
-        }
-    .table thead tr th:first-child,
-    .table tbody tr td:first-child {
-        width: 300px;
-        min-width: 300px;
-        max-width: 300px;
-        }
     .title {
         font-family: Arial, sans-serif;
         font-size: 32px;
@@ -942,7 +925,9 @@ def _css_styles_for_report():
         }
 
     '''
-    return f'<style>{custom_css}</style>'
+    css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components/dist/style.css"  # noqa:E501
+    table_css = f' <link href={css_link} rel="stylesheet" />'
+    return f'{table_css}<style>{custom_css}</style>'
 
 
 def _generate_html_report(step, figures):
@@ -1010,9 +995,37 @@ def _generate_html_body(figures):
     """
     body = "<body>"
     include_plotlyjs = "cdn"
+    table_index = 1
     for figure in figures:
-        if isinstance(figure, str):  # tables
-            inner_html = f'''<div class="table">{figure}</div>'''
+        if isinstance(figure, pd.DataFrame):  # tables
+            table_index += 1
+            table_id = f"table{table_index}"
+
+            data, headers = _pandas_df_to_json(figure)
+            inner_html = f'''
+            <div id="{table_id}"></div>
+            <script type="importmap">
+            {{
+                "imports": {{
+                "react": "https://esm.sh/react",
+                "react-dom": "https://esm.sh/react-dom",
+                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components"
+                }}
+            }}
+            </script>
+            <script type="module">
+            import {{createRoot}} from "react-dom"
+            import {{createElement}} from "react"
+            import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
+
+            const clusters = {data}
+            const headers = {headers}
+
+            createRoot(document.getElementById('{table_id}')).render(
+                createElement(ClusterTable, {{ clusters, headers, maxbest:10 }})
+                )
+            </script>
+            '''  # noqa:E501
         else:  # plots
             inner_html = figure.to_html(
                 full_html=False, include_plotlyjs=include_plotlyjs
@@ -1041,7 +1054,7 @@ def report_generator(boxes, scatters, tables, step):
     table: list
         a list including tables generated by clt_table_handler
     """
-    figures = tables
+    figures = [tables]
     # Combine scatters
     figures.append(
         report_plots_handler(

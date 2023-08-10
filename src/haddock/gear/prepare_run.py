@@ -259,7 +259,7 @@ def setup_run(
             )
 
         if len(modules_params["topoaa.1"]["molecules"]) > max_molecules_allowed:
-            raise ConfigurationError("Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
+            raise ConfigurationError(f"Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
 
         zero_fill.read(modules_params)
 

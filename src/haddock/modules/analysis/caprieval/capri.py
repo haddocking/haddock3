@@ -65,7 +65,7 @@ def load_contacts(
         coord_arrays[chain] = np.array(coord_arrays[chain])
 
     # combinations of chains
-    unique_chain_combs = list(combinations(coord_arrays.keys(), 2))
+    unique_chain_combs = list(combinations(sorted(coord_arrays.keys()), 2))
 
     # calculating contacts
     for pair in unique_chain_combs:

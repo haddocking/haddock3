@@ -857,7 +857,7 @@ def align_seq(reference, model, output_path):
                 else -1 for n in range(len(combs))
                 ]
             matches += 1
-        log.info(f"model2ref chain matching dict is {SeqAln.model2ref_chain_dict}")
+        log.info(f"model2ref chain matching is {SeqAln.model2ref_chain_dict}")
     else:
         # chains do match. no need to do chain matching
         matches = 0

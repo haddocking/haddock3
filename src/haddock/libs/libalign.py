@@ -857,6 +857,7 @@ def align_seq(reference, model, output_path):
                 else -1 for n in range(len(combs))
                 ]
             matches += 1
+        log.info(f"model2ref chain matching dict is {SeqAln.model2ref_chain_dict}")
     else:
         # chains do match. no need to do chain matching
         matches = 0
@@ -886,6 +887,7 @@ def align_seq(reference, model, output_path):
             # postprocess alignment
             SeqAln.postprocess_alignment(ref_ch, mod_ch, matches)
             matches += 1
+    # dump the .izone file
     izone_fname = Path(output_path, "blosum62.izone")
     log.debug(f"Saving .izone to {izone_fname.name}")
     dump_as_izone(izone_fname, SeqAln.align_dic, SeqAln.ref2model_chain_dict)

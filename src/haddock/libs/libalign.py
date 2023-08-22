@@ -753,8 +753,6 @@ class SeqAlign:
                 log.warning(
                     f"Sequence identity of chain {ref_ch} is "
                     f"{identity:.2f}%, please check the results carefully")
-                # log.warning(
-                #    "Please use alignment_method = \"structure\" instead")
             else:
                 log.debug(
                     f"Sequence identity between chain {ref_ch} "

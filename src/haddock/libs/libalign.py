@@ -682,8 +682,13 @@ def sequence_alignment(seq_ref, seq_model):
     identity = (str(top_aln).count("|") / float(aln_denom)) * 100
     
     aln_ref_seg, aln_mod_seg = top_aln.aligned
-    # this should always be true
-    assert len(aln_ref_seg) == len(aln_mod_seg)
+    # check alignment length
+    len_ref = len(aln_ref_seg)
+    len_mod = len(aln_mod_seg)
+    if len_ref != len_mod:
+        raise ALIGNError(
+            f"Alignment length mismatch ({len_ref} != {len_mod})"
+            )
 
     return identity, top_aln, aln_ref_seg, aln_mod_seg
 
@@ -865,7 +870,7 @@ def align_seq(reference, model, output_path):
             SeqAln.model2ref_chain_dict[mod_ch] = ref_ch
             SeqAln.ref2model_chain_dict[ref_ch] = mod_ch
             if ref_ch != mod_ch:
-                raise AlignError(
+                raise ALIGNError(
                     f"Chain mismatch: {ref_ch} != {mod_ch}"
                     )
             # extract sequences
@@ -943,11 +948,3 @@ def dump_as_izone(fname, numbering_dic, model2ref_chain_dict=None):
                     f"{os.linesep}"
                     )
                 fh.write(izone_str)
-
-
-class AlignError(Exception):
-    """Raised when something goes wrong with the Alignment library."""
-
-    def __init__(self, msg=""):
-        self.msg = msg
-        super().__init__(self.msg)

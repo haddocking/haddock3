@@ -396,7 +396,7 @@ def pdb2fastadic(pdb_f):
             ("DA", "A"),
             ("DG", "G"),
             ("DC", "C"),
-            ("DT", "T"),  # 9/8/2023: adding non-standard amino-acids (https://wenmr.science.uu.nl/haddock2.4/library) # noqa: E501
+            ("DT", "T"),  # 9/8/2023: adding non-standard amino-acids (src/haddock/cns/toppar/protein-allhdg5-4.top) # noqa: E501
             ("ALY", "K"),
             ("ASH", "D"),
             ("CFE", "C"),
@@ -406,6 +406,7 @@ def pdb2fastadic(pdb_f):
             ("CYM", "C"),
             ("DDZ", "A"),
             ("GLH", "E"),
+            ("HLY", "P"),
             ("HY3", "P"),
             ("HYP", "P"),
             ("M3L", "K"),

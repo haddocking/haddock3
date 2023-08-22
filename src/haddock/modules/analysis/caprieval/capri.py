@@ -215,8 +215,8 @@ class CAPRI:
         else:
             r_chain, l_chains = self.check_chains(obs_chains)
             r_start, r_end = chain_ranges[r_chain]
-            l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
-            l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
+            l_starts = [chain_ranges[l_chain][0] for _l in l_chains]
+            l_ends = [chain_ranges[l_chain][1] for _l in l_chains]
             
             for k in intersection:
                 ref_xyz = ref_coord_dic[k]

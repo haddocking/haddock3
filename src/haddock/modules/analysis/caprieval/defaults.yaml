@@ -36,7 +36,7 @@ lrmsd:
   title: Calculate L-RMSD
   short: Performs Ligand RMSD calculations.
   long: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing
-    the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chain parameter). 
+    the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chains parameter). 
     Superposition and RMSD calculations are done on backbone heavy atoms.
   group: analysis
   explevel: easy
@@ -48,7 +48,7 @@ ilrmsd:
   short: Performs Interface Ligand RMSD calculations.
   long: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target
         on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms 
-        of the ligand (defined by the ligand_chain parameter).
+        of the ligand (defined by the ligand_chains parameter).
   group: analysis
   explevel: easy
 
@@ -98,14 +98,12 @@ receptor_chain:
   group: analysis
   explevel: easy
 
-ligand_chain:
-  default: B
-  type: string
-  minchars: 1
-  maxchars: 1
-  title: Ligand ChainID
-  short: Ligand ChainID to be considered for the RMSD calculations.
-  long: Ligand ChainID to be considered for the RMSD calculations. This determines which chain will be
+ligand_chains:
+  default: ["B"]
+  type: list
+  title: Ligand ChainIDs
+  short: Ligand ChainIDs to be considered for the RMSD calculations.
+  long: Ligand ChainIDs to be considered for the RMSD calculations. This determines which chains will be
     treated as the ligand for the L-RMSD and for I-L-RMSD.
   group: analysis
   explevel: easy

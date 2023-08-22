@@ -120,7 +120,7 @@ class CAPRI:
         self.dockq = float('nan')
         self.atoms = self._load_atoms(model, reference)
         self.r_chain = params["receptor_chain"]
-        self.l_chain = params["ligand_chain"]
+        self.l_chains = params["ligand_chains"]
         self.model2ref_numbering = None
         self.model2ref_chain_dict = None
         self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
@@ -336,7 +336,6 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating ilrmsd")
         else:
-            # r_chain, l_chain = self.check_chains(obs_chains)
             r_chain, l_chains = self.check_chains(obs_chains)
             r_start, r_end = chain_ranges[r_chain]
             l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
@@ -511,33 +510,40 @@ class CAPRI:
         self.make_output()
 
     def check_chains(self, obs_chains):
-        """Check observed chains against the expected ones."""
+        """
+        Check observed chains against the expected ones.
+
+        Logic: if chain B is among the observed chains and is not selected as
+         the receptor chain, then ligand_chains = ["B"] (default behaviour).
+        Otherwise, ligand_chains becomes equal to all the other chains (once
+         receptor chain is removed).
+
+        Parameters
+        ----------
+        obs_chains : list
+            List of observed chains.
+        """
         r_found, l_found = False, False
-        obs_chains_cp = obs_chains.copy()
         if self.r_chain in obs_chains:
             r_chain = self.r_chain
             obs_chains.remove(r_chain)
             r_found = True
-        if self.l_chain in obs_chains:
-            l_chains = [self.l_chain]
-            obs_chains.remove(self.l_chain)
-            l_found = True
-        # if one or both exp chains are not observed, use the observed chains
-        if obs_chains != []:
-            exps = (self.r_chain, self.l_chain)
-            log.warning(f"observed chains != expected chains {exps}.")
-            log.info(f"Sticking to observed chains {obs_chains_cp}")
-        
+        l_chains = []
+        for l_chain in self.l_chains:
+            if l_chain in obs_chains:
+                l_chains.append(l_chain)
+                obs_chains.remove(l_chain)
+                l_found = True
+        # if receptor chain is not among the observed chains, then
+        # it is the first chain in the list
         if not r_found:
             r_chain = obs_chains[0]
             obs_chains.remove(r_chain)
+        # if no element in ligand_chains is not among the observed chains, then
+        # ligand_chains is the list of observed chains (the receptor chain has
+        # already been removed)
         if not l_found:
             l_chains = [el for el in obs_chains]
-        else:
-            if obs_chains != []:
-                log.warning("More than one chain found for the ligand")
-                l_chains.extend(obs_chains)
-
         return r_chain, l_chains
 
     @staticmethod

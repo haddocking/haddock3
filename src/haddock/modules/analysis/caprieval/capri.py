@@ -11,7 +11,7 @@ from scipy.spatial.distance import cdist
 
 from haddock import log
 from haddock.libs.libalign import (
-    AlignError,
+    ALIGNError,
     calc_rmsd,
     centroid,
     get_align,
@@ -473,7 +473,7 @@ class CAPRI:
                 self.model,
                 self.path
                 )
-        except AlignError:
+        except ALIGNError:
             log.warning(
                 f"Alignment failed between {self.reference} "
                 f"and {self.model}, skipping..."

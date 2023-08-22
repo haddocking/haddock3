@@ -91,7 +91,7 @@ def protprot_onechain_list():
 @pytest.fixture
 def params():
     return {
-        "receptor_chain": "A", "ligand_chain": "B", "aln_method": "sequence"
+        "receptor_chain": "A", "ligand_chains": ["B"], "aln_method": "sequence"
         }
 
 
@@ -176,7 +176,7 @@ def protprot_caprimodule_parallel(protprot_input_list):
         reference=reference,
         model=model,
         receptor_chain="A",
-        ligand_chain="B",
+        ligand_chains=["B"],
         aln_method="sequence",
         path=golden_data,
         identificator=0,
@@ -534,12 +534,14 @@ def test_check_chains(protprot_caprimodule):
     obs_ch = [["A", "C"],
               ["A", "B"],
               ["S", "E", "B", "A"],
+              ["S", "E", "P", "A"],
               ["C", "D"]]
     
     # assuming exp chains are A and B
     exp_ch = [["A", ["C"]],
               ["A", ["B"]],
-              ["A", ["B", "S", "E"]],
+              ["A", ["B"]],  # S and E are ignored when B is present
+              ["A", ["S", "E", "P"]],
               ["C", ["D"]]]
 
     for n in range(len(obs_ch)):

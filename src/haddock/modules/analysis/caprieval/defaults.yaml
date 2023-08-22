@@ -101,6 +101,8 @@ receptor_chain:
 ligand_chains:
   default: ["B"]
   type: list
+  minitems: 0
+  maxitems: 100
   title: Ligand ChainIDs
   short: Ligand ChainIDs to be considered for the RMSD calculations.
   long: Ligand ChainIDs to be considered for the RMSD calculations. This determines which chains will be

@@ -87,6 +87,7 @@ class HaddockModule(BaseHaddockModule):
                 # changing attributes
                 name_path = Path(name)
                 name_path.write_text(model.rel_path.read_text())
+                model.ori_name = model.file_name
                 model.file_name = name
                 model.full_name = name
                 model.rel_path = Path('..', Path(self.path).name, name)

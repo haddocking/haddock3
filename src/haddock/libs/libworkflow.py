@@ -6,6 +6,7 @@ from time import time
 
 from haddock import log
 from haddock.clis.cli_analyse import main as cli_analyse
+from haddock.clis.cli_traceback import main as cli_traceback
 from haddock.core.exceptions import HaddockError, HaddockTermination, StepError
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.config import get_module_name
@@ -62,6 +63,8 @@ class WorkflowManager:
                 capri_steps.append(step.order)
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
         cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None)
+        # call cli_traceback
+        cli_traceback("./")
 
 
 class Workflow:

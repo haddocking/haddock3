@@ -926,7 +926,6 @@ def _generate_html_body(figures):
             include_plotlyjs = False
         body += "<br>"  # add a break between tables and plots
         body += inner_html
-    body += _ngl_viewer()
     body += "</body>"
     return body
 

@@ -670,61 +670,6 @@ def find_best_struct(ss_file, number_of_struct=10):
     return best_struct_df
 
 
-def _ngl_viewer():
-    # http://nglviewer.org/ngl/gallery/
-    ngl_script = ("""
-        <script src="https://cdn.rawgit.com/arose/ngl/v2.1.0/dist/ngl.js">
-        </script>
-        <script>
-            var dialog;
-            var stage;
-
-            document.addEventListener("DOMContentLoaded", function () {
-
-                // Create NGL Stage object
-                stage = new NGL.Stage("viewport");
-
-                // Handle window resizing
-                window.addEventListener("resize", function(event){
-                    stage.handleResize();
-                }, false);
-
-            });
-
-            function showStructure(file_name, dl_name) {
-                dialog = document.getElementById("structureViewerDialog");
-                dialog.querySelector("#dl").href = file_name;
-                dialog.querySelector("#dl").text = dl_name;
-                dialog.querySelector("#dl").setAttribute("download", dl_name);
-                dialog.showModal();
-                stage.loadFile(file_name).then(function (o) {
-                    o.addRepresentation("cartoon");
-                    o.autoView();
-                    stage.setParameters({backgroundColor: "white"});
-                    stage.handleResize();
-                });
-            }
-        </script>
-    """)
-    ngl_dialog = ("""
-        <body>
-            <dialog id="structureViewerDialog">
-                <div id="viewport" style="width:800px; height:600px;"></div>
-                <form>
-                    <a id="dl"
-                        style="position: absolute; top: 10px; left: 10px;">
-                    </a>
-                    <button style="position: absolute; top: 10px; right: 10px;"
-                            value="cancel"
-                            formmethod="dialog">
-                            X
-                    </button>
-                </form>
-            </dialog>
-        </body>
-    """)
-    return ngl_script + ngl_dialog
-
 
 def _add_viewers(df):
     def _generate_download_link(file_name, dl_name):

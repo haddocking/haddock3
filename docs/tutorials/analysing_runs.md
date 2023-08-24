@@ -61,7 +61,7 @@ By default `haddock3-analyse` produces a set of scatter plots that compare each 
 such as the interface-RMSD, Fnat, DOCKQ, and so on. An example is available [here](../figs/irmsd_score.png).
 
 For each of the energy component and the metrics mentioned above `haddock3-analyse` produces also a box plot, in which each cluster 
-is considered separately. An example is available [here]().
+is considered separately. An example is available [here](../figs/score_clt.png).
 
 ### The report
 

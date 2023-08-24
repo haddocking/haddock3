@@ -213,8 +213,25 @@ configuration files which have specific keys.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.gear.yaml2cfg.read_from_yaml_config">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.yaml2cfg.</span></span><span class="sig-name descname"><span class="pre">read_from_yaml_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/yaml2cfg.html#read_from_yaml_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.yaml2cfg.read_from_yaml_config" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.gear.yaml2cfg.</span></span><span class="sig-name descname"><span class="pre">read_from_yaml_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/haddock/gear/yaml2cfg.html#read_from_yaml_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.yaml2cfg.read_from_yaml_config" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read config from yaml by collapsing the expert levels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg_file</strong> – Path to a .yaml configuration file</p></li>
+<li><p><strong>default_only</strong> (<em>bool</em>) – Set the return value of this function; if True (default value), only
+returns default values, else return the fully loaded configuration file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>ycfg</strong> (<em>dict</em>) – The full default configuration file as a dict</p></li>
+<li><p><em>OR</em></p></li>
+<li><p><strong>cfg</strong> (<em>dict</em>) – A dictionary containing only the default parameters values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -267,7 +284,7 @@ parameters will be considered.</p></li>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 23, 2023.
+        Last updated on Aug 24, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

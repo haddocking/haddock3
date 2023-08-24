@@ -283,6 +283,12 @@
     <span class="n">re</span><span class="o">.</span><span class="n">ASCII</span><span class="p">,</span>
     <span class="p">)</span>
 
+<span class="c1"># Captures parameter uppercase boolean</span>
+<span class="n">_uppercase_bool_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s1">&#39;(_?\w+((_?\w+?)+)?\s*=\s*)(True|False)&#39;</span><span class="p">,</span>
+    <span class="n">re</span><span class="o">.</span><span class="n">ASCII</span>
+    <span class="p">)</span>
+
 <span class="c1"># Some parameters are paths. The configuration reader reads those as</span>
 <span class="c1"># pathlib.Path so that they are injected properly in the rest of the</span>
 <span class="c1"># workflow. In general, any parameter ending with `_fname` is a path,</span>
@@ -350,10 +356,14 @@
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    dict</span>
-<span class="sd">        The config in the form of a dictionary.</span>
-<span class="sd">        The order of the keys matters as it defines the order of the</span>
-<span class="sd">        steps in the workflow.</span>
+<span class="sd">    all_configs : dict</span>
+<span class="sd">        A dictionary holding all the configuration file steps:</span>
+<span class="sd">        - &#39;raw_input&#39;: Original input file as provided by user.</span>
+<span class="sd">        - &#39;cleaned_input&#39;: Regex cleaned input file.</span>
+<span class="sd">        - &#39;loaded_cleaned_input&#39;: Dict of toml loaded cleaned input.</span>
+<span class="sd">        - &#39;final_cfg&#39;: The config in the form of a dictionary. In which</span>
+<span class="sd">          the order of the keys matters as it defines the order of the</span>
+<span class="sd">          steps in the workflow.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_lines</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">cfg_lines</span> <span class="o">=</span> <span class="n">cfg_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="p">)</span>
@@ -386,15 +396,21 @@
             <span class="n">count</span> <span class="o">=</span> <span class="n">counter</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>  <span class="c1"># name should be already defined here</span>
             <span class="n">new_line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">&#39;</span><span class="si">{</span><span class="n">group</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">]&quot;</span>
 
+        <span class="k">elif</span> <span class="n">group</span> <span class="o">:=</span> <span class="n">_uppercase_bool_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Catches &#39;param = &#39;</span>
+            <span class="n">uppercase_bool</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+            <span class="n">new_line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param</span><span class="si">}{</span><span class="n">uppercase_bool</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># Lowercase bool</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="n">new_line</span> <span class="o">=</span> <span class="n">line</span>
 
         <span class="n">new_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_line</span><span class="p">)</span>
 
+    <span class="c1"># Re-build workflow configuration file</span>
     <span class="n">cfg</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_lines</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">cfg_dict</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="n">cfg_dict</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>  <span class="c1"># Try to load it with the toml library</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span>
             <span class="s2">&quot;Some thing is wrong with the config file: &quot;</span>
@@ -403,7 +419,15 @@
 
     <span class="n">final_cfg</span> <span class="o">=</span> <span class="n">convert_variables_to_paths</span><span class="p">(</span><span class="n">cfg_dict</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">final_cfg</span></div>
+    <span class="n">all_configs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;raw_input&#39;</span><span class="p">:</span> <span class="n">cfg_str</span><span class="p">,</span>
+        <span class="s1">&#39;cleaned_input&#39;</span><span class="p">:</span> <span class="n">cfg</span><span class="p">,</span>
+        <span class="s1">&#39;loaded_cleaned_input&#39;</span><span class="p">:</span> <span class="n">cfg_dict</span><span class="p">,</span>
+        <span class="s1">&#39;final_cfg&#39;</span><span class="p">:</span> <span class="n">final_cfg</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Return all configuration steps</span>
+    <span class="k">return</span> <span class="n">all_configs</span></div>
 
 
 <div class="viewcode-block" id="convert_variables_to_paths"><a class="viewcode-back" href="../../../reference/gear/config.html#haddock.gear.config.convert_variables_to_paths">[docs]</a><span class="k">def</span> <span class="nf">convert_variables_to_paths</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
@@ -539,7 +563,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 23, 2023.
+        Last updated on Aug 24, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

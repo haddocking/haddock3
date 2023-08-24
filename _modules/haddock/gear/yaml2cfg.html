@@ -312,13 +312,32 @@
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="read_from_yaml_config"><a class="viewcode-back" href="../../../reference/gear/yaml2cfg.html#haddock.gear.yaml2cfg.read_from_yaml_config">[docs]</a><span class="k">def</span> <span class="nf">read_from_yaml_config</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read config from yaml by collapsing the expert levels.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="read_from_yaml_config"><a class="viewcode-back" href="../../../reference/gear/yaml2cfg.html#haddock.gear.yaml2cfg.read_from_yaml_config">[docs]</a><span class="k">def</span> <span class="nf">read_from_yaml_config</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">,</span> <span class="n">default_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read config from yaml by collapsing the expert levels.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cfg_file :</span>
+<span class="sd">        Path to a .yaml configuration file</span>
+<span class="sd">    default_only : bool</span>
+<span class="sd">        Set the return value of this function; if True (default value), only</span>
+<span class="sd">        returns default values, else return the fully loaded configuration file</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    ycfg : dict</span>
+<span class="sd">        The full default configuration file as a dict</span>
+<span class="sd">    OR</span>
+<span class="sd">    cfg : dict</span>
+<span class="sd">        A dictionary containing only the default parameters values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ycfg</span> <span class="o">=</span> <span class="n">read_from_yaml</span><span class="p">(</span><span class="n">cfg_file</span><span class="p">)</span>
-    <span class="c1"># there&#39;s no need to make a deep copy here, a shallow copy suffices.</span>
-    <span class="n">cfg</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">flat_yaml_cfg</span><span class="p">(</span><span class="n">ycfg</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">cfg</span></div>
+    <span class="k">if</span> <span class="n">default_only</span><span class="p">:</span>
+        <span class="c1"># there&#39;s no need to make a deep copy here, a shallow copy suffices.</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">cfg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">flat_yaml_cfg</span><span class="p">(</span><span class="n">ycfg</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cfg</span>
+    <span class="k">return</span> <span class="n">ycfg</span></div>
 
 
 <div class="viewcode-block" id="flat_yaml_cfg"><a class="viewcode-back" href="../../../reference/gear/yaml2cfg.html#haddock.gear.yaml2cfg.flat_yaml_cfg">[docs]</a><span class="k">def</span> <span class="nf">flat_yaml_cfg</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
@@ -375,7 +394,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 23, 2023.
+        Last updated on Aug 24, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

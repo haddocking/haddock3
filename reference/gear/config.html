@@ -331,9 +331,16 @@ normalized.</p>
 the HADDOCK3 config file or pure <cite>toml</cite> syntax.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>dict</em> – The config in the form of a dictionary.
-The order of the keys matters as it defines the order of the
+<dd class="field-even"><p><p><strong>all_configs</strong> (<em>dict</em>) – A dictionary holding all the configuration file steps:
+- ‘raw_input’: Original input file as provided by user.
+- ‘cleaned_input’: Regex cleaned input file.
+- ‘loaded_cleaned_input’: Dict of toml loaded cleaned input.
+- ‘final_cfg’: The config in the form of a dictionary. In which</p>
+<blockquote>
+<div><p>the order of the keys matters as it defines the order of the
 steps in the workflow.</p>
+</div></blockquote>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -396,7 +403,7 @@ HADDOCK3.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 23, 2023.
+        Last updated on Aug 24, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

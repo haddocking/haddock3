@@ -667,63 +667,14 @@ def find_best_struct(ss_file, number_of_struct=10):
     best_struct_df["Cluster Rank"] = best_struct_df["Cluster Rank"].apply(
         _fix_uncluster_rank
         )
+
+    # Correct path because after running analyse files are moved to analysis
+    # folder
+    df = best_struct_df.copy()
+    for col_name in best_struct_df.columns[2:]:
+        best_struct_df[col_name] = "../" + df[col_name]
+
     return best_struct_df
-
-
-
-def _add_viewers(df):
-    def _generate_download_link(file_name, dl_name):
-        html_code = "&#8595;"  # add icon
-        html_code += "&nbsp;"  # add space
-        html_code += f'<a href="{file_name}" download="{dl_name}">Download</a>'
-        return html_code
-
-    def _generate_view_link(file_name, dl_name):
-        html_code = "&#x1F441;"  # add icon
-        html_code += "&nbsp;"  # add space
-
-        # create event
-        event = f'''onClick="showStructure(\'{file_name}\', \'{dl_name}\')"'''
-        html_code += f'<a {event} style="cursor:pointer;">View</a>'  # add link
-        return html_code
-
-    def _format_cell(row):
-        file_name, dl_name = row.split(",")
-
-        # Correct path because after running analyse
-        # files are moved to analysis folder
-        correct_path = f"../{file_name}"
-
-        # Add suffix to download name
-        suffix = Path(file_name).suffix
-        dl_name = dl_name + suffix
-
-        # Generate html code
-        html_code = "<span>"
-        html_code += _generate_download_link(correct_path, dl_name)
-        html_code += "&nbsp;"  # add space
-        html_code += _generate_view_link(correct_path, dl_name)
-        html_code += "</span>"
-        return html_code
-
-    table_df = df.copy()
-    for col_name in table_df.columns[2:]:
-        # Remove leading zero number from model (or structure) number for
-        # consistency with cluster number
-        str_number = col_name.split(" ")[1].lstrip("0")
-
-        # Downloaded file name should include cluster rank and model (or
-        # structure) id
-        dl_names = []
-        for rn in df["Cluster Rank"]:
-            if rn == "Unclustered":
-                dl_name = f'unclustered_model{str_number}'
-            else:
-                dl_name = f'cluster{rn}_model{str_number}'
-            dl_names.append(dl_name)
-        df[col_name] = df[col_name] + "," + dl_names
-        table_df[col_name] = df[col_name].apply(_format_cell)
-    return table_df
 
 
 def clean_capri_table(dfcl):
@@ -840,12 +791,9 @@ def clt_table_handler(clt_file, ss_file):
     structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])
     structs_df = structs_df.reset_index()
 
-    # Add download links and viewer
-    structs_links_df = _add_viewers(structs_df)
-
     # Merge dataframes
     df_merged = pd.merge(
-        statistics_df, structs_links_df, on=["Cluster ID", "Cluster Rank"]
+        statistics_df, structs_df, on=["Cluster ID", "Cluster Rank"]
         )
 
     # The header of the table should be the cluster rank instead of id

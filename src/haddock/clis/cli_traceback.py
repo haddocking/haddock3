@@ -8,6 +8,8 @@ USAGE::
 
     haddock3-traceback -r <run_dir>
 
+For more information please check the tutorial at
+docs/tutorials/analysing_runs.md
 """
 import argparse
 import sys

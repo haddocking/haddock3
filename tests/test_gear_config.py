@@ -211,13 +211,13 @@ _config_example_dict_3 = {
 def test_load(config_example, expected):
     """Test read config."""
     r = config.loads(config_example)
-    assert r == expected
+    assert r['final_cfg'] == expected
 
 
 def test_load_nan_vlaue():
     """Test read config."""
     r = config.loads("param=nan")
-    assert isnan(r["param"])
+    assert isnan(r['final_cfg']["param"])
 
 
 @pytest.mark.parametrize(
@@ -232,7 +232,7 @@ def test_save_config(conf):
     target = Path("dummy_config.cfg")
     config.save(conf, target)
     loaded = config.load(target)
-    assert loaded == conf
+    assert loaded['final_cfg'] == conf
     target.unlink()
 
 
@@ -248,3 +248,38 @@ def test_save_config_toml(conf):
     target = Path("dummy_config.toml")
     config.save(conf, target, pure_toml=True)
     target.unlink()
+
+
+@pytest.mark.parametrize(
+    "paramline",
+    [
+        'param=true',
+        'sampling_factor=false',
+        'sym3 =true',
+        'sym4 = false',
+        ]
+    )
+def test_not_uppercase_bool(paramline):
+    """Test lower case regex."""
+    assert config._uppercase_bool_re.match(paramline) is None
+
+
+@pytest.mark.parametrize(
+    "paramline,expectedparam,expectedbool",
+    [
+        ('param=True', 'param=', 'true'),
+        ('param = False', 'param = ', 'false'),
+        ('sampling_factor =False', 'sampling_factor =', 'false'),
+        ('sym3=True', 'sym3=', 'true'),
+        ('_strange_1_param_= False', '_strange_1_param_= ', 'false'),
+        ('_strange1_2_3param_ = True', '_strange1_2_3param_ = ', 'true'),
+        ]
+    )
+def test_uppercase_bool(paramline, expectedparam, expectedbool):
+    """Test lower case regex."""
+    groups = config._uppercase_bool_re.match(paramline)
+    assert groups is not None  # Able to catch line
+    paramgroup = groups[1]
+    assert paramgroup == expectedparam  # Able to catch parameter
+    lowercase_bool = groups[4].lower()
+    assert lowercase_bool == expectedbool  # Able to lowercase boolean

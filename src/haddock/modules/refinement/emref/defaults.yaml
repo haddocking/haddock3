@@ -1178,7 +1178,7 @@ w_elec:
 w_lcc:
   default: -10000.0
   type: float
-  min: -9999
+  min: -10000.0
   max: 0
   precision: 3
   title: Weight of the EM local correlation coefficient

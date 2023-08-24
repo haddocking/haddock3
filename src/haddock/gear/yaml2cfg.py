@@ -119,13 +119,32 @@ def _yaml2cfg_text(ycfg, module, explevel):
     return os.linesep.join(params)
 
 
-def read_from_yaml_config(cfg_file):
-    """Read config from yaml by collapsing the expert levels."""
+def read_from_yaml_config(cfg_file, default_only=True) -> dict:
+    """Read config from yaml by collapsing the expert levels.
+    
+    Parameters
+    ----------
+    cfg_file :
+        Path to a .yaml configuration file
+    default_only : bool
+        Set the return value of this function; if True (default value), only
+        returns default values, else return the fully loaded configuration file
+
+    Return
+    ------
+    ycfg : dict
+        The full default configuration file as a dict
+    OR
+    cfg : dict
+        A dictionary containing only the default parameters values
+    """
     ycfg = read_from_yaml(cfg_file)
-    # there's no need to make a deep copy here, a shallow copy suffices.
-    cfg = {}
-    cfg.update(flat_yaml_cfg(ycfg))
-    return cfg
+    if default_only:
+        # there's no need to make a deep copy here, a shallow copy suffices.
+        cfg = {}
+        cfg.update(flat_yaml_cfg(ycfg))
+        return cfg
+    return ycfg
 
 
 def flat_yaml_cfg(cfg):

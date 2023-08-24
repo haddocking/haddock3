@@ -58,7 +58,7 @@ Each subfolder contains all the analysis plots related to that specific step of 
 
 By default `haddock3-analyse` produces a set of scatter plots that compare each HADDOCK energy term 
 (i.e., the HADDOCK score and its components) to the different metrics used to evaluate the quality of a model,
-such as the interface-RMSD, Fnat, DOCKQ, and so on. An example is available [here]().
+such as the interface-RMSD, Fnat, DOCKQ, and so on. An example is available [here](../figs/irmsd_score.html).
 
 For each of the energy component and the metrics mentioned above `haddock3-analyse` produces also a box plot, in which each cluster 
 is considered separately. An example is available [here]().

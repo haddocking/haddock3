@@ -26,6 +26,8 @@ import argparse
 import sys
 from pathlib import Path
 
+import numpy as np
+
 from haddock import log
 from haddock.gear.config import load as read_config
 from haddock.libs.libplots import read_capri_table
@@ -162,15 +164,15 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
     key = list(cns_params['final_cfg'].keys())[0]
     scoring_pars = {kv: cns_params['final_cfg'][key][kv] for kv in WEIGHTS}
 
-    if w_elec:
+    if w_elec is not None:
         scoring_pars.update({"w_elec": w_elec})
-    if w_vdw:
+    if w_vdw is not None:
         scoring_pars.update({"w_vdw": w_vdw})
-    if w_desolv:
+    if w_desolv is not None:
         scoring_pars.update({"w_desolv": w_desolv})
-    if w_bsa:
+    if w_bsa is not None:
         scoring_pars.update({"w_bsa": w_bsa})
-    if w_air:
+    if w_air is not None:
         scoring_pars.update({"w_air": w_air})
 
     log.info(f"rescoring_pars: {scoring_pars}")
@@ -197,8 +199,26 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
     outdir.mkdir(exist_ok=True)
     df_ss.to_csv(Path(outdir, "capri_ss.tsv"), sep="\t", index=False)
 
+    # now we want to calculate mean and std dev of the scores on df_ss
+    # first groupby score
+    df_ss_grouped = df_ss.groupby("cluster-ranking")
+    # calculate the mean and standard deviation of the first 4 elements
+    # of each group
+    new_values = np.zeros((len(df_ss_grouped), 2))
+    for clt_id in df_ss_grouped:
+        ave_score = np.mean(clt_id[1]["score"].iloc[:4])
+        std_score = np.std(clt_id[1]["score"].iloc[:4])
+        new_values[clt_id[0] - 1] = [ave_score, std_score]
+    # get the index that sorts the array by the first column
+    clt_ranks = np.argsort(new_values[:, 0])
+
     # CLT file
     df_clt = read_capri_table(capri_clt)
+    # it may not be ordered by cluster_rank
+    df_clt.sort_values(by=["cluster_rank"], inplace=True)
+    df_clt["score"] = new_values[:, 0]
+    df_clt["score_std"] = new_values[:, 1]
+    df_clt["cluster_rank"] = clt_ranks + 1
     df_clt.to_csv(Path(outdir, "capri_clt.tsv"), sep="\t", index=False)
     return
 

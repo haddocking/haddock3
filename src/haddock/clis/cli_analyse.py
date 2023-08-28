@@ -44,6 +44,7 @@ from haddock.modules.analysis.caprieval import HaddockModule
 
 
 ANA_FOLDER = "analysis"  # name of the analysis folder
+INTER_STR = "interactive"  # suffix of interactive analysis folders
 
 
 def get_cluster_ranking(capri_clt_filename, top_cluster):
@@ -141,6 +142,14 @@ ap.add_argument(
     required=False,
     type=float,
     default=1.0
+    )
+
+ap.add_argument(
+    "--inter",
+    help="interactive analysis",
+    required=False,
+    type=bool,
+    default=False
     )
 
 ap.add_argument(
@@ -326,7 +335,7 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
         report_generator(boxes, scatters, tables, step)
 
 
-def main(run_dir, modules, top_cluster, format, scale, **kwargs):
+def main(run_dir, modules, top_cluster, format, scale, inter, **kwargs):
     """
     Analyse CLI.
 
@@ -346,6 +355,9 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
 
     scale : int
         scale for images.
+
+    inter: bool
+        analyse only steps labelled as 'interactive'
     """
     log.level = 20
     log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
@@ -368,12 +380,16 @@ def main(run_dir, modules, top_cluster, format, scale, **kwargs):
     # Reading steps
     log.info("Reading input run directory")
     # get the module folders from the run_dir input
-    selected_steps = get_module_steps_folders(Path("./"), modules)
-    log.info(f"selected steps: {', '.join(selected_steps)}")
+    sel_steps = get_module_steps_folders(Path("./"), modules)
+    if inter:
+        sel_steps = [st for st in sel_steps if st.endswith(INTER_STR)]
+    else:
+        sel_steps = [st for st in sel_steps if not st.endswith(INTER_STR)]
+    log.info(f"selected steps: {', '.join(sel_steps)}")
 
     # analysis
     good_folder_paths, bad_folder_paths = [], []
-    for step in selected_steps:
+    for step in sel_steps:
         subfolder_name = f"{step}_analysis"
         target_path = Path(Path("./"), subfolder_name)
 

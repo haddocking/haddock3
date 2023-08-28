@@ -262,7 +262,7 @@
 <div class="line"><em>type</em>: boolean</div>
 <div class="line"><em>title</em>: Calculate I-L-RMSD</div>
 <div class="line"><em>short description</em>: Performs Interface Ligand RMSD calculations.</div>
-<div class="line"><em>long description</em>: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms of the ligand (defined by the ligand_chain parameter).</div>
+<div class="line"><em>long description</em>: Calculates the Interface Ligand Root Mean Square Deviation. This calculation is done by superimposing the model and the target on the interface backbone atoms of the receptor (defined by the receptor_chain parameter) and calculating the RMSD on all heavy atoms of the ligand (defined by the ligand_chains parameter).</div>
 <div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -291,14 +291,14 @@
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
-<section id="ligand-chain">
-<h2>ligand_chain<a class="headerlink" href="#ligand-chain" title="Permalink to this heading">¶</a></h2>
+<section id="ligand-chains">
+<h2>ligand_chains<a class="headerlink" href="#ligand-chains" title="Permalink to this heading">¶</a></h2>
 <div class="line-block">
-<div class="line"><em>default</em>: ‘B’</div>
-<div class="line"><em>type</em>: string</div>
-<div class="line"><em>title</em>: Ligand ChainID</div>
-<div class="line"><em>short description</em>: Ligand ChainID to be considered for the RMSD calculations.</div>
-<div class="line"><em>long description</em>: Ligand ChainID to be considered for the RMSD calculations. This determines which chain will be treated as the ligand for the L-RMSD and for I-L-RMSD.</div>
+<div class="line"><em>default</em>: [‘B’]</div>
+<div class="line"><em>type</em>: list</div>
+<div class="line"><em>title</em>: Ligand ChainIDs</div>
+<div class="line"><em>short description</em>: Ligand ChainIDs to be considered for the RMSD calculations.</div>
+<div class="line"><em>long description</em>: Ligand ChainIDs to be considered for the RMSD calculations. This determines which chains will be treated as the ligand for the L-RMSD and for I-L-RMSD.</div>
 <div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -322,7 +322,7 @@
 <div class="line"><em>type</em>: boolean</div>
 <div class="line"><em>title</em>: Calculate L-RMSD</div>
 <div class="line"><em>short description</em>: Performs Ligand RMSD calculations.</div>
-<div class="line"><em>long description</em>: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chain parameter). Superposition and RMSD calculations are done on backbone heavy atoms.</div>
+<div class="line"><em>long description</em>: Calculates the Ligand Root Mean Square Deviation. This calculation is done by superimposing the receptors (defined by the receptor_chain parameter) and then evaluating the RMSD on the ligands (defined by the ligand_chains parameter). Superposition and RMSD calculations are done on backbone heavy atoms.</div>
 <div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -407,7 +407,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 24, 2023.
+        Last updated on Aug 28, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

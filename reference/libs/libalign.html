@@ -232,16 +232,24 @@ set self.__traceback__ to tb and return self.</p>
 
 </dd></dl>
 
-<dl class="py exception">
-<dt class="sig sig-object py" id="haddock.libs.libalign.AlignError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">AlignError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#AlignError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.AlignError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
-<p>Raised when something goes wrong with the Alignment library.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="haddock.libs.libalign.SeqAlign">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">SeqAlign</span></span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#SeqAlign"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.SeqAlign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>SeqAlign class.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libalign.AlignError.with_traceback">
-<span class="sig-name descname"><span class="pre">with_traceback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libalign.AlignError.with_traceback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception.with_traceback(tb) –
-set self.__traceback__ to tb and return self.</p>
+<dt class="sig sig-object py" id="haddock.libs.libalign.SeqAlign.postprocess_alignment">
+<span class="sig-name descname"><span class="pre">postprocess_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref_ch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mod_ch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">align_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#SeqAlign.postprocess_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.SeqAlign.postprocess_alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Postprocess the alignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ref_ch</strong> (<em>str</em>) – reference chain</p></li>
+<li><p><strong>mod_ch</strong> (<em>str</em>) – model chain</p></li>
+<li><p><strong>align_id</strong> (<em>int</em>) – alignment id (index of the alignment)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -316,7 +324,7 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libalign.dump_as_izone">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">dump_as_izone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbering_dic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#dump_as_izone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.dump_as_izone" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">dump_as_izone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbering_dic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model2ref_chain_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#dump_as_izone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.dump_as_izone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dump the numbering dictionary as .izone.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -378,7 +386,7 @@ set self.__traceback__ to tb and return self.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="haddock.libs.libalign.load_coords">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">load_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_resdic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbering_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#load_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.load_coords" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">load_coords</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdb_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atoms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_resdic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numbering_dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model2ref_chain_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#load_coords"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.load_coords" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load coordinates from PDB.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -427,6 +435,43 @@ set self.__traceback__ to tb and return self.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libalign.sequence_alignment">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">sequence_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#sequence_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.sequence_alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a sequence alignment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq_ref</strong> (<em>str</em>) – reference sequence</p></li>
+<li><p><strong>seq_model</strong> (<em>str</em>) – model sequence</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>identity</strong> (<em>float</em>) – sequence identity</p></li>
+<li><p><strong>top_aln</strong> (<em>Bio.Align.PairwiseAlignments</em>) – alignment object</p></li>
+<li><p><strong>aln_ref_seg</strong> (<em>tuple</em>) – aligned reference segment</p></li>
+<li><p><strong>aln_mod_seg</strong> (<em>tuple</em>) – aligned model segment</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="haddock.libs.libalign.write_alignment">
+<span class="sig-prename descclassname"><span class="pre">haddock.libs.libalign.</span></span><span class="sig-name descname"><span class="pre">write_alignment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">top_aln</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_ch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libalign.html#write_alignment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libalign.write_alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the alignment to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>top_aln</strong> (<em>Bio.Align.PairwiseAlignments</em>) – alignment object</p></li>
+<li><p><strong>ref_ch</strong> (<em>str</em>) – reference chain</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -459,7 +504,7 @@ set self.__traceback__ to tb and return self.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Aug 24, 2023.
+        Last updated on Aug 28, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

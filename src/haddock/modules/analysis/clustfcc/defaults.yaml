@@ -1,9 +1,9 @@
 executable:
   default: src/contact_fcc
   type: file
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: relative path to contact_fcc executable
+  short: relative path to contact_fcc executable
+  long: relative path to contact_fcc executable
   group: ''
   explevel: easy
 contact_distance_cutoff:
@@ -12,9 +12,9 @@ contact_distance_cutoff:
   min: -9999
   max: 9999
   precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: cutoff distance for contact detection
+  short: cutoff distance for contact detection. By default 5.0 Angstroms.
+  long: cutoff distance for contact detection. By default 5.0 Angstroms.
   group: ''
   explevel: easy
 fraction_cutoff:
@@ -23,9 +23,9 @@ fraction_cutoff:
   min: -9999
   max: 9999
   precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: fraction of common contacts to not be considered a singleton model
+  short: fraction of common contacts to not be considered a singleton model and therefore be excluded by further clustering. By default 0.6.
+  long: fraction of common contacts to not be considered a singleton model and therefore be excluded by further clustering. By default 0.6.
   group: ''
   explevel: easy
 threshold:
@@ -33,9 +33,9 @@ threshold:
   type: integer
   min: -9999
   max: 9999
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: Clustering population threshold
+  short: Threshold employed to exclude clusters with less than this number of members. By default 4.
+  long: Threshold employed to exclude clusters with less than this number of members. By default 4.
   group: ''
   explevel: easy
 strictness:
@@ -44,8 +44,8 @@ strictness:
   min: -9999
   max: 9999
   precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: fraction of common contacts to be considered to be part of the same cluster
+  short: fraction of common contacts to be considered to be part of the same cluster. By default 0.75.
+  long: fraction of common contacts to be considered to be part of the same cluster. By default 0.75. Higher values will result in less populated, more localized clusters. Lower values will result in more populated, less localized clusters.
   group: ''
   explevel: easy

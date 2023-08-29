@@ -14,8 +14,8 @@ top_models:
   min: -9999
   max: 9999
   precision: 3
-  title: No title yet
-  short: No short description yet
-  long: No long description yet
+  title: Number of best-ranked models to select per cluster
+  short: Number of best-ranked models to select per cluster. By default, all models are selected.
+  long: Number of best-ranked models to select per cluster. By default, all models are selected. If one expects to find many clusters (e.g., in the case of vague restraints), this number can be reduced to speed up the protocol. Instead, if few clusters are expected (very specific and localized restraints) this number can be increased.
   group: ''
   explevel: easy

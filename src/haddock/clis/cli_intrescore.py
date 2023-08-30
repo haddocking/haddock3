@@ -34,7 +34,7 @@ from haddock.libs.libplots import read_capri_table
 from haddock.modules import get_module_steps_folders
 
 
-# TODO: see if it possible to avoid hard-coding
+# TODO: see if it's possible to avoid hard-coding
 CNS_MODULES = ["rigidbody",
                "flexref",
                "emscoring",
@@ -205,10 +205,12 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
     # calculate the mean and standard deviation of the first 4 elements
     # of each group
     new_values = np.zeros((len(df_ss_grouped), 2))
-    for clt_id in df_ss_grouped:
+    # loop over df_ss_grouped with enumerate
+    for i, clt_id in enumerate(df_ss_grouped):
         ave_score = np.mean(clt_id[1]["score"].iloc[:4])
         std_score = np.std(clt_id[1]["score"].iloc[:4])
-        new_values[clt_id[0] - 1] = [ave_score, std_score]
+        new_values[i] = [ave_score, std_score]
+    
     # get the index that sorts the array by the first column
     clt_ranks = np.argsort(new_values[:, 0])
 
@@ -218,8 +220,13 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
     df_clt.sort_values(by=["cluster_rank"], inplace=True)
     df_clt["score"] = new_values[:, 0]
     df_clt["score_std"] = new_values[:, 1]
-    df_clt["cluster_rank"] = clt_ranks + 1
-    df_clt.to_csv(Path(outdir, "capri_clt.tsv"), sep="\t", index=False)
+    if df_clt["cluster_rank"].iloc[0] != "-":
+        df_clt["cluster_rank"] = clt_ranks + 1
+        df_clt["caprieval_rank"] = clt_ranks + 1
+    df_clt.to_csv(Path(outdir, "capri_clt.tsv"),
+                  sep="\t",
+                  index=False,
+                  float_format="%.3f")
     return
 
 

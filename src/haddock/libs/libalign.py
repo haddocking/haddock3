@@ -209,7 +209,8 @@ def load_coords(
         atoms,
         filter_resdic=None,
         numbering_dic=None,
-        model2ref_chain_dict=None
+        model2ref_chain_dict=None,
+        add_resname=None,
         ):
     """
     Load coordinates from PDB.
@@ -267,8 +268,10 @@ def load_coords(
                         #     " was not matched!"
                         #     )
                         continue
-                # identifier = f"{chain}.{resnum}.{atom_name}"
-                identifier = (chain, resnum, atom_name)
+                if add_resname == True:
+                    identifier = (chain, resnum, atom_name, resname)
+                else:
+                    identifier = (chain, resnum, atom_name)
                 if atom_name not in atoms[resname]:
                     continue
                 if chain not in chain_dic:

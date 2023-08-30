@@ -30,6 +30,14 @@ ap = argparse.ArgumentParser(
 ap.add_argument("pdb_file", help="Input PDB file")
 
 ap.add_argument(
+    "--run_dir",
+    default="haddock-score-client",
+    type=str,
+    required=False,
+    help="Run directory name.",
+    )
+
+ap.add_argument(
     "--full",
     action="store_true",
     help="Print all energy components",
@@ -93,6 +101,7 @@ def maincli():
 
 def main(
         pdb_file,
+        run_dir,
         full=False,
         outputpdb=False,
         outputpsf=False,
@@ -168,7 +177,7 @@ def main(
 
     print("> starting calculations...")
 
-    run_dir = Path("haddock-score-client")
+    run_dir = Path(run_dir)
     with suppress(FileNotFoundError):
         shutil.rmtree(run_dir)
     run_dir.mkdir()
@@ -227,7 +236,7 @@ def main(
     else:
         print(
             'The folder where the calculations where performed was kept. See '
-            'folder: haddock-scoring-client'
+            f'folder: {run_dir}'
             )
 
 

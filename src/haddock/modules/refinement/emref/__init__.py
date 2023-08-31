@@ -47,6 +47,12 @@ class HaddockModule(BaseCNSModule):
             sampling_factor = 1
         if sampling_factor > 100:
             self.log("[Warning] sampling_factor is larger than 100")
+
+        if len(models_to_refine) * sampling_factor > 50000:
+            self.finish_with_error(
+                "Too many models to refine. Please reduce the number of "
+                "models or decrease the sampling_factor."
+                )
         
         # checking the ambig_fname:
         try:

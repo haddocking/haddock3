@@ -1,12 +1,14 @@
 """alascan module."""
-from pathlib import Path
-import subprocess
-import shlex
 import os
-from haddock import log
-from haddock.modules.analysis.caprieval.capri import CAPRI
-from haddock.libs.libalign import get_atoms, load_coords
+import shlex
+import subprocess
+from pathlib import Path
+
 import pandas as pd
+
+from haddock import log
+from haddock.libs.libalign import get_atoms, load_coords
+from haddock.modules.analysis.caprieval.capri import CAPRI
 
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']

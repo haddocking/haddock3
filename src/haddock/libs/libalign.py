@@ -268,7 +268,7 @@ def load_coords(
                         #     " was not matched!"
                         #     )
                         continue
-                if add_resname == True:
+                if add_resname is True:
                     identifier = (chain, resnum, atom_name, resname)
                 else:
                     identifier = (chain, resnum, atom_name)

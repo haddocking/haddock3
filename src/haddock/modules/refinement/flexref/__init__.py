@@ -48,7 +48,8 @@ class HaddockModule(BaseCNSModule):
         if sampling_factor > 100:
             self.log("[Warning] sampling_factor is larger than 100")
 
-        if len(models_to_refine) * sampling_factor > 50000:
+        max_nmodels = self.params["max_nmodels"]
+        if len(models_to_refine) * sampling_factor > max_nmodels:
             self.finish_with_error(
                 "Too many models to refine. Please reduce the number of "
                 "models or decrease the sampling_factor."

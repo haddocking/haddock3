@@ -26,6 +26,7 @@ import argparse
 import sys
 from pathlib import Path
 
+import json
 import numpy as np
 
 from haddock import log
@@ -239,7 +240,7 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
             jsonf,
             indent=4,
         )
-    log.info("new rescoring parameters written in: {rescoring_params_fname}")
+    log.info(f"new rescoring parameters written in: {rescoring_params_fname}")
 
     return
 

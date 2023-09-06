@@ -23,10 +23,10 @@ IMPORTANT: only one module can be selected (as the interactive analysis will
 be performed only on one module at a time).
 """
 import argparse
+import json
 import sys
 from pathlib import Path
 
-import json
 import numpy as np
 
 from haddock import log
@@ -239,7 +239,7 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
             scoring_pars,
             jsonf,
             indent=4,
-        )
+            )
     log.info(f"new rescoring parameters written in: {rescoring_params_fname}")
 
     return

@@ -176,6 +176,7 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
         scoring_pars.update({"w_air": w_air})
 
     log.info(f"rescoring_pars: {scoring_pars}")
+
     capri_ss = Path(run_dir, sel_steps[-1], "capri_ss.tsv")
     capri_clt = Path(run_dir, sel_steps[-1], "capri_clt.tsv")
     # ss file
@@ -227,6 +228,19 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
                   sep="\t",
                   index=False,
                   float_format="%.3f")
+
+    # Write the latest parameters file
+    # define output fname
+    rescoring_params_fname = Path(outdir, "weights_params.json")
+    # write json file
+    with open(rescoring_params_fname, 'w', encoding='utf-8') as jsonf:
+        json.dump(
+            scoring_pars,
+            jsonf,
+            indent=4,
+        )
+    log.info("new rescoring parameters written in: {rescoring_params_fname}")
+
     return
 
 

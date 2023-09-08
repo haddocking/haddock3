@@ -25,7 +25,7 @@ def test_find_best_struct_best1(example_capri_ss):
             "Cluster ID": {0: 1},
             "Cluster Rank": {0: 2},
             "Nr 01 best structure": {
-                0: "../1_rigidbody/rigidbody_383.pdb",
+                0: "../../1_rigidbody/rigidbody_383.pdb",
                 },
             }
         )
@@ -42,10 +42,10 @@ def test_find_best_struct_best20(example_capri_ss):
         {
             "Cluster ID": {0: 1},
             "Cluster Rank": {0: 2},
-            "Nr 01 best structure": {0: "../1_rigidbody/rigidbody_383.pdb"},
-            "Nr 02 best structure": {0: "../1_rigidbody/rigidbody_265.pdb"},
-            "Nr 03 best structure": {0: "../1_rigidbody/rigidbody_231.pdb"},
-            "Nr 04 best structure": {0: "../1_rigidbody/rigidbody_218.pdb"},
+            "Nr 01 best structure": {0: "../../1_rigidbody/rigidbody_383.pdb"},
+            "Nr 02 best structure": {0: "../../1_rigidbody/rigidbody_265.pdb"},
+            "Nr 03 best structure": {0: "../../1_rigidbody/rigidbody_231.pdb"},
+            "Nr 04 best structure": {0: "../../1_rigidbody/rigidbody_218.pdb"},
             }
         )
     expected.columns.names = ["Structure"]
@@ -61,10 +61,10 @@ def test_find_best_struct_best4(example_capri_ss):
         {
             "Cluster ID": {0: 1},
             "Cluster Rank": {0: 2},
-            "Nr 01 best structure": {0: "../1_rigidbody/rigidbody_383.pdb"},
-            "Nr 02 best structure": {0: "../1_rigidbody/rigidbody_265.pdb"},
-            "Nr 03 best structure": {0: "../1_rigidbody/rigidbody_231.pdb"},
-            "Nr 04 best structure": {0: "../1_rigidbody/rigidbody_218.pdb"},
+            "Nr 01 best structure": {0: "../../1_rigidbody/rigidbody_383.pdb"},
+            "Nr 02 best structure": {0: "../../1_rigidbody/rigidbody_265.pdb"},
+            "Nr 03 best structure": {0: "../../1_rigidbody/rigidbody_231.pdb"},
+            "Nr 04 best structure": {0: "../../1_rigidbody/rigidbody_218.pdb"},
             }
         )
     expected.columns.names = ["Structure"]
@@ -85,10 +85,10 @@ def test_find_best_struct_unclustered(example_capri_ss_dashcluster):
         {
             "Cluster ID": {0: "-"},
             "Cluster Rank": {0: "Unclustered"},
-            "Nr 01 best structure": {0: "../../01_rigidbody/rigidbody_6.pdb"},
-            "Nr 02 best structure": {0: "../../01_rigidbody/rigidbody_16.pdb"},
-            "Nr 03 best structure": {0: "../../01_rigidbody/rigidbody_20.pdb"},
-            "Nr 04 best structure": {0: "../../01_rigidbody/rigidbody_14.pdb"},
+            "Nr 01 best structure": {0: "../../../01_rigidbody/rigidbody_6.pdb"},
+            "Nr 02 best structure": {0: "../../../01_rigidbody/rigidbody_16.pdb"},
+            "Nr 03 best structure": {0: "../../../01_rigidbody/rigidbody_20.pdb"},
+            "Nr 04 best structure": {0: "../../../01_rigidbody/rigidbody_14.pdb"},
             }
         )
     expected.columns.names = ["Structure"]

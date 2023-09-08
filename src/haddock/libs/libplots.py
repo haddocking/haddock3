@@ -902,7 +902,8 @@ def _generate_html_body(figures):
                 "imports": {{
                 "react": "https://esm.sh/react@^18.2.0",
                 "react-dom": "https://esm.sh/react-dom@^18.2.0",
-                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.2.0"
+                "ngl": "https://esm.sh/ngl",
+                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.3.0?bundle"
                 }}
             }}
             </script>

@@ -32,6 +32,9 @@ def yaml2cfg_text(ymlcfg: dict, module: str, explevel: str,
         The expert level to consider. Provides all parameters for that
         level and those of inferior hierarchy. If you give "all", all
         parameters will be considered.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     new_config = []
     if module is not None:
@@ -57,10 +60,21 @@ def _yaml2cfg_text(ymlcfg: dict, module: str, explevel: str,
 
     Parameters
     ----------
-    ycfg : dict
+    ymlcfg : dict
         The dictionary representing the HADDOCK3 YAML configuration.
         This configuration should NOT have the expertise levels. It
         expectes the first level of keys to be the parameter name.
+
+    module : str
+        The module to which the config belongs to.
+
+    explevel : str
+        The expert level to consider. Provides all parameters for that
+        level and those of inferior hierarchy. If you give "all", all
+        parameters will be considered.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     params = []
     exp_levels = {

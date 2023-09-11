@@ -124,6 +124,9 @@ def main(
         Whether to add the module's general global parameter. If
         ``True`` and ``module`` is ``None``, outputs only the general
         parameters.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     from haddock import modules_defaults_path
     from haddock.gear.yaml2cfg import yaml2cfg_text

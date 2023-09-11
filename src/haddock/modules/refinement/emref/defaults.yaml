@@ -1346,10 +1346,20 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 1
+  max: 200
   title: Sampling factor for each starting model
   short: This paramater control how many times a model will be refined.
   long: This paramater control how many times a model will be refined. For EM refinement only it does not make sense to increase it unless random removal of restraints is turned on. If not then the energy minimisation will lead to the same final conformation. 
+  group: 'sampling'
+  explevel: expert
+max_nmodels:
+  default: 50000
+  type: integer
+  min: 1
+  max: 100000
+  title: Maximum number of models to refine
+  short: This paramater controls the maximum number of models to refine.
+  long: This paramater controls the maximum number of models to refine.
   group: 'sampling'
   explevel: expert
 nemsteps:

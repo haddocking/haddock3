@@ -243,6 +243,15 @@
         <span class="k">if</span> <span class="n">sampling_factor</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&quot;[Warning] sampling_factor is larger than 100&quot;</span><span class="p">)</span>
         
+        <span class="n">max_nmodels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_nmodels&quot;</span><span class="p">]</span>
+        <span class="n">nmodels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">models_to_refine</span><span class="p">)</span> <span class="o">*</span> <span class="n">sampling_factor</span>
+        <span class="k">if</span> <span class="n">nmodels</span> <span class="o">&gt;</span> <span class="n">max_nmodels</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finish_with_error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Too many models (</span><span class="si">{</span><span class="n">nmodels</span><span class="si">}</span><span class="s2">) to refine, max_nmodels =&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">max_nmodels</span><span class="si">}</span><span class="s2">. Please reduce the number of models or&quot;</span>
+                <span class="s2">&quot; decrease the sampling_factor.&quot;</span>
+                <span class="p">)</span>
+        
         <span class="c1"># checking the ambig_fname:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">prev_ambig_fnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">mod</span><span class="o">.</span><span class="n">restr_fname</span> <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">models_to_refine</span><span class="p">]</span>
@@ -343,7 +352,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Sep 01, 2023.
+        Last updated on Sep 11, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

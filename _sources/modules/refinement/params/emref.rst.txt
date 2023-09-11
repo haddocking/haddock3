@@ -1349,6 +1349,17 @@ ligand_top_fname
 | *group*: force field
 | *explevel*: expert
 
+max_nmodels
+~~~~~~~~~~~
+
+| *default*: 50000
+| *type*: integer
+| *title*: Maximum number of models to refine
+| *short description*: This paramater controls the maximum number of models to refine.
+| *long description*: This paramater controls the maximum number of models to refine.
+| *group*: sampling
+| *explevel*: expert
+
 mol_fix_origin_1
 ~~~~~~~~~~~~~~~~
 

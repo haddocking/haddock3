@@ -216,7 +216,7 @@
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">cfg</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span>
                     <span class="p">[</span><span class="o">-</span><span class="n">m</span> <span class="p">{</span><span class="n">caprieval</span><span class="p">,</span><span class="n">clustfcc</span><span class="p">,</span><span class="n">clustrmsd</span><span class="p">,</span><span class="n">emref</span><span class="p">,</span><span class="n">emscoring</span><span class="p">,</span><span class="n">exit</span><span class="p">,</span><span class="n">flexref</span><span class="p">,</span><span class="n">gdock</span><span class="p">,</span><span class="n">lightdock</span><span class="p">,</span><span class="n">mdref</span><span class="p">,</span><span class="n">mdscoring</span><span class="p">,</span><span class="n">rigidbody</span><span class="p">,</span><span class="n">rmsdmatrix</span><span class="p">,</span><span class="n">seletop</span><span class="p">,</span><span class="n">seletopclusts</span><span class="p">,</span><span class="n">topoaa</span><span class="p">,</span><span class="n">topocg</span><span class="p">}]</span>
-                    <span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="n">easy</span><span class="p">,</span><span class="n">expert</span><span class="p">,</span><span class="n">guru</span><span class="p">,</span><span class="nb">all</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">g</span><span class="p">]</span>
+                    <span class="p">[</span><span class="o">-</span><span class="n">l</span> <span class="p">{</span><span class="n">easy</span><span class="p">,</span><span class="n">expert</span><span class="p">,</span><span class="n">guru</span><span class="p">,</span><span class="nb">all</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">g</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span>
 </pre></div>
 </div>
 <section id="named-arguments">
@@ -233,6 +233,10 @@
 </dd>
 <dt><kbd>-g, --globals</kbd></dt>
 <dd><p>Add also the optional module’s general parameters.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>-d, --details</kbd></dt>
+<dd><p>Add detailed parameter description found in ‘long’.</p>
 <p>Default: False</p>
 </dd>
 </dl>
@@ -269,7 +273,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Sep 11, 2023.
+        Last updated on Sep 13, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

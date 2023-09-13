@@ -206,7 +206,8 @@
 <span class="kn">from</span> <span class="nn">haddock.libs.libio</span> <span class="kn">import</span> <span class="n">read_from_yaml</span>
 
 
-<div class="viewcode-block" id="yaml2cfg_text"><a class="viewcode-back" href="../../../reference/gear/yaml2cfg.html#haddock.gear.yaml2cfg.yaml2cfg_text">[docs]</a><span class="k">def</span> <span class="nf">yaml2cfg_text</span><span class="p">(</span><span class="n">ymlcfg</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">explevel</span><span class="p">):</span>
+<div class="viewcode-block" id="yaml2cfg_text"><a class="viewcode-back" href="../../../reference/gear/yaml2cfg.html#haddock.gear.yaml2cfg.yaml2cfg_text">[docs]</a><span class="k">def</span> <span class="nf">yaml2cfg_text</span><span class="p">(</span><span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                  <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert HADDOCK3 YAML config to HADDOCK3 user config text.</span>
 
@@ -224,17 +225,26 @@
 <span class="sd">        The expert level to consider. Provides all parameters for that</span>
 <span class="sd">        level and those of inferior hierarchy. If you give &quot;all&quot;, all</span>
 <span class="sd">        parameters will be considered.</span>
+
+<span class="sd">    details : bool</span>
+<span class="sd">        Whether to add the &#39;long&#39; description of each parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_config</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">new_config</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">module</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
 
-    <span class="n">new_config</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_yaml2cfg_text</span><span class="p">(</span><span class="n">ymlcfg</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">explevel</span><span class="p">))</span>
+    <span class="n">new_config</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_yaml2cfg_text</span><span class="p">(</span>
+        <span class="n">ymlcfg</span><span class="p">,</span>
+        <span class="n">module</span><span class="p">,</span>
+        <span class="n">explevel</span><span class="p">,</span>
+        <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+        <span class="p">))</span>
 
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">new_config</span><span class="p">)</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">linesep</span></div>
 
 
-<span class="k">def</span> <span class="nf">_yaml2cfg_text</span><span class="p">(</span><span class="n">ycfg</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">explevel</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_yaml2cfg_text</span><span class="p">(</span><span class="n">ymlcfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">explevel</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                   <span class="n">details</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert HADDOCK3 YAML config to HADDOCK3 user config text.</span>
 
@@ -243,10 +253,21 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    ycfg : dict</span>
+<span class="sd">    ymlcfg : dict</span>
 <span class="sd">        The dictionary representing the HADDOCK3 YAML configuration.</span>
 <span class="sd">        This configuration should NOT have the expertise levels. It</span>
 <span class="sd">        expectes the first level of keys to be the parameter name.</span>
+
+<span class="sd">    module : str</span>
+<span class="sd">        The module to which the config belongs to.</span>
+
+<span class="sd">    explevel : str</span>
+<span class="sd">        The expert level to consider. Provides all parameters for that</span>
+<span class="sd">        level and those of inferior hierarchy. If you give &quot;all&quot;, all</span>
+<span class="sd">        parameters will be considered.</span>
+
+<span class="sd">    details : bool</span>
+<span class="sd">        Whether to add the &#39;long&#39; description of each parameter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">exp_levels</span> <span class="o">=</span> <span class="p">{</span>
@@ -255,7 +276,12 @@
         <span class="p">}</span>
     <span class="n">exp_level_idx</span> <span class="o">=</span> <span class="n">exp_levels</span><span class="p">[</span><span class="n">explevel</span><span class="p">]</span>
 
-    <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">ycfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="c1"># define set of undesired parameter keys</span>
+    <span class="n">undesired</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;explevel&quot;</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">details</span><span class="p">:</span>
+        <span class="n">undesired</span> <span class="o">=</span> <span class="n">undesired</span> <span class="o">+</span> <span class="p">(</span><span class="s2">&quot;long&quot;</span><span class="p">,)</span>
+
+    <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">ymlcfg</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
         <span class="c1"># treats parameters that are subdictionaries of parameters</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;default&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">param</span><span class="p">:</span>
@@ -266,7 +292,12 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">curr_module</span> <span class="o">=</span> <span class="n">param_name</span>
             <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">curr_module</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
-            <span class="n">_</span> <span class="o">=</span> <span class="n">_yaml2cfg_text</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">curr_module</span><span class="p">,</span> <span class="n">explevel</span><span class="o">=</span><span class="n">explevel</span><span class="p">)</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">_yaml2cfg_text</span><span class="p">(</span>
+                <span class="n">param</span><span class="p">,</span>
+                <span class="n">module</span><span class="o">=</span><span class="n">curr_module</span><span class="p">,</span>
+                <span class="n">explevel</span><span class="o">=</span><span class="n">explevel</span><span class="p">,</span>
+                <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span>
 
         <span class="c1"># treats normal parameters</span>
@@ -279,7 +310,7 @@
 
             <span class="n">comment</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">_comment</span><span class="p">,</span> <span class="n">cvalue</span> <span class="ow">in</span> <span class="n">param</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">_comment</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;explevel&quot;</span><span class="p">,</span> <span class="s2">&quot;short&quot;</span><span class="p">,</span> <span class="s2">&quot;long&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">_comment</span> <span class="ow">in</span> <span class="n">undesired</span><span class="p">:</span>
                     <span class="k">continue</span>
 
                 <span class="k">if</span> <span class="n">cvalue</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
@@ -394,7 +425,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Sep 11, 2023.
+        Last updated on Sep 13, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

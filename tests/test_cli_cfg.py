@@ -26,3 +26,13 @@ def module(request):
 def test_export_cfgs_add_global(module, config_level, global_params):
     """Test export all configs work with `add_global` parameter."""
     cli_cfg.main(module, explevel=config_level, global_params=global_params)
+
+
+def test_export_cfgs_details(module, config_level, global_params):
+    """Test export all configs work with detailed parameter description."""
+    cli_cfg.main(
+        module,
+        explevel=config_level,
+        global_params=global_params,
+        details=True,
+        )

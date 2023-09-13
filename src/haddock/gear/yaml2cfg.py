@@ -13,7 +13,8 @@ from haddock.core.exceptions import ConfigurationError
 from haddock.libs.libio import read_from_yaml
 
 
-def yaml2cfg_text(ymlcfg, module, explevel):
+def yaml2cfg_text(ymlcfg: dict, module: str, explevel: str,
+                  details: bool = False):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -31,17 +32,26 @@ def yaml2cfg_text(ymlcfg, module, explevel):
         The expert level to consider. Provides all parameters for that
         level and those of inferior hierarchy. If you give "all", all
         parameters will be considered.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     new_config = []
     if module is not None:
         new_config.append(f"[{module}]")
 
-    new_config.append(_yaml2cfg_text(ymlcfg, module, explevel))
+    new_config.append(_yaml2cfg_text(
+        ymlcfg,
+        module,
+        explevel,
+        details=details,
+        ))
 
     return os.linesep.join(new_config) + os.linesep
 
 
-def _yaml2cfg_text(ycfg, module, explevel):
+def _yaml2cfg_text(ymlcfg: dict, module: str, explevel: str,
+                   details: bool = False):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -50,10 +60,21 @@ def _yaml2cfg_text(ycfg, module, explevel):
 
     Parameters
     ----------
-    ycfg : dict
+    ymlcfg : dict
         The dictionary representing the HADDOCK3 YAML configuration.
         This configuration should NOT have the expertise levels. It
         expectes the first level of keys to be the parameter name.
+
+    module : str
+        The module to which the config belongs to.
+
+    explevel : str
+        The expert level to consider. Provides all parameters for that
+        level and those of inferior hierarchy. If you give "all", all
+        parameters will be considered.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     params = []
     exp_levels = {
@@ -62,7 +83,12 @@ def _yaml2cfg_text(ycfg, module, explevel):
         }
     exp_level_idx = exp_levels[explevel]
 
-    for param_name, param in ycfg.items():
+    # define set of undesired parameter keys
+    undesired = ("default", "explevel", "short", "type")
+    if not details:
+        undesired = undesired + ("long",)
+
+    for param_name, param in ymlcfg.items():
 
         # treats parameters that are subdictionaries of parameters
         if isinstance(param, Mapping) and "default" not in param:
@@ -73,7 +99,12 @@ def _yaml2cfg_text(ycfg, module, explevel):
             else:
                 curr_module = param_name
             params.append(f"[{curr_module}]")
-            _ = _yaml2cfg_text(param, module=curr_module, explevel=explevel)
+            _ = _yaml2cfg_text(
+                param,
+                module=curr_module,
+                explevel=explevel,
+                details=details,
+                )
             params.append(_)
 
         # treats normal parameters
@@ -86,7 +117,7 @@ def _yaml2cfg_text(ycfg, module, explevel):
 
             comment = []
             for _comment, cvalue in param.items():
-                if _comment in ("default", "explevel", "short", "long", "type"):
+                if _comment in undesired:
                     continue
 
                 if cvalue == "":

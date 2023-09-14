@@ -154,15 +154,34 @@ def update_haddock_version(commit_id: str, shorten: int = 6):
 
 
 def commit_to_number(commit_id: str):
-    number_seq = []
+    """Convert a commit id to a number.
+    
+    Parameters
+    ----------
+    commit_id : str
+        A string containing letters / numbers.
+
+    Return
+    number_seq : str
+        A string containing only numbers.
+    """
+    # initiate holding list
+    number_seq_ = []
+    # loop over letters
     for letter in commit_id:
         try:
+            # check if an integer
             number = int(letter)
         except ValueError:
+            # convert an ascii to letter
             number = ord(letter)
         finally:
-            number_seq.append(str(number))
-    return ''.join(number_seq)
+            # add string casted version of the number
+            number_seq_.append(str(number))
+    # join the sequence
+    number_seq = ''.join(number_seq_)
+    # return it
+    return number_seq
 
 
 def modify_patch_version(patch_v: str):

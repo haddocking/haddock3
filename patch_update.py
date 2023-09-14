@@ -140,15 +140,29 @@ def update_haddock_version(commit_id: str, shorten: int = 6):
     """
     # generate shorten version of the commit
     short_commit = commit_id[:shorten]
+    # generate number version of commit
+    number_commit = commit_to_number(short_commit)
     # modify patch version with current commit
-    modify_patch_version(short_commit)
+    modify_patch_version(number_commit)
     # get current (just modified) version
     current_version = get_current_version()
     # check it was well applied
-    assert current_version.split('.')[-1] == short_commit
-    assert get_current_patch_version() == short_commit
+    assert current_version.split('.')[-1] == number_commit
+    assert get_current_patch_version() == number_commit
     # return current version
     return current_version
+
+
+def commit_to_number(commit_id: str):
+    number_seq = []
+    for letter in commit_id:
+        try:
+            number = int(letter)
+        except ValueError:
+            number = ord(letter)
+        finally:
+            number_seq.append(str(number))
+    return ''.join(number_seq)
 
 
 def modify_patch_version(patch_v: str):

@@ -41,7 +41,7 @@ class EmptyPath:
 # versions
 v_major = 3
 v_minor = 0
-v_patch = "0"
+v_patch = 100700997
 # full version
 version = f"{v_major}.{v_minor}.{v_patch}"
 

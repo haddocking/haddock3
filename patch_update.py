@@ -9,7 +9,7 @@ import re
 from importlib import reload
 from subprocess import PIPE, Popen, check_output
 
-import haddock
+from src import haddock
 
 
 class ProcessFailure(Exception):
@@ -49,8 +49,8 @@ def get_N_recent_merges(n: int = 10):
     git_cmd_ = [
         'git', 'log',  # to get the logs
         '--merges',  # to get only merges
-        '-n', str(n),  # to get only last N merges
-        '--pretty=format:{"commit": "%H", "subject": "%f"}',  # noqa : E501 # gather commit hash and subject as dict
+        '-n', str(n),  # to get only last `n` merges
+        '--pretty=format:{"commit": "%H", "subject": "%f", "time": "%ct"}',  # noqa : E501 # gather commit hash and subject as dict
         ]
 
     # run the command
@@ -80,9 +80,13 @@ def find_closest_pr_merge(logs: list) -> dict:
     logdt : dict
         First git log data containing a merged pull request in the list.
     """
+    # compile regex to find a merged pull request
     search_flag = re.compile(r'Merge-pull-request-\d{1,6}')
+    # loop over git logs
     for logdt in logs:
+        # check if can find flag in `subject`
         if search_flag.search(logdt["subject"]):
+            # return first time found
             return logdt
 
 
@@ -235,11 +239,11 @@ def main() -> str:
         return get_current_version()
     else:
         # get last merge PR commit hash
-        commit_id = last_merge_log["commit"]
+        patch_id = last_merge_log["commit"]  # could be "time"
 
     # update haddock3 version
     try:
-        version = update_haddock_version(commit_id)
+        version = update_haddock_version(patch_id)
     except AssertionError:
         version = update_haddock_version(init_patch_version)
     

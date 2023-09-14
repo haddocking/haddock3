@@ -30,7 +30,8 @@ long_description = '{}\n{}'.format(
 
 setup(
     name='haddock3',
-    version='3.0.0',
+    # version='3.0.0',
+    use_scm_version=True,
     description='Haddock 3.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -75,6 +76,7 @@ setup(
     extras_require={
         },
     setup_requires=[
+        'setuptools_scm',
         ],
     entry_points={
         'console_scripts': [

@@ -38,8 +38,33 @@ class EmptyPath:
         return False
 
 
+def get_package_version():
+    """Use package egg info to obain build version."""
+    # point package path
+    ppath = __path__[0]
+    # point setup egg data
+    pkg_info_fpath = f'{ppath}3.egg-info/PKG-INFO'
+    # read this file
+    with open(pkg_info_fpath, 'r') as filin:
+        # loop over lines
+        for _ in filin:
+            # find the line where version is written
+            if _.startswith('Version'):
+                # return the version
+                return _.split(':')[-1].strip()
+
+
+def split_version(version: str) -> tuple:
+    """Split version into major, minor and patch."""
+    s_version = version.split('.')
+    v_major = s_version[0]
+    v_minor = s_version[1]
+    v_patch = '.'.join(s_version[2:])
+    return (v_major, v_minor, v_patch)
+
+
 # version
-version = "3.0.0"
-v_major, v_minor, v_patch = version.split('.')
+version = get_package_version()
+v_major, v_minor, v_patch = split_version(version)
 
 contact_us = 'https://github.com/haddocking/haddock3/issues'

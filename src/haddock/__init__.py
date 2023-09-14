@@ -38,8 +38,12 @@ class EmptyPath:
         return False
 
 
-# version
-version = "3.0.0"
-v_major, v_minor, v_patch = version.split('.')
+# versions
+v_major = 3
+v_minor = 0
+v_patch = "0"
+# full version
+version = f"{v_major}.{v_minor}.{v_patch}"
 
+# link to contact / support
 contact_us = 'https://github.com/haddocking/haddock3/issues'

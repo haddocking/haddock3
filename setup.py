@@ -4,6 +4,8 @@
 import warnings
 from os.path import dirname, join
 
+from find_version import set_version
+
 from setuptools import SetuptoolsDeprecationWarning, find_packages, setup
 # Import warnings object for later filtering out
 from setuptools.command.easy_install import EasyInstallDeprecationWarning
@@ -30,7 +32,7 @@ long_description = '{}\n{}'.format(
 
 setup(
     name='haddock3',
-    version='3.0.0',
+    version=set_version(),  # updates and get current HADDOCK version
     description='Haddock 3.',
     long_description=long_description,
     long_description_content_type='text/markdown',

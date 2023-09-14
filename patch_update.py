@@ -3,13 +3,11 @@
 
 """Update HADDOCK patch version using git logs information."""
 
-import os
 import json
+import os
 import re
-
 from importlib import reload
-
-from subprocess import Popen, PIPE, check_output
+from subprocess import PIPE, Popen, check_output
 
 import haddock
 
@@ -162,7 +160,7 @@ def modify_patch_version(patch_v: str):
         Version of the current patch to apply.
     """
     # path where it is stored
-    from haddock import __file__ as fpath
+    fpath = haddock.__file__
     # build sed cmd line
     sed_cmd_ = f"""sed -i 's|v_patch =.*|v_patch = "{patch_v}"|g' {fpath}"""
     # use sed to modify patch version

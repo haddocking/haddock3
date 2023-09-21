@@ -168,7 +168,12 @@ def main(run_dir):
     all_steps = get_module_steps_folders(Path(run_dir))
     log.info(f"All_steps: {', '.join(all_steps)}")
     sel_step = [st for st in all_steps if st.split("_")[1] not in ANA_MODULES]
-    log.info(f"Steps to trace back: {', '.join(sel_step)}")
+    # check if there are steps to traceback
+    if len(sel_step) == 0:
+        log.info("No steps to trace back. Exiting.")
+        sys.exit(0)
+    else:
+        log.info(f"Steps to trace back: {', '.join(sel_step)}")
     
     data_dict, rank_dict = {}, {}
     unk_idx, max_topo_len = 0, 0

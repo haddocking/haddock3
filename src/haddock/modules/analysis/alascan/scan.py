@@ -63,49 +63,6 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     return mut_pdb_fname
 
 
-def add_delta_to_bfactor(pdb_f, df_scan):
-    """Add delta scores as b-factors.
-    
-    Parameters
-    ----------
-    pdb_f : str
-        Path to the pdb file.
-    df_scan : pandas.DataFrame
-        Dataframe with the scan results for the model
-    
-    Returns
-    -------
-    pdb_f : str
-        Path to the pdb file with the b-factors added.
-    """
-    tmp_pdb_f = pdb_f.replace('.pdb', '_bfactor.pdb')
-    max_b, min_b = df_scan["delta_score"].max(), df_scan["delta_score"].min()
-    out_pdb_l = []
-    with open(pdb_f, 'r') as fh:
-        for line in fh.readlines():
-            if line.startswith('ATOM'):
-                chain = line[21]
-                resnum = int(line[22:26])
-                norm_delta = 0.0
-                # extracting all the elements of df_scan such that
-                # chain = chain and res = resnum
-                df_scan_subset = df_scan.loc[
-                    (df_scan["chain"] == chain) & (df_scan["res"] == resnum)
-                    ]
-                if df_scan_subset.shape[0] > 0:
-                    delta = df_scan_subset["delta_score"].values[0]
-                    norm_delta = 100 * (delta - min_b) / (max_b - min_b)
-                
-                delta_str = f"{norm_delta:.2f}".rjust(6, " ")
-                line = line[:60] + delta_str + line[66:]
-            out_pdb_l.append(line)
-    with open(tmp_pdb_f, 'w') as out_fh:
-        out_fh.write(''.join(out_pdb_l))
-    # move tmp_pdb_f to pdb_f
-    os.rename(tmp_pdb_f, pdb_f)
-    return pdb_f
-
-
 def calc_score(pdb_f, run_dir):
     """Calculate the score of a model.
 
@@ -148,6 +105,31 @@ def calc_score(pdb_f, run_dir):
             desolv = float(ln.split("desolv=")[1].split(",")[0])
             bsa = float(ln.split("bsa=")[1].split(",")[0])
     return score, vdw, elec, desolv, bsa
+
+
+def add_zscores(df_scan_clt, column='delta_score'):
+    """Add z-scores to the dataframe.
+
+    Parameters
+    ----------
+    df_scan : pandas.DataFrame
+        Dataframe with the scan results for the model.
+    
+    colunm : str
+        Column to calculate the z-score.
+    
+    Returns
+    -------
+    df_scan : pandas.DataFrame
+        Dataframe with the z-scores added.
+    """
+    mean_delta = df_scan_clt[column].mean()
+    std_delta = df_scan_clt[column].std()
+    if std_delta != 0.0:
+        df_scan_clt['z_score'] = (df_scan_clt[column] - mean_delta) / std_delta
+    else:
+        df_scan_clt['z_score'] = 0.0
+    return df_scan_clt
 
 
 def alascan_cluster_analysis(models):
@@ -225,6 +207,9 @@ def alascan_cluster_analysis(models):
                    'delta_vdw', 'delta_elec', 'delta_desolv', 'delta_bsa',
                    'frac_pres']
         df_scan_clt = pd.DataFrame(clt_data, columns=df_cols)
+        # adding clt-based Z score
+        df_scan_clt = add_zscores(df_scan_clt, 'delta_score')
+
         df_scan_clt.sort_values(by=['chain', 'resnum'], inplace=True)
         df_scan_clt.to_csv(
             scan_clt_filename,
@@ -345,12 +330,16 @@ class Scan:
                           'delta_elec', 'delta_desolv', 'delta_bsa']
             df_scan = pd.DataFrame(scan_data, columns=df_columns)
             alascan_fname = f"scan_{native.file_name}.csv"
+            # add zscore
+            df_scan = add_zscores(df_scan, 'delta_score')
+
             df_scan.to_csv(
                 alascan_fname,
                 index=False,
                 float_format='%.3f',
                 sep="\t"
                 )
+
             fl_content = open(alascan_fname, 'r').read()
             with open(alascan_fname, 'w') as f:
                 f.write(f"########################################{os.linesep}")  # noqa E501

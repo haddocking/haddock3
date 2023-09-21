@@ -53,6 +53,15 @@ ap.add_argument(
     action="store_true",
     )
 
+ap.add_argument(
+    '-d',
+    '--details',
+    dest='details',
+    help="Add detailed parameter description found in 'long'.",
+    action="store_true",
+    default=False,
+    )
+
 
 def _ap():
     return ap
@@ -90,7 +99,12 @@ def maincli():
     cli(ap, main)
 
 
-def main(module=None, explevel="all", global_params=True):
+def main(
+    module: str = None,
+    explevel: str = "all",
+    global_params: bool = True,
+    details: bool = False,
+        ):
     """
     Extract the defaults in the form of a run configuration file.
 
@@ -110,6 +124,9 @@ def main(module=None, explevel="all", global_params=True):
         Whether to add the module's general global parameter. If
         ``True`` and ``module`` is ``None``, outputs only the general
         parameters.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     from haddock import modules_defaults_path
     from haddock.gear.yaml2cfg import yaml2cfg_text
@@ -123,6 +140,7 @@ def main(module=None, explevel="all", global_params=True):
             general_cfg,
             module=None,
             explevel="all",
+            details=details,
             )
         comment = os.linesep.join((
             "# The parameters below are optional parameters. ",
@@ -148,7 +166,7 @@ def main(module=None, explevel="all", global_params=True):
         cfg = module_lib.DEFAULT_CONFIG
 
         ycfg = read_from_yaml(cfg)
-        module_config = yaml2cfg_text(ycfg, module, explevel)
+        module_config = yaml2cfg_text(ycfg, module, explevel, details=details)
 
         new_config = os.linesep.join((new_config, module_config))
 

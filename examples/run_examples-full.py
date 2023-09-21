@@ -57,6 +57,7 @@ examples = (
     ("docking-protein-protein"     , "docking-protein-protein-full.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-full.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-full.cfg"),  # noqa: E203, E501
+    ("docking-multiple-ambig"      , "docking-multiple-tbls-full.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-full"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-full.cfg"),  # noqa: E203, E501
     ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-full.cfg"),  # noqa: E203, E501

@@ -155,13 +155,6 @@ def main(run_dir):
     log.level = 20
     log.info(f"Running haddock3-traceback on {run_dir}")
 
-    outdir = Path(run_dir, TRACK_FOLDER)
-    try:
-        outdir.mkdir(exist_ok=False)
-        log.info(f"Created directory: {str(outdir.resolve())}")
-    except FileExistsError:
-        log.warning(f"Directory {str(outdir.resolve())} already exists.")
-
     # Reading steps
     log.info("Reading input run directory")
     # get the module folders from the run_dir input
@@ -171,9 +164,17 @@ def main(run_dir):
     # check if there are steps to traceback
     if len(sel_step) == 0:
         log.info("No steps to trace back. Exiting.")
-        sys.exit(0)
+        return
     else:
         log.info(f"Steps to trace back: {', '.join(sel_step)}")
+
+    # creating traceback folder
+    outdir = Path(run_dir, TRACK_FOLDER)
+    try:
+        outdir.mkdir(exist_ok=False)
+        log.info(f"Created directory: {str(outdir.resolve())}")
+    except FileExistsError:
+        log.warning(f"Directory {str(outdir.resolve())} already exists.")
     
     data_dict, rank_dict = {}, {}
     unk_idx, max_topo_len = 0, 0

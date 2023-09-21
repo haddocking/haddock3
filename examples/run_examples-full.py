@@ -1,9 +1,9 @@
 """
-Run all examples in a row.
+Run all full examples in a row.
 
 This script should be executed from inside the haddock3/examples/ folder.
 
-This script runs the `*-test.cfg` files. These test cases are not fetched
+This script runs the `*-full.cfg` files. These test cases are not fetched
 automatically. If you want to add/remove cases you need to edit this script.
 The HADDOCK3 team has defined here only those test cases that are part of the
 integration tests.
@@ -30,8 +30,8 @@ from shutil import rmtree
 
 
 try:
+    from haddock.gear.config import load as read_config
     from haddock.libs.libio import working_directory
-    from haddock.gear.config_reader import read_config
 except Exception:
     print(  # noqa: T001
         "Haddock3 could not be imported. "
@@ -41,7 +41,7 @@ except Exception:
     sys.exit(1)
 
 
-# edit this dictionary to add or remove examples.
+# edit this tuple to add or remove examples.
 # keys are the examples folder, and values are the configuration files
 # spacings are anti-pythonic but facilitate reading :-)
 examples = (
@@ -94,9 +94,13 @@ def main(examples, break_on_errors=True):
         print()  # noqa: T001
 
         with working_directory(folder):
+            # obtain run directory
+            all_params = read_config(file_)
+            rundir = all_params['final_cfg']["run_dir"]
+            # remove eventual previous run
+            rmtree(rundir, ignore_errors=True)
 
-            params = read_config(file_)
-            rmtree(params["run_dir"], ignore_errors=True)
+            # run haddock with config file
             subprocess.run(
                 f"haddock3 {file_}",
                 shell=True,

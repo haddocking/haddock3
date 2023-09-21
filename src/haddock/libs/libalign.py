@@ -228,6 +228,9 @@ def load_coords(
     numbering_dic : dict
         dict of numbering dictionaries (one dictionary per chain)
 
+    add_resname : bool
+        use the residue name in the identifier
+
     Returns
     -------
     coord_dic : dict

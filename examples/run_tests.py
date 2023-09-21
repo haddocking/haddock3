@@ -19,9 +19,9 @@ You should work towards solving that problem or contact the HADDOCK3 team.
 
 USAGE:
 
-    $ python run_examples.py -h
-    $ python run_examples.py     # runs all examples regardless of errors
-    $ python run_examples.py -b  # stops asap an error is found
+    $ python run_tests.py -h
+    $ python run_tests.py     # runs all examples regardless of errors
+    $ python run_tests.py -b  # stops asap an error is found
 """
 import argparse
 import os
@@ -42,7 +42,7 @@ except Exception:
     sys.exit(1)
 
 
-# edit this dictionary to add or remove examples.
+# edit this tuple to add or remove examples.
 # keys are the examples folder, and values are the configuration files
 # the whitespaces below are anti-pythonic but facilitate reading :-)
 examples = (
@@ -68,7 +68,7 @@ examples = (
     ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
-    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg")  # noqa: E203, E501
+    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
     )
 
 
@@ -106,8 +106,13 @@ def main(examples, break_on_errors=True):
 
         with working_directory(folder):
 
-            params = read_config(file_)
-            rmtree(params["run_dir"], ignore_errors=True)
+            # obtain run directory
+            all_params = read_config(file_)
+            rundir = all_params['final_cfg']["run_dir"]
+            # remove eventual previous run
+            rmtree(rundir, ignore_errors=True)
+
+            # run example
             subprocess.run(
                 f"haddock3 {file_}",
                 shell=True,

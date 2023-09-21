@@ -34,10 +34,13 @@ output:
 scan_residue:
   default: "ALA"
   type: string
+  minchars: 3
+  maxchars: 3
   choices: [ALA, ARG, ASN, ASP, CYS, GLN, GLU, GLY, HIS, ILE, LEU, LYS, MET, PHE, PRO, SER, THR, TRP, TYR, VAL]
   title: Residue to be used for the scanning
   short: Residue to be used for the scanning. The default is alanine.
-  long: Residue to be used for the scanning. Use bigger residues at your own risk.
+  long: Residue to be used for the scanning. The default is alanine. Use bigger residues at your own risk.
+  group: analysis
   explevel: easy
 plot:
   default: false
@@ -45,4 +48,5 @@ plot:
   title: Plot scanning data.
   short: Plot scanning data.
   long: Plot scanning data.
+  group: analysis
   explevel: easy

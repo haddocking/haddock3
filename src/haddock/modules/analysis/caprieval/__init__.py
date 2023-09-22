@@ -1,8 +1,10 @@
 """Calculate CAPRI metrics."""
+import json
 from pathlib import Path
 
+from haddock.gear.config import load as read_config
 from haddock.libs.libparallel import Scheduler
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, get_module_steps_folders
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
@@ -13,6 +15,14 @@ from haddock.modules.analysis.caprieval.capri import (
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+
+CNS_MODULES = ["rigidbody",
+               "flexref",
+               "emscoring",
+               "mdscoring",
+               "mdref",
+               "emref"]
+WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
 
 
 class HaddockModule(BaseHaddockModule):
@@ -39,6 +49,33 @@ class HaddockModule(BaseHaddockModule):
         models = self.previous_io.retrieve_models(
             individualize=True
             )
+        
+        # dump previously used weights
+        sel_steps = get_module_steps_folders(Path(".."))
+
+        # get the previous CNS step
+        mod = len(sel_steps) - 2
+        while mod > -1:
+            st_name = sel_steps[mod].split("_")[1]
+            if st_name in CNS_MODULES:
+                cns_step = sel_steps[mod]
+                break
+            mod -= 1
+        
+        cns_params = read_config(Path("..", cns_step, "params.cfg"))
+        key = list(cns_params['final_cfg'].keys())[0]
+        scoring_pars = {kv: cns_params['final_cfg'][key][kv] for kv in WEIGHTS}
+        
+        scoring_params_fname = Path("weights_params.json")
+        # write json file
+        with open(scoring_params_fname, 'w', encoding='utf-8') as jsonf:
+            json.dump(
+                scoring_pars,
+                jsonf,
+                indent=4,
+                )
+        self.log(f"scoring parameters written in: {scoring_params_fname}")
+
         # Sort by score to find the "best"
         models.sort()
         best_model_fname = Path(models[0].rel_path)

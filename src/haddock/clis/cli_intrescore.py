@@ -30,19 +30,11 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
-from haddock.gear.config import load as read_config
 from haddock.libs.libplots import read_capri_table
-from haddock.modules import get_module_steps_folders
 
 
 # TODO: see if it's possible to avoid hard-coding
-CNS_MODULES = ["rigidbody",
-               "flexref",
-               "emscoring",
-               "mdscoring",
-               "mdref",
-               "emref"]
-WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
+
 ANA_FOLDER = "interactive"  # name of the analysis folder
 
 # Command line interface parser
@@ -53,18 +45,8 @@ ap = argparse.ArgumentParser(
     )
 
 ap.add_argument(
-    "-r",
-    "--run-dir",
-    help="The input run directory.",
-    required=True,
-    )
-
-ap.add_argument(
-    "-m",
-    "--module",
-    help="The number of the step to rescore.",
-    required=True,
-    type=int,
+    "capri_dir",
+    help="The caprieval directory to rescore.",
     )
 
 ap.add_argument(
@@ -128,7 +110,7 @@ def maincli():
     cli(ap, main)
 
 
-def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
+def main(capri_dir, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
     """
     Analyse CLI.
 
@@ -141,30 +123,11 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
         List of the integer prefix of the modules to copy.
     """
     log.level = 20
-    log.info(f"Running haddock3-int_rescore on {run_dir}, module {module}, "
-             f"with w_elec = {w_elec}")
+    log.info(f"Running haddock3-int_rescore on folder {capri_dir}")
 
-    # Reading steps
-    log.info("Reading input run directory")
-    # get the module folders from the run_dir input
-    module_list = list(range(1, module + 1))
-    sel_steps = get_module_steps_folders(Path(run_dir), module_list)
-
-    mod = len(sel_steps) - 2
-    while mod > -1:
-        st_name = sel_steps[mod].split("_")[1]
-        if st_name in CNS_MODULES:
-            cns_step = sel_steps[mod]
-            break
-        mod -= 1
-    
-    log.info(f"selected step is {sel_steps[-1]}, last CNS step is {cns_step}")
-
-    # now we read the params.cfg file from the CNS module
-    cns_params = read_config(Path(run_dir, cns_step, "params.cfg"))
-    key = list(cns_params['final_cfg'].keys())[0]
-    scoring_pars = {kv: cns_params['final_cfg'][key][kv] for kv in WEIGHTS}
-
+    # load the scoring pars via json
+    scoring_pars = json.load(open(Path(capri_dir, "weights_params.json"), "r"))
+    log.info(f"Previous scoring parameters: {scoring_pars}")
     if w_elec is not None:
         scoring_pars.update({"w_elec": w_elec})
     if w_vdw is not None:
@@ -176,10 +139,10 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
     if w_air is not None:
         scoring_pars.update({"w_air": w_air})
 
-    log.info(f"rescoring_pars: {scoring_pars}")
+    log.info(f"Rescoring parameters: {scoring_pars}")
 
-    capri_ss = Path(run_dir, sel_steps[-1], "capri_ss.tsv")
-    capri_clt = Path(run_dir, sel_steps[-1], "capri_clt.tsv")
+    capri_ss = Path(capri_dir, "capri_ss.tsv")
+    capri_clt = Path(capri_dir, "capri_clt.tsv")
     # ss file
     df_ss = read_capri_table(capri_ss)
     # now we want to rewrite the score parameter
@@ -197,7 +160,11 @@ def main(run_dir, module, w_elec, w_vdw, w_desolv, w_bsa, w_air, **kwargs):
     df_ss["caprieval_rank"] = df_ss.index
     
     # now we want to write the new capri_ss.tsv file
-    outdir = Path(run_dir, f"{sel_steps[-1]}_interactive")
+    run_dir = Path(capri_dir).parent
+    capri_name = Path(capri_dir).name
+    
+    # create the interactive folder
+    outdir = Path(run_dir, f"{capri_name}_interactive")
     outdir.mkdir(exist_ok=True)
     df_ss.to_csv(Path(outdir, "capri_ss.tsv"), sep="\t", index=False)
 

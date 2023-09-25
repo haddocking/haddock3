@@ -144,4 +144,4 @@ class HaddockModule(BaseHaddockModule):
             pdb.topology = topologies
             self.output_models.append(pdb)
 
-        self.export_output_models()
+        self.export_io_models()

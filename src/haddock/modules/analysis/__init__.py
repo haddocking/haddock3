@@ -1,7 +1,7 @@
 """HADDOCK3 modules related to model analysis."""
 
 
-modules_using_resdic = ("caprieval", "rmsdmatrix")
+modules_using_resdic = ("caprieval", "rmsdmatrix", "alascan")
 
 
 def confirm_resdic_chainid_length(params):

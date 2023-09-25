@@ -37,7 +37,28 @@ RES_CODES = dict([
 
 
 def mutate(pdb_f, target_chain, target_resnum, mut_resname):
-    """Mutate a resnum to a resname."""
+    """
+    Mutate a resnum to a resname.
+    
+    Parameters
+    ----------
+    pdb_f : str
+        Path to the pdb file.
+    
+    target_chain : str
+        Chain of the residue to be mutated.
+    
+    target_resnum : int
+        Residue number of the residue to be mutated.
+    
+    mut_resname : str
+        Residue name of the residue to be mutated.
+
+    Returns
+    -------
+    mut_pdb_fname : str
+        Path to the mutated pdb file.
+    """
     mut_pdb_l = []
     resname = ''
     with open(pdb_f, 'r') as fh:
@@ -61,6 +82,49 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     with open(mut_pdb_fname, 'w') as fh:
         fh.write(''.join(mut_pdb_l))
     return mut_pdb_fname
+
+
+def add_delta_to_bfactor(pdb_f, df_scan):
+    """Add delta scores as b-factors.
+    
+    Parameters
+    ----------
+    pdb_f : str
+        Path to the pdb file.
+    df_scan : pandas.DataFrame
+        Dataframe with the scan results for the model
+    
+    Returns
+    -------
+    pdb_f : str
+        Path to the pdb file with the b-factors added.
+    """
+    tmp_pdb_f = pdb_f.replace('.pdb', '_bfactor.pdb')
+    max_b, min_b = df_scan["delta_score"].max(), df_scan["delta_score"].min()
+    out_pdb_l = []
+    with open(pdb_f, 'r') as fh:
+        for line in fh.readlines():
+            if line.startswith('ATOM'):
+                chain = line[21]
+                resnum = int(line[22:26])
+                norm_delta = 0.0
+                # extracting all the elements of df_scan such that
+                # chain = chain and res = resnum
+                df_scan_subset = df_scan.loc[
+                    (df_scan["chain"] == chain) & (df_scan["res"] == resnum)
+                    ]
+                if df_scan_subset.shape[0] > 0:
+                    delta = df_scan_subset["delta_score"].values[0]
+                    norm_delta = 100 * (delta - min_b) / (max_b - min_b)
+
+                delta_str = f"{norm_delta:.2f}".rjust(6, " ")
+                line = line[:60] + delta_str + line[66:]
+            out_pdb_l.append(line)
+    with open(tmp_pdb_f, 'w') as out_fh:
+        out_fh.write(''.join(out_pdb_l))
+    # move tmp_pdb_f to pdb_f
+    os.rename(tmp_pdb_f, pdb_f)
+    return pdb_f
 
 
 def calc_score(pdb_f, run_dir):
@@ -125,7 +189,7 @@ def add_zscores(df_scan_clt, column='delta_score'):
     """
     mean_delta = df_scan_clt[column].mean()
     std_delta = df_scan_clt[column].std()
-    if std_delta != 0.0:
+    if std_delta > 0.0:
         df_scan_clt['z_score'] = (df_scan_clt[column] - mean_delta) / std_delta
     else:
         df_scan_clt['z_score'] = 0.0
@@ -258,6 +322,15 @@ class Scan:
         self.core = core
         self.path = path
         self.scan_res = params['params']['scan_residue']
+        self.int_cutoff = params["params"]["int_cutoff"]
+        # initialising resdic
+        if "params" in params.keys():
+            self.filter_resdic = {
+                key[-1]: value for key, value
+                in params["params"].items()
+                if key.startswith("resdic")
+                }
+    
 
     def run(self):
         """Run alascan calculations."""
@@ -275,7 +348,13 @@ class Scan:
                                                               run_dir=sc_dir)
             
             scan_data = []
-            interface = CAPRI.identify_interface(native.rel_path)
+            # check if the user wants to mutate only some residues
+            if self.filter_resdic != {'_': []}:
+                interface = self.filter_resdic
+            else:
+                interface = CAPRI.identify_interface(native.rel_path, cutoff=self.int_cutoff)
+                
+                        
             atoms = get_atoms(native.rel_path)
             coords, chain_ranges = load_coords(native.rel_path,
                                                atoms,
@@ -328,12 +407,12 @@ class Scan:
                           'score', 'vdw', 'elec', 'desolv', 'bsa',
                           'delta_ori_score', 'delta_score', 'delta_vdw',
                           'delta_elec', 'delta_desolv', 'delta_bsa']
-            df_scan = pd.DataFrame(scan_data, columns=df_columns)
+            self.df_scan = pd.DataFrame(scan_data, columns=df_columns)
             alascan_fname = f"scan_{native.file_name}.csv"
             # add zscore
-            df_scan = add_zscores(df_scan, 'delta_score')
+            self.df_scan = add_zscores(self.df_scan, 'delta_score')
 
-            df_scan.to_csv(
+            self.df_scan.to_csv(
                 alascan_fname,
                 index=False,
                 float_format='%.3f',

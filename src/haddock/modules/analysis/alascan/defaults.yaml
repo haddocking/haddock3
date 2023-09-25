@@ -12,10 +12,10 @@ resdic_:
     identifier.
   group: analysis
   explevel: easy
-fnat_cutoff:
+int_cutoff:
   default: 5.0
   type: float
-  min: 3.0
+  min: 1.0
   max: 20.
   precision: 3
   title: Distance cutoff (Å) used to define interface contacts.

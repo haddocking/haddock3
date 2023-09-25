@@ -94,4 +94,4 @@ class HaddockModule(BaseHaddockModule):
                 model.path = str(Path(self.path).resolve())
 
         self.output_models = models_to_export
-        self.export_output_models()
+        self.export_io_models()

@@ -434,15 +434,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span></div>
 
-<div class="viewcode-block" id="BaseHaddockModule.export_output_models"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.export_output_models">[docs]</a>    <span class="k">def</span> <span class="nf">export_output_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faulty_tolerance</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseHaddockModule.export_io_models"><a class="viewcode-back" href="../../modules/index.html#haddock.modules.BaseHaddockModule.export_io_models">[docs]</a>    <span class="k">def</span> <span class="nf">export_io_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">faulty_tolerance</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Export output to the ModuleIO interface.</span>
+<span class="sd">        Export input/output to the ModuleIO interface.</span>
 
-<span class="sd">        Modules that generate PDBs that other models should take as input,</span>
-<span class="sd">        should export those PDBs registries through the ModuleIO interface.</span>
+<span class="sd">        Modules that do not perform any operation on PDB files should have</span>
+<span class="sd">         input = output.</span>
 
-<span class="sd">        This function implements a common interface for all modules requiring</span>
-<span class="sd">        this feature.</span>
+<span class="sd">        This function implements a common interface for all modules.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -453,6 +452,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span> <span class="s2">&quot;`self.output_models` cannot be empty.&quot;</span>
         <span class="n">io</span> <span class="o">=</span> <span class="n">ModuleIO</span><span class="p">()</span>
+        <span class="c1"># add the input models</span>
+        <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">previous_io</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;i&quot;</span><span class="p">)</span>
+        <span class="c1"># add the output models</span>
         <span class="n">io</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_models</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">)</span>
         <span class="n">faulty</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">check_faulty</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">faulty</span> <span class="o">&gt;</span> <span class="n">faulty_tolerance</span><span class="p">:</span>
@@ -664,7 +666,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Sep 22, 2023.
+        Last updated on Sep 26, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

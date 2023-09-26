@@ -230,13 +230,14 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="haddock.modules.sampling.lightdock.HaddockModule.export_output_models">
-<span class="sig-name descname"><span class="pre">export_output_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.sampling.lightdock.HaddockModule.export_output_models" title="Permalink to this definition">¶</a></dt>
-<dd><p>Export output to the ModuleIO interface.</p>
-<p>Modules that generate PDBs that other models should take as input,
-should export those PDBs registries through the ModuleIO interface.</p>
-<p>This function implements a common interface for all modules requiring
-this feature.</p>
+<dt class="sig sig-object py" id="haddock.modules.sampling.lightdock.HaddockModule.export_io_models">
+<span class="sig-name descname"><span class="pre">export_io_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">faulty_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.modules.sampling.lightdock.HaddockModule.export_io_models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export input/output to the ModuleIO interface.</p>
+<dl class="simple">
+<dt>Modules that do not perform any operation on PDB files should have</dt><dd><p>input = output.</p>
+</dd>
+</dl>
+<p>This function implements a common interface for all modules.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>faulty_tolerance</strong> (<em>int, default 0</em>) – The percentage of missing output allowed. If 20 is given,
@@ -536,7 +537,7 @@ dictionary and unpack the dictionary to the function call.</p>
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Sep 22, 2023.
+        Last updated on Sep 26, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

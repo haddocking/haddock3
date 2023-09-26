@@ -142,7 +142,7 @@ class HaddockModule(BaseHaddockModule):
 
         write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_score_dic, linkage_type, crit, tol, threshold)
 
-        self.export_output_models()
+        self.export_io_models()
         # sending matrix to next step of the workflow
         matrix_io = ModuleIO()
         matrix_io.add(self.matrix_json.input[0])

@@ -241,15 +241,14 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def export_output_models(self, faulty_tolerance=0):
+    def export_io_models(self, faulty_tolerance=0):
         """
-        Export output to the ModuleIO interface.
+        Export input/output to the ModuleIO interface.
 
-        Modules that generate PDBs that other models should take as input,
-        should export those PDBs registries through the ModuleIO interface.
+        Modules that do not perform any operation on PDB files should have
+         input = output.
 
-        This function implements a common interface for all modules requiring
-        this feature.
+        This function implements a common interface for all modules.
 
         Parameters
         ----------
@@ -260,6 +259,9 @@ class BaseHaddockModule(ABC):
         """
         assert self.output_models, "`self.output_models` cannot be empty."
         io = ModuleIO()
+        # add the input models
+        io.add(self.previous_io.output, "i")
+        # add the output models
         io.add(self.output_models, "o")
         faulty = io.check_faulty()
         if faulty > faulty_tolerance:

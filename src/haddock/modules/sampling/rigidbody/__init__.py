@@ -152,4 +152,4 @@ class HaddockModule(BaseCNSModule):
                 haddock_score = haddock_model.calc_haddock_score(**weights)
                 model.score = haddock_score
                 
-        self.export_output_models(faulty_tolerance=self.params["tolerance"])
+        self.export_io_models(faulty_tolerance=self.params["tolerance"])

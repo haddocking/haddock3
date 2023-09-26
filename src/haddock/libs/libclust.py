@@ -45,3 +45,70 @@ def write_structure_list(input_models, clustered_models, out_fname):
     log.info(f'Saving structure list to {out_fname}')
     with open(output_fname, 'w') as out_fh:
         out_fh.write(output_str)
+
+
+def rank_clusters(clt_dic, threshold):
+    """
+    Rank the clusters by their average score.
+
+    Parameters
+    ----------
+    clt_dic : :obj:`dict`
+        Dictionary with the clusters.
+    
+    threshold : int
+        Number of models to consider for the average score.
+    
+    Returns
+    -------
+    score_dic : :obj:`dict`
+        Dictionary with the cluster ID as key and the average score as value.
+    
+    sorted_score_dic : :obj:`list`
+        List of tuples with the cluster ID and the average score, sorted by
+        the average score.
+    """
+    score_dic = {}
+    for clt_id in clt_dic:
+        score_l = [p.score for p in clt_dic[clt_id]]
+        score_l.sort()
+        denom = float(min(threshold, len(score_l)))
+        top4_score = sum(score_l[:threshold]) / denom
+        score_dic[clt_id] = top4_score
+    
+    sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
+    return score_dic, sorted_score_dic
+
+
+def add_cluster_info(sorted_score_dic, clt_dic):
+    """
+    Add cluster information to the models.
+
+    Parameters
+    ----------
+    sorted_score_dic : :obj:`list`
+        List of tuples with the cluster ID and the average score, sorted by
+        the average score.
+    
+    clt_dic : :obj:`dict`
+        Dictionary with the clusters.
+    
+    Returns
+    -------
+    output_models : :obj:`list`
+        List of models with the cluster information.
+    """
+    # Add this info to the models
+    output_models = []
+    for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
+        cluster_id, _ = _e
+        # sort the models by score
+        clt_dic[cluster_id].sort()
+        # rank the models
+        for model_ranking, pdb in enumerate(clt_dic[cluster_id],
+                                            start=1):
+            pdb.clt_id = int(cluster_id)
+            pdb.clt_rank = cluster_rank
+            pdb.clt_model_rank = model_ranking
+            output_models.append(pdb)
+    return output_models

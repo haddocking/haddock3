@@ -2,10 +2,65 @@
 from pathlib import Path
 
 import numpy as np
+import os
 from scipy.cluster.hierarchy import fcluster, linkage
 
 from haddock import log
 from haddock.libs.libontology import RMSDFile
+
+
+def write_clusters(clusters, cluster_arr, models, rmsd_matrix, out_filename="cluster.out", centers=False):
+    """
+    Write the clusters to a file.
+
+    Parameters
+    ----------
+    clusters : list
+        List of clusters to write.
+    cluster_arr : np.array
+        Array with the cluster assignment for each model.
+    models : list
+        List of models.
+    rmsd_matrix : np.array
+        RMSD matrix.
+    out_filename : str, optional
+        Output filename. The default is "cluster.out".
+    centers : bool, optional
+        Whether to calculate the cluster centers. The default is False.
+    
+    Returns
+    -------
+    clt_dic : :obj:`dict`
+        Dictionary with the clusters.
+    
+    cluster_centers : :obj:`dict`
+        Dictionary with the cluster ID as key and the cluster center as value.
+    """
+    n_obs = len(cluster_arr)
+    cluster_centers = {}
+    # preparing output
+    clt_dic = {}
+    log.info(f'Saving output to {out_filename}')
+    cluster_out = Path(out_filename)
+    with open(cluster_out, 'w') as fh:
+        for cl_id in clusters:
+            if cl_id != -1:
+                npw = np.where(cluster_arr == cl_id)[0]
+                clt_dic[cl_id] = [models[n] for n in npw]
+                fh.write(f"Cluster {cl_id} -> ")
+
+                # find the cluster center
+                if centers:
+                    clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
+                    cluster_centers[cl_id] = models[clt_center].file_name
+                
+                # write the cluster
+                for el in npw[:-1]:
+                    fh.write(f"{el + 1} ")
+                fh.write(f"{npw[-1] + 1}")
+                fh.write(os.linesep)
+
+    return clt_dic, cluster_centers
 
 
 def read_matrix(rmsd_matrix):
@@ -52,8 +107,23 @@ def read_matrix(rmsd_matrix):
 
 
 def get_dendrogram(rmsd_matrix, linkage_type):
-    """Get the dendrogram."""
+    """Get and save the dendrogram.
+    
+    Parameters
+    ----------
+    rmsd_matrix : :obj:`numpy.ndarray`
+        Numpy array with the RMSD matrix.
+    
+    linkage_type : str
+        Linkage type for the clustering.
+    
+    Returns
+    -------
+    Z : :obj:`numpy.ndarray`
+        Numpy array with the dendrogram.
+    """
     Z = linkage(rmsd_matrix, linkage_type)
+    np.savetxt("dendrogram.txt", Z, fmt='%.5f')
     return Z
 
 
@@ -168,3 +238,58 @@ def get_cluster_center(npw, n_obs, rmsd_matrix):
             intra_cl_distances[npws[pair_idx]] += rmsd_matrix[pairs[pair_idx]]
     cluster_center = min(intra_cl_distances, key=intra_cl_distances.get)
     return cluster_center
+
+
+def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_score_dic, linkage_type, crit, tol, threshold):
+    """
+    Write the clustrmsd.txt file.
+    """
+    # Prepare clustrmsd.txt
+    output_fname = Path('clustrmsd.txt')
+    output_str = f'### clustrmsd output ###{os.linesep}'
+    output_str += os.linesep
+    output_str += f'Clustering parameters {os.linesep}'
+    output_str += f"> linkage_type={linkage_type}{os.linesep}"
+    output_str += f"> criterion={crit}{os.linesep}"
+    output_str += f"> tolerance={tol:.2f}{os.linesep}"
+    output_str += f"> threshold={threshold}{os.linesep}"
+    output_str += os.linesep
+    
+    output_str += (
+        f"-----------------------------------------------{os.linesep}")
+    output_str += os.linesep
+    output_str += f'Total # of clusters: {len(clusters)}{os.linesep}'
+    for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
+        cluster_id, _ = _e
+        
+        model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
+        model_score_l.sort()
+        top_score = score_dic[cluster_id]
+
+        output_str += (
+            f"{os.linesep}"
+            "-----------------------------------------------"
+            f"{os.linesep}"
+            f"Cluster {cluster_rank} (#{cluster_id}, "
+            f"n={len(model_score_l)}, "
+            f"top{threshold}_avg_score = {top_score:.2f})"
+            f"{os.linesep}")
+        output_str += os.linesep
+        output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
+        for model_ranking, element in enumerate(model_score_l, start=1):
+            score, pdb = element
+            # is the model the cluster center?
+            if pdb.file_name == cluster_centers[cluster_id]:
+                output_str += (
+                    f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
+                    f"{os.linesep}")
+            else:
+                output_str += (
+                    f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
+                    f"{os.linesep}")
+    output_str += (
+        "-----------------------------------------------"
+        f"{os.linesep}")
+    log.info('Saving detailed output to clustrmsd.txt')
+    with open(output_fname, 'w') as out_fh:
+        out_fh.write(output_str)

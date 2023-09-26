@@ -39,7 +39,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
-from haddock.libs.libclust import write_structure_list
+from haddock.libs.libclust import rank_clusters, write_structure_list
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
@@ -48,6 +48,8 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_dendrogram,
     iterate_threshold,
     read_matrix,
+    write_clusters,
+    write_clustrmsd_file,
     )
 
 
@@ -74,6 +76,7 @@ class HaddockModule(BaseHaddockModule):
         """Execute module."""
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models()
+
         # Cluster
         rmsd_matrix = read_matrix(
             self.matrix_json.input[0]
@@ -112,35 +115,11 @@ class HaddockModule(BaseHaddockModule):
         clusters = [c for c in unq_clusters if c != -1]
         log.info(f"clusters = {clusters}")
         
-        # initialising cluster centers
-        n_obs = len(cluster_arr)
-        cluster_centers = {}
-        # preparing output
-        clt_dic = {}
-        log.info('Saving output to cluster.out')
-        cluster_out = Path('cluster.out')
-        with open(cluster_out, 'w') as fh:
-            for cl_id in clusters:
-                if cl_id != -1:
-                    npw = np.where(cluster_arr == cl_id)[0]
-                    clt_dic[cl_id] = [models[n] for n in npw]
-                    fh.write(f"Cluster {cl_id} -> ")
-                    clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
-                    cluster_centers[cl_id] = models[clt_center].file_name
-                    for el in npw[:-1]:
-                        fh.write(f"{el + 1} ")
-                    fh.write(f"{npw[-1] + 1}")
-                    fh.write(os.linesep)
-        # rank the clusters
-        score_dic = {}
-        for clt_id in clt_dic:
-            score_l = [p.score for p in clt_dic[clt_id]]
-            score_l.sort()
-            denom = float(min(threshold, len(score_l)))
-            top4_score = sum(score_l[:threshold]) / denom
-            score_dic[clt_id] = top4_score
-        
-        sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
+        out_filename = Path('cluster.out')
+        clt_dic, cluster_centers = write_clusters(clusters, cluster_arr, models, rmsd_matrix, out_filename, centers=True)
+
+        # ranking clusters
+        score_dic, sorted_score_dic = rank_clusters(clt_dic, threshold)
 
         # Add this info to the models
         self.output_models = []
@@ -161,55 +140,7 @@ class HaddockModule(BaseHaddockModule):
                              self.output_models,
                              out_fname="clustrmsd.tsv")
 
-        # Prepare clustrmsd.txt
-        output_fname = Path('clustrmsd.txt')
-        output_str = f'### clustrmsd output ###{os.linesep}'
-        output_str += os.linesep
-        output_str += f'Clustering parameters {os.linesep}'
-        output_str += f"> linkage_type={linkage_type}{os.linesep}"
-        output_str += f"> criterion={crit}{os.linesep}"
-        output_str += f"> tolerance={tol:.2f}{os.linesep}"
-        output_str += f"> threshold={threshold}{os.linesep}"
-        output_str += os.linesep
-        
-        output_str += (
-            f"-----------------------------------------------{os.linesep}")
-        output_str += os.linesep
-        output_str += f'Total # of clusters: {len(clusters)}{os.linesep}'
-        for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-            cluster_id, _ = _e
-            
-            model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
-            model_score_l.sort()
-            top_score = score_dic[cluster_id]
-
-            output_str += (
-                f"{os.linesep}"
-                "-----------------------------------------------"
-                f"{os.linesep}"
-                f"Cluster {cluster_rank} (#{cluster_id}, "
-                f"n={len(model_score_l)}, "
-                f"top{threshold}_avg_score = {top_score:.2f})"
-                f"{os.linesep}")
-            output_str += os.linesep
-            output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
-            for model_ranking, element in enumerate(model_score_l, start=1):
-                score, pdb = element
-                # is the model the cluster center?
-                if pdb.file_name == cluster_centers[cluster_id]:
-                    output_str += (
-                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
-                        f"{os.linesep}")
-                else:
-                    output_str += (
-                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                        f"{os.linesep}")
-        output_str += (
-            "-----------------------------------------------"
-            f"{os.linesep}")
-        log.info('Saving detailed output to clustrmsd.txt')
-        with open(output_fname, 'w') as out_fh:
-            out_fh.write(output_str)
+        write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_score_dic, linkage_type, crit, tol, threshold)
 
         self.export_output_models()
         # sending matrix to next step of the workflow

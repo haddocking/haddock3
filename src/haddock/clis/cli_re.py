@@ -7,13 +7,10 @@ USAGE::
 """
 import argparse
 import sys
-from pathlib import Path
 
-from haddock import log
-
-from haddock.re.score import rescore, add_rescore_arguments
-from haddock.re.clustfcc import reclustfcc, add_clustfcc_arguments
-from haddock.re.clustrmsd import reclustrmsd, add_clustrmsd_arguments
+from haddock.re.clustfcc import add_clustfcc_arguments, reclustfcc
+from haddock.re.clustrmsd import add_clustrmsd_arguments, reclustrmsd
+from haddock.re.score import add_rescore_arguments, rescore
 
 
 ANA_FOLDER = "interactive"  # name of the analysis folder

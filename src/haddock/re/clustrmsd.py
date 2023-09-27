@@ -1,20 +1,26 @@
-import argparse
-import numpy as np
-import json
-
-from haddock import log
+"""haddock3-re clustrmsd subcommand."""
 from pathlib import Path
 
+import numpy as np
+
+from haddock import log
 from haddock.gear.config import load as read_config
-
+from haddock.gear.config import save as save_config
+from haddock.libs.libclust import (
+    add_cluster_info,
+    rank_clusters,
+    write_structure_list,
+    )
 from haddock.libs.libontology import ModuleIO
-
-from haddock.modules.analysis.clustrmsd.clustrmsd import get_clusters, rank_clusters, write_clusters
-from haddock.libs.libclust import write_structure_list
-
+from haddock.modules.analysis.clustrmsd.clustrmsd import (
+    get_clusters,
+    write_clusters,
+    write_clustrmsd_file,
+    )
 
 
 def add_clustrmsd_arguments(clustrmsd_subcommand):
+    """Add arguments to the clustrmsd subcommand."""
     clustrmsd_subcommand.add_argument(
         "clustrmsd_dir",
         help="The clustrmsd directory to recluster.",
@@ -46,9 +52,44 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
 
     return clustrmsd_subcommand
 
+
 def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None):
-    """Recluster the models in the clustrmsd directory."""
+    """
+    Recluster the models in the clustrmsd directory.
+    
+    Parameters
+    ----------
+    clustrmsd_dir : str
+        Path to the clustrmsd directory.
+    
+    n_clusters : int
+        Number of clusters to generate.
+    
+    distance : int
+        Cutoff distance.
+    
+    threshold : int
+        Cluster population threshold.
+    
+    Returns
+    -------
+    outdir : str
+        Path to the interactive directory.
+    """
     log.info(f"Reclustering {clustrmsd_dir}")
+
+    run_dir = Path(clustrmsd_dir).parent
+    clustrmsd_name = Path(clustrmsd_dir).name
+    # create the interactive folder
+    outdir = Path(run_dir, f"{clustrmsd_name}_interactive")
+    outdir.mkdir(exist_ok=True)
+
+    # create an io object
+    io = ModuleIO()
+    filename = Path(clustrmsd_dir, "io.json")
+    io.load(filename)
+    models = io.retrieve_models()
+
     # load the original clustering parameters via json
     clustrmsd_params = read_config(Path(clustrmsd_dir, "params.cfg"))
     key = list(clustrmsd_params['final_cfg'].keys())[0]
@@ -70,53 +111,54 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None):
     # load the clustering dendrogram
     dendrogram = np.loadtxt(Path(clustrmsd_dir, "dendrogram.txt"))
 
-    ## get the clusters
-    cluster_arr = get_clusters(dendrogram, clustrmsd_params["tolerance"], clustrmsd_params["criterion"])
+    # get the clusters
+    cluster_arr = get_clusters(
+        dendrogram,
+        clustrmsd_params["tolerance"],
+        clustrmsd_params["criterion"])
     log.info(f"clusters {cluster_arr}")
-
-    # we got the clusters, now we need write down (part of) the information available in the clustrmsd directory
-    run_dir = Path(clustrmsd_dir).parent
-    clustrmsd_name = Path(clustrmsd_dir).name
-    # create the interactive folder
-    outdir = Path(run_dir, f"{clustrmsd_name}_interactive")
-    outdir.mkdir(exist_ok=True)
-
-    # create an io object
-    io = ModuleIO()
-    filename = Path(clustrmsd_dir, "io.json")
-    io.load(filename)
-    models = io.retrieve_models()
     
     # processing the clusters
     unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
     clusters = [c for c in unq_clusters if c != -1]
     log.info(f"clusters = {clusters}")
 
-    clt_dic, cluster_centers = write_clusters(clusters, cluster_arr, models, out_filename=Path(outdir, "cluster.out"), rmsd_matrix = None, centers=False)
+    clt_dic, cluster_centers = write_clusters(
+        clusters,
+        cluster_arr,
+        models,
+        out_filename=Path(outdir, "cluster.out"),
+        rmsd_matrix=None,
+        centers=False
+        )
 
-    sorted_score_dic = rank_clusters(clt_dic, clustrmsd_params["threshold"])
+    # sorted_score_dic = rank_clusters(clt_dic, clustrmsd_params["threshold"])
+    score_dic, sorted_score_dic = rank_clusters(
+        clt_dic,
+        clustrmsd_params["threshold"]
+        )
     
-    # add this to the models
-    output_models = []
-    for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-        cluster_id, _ = _e
-        # sort the models by score
-        clt_dic[cluster_id].sort()
-        # rank the models
-        for model_ranking, pdb in enumerate(clt_dic[cluster_id],
-                                            start=1):
-            pdb.clt_id = int(cluster_id)
-            pdb.clt_rank = cluster_rank
-            pdb.clt_model_rank = model_ranking
-            output_models.append(pdb)
+    output_models = add_cluster_info(sorted_score_dic, clt_dic)
     
     write_structure_list(models,
                          output_models,
-                         out_fname=Path(outdir,"clustrmsd.tsv"))
-    # save the io.json file
+                         out_fname=Path(outdir, "clustrmsd.tsv")
+                         )
+    
+    write_clustrmsd_file(
+        clusters,
+        clt_dic,
+        cluster_centers,
+        score_dic,
+        sorted_score_dic,
+        clustrmsd_params,
+        output_fname=Path(outdir, "clustrmsd.txt")
+        )
+
+    # save the io.json file
     io.save(outdir)
 
+    # save the updated parameters in a json file
+    save_config(clustrmsd_params, Path(outdir, "params.cfg"))
+
     return outdir
-    
-
-

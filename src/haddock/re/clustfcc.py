@@ -1,29 +1,37 @@
-import argparse
+"""haddock3-re clustfcc subcommand."""
 
-import numpy as np
-import json
-
-from haddock import log
 from pathlib import Path
 
+from fcc.scripts import cluster_fcc
+
+from haddock import log
 from haddock.gear.config import load as read_config
-from fcc.scripts import calc_fcc_matrix, cluster_fcc
-
+from haddock.gear.config import save as save_config
+from haddock.libs.libclust import (
+    add_cluster_info,
+    rank_clusters,
+    write_structure_list,
+    )
 from haddock.libs.libontology import ModuleIO
-
-from haddock.libs.libclust import write_structure_list
+from haddock.modules.analysis.clustfcc.clustfcc import (
+    get_cluster_centers,
+    iterate_clustering,
+    write_clusters,
+    write_clustfcc_file,
+    )
 
 
 def add_clustfcc_arguments(clustfcc_subcommand):
+    """Add arguments to the clustfcc subcommand."""
     clustfcc_subcommand.add_argument(
-    "clustfcc_dir",
-    help="The clustfcc directory to recluster.",
-    )
+        "clustfcc_dir",
+        help="The clustfcc directory to recluster.",
+        )
 
     clustfcc_subcommand.add_argument(
         "-f",
         "--fraction",
-        help="fraction of common contacts to not be considered a singleton model.",
+        help="fraction of common contacts to not be considered a singleton model.",  # noqa: E501
         required=False,
         type=float,
         )
@@ -31,7 +39,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     clustfcc_subcommand.add_argument(
         "-s",
         "--strictness",
-        help="fraction of common contacts to be considered to be part of the same cluster.",
+        help="fraction of common contacts to be considered to be part of the same cluster.",  # noqa: E501
         required=False,
         type=float,
         )
@@ -46,8 +54,31 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     
     return clustfcc_subcommand
 
+
 def reclustfcc(clustfcc_dir, fraction=None, strictness=None, threshold=None):
-    """Recluster the models in the clustfcc directory."""
+    """
+    Recluster the models in the clustfcc directory.
+    
+    Parameters
+    ----------
+    clustfcc_dir : str
+        Path to the clustfcc directory.
+    
+    fraction : float
+        Fraction of common contacts to not be considered a singleton model.
+    
+    strictness : float
+        Fraction of common contacts to be considered to be part of the same
+         cluster.
+    
+    threshold : int
+        Cluster population threshold.
+    
+    Returns
+    -------
+    outdir : str
+        Path to the interactive directory.
+    """
     log.info(f"Reclustering {clustfcc_dir}")
 
     # create the interactive folder
@@ -76,83 +107,45 @@ def reclustfcc(clustfcc_dir, fraction=None, strictness=None, threshold=None):
     if threshold is not None:
         clustfcc_params["threshold"] = threshold
     
-    # load the fcc matrix
+    # load the fcc matrix
     pool = cluster_fcc.read_matrix(
-            Path(clustfcc_dir, "fcc.matrix"),
-            clustfcc_params['fraction_cutoff'],
-            clustfcc_params['strictness'],
-            )
-
-    cluster_check = False
-    while not cluster_check:
-        for threshold in range(clustfcc_params['threshold'], 0, -1):
-            log.info(f'Clustering with threshold={threshold}')
-            _, clusters = cluster_fcc.cluster_elements(
-                pool,
-                threshold=threshold,
-                )
-            if not clusters:
-                log.info(
-                    "[WARNING] No cluster was found, decreasing threshold!"
-                    )
-            else:
-                cluster_check = True
-                # pass the actual threshold back to the param dict
-                #  because it will be use in the detailed output
-                clustfcc_params['threshold'] = threshold
-                break
-        if not cluster_check:
-            # No cluster was obtained in any threshold
-            cluster_check = True
+        Path(clustfcc_dir, "fcc.matrix"),
+        clustfcc_params['fraction_cutoff'],
+        clustfcc_params['strictness'],
+        )
+    
+    # iterate clustering until at least one cluster is found
+    clusters, threshold = iterate_clustering(
+        pool,
+        clustfcc_params['threshold']
+        )
+    clustfcc_params['threshold'] = threshold
 
     # Prepare output and read the elements
     clt_dic = {}
     if clusters:
-        # write the classic output file for compatibility reasons
-        log.info('Saving output to cluster.out')
-        cluster_out = Path('cluster.out')
-        with open(cluster_out, 'w') as fh:
-            cluster_fcc.output_clusters(fh, clusters)
-        fh.close()
-        clt_centers = {}
-        for clt in clusters:
-            cluster_id = clt.name
-            cluster_center_id = clt.center.name - 1
-            cluster_center_pdb = models[cluster_center_id]
-            clt_dic[cluster_id] = []
-            clt_centers[cluster_id] = cluster_center_pdb
-            clt_dic[cluster_id].append(cluster_center_pdb)
-            for model in clt.members:
-                model_id = model.name
-                model_pdb = models[model_id - 1]
-                clt_dic[cluster_id].append(model_pdb)
-        # Rank the clusters
-        #  they are sorted by the topX (threshold) models in each cluster
-        score_dic = {}
-        for clt_id in clt_dic:
-            score_l = [p.score for p in clt_dic[clt_id]]
-            score_l.sort()
-            denom = float(min(threshold, len(score_l)))
-            top4_score = sum(score_l[:threshold]) / denom
-            score_dic[clt_id] = top4_score
-        sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
-        # Add this info to the models
-        output_models = []
-        for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-            cluster_id, _ = _e
-            # sort the models by score
-            clt_dic[cluster_id].sort()
-            # rank the models
-            for model_ranking, pdb in enumerate(clt_dic[cluster_id],
-                                                start=1):
-                pdb.clt_id = cluster_id
-                pdb.clt_rank = cluster_rank
-                pdb.clt_model_rank = model_ranking
-                output_models.append(pdb)
+        write_clusters(clusters, out_filename=Path(outdir, "cluster.out"))
+
+        # Get the cluster centers
+        clt_dic, clt_centers = get_cluster_centers(clusters, models)
+
+        score_dic, sorted_score_dic = rank_clusters(clt_dic, threshold)
+
+        output_models = add_cluster_info(sorted_score_dic, clt_dic)
+        
         # Write unclustered structures
         write_structure_list(models,
                              output_models,
-                             out_fname=Path(outdir,"clustfcc.tsv"))
-    
-    return outdir
+                             out_fname=Path(outdir, "clustfcc.tsv"))
+        
+        write_clustfcc_file(
+            clusters,
+            clt_centers,
+            clt_dic,
+            clustfcc_params,
+            sorted_score_dic,
+            output_fname=Path(outdir, 'clustfcc.txt')
+            )
 
+        save_config(clustfcc_params, Path(outdir, "params.cfg"))
+    return outdir

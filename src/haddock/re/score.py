@@ -1,18 +1,19 @@
-import numpy as np
+"""haddock3-re score subcommand."""
 import json
 from pathlib import Path
 
+import numpy as np
 
 from haddock import log
 from haddock.libs.libplots import read_capri_table
 
-import argparse
 
 def add_rescore_arguments(rescore_subcommand):
+    """Add arguments to the score subcommand."""
     rescore_subcommand.add_argument(
-    "capri_dir",
-    help="The caprieval directory to rescore.",
-    )
+        "capri_dir",
+        help="The caprieval directory to rescore.",
+        )
 
     rescore_subcommand.add_argument(
         "-e",
@@ -56,12 +57,14 @@ def add_rescore_arguments(rescore_subcommand):
 
     return rescore_subcommand
 
+
 ANA_FOLDER = "interactive"  # name of the analysis folder
 
-def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air=None):
+
+def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air=None):  # noqa: E501
     """Rescore the CAPRI models."""
-    # load the scoring pars via json
     log.info(f"Rescoring {capri_dir}")
+    # load the scoring pars via json
     scoring_pars = json.load(open(Path(capri_dir, "weights_params.json"), "r"))
     log.info(f"Previous scoring parameters: {scoring_pars}")
     if w_elec is not None:

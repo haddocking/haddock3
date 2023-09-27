@@ -1,15 +1,15 @@
 """RMSD clustering."""
+import os
 from pathlib import Path
 
 import numpy as np
-import os
 from scipy.cluster.hierarchy import fcluster, linkage
 
 from haddock import log
 from haddock.libs.libontology import RMSDFile
 
 
-def write_clusters(clusters, cluster_arr, models, rmsd_matrix, out_filename="cluster.out", centers=False):
+def write_clusters(clusters, cluster_arr, models, rmsd_matrix, out_filename="cluster.out", centers=False):  # noqa: E501
     """
     Write the clusters to a file.
 
@@ -186,11 +186,14 @@ def iterate_threshold(cluster_arr, threshold):
         log.info(f'Clustering with threshold={curr_thr}')
         new_cluster_arr = apply_threshold(cluster_arr, curr_thr)
         ncl = len(np.unique(new_cluster_arr))
-        if ncl <= 1:  # contains -1 (unclustered)
+        if -1 in new_cluster_arr:  # contains -1 (unclustered)
+            ncl -= 1
+        # if no clusters found, try with a lower threshold
+        if ncl == 0:
             log.warning(f'No clusters found with threshold={curr_thr}')
         else:
             break
-    return new_cluster_arr
+    return new_cluster_arr, curr_thr
 
 
 def cond_index(i, j, n):
@@ -240,19 +243,41 @@ def get_cluster_center(npw, n_obs, rmsd_matrix):
     return cluster_center
 
 
-def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_score_dic, linkage_type, crit, tol, threshold):
+def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_score_dic, params, output_fname='clustrmsd.txt'):  # noqa E501
     """
     Write the clustrmsd.txt file.
+
+    Parameters
+    ----------
+    clusters : np.ndarray
+        Array of clusters.
+    
+    clt_dic : dict
+        Dictionary with the clusters.
+    
+    cluster_centers : dict
+        Dictionary with the cluster centers.
+    
+    score_dic : dict
+        Dictionary with the scores.
+    
+    sorted_score_dic : dict
+        Dictionary with the sorted scores.
+    
+    params : dict
+        Dictionary with the clustering parameters.
+    
+    output_fname : str
+        Output filename.
     """
     # Prepare clustrmsd.txt
-    output_fname = Path('clustrmsd.txt')
     output_str = f'### clustrmsd output ###{os.linesep}'
     output_str += os.linesep
     output_str += f'Clustering parameters {os.linesep}'
-    output_str += f"> linkage_type={linkage_type}{os.linesep}"
-    output_str += f"> criterion={crit}{os.linesep}"
-    output_str += f"> tolerance={tol:.2f}{os.linesep}"
-    output_str += f"> threshold={threshold}{os.linesep}"
+    output_str += f"> linkage_type={params['linkage']}{os.linesep}"
+    output_str += f"> criterion={params['criterion']}{os.linesep}"
+    output_str += f"> tolerance={params['tolerance']:.2f}{os.linesep}"
+    output_str += f"> threshold={params['threshold']}{os.linesep}"
     output_str += os.linesep
     
     output_str += (
@@ -272,21 +297,20 @@ def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_s
             f"{os.linesep}"
             f"Cluster {cluster_rank} (#{cluster_id}, "
             f"n={len(model_score_l)}, "
-            f"top{threshold}_avg_score = {top_score:.2f})"
+            f"top{params['threshold']}_avg_score = {top_score:.2f})"
             f"{os.linesep}")
         output_str += os.linesep
         output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
         for model_ranking, element in enumerate(model_score_l, start=1):
             score, pdb = element
-            # is the model the cluster center?
-            if pdb.file_name == cluster_centers[cluster_id]:
-                output_str += (
-                    f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
-                    f"{os.linesep}")
-            else:
-                output_str += (
-                    f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                    f"{os.linesep}")
+            output_str += (
+                f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
+                )
+            if cluster_centers:
+                # is the model the cluster center?
+                if pdb.file_name == cluster_centers[cluster_id]:
+                    output_str += "\t*"
+            output_str += (f"{os.linesep}")
     output_str += (
         "-----------------------------------------------"
         f"{os.linesep}")

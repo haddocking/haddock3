@@ -33,17 +33,19 @@ matrix.
 
 .. _scipy routines: https://docs.scipy.org/doc/scipy/reference/cluster.hierarchy.html
 """  # noqa: E501
-import os
 from pathlib import Path
 
 import numpy as np
 
 from haddock import log
-from haddock.libs.libclust import rank_clusters, write_structure_list
+from haddock.libs.libclust import (
+    add_cluster_info,
+    rank_clusters,
+    write_structure_list,
+    )
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
-    get_cluster_center,
     get_clusters,
     get_dendrogram,
     iterate_threshold,
@@ -81,34 +83,41 @@ class HaddockModule(BaseHaddockModule):
         rmsd_matrix = read_matrix(
             self.matrix_json.input[0]
             )
-        # loading parameters
-        linkage_type = self.params["linkage"]
-        crit = self.params["criterion"]
-        threshold = self.params['threshold']
-        
+                
         # getting clusters_list
-        dendrogram = get_dendrogram(rmsd_matrix, linkage_type)
+        dendrogram = get_dendrogram(rmsd_matrix, self.params["linkage"])
         # setting tolerance
         if np.isnan(self.params["tolerance"]):
             self.log("tolerance is not defined")
-            if crit == "maxclust":
+            if self.params['criterion'] == "maxclust":
                 tol = max(len(models) // 4 + 1, 2)
             else:
                 tol = np.mean(dendrogram[:, 2])
-            self.log(f"Setting tolerance to {tol:.2f} for criterion {crit}")
+            self.log(f"Setting tolerance to {tol:.2f} for criterion {self.params['criterion']}")  # noqa: E501
         else:
-            if crit == "maxclust":
+            if self.params['criterion'] == "maxclust":
                 tol = int(self.params["tolerance"])
-            elif crit == "distance":
+            elif self.params['criterion'] == "distance":
                 tol = float(self.params["tolerance"])
             else:
-                raise Exception(f"unknown criterion {crit}")
+                raise Exception(
+                    f"unknown criterion {self.params['criterion']}"
+                    )
         log.info(f"tolerance {tol}")
-        cluster_arr = get_clusters(dendrogram, tol, crit)
+        self.params["tolerance"] = tol
+        cluster_arr = get_clusters(
+            dendrogram,
+            self.params["tolerance"],
+            self.params["criterion"]
+            )
 
         # when crit == distance, apply clustering threshold
-        if crit == "distance":
-            cluster_arr = iterate_threshold(cluster_arr, threshold)
+        if self.params['criterion'] == "distance":
+            cluster_arr, threshold = iterate_threshold(
+                cluster_arr,
+                self.params['threshold']
+                )
+            self.params['threshold'] = threshold
 
         # print clusters
         unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
@@ -116,31 +125,36 @@ class HaddockModule(BaseHaddockModule):
         log.info(f"clusters = {clusters}")
         
         out_filename = Path('cluster.out')
-        clt_dic, cluster_centers = write_clusters(clusters, cluster_arr, models, rmsd_matrix, out_filename, centers=True)
+        clt_dic, cluster_centers = write_clusters(
+            clusters,
+            cluster_arr,
+            models,
+            rmsd_matrix,
+            out_filename,
+            centers=True
+            )
 
         # ranking clusters
-        score_dic, sorted_score_dic = rank_clusters(clt_dic, threshold)
+        score_dic, sorted_score_dic = rank_clusters(
+            clt_dic,
+            self.params['threshold']
+            )
 
-        # Add this info to the models
-        self.output_models = []
-        for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
-            cluster_id, _ = _e
-            # sort the models by score
-            clt_dic[cluster_id].sort()
-            # rank the models
-            for model_ranking, pdb in enumerate(clt_dic[cluster_id],
-                                                start=1):
-                pdb.clt_id = int(cluster_id)
-                pdb.clt_rank = cluster_rank
-                pdb.clt_model_rank = model_ranking
-                self.output_models.append(pdb)
+        self.output_models = add_cluster_info(sorted_score_dic, clt_dic)
         
         # Write unclustered structures
         write_structure_list(models,
                              self.output_models,
                              out_fname="clustrmsd.tsv")
 
-        write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_score_dic, linkage_type, crit, tol, threshold)
+        write_clustrmsd_file(
+            clusters,
+            clt_dic,
+            cluster_centers,
+            score_dic,
+            sorted_score_dic,
+            self.params
+            )
 
         self.export_io_models()
         # sending matrix to next step of the workflow

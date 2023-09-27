@@ -1,12 +1,12 @@
+"""FCC clustering."""
 import os
+from pathlib import Path
 
 import numpy as np
-
-from haddock import log
 from fcc.scripts import cluster_fcc
 
+from haddock import log
 
-from pathlib import Path
 
 def iterate_clustering(pool, threshold_param):
     """
@@ -50,7 +50,8 @@ def iterate_clustering(pool, threshold_param):
             cluster_check = True
     return clusters, threshold
 
-def write_clusters(clusters):
+
+def write_clusters(clusters, out_filename="cluster.out"):
     """
     Write the clusters to the cluster.out file.
 
@@ -59,16 +60,20 @@ def write_clusters(clusters):
     clusters : list
         A list of clusters.
     
+    out_filename : str, optional
+        The name of the output file. The default is "cluster.out".
+    
     Returns
     -------
     None
     """
     # write the classic output file for compatibility reasons
-    log.info('Saving output to cluster.out')
-    cluster_out = Path('cluster.out')
+    log.info(f'Saving output to {out_filename}')
+    cluster_out = Path(out_filename)
     with open(cluster_out, 'w') as fh:
         cluster_fcc.output_clusters(fh, clusters)
     fh.close()
+
 
 def get_cluster_centers(clusters, models_to_cluster):
     """
@@ -92,7 +97,7 @@ def get_cluster_centers(clusters, models_to_cluster):
     """
     clt_dic = {}
     clt_centers = {}
-    # iterate over the clusters
+    # iterate over the clusters
     for clt in clusters:
         cluster_id = clt.name
         cluster_center_id = clt.center.name - 1
@@ -101,7 +106,7 @@ def get_cluster_centers(clusters, models_to_cluster):
         clt_dic[cluster_id] = []
         clt_centers[cluster_id] = cluster_center_pdb
         clt_dic[cluster_id].append(cluster_center_pdb)
-        # iterate over the models in the cluster
+        # iterate over the models in the cluster
         for model in clt.members:
             model_id = model.name
             model_pdb = models_to_cluster[model_id - 1]
@@ -109,7 +114,7 @@ def get_cluster_centers(clusters, models_to_cluster):
     return clt_dic, clt_centers
 
 
-def write_clustfcc_file(clusters, clt_centers, clt_dic, params, sorted_score_dic):
+def write_clustfcc_file(clusters, clt_centers, clt_dic, params, sorted_score_dic, output_fname='clustfcc.txt'):  # noqa: E501
     """
     Write the clustfcc.txt file.
 
@@ -135,7 +140,6 @@ def write_clustfcc_file(clusters, clt_centers, clt_dic, params, sorted_score_dic
     None
     """
     # Prepare clustfcc.txt
-    output_fname = Path('clustfcc.txt')
     output_str = f'### clustfcc output ###{os.linesep}'
     output_str += os.linesep
     output_str += f'Clustering parameters {os.linesep}'

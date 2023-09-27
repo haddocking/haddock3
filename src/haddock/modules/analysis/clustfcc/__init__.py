@@ -2,21 +2,24 @@
 import os
 from pathlib import Path
 
-import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 
 from haddock import FCC_path, log
-from haddock.libs.libclust import add_cluster_info, rank_clusters, write_structure_list
+from haddock.libs.libclust import (
+    add_cluster_info,
+    rank_clusters,
+    write_structure_list,
+    )
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
-
 from haddock.modules.analysis.clustfcc.clustfcc import (
     get_cluster_centers,
     iterate_clustering,
     write_clusters,
     write_clustfcc_file,
     )
+
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -121,7 +124,10 @@ class HaddockModule(BaseHaddockModule):
             write_clusters(clusters)
             
             # Get the cluster centers
-            clt_dic, clt_centers = get_cluster_centers(clusters, models_to_cluster)
+            clt_dic, clt_centers = get_cluster_centers(
+                clusters,
+                models_to_cluster
+                )
             
             # ranking clusters
             score_dic, sorted_score_dic = rank_clusters(clt_dic, threshold)
@@ -134,7 +140,13 @@ class HaddockModule(BaseHaddockModule):
                                  self.output_models,
                                  out_fname="clustfcc.tsv")
 
-            write_clustfcc_file(clusters, clt_centers, clt_dic, self.params, sorted_score_dic)
+            write_clustfcc_file(
+                clusters,
+                clt_centers,
+                clt_dic,
+                self.params,
+                sorted_score_dic
+                )
         else:
             log.warning('No clusters were found')
             self.output_models = models_to_cluster

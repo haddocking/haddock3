@@ -91,7 +91,20 @@ def protprot_onechain_list():
 @pytest.fixture
 def params():
     return {
-        "receptor_chain": "A", "ligand_chains": ["B"], "aln_method": "sequence"
+        "receptor_chain": "A",
+        "ligand_chains": ["B"],
+        "aln_method": "sequence",
+        "allatoms": False,
+        }
+
+
+@pytest.fixture
+def params_all():
+    return {
+        "receptor_chain": "A",
+        "ligand_chains": ["B"],
+        "aln_method": "sequence",
+        "allatoms": True,
         }
 
 
@@ -142,6 +155,24 @@ def protprot_caprimodule(protprot_input_list, params):
         model=model,
         path=golden_data,
         params=params,
+        )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture
+def protprot_allatm_caprimodule(protprot_input_list, params_all):
+    """Protein-Protein CAPRI module."""
+    reference = protprot_input_list[0].rel_path
+    model = protprot_input_list[1]
+    capri = CAPRI(
+        identificator=42,
+        reference=reference,
+        model=model,
+        path=golden_data,
+        params=params_all,
         )
 
     yield capri
@@ -225,6 +256,27 @@ def test_protprot_dockq(protprot_caprimodule):
     assert round_two_dec(protprot_caprimodule.dockq) == 0.10
 
 
+def test_protprot_bb_vs_all_atoms(
+    protprot_caprimodule,
+    protprot_allatm_caprimodule,
+        ):
+    """Test difference between all and backbone atoms selection."""
+    assert protprot_caprimodule.allatoms is False
+    assert protprot_allatm_caprimodule.allatoms is True
+    assert protprot_caprimodule.atoms != protprot_allatm_caprimodule.atoms
+
+
+def test_protprot_allatoms(protprot_allatm_caprimodule):
+    """Test protein-protein all atoms calculations."""
+    # Compute values with all atoms calculations
+    protprot_allatm_caprimodule.calc_fnat()
+    protprot_allatm_caprimodule.calc_lrmsd()
+    protprot_allatm_caprimodule.calc_irmsd()
+    protprot_allatm_caprimodule.calc_ilrmsd()
+    # process checks
+    assert round_two_dec(protprot_allatm_caprimodule.lrmsd) == 21.10
+
+
 def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
     """Test protein-protein i-rmsd calculation."""
     protprot_1bkd_caprimodule.calc_irmsd(cutoff=10.0)
@@ -256,6 +308,22 @@ def test_protprot_1bkd_dockq(protprot_1bkd_caprimodule):
     protprot_1bkd_caprimodule.lrmsd = 28.47
     protprot_1bkd_caprimodule.calc_dockq()
     assert round_two_dec(protprot_1bkd_caprimodule.dockq) == 0.06
+
+
+def test_protprot_1bkd_allatoms(protprot_1bkd_caprimodule):
+    """Test protein-protein all atoms calculations."""
+    # modify module allatoms parameter
+    protprot_1bkd_caprimodule.allatoms = True
+    protprot_1bkd_caprimodule.atoms = protprot_1bkd_caprimodule._load_atoms(
+        protprot_1bkd_caprimodule.model,
+        protprot_1bkd_caprimodule.reference,
+        full=protprot_1bkd_caprimodule.allatoms,
+        )
+    # Compute values with all atoms calculations
+    protprot_1bkd_caprimodule.calc_fnat()
+    protprot_1bkd_caprimodule.calc_lrmsd()
+    protprot_1bkd_caprimodule.calc_irmsd()
+    protprot_1bkd_caprimodule.calc_ilrmsd()
 
 
 def test_protlig_irmsd(protlig_caprimodule):
@@ -304,6 +372,24 @@ def test_protdna_fnat(protdna_caprimodule):
     """Test protein-dna fnat calculation."""
     protdna_caprimodule.calc_fnat()
     assert round_two_dec(protdna_caprimodule.fnat) == 0.49
+
+
+def test_protdna_allatoms(protdna_caprimodule):
+    """Test protein-protein all atoms calculations."""
+    # modify module allatoms parameter
+    protdna_caprimodule.allatoms = True
+    protdna_caprimodule.atoms = protdna_caprimodule._load_atoms(
+        protdna_caprimodule.model,
+        protdna_caprimodule.reference,
+        full=protdna_caprimodule.allatoms,
+        )
+    # Compute values with all atoms calculations
+    protdna_caprimodule.calc_fnat()
+    protdna_caprimodule.calc_lrmsd()
+    protdna_caprimodule.calc_irmsd()
+    protdna_caprimodule.calc_ilrmsd()
+    # process checks
+    # assert round_two_dec(protdna_caprimodule.lrmsd) == 6.26
 
 
 def test_make_output(protprot_caprimodule):

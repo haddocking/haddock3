@@ -173,3 +173,13 @@ clt_threshold:
   long: Threshold (n) used for the average evaluation in the cluster-based output.
   group: analysis
   explevel: easy
+
+allatoms:
+  default: false
+  type: boolean
+  title: Atoms to be considered during the analysis.
+  short: Atoms to be considered during the analysis.
+  long: Atoms to be considered during the analysis. If false (default), only
+        back-bone atoms will be considered, else all heavy-atoms.
+  group: analysis
+  explevel: easy

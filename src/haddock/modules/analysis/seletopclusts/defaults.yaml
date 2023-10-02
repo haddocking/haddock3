@@ -6,16 +6,15 @@ top_cluster:
   title: Number of clusters to consider 
   short: Number of clusters to consider (ranked by score)
   long: Number of clusters to consider (ranked by score)
-  group: ''
+  group: analysis
   explevel: easy
 top_models:
   default: .nan
-  type: float
-  min: -9999
-  max: 9999
-  precision: 3
+  type: integer
+  min: 1
+  max: 99999
   title: Number of best-ranked models to select per cluster
   short: Number of best-ranked models to select per cluster. By default, all models are selected.
   long: Number of best-ranked models to select per cluster. By default, all models are selected. If one expects to find many clusters (e.g., in the case of vague restraints), this number can be reduced to speed up the protocol. Instead, if few clusters are expected (very specific and localized restraints) this number can be increased.
-  group: ''
+  group: analysis
   explevel: easy

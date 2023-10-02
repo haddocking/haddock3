@@ -1,10 +1,10 @@
 select:
   default: 200
   type: integer
-  min: -9999
-  max: 9999
+  min: 1
+  max: 50000
   title: Number of best-ranked models to select
   short: Number of best-ranked models to select for further steps of the workflow
   long: Number of best-ranked models to select for further steps of the workflow. Typically only 200 models produced at the rigid-body docking stage are selected for further refinement.
-  group: ''
+  group: analysis
   explevel: easy

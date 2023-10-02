@@ -3,7 +3,7 @@ executable:
   type: file
   title: Relative path to contact_fcc executable.
   short: Relative path to contact_fcc executable.
-  long: As contact_fcc is an external tool, it's path must be provided. Basically, this parameter should not be changed, as the tool is downloaded at the same time as haddock3. Nevertheless, one could try to have the contact_fcc tool written in an other programming language of whatever.
+  long: As contact_fcc is an external tool, its path must be provided. Basically, this parameter should not be changed, as the tool is downloaded at the same time as haddock3. Nevertheless, one could try to have the contact_fcc tool written in another programming language or whatever.
   group: executable
   explevel: expert
 contact_distance_cutoff:

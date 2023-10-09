@@ -3,12 +3,11 @@ import shutil
 from pathlib import Path
 
 import pandas as pd
-import plotly.graph_objects as go
 
 from haddock import log
 from haddock.libs.libparallel import Scheduler
-from haddock.libs.libutil import parse_ncores
 from haddock.libs.libplots import make_alascan_plot
+from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.alascan.scan import (
     Scan,
@@ -27,7 +26,7 @@ def get_index_list(nmodels, ncores):
     spc = nmodels // ncores
     # now the remainder
     rem = nmodels % ncores
-    # now the list of indexes to be used for the RMSD calculation
+    # now the list of indexes to be used for the SCAN calculation
     index_list = [0]
     for core in range(ncores):
         if core < rem:
@@ -79,7 +78,7 @@ class HaddockModule(BaseHaddockModule):
                 )
             # running now the ContactJob
             job_f = Path(output_name)
-            # init RMSDJob
+            # init ScanJob
             job = ScanJob(
                 job_f,
                 self.params,

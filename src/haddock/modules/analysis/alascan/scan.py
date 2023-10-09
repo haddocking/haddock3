@@ -4,6 +4,7 @@ import shlex
 import subprocess
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from haddock import log
@@ -187,8 +188,8 @@ def add_zscores(df_scan_clt, column='delta_score'):
     df_scan : pandas.DataFrame
         Dataframe with the z-scores added.
     """
-    mean_delta = df_scan_clt[column].mean()
-    std_delta = df_scan_clt[column].std()
+    mean_delta = np.mean(df_scan_clt[column])
+    std_delta = np.std(df_scan_clt[column])
     if std_delta > 0.0:
         df_scan_clt['z_score'] = (df_scan_clt[column] - mean_delta) / std_delta
     else:
@@ -331,7 +332,6 @@ class Scan:
                 if key.startswith("resdic")
                 }
     
-
     def run(self):
         """Run alascan calculations."""
         for native in self.model_list:
@@ -352,9 +352,11 @@ class Scan:
             if self.filter_resdic != {'_': []}:
                 interface = self.filter_resdic
             else:
-                interface = CAPRI.identify_interface(native.rel_path, cutoff=self.int_cutoff)
-                
-                        
+                interface = CAPRI.identify_interface(
+                    native.rel_path,
+                    cutoff=self.int_cutoff
+                    )
+                    
             atoms = get_atoms(native.rel_path)
             coords, chain_ranges = load_coords(native.rel_path,
                                                atoms,

@@ -11,7 +11,6 @@ from haddock.modules.analysis.alascan.scan import (
     Scan,
     add_delta_to_bfactor,
     add_zscores,
-    alascan_cluster_analysis,
     mutate,
     )
 

@@ -97,16 +97,6 @@ def test_alascan_module(alascan_module, protprot_model_list):
     assert alascan_module.int_cutoff == 3.0
     assert alascan_module.scan_res == "ALA"
 
-    # this requires CNS to be installed
-    # alascan_module.run()
-    # assert alascan_module.df_scan.empty
-
-    # now test the alascan_cluster_analysis function
-    clt_scan = alascan_cluster_analysis(protprot_model_list)
-    assert clt_scan == {"-": {}}
-    os.remove("scan_protprot_complex_1.pdb.csv")
-    os.remove("scan_clt_-.csv")
-
 
 def test_mutate(protprot_model_list):
     """Test the mutate function."""

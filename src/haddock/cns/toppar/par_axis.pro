@@ -14,4 +14,6 @@ NONBonded  YY		0.01	0.01	0.01 	0.01
 NONBonded  ZZ		0.01	0.01	0.01 	0.01
 NONBonded  OO		0.01	0.01	0.01 	0.01
 
+IMPROPER   XX YY OO ZZ     500.0     0    90.0
+
 set message on echo on end

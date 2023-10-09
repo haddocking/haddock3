@@ -62,3 +62,23 @@ def test_main(rigid_json, flexref_json):
 
     # clean up
     shutil.rmtree(run_dir)
+
+
+def test_analysis():
+    """Test traceback on a pure analysis run."""
+    # build fake run_dir
+    run_dir = "example_dir"
+    step_dirs = [os.path.join(run_dir, "0_topoaa"),
+                 os.path.join(run_dir, "1_caprieval")]
+    
+    if os.path.isdir(run_dir):
+        shutil.rmtree(run_dir)
+    # Loop over directories to be created
+    for d in [run_dir, *step_dirs]:
+        os.mkdir(d)
+
+    # run haddock3-traceback
+    main(run_dir)
+
+    # check traceback folder does not exist
+    assert not os.path.isdir(os.path.join(run_dir, "traceback"))

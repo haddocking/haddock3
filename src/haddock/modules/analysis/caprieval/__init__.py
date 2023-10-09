@@ -99,4 +99,4 @@ class HaddockModule(BaseHaddockModule):
         # Send models to the next step,
         #  no operation is done on them
         self.output_models = models
-        self.export_output_models()
+        self.export_io_models()

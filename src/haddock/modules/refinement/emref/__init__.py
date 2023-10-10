@@ -48,6 +48,15 @@ class HaddockModule(BaseCNSModule):
         if sampling_factor > 100:
             self.log("[Warning] sampling_factor is larger than 100")
         
+        max_nmodels = self.params["max_nmodels"]
+        nmodels = len(models_to_refine) * sampling_factor
+        if nmodels > max_nmodels:
+            self.finish_with_error(
+                f"Too many models ({nmodels}) to refine, max_nmodels ="
+                f" {max_nmodels}. Please reduce the number of models or"
+                " decrease the sampling_factor."
+                )
+        
         # checking the ambig_fname:
         try:
             prev_ambig_fnames = [mod.restr_fname for mod in models_to_refine]
@@ -116,4 +125,4 @@ class HaddockModule(BaseCNSModule):
                 haddock_score = haddock_model.calc_haddock_score(**weights)
                 pdb.score = haddock_score
 
-        self.export_output_models(faulty_tolerance=self.params["tolerance"])
+        self.export_io_models(faulty_tolerance=self.params["tolerance"])

@@ -132,12 +132,12 @@ class HaddockModule(BaseHaddockModule):
         if self.params["output"] is True:
             models_to_export = []
             for model in models:
-                name = f"{model.file_name}_alascan.pdb"
+                name = f"{model.file_name.rstrip('.pdb')}_alascan.pdb"
                 # changing attributes
                 name_path = Path(name)
                 shutil.copy(model.rel_path, name_path)
 
-                alascan_fname = f"scan_{model.file_name}.csv"
+                alascan_fname = f"scan_{model.file_name.rstrip('.pdb')}.csv"
                 # add delta_score as a bfactor to the model
                 df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
                 add_delta_to_bfactor(name, df_scan)
@@ -153,4 +153,4 @@ class HaddockModule(BaseHaddockModule):
             # Send models to the next step,
             #  no operation is done on them
             self.output_models = models
-        self.export_output_models()
+        self.export_io_models()

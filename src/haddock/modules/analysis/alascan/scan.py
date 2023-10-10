@@ -13,6 +13,7 @@ from haddock.modules.analysis.caprieval.capri import CAPRI
 
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']
+
 RES_CODES = dict([
     ("CYS", "C"),
     ("ASP", "D"),
@@ -34,6 +35,29 @@ RES_CODES = dict([
     ("GLU", "E"),
     ("TYR", "Y"),
     ("MET", "M"),
+    ("ALY", "K"),
+    ("ASH", "D"),
+    ("CFE", "C"),
+    ("CSP", "C"),
+    ("CYC", "C"),
+    ("CYF", "C"),
+    ("CYM", "C"),
+    ("DDZ", "A"),
+    ("GLH", "E"),
+    ("HLY", "P"),
+    ("HY3", "P"),
+    ("HYP", "P"),
+    ("M3L", "K"),
+    ("MLY", "K"),
+    ("MLZ", "K"),
+    ("MSE", "M"),
+    ("NEP", "H"),
+    ("PNS", "S"),
+    ("PTR", "Y"),
+    ("SEP", "S"),
+    ("TOP", "T"),
+    ("TYP", "Y"),
+    ("TYS", "Y"),
     ])
 
 
@@ -77,7 +101,10 @@ def mutate(pdb_f, target_chain, target_resnum, mut_resname):
                         mut_pdb_l.append(line)
                 else:
                     mut_pdb_l.append(line)
-    mut_id = f'{RES_CODES[resname]}{target_resnum}{RES_CODES[mut_resname]}'
+    try:
+        mut_id = f'{RES_CODES[resname]}{target_resnum}{RES_CODES[mut_resname]}'
+    except KeyError:
+        raise KeyError(f"Could not mutate {resname} into {mut_resname}.")
     mut_pdb_fname = Path(
         pdb_f.name.replace('.pdb', f'-{target_chain}_{mut_id}.pdb'))
     with open(mut_pdb_fname, 'w') as fh:
@@ -218,7 +245,7 @@ def alascan_cluster_analysis(models):
         else:
             cl_pops[cl_id] += 1
         # read the scan file
-        alascan_fname = f"scan_{native.file_name}.csv"
+        alascan_fname = f"scan_{native.file_name.rstrip('.pdb')}.csv"
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
         # loop over the scan file
         for row_idx in range(df_scan.shape[0]):
@@ -281,6 +308,16 @@ def alascan_cluster_analysis(models):
             index=False,
             float_format='%.3f',
             sep="\t")
+
+        # add comment
+        fl_content = open(scan_clt_filename, 'r').read()
+        with open(scan_clt_filename, 'w') as f:
+                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(f"# `alascan` cluster results for cluster {cl_id}{os.linesep}")  # noqa E501
+                f.write(f"#{os.linesep}")
+                f.write(f"# z_score is calculated with respect to the mean values of all residues{os.linesep}")  # noqa E501
+                f.write(f"#######################################################################{os.linesep}")  # noqa E501
+                f.write(fl_content)
     return clt_scan
 
 
@@ -381,10 +418,14 @@ class Scan:
                         c_des = n_des
                         c_bsa = n_bsa
                     else:
-                        mut_pdb_name = mutate(native.rel_path,
-                                              chain,
-                                              res,
-                                              end_resname)
+                        try:
+                            mut_pdb_name = mutate(native.rel_path,
+                                                  chain,
+                                                  res,
+                                                  end_resname)
+                        except KeyError:
+                            continue
+                        # now we score the mutated model
                         c_score, c_vdw, c_elec, c_des, c_bsa = calc_score(
                             mut_pdb_name,
                             run_dir=sc_dir)
@@ -410,7 +451,7 @@ class Scan:
                           'delta_ori_score', 'delta_score', 'delta_vdw',
                           'delta_elec', 'delta_desolv', 'delta_bsa']
             self.df_scan = pd.DataFrame(scan_data, columns=df_columns)
-            alascan_fname = f"scan_{native.file_name}.csv"
+            alascan_fname = f"scan_{native.file_name.rstrip('.pdb')}.csv"
             # add zscore
             self.df_scan = add_zscores(self.df_scan, 'delta_score')
 
@@ -423,10 +464,12 @@ class Scan:
 
             fl_content = open(alascan_fname, 'r').read()
             with open(alascan_fname, 'w') as f:
-                f.write(f"########################################{os.linesep}")  # noqa E501
+                f.write(f"##########################################################{os.linesep}")  # noqa E501
                 f.write(f"# `alascan` results for {native.file_name}{os.linesep}")  # noqa E501
                 f.write(f"#{os.linesep}")
-                f.write(f"########################################{os.linesep}")  # noqa E501
+                f.write(f"# z_score is calculated with respect to the other residues")  # noqa E501
+                f.write(f"{os.linesep}")
+                f.write(f"##########################################################{os.linesep}")  # noqa E501
                 f.write(fl_content)
     
     def output(self):

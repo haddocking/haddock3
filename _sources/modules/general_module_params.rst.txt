@@ -17,7 +17,7 @@ batch_type
 clean
 ~~~~~
 
-| *default*: False
+| *default*: True
 | *type*: boolean
 | *title*: Clean the module output files.
 | *short description*: Clean the module if run succeeds by compressing or removing output files.

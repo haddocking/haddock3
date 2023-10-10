@@ -29,7 +29,7 @@ define
           or resname NAG or resname NGA);
 
   {- Maximum distance between linkable atoms -}
-  carbo_dist= 2.75;
+  carbo_dist= 2.0;
 )
 
 {- this is OK here after reading the coordinates since the various -}

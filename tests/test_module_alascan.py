@@ -227,8 +227,6 @@ def test_run(
     mock_export_io_models,
     alascan,
 ):
-    alascan.path.mkdir(parents=True, exist_ok=True)
-
     # Only add files that are used within the body of the `run` method!
     Path(alascan.path, "alascan_0.scan").touch()
     Path(alascan.path, "scan_protprot_complex_1.csv").touch()

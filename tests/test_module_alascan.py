@@ -5,6 +5,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+import tempfile
+from unittest.mock import patch
+from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
+from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.alascan.scan import (
@@ -12,24 +16,28 @@ from haddock.modules.analysis.alascan.scan import (
     add_delta_to_bfactor,
     add_zscores,
     mutate,
-    )
+)
 
 from . import golden_data
 
 
 @pytest.fixture
-def protprot_model_list():
+def complex_pdb():
+    """Return example complex pdb."""
+    return Path(golden_data, "protprot_complex_1.pdb")
+
+
+@pytest.fixture
+def protprot_model_list(complex_pdb):
     """Prot-prot input."""
     return [
-        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
-        ]
+        PDBFile(file_name=complex_pdb, path=str(golden_data)),
+    ]
 
 
 @pytest.fixture
 def params():
-    return {
-        "int_cutoff": 3.0, "plot": False, "scan_residue": "ALA"
-        }
+    return {"int_cutoff": 3.0, "plot": False, "scan_residue": "ALA"}
 
 
 @pytest.fixture
@@ -40,10 +48,22 @@ def alascan_module(protprot_model_list, params):
         output_name="alascan",
         path=Path("."),
         core=0,
-        params=params
-        )
+        params=params,
+    )
 
     yield scan
+
+
+@pytest.fixture
+def alascan():
+    """Return alascan module."""
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        yield AlascanModule(
+            order=1,
+            path=Path(tmpdir),
+            initial_params=DEFAULT_CONFIG,
+        )
 
 
 @pytest.fixture
@@ -51,24 +71,61 @@ def example_df_scan():
     """Return example alascan DataFrame."""
     example_scan_data = [
         [
-            "A", 19, "THR", "ALA", -108.540, -43.234,
-            -275.271, -10.252, 1589.260, -0.243, 5.401,
-            0.119, 28.482, -0.414, 10.470, -0.329
-            ],
+            "A",
+            19,
+            "THR",
+            "ALA",
+            -108.540,
+            -43.234,
+            -275.271,
+            -10.252,
+            1589.260,
+            -0.243,
+            5.401,
+            0.119,
+            28.482,
+            -0.414,
+            10.470,
+            -0.329,
+        ],
         [
-            "A", 20, "ILE", "ALA", -18.540, -41.234,
-            -270.271, -11.252, 589.260, +0.243, 4.401,
-            0.109, 27.482, -0.3, 0.470, +0.329
-            ],  # this one is truly random
-        ]
-    columns = ["chain", "res", "ori_resname", "end_resname", "score",
-               "vdw", "elec", "desolv", "bsa", "delta_ori_score",
-               "delta_score", "delta_vdw", "delta_elec", "delta_desolv",
-               "delta_bsa", "z_score"]
-    example_df_scan = pd.DataFrame(
-        example_scan_data,
-        columns=columns
-        )
+            "A",
+            20,
+            "ILE",
+            "ALA",
+            -18.540,
+            -41.234,
+            -270.271,
+            -11.252,
+            589.260,
+            +0.243,
+            4.401,
+            0.109,
+            27.482,
+            -0.3,
+            0.470,
+            +0.329,
+        ],  # this one is truly random
+    ]
+    columns = [
+        "chain",
+        "res",
+        "ori_resname",
+        "end_resname",
+        "score",
+        "vdw",
+        "elec",
+        "desolv",
+        "bsa",
+        "delta_ori_score",
+        "delta_score",
+        "delta_vdw",
+        "delta_elec",
+        "delta_desolv",
+        "delta_bsa",
+        "z_score",
+    ]
+    example_df_scan = pd.DataFrame(example_scan_data, columns=columns)
 
     yield example_df_scan
 
@@ -79,15 +136,22 @@ def example_df_scan_clt():
     example_clt_data = [
         ["A", 38, "ASP", "A-38-ASP", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
         ["A", 69, "LYS", "A-38-ASP", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
-        ]
-    columns = ["chain", "resnum", "resname", "full_resname", "score",
-               "delta_score", "delta_vdw", "delta_elec", "delta_desolv",
-               "delta_bsa", "frac_pres"]
+    ]
+    columns = [
+        "chain",
+        "resnum",
+        "resname",
+        "full_resname",
+        "score",
+        "delta_score",
+        "delta_vdw",
+        "delta_elec",
+        "delta_desolv",
+        "delta_bsa",
+        "frac_pres",
+    ]
 
-    example_df_scan_clt = pd.DataFrame(
-        example_clt_data,
-        columns=columns
-        )
+    example_df_scan_clt = pd.DataFrame(example_clt_data, columns=columns)
     yield example_df_scan_clt
 
 
@@ -127,3 +191,76 @@ def test_add_zscores(example_df_scan_clt):
     obs_df_scan_clt = add_zscores(example_df_scan_clt)
     assert np.isclose(obs_df_scan_clt["z_score"].values[0], -1.0)
     assert np.isclose(obs_df_scan_clt["z_score"].values[1], 1.0)
+
+
+@pytest.mark.skip("Not implemented yet")
+def test_get_index_list():
+    assert False
+
+
+def test_confirm_installation(alascan):
+    assert alascan.confirm_installation() is None
+
+
+def test_init(alascan):
+    alascan.__init__(
+        order=42,
+        path=Path("0_anything"),
+        initial_params=DEFAULT_CONFIG,
+    )
+
+    # Once a module is initialized, it should have the following attributes
+    assert alascan.path == Path("0_anything")
+    assert alascan._origignal_config_file == DEFAULT_CONFIG
+    assert type(alascan.params) == dict
+    assert len(alascan.params) != 0
+
+
+@patch("haddock.modules.analysis.alascan.Scheduler")
+@patch("haddock.modules.analysis.alascan.alascan_cluster_analysis")
+@patch("haddock.modules.analysis.alascan.make_alascan_plot")
+@patch("haddock.modules.analysis.alascan.HaddockModule.export_io_models")
+def test_run(
+    MockScheduler,
+    mock_alascan_cluster_analysis,
+    mock_make_alascan_plot,
+    mock_export_io_models,
+    alascan,
+):
+    alascan.path.mkdir(parents=True, exist_ok=True)
+
+    # Only add files that are used within the body of the `run` method!
+    Path(alascan.path, "alascan_0.scan").touch()
+    Path(alascan.path, "scan_protprot_complex_1.csv").touch()
+
+    # TODO: Set these to true and update the tests!!
+    alascan.params["plot"] = False
+    alascan.params["output"] = False
+
+    alascan.previous_io = MockPreviousIO()
+    alascan.run()
+
+
+class MockPreviousIO:
+    # In the mocked method, add the arguments that are called by the original method
+    #  that is being tested
+    def retrieve_models(self, individualize: bool = False):
+        return [
+            PDBFile(file_name="protprot_complex_1.pdb", path=str(golden_data)),
+        ]
+
+
+def mock_alascan_cluster_analysis():
+    # Return whatever is necessary for the `run` method to work
+    return {
+        0: {
+            "X-X-X": {
+                "delta_score": 0.0,
+                "delta_vdw": 0.0,
+                "delta_elec": 0.0,
+                "delta_desolv": 0.0,
+                "delta_bsa": 0.0,
+                "frac_pr": 0.0,
+            }
+        },
+    }

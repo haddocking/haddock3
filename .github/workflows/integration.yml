@@ -32,6 +32,7 @@ jobs:
           chmod u+x Makefile
           ./Makefile 2>%1 >/dev/null || true
           cd -
+          pip install -r requirements.txt
 
       - name: get CNS
         run: |

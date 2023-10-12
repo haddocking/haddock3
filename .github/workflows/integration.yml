@@ -1,0 +1,41 @@
+name: integration
+
+on: push
+
+env:
+  CNS_EXEC: /opt/bin/cns
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: |
+          pip install pytest
+
+      - name: Install HADDOCK
+        run: |
+          pwd
+          ls -lsa
+          mkdir bin
+          touch bin/cns
+          cd src/fcc/src
+          chmod u+x Makefile
+          ./Makefile 2>%1 >/dev/null || true
+          cd -
+
+      - name: get CNS
+        run: |
+            curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC
+
+      - run: pytest integration_tests/ -v -x
+

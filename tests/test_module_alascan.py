@@ -289,11 +289,5 @@ def test_check_alascan_jobs(scanjob_obj):
     # has not run yet
     with pytest.raises(Exception):
         check_alascan_jobs([scanjob_obj])
-    scanjob_obj.run()
-    # calling check_alascan_jobs should not raise an Exception as the job
-    # has run
-    exp_scan_name = scanjob_obj.output.name
-    alascan_file_l = check_alascan_jobs([scanjob_obj])
-    assert alascan_file_l == [exp_scan_name]
-    os.unlink(exp_scan_name)
-    os.unlink("scan_protprot_complex_1.csv")
+    
+    

@@ -135,7 +135,7 @@ class HaddockModule(BaseHaddockModule):
                 name = f"{model.file_name.rstrip('.pdb')}_alascan.pdb"
                 # changing attributes
                 name_path = Path(name)
-                shutil.copy(model.rel_path, name_path)
+                shutil.copy(Path(model.path, model.file_name), name_path)
 
                 alascan_fname = f"scan_{model.file_name.rstrip('.pdb')}.csv"
                 # add delta_score as a bfactor to the model

@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import tempfile
+import shutil
 from unittest.mock import patch
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
@@ -15,7 +16,7 @@ from haddock.modules.analysis.alascan.scan import (
     Scan,
     add_delta_to_bfactor,
     add_zscores,
-    mutate,
+    mutate
 )
 
 from . import golden_data
@@ -58,7 +59,7 @@ def alascan_module(protprot_model_list, params):
 def alascan():
     """Return alascan module."""
 
-    with tempfile.TemporaryDirectory() as tmpdir:
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         yield AlascanModule(
             order=1,
             path=Path(tmpdir),
@@ -218,22 +219,20 @@ def test_init(alascan):
 
 @patch("haddock.modules.analysis.alascan.Scheduler")
 @patch("haddock.modules.analysis.alascan.alascan_cluster_analysis")
-@patch("haddock.modules.analysis.alascan.make_alascan_plot")
 @patch("haddock.modules.analysis.alascan.HaddockModule.export_io_models")
 def test_run(
     MockScheduler,
     mock_alascan_cluster_analysis,
-    mock_make_alascan_plot,
     mock_export_io_models,
     alascan,
 ):
     # Only add files that are used within the body of the `run` method!
     Path(alascan.path, "alascan_0.scan").touch()
-    Path(alascan.path, "scan_protprot_complex_1.csv").touch()
-
-    # TODO: Set these to true and update the tests!!
-    alascan.params["plot"] = False
-    alascan.params["output"] = False
+    ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
+    shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
+    
+    alascan.params["plot"] = True
+    alascan.params["output"] = True
 
     alascan.previous_io = MockPreviousIO()
     alascan.run()

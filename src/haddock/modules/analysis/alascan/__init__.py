@@ -14,6 +14,7 @@ from haddock.modules.analysis.alascan.scan import (
     ScanJob,
     add_delta_to_bfactor,
     alascan_cluster_analysis,
+    check_alascan_jobs,
     )
 
 
@@ -69,40 +70,27 @@ class HaddockModule(BaseHaddockModule):
         alascan_jobs = []
         for core in range(ncores):
             output_name = "alascan_" + str(core) + ".scan"
-            contact_obj = Scan(
+            scan_obj = Scan(
                 model_list=models[index_list[core]:index_list[core + 1]],
                 output_name=output_name,
                 core=core,
                 path=Path("."),
                 params=self.params,
                 )
-            # running now the ContactJob
+            # running now the ScanJob
             job_f = Path(output_name)
             # init ScanJob
             job = ScanJob(
                 job_f,
                 self.params,
-                contact_obj,
+                scan_obj,
                 )
             alascan_jobs.append(job)
 
-        contact_engine = Scheduler(alascan_jobs, ncores=ncores)
-        contact_engine.run()
+        scan_engine = Scheduler(alascan_jobs, ncores=ncores)
+        scan_engine.run()
         # check if all the jobs have been completed
-        alascan_file_l = []
-        not_found = []
-        for job in alascan_jobs:
-            if not job.output.exists():
-                not_found.append(job.output.name)
-                wrn = f'Alascan not completed for {job.output.name}'
-                log.warning(wrn)
-            else:
-                alascan_file_l.append(str(job.output))
-
-        if not_found:
-            # Not all alascan were executed, cannot proceed
-            self.finish_with_error("Several alascan files were not generated:"
-                                   f" {not_found}")
+        alascan_file_l = check_alascan_jobs(alascan_jobs)
         
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)

@@ -14,8 +14,10 @@ from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.alascan.scan import (
     Scan,
+    ScanJob,
     add_delta_to_bfactor,
     add_zscores,
+    check_alascan_jobs,
     mutate
 )
 
@@ -42,9 +44,9 @@ def params():
 
 
 @pytest.fixture
-def alascan_module(protprot_model_list, params):
+def scan_obj(protprot_model_list, params):
     """Return example alascan module."""
-    scan = Scan(
+    scan_obj = Scan(
         model_list=protprot_model_list,
         output_name="alascan",
         path=Path("."),
@@ -52,7 +54,26 @@ def alascan_module(protprot_model_list, params):
         params=params,
     )
 
-    yield scan
+    yield scan_obj
+
+
+@pytest.fixture
+def scanjob_obj(scan_obj):
+    """Return example alascan module."""
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        yield ScanJob(
+        scan_obj=scan_obj,
+        output=Path("alascan"),
+        params=params,
+    )
+
+    #scanjob_obj = ScanJob(
+    #    scan_obj=scan_obj,
+    #    output=Path("alascan"),
+    #    params=params,
+    #)
+
+    #yield scanjob_obj
 
 
 @pytest.fixture
@@ -156,10 +177,10 @@ def example_df_scan_clt():
     yield example_df_scan_clt
 
 
-def test_alascan_module(alascan_module, protprot_model_list):
+def test_scan_obj(scan_obj, protprot_model_list):
     """Test the alascan module."""
-    assert alascan_module.int_cutoff == 3.0
-    assert alascan_module.scan_res == "ALA"
+    assert scan_obj.int_cutoff == 3.0
+    assert scan_obj.scan_res == "ALA"
 
 
 def test_mutate(protprot_model_list):
@@ -261,3 +282,18 @@ def mock_alascan_cluster_analysis():
             }
         },
     }
+
+
+def test_check_alascan_jobs(scanjob_obj):
+    # calling check_alascan_jobs should raise an Exception as the job 
+    # has not run yet
+    with pytest.raises(Exception):
+        check_alascan_jobs([scanjob_obj])
+    scanjob_obj.run()
+    # calling check_alascan_jobs should not raise an Exception as the job
+    # has run
+    exp_scan_name = scanjob_obj.output.name
+    alascan_file_l = check_alascan_jobs([scanjob_obj])
+    assert alascan_file_l == [exp_scan_name]
+    os.unlink(exp_scan_name)
+    os.unlink("scan_protprot_complex_1.csv")

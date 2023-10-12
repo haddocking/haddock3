@@ -320,6 +320,36 @@ def alascan_cluster_analysis(models):
                 f.write(fl_content)
     return clt_scan
 
+def check_alascan_jobs(alascan_jobs):
+    """Check that all the alascan jobs have been completed.
+    
+    Parameters
+    ----------
+    alascan_jobs : list
+        List of ScanJob objects.
+    
+    Returns
+    ------
+    alascan_file_l : list
+        List of the alascan files.
+    """
+    alascan_file_l = []
+    not_found = []
+    for job in alascan_jobs:
+        if not job.output.exists():
+            not_found.append(job.output.name)
+            wrn = f'Alascan not completed for {job.output.name}'
+            log.warning(wrn)
+        else:
+            alascan_file_l.append(str(job.output))
+    print(f"not_found {not_found}")
+    if not_found:
+        # Not all alascan were executed, cannot proceed
+        raise Exception("Several alascan files were not generated:"
+                               f" {not_found}")
+    
+    return alascan_file_l
+
 
 class ScanJob:
     """A Job dedicated to the parallel alanine scanning of models."""
@@ -344,7 +374,7 @@ class ScanJob:
 
 
 class Scan:
-    """Contact class."""
+    """Scan class."""
 
     def __init__(
             self,
@@ -354,7 +384,7 @@ class Scan:
             path,
             **params,
             ):
-        """Initialise Contact class."""
+        """Initialise Scan class."""
         self.model_list = model_list
         self.output_name = output_name
         self.core = core

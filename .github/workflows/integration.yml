@@ -36,5 +36,7 @@ jobs:
           chmod +x $CNS_EXEC
           pip install pytest
 
-      - run: pytest integration_tests/ -v -x
+      - name: Run integration test
+        run: |
+          pytest integration_tests/ -v -x
 

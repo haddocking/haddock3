@@ -3,7 +3,7 @@ name: integration
 on: push
 
 env:
-  CNS_EXEC: /opt/bin/cns
+  CNS_EXEC: ${{ github.workspace }}/bin/cns
 
 jobs:
   integration:
@@ -27,7 +27,6 @@ jobs:
           pwd
           ls -lsa
           mkdir bin
-          touch bin/cns
           cd src/fcc/src
           chmod u+x Makefile
           ./Makefile 2>%1 >/dev/null || true

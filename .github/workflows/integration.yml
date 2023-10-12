@@ -1,13 +1,17 @@
-name: integration
+name: integrationtests
 
-on: push
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 env:
   CNS_EXEC: ${{ github.workspace }}/bin/cns
   PYTHONPATH: ${{ github.workspace }}/src
 
 jobs:
-  integration:
+  integrationtests:
     runs-on: ubuntu-latest
 
     steps:

@@ -34,9 +34,7 @@ jobs:
           cd -
           pip install -r requirements.txt
 
-      - name: get CNS
-        run: |
-            curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC -s
+      - run: curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC -s && chmod +x $CNS_EXEC
 
       - run: pytest integration_tests/ -v -x
 

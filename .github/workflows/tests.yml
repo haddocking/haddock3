@@ -1,4 +1,4 @@
-name: tests
+name: unittests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  unittests:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
@@ -43,7 +43,6 @@ jobs:
       - name: unit tests
         run: tox -e test
 
-      # from https://github.com/codecov/codecov-action
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:

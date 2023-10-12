@@ -4,6 +4,7 @@ on: push
 
 env:
   CNS_EXEC: ${{ github.workspace }}/bin/cns
+  PYTHONPATH: ${{ github.workspace }}/src
 
 jobs:
   integration:
@@ -34,7 +35,7 @@ jobs:
 
       - name: get CNS
         run: |
-            curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC
+            curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC -s
 
       - run: pytest integration_tests/ -v -x
 

@@ -19,10 +19,6 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Install dependencies
-        run: |
-          pip install pytest
-
       - name: Install HADDOCK
         run: |
           pwd
@@ -34,7 +30,11 @@ jobs:
           cd -
           pip install -r requirements.txt
 
-      - run: curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC -s && chmod +x $CNS_EXEC
+      - name: Install test dependencies
+        run: |
+          curl ${{ secrets.CNS_LINK }} -o $CNS_EXEC -s
+          chmod +x $CNS_EXEC
+          pip install pytest
 
       - run: pytest integration_tests/ -v -x
 

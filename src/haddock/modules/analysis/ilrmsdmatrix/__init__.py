@@ -41,6 +41,21 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
+def get_index_list(nmodels, ncores):
+    """Optimal distribution of models among cores"""
+    spc = nmodels // ncores
+    # now the remainder
+    rem = nmodels % ncores
+    # now the list of indexes to be used for the SCAN calculation
+    index_list = [0]
+    for core in range(ncores):
+        if core < rem:
+            index_list.append(index_list[-1] + spc + 1)
+        else:
+            index_list.append(index_list[-1] + spc)
+    return index_list
+
+
 class HaddockModule(BaseHaddockModule):
     """HADDOCK3 module for clustering with RMSD."""
 
@@ -138,20 +153,11 @@ class HaddockModule(BaseHaddockModule):
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
 
         if nmodels > self.params["max_models"]:
-            # too many input models : RMSD matrix would be too big => Abort!
-            raise Exception("Too many models for RMSD matrix calculation")
+            # too many input models : ilRMSD matrix would be too big => Abort!
+            raise Exception("Too many models for ilRMSD matrix calculation")
 
         # Find the common residues making contacts for the receptor and ligand.
-        # optimal distribution of models among cores)
-        spc = nmodels // ncores
-        # now the remainder
-        rem = nmodels % ncores
-        # now the list of indexes to be used for the RMSD calculation
-        index_list = [
-            core * spc if core > rem
-            else core * spc + 1 for core in range(ncores)
-            ]
-        index_list.append(nmodels - 1)
+        index_list = get_index_list(nmodels, ncores)
         # contact jobs
         contact_jobs = []
         for core in range(ncores):
@@ -261,7 +267,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Sending models to the next step of the workflow
         self.output_models = models
-        self.export_output_models()
+        self.export_io_models()
         # Sending matrix path to the next step of the workflow
         matrix_io = ModuleIO()
         ilrmsd_matrix_file = RMSDFile(

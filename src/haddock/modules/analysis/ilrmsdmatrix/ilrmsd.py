@@ -26,7 +26,6 @@ class ContactJob:
             contact_obj):
 
         log.info(f"core {contact_obj.core}, initialising Contact...")
-        self.output = output
         self.params = params
         self.contact_obj = contact_obj
         log.info(f"core {contact_obj.core}, Contact initialised")
@@ -58,6 +57,8 @@ class Contact:
         self.atoms = {}
         self.receptor_chain = params["params"]["receptor_chain"]
         self.ligand_chains = params["params"]["ligand_chains"]
+        self.unique_rec_res = []
+        self.unique_lig_res = []
         for m in model_list:
             self.atoms.update(get_atoms(m))
         
@@ -77,12 +78,18 @@ class Contact:
                 con[1] if con[0] in self.ligand_chains
                 else con[3] for con in contacts
                 ]
-            receptor_interface_residues.append(np.unique(rec_resids))
-            ligand_interface_residues.append(np.unique(lig_resids))
-        rec_np_arr = np.concatenate(receptor_interface_residues)
-        lig_np_arr = np.concatenate(ligand_interface_residues)
-        self.unique_rec_res = np.unique(rec_np_arr)
-        self.unique_lig_res = np.unique(lig_np_arr)
+            if rec_resids != []:
+                receptor_interface_residues.append(np.unique(rec_resids))
+            if lig_resids != []:
+                ligand_interface_residues.append(np.unique(lig_resids))
+        # concatenate all the receptor residues
+        if receptor_interface_residues != []:
+            rec_np_arr = np.concatenate(receptor_interface_residues)
+            self.unique_rec_res = np.unique(rec_np_arr)
+        # now the ligand residues
+        if ligand_interface_residues != []:
+            lig_np_arr = np.concatenate(ligand_interface_residues)
+            self.unique_lig_res = np.unique(lig_np_arr)
        
     def output(self):
         """Write down unique contacts to file."""
@@ -107,20 +114,20 @@ class ilRMSDJob:
             self,
             output,
             params,
-            rmsd_obj):
+            ilrmsd_obj):
 
-        log.info(f"core {rmsd_obj.core}, initialising ilRMSD...")
-        log.info(f"core {rmsd_obj.core}, # of pairs : {rmsd_obj.npairs}")
+        log.info(f"core {ilrmsd_obj.core}, initialising ilRMSD...")
+        log.info(f"core {ilrmsd_obj.core}, # of pairs : {ilrmsd_obj.npairs}")
         self.output = output
         self.params = params
-        self.rmsd_obj = rmsd_obj
-        log.info(f"core {rmsd_obj.core}, ilRMSD initialised")
+        self.ilrmsd_obj = ilrmsd_obj
+        log.info(f"core {ilrmsd_obj.core}, ilRMSD initialised")
 
     def run(self):
         """Run this RMSDJob."""
-        log.info(f"core {self.rmsd_obj.core}, running ilRMSD...")
-        self.rmsd_obj.run()
-        self.rmsd_obj.output()
+        log.info(f"core {self.ilrmsd_obj.core}, running ilRMSD...")
+        self.ilrmsd_obj.run()
+        self.ilrmsd_obj.output()
         return
 
 
@@ -185,6 +192,83 @@ class ilRMSD:
         # data array
         self.data = np.zeros((self.npairs, 3))
 
+    def calc_ilrmsd(self, ref, mod):
+        """
+        Calculate ilRMSD.
+
+        Parameters
+        ----------
+        ref : int
+            index of the reference structure
+        
+        mod : int
+            index of the mobile structure
+        
+        Returns
+        -------
+        ilrmsd : float
+            ilRMSD value
+        """
+        ref_coord_dic, _ = load_coords(
+            self.model_list[ref], self.atoms, self.filter_resdic
+        )
+        
+        mod_coord_dic, _ = load_coords(
+            self.model_list[mod], self.atoms, self.filter_resdic
+        )
+        # calculating ilRMSD
+        # find atoms present in both interfaces
+        Q_int = []
+        P_int = []
+        common_keys = ref_coord_dic.keys() & mod_coord_dic.keys()
+        for k in sorted(common_keys):
+            ref_xyz = ref_coord_dic[k]
+            mod_xyz = mod_coord_dic[k]
+            Q_int.append(ref_xyz)
+            P_int.append(mod_xyz)
+        Q_int = np.asarray(Q_int)
+        P_int = np.asarray(P_int)
+
+        chain_ranges = {}
+        for i, segment in enumerate(sorted(common_keys)):
+            chain, _, _ = segment
+            if chain not in chain_ranges:
+                chain_ranges[chain] = []
+            chain_ranges[chain].append(i)
+        chain_ranges = make_range(chain_ranges)
+        obs_chains = list(chain_ranges.keys())  # observed chains
+        if len(obs_chains) < 2:
+            log.warning("Not enough chains for calculating ilrmsd")
+            ilrmsd = None
+        else:
+            r_chain = self.receptor_chain
+            l_chains = [c for c in obs_chains if c != self.receptor_chain]
+            r_start, r_end = chain_ranges[r_chain]
+            l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
+            l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
+            # put system at origin of the receptor interface
+            Q_r_int = Q_int[r_start: r_end + 1]
+            P_r_int = P_int[r_start: r_end + 1]
+            Q_int = Q_int - centroid(Q_r_int)
+            P_int = P_int - centroid(P_r_int)
+            # put interfaces at the origin
+            # find the rotation that minimizes the receptor interface rmsd
+            Q_r_int = Q_int[r_start: r_end + 1]
+            P_r_int = P_int[r_start: r_end + 1]
+            U_int = kabsch(P_r_int, Q_r_int)
+            P_int = np.dot(P_int, U_int)
+            
+            # Identify ligand coords concatenating all the ligand chains
+            Q_l_int = np.empty((0, 3))
+            P_l_int = np.empty((0, 3))
+            for l_st, l_end in zip(l_starts, l_ends):
+                Q_l_int = np.concatenate((Q_l_int, Q_int[l_st: l_end + 1]))
+                P_l_int = np.concatenate((P_l_int, P_int[l_st: l_end + 1]))
+            # # this will be the interface-ligand-rmsd
+            ilrmsd = calc_rmsd(P_l_int, Q_l_int)
+            return ilrmsd
+
+
     def run(self):
         """Run calculations."""
         # initialising the number of pairs
@@ -192,83 +276,20 @@ class ilRMSD:
         mod = self.start_mod
         nmodels = len(self.model_list)
         for n in range(self.npairs):
-
-            ref_coord_dic, _ = load_coords(
-                self.model_list[ref], self.atoms, self.filter_resdic
-                )
-        
-            mod_coord_dic, _ = load_coords(
-                self.model_list[mod], self.atoms, self.filter_resdic
-                )
-            # calculating ilRMSD
-            # find atoms present in both interfaces
-            Q_int = []
-            P_int = []
-            common_keys = ref_coord_dic.keys() & mod_coord_dic.keys()
-            for k in sorted(common_keys):
-                ref_xyz = ref_coord_dic[k]
-                mod_xyz = mod_coord_dic[k]
-
-                Q_int.append(ref_xyz)
-                P_int.append(mod_xyz)
-
-            Q_int = np.asarray(Q_int)
-            P_int = np.asarray(P_int)
-
-            chain_ranges = {}
-            for i, segment in enumerate(sorted(common_keys)):
-                chain, _, _ = segment
-                if chain not in chain_ranges:
-                    chain_ranges[chain] = []
-                chain_ranges[chain].append(i)
-
-            chain_ranges = make_range(chain_ranges)
-            obs_chains = list(chain_ranges.keys())  # observed chains
-            if len(obs_chains) < 2:
-                log.warning("Not enough chains for calculating ilrmsd")
+            # calculating RMSD
+            ilrmsd = self.calc_ilrmsd(ref, mod)
+            if ilrmsd is None:
                 break
+            # saving output (adding one for consistency with clusterfcc)
+            self.data[n, 0] = ref + 1
+            self.data[n, 1] = mod + 1
+            self.data[n, 2] = ilrmsd
+            # updating indices
+            if mod == (nmodels - 1):
+                ref += 1
+                mod = ref + 1
             else:
-                r_chain = self.receptor_chain
-                l_chains = [c for c in obs_chains if c != self.receptor_chain]
-
-                r_start, r_end = chain_ranges[r_chain]
-                l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
-                l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
-
-                # put system at origin of the receptor interface
-                Q_r_int = Q_int[r_start: r_end + 1]
-                P_r_int = P_int[r_start: r_end + 1]
-
-                Q_int = Q_int - centroid(Q_r_int)
-                P_int = P_int - centroid(P_r_int)
-                # put interfaces at the origin
-
-                # find the rotation that minimizes the receptor interface rmsd
-                Q_r_int = Q_int[r_start: r_end + 1]
-                P_r_int = P_int[r_start: r_end + 1]
-
-                U_int = kabsch(P_r_int, Q_r_int)
-                P_int = np.dot(P_int, U_int)
-                
-                # Identify ligand coords concatenating all the ligand chains
-                Q_l_int = np.empty((0, 3))
-                P_l_int = np.empty((0, 3))
-                for l_st, l_end in zip(l_starts, l_ends):
-                    Q_l_int = np.concatenate((Q_l_int, Q_int[l_st: l_end + 1]))
-                    P_l_int = np.concatenate((P_l_int, P_int[l_st: l_end + 1]))
-
-                # # this will be the interface-ligand-rmsd
-                ilrmsd = calc_rmsd(P_l_int, Q_l_int)
-                # saving output (adding one for consistency with clusterfcc)
-                self.data[n, 0] = ref + 1
-                self.data[n, 1] = mod + 1
-                self.data[n, 2] = ilrmsd
-                # updating indices
-                if mod == (nmodels - 1):
-                    ref += 1
-                    mod = ref + 1
-                else:
-                    mod += 1
+                mod += 1
 
     def output(
             self,

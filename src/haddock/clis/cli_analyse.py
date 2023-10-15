@@ -19,6 +19,9 @@ USAGE::
 
 Where, ``-m 1 3`` means that the analysis will be performed on ``1_rigidbody``
  and ``3_flexref``.
+
+For more information please check the tutorial at
+docs/tutorials/analysing_runs.md
 """
 import argparse
 import os
@@ -149,8 +152,8 @@ ap.add_argument(
     dest="other_params",
     help=(
         "Any other parameter of the `caprieval` module."
-        "For example: -p reference_fname target.pdb."
-        "You can give any number of parameters."
+        " For example: -p reference_fname target.pdb."
+        " You can give any number of parameters."
         ),
     action=_ParamsToDict,
     default={},

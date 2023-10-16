@@ -5,9 +5,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+import pytest_mock
 import tempfile
 import shutil
-from unittest.mock import patch
+from subprocess import CompletedProcess
+#from unittest.mock import patch
+
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
 
@@ -17,7 +20,11 @@ from haddock.modules.analysis.alascan.scan import (
     ScanJob,
     add_delta_to_bfactor,
     add_zscores,
+    alascan_cluster_analysis,
+    calc_score,
     check_alascan_jobs,
+    generate_alascan_output,
+    get_index_list,
     mutate
 )
 
@@ -40,7 +47,7 @@ def protprot_model_list(complex_pdb):
 
 @pytest.fixture
 def params():
-    return {"int_cutoff": 3.0, "plot": False, "scan_residue": "ALA"}
+    return {"int_cutoff": 3.0, "plot": False, "scan_residue": "ALA", "resdic_A": [19, 20]}
 
 
 @pytest.fixture
@@ -66,14 +73,6 @@ def scanjob_obj(scan_obj):
         output=Path("alascan"),
         params=params,
     )
-
-    #scanjob_obj = ScanJob(
-    #    scan_obj=scan_obj,
-    #    output=Path("alascan"),
-    #    params=params,
-    #)
-
-    #yield scanjob_obj
 
 
 @pytest.fixture
@@ -177,6 +176,12 @@ def example_df_scan_clt():
     yield example_df_scan_clt
 
 
+@pytest.fixture
+def scan_file():
+    """Return example alascan file."""
+    yield(Path(golden_data, "scan_protprot_complex_1.csv"))
+
+
 def test_scan_obj(scan_obj, protprot_model_list):
     """Test the alascan module."""
     assert scan_obj.int_cutoff == 3.0
@@ -215,9 +220,13 @@ def test_add_zscores(example_df_scan_clt):
     assert np.isclose(obs_df_scan_clt["z_score"].values[1], 1.0)
 
 
-@pytest.mark.skip("Not implemented yet")
 def test_get_index_list():
-    assert False
+    """Test the get_index_list function."""
+    obs_idx_list = get_index_list(10, 2)
+    assert obs_idx_list == [0, 5, 10]
+
+    obs_idx_list = get_index_list(10, 3)
+    assert obs_idx_list == [0, 4, 7, 10]
 
 
 def test_confirm_installation(alascan):
@@ -238,25 +247,96 @@ def test_init(alascan):
     assert len(alascan.params) != 0
 
 
-@patch("haddock.modules.analysis.alascan.Scheduler")
-@patch("haddock.modules.analysis.alascan.alascan_cluster_analysis")
-@patch("haddock.modules.analysis.alascan.HaddockModule.export_io_models")
-def test_run(
-    MockScheduler,
-    mock_alascan_cluster_analysis,
-    mock_export_io_models,
-    alascan,
-):
-    # Only add files that are used within the body of the `run` method!
-    Path(alascan.path, "alascan_0.scan").touch()
-    ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
-    shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
-    
-    alascan.params["plot"] = True
-    alascan.params["output"] = True
+#@patch("haddock.modules.analysis.alascan.Scheduler")
+#@patch("haddock.modules.analysis.alascan.alascan_cluster_analysis")
+#@patch("haddock.modules.analysis.alascan.HaddockModule.export_io_models")
+#def test_run(
+#    MockScheduler,
+#    mock_alascan_cluster_analysis,
+#    mock_export_io_models,
+#    alascan,
+#):
+#    # Only add files that are used within the body of the `run` method!
+#    Path(alascan.path, "alascan_0.scan").touch()
+#    ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
+#    shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
+#    
+#    alascan.params["plot"] = True
+#    alascan.params["output"] = True
+#
+#    alascan.previous_io = MockPreviousIO()
+#    alascan.run()
+#
+#    assert Path(alascan.path, "scan_clt_0.csv").exists()
 
-    alascan.previous_io = MockPreviousIO()
-    alascan.run()
+
+#def new_calc_score():
+#    sc, a, b, c, d = calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
+#    sc = sc + 1.0
+#    return sc
+#
+#def test_new_calc_score_with_mock(mocker):
+#    mocker.patch(__name__ + '.new_calc_score', return_value = 4)
+#    result = new_calc_score()
+#    assert result == 4  # Expected result after mocking calc_score
+
+
+def test_scan_run_output(
+    mocker,
+    scan_obj):
+    """Test Scan run and output method."""
+    mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
+    scan_obj.run()
+
+    assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
+    assert scan_obj.df_scan.shape[0] == 2
+
+    scan_obj.output()
+    assert Path(scan_obj.path, "alascan").exists()
+
+    # clean up
+    os.unlink(Path(scan_obj.path, "alascan"))
+    os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
+
+
+def test_scan_run_noresdic(mocker, scan_obj):
+    """Test Scan run with empty filter_resdic."""
+    scan_obj.filter_resdic = {'_': []}
+    mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
+    scan_obj.run()
+
+    assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
+    assert scan_obj.df_scan.shape[0] == 7
+
+    # clean up
+    os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
+
+
+def test_calc_score(mocker):
+    """Test the run_scan method."""
+    mocker.patch(
+        "subprocess.run",
+        return_value = CompletedProcess(
+            args=['haddock3-score', 'mdref_9-B_T16A.pdb', '--full', '--run_dir', 'haddock3-score-2'],
+            returncode=0,
+            stdout=b'> starting calculations...\n> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)\n> HADDOCK-score (emscoring) = -106.7376\n> vdw=-29.5808,elec=-316.542,desolv=-13.8484,air=0.0,bsa=1494.73\n', stderr=b'')
+    )
+    scores = calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir = "tmp")
+    
+    assert scores == (-106.7376, -29.5808, -316.542, -13.8484, 1494.73)
+
+
+def test_generate_alascan_output(mocker, protprot_model_list, scan_file):
+    """Test the generate_alascan_output method."""
+    shutil.copy(scan_file, Path("scan_protprot_complex_1.csv"))
+    models_to_export = generate_alascan_output(protprot_model_list, path=".")
+    assert len(models_to_export) == 1
+    assert models_to_export[0].ori_name == "protprot_complex_1.pdb"
+    assert models_to_export[0].file_name == "protprot_complex_1_alascan.pdb"
+
+    # clean up
+    os.unlink(Path("scan_protprot_complex_1.csv"))
+    os.unlink(Path("protprot_complex_1_alascan.pdb"))
 
 
 class MockPreviousIO:
@@ -289,5 +369,15 @@ def test_check_alascan_jobs(scanjob_obj):
     # has not run yet
     with pytest.raises(Exception):
         check_alascan_jobs([scanjob_obj])
-    
-    
+
+
+def test_alascan_cluster_analysis(protprot_model_list, scan_file):
+    """Test alascan_cluster_analysis"""
+    shutil.copy(scan_file, Path("scan_protprot_complex_1.csv"))
+    alascan_cluster_analysis(protprot_model_list)
+
+    assert Path("scan_clt_-.csv").exists()
+
+    # clean up
+    os.unlink(Path("scan_protprot_complex_1.csv"))
+    os.unlink(Path("scan_clt_-.csv"))

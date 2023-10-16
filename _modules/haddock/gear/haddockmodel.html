@@ -234,6 +234,9 @@
                     <span class="k">if</span> <span class="s1">&#39;Desolvation energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
                         <span class="n">desolv</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
                         <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;desolv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">desolv</span>
+                    <span class="k">if</span> <span class="s1">&#39;Symmetry energy&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="n">sym</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">energy_dic</span><span class="p">[</span><span class="s1">&#39;sym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sym</span>
 
         <span class="k">return</span> <span class="n">energy_dic</span>
 
@@ -280,7 +283,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Oct 13, 2023.
+        Last updated on Oct 16, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

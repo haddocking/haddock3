@@ -23,8 +23,9 @@ def test_find_best_struct_best1(example_capri_ss):
     expected = pd.DataFrame(
         {
             "Cluster ID": {0: 1},
+            "Cluster Rank": {0: 2},
             "Nr 01 best structure": {
-                0: "../1_rigidbody/rigidbody_383.pdb",
+                0: "../../1_rigidbody/rigidbody_383.pdb",
                 },
             }
         )
@@ -40,10 +41,11 @@ def test_find_best_struct_best20(example_capri_ss):
     expected = pd.DataFrame(
         {
             "Cluster ID": {0: 1},
-            "Nr 01 best structure": {0: "../1_rigidbody/rigidbody_383.pdb"},
-            "Nr 02 best structure": {0: "../1_rigidbody/rigidbody_265.pdb"},
-            "Nr 03 best structure": {0: "../1_rigidbody/rigidbody_231.pdb"},
-            "Nr 04 best structure": {0: "../1_rigidbody/rigidbody_218.pdb"},
+            "Cluster Rank": {0: 2},
+            "Nr 01 best structure": {0: "../../1_rigidbody/rigidbody_383.pdb"},
+            "Nr 02 best structure": {0: "../../1_rigidbody/rigidbody_265.pdb"},
+            "Nr 03 best structure": {0: "../../1_rigidbody/rigidbody_231.pdb"},
+            "Nr 04 best structure": {0: "../../1_rigidbody/rigidbody_218.pdb"},
             }
         )
     expected.columns.names = ["Structure"]
@@ -58,10 +60,11 @@ def test_find_best_struct_best4(example_capri_ss):
     expected = pd.DataFrame(
         {
             "Cluster ID": {0: 1},
-            "Nr 01 best structure": {0: "../1_rigidbody/rigidbody_383.pdb"},
-            "Nr 02 best structure": {0: "../1_rigidbody/rigidbody_265.pdb"},
-            "Nr 03 best structure": {0: "../1_rigidbody/rigidbody_231.pdb"},
-            "Nr 04 best structure": {0: "../1_rigidbody/rigidbody_218.pdb"},
+            "Cluster Rank": {0: 2},
+            "Nr 01 best structure": {0: "../../1_rigidbody/rigidbody_383.pdb"},
+            "Nr 02 best structure": {0: "../../1_rigidbody/rigidbody_265.pdb"},
+            "Nr 03 best structure": {0: "../../1_rigidbody/rigidbody_231.pdb"},
+            "Nr 04 best structure": {0: "../../1_rigidbody/rigidbody_218.pdb"},
             }
         )
     expected.columns.names = ["Structure"]
@@ -78,13 +81,15 @@ def test_find_best_struct_unclustered(example_capri_ss_dashcluster):
     """Finds 4 best structures when there unclustered."""
     result = find_best_struct(example_capri_ss_dashcluster, 4)
 
+    struct_dir = "../../../01_rigidbody"
     expected = pd.DataFrame(
         {
             "Cluster ID": {0: "-"},
-            "Nr 01 best structure": {0: "../../01_rigidbody/rigidbody_6.pdb"},
-            "Nr 02 best structure": {0: "../../01_rigidbody/rigidbody_16.pdb"},
-            "Nr 03 best structure": {0: "../../01_rigidbody/rigidbody_20.pdb"},
-            "Nr 04 best structure": {0: "../../01_rigidbody/rigidbody_14.pdb"},
+            "Cluster Rank": {0: "Unclustered"},
+            "Nr 01 best structure": {0: f"{struct_dir}/rigidbody_6.pdb"},
+            "Nr 02 best structure": {0: f"{struct_dir}/rigidbody_16.pdb"},
+            "Nr 03 best structure": {0: f"{struct_dir}/rigidbody_20.pdb"},
+            "Nr 04 best structure": {0: f"{struct_dir}/rigidbody_14.pdb"},
             }
         )
     expected.columns.names = ["Structure"]

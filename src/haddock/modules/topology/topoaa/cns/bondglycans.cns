@@ -29,7 +29,7 @@ define
           or resname NAG or resname NGA);
 
   {- Maximum distance between linkable atoms -}
-  carbo_dist= 2.75;
+  carbo_dist= 2.0;
 )
 
 {- this is OK here after reading the coordinates since the various -}
@@ -308,7 +308,7 @@ ident (store3) ( ( &alpha or &beta ) and name O3 and known )
 {- for B14: beta(1,4)  link from beta-anomer to any -}
 ident (store4) ( ( &alpha or &beta ) and name O4 and known ) 
 {- for B16: beta(1,6)  link from beta-anomer to any -}
-ident (store6) ( ( &alpha or &beta ) and name O4 and known ) 
+ident (store6) ( ( &alpha or &beta ) and name O6 and known ) 
 
 for $id1 in id ( &beta and name C1 and known ) loop B1
 
@@ -438,7 +438,7 @@ for $id1 in id ( &beta and name C1 and known ) loop B1
     end if
 
   end loop B14
-
+  
   for $id2 in id ( recall6 ) loop B16
 
     show (segid) (id $id2)

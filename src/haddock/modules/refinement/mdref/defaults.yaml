@@ -1217,7 +1217,7 @@ w_elec:
 w_lcc:
   default: -10000.0
   type: float
-  min: -9999
+  min: -10000.0
   max: 0
   precision: 3
   title: Weight of the EM local correlation coefficient
@@ -1385,10 +1385,20 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 1
+  max: 200
   title: Sampling factor for each starting model
   short: This paramater control how many times a model will be refined.
   long: This paramater control how many times a model will be refined. 
+  group: 'sampling'
+  explevel: expert
+max_nmodels:
+  default: 10000
+  type: integer
+  min: 1
+  max: 50000
+  title: Maximum number of models to refine
+  short: This paramater controls the maximum number of models to refine.
+  long: This paramater controls the maximum number of models to refine.
   group: 'sampling'
   explevel: expert
 solvent:

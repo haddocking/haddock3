@@ -94,4 +94,4 @@ class HaddockModule(ScoringModule):
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
 
-        self.export_output_models(faulty_tolerance=self.params["tolerance"])
+        self.export_io_models(faulty_tolerance=self.params["tolerance"])

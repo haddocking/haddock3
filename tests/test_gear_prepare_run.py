@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from haddock.core.exceptions import ConfigurationError
 from haddock.gear.prepare_run import (
     check_if_path_exists,
     copy_molecules_to_topology,
@@ -14,7 +15,10 @@ from haddock.gear.prepare_run import (
     populate_topology_molecule_params,
     update_step_contents_to_step_names,
     validate_module_names_are_not_misspelled,
+    validate_param_range,
+    validate_param_type,
     validate_parameters_are_not_misspelled,
+    validate_value,
     )
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.modules import modules_names
@@ -241,3 +245,139 @@ def test_update_step_folders_from_restart():
     assert '1_dummystep' in file2
 
     shutil.rmtree(output_tmp)
+
+
+@pytest.mark.parametrize(
+    "defaultparam,inputvalue",
+    [
+        ({'type': 'integer'}, 1),
+        ({'type': 'float'}, 0.99),
+        ({'type': 'list'}, [1, 2]),
+        ({'type': 'boolean'}, False),
+        ({'type': 'boolean'}, True),
+        ({'type': 'string'}, 'Hello world'),
+        ]
+    )
+def test_accepted_value_type(defaultparam, inputvalue):
+    """Test if the provided value type is correct.
+
+    Should not return anything
+    """
+    assert validate_param_type(defaultparam, inputvalue) is None
+
+
+@pytest.mark.parametrize(
+    "defaultparam,inputvalue",
+    [
+        ({'type': 'integer', 'default': 0}, False),
+        ({'type': 'float', 'default': 1.1}, 'Hello world'),
+        ({'type': 'list', 'default': [1, 2]}, {1: 1, 2: 2}),
+        ({'type': 'boolean', 'default': True}, 1),
+        ({'type': 'boolean', 'default': False}, 0),
+        ({'type': 'str', 'default': 'test'}, 2.1),
+        ]
+    )
+def test_value_type_error(defaultparam, inputvalue):
+    """Test if the provided value type is wrong.
+
+    Should return a formated string describing the error.
+    """
+    assert validate_param_type(defaultparam, inputvalue) is not None
+    
+
+@pytest.mark.parametrize(
+    "defaultparam,inputvalue",
+    [
+        ({'min': 0, 'max': 1}, 0.5),
+        ({'min': 1, 'max': 1000}, 1),
+        ({'min': 0, 'max': 1000}, 1000),
+        ({'min': 0, 'max': 1000}, -0),
+        ({'choices': ['ok', 'fine']}, 'fine'),
+        ({'choices': ['super']}, 'super'),
+        ]
+    )
+def test_accepted_value_range(defaultparam, inputvalue):
+    """Test if the provided value range/choices is correct.
+
+    Should not return anything
+    """
+    assert validate_param_range(defaultparam, inputvalue) is None
+
+
+@pytest.mark.parametrize(
+    "defaultparam,inputvalue",
+    [
+        ({'min': 0, 'max': 1, 'default': 0}, 2),
+        ({'min': 1.1, 'max': 1.3, 'default': 1.2}, 1.4),
+        ({'min': 0.1, 'max': 1.0, 'default': 0.5}, -0.1),
+        ({'choices': ['not', 'good'], 'default': 'good'}, ['not', 'good']),
+        ({'choices': ['super'], 'default': 'super'}, 'wrong'),
+        ]
+    )
+def test_value_range_error(defaultparam, inputvalue):
+    """Test if the provided value range/choices is erronnated.
+
+    Should return formated string describing the error.
+    """
+    assert validate_param_range(defaultparam, inputvalue) is not None
+
+
+@pytest.mark.parametrize(
+    "defaultparams,key,value",
+    [
+        ({'key': {'min': 0, 'max': 1, 'type': 'integer'}}, 'key', 1),
+        ({'key': {'min': 0.5, 'max': 2.2, 'type': 'float'}}, 'key', 1.1),
+        ({'key': {'min': 0, 'max': 1, 'type': 'integer'}}, 'key', 0),
+        ({'key': {'choices': ['ok', 'fine'], 'type': 'string'}},
+         'key', 'ok'),
+        ({'key': {'choices': ['ok', 'fine'], 'type': 'string'}},
+         'key', 'fine'),
+        ({'key': {'type': 'boolean'}}, 'key', True),
+        ({'key': {'type': 'list'}}, 'key', ['mol1', 'mol2']),
+        ({'mol': {'group': 'molecules', 'type': 'list'}}, 'mol', ['pdb']),
+        ({'molecule': {'type': 'list'}}, 'molecules', ['mol1', 'pdb']),
+        ]
+    )
+def test_accepted_param_value(defaultparams, key, value):
+    """Test if the provided parameter = value is correct.
+
+    Should not return anything
+    """
+    assert validate_value(defaultparams, key, value) is None
+
+
+@pytest.mark.parametrize(
+    "defaultparams,key,value",
+    [
+        ({'key': {'min': 0, 'max': 1, 'type': 'integer',
+                  'default': 0}}, 'key', 1.1),
+        ({'key': {'min': 0.5, 'max': 2.2,
+                  'type': 'float', 'default': 1.1}}, 'key', 0),
+        ({'key': {'choices': ['not', 'good'],
+                  'type': 'string',
+                  'default': 'good'}},
+         'key', 'ok'),
+        ({'key': {'choices': ['False', 'True'],
+                  'type': 'string',
+                  'default': 'True'}},
+         'key', True),
+        ({'key': {'choices': ['False', 'True'], 'type': 'string',
+                  'default': 'False'}},
+         'key', False),
+        ({'key': {'type': 'boolean', 'default': False}}, 'key', 0),
+        ({'key': {'type': 'boolean', 'default': True}}, 'key', 1),
+        ({'key': {'type': 'boolean', 'default': False}}, 'key', []),
+        ({'key': {'type': 'boolean', 'default': False}}, 'key', ''),
+        ({'key': {'type': 'list', 'default': ['m1', 'm2']}}, 'key', 1),
+        ({'key': {'type': 'list', 'default': ['m1', 'm2']}}, 'key', 'list'),
+        ({'key': {'type': 'list', 'default': ['m1', 'm2']}},
+         'key', {'hello': 'world'}),
+        ]
+    )
+def test_param_value_error(defaultparams, key, value):
+    """Test if the provided parameter = value is not correct.
+
+    Should raise ConfigurationError
+    """
+    with pytest.raises(ConfigurationError):
+        validate_value(defaultparams, key, value)

@@ -91,6 +91,12 @@ _sub_quoted_header_re = re.compile(
     re.ASCII,
     )
 
+# Captures parameter uppercase boolean
+_uppercase_bool_re = re.compile(
+    r'(_?\w+((_?\w+?)+)?\s*=\s*)(True|False)',
+    re.ASCII
+    )
+
 # Some parameters are paths. The configuration reader reads those as
 # pathlib.Path so that they are injected properly in the rest of the
 # workflow. In general, any parameter ending with `_fname` is a path,
@@ -158,10 +164,14 @@ def loads(cfg_str: str) -> ParamDict:
 
     Returns
     -------
-    dict
-        The config in the form of a dictionary.
-        The order of the keys matters as it defines the order of the
-        steps in the workflow.
+    all_configs : dict
+        A dictionary holding all the configuration file steps:
+        - 'raw_input': Original input file as provided by user.
+        - 'cleaned_input': Regex cleaned input file.
+        - 'loaded_cleaned_input': Dict of toml loaded cleaned input.
+        - 'final_cfg': The config in the form of a dictionary. In which
+          the order of the keys matters as it defines the order of the
+          steps in the workflow.
     """
     new_lines: list[str] = []
     cfg_lines = cfg_str.split(os.linesep)
@@ -194,15 +204,21 @@ def loads(cfg_str: str) -> ParamDict:
             count = counter[name]  # name should be already defined here
             new_line = f"['{name}.{count}'{group[2]}]"
 
+        elif group := _uppercase_bool_re.match(line):
+            param = group[1]  # Catches 'param = '
+            uppercase_bool = group[4]
+            new_line = f"{param}{uppercase_bool.lower()}"  # Lowercase bool
+
         else:
             new_line = line
 
         new_lines.append(new_line)
 
+    # Re-build workflow configuration file
     cfg = os.linesep.join(new_lines)
 
     try:
-        cfg_dict = toml.loads(cfg)
+        cfg_dict = toml.loads(cfg)  # Try to load it with the toml library
     except Exception as err:
         raise ConfigurationError(
             "Some thing is wrong with the config file: "
@@ -211,7 +227,15 @@ def loads(cfg_str: str) -> ParamDict:
 
     final_cfg = convert_variables_to_paths(cfg_dict)
 
-    return final_cfg
+    all_configs = {
+        'raw_input': cfg_str,
+        'cleaned_input': cfg,
+        'loaded_cleaned_input': cfg_dict,
+        'final_cfg': final_cfg,
+        }
+
+    # Return all configuration steps
+    return all_configs
 
 
 def convert_variables_to_paths(cfg: ParamMapT) -> ParamMapT:

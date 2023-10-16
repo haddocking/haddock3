@@ -2405,10 +2405,6 @@ link pept head - QSR tail + QSR end
 link pctn head - QSR tail + CTN end
 link pept head - QSR tail + NME end
 
-first PROP tail + PRO end
-first PROP tail + HYP end
-first PROP tail + HY3 end
-
 first ACET tail + ACE end
 
 last CTER head - ALA end

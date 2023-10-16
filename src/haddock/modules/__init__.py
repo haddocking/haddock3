@@ -19,7 +19,7 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
-    )
+)
 from haddock.gear import config
 from haddock.gear.clean_steps import clean_output
 from haddock.gear.parameters import config_mandatory_general_parameters
@@ -35,12 +35,12 @@ from haddock.libs.libutil import recursive_dict_update
 
 modules_folder = Path(__file__).resolve().parent
 
-_folder_match_regex = '[a-zA-Z]*/'
+_folder_match_regex = "[a-zA-Z]*/"
 modules_category = {
     module.name: category.name
     for category in modules_folder.glob(_folder_match_regex)
     for module in category.glob(_folder_match_regex)
-    }
+}
 """Indexes each module in its specific category. Keys are Paths to the module,
 values are their categories. Categories are the modules parent folders."""
 
@@ -53,7 +53,7 @@ category_hierarchy = [
     "scoring",
     "analysis",
     "extras",
-    ]
+]
 
 # this dictionary defines non-mandatory general parameters that can be defined
 # as global parameters thus affect all modules, or, instead, can be defined per
@@ -61,16 +61,16 @@ category_hierarchy = [
 # modules will use these parameters. It is the responsibility of the module to
 # extract the parameters it needs.
 # the config file is in modules/defaults.cfg
-non_mandatory_general_parameters_defaults = \
-    read_from_yaml_config(modules_defaults_path)
+non_mandatory_general_parameters_defaults = read_from_yaml_config(modules_defaults_path)
 
 config_readers = {
     ".yaml": read_from_yaml_config,
     ".cfg": config.load,
-    }
+}
 
-_step_folder_regex = tuple(r"[0-9]+_" + mod_name
-                           for mod_name in modules_category.keys())
+_step_folder_regex = tuple(
+    r"[0-9]+_" + mod_name for mod_name in modules_category.keys()
+)
 step_folder_regex = "(" + "|".join(_step_folder_regex) + ")"
 """
 String for regular expression to match module folders in a run directory.
@@ -97,8 +97,10 @@ def _not_valid_config() -> Generator[None, None, None]:
     try:
         yield
     except KeyError as err:
-        emsg = ("The configuration file extension is not supported. "
-                f"Supported types are {', '.join(config_readers.keys())}.")
+        emsg = (
+            "The configuration file extension is not supported. "
+            f"Supported types are {', '.join(config_readers.keys())}."
+        )
         raise ConfigurationError(emsg) from err
 
 
@@ -141,9 +143,9 @@ class BaseHaddockModule(ABC):
         self._params.clear()
         self.update_params(**self._original_params)
 
-    def update_params(self,
-                      update_from_cfg_file: Optional[FilePath] = None,
-                      **params: Any) -> None:
+    def update_params(
+        self, update_from_cfg_file: Optional[FilePath] = None, **params: Any
+    ) -> None:
         """
         Update the modules parameters.
 
@@ -175,8 +177,9 @@ class BaseHaddockModule(ABC):
         >>> m.update_params(...)
         """
         if update_from_cfg_file and params:
-            _msg = ("You can not provide both `update_from_cfg_file` "
-                    "and key arguments.")
+            _msg = (
+                "You can not provide both `update_from_cfg_file` " "and key arguments."
+            )
             raise TypeError(_msg)
 
         if update_from_cfg_file:
@@ -185,8 +188,9 @@ class BaseHaddockModule(ABC):
                 params = config_readers[extension](update_from_cfg_file)
 
         # the updating order is relevant
-        _n = recursive_dict_update(non_mandatory_general_parameters_defaults,
-                                   self._params)
+        _n = recursive_dict_update(
+            non_mandatory_general_parameters_defaults, self._params
+        )
         self._params = recursive_dict_update(_n, params)
         self._fill_emptypaths()
         self._confirm_fnames_exist()
@@ -199,7 +203,8 @@ class BaseHaddockModule(ABC):
         # [topoaa]
         # ...
         ignore = config_mandatory_general_parameters.union(
-            non_mandatory_general_parameters_defaults)  # noqa: 501
+            non_mandatory_general_parameters_defaults
+        )  # noqa: 501
         params = deepcopy(self.params)
 
         with suppress(KeyError):
@@ -212,9 +217,9 @@ class BaseHaddockModule(ABC):
         """Add parent path to paths."""
         # convert paths to relative by appending parent
         for key, value in self.params.items():
-            if value and key.endswith('_fname'):
+            if value and key.endswith("_fname"):
                 if not Path(value).is_absolute():
-                    self.params[key] = Path('..', value)
+                    self.params[key] = Path("..", value)
         return
 
     @abstractmethod
@@ -223,7 +228,7 @@ class BaseHaddockModule(ABC):
 
     def run(self, **params: Any) -> None:
         """Execute the module."""
-        log.info(f'Running [{self.name}] module')
+        log.info(f"Running [{self.name}] module")
 
         self.update_params(**params)
         self.add_parent_to_paths()
@@ -231,7 +236,7 @@ class BaseHaddockModule(ABC):
         with working_directory(self.path):
             self._run()
 
-        log.info(f'Module [{self.name}] finished.')
+        log.info(f"Module [{self.name}] finished.")
 
     def clean_output(self) -> None:
         """
@@ -254,15 +259,14 @@ class BaseHaddockModule(ABC):
         """
         return
 
-    def export_output_models(self, faulty_tolerance: int = 0) -> None:
+    def export_io_models(self, faulty_tolerance=0):
         """
-        Export output to the ModuleIO interface.
+        Export input/output to the ModuleIO interface.
 
-        Modules that generate PDBs that other models should take as input,
-        should export those PDBs registries through the ModuleIO interface.
+        Modules that do not perform any operation on PDB files should have
+         input = output.
 
-        This function implements a common interface for all modules requiring
-        this feature.
+        This function implements a common interface for all modules.
 
         Parameters
         ----------
@@ -274,12 +278,16 @@ class BaseHaddockModule(ABC):
         self.output_models: Union[list[PDBFile], dict[int, PDBFile]]
         assert self.output_models, "`self.output_models` cannot be empty."
         io = ModuleIO()
+        # add the input models
+        io.add(self.previous_io.output, "i")
+        # add the output models
         io.add(self.output_models, "o")
         faulty = io.check_faulty()
         if faulty > faulty_tolerance:
             _msg = (
                 f"{faulty:.2f}% of output was not generated for this module "
-                f"and tolerance was set to {faulty_tolerance:.2f}%.")
+                f"and tolerance was set to {faulty_tolerance:.2f}%."
+            )
             self.finish_with_error(_msg)
         io.save()
 
@@ -291,8 +299,7 @@ class BaseHaddockModule(ABC):
         else:
             raise RuntimeError(reason)
 
-    def _load_previous_io(self,
-                          filename: FilePath = MODULE_IO_FILE) -> ModuleIO:
+    def _load_previous_io(self, filename: FilePath = MODULE_IO_FILE) -> ModuleIO:
         if self.order == 0:
             self._num_of_input_molecules = 0
             return ModuleIO()
@@ -316,7 +323,7 @@ class BaseHaddockModule(ABC):
         except IndexError:
             return self.path
 
-    def log(self, msg: str, level: str = 'info') -> None:
+    def log(self, msg: str, level: str = "info") -> None:
         """
         Log a message with a common header.
 
@@ -331,18 +338,18 @@ class BaseHaddockModule(ABC):
             The level log: 'debug', 'info', ...
             Defaults to 'info'.
         """
-        getattr(log, level)(f'[{self.name}] {msg}')
+        getattr(log, level)(f"[{self.name}] {msg}")
 
     def _confirm_fnames_exist(self) -> None:
         for param, value in self._params.items():
-            if param.endswith('_fname') and value:
+            if param.endswith("_fname") and value:
                 if not Path(value).exists():
-                    raise FileNotFoundError(f'File not found: {str(value)!r}')
+                    raise FileNotFoundError(f"File not found: {str(value)!r}")
 
     def _fill_emptypaths(self) -> None:
         """Fill empty paths."""
         for param, value in list(self._params.items()):
-            if param.endswith('_fname') and not value:
+            if param.endswith("_fname") and not value:
                 self._params[param] = EmptyPath()
 
 
@@ -350,8 +357,8 @@ EngineMode = Literal["hpc", "local", "mpi"]
 
 
 def get_engine(
-        mode: EngineMode, params: ParamMap
-        ) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
+    mode: EngineMode, params: ParamMap
+) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
     """
     Create an engine to run the jobs.
 
@@ -367,20 +374,20 @@ def get_engine(
     """
     # a bit of a factory pattern here
     # this might end up in another module but for now its fine here
-    if mode == 'hpc':
+    if mode == "hpc":
         return partial(
             HPCScheduler,
-            target_queue=params['queue'],
-            queue_limit=params['queue_limit'],
-            concat=params['concat'],
-            )
+            target_queue=params["queue"],
+            queue_limit=params["queue_limit"],
+            concat=params["concat"],
+        )
 
-    elif mode == 'local':
+    elif mode == "local":
         return partial(
             Scheduler,
-            ncores=params['ncores'],
-            max_cpus=params['max_cpus'],
-            )
+            ncores=params["ncores"],
+            max_cpus=params["max_cpus"],
+        )
     elif mode == "mpi":
         return partial(MPIScheduler, ncores=params["ncores"])
 
@@ -388,12 +395,13 @@ def get_engine(
         available_engines = ("hpc", "local", "mpi")
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
-            f"Available options are {', '.join(available_engines)}")
+            f"Available options are {', '.join(available_engines)}"
+        )
 
 
 def get_module_steps_folders(
-        folder: FilePath,
-        modules: Optional[Container[int]] = None) -> list[str]:
+    folder: FilePath, modules: Optional[Container[int]] = None
+) -> list[str]:
     """
     Return a sorted list of the step folders in a running directory.
 
@@ -426,12 +434,13 @@ def get_module_steps_folders(
     steps = sorted(
         (f for f in folders if step_folder_regex_re.search(f)),
         key=lambda x: int(x.split("_")[0]),
-        )
+    )
     if modules:
         steps = [
-            st for st in steps if int(st.split("_")[0]) in modules
-            and st.split("_")[1] in modules_names
-            ]
+            st
+            for st in steps
+            if int(st.split("_")[0]) in modules and st.split("_")[1] in modules_names
+        ]
     return steps
 
 
@@ -456,10 +465,7 @@ def is_step_folder(path: FilePath) -> bool:
     folder_exists(path)
     main_folder_name = path.name
     parts = main_folder_name.split("_")
-    if \
-            len(parts) == 2 \
-            and parts[0].isdigit() \
-            and parts[1] in modules_category:
+    if len(parts) == 2 and parts[0].isdigit() and parts[1] in modules_category:
         return True
     else:
         return False

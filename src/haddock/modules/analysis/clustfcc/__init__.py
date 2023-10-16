@@ -251,4 +251,4 @@ class HaddockModule(BaseHaddockModule):
             log.warning('No clusters were found')
             self.output_models = models_to_cluster
 
-        self.export_output_models()
+        self.export_io_models()

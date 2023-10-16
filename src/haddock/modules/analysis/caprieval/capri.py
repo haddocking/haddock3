@@ -19,9 +19,9 @@ from haddock.core.typing import (
     ParamDict,
     ParamMap,
     Union,
-    )
+)
 from haddock.libs.libalign import (
-    AlignError,
+    ALIGNError,
     calc_rmsd,
     centroid,
     get_align,
@@ -29,22 +29,12 @@ from haddock.libs.libalign import (
     kabsch,
     load_coords,
     make_range,
-    )
+)
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 
 
-Contact = tuple[str, int, str, int]
-"""
-A residue-based contact.It's a tuple consist of
-
-(chain name A,residue number of chain A,
-
-chain name B, residue number of chain B)
-"""
-
-
-def load_contacts(pdb_f: PDBPath, cutoff: float = 5.0) -> set[Contact]:
+def load_contacts(pdb_f, cutoff=5.0, numbering_dic=None, model2ref_chain_dict=None):
     """
     Load residue-based contacts.
 
@@ -65,7 +55,12 @@ def load_contacts(pdb_f: PDBPath, cutoff: float = 5.0) -> set[Contact]:
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
     atoms = get_atoms(pdb_f, full=True)
-    ref_coord_dic, _ = load_coords(pdb_f, atoms)
+    ref_coord_dic, _ = load_coords(
+        pdb_f,
+        atoms,
+        numbering_dic=numbering_dic,
+        model2ref_chain_dict=model2ref_chain_dict,
+    )
     # create coordinate arrays
     coord_arrays: dict[str, NDFloat] = {}
     coord_ids: dict[str, list[int]] = {}
@@ -79,7 +74,7 @@ def load_contacts(pdb_f: PDBPath, cutoff: float = 5.0) -> set[Contact]:
         coord_arrays[chain] = np.array(coord_arrays[chain])
 
     # combinations of chains
-    unique_chain_combs = list(combinations(coord_arrays.keys(), 2))
+    unique_chain_combs = list(combinations(sorted(coord_arrays.keys()), 2))
 
     # calculating contacts
     for pair in unique_chain_combs:
@@ -91,8 +86,7 @@ def load_contacts(pdb_f: PDBPath, cutoff: float = 5.0) -> set[Contact]:
             npw = np.where(dist < cutoff)
             del dist
             for k in range(npw[0].shape[0]):
-                con: Contact = (pair[0], s_cid, pair[1],
-                                coord_ids[pair[1]][npw[1][k]])
+                con: Contact = (pair[0], s_cid, pair[1], coord_ids[pair[1]][npw[1][k]])
                 con_list.append(con)
     return set(con_list)
 
@@ -101,13 +95,13 @@ class CAPRI:
     """CAPRI class."""
 
     def __init__(
-            self,
-            identificator: str,
-            model: PDBPath,
-            path: Path,
-            reference: PDBPath,
-            params: ParamMap,
-            ) -> None:
+        self,
+        identificator: str,
+        model: PDBPath,
+        path: Path,
+        reference: PDBPath,
+        params: ParamMap,
+    ) -> None:
         """
         Initialize the class.
 
@@ -131,15 +125,16 @@ class CAPRI:
             self.model = model
         self.path = path
         self.params = params
-        self.irmsd = float('nan')
-        self.lrmsd = float('nan')
-        self.ilrmsd = float('nan')
-        self.fnat = float('nan')
-        self.dockq = float('nan')
+        self.irmsd = float("nan")
+        self.lrmsd = float("nan")
+        self.ilrmsd = float("nan")
+        self.fnat = float("nan")
+        self.dockq = float("nan")
         self.atoms = self._load_atoms(model, reference)
-        self.r_chain: str = params["receptor_chain"]
-        self.l_chain: str = params["ligand_chain"]
+        self.r_chain = params["receptor_chain"]
+        self.l_chains = params["ligand_chains"]
         self.model2ref_numbering = None
+        self.model2ref_chain_dict = None
         self.output_ss_fname = Path(f"capri_ss_{identificator}.tsv")
         self.output_clt_fname = Path(f"capri_clt_{identificator}.tsv")
         # for parallelisation
@@ -164,14 +159,15 @@ class CAPRI:
             # Load interface coordinates
             ref_coord_dic, _ = load_coords(
                 self.reference, self.atoms, ref_interface_resdic
-                )
+            )
 
             mod_coord_dic, _ = load_coords(
                 self.model,
                 self.atoms,
                 ref_interface_resdic,
-                numbering_dic=self.model2ref_numbering
-                )
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+            )
 
             # Here _coord_dic keys are matched
             #  and formatted as (chain, resnum, atom)
@@ -207,8 +203,9 @@ class CAPRI:
         mod_coord_dic, _ = load_coords(
             self.model,
             self.atoms,
-            numbering_dic=self.model2ref_numbering
-            )
+            numbering_dic=self.model2ref_numbering,
+            model2ref_chain_dict=self.model2ref_chain_dict,
+        )
 
         Q = []
         P = []
@@ -228,9 +225,10 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating lrmsd")
         else:
-            r_chain, l_chain = self.check_chains(obs_chains)
+            r_chain, l_chains = self.check_chains(obs_chains)
             r_start, r_end = chain_ranges[r_chain]
-            l_start, l_end = chain_ranges[l_chain]
+            l_starts = [chain_ranges[_l][0] for _l in l_chains]
+            l_ends = [chain_ranges[_l][1] for _l in l_chains]
 
             for k in intersection:
                 ref_xyz = ref_coord_dic[k]
@@ -246,8 +244,8 @@ class CAPRI:
             # write_coords("model_first.pdb", P)
 
             # get receptor and ligand coordinates
-            Q_r_first = Q[r_start: r_end + 1]
-            P_r_first = P[r_start: r_end + 1]
+            Q_r_first = Q[r_start : r_end + 1]
+            P_r_first = P[r_start : r_end + 1]
             # write_coords("ref_r_first.pdb", Q_r_first)
             # write_coords("model_r_first.pdb", P_r_first)
             # Q_l_first = Q[l_start: l_end + 1]
@@ -261,8 +259,8 @@ class CAPRI:
             P = P - centroid(P_r_first)
 
             # get receptor coordinates
-            Q_r = Q[r_start: r_end + 1]
-            P_r = P[r_start: r_end + 1]
+            Q_r = Q[r_start : r_end + 1]
+            P_r = P[r_start : r_end + 1]
             # Center receptors and get rotation matrix
             # Q_r = Q_r - centroid(Q_r)
             # P_r = P_r - centroid(P_r)
@@ -278,9 +276,14 @@ class CAPRI:
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
 
-            # Identify the ligand coordinates
-            Q_l = Q[l_start: l_end + 1]
-            P_l = P[l_start: l_end + 1]
+            # Identify ligand coordinates concatenating all the ligand chains
+            Q_l = np.empty((0, 3))
+            P_l = np.empty((0, 3))
+            for l_start, l_end in zip(l_starts, l_ends):
+                Q_l = np.concatenate((Q_l, Q[l_start : l_end + 1]))
+                P_l = np.concatenate((P_l, P[l_start : l_end + 1]))
+            # Q_l = Q[l_start: l_end + 1]
+            # P_l = P[l_start: l_end + 1]
 
             # write_coords("ref_l.pdb", Q_l)
             # write_coords("model_l.pdb", P_l)
@@ -303,14 +306,15 @@ class CAPRI:
 
         ref_int_coord_dic, _ = load_coords(
             self.reference, self.atoms, ref_interface_resdic
-            )
+        )
 
         mod_int_coord_dic, _ = load_coords(
             self.model,
             self.atoms,
             ref_interface_resdic,
-            numbering_dic=self.model2ref_numbering
-            )
+            numbering_dic=self.model2ref_numbering,
+            model2ref_chain_dict=self.model2ref_chain_dict,
+        )
 
         # write_coord_dic("ref.pdb", ref_int_coord_dic)
         # write_coord_dic("model.pdb", mod_int_coord_dic)
@@ -344,25 +348,25 @@ class CAPRI:
         if len(obs_chains) < 2:
             log.warning("Not enough chains for calculating ilrmsd")
         else:
-            r_chain, l_chain = self.check_chains(obs_chains)
-
-            l_start, l_end = chain_ranges[l_chain]
+            r_chain, l_chains = self.check_chains(obs_chains)
             r_start, r_end = chain_ranges[r_chain]
+            l_starts = [chain_ranges[l_chain][0] for l_chain in l_chains]
+            l_ends = [chain_ranges[l_chain][1] for l_chain in l_chains]
 
             # write_coords("ref.pdb", Q)
             # write_coords("model.pdb", P)
 
             # put system at origin of the receptor interface
-            Q_r_int = Q_int[r_start: r_end + 1]
-            P_r_int = P_int[r_start: r_end + 1]
+            Q_r_int = Q_int[r_start : r_end + 1]
+            P_r_int = P_int[r_start : r_end + 1]
 
             Q_int = Q_int - centroid(Q_r_int)
             P_int = P_int - centroid(P_r_int)
             # put interfaces at the origin
 
             # find the rotation that minimizes the receptor interface rmsd
-            Q_r_int = Q_int[r_start: r_end + 1]
-            P_r_int = P_int[r_start: r_end + 1]
+            Q_r_int = Q_int[r_start : r_end + 1]
+            P_r_int = P_int[r_start : r_end + 1]
 
             U_int = kabsch(P_r_int, Q_r_int)
             P_int = np.dot(P_int, U_int)
@@ -372,9 +376,15 @@ class CAPRI:
             # P_r_int = P_int[r_start: r_end + 1]
             # r_rmsd = calc_rmsd(Q_r_int, P_int[r_start: r_end + 1])
             # print(r_rmsd)
-
-            Q_l_int = Q_int[l_start: l_end + 1]
-            P_l_int = P_int[l_start: l_end + 1]
+            # Identify ligand coordinates concatenating all the ligand chains
+            Q_l_int = np.empty((0, 3))
+            P_l_int = np.empty((0, 3))
+            for l_start, l_end in zip(l_starts, l_ends):
+                Q_l_int = np.concatenate((Q_l_int, Q_int[l_start : l_end + 1]))
+                P_l_int = np.concatenate((P_l_int, P_int[l_start : l_end + 1]))
+            # prior to multibody:
+            # Q_l_int = Q_int[l_start: l_end + 1]
+            # P_l_int = P_int[l_start: l_end + 1]
             # write_coords("ref_l_int_fin.pdb", Q_l_int)
             # write_coords("mod_l_int_fin.pdb", P_l_int)
 
@@ -392,7 +402,12 @@ class CAPRI:
         """
         ref_contacts = load_contacts(self.reference, cutoff)
         if len(ref_contacts) != 0:
-            model_contacts = load_contacts(self.model, cutoff)
+            model_contacts = load_contacts(
+                self.model,
+                cutoff,
+                numbering_dic=self.model2ref_numbering,
+                model2ref_chain_dict=self.model2ref_chain_dict,
+            )
             intersection = ref_contacts & model_contacts
             self.fnat = len(intersection) / float(len(ref_contacts))
         else:
@@ -463,20 +478,19 @@ class CAPRI:
         try:
             align_func = get_align(
                 method=self.params["alignment_method"],
-                lovoalign_exec=self.params["lovoalign_exec"]
-                )
-            self.model2ref_numbering = align_func(
-                self.reference,
-                self.model,
-                self.path
-                )
-        except AlignError:
+                lovoalign_exec=self.params["lovoalign_exec"],
+            )
+            self.model2ref_numbering, self.model2ref_chain_dict = align_func(
+                self.reference, self.model, self.path
+            )
+        except ALIGNError:
             log.warning(
                 f"Alignment failed between {self.reference} "
                 f"and {self.model}, skipping..."
-                )
+            )
             return
-
+        # print(f"model2ref_numbering {self.model2ref_numbering}")
+        # print(f"model2ref_chain_dict {self.model2ref_chain_dict}")
         if self.params["fnat"]:
             log.debug(f"id {self.identificator}, calculating FNAT")
             fnat_cutoff = self.params["fnat_cutoff"]
@@ -505,30 +519,42 @@ class CAPRI:
 
         self.make_output()
 
-    def check_chains(self, obs_chains: list[str]) -> tuple[str, str]:
-        """Check observed chains against the expected ones."""
+    def check_chains(self, obs_chains):
+        """
+        Check observed chains against the expected ones.
+
+        Logic: if chain B is among the observed chains and is not selected as
+         the receptor chain, then ligand_chains = ["B"] (default behaviour).
+        Otherwise, ligand_chains becomes equal to all the other chains (once
+         receptor chain is removed).
+
+        Parameters
+        ----------
+        obs_chains : list
+            List of observed chains.
+        """
         r_found, l_found = False, False
-        obs_chains_cp = obs_chains.copy()
         if self.r_chain in obs_chains:
             r_chain = self.r_chain
             obs_chains.remove(r_chain)
             r_found = True
-        if self.l_chain in obs_chains:
-            l_chain = self.l_chain
-            obs_chains.remove(l_chain)
-            l_found = True
-        # if one or both exp chains are not observed, use the observed chains
-        if obs_chains != []:
-            exps = {self.r_chain, self.l_chain}
-            log.warning(f"observed chains != expected chains {exps}.")
-            log.info(f"Sticking to observed chains {obs_chains_cp}")
+        l_chains = []
+        for l_chain in self.l_chains:
+            if l_chain in obs_chains:
+                l_chains.append(l_chain)
+                obs_chains.remove(l_chain)
+                l_found = True
+        # if receptor chain is not among the observed chains, then
+        # it is the first chain in the list
         if not r_found:
             r_chain = obs_chains[0]
             obs_chains.remove(r_chain)
+        # if no element in ligand_chains is not among the observed chains, then
+        # ligand_chains is the list of observed chains (the receptor chain has
+        # already been removed)
         if not l_found:
-            l_chain = obs_chains[0]
-
-        return r_chain, l_chain
+            l_chains = [el for el in obs_chains]
+        return r_chain, l_chains
 
     @staticmethod
     def _load_atoms(model: PDBPath, reference: PDBPath) -> AtomsDict:
@@ -555,8 +581,7 @@ class CAPRI:
         return atoms_dict
 
     @staticmethod
-    def identify_interface(pdb_f: PDBPath,
-                           cutoff: float = 5.0) -> dict[str, list[int]]:
+    def identify_interface(pdb_f: PDBPath, cutoff: float = 5.0) -> dict[str, list[int]]:
         """Identify the interface.
 
         Parameters
@@ -573,7 +598,6 @@ class CAPRI:
         contacts = load_contacts(pdb_f, cutoff)
 
         for contact in contacts:
-
             first_chain, first_resid, sec_chain, sec_resid = contact
 
             if first_chain not in interface_resdic:
@@ -619,15 +643,14 @@ def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
             continue
         header, content = out_file.read_text().split(os.linesep, 1)
 
-        header_data = header.split('\t')
-        content_data = content.split('\t')
+        header_data = header.split("\t")
+        content_data = content.split("\t")
 
         model_name = Path(content_data[header_data.index("model")]).name
         capri_dic[model_name] = {}
-        target_keys = ['irmsd', 'fnat', 'ilrmsd', 'lrmsd', 'dockq']
+        target_keys = ["irmsd", "fnat", "ilrmsd", "lrmsd", "dockq"]
         for key in target_keys:
-            capri_dic[model_name][key] = float(
-                content_data[header_data.index(key)])
+            capri_dic[model_name][key] = float(content_data[header_data.index(key)])
 
     for j in capri_jobs:
         for m in capri_dic:
@@ -635,22 +658,22 @@ def merge_data(capri_jobs: list[CAPRI]) -> list[CAPRI]:
             file_name = jm.name if isinstance(jm, Path) else jm.file_name
             if m == file_name:
                 # add the data
-                j.irmsd = capri_dic[m]['irmsd']
-                j.fnat = capri_dic[m]['fnat']
-                j.lrmsd = capri_dic[m]['lrmsd']
-                j.ilrmsd = capri_dic[m]['ilrmsd']
-                j.dockq = capri_dic[m]['dockq']
+                j.irmsd = capri_dic[m]["irmsd"]
+                j.fnat = capri_dic[m]["fnat"]
+                j.lrmsd = capri_dic[m]["lrmsd"]
+                j.ilrmsd = capri_dic[m]["ilrmsd"]
+                j.dockq = capri_dic[m]["dockq"]
 
     return capri_jobs
 
 
 def rearrange_ss_capri_output(
-        output_name: str,
-        output_count: int,
-        sort_key: str,
-        sort_ascending: bool,
-        path: FilePath
-        ) -> None:
+    output_name: str,
+    output_count: int,
+    sort_key: str,
+    sort_ascending: bool,
+    path: FilePath,
+) -> None:
     """
     Combine different capri outputs in a single file.
 
@@ -669,12 +692,9 @@ def rearrange_ss_capri_output(
     output_fname = Path(path, output_name)
     log.info(f"Rearranging output files into {output_fname}")
     keyword = output_name.split(".")[0]
-    split_dict = {
-        "capri_ss": "model-cluster-ranking",
-        "capri_clt": "caprieval_rank"
-        }
+    split_dict = {"capri_ss": "model-cluster-ranking", "capri_clt": "caprieval_rank"}
     if keyword not in split_dict.keys():
-        raise Exception(f'Keyword {keyword} does not exist.')
+        raise Exception(f"Keyword {keyword} does not exist.")
 
     # Load the information of each intermediate file
     data: dict[int, ParamDict] = {}
@@ -683,15 +703,19 @@ def rearrange_ss_capri_output(
 
         # raise a warning if file does not exist.
         if not out_file.exists():
-            log.warning((f"Output file {out_file} does not exist. "
-                        "Caprieval will not be exhaustive..."))
+            log.warning(
+                (
+                    f"Output file {out_file} does not exist. "
+                    "Caprieval will not be exhaustive..."
+                )
+            )
             continue
 
         data[ident] = {}
         header, content = out_file.read_text().split(os.linesep, 1)
 
-        header_data = header.split('\t')
-        content_data = content.split('\t')
+        header_data = header.split("\t")
+        content_data = content.split("\t")
 
         # find out the data type of each field
         for key, value in zip(header_data, content_data):
@@ -707,7 +731,7 @@ def rearrange_ss_capri_output(
         out_file.unlink()
 
     # Rank according to the score
-    score_rankkey_values = [(k, v['score']) for k, v in data.items()]
+    score_rankkey_values = [(k, v["score"]) for k, v in data.items()]
     score_rankkey_values.sort(key=lambda x: x[1])
 
     for i, k in enumerate(score_rankkey_values):
@@ -717,9 +741,8 @@ def rearrange_ss_capri_output(
     # Sort according to the sort key
     rankkey_values = [(k, v[sort_key]) for k, v in data.items()]
     rankkey_values.sort(
-        key=lambda x: x[1],
-        reverse=True if not sort_ascending else False
-        )
+        key=lambda x: x[1], reverse=True if not sort_ascending else False
+    )
 
     _data = {}
     for i, (data_idx, _) in enumerate(rankkey_values):
@@ -754,19 +777,18 @@ def calc_stats(data) -> tuple[float, float]:
     return mean, stdev
 
 
-CltData = dict[tuple[Optional[int], Union[int, str, None]],
-               list[tuple[CAPRI, PDBFile]]]
+CltData = dict[tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]]
 
 
 def capri_cluster_analysis(
-        capri_list: Iterable[CAPRI],
-        model_list: Iterable[PDBFile],
-        output_fname: FilePath,
-        clt_threshold: float,
-        sort_key: str,
-        sort_ascending: bool,
-        path: FilePath
-        ) -> None:
+    capri_list: Iterable[CAPRI],
+    model_list: Iterable[PDBFile],
+    output_fname: FilePath,
+    clt_threshold: float,
+    sort_key: str,
+    sort_ascending: bool,
+    path: FilePath,
+) -> None:
     """Consider the cluster results for the CAPRI evaluation."""
     capri_keys = ["irmsd", "fnat", "lrmsd", "dockq"]
     model_keys = ["air", "bsa", "desolv", "elec", "total", "vdw"]
@@ -795,8 +817,7 @@ def capri_cluster_analysis(
             data["under_eval"] = "-"
         # score
         try:
-            score_array = [
-                e[1].score for e in clt_data[element][:clt_threshold]]
+            score_array = [e[1].score for e in clt_data[element][:clt_threshold]]
             data["score"], data["score_std"] = calc_stats(score_array)
         except KeyError:
             data["score"] = float("nan")
@@ -806,8 +827,7 @@ def capri_cluster_analysis(
         for key in capri_keys:
             std_key = f"{key}_std"
             try:
-                key_array = [
-                    vars(e[0])[key] for e in clt_data[element][:clt_threshold]]
+                key_array = [vars(e[0])[key] for e in clt_data[element][:clt_threshold]]
                 data[key], data[std_key] = calc_stats(key_array)
             except KeyError:
                 data[key] = float("nan")
@@ -821,7 +841,7 @@ def capri_cluster_analysis(
                     key_array = [
                         vars(e[1])["unw_energies"][key]
                         for e in clt_data[element][:clt_threshold]
-                        ]
+                    ]
                     data[key], data[std_key] = calc_stats(key_array)
                 except KeyError:
                     data[key] = float("nan")
@@ -830,20 +850,17 @@ def capri_cluster_analysis(
         output_dic[i] = data
 
     # Rank according to the score
-    score_rankkey_values = [(key, v['score'])
-                            for key, v in output_dic.items()]
+    score_rankkey_values = [(key, v["score"]) for key, v in output_dic.items()]
     score_rankkey_values.sort(key=lambda x: x[1])
     for i, k in enumerate(score_rankkey_values):
         idx, _ = k
         output_dic[idx]["caprieval_rank"] = i + 1
 
     # Rank according to the sorting key
-    rankkey_values = [(key, v[sort_key])
-                      for key, v in output_dic.items()]
+    rankkey_values = [(key, v[sort_key]) for key, v in output_dic.items()]
     rankkey_values.sort(
-        key=lambda x: x[1],
-        reverse=True if not sort_ascending else False
-        )
+        key=lambda x: x[1], reverse=True if not sort_ascending else False
+    )
 
     _output_dic = {}
     for i, k in enumerate(rankkey_values):
@@ -863,18 +880,15 @@ def capri_cluster_analysis(
     info_header += (
         "# NOTE: if under_eval=yes, it means that there were less models in"
         " a cluster than" + os.linesep
-        )
+    )
     info_header += (
-        "#    clt_threshold, thus these values were under evaluated."
-        + os.linesep
-        )
+        "#    clt_threshold, thus these values were under evaluated." + os.linesep
+    )
     info_header += (
         "#   You might need to tweak the value of clt_threshold or change"
         " some parameters" + os.linesep
-        )
-    info_header += (
-        "#    in `clustfcc` depending on your analysis." + os.linesep
-        )
+    )
+    info_header += "#    in `clustfcc` depending on your analysis." + os.linesep
     info_header += "#" + os.linesep
     info_header += "#" * 40
 
@@ -882,10 +896,7 @@ def capri_cluster_analysis(
         # This means there were only "dummy" values
         return
     else:
-        write_nested_dic_to_file(
-            output_dic,
-            output_fname,
-            info_header=info_header)
+        write_nested_dic_to_file(output_dic, output_fname, info_header=info_header)
 
 
 class CAPRIError(Exception):

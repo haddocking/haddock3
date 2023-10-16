@@ -129,10 +129,10 @@ class HaddockModule(BaseHaddockModule):
 
         # final section
         self.output_models = list_of_created_models
-        self.export_output_models()
+        self.export_io_models()
         # in case your module considers possible tolerance for generated models,
         # you can use:
-        # self.export_output_models(faulty_tolerance=self.params["tolerance"])
+        # self.export_io_models(faulty_tolerance=self.params["tolerance"])
 
 
 # Finally, the haddock module's class inherit from BaseHaddockModule. It is

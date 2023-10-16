@@ -165,7 +165,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Sending models to the next step of the workflow
         self.output_models = models
-        self.export_output_models()
+        self.export_io_models()
         # Sending matrix path to the next step of the workflow
         matrix_io = ModuleIO()
         rmsd_matrix_file = RMSDFile(

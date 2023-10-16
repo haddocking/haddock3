@@ -24,7 +24,7 @@
 
 do (store1 = 1) (all)
 restraint dihedral
-    nass = 10000
+    nass = 50000
 end
 evaluate ($group=1)
 evaluate ($done=false)

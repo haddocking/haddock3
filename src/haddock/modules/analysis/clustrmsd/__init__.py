@@ -215,7 +215,7 @@ class HaddockModule(BaseHaddockModule):
         with open(output_fname, 'w') as out_fh:
             out_fh.write(output_str)
 
-        self.export_output_models()
+        self.export_io_models()
         # sending matrix to next step of the workflow
         matrix_io = ModuleIO()
         matrix_io.add(self.matrix_json.input[0])

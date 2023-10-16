@@ -1,4 +1,4 @@
-name: tests
+name: unittests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  unittests:
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install pip==23.1.2 setuptools==67.7.2 wheel==0.40.0
-          pip install virtualenv==20.23.0 tox==4.5.1
+          pip install virtualenv==20.23.0 tox==4.5.1.1
 
       - name: Install FCC
         run: |
@@ -43,10 +43,9 @@ jobs:
       - name: unit tests
         run: tox -e test
 
-      # from https://github.com/codecov/codecov-action
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
           files: ./coverage.xml
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           verbose: true

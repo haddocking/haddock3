@@ -16,12 +16,11 @@ from haddock.core.typing import (
     Optional,
     ParamDict,
     ParamMap,
-    )
+)
 from haddock.libs.libio import read_from_yaml
 
 
-def yaml2cfg_text(ymlcfg: ParamMap, module: Optional[str],
-                  explevel: ExpertLevel) -> str:
+def yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = False):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -39,18 +38,27 @@ def yaml2cfg_text(ymlcfg: ParamMap, module: Optional[str],
         The expert level to consider. Provides all parameters for that
         level and those of inferior hierarchy. If you give "all", all
         parameters will be considered.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     new_config: list[str] = []
     if module is not None:
         new_config.append(f"[{module}]")
 
-    new_config.append(_yaml2cfg_text(ymlcfg, module, explevel))
+    new_config.append(
+        _yaml2cfg_text(
+            ymlcfg,
+            module,
+            explevel,
+            details=details,
+        )
+    )
 
     return os.linesep.join(new_config) + os.linesep
 
 
-def _yaml2cfg_text(ycfg: ParamMap, module: Optional[str],
-                   explevel: ExpertLevel) -> str:
+def _yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = False):
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -59,35 +67,52 @@ def _yaml2cfg_text(ycfg: ParamMap, module: Optional[str],
 
     Parameters
     ----------
-    ycfg : dict
+    ymlcfg : dict
         The dictionary representing the HADDOCK3 YAML configuration.
         This configuration should NOT have the expertise levels. It
         expectes the first level of keys to be the parameter name.
+
+    module : str
+        The module to which the config belongs to.
+
+    explevel : str
+        The expert level to consider. Provides all parameters for that
+        level and those of inferior hierarchy. If you give "all", all
+        parameters will be considered.
+
+    details : bool
+        Whether to add the 'long' description of each parameter.
     """
     params: list[str] = []
     exp_levels = {
-        _el: i
-        for i, _el in enumerate(config_expert_levels + ("all", _hidden_level))
-        }
+        _el: i for i, _el in enumerate(config_expert_levels + ("all", _hidden_level))
+    }
     exp_level_idx = exp_levels[explevel]
 
-    for param_name, param in ycfg.items():
+    # define set of undesired parameter keys
+    undesired = ("default", "explevel", "short", "type")
+    if not details:
+        undesired = undesired + ("long",)
 
+    for param_name, param in ymlcfg.items():
         # treats parameters that are subdictionaries of parameters
         if isinstance(param, Mapping) and "default" not in param:
-
             params.append("")  # give extra space
             if module is not None:
                 curr_module = f"{module}.{param_name}"
             else:
                 curr_module = param_name
             params.append(f"[{curr_module}]")
-            _ = _yaml2cfg_text(param, module=curr_module, explevel=explevel)
+            _ = _yaml2cfg_text(
+                param,
+                module=curr_module,
+                explevel=explevel,
+                details=details,
+            )
             params.append(_)
 
         # treats normal parameters
         elif isinstance(param, Mapping):
-
             if exp_levels[param["explevel"]] > exp_level_idx:
                 # ignore this parameter because is of an expert level
                 # superior to the one request:
@@ -95,7 +120,7 @@ def _yaml2cfg_text(ycfg: ParamMap, module: Optional[str],
 
             comment: list[str] = []
             for _comment, cvalue in param.items():
-                if _comment in ("default", "explevel", "short", "long", "type"):
+                if _comment in undesired:
                     continue
 
                 if cvalue == "":
@@ -112,11 +137,13 @@ def _yaml2cfg_text(ycfg: ParamMap, module: Optional[str],
             else:
                 param_line = "{} = {!r}  # {}"
 
-            params.append(param_line.format(
-                param_name,
-                default_value,
-                " / ".join(comment),
-                ))
+            params.append(
+                param_line.format(
+                    param_name,
+                    default_value,
+                    " / ".join(comment),
+                )
+            )
 
             if param["type"] == "list":
                 params.append(os.linesep)
@@ -128,13 +155,32 @@ def _yaml2cfg_text(ycfg: ParamMap, module: Optional[str],
     return os.linesep.join(params)
 
 
-def read_from_yaml_config(cfg_file: FilePath) -> ParamDict:
-    """Read config from yaml by collapsing the expert levels."""
+def read_from_yaml_config(cfg_file, default_only=True) -> dict:
+    """Read config from yaml by collapsing the expert levels.
+
+    Parameters
+    ----------
+    cfg_file :
+        Path to a .yaml configuration file
+    default_only : bool
+        Set the return value of this function; if True (default value), only
+        returns default values, else return the fully loaded configuration file
+
+    Return
+    ------
+    ycfg : dict
+        The full default configuration file as a dict
+    OR
+    cfg : dict
+        A dictionary containing only the default parameters values
+    """
     ycfg = read_from_yaml(cfg_file)
-    # there's no need to make a deep copy here, a shallow copy suffices.
-    cfg: ParamDict = {}
-    cfg.update(flat_yaml_cfg(ycfg))
-    return cfg
+    if default_only:
+        # there's no need to make a deep copy here, a shallow copy suffices.
+        cfg = {}
+        cfg.update(flat_yaml_cfg(ycfg))
+        return cfg
+    return ycfg
 
 
 def flat_yaml_cfg(cfg: ParamMap) -> ParamDict:

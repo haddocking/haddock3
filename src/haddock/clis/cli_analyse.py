@@ -320,8 +320,8 @@ def analyse_step(step: str, run_dir: FilePath, capri_dict: ParamDict,
     else:
         log.info(f"step {step} is caprieval, files should be already available")
         ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
-        clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(ss_fname, target_path)
+        clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(clt_fname, target_path)
 
     os.chdir(target_path)
@@ -341,8 +341,8 @@ def analyse_step(step: str, run_dir: FilePath, capri_dict: ParamDict,
         log.info("Plotting results..")
         scatters = scatter_plot_handler(ss_file, cluster_ranking, format, scale)
         boxes = box_plot_handler(ss_file, cluster_ranking, format, scale)
-        table = clt_table_handler(clt_file, ss_file)
-        report_generator(boxes, scatters, table, step)
+        tables = clt_table_handler(clt_file, ss_file)
+        report_generator(boxes, scatters, tables, step)
 
 
 def main(run_dir: FilePath, modules: list[int], top_cluster: int,
@@ -364,7 +364,7 @@ def main(run_dir: FilePath, modules: list[int], top_cluster: int,
 
     format : str
         Produce images in the selected format.
-    
+
     scale : int
         scale for images.
     """
@@ -447,12 +447,21 @@ def main(run_dir: FilePath, modules: list[int], top_cluster: int,
                 shutil.rmtree(directory)
 
     # substituting the correct paths in the capri_ss files
+    # after moving files into analysis folder
     for directory in good_folder_paths:
         ss_file = Path(outdir, directory, "capri_ss.tsv")
         if ss_file.exists():
             log.info(f"updating paths in {ss_file}")
             update_paths(ss_file, "../", "../../")
-
+        report_file = Path(outdir, directory, "report.html")
+        log.info(f"View the results in {report_file}")
+        info_msg = ("To view structures or download the structure files, "
+                    f"in a terminal run the command "
+                    f"`python -m http.server --directory {rundir_cwd}`. "
+                    "By default, http server runs on `http://0.0.0.0:8000/`. "
+                    f"Open the link http://0.0.0.0:8000/{report_file} "
+                    "in a web browser.")
+        log.info(info_msg)
     os.chdir(ori_cwd)
     return
 

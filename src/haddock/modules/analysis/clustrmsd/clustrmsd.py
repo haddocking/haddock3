@@ -8,15 +8,15 @@ from haddock import log
 from haddock.libs.libontology import RMSDFile
 
 
-def read_matrix(rmsd_matrix):
+def read_matrix(rmsd_matrix: RMSDFile) -> np.ndarray:
     """
     Read the RMSD matrix.
-    
+
     Parameters
     ----------
     rmsd_matrix : :obj:`RMSDFile`
         RMSDFile object with the path to the RMSD matrix.
-    
+
     Returns
     -------
     matrix : :obj:`numpy.ndarray`
@@ -40,7 +40,7 @@ def read_matrix(rmsd_matrix):
     # creating and filling matrix obj
     matrix = np.zeros((nlines))
     c = 0
-    with open(filename, 'r') as mf:
+    with open(filename, "r") as mf:
         for line in mf:
             data = line.split()
             if len(data) != 3:
@@ -59,22 +59,22 @@ def get_dendrogram(rmsd_matrix, linkage_type):
 
 def get_clusters(dendrogram, tolerance, criterion):
     """Obtain the clusters."""
-    log.info('Clustering dendrogram...')
+    log.info("Clustering dendrogram...")
     cluster_arr = fcluster(dendrogram, t=tolerance, criterion=criterion)
     return cluster_arr
 
 
-def apply_threshold(cluster_arr, threshold):
+def apply_threshold(cluster_arr: np.ndarray, threshold: int) -> np.ndarray:
     """
     Apply threshold to cluster list.
-    
+
     Parameters
     ----------
     cluster_arr : np.ndarray
         Array of clusters.
     threshold : int
         Threshold value on cluster population.
-    
+
     Returns
     -------
     cluster_arr : np.ndarray
@@ -96,7 +96,7 @@ def apply_threshold(cluster_arr, threshold):
     return new_cluster_arr
 
 
-def iterate_threshold(cluster_arr, threshold):
+def iterate_threshold(cluster_arr: np.ndarray, threshold: int) -> np.ndarray:
     """
     Iterate over the threshold values until we find at least one valid cluster.
 
@@ -112,18 +112,19 @@ def iterate_threshold(cluster_arr, threshold):
     new_cluster_arr : np.ndarray
         Array of clusters (unclustered structures are labelled with -1)
     """
+    new_cluster_arr: np.ndarray = np.ndarray([])
     for curr_thr in range(threshold, 0, -1):
-        log.info(f'Clustering with threshold={curr_thr}')
+        log.info(f"Clustering with threshold={curr_thr}")
         new_cluster_arr = apply_threshold(cluster_arr, curr_thr)
         ncl = len(np.unique(new_cluster_arr))
         if ncl <= 1:  # contains -1 (unclustered)
-            log.warning(f'No clusters found with threshold={curr_thr}')
+            log.warning(f"No clusters found with threshold={curr_thr}")
         else:
             break
     return new_cluster_arr
 
 
-def cond_index(i, j, n):
+def cond_index(i: int, j: int, n: int) -> float:
     """
     Get the condensed index from two matrix indexes.
 
@@ -139,7 +140,7 @@ def cond_index(i, j, n):
     return n * (n - 1) / 2 - (n - i) * (n - i - 1) / 2 + j - i - 1
 
 
-def get_cluster_center(npw, n_obs, rmsd_matrix):
+def get_cluster_center(npw: np.ndarray, n_obs: int, rmsd_matrix: np.ndarray) -> int:
     """
     Get the cluster centers.
 
@@ -158,13 +159,13 @@ def get_cluster_center(npw, n_obs, rmsd_matrix):
         Index of cluster center
     """
     intra_cl_distances = {el: 0.0 for el in npw}
-    
+
     # iterating over the elements of the cluster
     for m_idx in range(len(npw)):
-        npws = npw[m_idx + 1:]
+        npws = npw[m_idx + 1 :]
         pairs = [int(cond_index(npw[m_idx], npw_el, n_obs)) for npw_el in npws]
         for pair_idx in range(len(pairs)):
             intra_cl_distances[npw[m_idx]] += rmsd_matrix[pairs[pair_idx]]
             intra_cl_distances[npws[pair_idx]] += rmsd_matrix[pairs[pair_idx]]
-    cluster_center = min(intra_cl_distances, key=intra_cl_distances.get)
+    cluster_center = min(intra_cl_distances, key=intra_cl_distances.get)  # type: ignore
     return cluster_center

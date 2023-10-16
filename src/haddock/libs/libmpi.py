@@ -4,6 +4,7 @@ import shlex
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any, Optional
 
 from haddock import log
 
@@ -11,12 +12,12 @@ from haddock import log
 class MPIScheduler:
     """Schedules tasks to be executed via MPI."""
 
-    def __init__(self, tasks, ncores=None):
+    def __init__(self, tasks: list[Any], ncores: Optional[int] = None) -> None:
         self.tasks = tasks
         self.cwd = Path.cwd()
         self.ncores = ncores
 
-    def run(self):
+    def run(self) -> None:
         """Send it to the haddock3-mpitask runner."""
         pkl_tasks = self._pickle_tasks()
         cmd = f"mpirun -np {self.ncores} haddock3-mpitask {pkl_tasks}"
@@ -37,7 +38,7 @@ class MPIScheduler:
             log.error(err)
             sys.exit()
 
-    def _pickle_tasks(self):
+    def _pickle_tasks(self) -> Path:
         """Pickle the tasks."""
         fpath = Path(self.cwd, "mpi.pkl")
         log.debug(f"Pickling the tasks at {fpath}")

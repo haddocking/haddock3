@@ -582,7 +582,7 @@ Unrecognized residues' code is `X`.
 """
 
 
-def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, ResCode]]:
+def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, str]]:
     """
     Write the sequence as a fasta.
 
@@ -650,7 +650,7 @@ def pdb2fastadic(pdb_f: PDBPath) -> dict[str, dict[int, ResCode]]:
         ]
     )
 
-    seq_dic: dict[str, dict[int, ResCode]] = {}
+    seq_dic: dict[str, dict[int, str]] = {}
 
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
@@ -832,18 +832,18 @@ def align_strct(
             resnum_a, seq_a, _ = line_a.split()
             resnum_b, seq_b, _ = line_b.split()
 
-            resnum_a = int(resnum_a) - 1
-            resnum_b = int(resnum_b) - 1
+            resnum_a = int(resnum_a) - 1  # type: ignore
+            resnum_b = int(resnum_b) - 1  # type: ignore
 
             for resname_a, resname_b in zip(seq_a, seq_b):
                 if resname_a != "-":
-                    resnum_a += 1
+                    resnum_a += 1  # type: ignore
 
                 if resname_b != "-":
-                    resnum_b += 1
+                    resnum_b += 1  # type: ignore
 
                 if resname_a != "-" and resname_b != "-":
-                    numbering_dic[chain][resnum_b] = resnum_a
+                    numbering_dic[chain][resnum_b] = resnum_a  # type: ignore
 
     izone_fname = Path(output_path, "lovoalign.izone")
     log.debug(f"Saving .izone to {izone_fname.name}")

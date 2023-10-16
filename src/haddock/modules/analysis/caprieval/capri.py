@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 from pdbtools import pdb_segxchain
 from scipy.spatial.distance import cdist
+from typing import Any
 
 from haddock import log
 from haddock.core.typing import (
@@ -50,7 +51,7 @@ def load_contacts(pdb_f, cutoff=5.0, numbering_dic=None, model2ref_chain_dict=No
     set(con_list) : set
         set of unique contacts
     """
-    con_list: list[Contact] = []
+    con_list: list = []
     if isinstance(pdb_f, PDBFile):
         pdb_f = pdb_f.rel_path
     # get also side chains atoms
@@ -67,8 +68,8 @@ def load_contacts(pdb_f, cutoff=5.0, numbering_dic=None, model2ref_chain_dict=No
     for atom in ref_coord_dic.keys():
         chain = atom[0]
         if chain not in coord_arrays.keys():  # initialize lists
-            coord_arrays[chain], coord_ids[chain] = [], []
-        coord_arrays[chain].append(ref_coord_dic[atom])
+            coord_arrays[chain], coord_ids[chain] = [], []  # type: ignore
+        coord_arrays[chain].append(ref_coord_dic[atom])  # type: ignore
         coord_ids[chain].append(atom[1])  # only the resid is appended
     for chain in coord_arrays.keys():
         coord_arrays[chain] = np.array(coord_arrays[chain])
@@ -86,7 +87,7 @@ def load_contacts(pdb_f, cutoff=5.0, numbering_dic=None, model2ref_chain_dict=No
             npw = np.where(dist < cutoff)
             del dist
             for k in range(npw[0].shape[0]):
-                con: Contact = (pair[0], s_cid, pair[1], coord_ids[pair[1]][npw[1][k]])
+                con = (pair[0], s_cid, pair[1], coord_ids[pair[1]][npw[1][k]])
                 con_list.append(con)
     return set(con_list)
 
@@ -213,7 +214,7 @@ class CAPRI:
         #  separate between receptor and ligand coordinates
         intersection = sorted(ref_coord_dic.keys() & mod_coord_dic.keys())
 
-        chain_ranges = {}
+        chain_ranges: dict[Any, Any] = {}
         for i, segment in enumerate(intersection):
             chain, _, _ = segment
             if chain not in chain_ranges:
@@ -336,7 +337,7 @@ class CAPRI:
         # write_coords("ref.pdb", Q_int)
         # write_coords("model.pdb", P_int)
 
-        chain_ranges = {}
+        chain_ranges: dict[Any, Any] = {}
         for i, segment in enumerate(sorted(common_keys)):
             chain, _, _ = segment
             if chain not in chain_ranges:
@@ -718,6 +719,7 @@ def rearrange_ss_capri_output(
         content_data = content.split("\t")
 
         # find out the data type of each field
+        value: Union[float, str]
         for key, value in zip(header_data, content_data):
             try:
                 value = int(value)
@@ -756,7 +758,7 @@ def rearrange_ss_capri_output(
         write_nested_dic_to_file(data, output_name)
 
 
-def calc_stats(data) -> tuple[float, float]:
+def calc_stats(data: list) -> tuple[float, float]:
     """
     Calculate the mean and stdev.
 
@@ -817,7 +819,7 @@ def capri_cluster_analysis(
             data["under_eval"] = "-"
         # score
         try:
-            score_array = [e[1].score for e in clt_data[element][:clt_threshold]]
+            score_array = [e[1].score for e in clt_data[element][:clt_threshold]]  # type: ignore
             data["score"], data["score_std"] = calc_stats(score_array)
         except KeyError:
             data["score"] = float("nan")
@@ -827,7 +829,7 @@ def capri_cluster_analysis(
         for key in capri_keys:
             std_key = f"{key}_std"
             try:
-                key_array = [vars(e[0])[key] for e in clt_data[element][:clt_threshold]]
+                key_array = [vars(e[0])[key] for e in clt_data[element][:clt_threshold]]  # type: ignore
                 data[key], data[std_key] = calc_stats(key_array)
             except KeyError:
                 data[key] = float("nan")
@@ -840,7 +842,7 @@ def capri_cluster_analysis(
                 try:
                     key_array = [
                         vars(e[1])["unw_energies"][key]
-                        for e in clt_data[element][:clt_threshold]
+                        for e in clt_data[element][:clt_threshold]  # type: ignore
                     ]
                     data[key], data[std_key] = calc_stats(key_array)
                 except KeyError:

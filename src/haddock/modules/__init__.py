@@ -357,7 +357,7 @@ EngineMode = Literal["hpc", "local", "mpi"]
 
 
 def get_engine(
-    mode: EngineMode, params: ParamMap
+    mode: str, params: dict[Any, Any]
 ) -> partial[Union[HPCScheduler, Scheduler, MPIScheduler]]:
     """
     Create an engine to run the jobs.
@@ -375,7 +375,7 @@ def get_engine(
     # a bit of a factory pattern here
     # this might end up in another module but for now its fine here
     if mode == "hpc":
-        return partial(
+        return partial(  # type: ignore
             HPCScheduler,
             target_queue=params["queue"],
             queue_limit=params["queue_limit"],
@@ -383,13 +383,13 @@ def get_engine(
         )
 
     elif mode == "local":
-        return partial(
+        return partial(  # type: ignore
             Scheduler,
             ncores=params["ncores"],
             max_cpus=params["max_cpus"],
         )
     elif mode == "mpi":
-        return partial(MPIScheduler, ncores=params["ncores"])
+        return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
 
     else:
         available_engines = ("hpc", "local", "mpi")

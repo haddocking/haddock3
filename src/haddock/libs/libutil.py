@@ -27,7 +27,7 @@ from haddock.core.typing import (
     ParamMap,
     ParamMapT,
     Union,
-    )
+)
 from haddock.gear.greetings import get_goodbye_help
 
 
@@ -36,11 +36,12 @@ check_subprocess = partial(
     shell=True,
     check=True,
     stdout=subprocess.DEVNULL,
-    )
+)
 
 
-def get_result_or_same_in_list(function: Callable[[PT], AnyT],
-                               value: PT) -> Union[AnyT, list[PT]]:
+def get_result_or_same_in_list(
+    function: Callable[[PT], AnyT], value: PT
+) -> Union[AnyT, list[PT]]:
     """
     Return the result if True or the value within a list.
 
@@ -61,8 +62,8 @@ def make_list_if_string(item: Union[str, list[str]]) -> list[str]:
 
 
 def transform_to_list(
-        item: Union[Iterable[AnyT],
-                    AnyT]) -> Union[list[AnyT], tuple[AnyT, ...]]:
+    item: Union[Iterable[AnyT], AnyT]
+) -> Union[list[AnyT], tuple[AnyT, ...]]:
     """
     Put `item` into a list if not a list already.
 
@@ -111,7 +112,7 @@ def remove_folder(folder: FilePath) -> None:
         Path to folder to remove.
     """
     if Path(folder).exists():
-        log.warning(f'{folder} exists and it will be REMOVED!')
+        log.warning(f"{folder} exists and it will be REMOVED!")
         shutil.rmtree(folder)
 
 
@@ -127,9 +128,11 @@ def remove_dict_keys(d: ParamMap, keys: Container[str]) -> ParamDict:
     return {k: deepcopy(v) for k, v in d.items() if k not in keys}
 
 
-def parse_ncores(n: Optional[Union[int, str]] = None,
-                 njobs: Optional[int] = None,
-                 max_cpus: Optional[bool] = None) -> int:
+def parse_ncores(
+    n: Optional[Union[int, str]] = None,
+    njobs: Optional[int] = None,
+    max_cpus: Optional[bool] = None,
+) -> int:
     """
     Check the number of cores according to HADDOCK3 architecture.
 
@@ -158,11 +161,11 @@ def parse_ncores(n: Optional[Union[int, str]] = None,
         A correct number of cores according to specifications.
     """
     if max_cpus is None or max_cpus is False:
-        max_cpus = max(cpu_count() - 1, 1)
+        max_cpus = max(cpu_count() - 1, 1)  # type: ignore
     if max_cpus is True:
-        max_cpus = cpu_count()
+        max_cpus = cpu_count()  # type: ignore
     elif not isinstance(max_cpus, int):
-        raise TypeError(f'`max_cpus` not of valid type: {type(max_cpus)}')
+        raise TypeError(f"`max_cpus` not of valid type: {type(max_cpus)}")
 
     if n is None:
         return max_cpus
@@ -182,7 +185,7 @@ def parse_ncores(n: Optional[Union[int, str]] = None,
         log.info(
             f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "
             "maximum available cores."
-            )
+        )
         return ncores
 
     log.debug(f"`njobs` not specified, evaluating initial value {n}...")
@@ -192,10 +195,10 @@ def parse_ncores(n: Optional[Union[int, str]] = None,
 
 
 def non_negative_int(
-        n: Any,
-        exception: type[Exception] = ValueError,
-        emsg: str = "`n` do not satisfies",
-        ) -> int:
+    n: Any,
+    exception: type[Exception] = ValueError,
+    emsg: str = "`n` do not satisfies",
+) -> int:
     """
     Transform `n` in int and returns if `compare` evaluates to True.
 
@@ -239,6 +242,7 @@ def recursive_dict_update(d: ParamMapT, u: ParamMap) -> ParamMapT:
         A new dict object with updated key: values. The original dictionaries
         are not modified.
     """
+
     def _recurse(d_: ParamMapT, u_: ParamMap) -> ParamMapT:
         for k, v in u_.items():
             if isinstance(v, collections.abc.Mapping):
@@ -287,7 +291,7 @@ def get_number_from_path_stem(path: FilePath) -> int:
         The tail integer of the path.
     """
     stem = Path(path).stem
-    number = re.findall(r'\d+', stem)[-1]
+    number = re.findall(r"\d+", stem)[-1]
     return int(number)
 
 
@@ -318,7 +322,7 @@ def sort_numbered_paths(*paths: FilePathT) -> list[FilePathT]:
         emsg = (
             "Mind the packing *argument, input should be strings or Paths, "
             "not a list."
-            )
+        )
         raise TypeError(emsg)
     except IndexError:
         return sorted(paths, key=lambda x: Path(x).stem)
@@ -333,9 +337,9 @@ def log_error_and_exit() -> Generator[None, None, None]:
         log.exception(err)
         log.error(err)
         log.error(
-            'An error has occurred, see log file. '
-            'And contact the developers if needed.'
-            )
+            "An error has occurred, see log file. "
+            "And contact the developers if needed."
+        )
         log.info(get_goodbye_help())
         sys.exit(1)
 

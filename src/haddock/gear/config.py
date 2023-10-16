@@ -67,35 +67,32 @@ from haddock.core.typing import FilePath, ParamDict, ParamMap, ParamMapT, Union
 from haddock.libs.libutil import (
     recursive_convert_paths_to_strings,
     transform_to_list,
-    )
+)
 
 
 # the re.ASCII parameter makes sure non-ascii chars are rejected in the \w key
 
 # Captures the main headers.
 # https://regex101.com/r/9urqti/1
-_main_header_re = re.compile(r'^ *\[(\w+)\]', re.ASCII)
+_main_header_re = re.compile(r"^ *\[(\w+)\]", re.ASCII)
 
 # regex by @sverhoeven
 # Matches ['<name>.<digit>']
-_main_quoted_header_re = re.compile(r'^ *\[\'(\w+)\.\d+\'\]', re.ASCII)
+_main_quoted_header_re = re.compile(r"^ *\[\'(\w+)\.\d+\'\]", re.ASCII)
 
 # Captures sub-headers
 # https://regex101.com/r/6OpJJ8/1
 # thanks https://stackoverflow.com/questions/39158902
-_sub_header_re = re.compile(r'^ *\[(\w+)((?:\.\w+)+)\]', re.ASCII)
+_sub_header_re = re.compile(r"^ *\[(\w+)((?:\.\w+)+)\]", re.ASCII)
 
 # regex by @sverhoeven
 _sub_quoted_header_re = re.compile(
-    r'^ *\[\'(\w+)\.\d+\'((?:\.\w+)+)\]',
+    r"^ *\[\'(\w+)\.\d+\'((?:\.\w+)+)\]",
     re.ASCII,
-    )
+)
 
 # Captures parameter uppercase boolean
-_uppercase_bool_re = re.compile(
-    r'(_?\w+((_?\w+?)+)?\s*=\s*)(True|False)',
-    re.ASCII
-    )
+_uppercase_bool_re = re.compile(r"(_?\w+((_?\w+?)+)?\s*=\s*)(True|False)", re.ASCII)
 
 # Some parameters are paths. The configuration reader reads those as
 # pathlib.Path so that they are injected properly in the rest of the
@@ -106,7 +103,7 @@ _keys_that_accept_files = [
     "cns_exec",
     "executable",
     RUNDIR,
-    ]
+]
 
 
 class ConfigFormatError(Exception):
@@ -140,7 +137,9 @@ def load(fpath: FilePath) -> ParamDict:
     try:
         return loads(Path(fpath).read_text())
     except Exception as err:
-        raise ConfigurationError('Something is wrong with the config file.') from err  # noqa: E501
+        raise ConfigurationError(
+            "Something is wrong with the config file."
+        ) from err  # noqa: E501
 
 
 def loads(cfg_str: str) -> ParamDict:
@@ -179,7 +178,6 @@ def loads(cfg_str: str) -> ParamDict:
 
     # this for-loop normalizes all headers regardless of their input format.
     for line in cfg_lines:
-
         if group := _main_header_re.match(line):
             name = group[1]
             counter.setdefault(name, 0)
@@ -221,18 +219,17 @@ def loads(cfg_str: str) -> ParamDict:
         cfg_dict = toml.loads(cfg)  # Try to load it with the toml library
     except Exception as err:
         raise ConfigurationError(
-            "Some thing is wrong with the config file: "
-            f"{str(err)}"
-            ) from err
+            "Some thing is wrong with the config file: " f"{str(err)}"
+        ) from err
 
     final_cfg = convert_variables_to_paths(cfg_dict)
 
     all_configs = {
-        'raw_input': cfg_str,
-        'cleaned_input': cfg,
-        'loaded_cleaned_input': cfg_dict,
-        'final_cfg': final_cfg,
-        }
+        "raw_input": cfg_str,
+        "cleaned_input": cfg,
+        "loaded_cleaned_input": cfg_dict,
+        "final_cfg": final_cfg,
+    }
 
     # Return all configuration steps
     return all_configs
@@ -262,7 +259,7 @@ def convert_variables_to_paths(cfg: ParamMapT) -> ParamMapT:
             cfg[param] = convert_to_path(value)
 
         elif isinstance(value, collections.abc.Mapping):
-            cfg[param] = convert_variables_to_paths(value)
+            cfg[param] = convert_variables_to_paths(value)  # type: ignore
 
     return cfg
 
@@ -282,7 +279,7 @@ def match_path_criteria(param: str) -> bool:
     This function contains the rules defining which parameter need to be
     converted to Path before be sent to HADDOCK3.
     """
-    return param.endswith('_fname') or param in _keys_that_accept_files
+    return param.endswith("_fname") or param in _keys_that_accept_files
 
 
 def get_module_name(name: str) -> str:
@@ -291,7 +288,7 @@ def get_module_name(name: str) -> str:
 
     Get the name without the integer suffix.
     """
-    return name.split('.')[0]
+    return name.split(".")[0]
 
 
 def save(params: ParamMap, path: FilePath, pure_toml: bool = False) -> None:
@@ -316,7 +313,7 @@ def save(params: ParamMap, path: FilePath, pure_toml: bool = False) -> None:
     params = recursive_convert_paths_to_strings(params)
 
     if pure_toml:
-        with open(path, 'w') as fout:
+        with open(path, "w") as fout:
             toml.dump(params, fout)
         return
 
@@ -324,7 +321,6 @@ def save(params: ParamMap, path: FilePath, pure_toml: bool = False) -> None:
 
     new_lines: list[str] = []
     for line in cfg_str:
-
         if group := _main_quoted_header_re.match(line):
             name = group[1]
             new_line = f"[{name}]"
@@ -336,7 +332,7 @@ def save(params: ParamMap, path: FilePath, pure_toml: bool = False) -> None:
             new_line = line
         new_lines.append(new_line)
 
-    cfg_str = os.linesep.join(new_lines)
+    cfg_str = os.linesep.join(new_lines)  # type: ignore
 
     with open(path, "w") as fout:
-        fout.write(cfg_str)
+        fout.write(cfg_str)  # type: ignore

@@ -7,6 +7,8 @@ configuration files which have specific keys.
 """
 import os
 from collections.abc import Mapping
+from pathlib import Path
+from typing import Union
 
 from haddock import _hidden_level, config_expert_levels
 from haddock.core.exceptions import ConfigurationError
@@ -20,7 +22,9 @@ from haddock.core.typing import (
 from haddock.libs.libio import read_from_yaml
 
 
-def yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = False):
+def yaml2cfg_text(
+    ymlcfg: dict, module: str, explevel: str, details: bool = False
+) -> str:
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -58,7 +62,9 @@ def yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = Fals
     return os.linesep.join(new_config) + os.linesep
 
 
-def _yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = False):
+def _yaml2cfg_text(
+    ymlcfg: dict, module: str, explevel: str, details: bool = False
+) -> str:
     """
     Convert HADDOCK3 YAML config to HADDOCK3 user config text.
 
@@ -92,7 +98,7 @@ def _yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = Fal
     # define set of undesired parameter keys
     undesired = ("default", "explevel", "short", "type")
     if not details:
-        undesired = undesired + ("long",)
+        undesired = undesired + ("long",)  # type: ignore
 
     for param_name, param in ymlcfg.items():
         # treats parameters that are subdictionaries of parameters
@@ -104,7 +110,7 @@ def _yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = Fal
                 curr_module = param_name
             params.append(f"[{curr_module}]")
             _ = _yaml2cfg_text(
-                param,
+                param,  # type: ignore
                 module=curr_module,
                 explevel=explevel,
                 details=details,
@@ -155,7 +161,9 @@ def _yaml2cfg_text(ymlcfg: dict, module: str, explevel: str, details: bool = Fal
     return os.linesep.join(params)
 
 
-def read_from_yaml_config(cfg_file, default_only=True) -> dict:
+def read_from_yaml_config(
+    cfg_file: Union[Path, str], default_only: bool = True
+) -> dict:
     """Read config from yaml by collapsing the expert levels.
 
     Parameters

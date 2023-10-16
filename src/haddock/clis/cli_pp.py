@@ -31,7 +31,7 @@ from haddock.core.typing import (
     FilePath,
     Namespace,
     Optional,
-    )
+)
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.libs.libcli import add_output_dir_arg
 from haddock.libs.libio import add_suffix_to_files, save_lines_to_files
@@ -42,34 +42,34 @@ SUFFIX_DEFAULT = "_processed"
 ap = argparse.ArgumentParser(
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 ap.add_argument(
-    'pdb_files',
+    "pdb_files",
     help="Input PDB files.",
-    nargs='+',
-    )
+    nargs="+",
+)
 
 ap.add_argument(
-    '-d',
-    '--dry',
+    "-d",
+    "--dry",
     help="Perform a dry run. Informs changes without modifying files.",
     action="store_true",
-    )
+)
 
 ap.add_argument(
-    '-t',
-    '--topfile',
+    "-t",
+    "--topfile",
     help="Additional .top files.",
     nargs="*",
-    )
+)
 
 ap.add_argument(
-    '-s',
-    '--suffix',
+    "-s",
+    "--suffix",
     help=f"Suffix to output files. Defaults to {SUFFIX_DEFAULT!r}",
     default=SUFFIX_DEFAULT,
-    )
+)
 
 add_output_dir_arg(ap)
 
@@ -99,12 +99,12 @@ def maincli() -> None:
 
 
 def main(
-        *pdb_files: FilePath,
-        dry: bool = False,
-        output_directory: Optional[FilePath] = None,
-        suffix: str = SUFFIX_DEFAULT,
-        topfile: Optional[FilePath] = None,
-        ) -> None:
+    *pdb_files: FilePath,
+    dry: bool = False,
+    output_directory: Optional[FilePath] = None,
+    suffix: str = SUFFIX_DEFAULT,
+    topfile: Optional[FilePath] = None,
+) -> None:
     """
     Process PDB files.
 
@@ -132,20 +132,17 @@ def main(
             "You selected the `--dry` option. No new files will be created. "
             "A report of the changes that would be performed in the PDB files "
             "will be printed."
-            )
+        )
 
     new_residues = read_additional_residues(topfile) if topfile else None
 
-    log.info(
-        "Processing the PDB files... "
-        "This may take a bit if there are many."
-        )
+    log.info("Processing the PDB files... " "This may take a bit if there are many.")
 
     processed_pdbs = process_pdbs(
         *pdb_files,
         dry=dry,
         user_supported_residues=new_residues,
-        )
+    )
 
     if dry:
         log.info("Everything done. Exiting...")
@@ -167,5 +164,5 @@ def main(
     return
 
 
-if __name__ == '__main__':
-    sys.exit(maincli())
+if __name__ == "__main__":
+    sys.exit(maincli())  # type: ignore

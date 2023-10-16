@@ -25,6 +25,7 @@ from haddock.core.typing import (
     Optional,
     ParamDict,
     ParamMap,
+    Union,
 )
 from haddock.gear.clean_steps import (
     UNPACK_FOLDERS,
@@ -394,7 +395,7 @@ def setup_run(
     return modules_params, general_params
 
 
-def save_configuration_files(configs: dict, datadir: [str, Path]) -> dict:
+def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     """Write a copy of configuration files (GitHub issue #578).
 
     Parameters
@@ -578,7 +579,7 @@ def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
         args.update(_missing_defaults)
 
 
-def validate_module_params_values(module_name, args: dict):
+def validate_module_params_values(module_name: str, args: dict) -> None:
     """Validate individual parameters for a module.
 
     Parameters
@@ -601,7 +602,7 @@ def validate_module_params_values(module_name, args: dict):
         validate_value(default_conf_params, key, val)
 
 
-def validate_value(default_yaml: dict, key: str, value: [bool, int, float, str, list]):
+def validate_value(default_yaml: dict, key: str, value: Any) -> None:
     """Validate queried value for a specific parameter of a module.
 
     Parameters
@@ -634,7 +635,7 @@ def validate_value(default_yaml: dict, key: str, value: [bool, int, float, str, 
     # FIXME: add more checks here ?
 
 
-def validate_param_type(param: dict, val: [bool, int, float, str, list]) -> [str, None]:
+def validate_param_type(param: dict, val: Any) -> Optional[str]:
     """Check if provided parameter type is similar to defined defaults ones.
 
     Parameters
@@ -664,9 +665,7 @@ def validate_param_type(param: dict, val: [bool, int, float, str, list]) -> [str
         )
 
 
-def validate_param_range(
-    param: dict, val: [bool, int, float, str, list]
-) -> [str, None]:
+def validate_param_range(param: dict, val: Any) -> Optional[str]:
     """Check if provided value is in range/choices defined for this parameter.
 
     Parameters
@@ -1142,7 +1141,7 @@ def check_if_path_exists(path: FilePath) -> None:
     if os.path.exists(path):
         return None
 
-    reconstituted_path = "./"
+    reconstituted_path: str = "./"
     error = ("", "", "")
     elements = Path(path).parts
     if elements[0] == ".":
@@ -1156,7 +1155,7 @@ def check_if_path_exists(path: FilePath) -> None:
                 part,
             )
             break
-        reconstituted_path = next_folder
+        reconstituted_path = str(next_folder)
 
     msg = (
         f"The following file could not be found: '{path}'. "
@@ -1192,7 +1191,7 @@ def fuzzy_match(
     results: list[tuple[str, str]] = list()
 
     for user_word in transform_to_list(user_input):
-        best = (-1, "")
+        best: tuple[float, Any] = (-1, "")
         for possibility in possibilities:
             distance = difflib.SequenceMatcher(
                 a=user_word, b=possibility

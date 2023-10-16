@@ -32,7 +32,7 @@ from haddock.core.typing import (
     FilePath,
     Namespace,
     Optional,
-    )
+)
 from haddock.libs import libcli
 
 
@@ -40,7 +40,7 @@ from haddock.libs import libcli
 ap = argparse.ArgumentParser(
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 libcli.add_rundir_arg(ap)
 libcli.add_ncores_arg(ap)
@@ -113,4 +113,4 @@ def main(run_dir: FilePath, ncores: Optional[int] = 1) -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

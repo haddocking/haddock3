@@ -26,56 +26,56 @@ from haddock.core.typing import ArgumentParser, Callable, Namespace, Optional
 
 
 workload_manager_launch = {
-    'slurm': 'sbatch',
-    'torque': 'qsub',
-    }
+    "slurm": "sbatch",
+    "torque": "qsub",
+}
 """options for the different job queue systems supported"""
 
 
 # prepares client arguments
 ap = argparse.ArgumentParser(
-    prog='HADDOCK3 benchmark submission daemon.',
+    prog="HADDOCK3 benchmark submission daemon.",
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 ap.add_argument(
     "benchmark_path",
-    help='Path to the benchmark folder as prepared by `haddock3-bm` interface.',
+    help="Path to the benchmark folder as prepared by `haddock3-bm` interface.",
     type=Path,
-    )
+)
 
 ap.add_argument(
     "--job-limit",
-    dest='job_limit',
+    dest="job_limit",
     help="How many jobs should run at the same time. Default: 10",
     default=10,
     type=int,
-    )
+)
 
 ap.add_argument(
-    '--job-sys',
-    dest='manager',
-    help='The system where the jobs will be run. Default `slurm`.',
+    "--job-sys",
+    dest="manager",
+    help="The system where the jobs will be run. Default `slurm`.",
     choices=tuple(workload_manager_launch.keys()),
-    default='slurm',
-    )
+    default="slurm",
+)
 
 ap.add_argument(
-    '--restart',
-    help='Restart the RUNNING jobs. DONE jobs won\'t be touched.',
-    action='store_true',
-    )
+    "--restart",
+    help="Restart the RUNNING jobs. DONE jobs won't be touched.",
+    action="store_true",
+)
 
 ap.add_argument(
-    '--sort-first',
-    dest='sort_first',
+    "--sort-first",
+    dest="sort_first",
     help=(
-        'Sort jobs by size in ascending order. If not given jobs are order by '
-        'size in descending order: the biggest first.'
-        ),
-    action='store_true',
-    )
+        "Sort jobs by size in ascending order. If not given jobs are order by "
+        "size in descending order: the biggest first."
+    ),
+    action="store_true",
+)
 
 
 def _ap() -> ArgumentParser:
@@ -104,20 +104,20 @@ class Job:
 
         # previous jog path
         job_stem = job_f.stem
-        self.job_run_folder = Path(job_f.parents[1], f'run-{job_stem}')
+        self.job_run_folder = Path(job_f.parents[1], f"run-{job_stem}")
 
-        self.check_done = Path(self.job_run_folder, 'DONE')
-        self.check_running = Path(self.job_run_folder, 'RUNNING')
-        self.check_available = Path(self.job_run_folder, 'AVAILABLE')
-        self.check_fail = Path(self.job_run_folder, 'FAIL')
+        self.check_done = Path(self.job_run_folder, "DONE")
+        self.check_running = Path(self.job_run_folder, "RUNNING")
+        self.check_available = Path(self.job_run_folder, "AVAILABLE")
+        self.check_fail = Path(self.job_run_folder, "FAIL")
         self.status = None
 
         self.status_files = [
             self.check_done,
             self.check_running,
             self.check_fail,
-            self.check_available
-            ]
+            self.check_available,
+        ]
 
     def get_status(self) -> Optional[str]:
         """
@@ -130,7 +130,7 @@ class Job:
         """
         for _file in self.status_files:
             if _file.exists():
-                self.status = _file.stem
+                self.status = _file.stem  # type: ignore
                 break
         return self.status
 
@@ -141,7 +141,7 @@ class Job:
         Run command `$launch_command $job_filename`.
         """
         subprocess.run(cmds := [self.launch_command, str(self.job_filename)])
-        print('Job sent: ', cmds)
+        print("Job sent: ", cmds)
 
     def restart(self) -> None:
         """
@@ -156,7 +156,7 @@ class Job:
         self.check_available.touch(exist_ok=True)
 
 
-def get_current_jobs(grep: str = 'BM5') -> int:
+def get_current_jobs(grep: str = "BM5") -> int:
     """
     Get current number of jobs for which job-name has the `grep` word.
 
@@ -178,10 +178,10 @@ def get_current_jobs(grep: str = 'BM5') -> int:
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        )
+    )
     output = p.communicate()[0]
-    njobs = int(output.decode('utf-8'))
-    print(f'Found {njobs} in the queue.')
+    njobs = int(output.decode("utf-8"))
+    print(f"Found {njobs} in the queue.")
     return njobs
 
 
@@ -195,14 +195,13 @@ def calc_size(job_path: Path) -> int:
     The size of the jobs is defined by the number of carbon-alpha lines
     in the `target.pdb` file.
     """
-    target_pdb = Path(job_path.parents[1], 'input', 'target.pdb')
+    target_pdb = Path(job_path.parents[1], "input", "target.pdb")
     lines = target_pdb.read_text().split(os.linesep)
-    size = sum(1 for line in lines if line[11:16].strip() == 'CA')
+    size = sum(1 for line in lines if line[11:16].strip() == "CA")
     return size
 
 
-def filter_by_status(job_list: list[Job],
-                     status: str = 'AVAILABLE') -> list[Job]:
+def filter_by_status(job_list: list[Job], status: str = "AVAILABLE") -> list[Job]:
     """
     Filter jobs by their status.
 
@@ -218,7 +217,7 @@ def filter_by_status(job_list: list[Job],
         The list with the `Job`s with matching `status`.
     """
     jobs = [j for j in job_list if j.get_status() == status]
-    print(f'Number of {status} jobs: {len(jobs)}.')
+    print(f"Number of {status} jobs: {len(jobs)}.")
     return jobs
 
 
@@ -241,12 +240,12 @@ def maincli() -> None:
 
 
 def main(
-        benchmark_path: Path,
-        job_limit: int = 10,
-        manager: str = 'slurm',
-        restart: bool = False,
-        sort_first: bool = False,
-        ) -> None:
+    benchmark_path: Path,
+    job_limit: int = 10,
+    manager: str = "slurm",
+    restart: bool = False,
+    sort_first: bool = False,
+) -> None:
     """
     Execute the benchmark daemon.
 
@@ -282,14 +281,14 @@ def main(
         the sorted jobs first. Defaults to False, the longer first.
     """
     # lists of all the job files in the benchmark_path folder
-    job_list = list(benchmark_path.glob('*/jobs/*.job'))
+    job_list = list(benchmark_path.glob("*/jobs/*.job"))
 
     # breaks if no jobs are found
     if not job_list:
-        sys.exit('+ ERROR! No jobs found in folder: {str(benchmark_path)!r}')
+        sys.exit("+ ERROR! No jobs found in folder: {str(benchmark_path)!r}")
 
     # sorts the job list
-    job_list.sort(key=calc_size, reverse=not(sort_first))  # noqa: E275
+    job_list.sort(key=calc_size, reverse=not (sort_first))  # noqa: E275
 
     # create the job objects according to the queue managing systme
     _jobsys = workload_manager_launch[manager]
@@ -297,7 +296,7 @@ def main(
 
     # restart previously (halted) `RUNNING` jobs - if selected.
     if restart:
-        running_jobs = filter_by_status(jobs, status='RUNNING')
+        running_jobs = filter_by_status(jobs, status="RUNNING")
         for _job in running_jobs:
             _job.restart()
 
@@ -306,14 +305,13 @@ def main(
 
     # runs the daemon loop, only if there are available jobs :-)
     while available_jobs:
-
         # get the number of available queue slots according to the
         # job limit parameter
         #
         # 0 is added to avoid going to negative values in case a job
         # had been manually submitted.
         empty_slots = max(0, job_limit - get_current_jobs())
-        print('empty slots: ', empty_slots)
+        print("empty slots: ", empty_slots)
 
         # send jobs if there are empty slots
         for i in range(empty_slots):
@@ -321,7 +319,7 @@ def main(
             time.sleep(5)
 
         # chill before repeating the process.
-        print('chilling for 120 seconds...')
+        print("chilling for 120 seconds...")
         time.sleep(120)
 
         # refreshes the available_jobs list
@@ -331,5 +329,5 @@ def main(
     return
 
 
-if __name__ == '__main__':
-    sys.exit(maincli())
+if __name__ == "__main__":
+    sys.exit(maincli())  # type: ignore

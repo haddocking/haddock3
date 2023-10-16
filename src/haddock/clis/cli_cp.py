@@ -55,14 +55,14 @@ from haddock.libs.libcli import add_version_arg
 ap = argparse.ArgumentParser(
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 ap.add_argument(
     "-r",
     "--run-dir",
     help="The input run directory.",
     required=True,
-    )
+)
 
 ap.add_argument(
     "-m",
@@ -71,14 +71,14 @@ ap.add_argument(
     help="The number of the steps to copy.",
     required=True,
     type=int,
-    )
+)
 
 ap.add_argument(
     "-o",
     "--output",
     help="The new run directory.",
     required=True,
-    )
+)
 
 add_version_arg(ap)
 
@@ -126,7 +126,7 @@ def main(run_dir: FilePath, modules: list[int], output: FilePath) -> None:
     from haddock.gear.extend_run import (
         copy_renum_step_folders,
         update_contents_of_new_steps,
-        )
+    )
     from haddock.gear.zerofill import zero_fill
     from haddock.modules import get_module_steps_folders
 
@@ -153,12 +153,14 @@ def main(run_dir: FilePath, modules: list[int], output: FilePath) -> None:
     # `data_steps` are selected to avoid FileNotFoundError because some steps
     # do not have a `data` folder.
     # See https://github.com/haddocking/haddock3/issues/559
-    data_steps = [step for step in selected_steps if os.path.exists(Path(run_dir, "data", step))]  # noqa: E501
+    data_steps = [
+        step for step in selected_steps if os.path.exists(Path(run_dir, "data", step))
+    ]  # noqa: E501
     copy_renum_step_folders(
         Path(run_dir, "data"),
         Path(outdir, "data"),
         data_steps,
-        )
+    )
 
     # update step names in files
     # update run dir names in files
@@ -166,11 +168,11 @@ def main(run_dir: FilePath, modules: list[int], output: FilePath) -> None:
         new_step_folder,
         ncores=1,
         dec_all=True,
-        )
+    )
     update_contents_of_new_steps(selected_steps, run_dir, outdir)
 
     return
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

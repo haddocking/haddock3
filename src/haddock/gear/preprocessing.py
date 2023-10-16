@@ -104,7 +104,7 @@ from pdbtools import (
     pdb_selaltloc,
     pdb_shiftres,
     pdb_tidy,
-    )
+)
 
 from haddock import log
 from haddock.core.exceptions import HaddockError
@@ -114,7 +114,7 @@ from haddock.core.supported_molecules import (
     supported_non_ions,
     supported_single_ions_atoms_map,
     supported_single_ions_resnames_map,
-    )
+)
 from haddock.core.typing import (
     Any,
     Callable,
@@ -124,7 +124,7 @@ from haddock.core.typing import (
     LineIterSource,
     Optional,
     Union,
-    )
+)
 from haddock.libs.libfunc import chainf
 from haddock.libs.libio import read_lines
 from haddock.libs.libpdb import (
@@ -135,7 +135,7 @@ from haddock.libs.libpdb import (
     slc_element,
     slc_name,
     slc_resname,
-    )
+)
 
 
 # defines chain letters for chain and seg IDs
@@ -165,13 +165,12 @@ def _report(log_msg: str) -> Callable[..., Any]:
     **Important:** Do NOT use ``_report`` with infinite generators,
     such as ``itertools.cycle``.
     """
+
     def decorator(function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
-        def wrapper(lines: Iterable[Any],
-                    *args: Any,
-                    report: bool = False,
-                    **kwargs: Any) -> Any:
-
+        def wrapper(
+            lines: Iterable[Any], *args: Any, report: bool = False, **kwargs: Any
+        ) -> Any:
             if report:
                 in_lines = list(lines)
                 result = list(function(in_lines, *args, **kwargs))
@@ -188,15 +187,15 @@ def _report(log_msg: str) -> Callable[..., Any]:
                 la = len(additions)
                 ld = len(deletions)
 
-                add_lines = linesep.join(f'+ {_}' for _ in additions)
-                del_lines = linesep.join(f'- {_}' for _ in deletions)
+                add_lines = linesep.join(f"+ {_}" for _ in additions)
+                del_lines = linesep.join(f"- {_}" for _ in deletions)
 
                 log_msg_ = log_msg.format(*args, *kwargs.values())
                 extended_log = (
-                    f'[{log_msg_}] + {la} - {ld} lines',
+                    f"[{log_msg_}] + {la} - {ld} lines",
                     add_lines,
                     del_lines,
-                    )
+                )
 
                 log.info(linesep.join(extended_log))
                 return result
@@ -206,6 +205,7 @@ def _report(log_msg: str) -> Callable[..., Any]:
                 return function(lines, *args, **kwargs)
 
         return wrapper
+
     return decorator
 
 
@@ -247,13 +247,13 @@ def _open_or_give(inputdata: Iterable[LineIterSource]) -> list[list[str]]:
     TypeError
         In any other circumstances.
     """
+
     def get_line(lines: Iterable[str]) -> list[str]:
         """Ignore empty lines."""
         return [line.rstrip(linesep) for line in lines if line]
 
     lines: list[list[str]] = []
     for idata in inputdata:
-
         if isinstance(idata, (Path, str)):
             lines.append(get_line(Path(idata).read_text().split(linesep)))
 
@@ -271,8 +271,9 @@ def _open_or_give(inputdata: Iterable[LineIterSource]) -> list[list[str]]:
 
 
 @read_lines
-def read_additional_residues(lines: Iterable[str], *ignore: Any,
-                             **everything: Any) -> tuple[str, ...]:
+def read_additional_residues(
+    lines: Iterable[str], *ignore: Any, **everything: Any
+) -> tuple[str, ...]:
     """
     Read additional residues listed in a ``*.top`` filename.
 
@@ -312,7 +313,7 @@ def read_additional_residues(lines: Iterable[str], *ignore: Any,
         A tuple with the new identified residues names.
     """
     # https://regex101.com/r/1H44kO/1
-    res_regex = re.compile(r'^(RESIdue|residue|RESI) ([A-Z0-9]{1,3}).*$')
+    res_regex = re.compile(r"^(RESIdue|residue|RESI) ([A-Z0-9]{1,3}).*$")
     residues: list[str] = []
     for line in map(str.strip, lines):
         name = res_regex.findall(line)
@@ -323,10 +324,10 @@ def read_additional_residues(lines: Iterable[str], *ignore: Any,
 
 
 def process_pdbs(
-        *inputdata: LineIterSource,
-        dry: bool = False,
-        user_supported_residues: Optional[Iterable[str]] = None,
-        ) -> list[list[str]]:
+    *inputdata: LineIterSource,
+    dry: bool = False,
+    user_supported_residues: Optional[Iterable[str]] = None,
+) -> list[list[str]]:
     """
     Process PDB file contents for compatibility with HADDOCK3.
 
@@ -385,12 +386,14 @@ def process_pdbs(
             residues=set.union(
                 supported_HETATM,
                 user_supported_residues or set(),
-                ),
             ),
+        ),
         convert_HETATM_to_ATOM,
         partial(wrep_pdb_fixinsert, option_list=[]),
         #####
-        partial(remove_unsupported_hetatm, user_defined=user_supported_residues),  # noqa: E501
+        partial(
+            remove_unsupported_hetatm, user_defined=user_supported_residues
+        ),  # noqa: E501
         partial(remove_unsupported_atom),
         ####
         # partial(wrep_pdb_shiftres, shifting_factor=0),
@@ -398,7 +401,7 @@ def process_pdbs(
         wrep_pdb_tidy,
         ###
         wrep_rstrip,
-        ]
+    ]
 
     # these functions take the whole PDB content, evaluate it, and
     # modify it if needed.
@@ -406,13 +409,13 @@ def process_pdbs(
         models_should_have_the_same_labels,
         solve_no_chainID_no_segID,
         homogenize_chains,
-        ]
+    ]
 
     # these functions take all structures combined, evulate them
     # togehter, and modify them if needed.
     processed_combined_steps = [
         correct_equal_chain_segids,
-        ]
+    ]
 
     # START THE ACTUAL PROCESSING
 
@@ -420,13 +423,13 @@ def process_pdbs(
     result_1 = [
         list(chainf(structure, *line_by_line_processing_steps, report=dry))
         for structure in structures
-        ]
+    ]
 
     # whole structure processing
     result_2 = [
         list(chainf(structure, *whole_pdb_processing_steps, report=dry))
         for structure in result_1
-        ]
+    ]
 
     # combined processing
     final_result = chainf(result_2, *processed_combined_steps)
@@ -437,25 +440,28 @@ def process_pdbs(
 # Functions operating line-by-line
 
 # make pdb-tools reportable
-wrep_pdb_chain = _report('pdb_chain')(pdb_chain.run)
-wrep_pdb_chainxseg = _report('pbd_segxchain')(pdb_chainxseg.run)
-wrep_pdb_element = _report('pdb_element')(pdb_element.run)
-wrep_pdb_fixinsert = _report('pdb_fixinsert')(pdb_fixinsert.run)
-wrep_pdb_keepcoord = _report('pdb_keepcoord')(pdb_keepcoord.run)
-wrep_pdb_occ = _report('pdb_occ')(pdb_occ.run)
-wrep_pdb_reatom = _report('pdb_reatom')(pdb_reatom.run)
-wrep_pdb_shiftres = _report('pdb_shiftres')(pdb_shiftres.run)
-wrep_pdb_rplresname = _report('pdb_rplresname')(pdb_rplresname.run)
-wrep_pdb_segxchain = _report('pdb_segxchain')(pdb_segxchain.run)
-wrep_pdb_selaltloc = _report('pdb_selaltloc')(pdb_selaltloc.run)
-wrep_pdb_tidy = _report('pdb_tidy')(pdb_tidy.run)
-wrep_pdb_tidy_strict = _report('pdb_tidy')(partial(pdb_tidy.run, strict=True))
-wrep_rstrip = _report("str.rstrip")(partial(map, lambda x: x.rstrip(linesep)))  # noqa: E501
+wrep_pdb_chain = _report("pdb_chain")(pdb_chain.run)
+wrep_pdb_chainxseg = _report("pbd_segxchain")(pdb_chainxseg.run)
+wrep_pdb_element = _report("pdb_element")(pdb_element.run)
+wrep_pdb_fixinsert = _report("pdb_fixinsert")(pdb_fixinsert.run)
+wrep_pdb_keepcoord = _report("pdb_keepcoord")(pdb_keepcoord.run)
+wrep_pdb_occ = _report("pdb_occ")(pdb_occ.run)
+wrep_pdb_reatom = _report("pdb_reatom")(pdb_reatom.run)
+wrep_pdb_shiftres = _report("pdb_shiftres")(pdb_shiftres.run)
+wrep_pdb_rplresname = _report("pdb_rplresname")(pdb_rplresname.run)
+wrep_pdb_segxchain = _report("pdb_segxchain")(pdb_segxchain.run)
+wrep_pdb_selaltloc = _report("pdb_selaltloc")(pdb_selaltloc.run)
+wrep_pdb_tidy = _report("pdb_tidy")(pdb_tidy.run)
+wrep_pdb_tidy_strict = _report("pdb_tidy")(partial(pdb_tidy.run, strict=True))
+wrep_rstrip = _report("str.rstrip")(
+    partial(map, lambda x: x.rstrip(linesep))
+)  # noqa: E501
 
 
 @_report("Replacing HETATM to ATOM for residue {!r}")
-def replace_HETATM_to_ATOM(fhandler: Iterable[str],
-                           res: str) -> Generator[str, None, None]:
+def replace_HETATM_to_ATOM(
+    fhandler: Iterable[str], res: str
+) -> Generator[str, None, None]:
     """
     Replace record `HETATM` to `ATOM` for `res`.
 
@@ -475,15 +481,16 @@ def replace_HETATM_to_ATOM(fhandler: Iterable[str],
         Yield line-by-line.
     """
     for line in fhandler:
-        if line.startswith('HETATM') and line[slc_resname].strip() == res:
-            yield 'ATOM  ' + line[6:]
+        if line.startswith("HETATM") and line[slc_resname].strip() == res:
+            yield "ATOM  " + line[6:]
         else:
             yield line
 
 
 @_report("Replace residue ATOM/HETATM {!r} to ATOM {!r}")
-def replace_residue(fhandler: Iterable[str], resin: str,
-                    resout: str) -> Generator[str, None, None]:
+def replace_residue(
+    fhandler: Iterable[str], resin: str, resout: str
+) -> Generator[str, None, None]:
     """
     Replace residue by another and changes ``HETATM`` to ``ATOM`` if needed.
 
@@ -515,7 +522,7 @@ def replace_residue(fhandler: Iterable[str], resin: str,
     yield from pdb_rplresname.run(_, name_from=resin, name_to=resout)
 
 
-replace_MSE_to_MET = partial(replace_residue, resin='MSE', resout='MET')
+replace_MSE_to_MET = partial(replace_residue, resin="MSE", resout="MET")
 """
 Replace ``MSE`` to ``MET``.
 
@@ -524,7 +531,7 @@ See Also
 * :py:func:`replace_residue`
 """
 
-replace_HSD_to_HIS = partial(replace_residue, resin='HSD', resout='HIS')
+replace_HSD_to_HIS = partial(replace_residue, resin="HSD", resout="HIS")
 """
 Replace ``HSD`` to ``HIS``.
 
@@ -533,7 +540,7 @@ See Also
 * :py:func:`replace_residue`
 """
 
-replace_HSE_to_HIS = partial(replace_residue, resin='HSE', resout='HIS')
+replace_HSE_to_HIS = partial(replace_residue, resin="HSE", resout="HIS")
 """
 Replace ``HSE`` to ``HIS``.
 
@@ -542,7 +549,7 @@ See Also
 * :py:func:`replace_residue`
 """
 
-replace_HID_to_HIS = partial(replace_residue, resin='HID', resout='HIS')
+replace_HID_to_HIS = partial(replace_residue, resin="HID", resout="HIS")
 """
 Replace ``HID`` to ``HIS``.
 
@@ -551,7 +558,7 @@ See Also
 * :py:func:`replace_residue`
 """
 
-replace_HIE_to_HIS = partial(replace_residue, resin='HIE', resout='HIS')
+replace_HIE_to_HIS = partial(replace_residue, resin="HIE", resout="HIS")
 """
 Replace ``HIE`` to ``HIS``.
 
@@ -563,11 +570,11 @@ See Also
 
 @_report("Remove unsupported molecules")
 def remove_unsupported_molecules(
-        lines: Iterable[str],
-        haddock3_defined: Optional[set[str]] = None,
-        user_defined: Optional[set[str]] = None,
-        line_startswith: Union[str, tuple[str, ...]] = ('ATOM', 'HETATM'),
-        ) -> Generator[str, None, None]:
+    lines: Iterable[str],
+    haddock3_defined: Optional[set[str]] = None,
+    user_defined: Optional[set[str]] = None,
+    line_startswith: Union[str, tuple[str, ...]] = ("ATOM", "HETATM"),
+) -> Generator[str, None, None]:
     """
     Remove HADDOCK3 unsupported molecules.
 
@@ -633,8 +640,8 @@ def remove_unsupported_molecules(
 remove_unsupported_hetatm = partial(
     remove_unsupported_molecules,
     haddock3_defined=supported_HETATM,
-    line_startswith='HETATM',
-    )
+    line_startswith="HETATM",
+)
 """
 Remove unsupported molecules in ``HETATM`` lines.
 
@@ -649,8 +656,8 @@ See Also
 remove_unsupported_atom = partial(
     remove_unsupported_molecules,
     haddock3_defined=supported_ATOM,
-    line_startswith='ATOM',
-    )
+    line_startswith="ATOM",
+)
 """
 Remove unsupported molecules in ``ATOM`` lines.
 
@@ -693,11 +700,10 @@ def add_charges_to_ions(fhandler: Iterable[str]) -> Generator[str, None, None]:
         _process_ion_case_atom,
         _process_ion_case_resname,
         _process_ion_case_element_charge,
-        ]
+    ]
 
     for line in fhandler:
         if line.startswith(("ATOM", "ANISOU", "HETATM")):
-
             # get values
             atom = line[slc_name].strip()  # max 4 chars
             resname = line[slc_resname].strip()  # max 3 chars
@@ -713,14 +719,14 @@ def add_charges_to_ions(fhandler: Iterable[str]) -> Generator[str, None, None]:
             # the preference to the atom, resname, and then charge
             func_to_apply = False
             if atom[-1].isdigit():
-                func_to_apply = _process_ion_case_atom
+                func_to_apply = _process_ion_case_atom  # type: ignore
             elif resname[-1].isdigit():
-                func_to_apply = _process_ion_case_resname
+                func_to_apply = _process_ion_case_resname  # type: ignore
             elif element and charge and charge[-1].isdigit():
-                func_to_apply = _process_ion_case_element_charge
+                func_to_apply = _process_ion_case_element_charge  # type: ignore
 
             if func_to_apply:
-                yield func_to_apply(line)
+                yield func_to_apply(line)  # type: ignore
 
             # in case none of the fields has information on the charge,
             # applies the process functions by giving preference to the
@@ -752,16 +758,17 @@ def _process_ion_case_resname(line: str) -> str:
     resname = line[slc_resname].strip()  # max 3 chars
     new_atom = supported_single_ions_resnames_map[resname].atoms[0]
     new_element = supported_single_ions_resnames_map[resname].elements[0]
-    charge = new_atom[-2:] if len(new_atom) > 2 else '  '
+    charge = new_atom[-2:] if len(new_atom) > 2 else "  "
 
-    new_line = \
-        line[:12] \
-        + format_atom_name(new_atom, new_element) \
-        + line[16] \
-        + resname.rjust(3, " ") \
-        + line[20:76] \
-        + new_element.rjust(2, " ") \
+    new_line = (
+        line[:12]
+        + format_atom_name(new_atom, new_element)
+        + line[16]
+        + resname.rjust(3, " ")
+        + line[20:76]
+        + new_element.rjust(2, " ")
         + charge
+    )
 
     return new_line
 
@@ -782,16 +789,17 @@ def _process_ion_case_atom(line: str) -> str:
     atom = line[slc_name].strip()  # max 4 chars
     new_resname = supported_single_ions_atoms_map[atom].resname
     new_element = supported_single_ions_atoms_map[atom].elements[0]
-    charge = atom[-2:] if len(atom) > 2 else '  '
+    charge = atom[-2:] if len(atom) > 2 else "  "
 
-    new_line = \
-        line[:12] \
-        + format_atom_name(atom, new_element) \
-        + line[16] \
-        + new_resname.rjust(3, " ") \
-        + line[20:76] \
-        + new_element.rjust(2, " ") \
+    new_line = (
+        line[:12]
+        + format_atom_name(atom, new_element)
+        + line[16]
+        + new_resname.rjust(3, " ")
+        + line[20:76]
+        + new_element.rjust(2, " ")
         + charge
+    )
 
     return new_line
 
@@ -808,21 +816,23 @@ def _process_ion_case_element_charge(line: str) -> str:
     atom = element + charge
     new_resname = supported_single_ions_atoms_map[atom].resname
 
-    new_line = \
-        line[:12] \
-        + format_atom_name(atom, element) \
-        + line[16] \
-        + new_resname.rjust(3, " ") \
-        + line[20:76] \
-        + element.rjust(2, " ") \
+    new_line = (
+        line[:12]
+        + format_atom_name(atom, element)
+        + line[16]
+        + new_resname.rjust(3, " ")
+        + line[20:76]
+        + element.rjust(2, " ")
         + charge
+    )
 
     return new_line
 
 
 @_report("Convert record: {!r} to {!r}.")
-def convert_record(fhandler: Iterable[str], record: str, other_record: str,
-                   residues: Container[str]) -> Generator[str, None, None]:
+def convert_record(
+    fhandler: Iterable[str], record: str, other_record: str, residues: Container[str]
+) -> Generator[str, None, None]:
     """
     Convert on record to another for specified residues.
 
@@ -856,7 +866,7 @@ convert_ATOM_to_HETATM = partial(
     record="ATOM",
     other_record="HETATM",
     residues=supported_HETATM,
-    )
+)
 """
 Convert ``ATOM`` to ``HETATM`` for HADDOCK3 supported ``HETATM``.
 
@@ -870,7 +880,7 @@ convert_HETATM_to_ATOM = partial(
     record="HETATM",
     other_record="ATOM  ",
     residues=supported_ATOM,
-    )
+)
 """
 Convert ``HETATM`` to ``ATOM`` for HADDOCK3 supported ``ATOM``.
 
@@ -881,6 +891,7 @@ See Also
 
 
 # Functions operating in the whole PDB
+
 
 @_report("Solving chain/seg ID issues.")
 def solve_no_chainID_no_segID(lines: Iterable[str]) -> Iterable[str]:
@@ -948,16 +959,19 @@ def homogenize_chains(lines: list[str]) -> list[str]:
     """
     chainids = read_chainids(lines)
     if len(set(chainids)) > 1:
-        return list(chainf(
-            lines,
-            partial(pdb_chain.run, chain_id=chainids[0]),
-            pdb_chainxseg.run,
-            ))
+        return list(
+            chainf(
+                lines,
+                partial(pdb_chain.run, chain_id=chainids[0]),
+                pdb_chainxseg.run,
+            )
+        )
     else:
         return lines
 
 
 # Functions operating in all PDBs at once
+
 
 def correct_equal_chain_segids(structures: list[list[str]]) -> list[list[str]]:
     """
@@ -982,8 +996,7 @@ def correct_equal_chain_segids(structures: list[list[str]]) -> list[list[str]]:
 
     # the remaining available chain characters are the A-Z minus the
     # `all_chain_ids`
-    remaining_chars = \
-        it.cycle(sorted(set(_ascii_letters).difference(all_chain_ids)))
+    remaining_chars = it.cycle(sorted(set(_ascii_letters).difference(all_chain_ids)))
 
     chain_ids: list[Iterable[str]] = []
     new_structures: list[list[str]] = []
@@ -995,13 +1008,15 @@ def correct_equal_chain_segids(structures: list[list[str]]) -> list[list[str]]:
 
         # if chain_id is repeated
         if chain_id in chain_ids:
-            new_lines = list(chainf(
-                lines,
-                # change the chain ID by a new one
-                partial(pdb_chain.run, chain_id=next(remaining_chars)),
-                # applies chain ID to seg ID as well
-                pdb_chainxseg.run,
-                ))
+            new_lines = list(
+                chainf(
+                    lines,
+                    # change the chain ID by a new one
+                    partial(pdb_chain.run, chain_id=next(remaining_chars)),
+                    # applies chain ID to seg ID as well
+                    pdb_chainxseg.run,
+                )
+            )
         else:
             chain_ids.append(chain_id)
 

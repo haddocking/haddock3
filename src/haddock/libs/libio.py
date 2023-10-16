@@ -20,7 +20,7 @@ from haddock.core.typing import (
     Iterable,
     Mapping,
     Optional,
-    )
+)
 from haddock.libs.libontology import PDBFile
 from haddock.libs.libutil import sort_numbered_paths
 
@@ -42,7 +42,7 @@ def clean_suffix(ext: str) -> str:
     >>> clean_suffix('pdb')
     'pdb'
     """
-    return ext.lstrip(r'.')
+    return ext.lstrip(r".")
 
 
 def dot_suffix(ext: str) -> str:
@@ -62,7 +62,7 @@ def dot_suffix(ext: str) -> str:
     >>> clean_suffix('pdb')
     '.pdb'
     """
-    return '.' + clean_suffix(ext)
+    return "." + clean_suffix(ext)
 
 
 def read_lines(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -72,11 +72,13 @@ def read_lines(func: Callable[..., Any]) -> Callable[..., Any]:
     Send to the decorated function the lines of the file in the form
     of list.
     """
+
     def wrapper(fpath: FilePath, *args: Any, **kwargs: Any) -> Any:
         lines = Path(fpath).read_text().split(os.linesep)
         return func(lines, *args, **kwargs)
+
     # manual wrapping for displaying documentation properly
-    wrapper.original = func
+    wrapper.original = func  # type: ignore
     wrapper.__doc__ = func.__doc__
     wrapper.__name__ = func.__name__
     return wrapper
@@ -99,7 +101,7 @@ def read_from_yaml(yaml_file: FilePath) -> dict[Any, Any]:
         Always returns a dictionary.
         Returns empty dictionary if yaml_file is empty.
     """
-    with open(yaml_file, 'r') as fin:
+    with open(yaml_file, "r") as fin:
         ycfg = yaml.safe_load(fin)
 
     # ycfg is None if yaml_file is empty
@@ -127,8 +129,9 @@ def open_files_to_lines(*files: FilePath) -> list[list[str]]:
     return [f.read_text().split(os.linesep) for f in f_paths]
 
 
-def save_lines_to_files(files: Iterable[FilePath],
-                        lines: Iterable[Iterable[str]]) -> None:
+def save_lines_to_files(
+    files: Iterable[FilePath], lines: Iterable[Iterable[str]]
+) -> None:
     """
     Save a list of list of lines to files.
 
@@ -152,8 +155,9 @@ def save_lines_to_files(files: Iterable[FilePath],
     return
 
 
-def add_suffix_to_files(files: Iterable[FilePath],
-                        suffix: str) -> Generator[Path, None, None]:
+def add_suffix_to_files(
+    files: Iterable[FilePath], suffix: str
+) -> Generator[Path, None, None]:
     """
     Add a suffix to file paths.
 
@@ -172,11 +176,11 @@ def add_suffix_to_files(files: Iterable[FilePath],
 
 
 def write_dic_to_file(
-        data_dict: Mapping[Any, Any],
-        output_fname: FilePath,
-        info_header: str = "",
-        sep: str = "\t",
-        ) -> None:
+    data_dict: Mapping[Any, Any],
+    output_fname: FilePath,
+    info_header: str = "",
+    sep: str = "\t",
+) -> None:
     """
     Create a table from a dictionary.
 
@@ -214,10 +218,12 @@ def write_dic_to_file(
         out_fh.write(sep.join(row_l) + os.linesep)
 
 
-def write_nested_dic_to_file(data_dict: Mapping[Any, Any],
-                             output_fname: FilePath,
-                             info_header: str = "",
-                             sep: str = "\t") -> None:
+def write_nested_dic_to_file(
+    data_dict: Mapping[Any, Any],
+    output_fname: FilePath,
+    info_header: str = "",
+    sep: str = "\t",
+) -> None:
     """
     Create a table from a nested dictionary.
 
@@ -272,10 +278,9 @@ def working_directory(path: FilePath) -> Generator[None, None, None]:
         os.chdir(prev_cwd)
 
 
-def compress_files_ext(path: FilePath,
-                       ext: str,
-                       ncores: int = 1,
-                       **kwargs: Any) -> bool:
+def compress_files_ext(
+    path: FilePath, ext: str, ncores: int = 1, **kwargs: Any
+) -> bool:
     """
     Compress all files with same extension in folder to `.gz`.
 
@@ -312,10 +317,12 @@ def compress_files_ext(path: FilePath,
     return False
 
 
-def gzip_files(file_: FilePath,
-               block_size: Optional[int] = None,
-               compresslevel: int = 9,
-               remove_original: bool = False) -> None:
+def gzip_files(
+    file_: FilePath,
+    block_size: Optional[int] = None,
+    compresslevel: int = 9,
+    remove_original: bool = False,
+) -> None:
     """
     Gzip a file.
 
@@ -334,11 +341,10 @@ def gzip_files(file_: FilePath,
     if block_size is None:
         block_size = 2 * 10**8
 
-    gfile = str(file_) + '.gz'
-    with \
-            open(file_, 'rb') as fin, \
-            gzip.open(gfile, mode='wb', compresslevel=compresslevel) as gout:
-
+    gfile = str(file_) + ".gz"
+    with open(file_, "rb") as fin, gzip.open(
+        gfile, mode="wb", compresslevel=compresslevel
+    ) as gout:
         content = fin.read(block_size)  # read the first
         while content:
             gout.write(content)
@@ -348,9 +354,7 @@ def gzip_files(file_: FilePath,
         Path(file_).unlink()
 
 
-def archive_files_ext(path: FilePath,
-                      ext: str,
-                      compresslevel: int = 9) -> bool:
+def archive_files_ext(path: FilePath, ext: str, compresslevel: int = 9) -> bool:
     """
     Archive all files with same extension in folder.
 
@@ -378,11 +382,10 @@ def archive_files_ext(path: FilePath,
 
     if files:
         with tarfile.open(
-                Path(path, f'{ext}.tgz'),
-                mode='w:gz',
-                compresslevel=compresslevel,
-                ) as tarout:
-
+            Path(path, f"{ext}.tgz"),
+            mode="w:gz",
+            compresslevel=compresslevel,
+        ) as tarout:
             for file_ in files:
                 tarout.add(file_, arcname=file_.name)
 
@@ -410,7 +413,7 @@ def glob_folder(folder: FilePath, ext: str) -> list[Path]:
     list of Path objects
         SORTED list of matching results.
     """
-    ext = f'*{dot_suffix(ext)}'
+    ext = f"*{dot_suffix(ext)}"
     files = glob.glob(str(Path(folder, ext)))
     return sort_numbered_paths(*(Path(file) for file in files))
 
@@ -431,15 +434,15 @@ def remove_files_with_ext(folder: FilePath, ext: str) -> None:
     files = sort_numbered_paths(*glob_folder(folder, ext))
     # if there are no files, the for loop  won't run.
     for file_ in files:
-        log.debug(f'removing: {file_}')
+        log.debug(f"removing: {file_}")
         file_.unlink()
 
 
 def folder_exists(
-        path: FilePath,
-        exception: type[Exception] = ValueError,
-        emsg: str = "The folder {!r} does not exist or is not a folder.",
-        ) -> Path:
+    path: FilePath,
+    exception: type[Exception] = ValueError,
+    emsg: str = "The folder {!r} does not exist or is not a folder.",
+) -> Path:
     """
     Assert if a folder exist.
 
@@ -479,10 +482,10 @@ def folder_exists(
 
 
 def file_exists(
-        path: FilePath,
-        exception: type[Exception] = ValueError,
-        emsg: str = "`path` is not a file or does not exist",
-        ) -> Path:
+    path: FilePath,
+    exception: type[Exception] = ValueError,
+    emsg: str = "`path` is not a file or does not exist",
+) -> Path:
     """
     Assert if file exist.
 
@@ -524,7 +527,7 @@ def file_exists(
 def pdb_path_exists(pdb_path: Path) -> tuple[bool, Optional[str]]:
     """
     Check if a pdb path exists.
-    
+
     If not, checks for the existence of a gzipped pdb file and informs the user
     that the file is gzipped
 
@@ -532,7 +535,7 @@ def pdb_path_exists(pdb_path: Path) -> tuple[bool, Optional[str]]:
     ----------
     pdb_path : pathlib.Path
         path to the pdb
-    
+
     Returns
     -------
     exists : bool
@@ -543,7 +546,7 @@ def pdb_path_exists(pdb_path: Path) -> tuple[bool, Optional[str]]:
     exists, msg = True, None
     if not pdb_path.exists():
         msg = f"PDB file {pdb_path} not found."
-        gz_pdb_path = pdb_path.with_suffix(pdb_path.suffix + '.gz')
+        gz_pdb_path = pdb_path.with_suffix(pdb_path.suffix + ".gz")
         if gz_pdb_path.exists():
             msg += f" A compressed file ({gz_pdb_path}) exists though."
             msg += "Use haddock3-unpack to unpack the run."
@@ -568,7 +571,6 @@ def make_writeable_recursive(path: FilePath) -> None:
     """
     # https://stackoverflow.com/questions/6874970
     for root, dirs, files in os.walk(path, topdown=False):
-
         for dir_ in (os.path.join(root, d) for d in dirs):
             os.chmod(dir_, get_perm(dir_) | stat.S_IWUSR)
 

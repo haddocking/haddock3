@@ -107,11 +107,11 @@ def maincli() -> None:
 
 
 def main(
-    module: str = None,
+    module: Optional[str] = None,
     explevel: str = "all",
     global_params: bool = True,
     details: bool = False,
-):
+) -> None:
     """
     Extract the defaults in the form of a run configuration file.
 
@@ -188,4 +188,4 @@ def main(
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

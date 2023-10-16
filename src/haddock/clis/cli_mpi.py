@@ -22,7 +22,7 @@ from haddock.core.typing import (
     Callable,
     FilePath,
     Namespace,
-    )
+)
 from haddock.libs.libsubprocess import CNSJob
 
 
@@ -31,7 +31,8 @@ try:
 except ImportError as e:
     _msg = (
         f"{e} - To run this cli you must have mpi4py and "
-        "OpenMPI installed in the system")
+        "OpenMPI installed in the system"
+    )
     sys.exit(_msg)
 
 
@@ -49,12 +50,12 @@ def split_tasks(task_l: list[AnyT], n: int) -> list[list[AnyT]]:
 ap = argparse.ArgumentParser(
     prog="MPI-wrapper for executing pickled CNSJobs created by libmpi",
     description=__doc__,
-    )
+)
 
 ap.add_argument(
     "pickled_tasks",
     help="The input pickled tasks path",
-    )
+)
 
 
 def _ap() -> ArgumentParser:
@@ -85,15 +86,14 @@ def main(pickled_tasks: FilePath) -> None:
     if COMM.rank == 0:
         with open(pickled_tasks, "rb") as pkl:
             tasks = pickle.load(pkl)
-        jobs = split_tasks(tasks, COMM.size)
+        mpi_jobs = split_tasks(tasks, COMM.size)
     else:
-        jobs = None
+        mpi_jobs = None
 
-    jobs = COMM.scatter(jobs, root=0)
+    jobs: list[CNSJob] = COMM.scatter(mpi_jobs, root=0)
 
     results: list[FilePath] = []
     for job in jobs:
-        job: CNSJob
         job.run()
         results.append(job.input_file)
 
@@ -102,4 +102,4 @@ def main(pickled_tasks: FilePath) -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

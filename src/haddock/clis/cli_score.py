@@ -25,14 +25,14 @@ from haddock.core.typing import (
     Callable,
     FilePath,
     Namespace,
-    )
+)
 from haddock.libs.libcli import _ParamsToDict
 
 
 ap = argparse.ArgumentParser(
     prog="haddock3-score",
     description=__doc__,
-    )
+)
 
 ap.add_argument("pdb_file", help="Input PDB file")
 
@@ -40,27 +40,26 @@ ap.add_argument(
     "--full",
     action="store_true",
     help="Print all energy components",
-    )
+)
 
 ap.add_argument(
     "--outputpdb",
     action="store_true",
     help="Save the output PDB file (minimized structure)",
-    )
+)
 
 ap.add_argument(
     "--outputpsf",
     action="store_true",
     help="Save the output PSF file (topology)",
-    )
+)
 
 ap.add_argument(
-    "-k"
-    "--keep-all",
+    "-k" "--keep-all",
     dest="keep_all",
     action="store_true",
-    help="Keep the whole run folder."
-    )
+    help="Keep the whole run folder.",
+)
 
 ap.add_argument(
     "-p",
@@ -70,11 +69,11 @@ ap.add_argument(
         "Any other parameter of the `emscoring` module."
         "For example: -p nemsteps 1000. You can give any number of "
         "parameters."
-        ),
+    ),
     action=_ParamsToDict,
     default={},
     nargs="*",
-    )
+)
 
 
 def _ap() -> ArgumentParser:
@@ -99,13 +98,13 @@ def maincli() -> None:
 
 
 def main(
-        pdb_file: FilePath,
-        full: bool = False,
-        outputpdb: bool = False,
-        outputpsf: bool = False,
-        keep_all: bool = False,
-        **kwargs: Any,
-        ) -> None:
+    pdb_file: FilePath,
+    full: bool = False,
+    outputpdb: bool = False,
+    outputpsf: bool = False,
+    keep_all: bool = False,
+    **kwargs: Any,
+) -> None:
     """
     Calculate the score of a complex using the ``emscoring`` module.
 
@@ -151,7 +150,7 @@ def main(
 
     input_pdb = Path(pdb_file).resolve()
     if not input_pdb.exists():
-        sys.exit(f'* ERROR * Input PDB file {str(input_pdb)!r} does not exist')
+        sys.exit(f"* ERROR * Input PDB file {str(input_pdb)!r} does not exist")
 
     # config all parameters are correctly spelled.
     default_emscoring = read_from_yaml_config(DEFAULT_CONFIG)
@@ -159,19 +158,25 @@ def main(
     n_warnings = 0
     for param, value in kwargs.items():
         if param not in default_emscoring:
-            sys.exit(f'* ERROR * Parameter {param!r} is not a valid `emscoring` parameter')  # noqa:E501
+            sys.exit(
+                f"* ERROR * Parameter {param!r} is not a valid `emscoring` parameter"
+            )  # noqa:E501
         if value != default_emscoring[param]:
-            print(f"* ATTENTION * Value ({value}) of parameter {param} different from default ({default_emscoring[param]})")  # noqa:E501
+            print(
+                f"* ATTENTION * Value ({value}) of parameter {param} different from default ({default_emscoring[param]})"
+            )  # noqa:E501
             ems_dict[param] = value
             n_warnings += 1
 
     if n_warnings != 0:
-        print("* ATTENTION * Non-default parameter values were used. They should be properly reported if the output data are used for publication.")  # noqa:E501
+        print(
+            "* ATTENTION * Non-default parameter values were used. They should be properly reported if the output data are used for publication."
+        )  # noqa:E501
 
     params = {
         "topoaa": {"molecules": [input_pdb]},
         "emscoring": ems_dict,
-        }
+    }
 
     print("> starting calculations...")
 
@@ -186,7 +191,7 @@ def main(
             workflow_params=params,
             start=0,
             run_dir=run_dir,
-            )
+        )
 
         workflow.run()
 
@@ -200,14 +205,17 @@ def main(
     bsa = haddock_score_component_dic["bsa"]
 
     # emscoring is equivalent to itw
-    haddock_score_itw = \
-        ems_dict["w_vdw"] * vdw \
-        + ems_dict["w_elec"] * elec \
-        + ems_dict["w_desolv"] * desolv \
-        + ems_dict["w_air"] * air \
+    haddock_score_itw = (
+        ems_dict["w_vdw"] * vdw
+        + ems_dict["w_elec"] * elec
+        + ems_dict["w_desolv"] * desolv
+        + ems_dict["w_air"] * air
         + ems_dict["w_bsa"] * bsa
+    )
 
-    print(f"""> HADDOCK-score = ({ems_dict['w_vdw']} * vdw) + ({ems_dict['w_elec']} * elec) + ({ems_dict['w_desolv']} * desolv) + ({ems_dict['w_air']} * air) + ({ems_dict['w_bsa']} * bsa)""")  # noqa: E501
+    print(
+        f"""> HADDOCK-score = ({ems_dict['w_vdw']} * vdw) + ({ems_dict['w_elec']} * elec) + ({ems_dict['w_desolv']} * desolv) + ({ems_dict['w_air']} * air) + ({ems_dict['w_bsa']} * bsa)"""
+    )  # noqa: E501
     print(f"> HADDOCK-score (emscoring) = {haddock_score_itw:.4f}")
 
     if full:
@@ -219,24 +227,24 @@ def main(
         shutil.copy(
             Path(run_dir, "1_emscoring", "emscoring_1.pdb"),
             outputpdb_name,
-            )
+        )
 
     if outputpsf:
         outputpsf_name = Path(f"{input_pdb.name}_hs.psf")
         print(f"> writing {outputpsf_name}")
         shutil.copy(
-            Path(run_dir, "0_topoaa", f'{input_pdb.name}_haddock.psf'),
+            Path(run_dir, "0_topoaa", f"{input_pdb.name}_haddock.psf"),
             outputpsf_name,
-            )
+        )
 
     if not keep_all:
         shutil.rmtree(run_dir)
     else:
         print(
-            'The folder where the calculations where performed was kept. See '
-            'folder: haddock-scoring-client'
-            )
+            "The folder where the calculations where performed was kept. See "
+            "folder: haddock-scoring-client"
+        )
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

@@ -18,6 +18,7 @@ from haddock.core.typing import (
     Optional,
     Union,
 )
+from typing import Any
 
 
 SCATTER_PAIRS = [
@@ -256,7 +257,7 @@ def box_plot_data(capri_df: pd.DataFrame, cl_rank: ClRank) -> pd.DataFrame:
         if cl_id not in cl_rank.keys():
             gb_other = pd.concat([gb_other, cl_df])
         else:
-            cl_df["capri_rank"] = cl_rank[cl_id]
+            cl_df["capri_rank"] = cl_rank[cl_id]  # type: ignore
             gb_good = pd.concat([gb_good, cl_df])
 
     gb_other["cluster-id"] = "Other"
@@ -774,7 +775,7 @@ def _pandas_df_to_json(df):
     headers = {json_plot_keys.get(name, name): name for name in df.columns}
 
     # Create a nested dictionary that contains the data of the table
-    data = {}
+    data: dict[Any, Any] = {}
     for index, row in df.iterrows():
         stats = {}
         best = {}
@@ -957,7 +958,7 @@ def _generate_html_body(figures):
             inner_html = figure.to_html(
                 full_html=False, include_plotlyjs=include_plotlyjs
             )
-            include_plotlyjs = False
+            include_plotlyjs = False  # type: ignore
         body += "<br>"  # add a break between tables and plots
         body += inner_html
     body += "</body>"

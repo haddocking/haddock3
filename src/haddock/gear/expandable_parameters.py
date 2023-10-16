@@ -86,28 +86,32 @@ from haddock.core.typing import (
     ParamMap,
     Sequence,
     SupportsAddT,
-    )
+)
 
 
 # error messages used in _read_groups_in_user_config function
 # errors messages for single indexed groups
-_emsg_no_group_single = \
+_emsg_no_group_single = (
     "The parameter block '{}_*_{}' is not a valid expandable parameter."
-_emsg_unexpected_params_single = \
+)
+_emsg_unexpected_params_single = (
     "These parameters do not belong to the block '{}_*_{}': {!r}."
+)
 
 # errors messages for multiple indexed groups
-_emsg_no_group_multiple = \
+_emsg_no_group_multiple = (
     "The parameter block '{}_*_{}_*' is not a valid expandable parameter."
-_emsg_unexpected_params_multiple = \
+)
+_emsg_unexpected_params_multiple = (
     "These parameters do not belong to the block '{}_*_{}_*': {!r}."
+)
 
 # common error messages
 _emsg_num_differ = (
     "The parameter block {!r} expects "
     "{} parameters, but {} are present "
     "in the user configuration file: {}."
-    )
+)
 
 
 # this dictionary defines which parameters of the form "param_1" are
@@ -119,8 +123,8 @@ type_simplest_ep = {
     "topoaa": {
         "hisd",  # hisd_1 should be defined in the `defaults.yaml`
         "hise",  # hise_1 should be defined in the `defaults.yaml`
-        },
-    }
+    },
+}
 
 
 GroupDict = dict[tuple[str, str], Any]
@@ -131,13 +135,13 @@ GroupDict = dict[tuple[str, str], Any]
 # `get_single_index_groups` and `get_multiple_index_groups`, for
 # example. The latter are defined later on with `partial`.
 def _get_groups(
-        config: ParamMap,
-        belongs_to_group: Callable[[Sequence[str]], bool],
-        make_param_name: Callable[[Sequence[str]], tuple[str, str]],
-        rejoin_parts: Callable[[Sequence[str]], str],
-        minimum: int = 2,
-        reference: bool = True,
-        ) -> GroupDict:
+    config: ParamMap,
+    belongs_to_group: Callable[[Sequence[str]], bool],
+    make_param_name: Callable[[Sequence[str]], tuple[str, str]],
+    rejoin_parts: Callable[[Sequence[str]], str],
+    minimum: int = 2,
+    reference: bool = True,
+) -> GroupDict:
     """
     Identify expandable parameter groups - main engine function.
 
@@ -189,11 +193,7 @@ def _get_groups(
         groups = remove_ghost_groups(groups)
 
     # creates the final dictionary
-    final_groups = {
-        k: v["mid"]
-        for k, v in groups.items()
-        if v["counts"] >= minimum
-        }
+    final_groups = {k: v["mid"] for k, v in groups.items() if v["counts"] >= minimum}
 
     return final_groups
 
@@ -228,7 +228,7 @@ def remove_ghost_groups(groups: GroupDict) -> GroupDict:
 
     new_groups = deepcopy(groups)
 
-    for key, value in counter.items():
+    for key, value in counter.items():  # type: ignore
         if value > 1:
             for gk in groups.keys():
                 if gk[0] == key:
@@ -243,13 +243,13 @@ def remove_ghost_groups(groups: GroupDict) -> GroupDict:
 # `read_multiple_idx_groups_user_config`, for example. The latter are
 # defined later on with `partial`.
 def _read_groups_in_user_config(
-        user_config: Iterable[str],
-        default_groups: GroupDict,
-        get_user_groups: Callable[..., GroupDict],
-        extract_params: Callable[..., set[str]],
-        _emsg_no_group: str = "Parameter block is not a valid expandable group",
-        _emsg_unexpected_params: str = "Unexpected params for group",
-        ) -> set[str]:
+    user_config: Iterable[str],
+    default_groups: GroupDict,
+    get_user_groups: Callable[..., GroupDict],
+    extract_params: Callable[..., set[str]],
+    _emsg_no_group: str = "Parameter block is not a valid expandable group",
+    _emsg_unexpected_params: str = "Unexpected params for group",
+) -> set[str]:
     """
     Read groups in user config.
 
@@ -289,7 +289,6 @@ def _read_groups_in_user_config(
 
     new: set[str] = set()
     for (param_name, group_idx), params in user_groups.items():
-
         if param_name not in default_group_names:
             emsg = _emsg_no_group.format(param_name, group_idx)
             raise ConfigurationError(emsg)
@@ -302,7 +301,7 @@ def _read_groups_in_user_config(
                 param_name,
                 group_idx,
                 ", ".join(diff),
-                )
+            )
             raise ConfigurationError(emsg)
 
         num_found = len(params)
@@ -317,7 +316,7 @@ def _read_groups_in_user_config(
                 num_expected,
                 num_found,
                 ", ".join(params),
-                )
+            )
             raise ConfigurationError(emsg)
 
         related_params = extract_params(user_config, param_name, group_idx)
@@ -326,8 +325,9 @@ def _read_groups_in_user_config(
     return new
 
 
-def read_simplest_expandable(expparams: Iterable[str],
-                             config: Iterable[str]) -> set[str]:
+def read_simplest_expandable(
+    expparams: Iterable[str], config: Iterable[str]
+) -> set[str]:
     """
     Read expandable parameters from config file of the type `param_1`.
 
@@ -364,16 +364,14 @@ def get_mol_parameters(config: Iterable[str]) -> set[str]:
 def is_mol_parameter(param: str) -> bool:
     """Identify if a parameter is a `mol` parameter."""
     parts = param.split("_")
-    return param.startswith("mol_") \
-        and parts[-1].isdigit() \
-        and len(parts) > 2
+    return param.startswith("mol_") and parts[-1].isdigit() and len(parts) > 2
 
 
 def read_mol_parameters(
-        user_config: ParamMap,
-        default_groups: Iterable[str],
-        max_mols: int = max_molecules_allowed,
-        ) -> set[str]:
+    user_config: ParamMap,
+    default_groups: Iterable[str],
+    max_mols: int = max_molecules_allowed,
+) -> set[str]:
     """
     Read the mol parameters in the user_config following expectations.
 
@@ -475,8 +473,7 @@ def get_trail_index(param: str) -> Optional[str]:
     return None
 
 
-def make_param_name_single_index(
-        param_parts: Sequence[AnyT]) -> tuple[AnyT, AnyT]:
+def make_param_name_single_index(param_parts: Sequence[AnyT]) -> tuple[AnyT, AnyT]:
     """
     Make the key name from param parts.
 
@@ -486,8 +483,8 @@ def make_param_name_single_index(
 
 
 def make_param_name_multiple_index(
-        param_parts: Sequence[SupportsAddT]
-        ) -> tuple[SupportsAddT, SupportsAddT]:
+    param_parts: Sequence[SupportsAddT],
+) -> tuple[SupportsAddT, SupportsAddT]:
     """
     Make the key name from param parts.
 
@@ -516,11 +513,12 @@ def belongs_to_single_index(param_parts: Sequence[str]) -> bool:
         - the last part is a digit
         - the part before last is not a digit
     """
-    return \
-        len(param_parts) > 2 \
-        and param_parts[-1].isdigit() \
-        and not param_parts[-2].isdigit() \
+    return (
+        len(param_parts) > 2
+        and param_parts[-1].isdigit()
+        and not param_parts[-2].isdigit()
         and not param_parts[0].startswith("mol")
+    )
 
 
 def belongs_to_multiple_index(param_parts: Sequence[str]) -> bool:
@@ -543,11 +541,12 @@ def belongs_to_multiple_index(param_parts: Sequence[str]) -> bool:
         - the last part is a digit
         - the part before last is a digit
     """
-    return \
-        len(param_parts) >= 4 \
-        and param_parts[-1].isdigit() \
-        and param_parts[-2].isdigit() \
+    return (
+        len(param_parts) >= 4
+        and param_parts[-1].isdigit()
+        and param_parts[-2].isdigit()
         and not param_parts[0].startswith("mol")
+    )
 
 
 def rejoin_parts_single_index(param_parts: Sequence[str]) -> str:
@@ -560,8 +559,9 @@ def rejoin_parts_multiple_index(param_parts: Sequence[str]) -> str:
     return "_".join(param_parts[1:-2])
 
 
-def extract_single_index_params(user_config: Iterable[str], param_name: str,
-                                group_idx: str) -> set[str]:
+def extract_single_index_params(
+    user_config: Iterable[str], param_name: str, group_idx: str
+) -> set[str]:
     """
     Extract the parameters belonging to a group.
 
@@ -620,16 +620,14 @@ def extract_single_index_params(user_config: Iterable[str], param_name: str,
             pname, *_, pidx = parts
         except ValueError:
             continue
-        if \
-                pname == param_name \
-                and pidx == group_idx \
-                and belongs_to_single_index(parts):
+        if pname == param_name and pidx == group_idx and belongs_to_single_index(parts):
             new.add(param)
     return new
 
 
-def extract_multiple_index_params(user_config: Iterable[str], param_name: str,
-                                  group_idx: str) -> set[str]:
+def extract_multiple_index_params(
+    user_config: Iterable[str], param_name: str, group_idx: str
+) -> set[str]:
     """
     Extract the parameters belonging to a group.
 
@@ -687,10 +685,11 @@ def extract_multiple_index_params(user_config: Iterable[str], param_name: str,
             pname, *_, molidx, pidx = parts
         except ValueError:
             continue
-        if \
-                pname + molidx == param_name \
-                and pidx == group_idx \
-                and belongs_to_multiple_index(parts):
+        if (
+            pname + molidx == param_name
+            and pidx == group_idx
+            and belongs_to_multiple_index(parts)
+        ):
             new.add(param)
     return new
 
@@ -702,7 +701,7 @@ get_single_index_groups = partial(
     belongs_to_group=belongs_to_single_index,
     make_param_name=make_param_name_single_index,
     rejoin_parts=rejoin_parts_single_index,
-    )
+)
 """
 Get single indexed blocks from a configuration.
 
@@ -766,7 +765,7 @@ get_multiple_index_groups = partial(
     belongs_to_group=belongs_to_multiple_index,
     make_param_name=make_param_name_multiple_index,
     rejoin_parts=rejoin_parts_multiple_index,
-    )
+)
 """
 Get parameter blocks with multiple indexes.
 
@@ -834,7 +833,7 @@ read_single_idx_groups_user_config = partial(
     extract_params=extract_single_index_params,
     _emsg_no_group=_emsg_no_group_single,
     _emsg_unexpected_params=_emsg_unexpected_params_single,
-    )
+)
 """
 Read single indexed groups in user config.
 
@@ -861,7 +860,7 @@ read_multiple_idx_groups_user_config = partial(
     extract_params=extract_multiple_index_params,
     _emsg_no_group=_emsg_no_group_multiple,
     _emsg_unexpected_params=_emsg_unexpected_params_multiple,
-    )
+)
 """
 Read multiple indexed groups in user config.
 
@@ -883,8 +882,9 @@ set
 """
 
 
-def populate_mol_parameters_in_module(params: ParamMap, num_mols: int,
-                                      defaults: ParamMap) -> None:
+def populate_mol_parameters_in_module(
+    params: ParamMap, num_mols: int, defaults: ParamMap
+) -> None:
     """
     Populate parameters dictionary with the needed molecule `mol_` parameters.
 
@@ -915,8 +915,8 @@ def populate_mol_parameters_in_module(params: ParamMap, num_mols: int,
     mol_params = (
         p
         for p in list(params.keys())
-        if is_mol_parameter(p) and get_trail_index(p) == '1'
-        )
+        if is_mol_parameter(p) and get_trail_index(p) == "1"
+    )
 
     for param, i in it.product(mol_params, range(1, num_mols + 1)):
         param_name = remove_trail_idx(param)

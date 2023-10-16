@@ -25,7 +25,7 @@ from haddock.core.typing import (
     LogLevel,
     Namespace,
     Optional,
-    )
+)
 from haddock.gear.extend_run import EXTEND_RUN_DEFAULT, add_extend_run
 from haddock.gear.restart_run import add_restart_arg
 from haddock.libs.libcli import add_version_arg, arg_file_exist
@@ -39,7 +39,7 @@ ap.add_argument(
     "recipe",
     type=arg_file_exist,
     help="The input recipe file path",
-    )
+)
 
 add_restart_arg(ap)
 add_extend_run(ap)
@@ -48,8 +48,8 @@ ap.add_argument(
     "--setup",
     help="Only setup the run, do not execute",
     action="store_true",
-    dest='setup_only',
-    )
+    dest="setup_only",
+)
 
 add_loglevel_arg(ap)
 add_version_arg(ap)
@@ -76,12 +76,12 @@ def maincli() -> None:
 
 
 def main(
-        recipe: FilePath,
-        restart: Optional[int] = None,
-        extend_run: Optional[FilePath] = EXTEND_RUN_DEFAULT,
-        setup_only: bool = False,
-        log_level: LogLevel = "INFO",
-        ) -> None:
+    recipe: FilePath,
+    restart: Optional[int] = None,
+    extend_run: Optional[FilePath] = EXTEND_RUN_DEFAULT,
+    setup_only: bool = False,
+    log_level: LogLevel = "INFO",
+) -> None:
     """
     Run an HADDOCK3 workflow.
 
@@ -117,7 +117,7 @@ def main(
         add_stringio_handler,
         log_file_name,
         log_formatters,
-        )
+    )
     from haddock.libs.libtimer import convert_seconds_to_min_sec
     from haddock.libs.libutil import log_error_and_exit
     from haddock.libs.libworkflow import WorkflowManager
@@ -135,7 +135,7 @@ def main(
         log,
         log_level=log_level,
         formatter=log_formatters[log_level],
-        )
+    )
 
     log.info(get_initial_greeting())
 
@@ -144,22 +144,22 @@ def main(
             recipe,
             restart_from=restart,
             extend_run=extend_run,
-            )
+        )
 
     # here we the io.StringIO handler log information, and reset the log
     # handlers to fit the CLI and HADDOCK3 specifications.
-    log_temporary = log.handlers[-1].stream.getvalue()
+    log_temporary = log.handlers[-1].stream.getvalue()  # type: ignore
     _run_dir: str = other_params[RUNDIR]
     log_file = Path(_run_dir, log_file_name)
     add_log_for_CLI(log, log_level, log_file)
 
     # here we append the log information in the previous io.StringIO()
     # handler in the log file already in the run_dir
-    with open(log_file, 'a') as fout:
+    with open(log_file, "a") as fout:
         fout.write(log_temporary)
 
     if setup_only:
-        log.info('We have setup the run, only.')
+        log.info("We have setup the run, only.")
         log.info(get_adieu())
         return
 
@@ -172,14 +172,14 @@ def main(
         WorkflowManager_ = WorkflowManager
 
     with (
-            working_directory(_run_dir),
-            log_error_and_exit(),
-            ):
+        working_directory(_run_dir),
+        log_error_and_exit(),
+    ):
         workflow = WorkflowManager_(
             workflow_params=params,
             start=restart_step,
             **other_params,
-            )
+        )
 
         # Main loop of execution
         workflow.run()
@@ -195,4 +195,4 @@ def main(
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

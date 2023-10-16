@@ -11,13 +11,13 @@ arg_file_exist = partial(
     file_exists,
     exception=ArgumentTypeError,
     emsg="File {!r} does not exist or is not a file.",
-    )
+)
 
 arg_folder_exist = partial(
     folder_exists,
     exception=ArgumentTypeError,
     emsg="Folder {!r} does not exist.",
-    )
+)
 
 
 def add_version_arg(ap: ArgumentParser) -> None:
@@ -27,8 +27,8 @@ def add_version_arg(ap: ArgumentParser) -> None:
         "--version",
         help="show version",
         action="version",
-        version=f'{ap.prog} - {version}',
-        )
+        version=f"{ap.prog} - {version}",
+    )
 
 
 def add_rundir_arg(ap: ArgumentParser) -> None:
@@ -37,7 +37,7 @@ def add_rundir_arg(ap: ArgumentParser) -> None:
         "run_dir",
         help="The run directory.",
         type=arg_folder_exist,
-        )
+    )
 
 
 def add_ncores_arg(ap: ArgumentParser) -> None:
@@ -45,17 +45,17 @@ def add_ncores_arg(ap: ArgumentParser) -> None:
     ap.add_argument(
         "-n",
         "--ncores",
-        dest='ncores',
+        dest="ncores",
         help=(
             "The number of threads to use. Uses 1 if not specified. "
             "Uses all available threads if `-n` is given. Else, uses the "
             "number indicated, for example: `-n 4` will use 4 threads."
-            ),
+        ),
         type=int,
         default=1,
         const=None,
-        nargs='?',
-        )
+        nargs="?",
+    )
 
 
 def add_output_dir_arg(ap: ArgumentParser) -> None:
@@ -67,7 +67,7 @@ def add_output_dir_arg(ap: ArgumentParser) -> None:
         help="The directory where to save the output.",
         type=Path,
         default=Path.cwd(),
-        )
+    )
 
 
 class _ParamsToDict(Action):
@@ -85,16 +85,15 @@ class _ParamsToDict(Action):
 
     """
 
-    def __call__(self, parser, namespace, ivalues, option_string=None) -> None:
+    def __call__(self, parser, namespace, ivalues, option_string=None):
         """Execute."""
         params = ivalues[::2]
         values = ivalues[1::2]
 
         if len(params) != len(values):
             raise parser.error(
-                "The parameters and value pairs "
-                "do not match for argument `-p`"
-                )
+                "The parameters and value pairs " "do not match for argument `-p`"
+            )
 
         param_dict = {}
         for k, v in zip(params, values):

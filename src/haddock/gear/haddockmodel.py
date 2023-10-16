@@ -41,6 +41,9 @@ class HaddockModel:
                     if 'Desolvation energy' in line:
                         desolv = float(line.rstrip().split(':')[-1])
                         energy_dic['desolv'] = desolv
+                    if 'Symmetry energy' in line:
+                        sym = float(line.rstrip().split(':')[-1])
+                        energy_dic['sym'] = sym
 
         return energy_dic
 

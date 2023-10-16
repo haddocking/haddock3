@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 
 import pandas as pd
+import os
 
 from haddock import log
 from haddock.libs.libparallel import Scheduler
@@ -15,26 +16,13 @@ from haddock.modules.analysis.alascan.scan import (
     add_delta_to_bfactor,
     alascan_cluster_analysis,
     check_alascan_jobs,
+    generate_alascan_output,
+    get_index_list,
     )
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
-
-
-def get_index_list(nmodels, ncores):
-    """Optimal distribution of models among cores"""
-    spc = nmodels // ncores
-    # now the remainder
-    rem = nmodels % ncores
-    # now the list of indexes to be used for the SCAN calculation
-    index_list = [0]
-    for core in range(ncores):
-        if core < rem:
-            index_list.append(index_list[-1] + spc + 1)
-        else:
-            index_list.append(index_list[-1] + spc)
-    return index_list
 
 
 class HaddockModule(BaseHaddockModule):
@@ -90,11 +78,10 @@ class HaddockModule(BaseHaddockModule):
         scan_engine = Scheduler(alascan_jobs, ncores=ncores)
         scan_engine.run()
         # check if all the jobs have been completed
-        alascan_file_l = check_alascan_jobs(alascan_jobs)
+        check_alascan_jobs(alascan_jobs)
         
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)
- 
         # now plot the data
         if self.params["plot"] is True:
             for clt_id in clt_alascan:
@@ -118,25 +105,8 @@ class HaddockModule(BaseHaddockModule):
                         )
         # if output is true, write the models and export them
         if self.params["output"] is True:
-            models_to_export = []
-            for model in models:
-                name = f"{model.file_name.rstrip('.pdb')}_alascan.pdb"
-                # changing attributes
-                name_path = Path(name)
-                shutil.copy(Path(model.path, model.file_name), name_path)
-
-                alascan_fname = f"scan_{model.file_name.rstrip('.pdb')}.csv"
-                # add delta_score as a bfactor to the model
-                df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
-                add_delta_to_bfactor(name, df_scan)
-                model.ori_name = model.file_name
-                model.file_name = name
-                model.full_name = name
-                model.rel_path = Path('..', Path(self.path).name, name)
-                model.path = str(Path(self.path).resolve())
-                models_to_export.append(model)
+            models_to_export = generate_alascan_output(models, self.path)
             self.output_models = models_to_export
-        
         else:
             # Send models to the next step,
             #  no operation is done on them

@@ -3,6 +3,7 @@ import os
 import shlex
 import subprocess
 from pathlib import Path
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -59,6 +60,36 @@ RES_CODES = dict([
     ("TYP", "Y"),
     ("TYS", "Y"),
     ])
+
+
+def get_index_list(nmodels, ncores):
+    """
+    Optimal distribution of models among cores
+    
+    Parameters
+    ----------
+    nmodels : int
+        Number of models to be distributed.
+    
+    ncores : int
+        Number of cores to be used.
+    
+    Returns
+    -------
+    index_list : list
+        List of model indexes to be used for the parallel scanning.
+    """
+    spc = nmodels // ncores
+    # now the remainder
+    rem = nmodels % ncores
+    # now the list of indexes to be used for the SCAN calculation
+    index_list = [0]
+    for core in range(ncores):
+        if core < rem:
+            index_list.append(index_list[-1] + spc + 1)
+        else:
+            index_list.append(index_list[-1] + spc)
+    return index_list
 
 
 def mutate(pdb_f, target_chain, target_resnum, mut_resname):
@@ -154,17 +185,14 @@ def add_delta_to_bfactor(pdb_f, df_scan):
     os.rename(tmp_pdb_f, pdb_f)
     return pdb_f
 
-
 def calc_score(pdb_f, run_dir):
     """Calculate the score of a model.
-
     Parameters
     ----------
     pdb_f : str
         Path to the pdb file.
     run_dir : str
         Path to the run directory.
-    
     Returns
     -------
     score : float
@@ -184,6 +212,7 @@ def calc_score(pdb_f, run_dir):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
         )
+
     # check if failed
     out = p.stdout.decode("utf-8").split(os.linesep)
     if p.returncode != 0:
@@ -342,7 +371,6 @@ def check_alascan_jobs(alascan_jobs):
             log.warning(wrn)
         else:
             alascan_file_l.append(str(job.output))
-    print(f"not_found {not_found}")
     if not_found:
         # Not all alascan were executed, cannot proceed
         raise Exception("Several alascan files were not generated:"
@@ -350,6 +378,25 @@ def check_alascan_jobs(alascan_jobs):
     
     return alascan_file_l
 
+def generate_alascan_output(models, path):
+    """Generate the alascan output files."""
+    models_to_export = []
+    for model in models:
+        name = f"{model.file_name.rstrip('.pdb')}_alascan.pdb"
+        # changing attributes
+        name_path = Path(name)
+        shutil.copy(Path(model.path, model.file_name), name_path) 
+        alascan_fname = f"scan_{model.file_name.rstrip('.pdb')}.csv"
+        # add delta_score as a bfactor to the model
+        df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
+        add_delta_to_bfactor(name, df_scan)
+        model.ori_name = model.file_name
+        model.file_name = name
+        model.full_name = name
+        model.rel_path = Path('..', Path(path).name, name)
+        model.path = str(Path(path).resolve())
+        models_to_export.append(model)
+    return models_to_export
 
 class ScanJob:
     """A Job dedicated to the parallel alanine scanning of models."""
@@ -398,7 +445,8 @@ class Scan:
                 in params["params"].items()
                 if key.startswith("resdic")
                 }
-    
+
+
     def run(self):
         """Run alascan calculations."""
         for native in self.model_list:
@@ -413,7 +461,6 @@ class Scan:
             sc_dir = f"haddock3-score-{self.core}"
             n_score, n_vdw, n_elec, n_des, n_bsa = calc_score(native.rel_path,
                                                               run_dir=sc_dir)
-            
             scan_data = []
             # check if the user wants to mutate only some residues
             if self.filter_resdic != {'_': []}:

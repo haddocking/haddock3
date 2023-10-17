@@ -159,8 +159,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -215,6 +215,7 @@
 <span class="sd">&quot;00_topoaa&quot;</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">ceil</span><span class="p">,</span> <span class="n">log10</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sized</span>
 
 
 <span class="k">class</span> <span class="nc">_ZeroFill</span><span class="p">:</span>
@@ -235,12 +236,12 @@
 <span class="sd">    &quot;2_rigidbody&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zfnum</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zfnum</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_zfnum</span> <span class="o">=</span> <span class="n">zfnum</span>
         <span class="k">return</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">zfnum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">zfnum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The zerofill number.</span>
 
@@ -248,7 +249,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa: D401</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zfnum</span>
 
-    <span class="k">def</span> <span class="nf">set_zerofill_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">set_zerofill_number</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register the zerofill number given a certain number of steps.</span>
 
@@ -259,7 +260,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_zfnum</span> <span class="o">=</span> <span class="n">get_zerofill_for_modules</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">)))</span>
 
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modules</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">modules</span><span class="p">:</span> <span class="n">Sized</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Register the zerofill number for current run.</span>
 
@@ -273,7 +274,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_zfnum</span> <span class="o">=</span> <span class="n">get_zerofill_for_modules</span><span class="p">(</span><span class="n">modules</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fill a name with the corresponding zero filling.</span>
 
@@ -294,7 +295,7 @@
 <span class="n">zero_fill</span> <span class="o">=</span> <span class="n">_ZeroFill</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="get_number_of_digits"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.get_number_of_digits">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_digits</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+<div class="viewcode-block" id="get_number_of_digits"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.get_number_of_digits">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_digits</span><span class="p">(</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the number of digits of a number.</span>
 
@@ -305,7 +306,7 @@
     <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">ceil</span><span class="p">(</span><span class="n">log10</span><span class="p">(</span><span class="n">num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_zerofill_for_modules"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.get_zerofill_for_modules">[docs]</a><span class="k">def</span> <span class="nf">get_zerofill_for_modules</span><span class="p">(</span><span class="n">modules</span><span class="p">):</span>
+<div class="viewcode-block" id="get_zerofill_for_modules"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.get_zerofill_for_modules">[docs]</a><span class="k">def</span> <span class="nf">get_zerofill_for_modules</span><span class="p">(</span><span class="n">modules</span><span class="p">:</span> <span class="n">Sized</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a the prefix zerofill for modules.</span>
 
@@ -322,7 +323,7 @@
     <span class="k">return</span> <span class="n">get_number_of_digits</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">modules</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="make_zero_fill"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.make_zero_fill">[docs]</a><span class="k">def</span> <span class="nf">make_zero_fill</span><span class="p">(</span><span class="n">number</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+<div class="viewcode-block" id="make_zero_fill"><a class="viewcode-back" href="../../../reference/gear/zerofill.html#haddock.gear.zerofill.make_zero_fill">[docs]</a><span class="k">def</span> <span class="nf">make_zero_fill</span><span class="p">(</span><span class="n">number</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a number string zero filled to the left.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">number</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span></div>
 </pre></div>

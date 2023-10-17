@@ -168,8 +168,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,122 +199,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.libs.libparallel">
-<span id="libparallel-multiprocessing-helping-functions"></span><h1>libparallel: multiprocessing helping functions<a class="headerlink" href="#module-haddock.libs.libparallel" title="Permalink to this heading">¶</a></h1>
-<p>Module in charge of parallelizing the execution of tasks.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libparallel.</span></span><span class="sig-name descname"><span class="pre">Scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_cpus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Scheduler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Schedules tasks to run in multiprocessing.</p>
-<dl class="py property">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler.num_processes">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_processes</span></span><a class="headerlink" href="#haddock.libs.libparallel.Scheduler.num_processes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of processors to use.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Scheduler.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Scheduler.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run tasks in parallel.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Scheduler.terminate">
-<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Scheduler.terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Scheduler.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Terminate tasks in a controlled way.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libparallel.</span></span><span class="sig-name descname"><span class="pre">Worker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Worker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Worker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Process</span></code></p>
-<p>Work on tasks.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.close">
-<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Close the Process object.</p>
-<p>This method releases resources held by the Process object.  It is
-an error to call this method if the child process is still running.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.daemon">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">daemon</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.daemon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return whether process is a daemon</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.exitcode">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exitcode</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.exitcode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return exit code of process or <cite>None</cite> if it has yet to stop</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.ident">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ident</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.ident" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return identifier (PID) of process or <cite>None</cite> if it has yet to start</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.is_alive">
-<span class="sig-name descname"><span class="pre">is_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.is_alive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return whether process is alive</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.join">
-<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.join" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wait until child process terminates</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.kill">
-<span class="sig-name descname"><span class="pre">kill</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.kill" title="Permalink to this definition">¶</a></dt>
-<dd><p>Terminate process; sends SIGKILL signal or uses TerminateProcess()</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.pid">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pid</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.pid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return identifier (PID) of process or <cite>None</cite> if it has yet to start</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#Worker.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.Worker.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute tasks.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.sentinel">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sentinel</span></span><a class="headerlink" href="#haddock.libs.libparallel.Worker.sentinel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a file descriptor (Unix) or handle (Windows) suitable for
-waiting for process termination.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.start">
-<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start child process</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.Worker.terminate">
-<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libparallel.Worker.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Terminate process; sends SIGTERM signal or uses TerminateProcess()</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.libparallel.split_tasks">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libparallel.</span></span><span class="sig-name descname"><span class="pre">split_tasks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libparallel.html#split_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libparallel.split_tasks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Split tasks into N-sized chunks.</p>
-</dd></dl>
-
+  <section id="libparallel-multiprocessing-helping-functions">
+<h1>libparallel: multiprocessing helping functions<a class="headerlink" href="#libparallel-multiprocessing-helping-functions" title="Permalink to this heading">¶</a></h1>
 </section>
 
 

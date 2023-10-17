@@ -168,8 +168,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,51 +199,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.libs.liblog">
-<span id="liblob-logging-helping-functions"></span><h1>liblob: Logging helping functions<a class="headerlink" href="#module-haddock.libs.liblog" title="Permalink to this heading">¶</a></h1>
-<p>Manage logging and logging helper functions.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.liblog.add_handler">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.liblog.</span></span><span class="sig-name descname"><span class="pre">add_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'[%(asctime)s</span> <span class="pre">%(module)s</span> <span class="pre">%(levelname)s]</span> <span class="pre">%(message)s'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/liblog.html#add_handler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.liblog.add_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a logging Handler to the log object.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.liblog.add_log_for_CLI">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.liblog.</span></span><span class="sig-name descname"><span class="pre">add_log_for_CLI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logfile</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/liblog.html#add_log_for_CLI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.liblog.add_log_for_CLI" title="Permalink to this definition">¶</a></dt>
-<dd><p>Configure log for command-line clients.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.liblog.add_logfile_handler">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.liblog.</span></span><span class="sig-name descname"><span class="pre">add_logfile_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler=&lt;class</span> <span class="pre">'logging.FileHandler'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream='log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level='INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatter='[%(asctime)s</span> <span class="pre">%(module)s</span> <span class="pre">%(levelname)s]</span> <span class="pre">%(message)s'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.liblog.add_logfile_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a logging Handler to the log object.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.liblog.add_loglevel_arg">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.liblog.</span></span><span class="sig-name descname"><span class="pre">add_loglevel_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/liblog.html#add_loglevel_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.liblog.add_loglevel_arg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add log level argument to CLI.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.liblog.add_stringio_handler">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.liblog.</span></span><span class="sig-name descname"><span class="pre">add_stringio_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler=&lt;class</span> <span class="pre">'logging.StreamHandler'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream=&lt;_io.StringIO</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level='INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatter='[%(asctime)s</span> <span class="pre">%(module)s</span> <span class="pre">%(levelname)s]</span> <span class="pre">%(message)s'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.liblog.add_stringio_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a logging Handler to the log object.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.liblog.add_syserr_handler">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.liblog.</span></span><span class="sig-name descname"><span class="pre">add_syserr_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler=&lt;class</span> <span class="pre">'logging.StreamHandler'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream=&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stderr&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level='ERROR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatter='[%(asctime)s</span> <span class="pre">%(module)s</span> <span class="pre">%(levelname)s]</span> <span class="pre">%(message)s'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.liblog.add_syserr_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a logging Handler to the log object.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.liblog.add_sysout_handler">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.liblog.</span></span><span class="sig-name descname"><span class="pre">add_sysout_handler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler=&lt;class</span> <span class="pre">'logging.StreamHandler'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream=&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='utf-8'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_level='INFO'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatter='[%(asctime)s</span> <span class="pre">%(module)s</span> <span class="pre">%(levelname)s]</span> <span class="pre">%(message)s'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.liblog.add_sysout_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a logging Handler to the log object.</p>
-</dd></dl>
-
+  <section id="liblob-logging-helping-functions">
+<h1>liblob: Logging helping functions<a class="headerlink" href="#liblob-logging-helping-functions" title="Permalink to this heading">¶</a></h1>
 </section>
 
 

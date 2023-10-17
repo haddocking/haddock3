@@ -166,8 +166,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,89 +199,6 @@
                             
   <section id="benchmark-client">
 <h1>Benchmark Client<a class="headerlink" href="#benchmark-client" title="Permalink to this heading">¶</a></h1>
-<p><p>Prepare HADDOCK3 benchmark configuration files and job scripts.</p>
-<p>Creates HADDOCK3 configuration files and job files. Details on each
-parameter are explained in the <cite>-h</cite> menu.</p>
-<p>There’s also a test flag that generates jobs only with <cite>topology</cite>
-creation. This feature helps testing the <cite>haddock3-dmn</cite> client.</p>
-<dl class="simple">
-<dt>The state of the jobs is identified by a file tag:</dt><dd><ul class="simple">
-<li><p>AVAILABLE</p></li>
-<li><p>RUNNING</p></li>
-<li><p>DONE</p></li>
-<li><p>FAIL</p></li>
-</ul>
-</dd>
-</dl>
-<p>At start, all jobs have the AVAILABLE tag, and this tag is upgraded as
-the job completes. To know which jobs are in each state, navigate to the
-&lt;output dir&gt; and search for the tags, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="n">AVAILABLE</span>
-<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="n">RUNNING</span>
-<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="n">DONE</span>
-<span class="n">find</span> <span class="o">.</span> <span class="o">-</span><span class="n">name</span> <span class="n">FAIL</span>
-</pre></div>
-</div>
-<p>Jobs are identified as FAIL if there are messages in the stderr file.</p>
-<p>Finally, a daemon job file is created to facilitate the usage of the
-daemon without directly using the <cite>haddock3-dmn</cite> client.</p>
-<p>Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span><span class="o">-</span><span class="n">bm</span> <span class="o">-</span><span class="n">h</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">bm</span> <span class="o">&lt;</span><span class="n">BM</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">output</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">OPTIONS</span><span class="p">]</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">bm</span> <span class="o">&lt;</span><span class="n">BM</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">output</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">workload</span><span class="o">-</span><span class="n">manager</span> <span class="o">&lt;</span><span class="n">option</span><span class="o">&gt;</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">bm</span> <span class="o">&lt;</span><span class="n">BM</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">output</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">workload</span><span class="o">-</span><span class="n">manager</span> <span class="o">&lt;</span><span class="n">option</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">num</span> <span class="n">cores</span><span class="o">&gt;</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">bm</span> <span class="o">&lt;</span><span class="n">BM</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">output</span> <span class="nb">dir</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">workload</span><span class="o">-</span><span class="n">manager</span> <span class="o">&lt;</span><span class="n">option</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">n</span> <span class="o">&lt;</span><span class="n">num</span> <span class="n">cores</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">td</span>
-</pre></div>
-</div>
-<dl class="simple">
-<dt>A <cite>BM folder</cite> is a folder with the characteristics of:</dt><dd><p><a class="reference external" href="https://github.com/haddocking/BM5-clean">https://github.com/haddocking/BM5-clean</a></p>
-</dd>
-</dl>
-<p>For more information read our benchmark tutorial at <cite>docs/benchmark.tut</cite>
-in HADDOCK3 repository site: <a class="reference external" href="https://github.com/haddocking/haddock3">https://github.com/haddocking/haddock3</a></p>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">bm</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">wm</span> <span class="p">{</span><span class="n">torque</span><span class="p">,</span><span class="n">slurm</span><span class="p">}]</span> <span class="p">[</span><span class="o">-</span><span class="n">td</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">qu</span> <span class="n">QUEUE_NAME</span><span class="p">]</span>
-                   <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="n">NCORES</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SUFFIX</span><span class="p">]</span>
-                   <span class="n">benchmark_path</span> <span class="n">output_path</span>
-</pre></div>
-</div>
-<section id="positional-arguments">
-<h2>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>benchmark_path</kbd></dt>
-<dd><p>Location of BM5 folder. This folder should have a subfolder for each model. We expected each subfolder to have the name of a PDBID. That is, folder starting with capital letters or numbers will be considered.</p>
-</dd>
-<dt><kbd>output_path</kbd></dt>
-<dd><p>Where the prepared jobs and the executed benchmark will be stored.</p>
-</dd>
-</dl>
-</section>
-<section id="named-arguments">
-<h2>Named Arguments<a class="headerlink" href="#named-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>-wm, --workload-manager</kbd></dt>
-<dd><p>Possible choices: torque, slurm</p>
-<p>The system where the jobs will be run. Default <cite>slurm</cite>.</p>
-<p>Default: “slurm”</p>
-</dd>
-<dt><kbd>-td, --test-daemon</kbd></dt>
-<dd><p>Creates configuration files just with the <cite>topology</cite> module. Useful to test the benchmark daemon. Default <cite>False</cite>.</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>-qu, --queue-name</kbd></dt>
-<dd><p>The name of the queue where to send the jobs. Default ‘medium’.</p>
-<p>Default: “medium”</p>
-</dd>
-<dt><kbd>-n, --ncores</kbd></dt>
-<dd><p>Maximum number of processors to use in the jobs. Default: 48</p>
-<p>Default: 48</p>
-</dd>
-<dt><kbd>-s, --suffix</kbd></dt>
-<dd><p>A common suffix for all jobs. Defaults to ‘BM5’. Avoid using long names because the job-name has a limited amount of characters.</p>
-<p>Default: “BM5”</p>
-</dd>
-</dl>
-</section>
 </section>
 
 

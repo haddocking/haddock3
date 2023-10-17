@@ -166,8 +166,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,49 +199,6 @@
                             
   <section id="clean-haddock3-runs">
 <h1>Clean HADDOCK3 runs<a class="headerlink" href="#clean-haddock3-runs" title="Permalink to this heading">¶</a></h1>
-<p><p>Clean the output of an HADDOCK3 run directory.</p>
-<p>The clean process performs file archiving and file compressing
-operations.</p>
-<p>All <cite>.inp</cite> and <cite>.out</cite> files are deleted except for the first one, which
-is compressed to <cite>.gz</cite>. On the other hand, all <cite>.seed</cite> and <cite>.con</cite> files
-are compressed and archived to <cite>.tgz</cite> files. Finally, <cite>.pdb</cite> and <cite>.psf</cite>
-files are compressed to <cite>.gz</cite>.</p>
-<p>The &lt;run_directory&gt; can either be a whole HADDOCK3 run folder or a
-specific folder of the workflow step. &lt;ncores&gt; defines the number of
-threads to use; by default uses a single core.</p>
-<p>Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="o">-</span><span class="n">h</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="o">&lt;</span><span class="n">run_directory</span><span class="o">&gt;</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span><span class="o">/</span><span class="mi">1</span><span class="n">_rigidbody</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span>  <span class="c1"># uses all cores</span>
-<span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="n">run1</span> <span class="o">-</span><span class="n">n</span> <span class="mi">2</span>  <span class="c1"># uses 2 cores</span>
-</pre></div>
-</div>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">clean</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">n</span> <span class="p">[</span><span class="n">NCORES</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="n">run_dir</span>
-</pre></div>
-</div>
-<section id="positional-arguments">
-<h2>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>run_dir</kbd></dt>
-<dd><p>The run directory.</p>
-</dd>
-</dl>
-</section>
-<section id="named-arguments">
-<h2>Named Arguments<a class="headerlink" href="#named-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>-n, --ncores</kbd></dt>
-<dd><p>The number of threads to use. Uses 1 if not specified. Uses all available threads if <cite>-n</cite> is given. Else, uses the number indicated, for example: <cite>-n 4</cite> will use 4 threads.</p>
-<p>Default: 1</p>
-</dd>
-<dt><kbd>-v, --version</kbd></dt>
-<dd><p>show version</p>
-</dd>
-</dl>
-</section>
 </section>
 
 

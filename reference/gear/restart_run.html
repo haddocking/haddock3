@@ -168,8 +168,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,41 +199,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.gear.restart_run">
-<span id="restart-run"></span><h1>Restart Run<a class="headerlink" href="#module-haddock.gear.restart_run" title="Permalink to this heading">¶</a></h1>
-<p>Features to allow run restart from a given step.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.gear.restart_run.add_restart_arg">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.restart_run.</span></span><span class="sig-name descname"><span class="pre">add_restart_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parser</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/restart_run.html#add_restart_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.restart_run.add_restart_arg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add <cite>–restart</cite> option to argument parser.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.gear.restart_run.remove_folders_after_number">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.restart_run.</span></span><span class="sig-name descname"><span class="pre">remove_folders_after_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/restart_run.html#remove_folders_after_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.restart_run.remove_folders_after_number" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove calculation folder after (included) a given number.</p>
-<p class="rubric">Example</p>
-<p>If the following step folders exist:</p>
-<blockquote>
-<div><p>00_topoaa
-01_rigidbody
-02_mdref
-03_flexref</p>
-</div></blockquote>
-<p>and the number <cite>2</cite> is given, folders <cite>02_</cite> and <cite>03_</cite> will be
-deleted.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>run_dir</strong> (<em>pathlib.Path</em>) – The run directory.</p></li>
-<li><p><strong>num</strong> (<em>int</em>) – The number of the folder from which to delete calculation step
-folders. <cite>num</cite> must be non-negative integer, or equivalent
-representation.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="restart-run">
+<h1>Restart Run<a class="headerlink" href="#restart-run" title="Permalink to this heading">¶</a></h1>
 </section>
 
 

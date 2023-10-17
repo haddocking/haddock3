@@ -159,8 +159,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -194,6 +194,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Molecular data structures.&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
 
 
 <div class="viewcode-block" id="Molecule"><a class="viewcode-back" href="../../../reference/libs/libstructure.html#haddock.libs.libstructure.Molecule">[docs]</a><span class="k">class</span> <span class="nc">Molecule</span><span class="p">:</span>
@@ -215,7 +216,10 @@
 <span class="sd">        as ``file_name``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">segid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">no_parent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">file_name</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+                 <span class="n">segid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">no_parent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># the rest of the code is too dependent on the Path API</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">Path</span><span class="p">),</span> \
             <span class="sa">f</span><span class="s2">&quot;`file_name` must be pathlib.Path: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span><span class="si">}</span><span class="s2"> given&quot;</span>
@@ -228,7 +232,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">with_parent</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;..&#39;</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="make_molecules"><a class="viewcode-back" href="../../../reference/libs/libstructure.html#haddock.libs.libstructure.make_molecules">[docs]</a><span class="k">def</span> <span class="nf">make_molecules</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="make_molecules"><a class="viewcode-back" href="../../../reference/libs/libstructure.html#haddock.libs.libstructure.make_molecules">[docs]</a><span class="k">def</span> <span class="nf">make_molecules</span><span class="p">(</span><span class="n">paths</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Molecule</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get input molecules from the data stream.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">Molecule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">paths</span><span class="p">))</span></div>
 </pre></div>

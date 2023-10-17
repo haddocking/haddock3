@@ -166,8 +166,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,56 +199,6 @@
                             
   <section id="pdb-preprocessing-client">
 <h1>PDB preprocessing client<a class="headerlink" href="#pdb-preprocessing-client" title="Permalink to this heading">¶</a></h1>
-<p><p>HADDOCK3 PDB preprocessing client.</p>
-<p>Process PDB files for agreement with HADDOCK3 requirements. Follows the
-logic implemented in the <a class="reference internal" href="../reference/gear/preprocessing.html#module-haddock.gear.preprocessing" title="haddock.gear.preprocessing"><code class="xref py py-mod docutils literal notranslate"><span class="pre">haddock.gear.preprocessing</span></code></a>. See
-documentation pages for more details.</p>
-<p>You can use the <cite>–dry</cite> option to report on the performed changes
-without actually performing the changes.</p>
-<p>Corrected PDBs are saved to new files named after the <cite>–suffix</cite> option.
-Original PDBs are never overwritten, unless <cite>–suffix</cite> is given an empty
-string.</p>
-<p>You can pass multiple PDB files to the command-line.</p>
-<p>Usage:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">haddock</span><span class="o">-</span><span class="n">pp</span> <span class="n">file1</span><span class="o">.</span><span class="n">pdb</span> <span class="n">file2</span><span class="o">.</span><span class="n">pdb</span>
-<span class="n">haddock</span><span class="o">-</span><span class="n">pp</span> <span class="n">file1</span><span class="o">.</span><span class="n">pdb</span> <span class="n">file2</span><span class="o">.</span><span class="n">pdb</span> <span class="o">--</span><span class="n">suffix</span> <span class="n">_new</span>
-<span class="n">haddock</span><span class="o">-</span><span class="n">pp</span> <span class="n">file1</span><span class="o">.</span><span class="n">pdb</span> <span class="n">file2</span><span class="o">.</span><span class="n">pdb</span> <span class="o">--</span><span class="n">dry</span>
-</pre></div>
-</div>
-</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">haddock3</span><span class="o">-</span><span class="n">pp</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="p">[</span><span class="n">TOPFILE</span> <span class="o">...</span><span class="p">]]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SUFFIX</span><span class="p">]</span>
-                   <span class="p">[</span><span class="o">-</span><span class="n">odir</span> <span class="n">OUTPUT_DIRECTORY</span><span class="p">]</span>
-                   <span class="n">pdb_files</span> <span class="p">[</span><span class="n">pdb_files</span> <span class="o">...</span><span class="p">]</span>
-</pre></div>
-</div>
-<section id="positional-arguments">
-<h2>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>pdb_files</kbd></dt>
-<dd><p>Input PDB files.</p>
-</dd>
-</dl>
-</section>
-<section id="named-arguments">
-<h2>Named Arguments<a class="headerlink" href="#named-arguments" title="Permalink to this heading">¶</a></h2>
-<dl class="option-list">
-<dt><kbd>-d, --dry</kbd></dt>
-<dd><p>Perform a dry run. Informs changes without modifying files.</p>
-<p>Default: False</p>
-</dd>
-<dt><kbd>-t, --topfile</kbd></dt>
-<dd><p>Additional .top files.</p>
-</dd>
-<dt><kbd>-s, --suffix</kbd></dt>
-<dd><p>Suffix to output files. Defaults to ‘_processed’</p>
-<p>Default: “_processed”</p>
-</dd>
-<dt><kbd>-odir, --output-directory</kbd></dt>
-<dd><p>The directory where to save the output.</p>
-<p>Default: /home/runner/work/haddock3/haddock3</p>
-</dd>
-</dl>
-</section>
 </section>
 
 

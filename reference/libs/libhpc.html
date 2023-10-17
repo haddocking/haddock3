@@ -168,8 +168,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,115 +199,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.libs.libhpc">
-<span id="libhpc-hpc-execution-functions"></span><h1>libhpc: HPC execution functions<a class="headerlink" href="#module-haddock.libs.libhpc" title="Permalink to this heading">¶</a></h1>
-<p>Module in charge of running tasks in HPC.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCScheduler">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libhpc.</span></span><span class="sig-name descname"><span class="pre">HPCScheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCScheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCScheduler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Schedules tasks to run in HPC.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCScheduler.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCScheduler.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCScheduler.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run tasks in the Queue.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCScheduler.terminate">
-<span class="sig-name descname"><span class="pre">terminate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCScheduler.terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCScheduler.terminate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Terminate all jobs in the queue in a controlled way.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCWorker">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libhpc.</span></span><span class="sig-name descname"><span class="pre">HPCWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tasks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workfload_manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slurm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCWorker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Defines the HPC Job.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCWorker.cancel">
-<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bypass_statuses</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('finished',</span> <span class="pre">'failed')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCWorker.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCWorker.cancel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cancel the execution.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCWorker.prepare_job_file">
-<span class="sig-name descname"><span class="pre">prepare_job_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'slurm'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCWorker.prepare_job_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCWorker.prepare_job_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepare the job file for all the jobs in the task list.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCWorker.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCWorker.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCWorker.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Execute the tasks.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.HPCWorker.update_status">
-<span class="sig-name descname"><span class="pre">update_status</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#HPCWorker.update_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.HPCWorker.update_status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve the status of this worker.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.create_CNS_export_envvars">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libhpc.</span></span><span class="sig-name descname"><span class="pre">create_CNS_export_envvars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">envvars</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#create_CNS_export_envvars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.create_CNS_export_envvars" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a string exporting envvars needed for CNS.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>envvars</strong> (<em>dict</em>) – A dictionary containing envvariables where keys are var names
-and values are the values.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – In the form of:
-export VAR1=VALUE1
-export VAR2=VALUE2
-export VAR3=VALUE3</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.create_slurm_header">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libhpc.</span></span><span class="sig-name descname"><span class="pre">create_slurm_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'haddock3_slurm_job'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'haddock3_job.out'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'haddock3_job.err'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">48</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#create_slurm_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.create_slurm_header" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create HADDOCK3 Slurm Batch job file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>job_name</strong> (<em>str</em>) – The name of the job.</p></li>
-<li><p><strong>work_dir</strong> (<em>pathlib.Path</em>) – The working dir of the example. That is, the directory where
-<cite>input</cite>, <cite>jobs</cite>, and <cite>logs</cite> reside. Injected in <cite>create_job_header</cite>.</p></li>
-<li><p><strong>**job_params</strong> – According to <cite>job_setup</cite>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – Slurm-based job file for HADDOCK3.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.libs.libhpc.create_torque_header">
-<span class="sig-prename descclassname"><span class="pre">haddock.libs.libhpc.</span></span><span class="sig-name descname"><span class="pre">create_torque_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'haddock3_torque_job'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">work_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stdout_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'haddock3_job.out'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stderr_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'haddock3_job.err'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">48</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libhpc.html#create_torque_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libhpc.create_torque_header" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create HADDOCK3 Alcazar job file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>job_name</strong> (<em>str</em>) – The name of the job.</p></li>
-<li><p><strong>work_dir</strong> (<em>pathlib.Path</em>) – The working dir of the example. That is, the directory where
-<cite>input</cite>, <cite>jobs</cite>, and <cite>logs</cite> reside. Injected in <cite>create_job_header</cite>.</p></li>
-<li><p><strong>**job_params</strong> – According to <cite>job_setup</cite>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>str</em> – Torque-based job file for HADDOCK3 benchmarking.</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="libhpc-hpc-execution-functions">
+<h1>libhpc: HPC execution functions<a class="headerlink" href="#libhpc-hpc-execution-functions" title="Permalink to this heading">¶</a></h1>
 </section>
 
 

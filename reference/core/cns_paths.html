@@ -168,8 +168,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,53 +199,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.core.cns_paths">
-<span id="cns-paths-definitions"></span><h1>CNS paths definitions<a class="headerlink" href="#module-haddock.core.cns_paths" title="Permalink to this heading">¶</a></h1>
-<p>Path to CNS-related files.</p>
-<p>Most paths are defined by dictionaries that gather several related
-paths. Here, instead of defining the dictionaries with static paths, we
-have functions that create those dict-containing paths dynamically. The
-default values are defined by:</p>
-<ul class="simple">
-<li><p>axis</p></li>
-<li><p>tensors</p></li>
-<li><p>translation_vectors</p></li>
-<li><p>water_box</p></li>
-</ul>
-<p>But you can re-use the functions to create new dictionaries with updated
-paths. This is useful for those cases when the <cite>cns/</cite> folder is moved
-to a different folder.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.core.cns_paths.get_axis">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.cns_paths.</span></span><span class="sig-name descname"><span class="pre">get_axis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/core/cns_paths.html#get_axis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.core.cns_paths.get_axis" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate paths for axis.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.core.cns_paths.get_tensors">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.cns_paths.</span></span><span class="sig-name descname"><span class="pre">get_tensors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/core/cns_paths.html#get_tensors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.core.cns_paths.get_tensors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate paths for tensors.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.core.cns_paths.get_translation_vectors">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.cns_paths.</span></span><span class="sig-name descname"><span class="pre">get_translation_vectors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/core/cns_paths.html#get_translation_vectors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.core.cns_paths.get_translation_vectors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate paths for translation vectors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<em>pathlib.Path</em>) – If absolute, paths will be absolute, if relative paths will be
-relative. Adds the INITIAL_POSITIONS_DIR path before the file
-name.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.core.cns_paths.get_water_box">
-<span class="sig-prename descclassname"><span class="pre">haddock.core.cns_paths.</span></span><span class="sig-name descname"><span class="pre">get_water_box</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/core/cns_paths.html#get_water_box"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.core.cns_paths.get_water_box" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generate paths for water box.</p>
-</dd></dl>
-
+  <section id="cns-paths-definitions">
+<h1>CNS paths definitions<a class="headerlink" href="#cns-paths-definitions" title="Permalink to this heading">¶</a></h1>
 </section>
 
 

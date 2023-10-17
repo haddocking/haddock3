@@ -168,8 +168,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,99 +199,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.gear.clean_steps">
-<span id="clean-output-from-step-folders"></span><h1>Clean output from step folders<a class="headerlink" href="#module-haddock.gear.clean_steps" title="Permalink to this heading">¶</a></h1>
-<p>Clean workflow steps’ output.</p>
-<p>This module concerns removing unnecessary files, compressing, and
-archiving files with the same extension to reduce space and stress when
-listing files in the modules’ step folders.</p>
-<p>The two main functions of this module are:</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#haddock.gear.clean_steps.clean_output" title="haddock.gear.clean_steps.clean_output"><code class="xref py py-func docutils literal notranslate"><span class="pre">clean_output()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#haddock.gear.clean_steps.unpack_compressed_and_archived_files" title="haddock.gear.clean_steps.unpack_compressed_and_archived_files"><code class="xref py py-func docutils literal notranslate"><span class="pre">unpack_compressed_and_archived_files()</span></code></a></p></li>
-</ul>
-<p>See also the command-line clients <code class="docutils literal notranslate"><span class="pre">haddock3-clean</span></code> and
-<code class="docutils literal notranslate"><span class="pre">haddock3-unpack</span></code>.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.gear.clean_steps.clean_output">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.clean_steps.</span></span><span class="sig-name descname"><span class="pre">clean_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/clean_steps.html#clean_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.clean_steps.clean_output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clean the output of step folders.</p>
-<p>This functions performs file archiving and file compressing
-operations. Files with extension <code class="docutils literal notranslate"><span class="pre">seed</span></code>, <code class="docutils literal notranslate"><span class="pre">inp</span></code>, <code class="docutils literal notranslate"><span class="pre">out</span></code>, and
-<code class="docutils literal notranslate"><span class="pre">con</span></code> are compressed and archived into <code class="docutils literal notranslate"><span class="pre">.tgz</span></code> files. The
-original files are deleted.</p>
-<p>Files with <code class="docutils literal notranslate"><span class="pre">.pdb</span></code> and <code class="docutils literal notranslate"><span class="pre">.psf</span></code> extension are compressed to <cite>.gz</cite>
-files.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str or pathlib.Path</em>) – The path to clean. Should point to a folder from a workflow step.</p></li>
-<li><p><strong>ncores</strong> (<em>int</em>) – The number of cores.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.gear.clean_steps.unpack_compressed_and_archived_files">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.clean_steps.</span></span><span class="sig-name descname"><span class="pre">unpack_compressed_and_archived_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">folders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ncores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/clean_steps.html#unpack_compressed_and_archived_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.clean_steps.unpack_compressed_and_archived_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unpack compressed and archived files in a folders.</p>
-<p>Works on <cite>.gz</cite> and <cite>.tgz</cite> files.</p>
-<p>Registers folders in <code class="xref py py-data docutils literal notranslate"><span class="pre">UNPACK_FOLDERS</span></code> where compressed
-and archived files were found.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>folders</strong> (<em>list</em>) – List of folders to operate.</p></li>
-<li><p><strong>ncores</strong> (<em>int</em>) – The number of cores.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="haddock.gear.clean_steps.update_unpacked_names">
-<span class="sig-prename descclassname"><span class="pre">haddock.gear.clean_steps.</span></span><span class="sig-name descname"><span class="pre">update_unpacked_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">original</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/gear/clean_steps.html#update_unpacked_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.gear.clean_steps.update_unpacked_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the unpacked path names.</p>
-<p>Sometimes the step folders are renamed to ajust their index number.
-Such operation happens after the output data is unpacked. This module,
-<a class="reference internal" href="#module-haddock.gear.clean_steps" title="haddock.gear.clean_steps"><code class="xref py py-mod docutils literal notranslate"><span class="pre">haddock.gear.clean_steps</span></code></a>, keeps registry of the folders
-unpacked to the correct funtioning of the <cite>extend_run</cite> module.</p>
-<p>Given the original names and the new names of the step folders,
-this function updates them in the storing list.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">original</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0_topoaa&#39;</span><span class="p">,</span> <span class="s1">&#39;4_flexref&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prev</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0_topoaa&#39;</span><span class="p">,</span> <span class="s1">&#39;4_flexref&#39;</span><span class="p">,</span> <span class="s1">&#39;5_seletopclusts&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0_topoaa&#39;</span><span class="p">,</span> <span class="s1">&#39;1_flexref&#39;</span><span class="p">,</span> <span class="s1">&#39;5_seletopclusts&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">update_unpacked_names</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">original</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">original</span>
-<span class="go">[&#39;0_topoaa&#39;, &#39;1_flexref&#39;]</span>
-</pre></div>
-</div>
-<p>This function only evaluate the name of the last folder. And
-maintains the type in the <code class="docutils literal notranslate"><span class="pre">original</span></code> list.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">original</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0_topoaa&#39;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;4_flexref&#39;</span><span class="p">),</span> <span class="s1">&#39;5_seletopclusts&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">prev</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;0_topoaa&#39;</span><span class="p">,</span> <span class="s1">&#39;run_dir/4_flexref&#39;</span><span class="p">,</span> <span class="s1">&#39;5_seletopclusts&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">new</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;run_dir/0_topoaa&#39;</span><span class="p">,</span> <span class="s1">&#39;1_flexref&#39;</span><span class="p">,</span> <span class="s1">&#39;run_dir/2_seletopclusts&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">update_unpacked_names</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">new</span><span class="p">,</span> <span class="n">original</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">original</span> <span class="o">==</span> <span class="p">[</span><span class="s1">&#39;0_topoaa&#39;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;1_flexref&#39;</span><span class="p">),</span> <span class="s1">&#39;2_seletopclusts&#39;</span><span class="p">]</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prev</strong> (<em>list of str or pathlib.Path</em>) – The list of the original names before they were changed.</p></li>
-<li><p><strong>new</strong> (<em>list of str or pathlib.Path</em>) – The list of the new folder names.</p></li>
-<li><p><strong>original</strong> (<em>list of pathlib.Path</em>) – The list containing the names to record and which names
-will be changed.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><em>None</em> – Edits <code class="docutils literal notranslate"><span class="pre">original</span></code> in place.</p>
-</dd>
-</dl>
-</dd></dl>
-
+  <section id="clean-output-from-step-folders">
+<h1>Clean output from step folders<a class="headerlink" href="#clean-output-from-step-folders" title="Permalink to this heading">¶</a></h1>
 </section>
 
 

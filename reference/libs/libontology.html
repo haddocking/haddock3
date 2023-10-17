@@ -168,8 +168,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../modules/scoring/index.html">Scoring Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/analysis/index.html">Analysis Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/extras/index.html">Extra modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules">Parent code for modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#module-haddock.modules.base_cns_module">Parent code for CNS modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-modules">Parent code for modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#parent-code-for-cns-modules">Parent code for CNS modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../modules/index.html#general-default-parameters">General Default parameters</a></li>
 </ul>
 </li>
@@ -199,111 +199,8 @@
                     <div class="document">
                         
                             
-  <section id="module-haddock.libs.libontology">
-<span id="libontology-module-communication"></span><h1>libontology: module communication<a class="headerlink" href="#module-haddock.libs.libontology" title="Permalink to this heading">¶</a></h1>
-<p>Describe the Haddock3 ontology used for communicating between modules.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libontology.Format">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libontology.</span></span><span class="sig-name descname"><span class="pre">Format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#Format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.Format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
-<p>Input and Output possible formats.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libontology.ModuleIO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libontology.</span></span><span class="sig-name descname"><span class="pre">ModuleIO</span></span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#ModuleIO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.ModuleIO" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Intercommunicating modules and exchange input/output information.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.ModuleIO.add">
-<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">persistent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'i'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#ModuleIO.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.ModuleIO.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a given filename as input or output.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.ModuleIO.check_faulty">
-<span class="sig-name descname"><span class="pre">check_faulty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#ModuleIO.check_faulty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.ModuleIO.check_faulty" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check how many of the output exists.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.ModuleIO.load">
-<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#ModuleIO.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.ModuleIO.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the content of a given IO filename.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.ModuleIO.remove_missing">
-<span class="sig-name descname"><span class="pre">remove_missing</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#ModuleIO.remove_missing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.ModuleIO.remove_missing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove missing structure from <cite>output</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.ModuleIO.retrieve_models">
-<span class="sig-name descname"><span class="pre">retrieve_models</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">crossdock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">individualize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#ModuleIO.retrieve_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.ModuleIO.retrieve_models" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve the PDBobjects to be used in the module.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.ModuleIO.save">
-<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'io.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#ModuleIO.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.ModuleIO.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save Input/Output needed files by this module to disk.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libontology.PDBFile">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libontology.</span></span><span class="sig-name descname"><span class="pre">PDBFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">md5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restr_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unw_energies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#PDBFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.PDBFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#haddock.libs.libontology.Persistent" title="haddock.libs.libontology.Persistent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Persistent</span></code></a></p>
-<p>Represent a PDB file.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.PDBFile.is_present">
-<span class="sig-name descname"><span class="pre">is_present</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libontology.PDBFile.is_present" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the persisent file exists on disk.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libontology.Persistent">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libontology.</span></span><span class="sig-name descname"><span class="pre">Persistent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">md5</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restr_fname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#Persistent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.Persistent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.12)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>Any persistent file generated by this framework.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.Persistent.is_present">
-<span class="sig-name descname"><span class="pre">is_present</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#Persistent.is_present"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.Persistent.is_present" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the persisent file exists on disk.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libontology.RMSDFile">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libontology.</span></span><span class="sig-name descname"><span class="pre">RMSDFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npairs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#RMSDFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.RMSDFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#haddock.libs.libontology.Persistent" title="haddock.libs.libontology.Persistent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Persistent</span></code></a></p>
-<p>Represents a RMSD matrix file.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.RMSDFile.is_present">
-<span class="sig-name descname"><span class="pre">is_present</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libontology.RMSDFile.is_present" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the persisent file exists on disk.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="haddock.libs.libontology.TopologyFile">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">haddock.libs.libontology.</span></span><span class="sig-name descname"><span class="pre">TopologyFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/haddock/libs/libontology.html#TopologyFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#haddock.libs.libontology.TopologyFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#haddock.libs.libontology.Persistent" title="haddock.libs.libontology.Persistent"><code class="xref py py-class docutils literal notranslate"><span class="pre">Persistent</span></code></a></p>
-<p>Represent a CNS-generated topology file.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="haddock.libs.libontology.TopologyFile.is_present">
-<span class="sig-name descname"><span class="pre">is_present</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#haddock.libs.libontology.TopologyFile.is_present" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the persisent file exists on disk.</p>
-</dd></dl>
-
-</dd></dl>
-
+  <section id="libontology-module-communication">
+<h1>libontology: module communication<a class="headerlink" href="#libontology-module-communication" title="Permalink to this heading">¶</a></h1>
 </section>
 
 

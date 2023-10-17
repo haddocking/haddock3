@@ -4,6 +4,7 @@ import random
 import sys
 from datetime import datetime
 from functools import partial
+from typing import Sequence
 
 from haddock import contact_us, version
 
@@ -20,7 +21,7 @@ international_good_byes = [
     ]
 
 
-def get_initial_greeting():
+def get_initial_greeting() -> str:
     """Create initial greeting message."""
     now = datetime.now().replace(second=0, microsecond=0)
     python_version = sys.version
@@ -39,13 +40,16 @@ def get_initial_greeting():
     return message
 
 
-def get_greetings(options, how_many=3, sep=" ", exclamation="!"):
+def get_greetings(options: Sequence[str],
+                  how_many: int = 3,
+                  sep: str = " ",
+                  exclamation: str = "!") -> str:
     """Get greeting messages."""
     n = how_many % len(options)
     return sep.join(s + exclamation for s in random.sample(options, k=n))
 
 
-def get_adieu():
+def get_adieu() -> str:
     """Create end-run greeting message."""
     end = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     bye = get_goodbye_greetings()
@@ -53,7 +57,7 @@ def get_adieu():
     return message
 
 
-def get_goodbye_help():
+def get_goodbye_help() -> str:
     """Create good-bye message with help."""
     end = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     bye = get_goodbye_greetings()

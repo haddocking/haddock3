@@ -43,7 +43,11 @@ jobs:
           ./Makefile 2>%1 >/dev/null || true
           cd -
 
-      - run: tox -e test
+      - name: types
+        run: tox -e types
+
+      - name: unit tests
+        run: tox -e test
 
       - uses: codecov/codecov-action@v2
         with:

@@ -49,7 +49,7 @@ class HPCWorker:
             num: int,
             job_id: Optional[int] = None,
             workfload_manager: str = 'slurm',
-            queue: Optional[str] = None
+            queue: Optional[str] = None,
             ) -> None:
         """
         Define the HPC job.

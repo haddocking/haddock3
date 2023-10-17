@@ -106,8 +106,8 @@ def maincli() -> None:
 
 
 def main(
-        pdb_file: FilePath,,
-        run_dir: FilePath,,
+        pdb_file: FilePath,
+        run_dir: FilePath,
         full=False,
         outputpdb=False,
         outputpsf=False,

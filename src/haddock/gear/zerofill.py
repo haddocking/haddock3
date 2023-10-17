@@ -22,6 +22,7 @@ Examples
 "00_topoaa"
 """
 from math import ceil, log10
+from typing import Sized
 
 
 class _ZeroFill:
@@ -42,12 +43,12 @@ class _ZeroFill:
     "2_rigidbody"
     """
 
-    def __init__(self, zfnum=None):
+    def __init__(self, zfnum: int = 1) -> None:
         self._zfnum = zfnum
         return
 
     @property
-    def zfnum(self):
+    def zfnum(self) -> int:
         """
         The zerofill number.
 
@@ -55,7 +56,7 @@ class _ZeroFill:
         """  # noqa: D401
         return self._zfnum
 
-    def set_zerofill_number(self, num_steps):
+    def set_zerofill_number(self, num_steps: int) -> None:
         """
         Register the zerofill number given a certain number of steps.
 
@@ -66,7 +67,7 @@ class _ZeroFill:
         """
         self._zfnum = get_zerofill_for_modules(list(range(num_steps)))
 
-    def read(self, modules):
+    def read(self, modules: Sized) -> None:
         """
         Register the zerofill number for current run.
 
@@ -80,7 +81,7 @@ class _ZeroFill:
         """
         self._zfnum = get_zerofill_for_modules(modules)
 
-    def fill(self, name, num):
+    def fill(self, name: str, num: int) -> str:
         """
         Fill a name with the corresponding zero filling.
 
@@ -101,7 +102,7 @@ class _ZeroFill:
 zero_fill = _ZeroFill()
 
 
-def get_number_of_digits(num):
+def get_number_of_digits(num: int) -> int:
     """
     Get the number of digits of a number.
 
@@ -112,7 +113,7 @@ def get_number_of_digits(num):
     return max(ceil(log10(num + 1)), 1)
 
 
-def get_zerofill_for_modules(modules):
+def get_zerofill_for_modules(modules: Sized) -> int:
     """
     Get a the prefix zerofill for modules.
 
@@ -129,6 +130,6 @@ def get_zerofill_for_modules(modules):
     return get_number_of_digits(len(modules) - 1)
 
 
-def make_zero_fill(number, digits):
+def make_zero_fill(number: int, digits: int) -> str:
     """Make a number string zero filled to the left."""
     return str(number).zfill(digits)

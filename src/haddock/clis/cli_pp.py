@@ -25,6 +25,13 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import (
+    ArgumentParser,
+    Callable,
+    FilePath,
+    Namespace,
+    Optional,
+)
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.libs.libcli import add_output_dir_arg
 from haddock.libs.libio import add_suffix_to_files, save_lines_to_files
@@ -35,49 +42,49 @@ SUFFIX_DEFAULT = "_processed"
 ap = argparse.ArgumentParser(
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 ap.add_argument(
-    'pdb_files',
+    "pdb_files",
     help="Input PDB files.",
-    nargs='+',
-    )
+    nargs="+",
+)
 
 ap.add_argument(
-    '-d',
-    '--dry',
+    "-d",
+    "--dry",
     help="Perform a dry run. Informs changes without modifying files.",
     action="store_true",
-    )
+)
 
 ap.add_argument(
-    '-t',
-    '--topfile',
+    "-t",
+    "--topfile",
     help="Additional .top files.",
     nargs="*",
-    )
+)
 
 ap.add_argument(
-    '-s',
-    '--suffix',
+    "-s",
+    "--suffix",
     help=f"Suffix to output files. Defaults to {SUFFIX_DEFAULT!r}",
     default=SUFFIX_DEFAULT,
-    )
+)
 
 add_output_dir_arg(ap)
 
 
 # client helper functions
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = vars(load_args(ap))
     # I use this `pop` structure to maintain the unpacking argument in
@@ -86,18 +93,18 @@ def cli(ap, main):
     main(*cmd.pop("pdb_files"), **cmd)
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
 def main(
-        *pdb_files,
-        dry=False,
-        output_directory=None,
-        suffix=SUFFIX_DEFAULT,
-        topfile=None,
-        ):
+    *pdb_files: FilePath,
+    dry: bool = False,
+    output_directory: Optional[FilePath] = None,
+    suffix: str = SUFFIX_DEFAULT,
+    topfile: Optional[FilePath] = None,
+) -> None:
     """
     Process PDB files.
 
@@ -125,27 +132,27 @@ def main(
             "You selected the `--dry` option. No new files will be created. "
             "A report of the changes that would be performed in the PDB files "
             "will be printed."
-            )
+        )
 
     new_residues = read_additional_residues(topfile) if topfile else None
 
-    log.info(
-        "Processing the PDB files... "
-        "This may take a bit if there are many."
-        )
+    log.info("Processing the PDB files... " "This may take a bit if there are many.")
 
     processed_pdbs = process_pdbs(
         *pdb_files,
         dry=dry,
         user_supported_residues=new_residues,
-        )
+    )
 
     if dry:
         log.info("Everything done. Exiting...")
         sys.exit(0)
 
     log.info("Finished processing PDBs. Saving to disk...")
-    output_directory = output_directory or Path.cwd()
+    if output_directory is None:
+        output_directory = Path.cwd()
+    else:
+        output_directory = Path(output_directory)
     log.info("Output dir: {!r}".format(str(output_directory)))
     output_directory.mkdir(parents=True, exist_ok=True)
 
@@ -157,5 +164,5 @@ def main(
     return
 
 
-if __name__ == '__main__':
-    sys.exit(maincli())
+if __name__ == "__main__":
+    sys.exit(maincli())  # type: ignore

@@ -1,8 +1,10 @@
 """Flexible refinement with CNS."""
 from pathlib import Path
 
+from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
+from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import CNSJob
 from haddock.modules import get_engine
 from haddock.modules.base_cns_module import BaseCNSModule
@@ -17,19 +19,22 @@ class HaddockModule(BaseCNSModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         cns_script = Path(RECIPE_PATH, "cns", "flexref.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm module is installed."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Pool of jobs to be executed by the CNS engine
-        jobs = []
+        jobs: list[CNSJob] = []
 
         # Get the models generated in previous step
         try:
@@ -37,7 +42,7 @@ class HaddockModule(BaseCNSModule):
         except Exception as e:
             self.finish_with_error(e)
 
-        self.output_models = []
+        self.output_models: list[PDBFile] = []
         idx = 1
         sampling_factor = self.params["sampling_factor"]
         if sampling_factor > 1:
@@ -123,7 +128,7 @@ class HaddockModule(BaseCNSModule):
             if pdb.is_present():
                 haddock_model = HaddockModel(pdb.file_name)
                 pdb.unw_energies = haddock_model.energies
-                
+
                 haddock_score = haddock_model.calc_haddock_score(**weights)
                 pdb.score = haddock_score
 

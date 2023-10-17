@@ -186,6 +186,7 @@ def add_delta_to_bfactor(pdb_f, df_scan):
     os.rename(tmp_pdb_f, pdb_f)
     return pdb_f
 
+
 def calc_score(pdb_f, run_dir):
     """Calculate the score of a model.
     Parameters
@@ -400,7 +401,7 @@ def generate_alascan_output(models, path):
     return models_to_export
 
 
-def create_alascan_plots(clt_alascan):
+def create_alascan_plots(clt_alascan, scan_residue):
     """Create the alascan plots."""
     for clt_id in clt_alascan:
         scan_clt_filename = f"scan_clt_{clt_id}.csv"
@@ -417,7 +418,7 @@ def create_alascan_plots(clt_alascan):
             make_alascan_plot(
                 df_scan_clt,
                 clt_id,
-                self.params['scan_residue']
+                scan_residue
                 )
         except Exception as e:
             log.warning(
@@ -425,6 +426,7 @@ def create_alascan_plots(clt_alascan):
                 f" occurred {e}"
                 )
     return
+
 
 class ScanJob:
     """A Job dedicated to the parallel alanine scanning of models."""

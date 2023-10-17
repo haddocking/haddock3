@@ -15,6 +15,7 @@ from haddock.modules.analysis.alascan.scan import (
     add_delta_to_bfactor,
     alascan_cluster_analysis,
     check_alascan_jobs,
+    create_alascan_plots,
     generate_alascan_output,
     get_index_list,
     )
@@ -45,7 +46,6 @@ class HaddockModule(BaseHaddockModule):
             models = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
-        print(f"models {models}")
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
@@ -83,7 +83,7 @@ class HaddockModule(BaseHaddockModule):
         clt_alascan = alascan_cluster_analysis(models)
         # now plot the data
         if self.params["plot"] is True:
-            create_alascan_plots(clt_alascan)
+            create_alascan_plots(clt_alascan, self.params["scan_residue"])
         # if output is true, write the models and export them
         if self.params["output"] is True:
             models_to_export = generate_alascan_output(models, self.path)

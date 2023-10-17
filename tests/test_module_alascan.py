@@ -13,6 +13,7 @@ from subprocess import CompletedProcess
 
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
+from .test_module_caprieval import protprot_input_list
 
 from haddock.libs.libontology import PDBFile
 from haddock.modules.analysis.alascan.scan import (
@@ -201,6 +202,9 @@ def test_mutate(protprot_model_list):
     # clean up
     os.remove(mut_pdb_fname)
 
+    with pytest.raises(KeyError):
+        mutate(mut_fname, "A", 19, "HOH")
+
 
 def test_add_delta_to_bfactor(protprot_model_list, example_df_scan):
     """Test the add_delta_to_bfactor function."""
@@ -258,7 +262,6 @@ def test_run(
     shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
     
     alascan.params["plot"] = True
-    alascan.params["output"] = True
 
     alascan.previous_io = MockPreviousIO()
     mocker.patch("haddock.libs.libparallel.Scheduler.run", return_value = None)
@@ -267,6 +270,15 @@ def test_run(
     alascan.run()
     assert Path(alascan.path, "scan_clt_-.csv").exists()
     assert Path(alascan.path, "scan_clt_-.html").exists()
+
+    alascan.params["output"] = True
+    alascan.run()
+
+
+def test_scanjob_run(scanjob_obj, mocker):
+    mocker.patch("haddock.modules.analysis.alascan.scan.Scan.run", return_value = None)
+    mocker.patch("haddock.modules.analysis.alascan.scan.Scan.output", return_value = None)
+    scanjob_obj.run()
 
 
 
@@ -288,17 +300,23 @@ def test_scan_run_output(
     os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
 
 
-def test_scan_run_noresdic(mocker, scan_obj):
+def test_scan_run_interface(mocker, scan_obj):
     """Test Scan run with empty filter_resdic."""
     scan_obj.filter_resdic = {'_': []}
+    scan_obj.scan_residue = "ASP"
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
     scan_obj.run()
 
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 7
-
     # clean up
     os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
+
+def test_no_oriscore(mocker, scan_obj):
+    """Test Scan run with no ori score"""
+    scan_obj.model_list[0].ori_score = None
+    mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
+    scan_obj.run()
 
 
 def test_calc_score(mocker):
@@ -313,6 +331,16 @@ def test_calc_score(mocker):
     scores = calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir = "tmp")
     
     assert scores == (-106.7376, -29.5808, -316.542, -13.8484, 1494.73)
+    mocker.patch(
+        "subprocess.run",
+        return_value = CompletedProcess(
+            args=['haddock3-score', 'mdref_9-B_T16A.pdb', '--full', '--run_dir', 'haddock3-score-2'],
+            returncode=1,
+            stdout=b'> could not calculate score')
+    )
+    # now calc_score should raise an Exception
+    with pytest.raises(Exception):
+        calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir = "tmp")
 
 
 def test_generate_alascan_output(mocker, protprot_model_list, scan_file):
@@ -360,11 +388,19 @@ def test_check_alascan_jobs(scanjob_obj):
         check_alascan_jobs([scanjob_obj])
 
 
-def test_alascan_cluster_analysis(protprot_model_list, scan_file):
+def test_alascan_cluster_analysis(protprot_input_list, scan_file):
     """Test alascan_cluster_analysis"""
     shutil.copy(scan_file, Path("scan_protprot_complex_1.csv"))
-    alascan_cluster_analysis(protprot_model_list)
+    shutil.copy(scan_file, Path("scan_protprot_complex_2.csv"))
+    
+    alascan_cluster_analysis(protprot_input_list)
 
+    assert Path("scan_clt_-.csv").exists()
+
+    protprot_input_list[1].clt_id = 1
+    alascan_cluster_analysis(protprot_input_list)
+
+    assert Path("scan_clt_1.csv").exists()
     assert Path("scan_clt_-.csv").exists()
 
     # clean up
@@ -374,7 +410,7 @@ def test_alascan_cluster_analysis(protprot_model_list, scan_file):
 def test_create_alascan_plots(mocker, caplog):
     """Test create_alascan_plots"""
     mocker.patch("pandas.read_csv", return_value = pd.DataFrame())
-    create_alascan_plots({"-": []})
+    create_alascan_plots({"-": []}, scan_residue="ALA")
 
     for record in caplog.records:
         assert record.levelname == "WARNING"
@@ -383,9 +419,13 @@ def test_create_alascan_plots(mocker, caplog):
     mocker.patch("pandas.read_csv", return_value = [])
     mocker.patch("os.path.exists", return_value = True)
 
-    create_alascan_plots({"-": []})
+    create_alascan_plots({"-": []}, scan_residue="ALA")
     for record in caplog.records:
-        assert record.levelname == "WARNING"
+        assert record.levelname in ["INFO", "WARNING"]
 
 
-    
+def test_failed_retrieve_models(alascan, mocker):
+    """Test the retrieve_models method."""
+    alascan.previous_io = []
+    with pytest.raises(Exception):
+        alascan.run()

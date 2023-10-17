@@ -77,7 +77,6 @@ class HPCWorker:
         self.workload_manager = workfload_manager
         self.queue = queue
 
-
     def prepare_job_file(self, queue_type: str = 'slurm') -> None:
         """Prepare the job file for all the jobs in the task list."""
         job_file_contents = create_job_header_funcs[queue_type](
@@ -128,11 +127,9 @@ class HPCWorker:
 
         return self.job_status
 
-
     def cancel(
             self,
             bypass_statuses: Container[str] = ("finished", "failed")) -> None:
-
         """Cancel the execution."""
         if self.update_status() not in bypass_statuses:
             log.info(f"Canceling {self.job_fname.name} - {self.job_id}")
@@ -407,9 +404,8 @@ def extract_slurm_status(slurm_out: str) -> str:
         # https://regex101.com/r/M2vbAc/1
         status = re.findall(STATE_REGEX, slurm_out)[0]
     except IndexError:
-        status = 'error'
+        status = 'ERROR'
     return status
-
 
 
 def create_CNS_export_envvars(**envvars: Any) -> str:

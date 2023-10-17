@@ -1,7 +1,11 @@
 """Test libhpc."""
 import pytest
 
-from haddock.libs.libhpc import extract_slurm_status, to_torque_time
+from haddock.libs.libhpc import (
+    extract_slurm_status,
+    JOB_STATUS_DIC,
+    to_torque_time,
+    )
 
 
 def test_to_torque_time():

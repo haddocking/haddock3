@@ -23,12 +23,9 @@ JOB_STATUS_DIC = {
     "COMPLETING": "running",
     "COMPLETED": "finished",
     "FAILED": "failed",
-    # https://help.rc.ufl.edu/doc/SLURM_Job_States#:~:text=TIMEOUT%3A%20Job%20was%20terminated%20because,requested%20cpu%20%2F%20gpu%20resources%20correctly  # noqa : E501
     "TIMEOUT": "timed-out",
     "OUT_OF_MEMORY": "out-of-memory",
-    "OUT_OF_ME+": "out-of-memory",
     "CANCELLED": "cancelled",
-    "ERROR": "error",
     }
 
 # if you change these defaults, change also the values in the
@@ -145,6 +142,12 @@ class HPCWorker:
         # Check if must too many tries
         if self.tries > MAX_JOB_TRIES:
             self.job_status = "failed"  # Set failed flag
+            for fpath in [
+                self.job_fname,
+                self.job_fname.with_suffix('.out'),
+                self.job_fname.with_suffix('.err'),
+                    ]:
+                fpath.unlink(missing_ok=True)
         else:
             self.run()  # Rerun the job
 
@@ -404,7 +407,7 @@ def extract_slurm_status(slurm_out: str) -> str:
         # https://regex101.com/r/M2vbAc/1
         status = re.findall(STATE_REGEX, slurm_out)[0]
     except IndexError:
-        status = 'ERROR'
+        status = 'error'
     return status
 
 

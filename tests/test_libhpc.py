@@ -73,8 +73,7 @@ def slurm_scontrol_wrongjobid():
 
 def test_slurm_nojobid(slurm_scontrol_wrongjobid):
     status = extract_slurm_status(slurm_scontrol_wrongjobid)
-    assert status == 'ERROR'
-    assert JOB_STATUS_DIC[status] == 'error'
+    assert status == 'error'
 
 
 @pytest.fixture
@@ -90,6 +89,7 @@ def hpcworker():
                     'TOPPAR': 'topology_params',
                     'MODULE': 'rigidbody',
                     },
+                cns_exec=None,
                 ),
             ],
         num=1,

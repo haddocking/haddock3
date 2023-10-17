@@ -3,10 +3,20 @@ import math
 from multiprocessing import Process
 
 from haddock import log
+from haddock.core.typing import (
+    AnyT,
+    FilePath,
+    Generator,
+    Optional,
+    Sequence,
+    SupportsRunT,
+    Union,
+    )
 from haddock.libs.libutil import parse_ncores
 
 
-def split_tasks(lst, n):
+def split_tasks(lst: Sequence[AnyT],
+                n: int) -> Generator[Sequence[AnyT], None, None]:
     """Split tasks into N-sized chunks."""
     n = math.ceil(len(lst) / n)
     for j in range(0, len(lst), n):
@@ -17,12 +27,12 @@ def split_tasks(lst, n):
 class Worker(Process):
     """Work on tasks."""
 
-    def __init__(self, tasks):
+    def __init__(self, tasks: Sequence[SupportsRunT]) -> None:
         super(Worker, self).__init__()
         self.tasks = tasks
         log.debug(f"Worker ready with {len(self.tasks)} tasks")
 
-    def run(self):
+    def run(self) -> None:
         """Execute tasks."""
         for task in self.tasks:
             task.run()
@@ -32,15 +42,17 @@ class Worker(Process):
 class Scheduler:
     """Schedules tasks to run in multiprocessing."""
 
-    def __init__(self, tasks, ncores=None, max_cpus=False):
+    def __init__(self,
+                 tasks: list[SupportsRunT],
+                 ncores: Optional[int] = None,
+                 max_cpus: bool = False) -> None:
         """
         Schedule tasks to a defined number of processes.
 
         Parameters
         ----------
         tasks : list
-            The list of tasks to execute. Tasks must be subclass of
-            `multiprocessing.Process`.
+            The list of tasks to execute. Tasks must have method `run()`.
 
         ncores : None or int
             The number of cores to use. If `None` is given uses the
@@ -53,7 +65,7 @@ class Scheduler:
 
         # Sort the tasks by input_file name and its length,
         #  so we know that 2 comes before 10
-        task_name_dic = {}
+        task_name_dic: dict[int, tuple[FilePath, int]] = {}
         for i, t in enumerate(tasks):
             try:
                 task_name_dic[i] = (t.input_file, len(str(t.input_file)))
@@ -62,7 +74,7 @@ class Scheduler:
                 #  input_file, use the output instead
                 task_name_dic[i] = (t.output, len(str(t.output)))
 
-        sorted_task_list = []
+        sorted_task_list: list[SupportsRunT] = []
         for e in sorted(task_name_dic.items(), key=lambda x: (x[0], x[1])):
             idx = e[0]
             sorted_task_list.append(tasks[idx])
@@ -74,12 +86,12 @@ class Scheduler:
         log.debug(f"{self.num_tasks} tasks ready.")
 
     @property
-    def num_processes(self):
+    def num_processes(self) -> int:
         """Number of processors to use."""  # noqa: D401
         return self._ncores
 
     @num_processes.setter
-    def num_processes(self, n):
+    def num_processes(self, n: Union[str, int, None]) -> None:
         self._ncores = parse_ncores(
             n,
             njobs=self.num_tasks,
@@ -87,7 +99,7 @@ class Scheduler:
             )
         log.debug(f"Scheduler configured for {self._ncores} cpu cores.")
 
-    def run(self):
+    def run(self) -> None:
         """Run tasks in parallel."""
         try:
             for worker in self.worker_list:
@@ -124,7 +136,7 @@ class Scheduler:
             # whichever has to catch it
             raise err
 
-    def terminate(self):
+    def terminate(self) -> None:
         """Terminate tasks in a controlled way."""
         for worker in self.worker_list:
             worker.terminate()

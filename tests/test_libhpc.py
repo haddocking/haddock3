@@ -121,8 +121,17 @@ def test_hpcworker_run(hpcworker, mocker):
     assert hpcworker.job_status == 'submitted'
 
 
-def test_hpcworker_over_tried(hpcworker):
+def test_hpcworker_over_tried(hpcworker, mocker):
     """Test the non-`restart` function of a HPCWorker object."""
+    mocker.patch(
+        "subprocess.run",
+        return_value=CompletedProcess(
+            args=['scontrol', 'show', 'jobid', '-dd', '123456789'],
+            returncode=0,
+            stdout=b'...\n  JobState=TIMEOUT \n...',
+            stderr=b'',
+            )
+        )
     hpcworker.tries = MAX_JOB_TRIES
     hpcworker.restart()
     assert hpcworker.job_status == 'failed'

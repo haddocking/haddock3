@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore", category=SetuptoolsDeprecationWarning)
 warnings.filterwarnings("ignore", category=EasyInstallDeprecationWarning)
 
 
-def read(*names, **kwargs):
+def read(*names, **kwargs) -> str:
     """Read description files."""
     path = join(dirname(__file__), *names)
     with open(path, encoding=kwargs.get('encoding', 'utf8')) as fh:

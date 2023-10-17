@@ -141,6 +141,16 @@ _cns_mtf_improper.id[1]
 _cns_mtf_improper.id[2]
 _cns_mtf_improper.id[3]
 _cns_mtf_improper.id[4]
+ 1  2  4  3
+ 5  6  8  7
+ 9 10 12 11
+13 14 16 15
+17 18 20 19
+21 22 24 23
+25 26 28 27
+29 30 32 31
+33 34 36 35
+37 38 40 39
 -1 -1 -1 -1
 
 loop_

@@ -18,6 +18,7 @@ to a different folder.
 from pathlib import Path
 
 from haddock import toppar_path
+from haddock.core.typing import FilePath
 
 
 # exact file names as present in the cns/ scripts folder
@@ -30,7 +31,7 @@ link_file = Path(toppar_path, LINK_FILE)
 scatter_lib = Path(toppar_path, SCATTER_LIB)
 
 
-def get_translation_vectors(path):
+def get_translation_vectors(path: FilePath) -> dict[str, Path]:
     """
     Generate paths for translation vectors.
 
@@ -41,7 +42,7 @@ def get_translation_vectors(path):
         relative. Adds the INITIAL_POSITIONS_DIR path before the file
         name.
     """
-    translation_vectors = {}
+    translation_vectors: dict[str, Path] = {}
     for i in range(51):
         _s = f'trans_vector_{i}'
         _p = Path(path, INITIAL_POSITIONS_DIR, _s)
@@ -50,7 +51,7 @@ def get_translation_vectors(path):
     return translation_vectors
 
 
-def get_tensors(path):
+def get_tensors(path: FilePath) -> dict[str, Path]:
     """Generate paths for tensors."""
     tensors = {
         "tensor_psf": Path(path, "tensor.psf"),
@@ -63,7 +64,7 @@ def get_tensors(path):
     return tensors
 
 
-def get_axis(path):
+def get_axis(path: FilePath) -> dict[str, Path]:
     """Generate paths for axis."""
     axis = {
         "top_axis": Path(path, "top_axis.pro"),
@@ -73,7 +74,7 @@ def get_axis(path):
     return axis
 
 
-def get_water_box(path):
+def get_water_box(path: FilePath) -> dict[str, Path]:
     """Generate paths for water box."""
     water_box = {
         "boxtyp20": Path(path, "boxtyp20.pdb"),

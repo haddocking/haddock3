@@ -1,7 +1,8 @@
 """Features to allow run restart from a given step."""
-from argparse import ArgumentTypeError
+from argparse import ArgumentParser, ArgumentTypeError
 from functools import partial
 from pathlib import Path
+from typing import Optional
 
 from haddock.libs.libutil import non_negative_int, remove_folder
 from haddock.modules import get_module_steps_folders
@@ -18,7 +19,7 @@ _arg_non_neg_int = partial(
     )
 
 
-def add_restart_arg(parser):
+def add_restart_arg(parser: ArgumentParser) -> None:
     """Add `--restart` option to argument parser."""
     parser.add_argument(
         "--restart",
@@ -28,7 +29,7 @@ def add_restart_arg(parser):
         )
 
 
-def remove_folders_after_number(run_dir, num):
+def remove_folders_after_number(run_dir: Path, num: Optional[int]) -> None:
     """
     Remove calculation folder after (included) a given number.
 

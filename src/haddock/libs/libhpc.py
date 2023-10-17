@@ -78,7 +78,6 @@ class HPCWorker:
 
 
     def prepare_job_file(self, queue_type: str = 'slurm') -> None:
-
         """Prepare the job file for all the jobs in the task list."""
         job_file_contents = create_job_header_funcs[queue_type](
             job_name='haddock3',
@@ -277,15 +276,14 @@ class HPCScheduler:
 
 
 def create_slurm_header(
-        job_name='haddock3_slurm_job',
-        work_dir='.',
+        job_name: FilePath = 'haddock3_slurm_job',
+        work_dir: FilePath = '.',
         time: int = 10,
-        stdout_path='haddock3_job.out',
-        stderr_path='haddock3_job.err',
-        queue=None,
-        ncores=48,
+        stdout_path: FilePath = 'haddock3_job.out',
+        stderr_path: FilePath = 'haddock3_job.err',
+        queue: Optional[str] = None,
+        ncores: int = 48,
         ) -> str:
-
     """
     Create HADDOCK3 Slurm Batch job file.
 
@@ -323,13 +321,13 @@ def create_slurm_header(
 
 
 def create_torque_header(
-        job_name='haddock3_torque_job',
-        work_dir='.',
+        job_name: FilePath = 'haddock3_slurm_job',
+        work_dir: FilePath = '.',
         time: int = 10,
-        stdout_path='haddock3_job.out',
-        stderr_path='haddock3_job.err',
-        queue=None,
-        ncores=48,
+        stdout_path: FilePath = 'haddock3_job.out',
+        stderr_path: FilePath = 'haddock3_job.err',
+        queue: Optional[str] = None,
+        ncores: int = 48,
         ) -> str:
     """
     Create HADDOCK3 Alcazar job file.
@@ -382,17 +380,14 @@ def to_torque_time(time: int) -> str:
     # Convert to hh:mm:ss string
     hh_mm_ss_l = [hours, remain_mins, 0]
     # Make sure hours contain at least 2 characters
-    for i in range(len(hh_mm_ss_l)):
-        val = str(hh_mm_ss_l[i])
-        if len(val) == 1:
-            val = '0' + val  # Add a 0 at front
-        hh_mm_ss_l[i] = val
+    hh_mm_ss_str = (f'0{val}' if len(str(val)) == 1 else str(val)
+                    for val in hh_mm_ss_l)
     # Join as single string
-    hh_mm_ss = ':'.join(hh_mm_ss_l)
+    hh_mm_ss = ':'.join(hh_mm_ss_str)
     return hh_mm_ss
 
 
-def extract_slurm_status(slurm_out: str):
+def extract_slurm_status(slurm_out: str) -> str:
     """Extract job status from slurm scontrol stdout.
 
     Parameters

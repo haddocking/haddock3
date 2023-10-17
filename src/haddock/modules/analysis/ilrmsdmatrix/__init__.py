@@ -43,6 +43,8 @@ DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 def get_index_list(nmodels, ncores):
     """Optimal distribution of models among cores"""
+    if nmodels < 1 or ncores < 1:
+        raise ValueError("nmodels and ncores must be greater than 0")
     spc = nmodels // ncores
     # now the remainder
     rem = nmodels % ncores

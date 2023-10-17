@@ -27,6 +27,7 @@ class ContactJob:
 
         log.info(f"core {contact_obj.core}, initialising Contact...")
         self.params = params
+        self.output = output
         self.contact_obj = contact_obj
         log.info(f"core {contact_obj.core}, Contact initialised")
 

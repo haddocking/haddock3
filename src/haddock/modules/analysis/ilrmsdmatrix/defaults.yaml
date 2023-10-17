@@ -22,3 +22,15 @@ receptor_chain:
     treated as the receptor for the L-RMSD and for I-L-RMSD.
   group: analysis
   explevel: easy
+
+ligand_chains:
+  default: ["B"]
+  type: list
+  minitems: 0
+  maxitems: 100
+  title: Ligand ChainIDs
+  short: Ligand ChainIDs to be considered for the IL-RMSD calculations.
+  long: Ligand ChainIDs to be considered for the IL-RMSD calculations. This determines which chains will be
+    treated as the ligand for the IL-RMSD.
+  group: analysis
+  explevel: easy

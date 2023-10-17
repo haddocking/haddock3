@@ -77,8 +77,12 @@ def test_slurm_nojobid(slurm_scontrol_wrongjobid):
 
 
 @pytest.fixture
-def hpcworker():
+def hpcworker(mocker):
     """Instanciate a HPCWorker object."""
+    mocker.patch(
+        "haddock.libs.libsubprocess.CNSJob.cns_exec",
+        return_value=None,
+        )
     return HPCWorker(
         tasks=[
             CNSJob(

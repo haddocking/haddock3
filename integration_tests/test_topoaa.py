@@ -1,4 +1,3 @@
-import os
 import tempfile
 from pathlib import Path
 
@@ -7,12 +6,7 @@ import pytest
 from haddock.modules.topology.topoaa import DEFAULT_CONFIG as DEFAULT_TOPOAA_CONFIG
 from haddock.modules.topology.topoaa import HaddockModule as TopoaaModule
 
-if "CNS_EXEC" in os.environ:
-    CNS_EXEC = os.environ["CNS_EXEC"]
-else:
-    raise ValueError("CNS_EXEC not found in the environment")
-
-DATA_DIR = Path(Path(__file__).parent.parent / "examples")
+from . import CNS_EXEC, DATA_DIR, has_cns
 
 
 @pytest.fixture
@@ -34,6 +28,7 @@ def topoaa_module():
         yield topoaa
 
 
+@has_cns
 def test_topoaa_default(topoaa_module):
     """Test the topoaa module."""
 

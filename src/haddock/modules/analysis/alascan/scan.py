@@ -314,7 +314,7 @@ def alascan_cluster_analysis(models):
         clt_data = []
         for ident in clt_scan[cl_id]:
             chain = ident.split("-")[0]
-            resnum = ident.split("-")[1]
+            resnum = int(ident.split("-")[1])
             resname = ident.split("-")[2]
             frac_pr = clt_scan[cl_id][ident]["frac_pr"]
             clt_data.append([chain, resnum, resname, ident,
@@ -337,7 +337,7 @@ def alascan_cluster_analysis(models):
         df_scan_clt.to_csv(
             scan_clt_filename,
             index=False,
-            float_format='%.3f',
+            float_format='%.2f',
             sep="\t")
 
         # add comment
@@ -485,7 +485,7 @@ class Scan:
             try:
                 ori_score = float(ori_score)
             except ValueError:
-                ori_score = "-"
+                ori_score = np.nan
             # here we rescore the native model for consistency, as the ori_score
             # could come from any module in principle
             sc_dir = f"haddock3-score-{self.core}"
@@ -540,7 +540,7 @@ class Scan:
                         if ori_score != "-":
                             delta_ori_score = c_score - ori_score
                         else:
-                            delta_ori_score = "-"
+                            delta_ori_score = np.nan
                         # now the deltas with the native
                         delta_score = c_score - n_score
                         delta_vdw = c_vdw - n_vdw
@@ -567,7 +567,7 @@ class Scan:
             self.df_scan.to_csv(
                 alascan_fname,
                 index=False,
-                float_format='%.3f',
+                float_format='%.2f',
                 sep="\t"
                 )
 

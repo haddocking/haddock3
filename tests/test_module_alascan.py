@@ -9,7 +9,6 @@ import pytest_mock
 import tempfile
 import shutil
 from subprocess import CompletedProcess
-#from unittest.mock import patch
 
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG
@@ -281,7 +280,6 @@ def test_scanjob_run(scanjob_obj, mocker):
     scanjob_obj.run()
 
 
-
 def test_scan_run_output(
     mocker,
     scan_obj):
@@ -318,8 +316,13 @@ def test_no_oriscore(mocker, scan_obj):
     scan_obj.model_list[0].ori_score = None
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
     scan_obj.run()
-
-
+    df = pd.read_csv("scan_protprot_complex_1.csv", sep="\t", comment="#")
+    # column delta_ori_score should be nan
+    assert np.isnan(df["delta_ori_score"][0])
+    print(os.listdir("."))
+    # clean up
+    os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
+    
 
 def test_calc_score(mocker):
     """Test the run_scan method."""
@@ -407,7 +410,10 @@ def test_alascan_cluster_analysis(protprot_input_list, scan_file):
 
     # clean up
     os.unlink(Path("scan_protprot_complex_1.csv"))
+    os.unlink(Path("scan_protprot_complex_2.csv"))
     os.unlink(Path("scan_clt_-.csv"))
+    os.unlink(Path("scan_clt_1.csv"))
+
 
 def test_create_alascan_plots(mocker, caplog):
     """Test create_alascan_plots"""

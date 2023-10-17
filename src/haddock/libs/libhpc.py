@@ -28,6 +28,7 @@ JOB_STATUS_DIC = {
     "OUT_OF_MEMORY": "out-of-memory",
     "OUT_OF_ME+": "out-of-memory",
     "CANCELLED": "cancelled",
+    "ERROR": "error",
     }
 
 # if you change these defaults, change also the values in the
@@ -231,6 +232,7 @@ class HPCScheduler:
                             "timed-out",
                             "out-of-memory",
                             "cancelled",
+                            "error",
                             )
                         for w in worker_list
                         )

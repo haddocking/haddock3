@@ -49,6 +49,7 @@ def slurm_scontrol_terminated_jobid():
 def test_slurm_status(slurm_scontrol_terminated_jobid):
     status = extract_slurm_status(slurm_scontrol_terminated_jobid)
     assert status == 'RUNNING'
+    assert JOB_STATUS_DIC[status] == 'running'
 
 
 @pytest.fixture
@@ -58,4 +59,5 @@ def slurm_scontrol_wrongjobid():
 
 def test_slurm_nojobid(slurm_scontrol_wrongjobid):
     status = extract_slurm_status(slurm_scontrol_wrongjobid)
-    assert status == 'error'
+    assert status == 'ERROR'
+    assert JOB_STATUS_DIC[status] == 'error'

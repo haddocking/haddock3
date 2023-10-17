@@ -1071,6 +1071,8 @@ def make_alascan_plot(df, clt_id, scan_res="ALA"):
         hovermode="x unified",
         hoverlabel=dict(font_size=16, font_family="Helvetica"),
         )
+    for n in range(df.shape[0] - 1):
+        fig.add_vline(x=0.5 + n, line_color="gray", opacity=0.2)
     # save html
     html_output_filename = f"{plot_name}.html"
     fig.write_html(html_output_filename)

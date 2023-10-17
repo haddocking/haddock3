@@ -108,11 +108,11 @@ def maincli() -> None:
 def main(
         pdb_file: FilePath,
         run_dir: FilePath,
-        full=False,
-        outputpdb=False,
-        outputpsf=False,
-        keep_all=False,
-        **kwargs,
+        full: bool = False,
+        outputpdb: bool = False,
+        outputpsf: bool = False,
+        keep_all: bool = False,
+        **kwargs: Any,
         ) -> None:
     """
     Calculate the score of a complex using the ``emscoring`` module.

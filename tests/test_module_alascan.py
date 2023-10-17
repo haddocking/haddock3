@@ -303,20 +303,22 @@ def test_scan_run_output(
 def test_scan_run_interface(mocker, scan_obj):
     """Test Scan run with empty filter_resdic."""
     scan_obj.filter_resdic = {'_': []}
-    scan_obj.scan_residue = "ASP"
+    scan_obj.scan_res = "ASP"
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
     scan_obj.run()
 
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
-    assert scan_obj.df_scan.shape[0] == 7
+    assert scan_obj.df_scan.shape[0] == 5
     # clean up
     os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
+
 
 def test_no_oriscore(mocker, scan_obj):
     """Test Scan run with no ori score"""
     scan_obj.model_list[0].ori_score = None
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
     scan_obj.run()
+
 
 
 def test_calc_score(mocker):

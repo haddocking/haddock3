@@ -218,7 +218,7 @@ def calc_score(pdb_f, run_dir):
     # check if failed
     out = p.stdout.decode("utf-8").split(os.linesep)
     if p.returncode != 0:
-        raise Exception("calc_score failed")
+        raise Exception(f"calc_score failed with command {cmd}")
     for ln in out:
         if ln.startswith("> HADDOCK-score (emscoring)"):
             score = float(ln.split()[-1])
@@ -485,7 +485,7 @@ class Scan:
             try:
                 ori_score = float(ori_score)
             except ValueError:
-                ori_score = float('nan')
+                ori_score = "-"
             # here we rescore the native model for consistency, as the ori_score
             # could come from any module in principle
             sc_dir = f"haddock3-score-{self.core}"
@@ -537,8 +537,10 @@ class Scan:
                             mut_pdb_name,
                             run_dir=sc_dir)
                         # difference with the original score
-                        if ori_score != float('nan'):
+                        if ori_score != "-":
                             delta_ori_score = c_score - ori_score
+                        else:
+                            delta_ori_score = "-"
                         # now the deltas with the native
                         delta_score = c_score - n_score
                         delta_vdw = c_vdw - n_vdw

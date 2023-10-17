@@ -10,6 +10,7 @@ import pandas as pd
 
 from haddock import log
 from haddock.libs.libalign import get_atoms, load_coords
+from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
 
 
@@ -397,6 +398,33 @@ def generate_alascan_output(models, path):
         model.path = str(Path(path).resolve())
         models_to_export.append(model)
     return models_to_export
+
+
+def create_alascan_plots(clt_alascan):
+    """Create the alascan plots."""
+    for clt_id in clt_alascan:
+        scan_clt_filename = f"scan_clt_{clt_id}.csv"
+        if not os.path.exists(scan_clt_filename):
+            log.warning(f"Could not find {scan_clt_filename}")
+            continue
+        df_scan_clt = pd.read_csv(
+            scan_clt_filename,
+            sep="\t",
+            comment="#"
+            )
+        # plot the data
+        try:
+            make_alascan_plot(
+                df_scan_clt,
+                clt_id,
+                self.params['scan_residue']
+                )
+        except Exception as e:
+            log.warning(
+                "Could not create interactive plot. The following error"
+                f" occurred {e}"
+                )
+    return
 
 class ScanJob:
     """A Job dedicated to the parallel alanine scanning of models."""

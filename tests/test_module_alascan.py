@@ -23,6 +23,7 @@ from haddock.modules.analysis.alascan.scan import (
     alascan_cluster_analysis,
     calc_score,
     check_alascan_jobs,
+    create_alascan_plots,
     generate_alascan_output,
     get_index_list,
     mutate
@@ -247,38 +248,26 @@ def test_init(alascan):
     assert len(alascan.params) != 0
 
 
-#@patch("haddock.modules.analysis.alascan.Scheduler")
-#@patch("haddock.modules.analysis.alascan.alascan_cluster_analysis")
-#@patch("haddock.modules.analysis.alascan.HaddockModule.export_io_models")
-#def test_run(
-#    MockScheduler,
-#    mock_alascan_cluster_analysis,
-#    mock_export_io_models,
-#    alascan,
-#):
-#    # Only add files that are used within the body of the `run` method!
-#    Path(alascan.path, "alascan_0.scan").touch()
-#    ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
-#    shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
-#    
-#    alascan.params["plot"] = True
-#    alascan.params["output"] = True
-#
-#    alascan.previous_io = MockPreviousIO()
-#    alascan.run()
-#
-#    assert Path(alascan.path, "scan_clt_0.csv").exists()
+def test_run(
+    mocker,
+    alascan,
+):
+    # Only add files that are used within the body of the `run` method!
+    Path(alascan.path, "alascan_0.scan").touch()
+    ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
+    shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
+    
+    alascan.params["plot"] = True
+    alascan.params["output"] = True
 
+    alascan.previous_io = MockPreviousIO()
+    mocker.patch("haddock.libs.libparallel.Scheduler.run", return_value = None)
+    mocker.patch("haddock.modules.BaseHaddockModule.export_io_models", return_value = None)
 
-#def new_calc_score():
-#    sc, a, b, c, d = calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir="tmp")
-#    sc = sc + 1.0
-#    return sc
-#
-#def test_new_calc_score_with_mock(mocker):
-#    mocker.patch(__name__ + '.new_calc_score', return_value = 4)
-#    result = new_calc_score()
-#    assert result == 4  # Expected result after mocking calc_score
+    alascan.run()
+    assert Path(alascan.path, "scan_clt_-.csv").exists()
+    assert Path(alascan.path, "scan_clt_-.html").exists()
+
 
 
 def test_scan_run_output(
@@ -381,3 +370,22 @@ def test_alascan_cluster_analysis(protprot_model_list, scan_file):
     # clean up
     os.unlink(Path("scan_protprot_complex_1.csv"))
     os.unlink(Path("scan_clt_-.csv"))
+
+def test_create_alascan_plots(mocker, caplog):
+    """Test create_alascan_plots"""
+    mocker.patch("pandas.read_csv", return_value = pd.DataFrame())
+    create_alascan_plots({"-": []})
+
+    for record in caplog.records:
+        assert record.levelname == "WARNING"
+
+    # now assuming existing file but wrong plot creation
+    mocker.patch("pandas.read_csv", return_value = [])
+    mocker.patch("os.path.exists", return_value = True)
+
+    create_alascan_plots({"-": []})
+    for record in caplog.records:
+        assert record.levelname == "WARNING"
+
+
+    

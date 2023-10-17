@@ -7,7 +7,6 @@ import os
 
 from haddock import log
 from haddock.libs.libparallel import Scheduler
-from haddock.libs.libplots import make_alascan_plot
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.alascan.scan import (
@@ -46,7 +45,7 @@ class HaddockModule(BaseHaddockModule):
             models = self.previous_io.retrieve_models(individualize=True)
         except Exception as e:
             self.finish_with_error(e)
-
+        print(f"models {models}")
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
@@ -84,25 +83,7 @@ class HaddockModule(BaseHaddockModule):
         clt_alascan = alascan_cluster_analysis(models)
         # now plot the data
         if self.params["plot"] is True:
-            for clt_id in clt_alascan:
-                scan_clt_filename = f"scan_clt_{clt_id}.csv"
-                df_scan_clt = pd.read_csv(
-                    scan_clt_filename,
-                    sep="\t",
-                    comment="#"
-                    )
-                # plot the data
-                try:
-                    make_alascan_plot(
-                        df_scan_clt,
-                        clt_id,
-                        self.params['scan_residue']
-                        )
-                except Exception as e:
-                    log.warning(
-                        "Could not create interactive plot. The following error"
-                        f" occurred {e}"
-                        )
+            create_alascan_plots(clt_alascan)
         # if output is true, write the models and export them
         if self.params["output"] is True:
             models_to_export = generate_alascan_output(models, self.path)

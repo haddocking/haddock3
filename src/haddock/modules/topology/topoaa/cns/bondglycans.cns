@@ -29,7 +29,7 @@ define
           or resname NAG or resname NGA);
 
   {- Maximum distance between linkable atoms -}
-  carbo_dist= 2.75;
+  carbo_dist= 2.0;
 )
 
 {- this is OK here after reading the coordinates since the various -}
@@ -438,6 +438,46 @@ for $id1 in id ( &beta and name C1 and known ) loop B1
     end if
 
   end loop B14
+  
+  for $id2 in id ( recall6 ) loop B16
+
+    show (segid) (id $id2)
+    evaluate ($segid2=$result)
+    show (resid) (id $id2)
+    evaluate ($resid2=$result)
+    
+    evaluate ($identical=false)
+    if ($resid1 = $resid2) then
+        if ($segid1 = $segid2) then
+           evaluate ($identical=true)
+        end if
+    end if
+
+    if ($identical=false) then
+
+      show (x) ( id $id1 ) evaluate ($x1=$result)
+      show (y) ( id $id1 ) evaluate ($y1=$result)
+      show (z) ( id $id1 ) evaluate ($z1=$result)
+      show (x) ( id $id2 ) evaluate ($x2=$result)
+      show (y) ( id $id2 ) evaluate ($y2=$result)
+      show (z) ( id $id2 ) evaluate ($z2=$result)
+      evaluate ($distance=sqrt( ($x1-$x2)^2 + ($y1-$y2)^2 + ($z1-$z2)^2 ))
+
+      if ( $distance <= &carbo_dist ) then
+          evaluate ($npatch=$npatch+1)
+          evaluate ($seg1.$npatch=$segid1)
+          evaluate ($seg2.$npatch=$segid2)
+          evaluate ($res1.$npatch=$resid1)
+          evaluate ($res2.$npatch=$resid2)
+          if ($resname1="FUL") then
+             evaluate ($pres.$npatch="B16L")
+          else
+             evaluate ($pres.$npatch="B16")
+          end if
+      end if
+    end if
+
+  end loop B16
 
 end loop B1
 

@@ -8,7 +8,6 @@ from subprocess import CompletedProcess
 
 from haddock.libs.libhpc import (
     HPCWorker,
-    MAX_JOB_TRIES,
     extract_slurm_status,
     JOB_STATUS_DIC,
     to_torque_time,
@@ -73,7 +72,7 @@ def slurm_scontrol_wrongjobid():
 
 def test_slurm_nojobid(slurm_scontrol_wrongjobid):
     status = extract_slurm_status(slurm_scontrol_wrongjobid)
-    assert status == 'error'
+    assert status == 'FAILED'
 
 
 @pytest.fixture
@@ -119,22 +118,6 @@ def test_hpcworker_run(hpcworker, mocker):
     os.remove(hpcworker.job_fname)
     assert hpcworker.job_id == 42914957
     assert hpcworker.job_status == 'submitted'
-
-
-def test_hpcworker_over_tried(hpcworker, mocker):
-    """Test the non-`restart` function of a HPCWorker object."""
-    mocker.patch(
-        "subprocess.run",
-        return_value=CompletedProcess(
-            args=['scontrol', 'show', 'jobid', '-dd', '123456789'],
-            returncode=0,
-            stdout=b'...\n  JobState=TIMEOUT \n...',
-            stderr=b'',
-            )
-        )
-    hpcworker.tries = MAX_JOB_TRIES
-    hpcworker.restart()
-    assert hpcworker.job_status == 'failed'
 
 
 def test_hpcworker_update_status(

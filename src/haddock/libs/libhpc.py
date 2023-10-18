@@ -14,8 +14,6 @@ from haddock.libs.libsubprocess import CNSJob
 
 STATE_REGEX = r"JobState=(\w*)"
 
-MAX_JOB_TRIES = 5
-
 JOB_STATUS_DIC = {
     "PENDING": "submitted",
     "RUNNING": "running",
@@ -23,9 +21,7 @@ JOB_STATUS_DIC = {
     "COMPLETING": "running",
     "COMPLETED": "finished",
     "FAILED": "failed",
-    "TIMEOUT": "timed-out",
-    "OUT_OF_MEMORY": "out-of-memory",
-    "CANCELLED": "cancelled",
+    "TIMEOUT": "failed",
     }
 
 # if you change these defaults, change also the values in the
@@ -63,7 +59,6 @@ class HPCWorker:
         self.job_num = num
         self.job_id = job_id
         self.job_status = "unknown"
-        self.tries = 0
 
         self.moddir = Path(tasks[0].envvars['MODDIR'])
         self.toppar = tasks[0].envvars['TOPPAR']
@@ -81,7 +76,6 @@ class HPCWorker:
             queue=self.queue,
             ncores=1,
             work_dir=self.moddir,
-            time=10 * (self.tries + 1),
             stdout_path=self.job_fname.with_suffix('.out'),
             stderr_path=self.job_fname.with_suffix('.err'),
             )
@@ -132,24 +126,6 @@ class HPCWorker:
             log.info(f"Canceling {self.job_fname.name} - {self.job_id}")
             cmd = f"scancel {self.job_id}"
             _ = subprocess.run(shlex.split(cmd), capture_output=True)
-
-    def restart(self):
-        """Restart an execution."""
-        # Cancel previous job
-        self.cancel()
-        # Increase number of tries for this job
-        self.tries += 1
-        # Check if must too many tries
-        if self.tries > MAX_JOB_TRIES:
-            self.job_status = "failed"  # Set failed flag
-            for fpath in [
-                self.job_fname,
-                self.job_fname.with_suffix('.out'),
-                self.job_fname.with_suffix('.err'),
-                    ]:
-                fpath.unlink(missing_ok=True)
-        else:
-            self.run()  # Rerun the job
 
 
 class HPCScheduler:
@@ -214,8 +190,6 @@ class HPCScheduler:
                                 f">> {worker.job_fname.name}"
                                 f" {worker.job_status}"
                                 )
-                            if worker.job_status == 'timed-out':
-                                worker.restart()
 
                     # Initiate count of terminated jobs
                     terminated_count = 0
@@ -225,16 +199,6 @@ class HPCScheduler:
 
                     terminated_count += sum(
                         w.job_status == "failed" for w in worker_list
-                        )
-
-                    terminated_count += sum(
-                        w.job_status in (
-                            "timed-out",
-                            "out-of-memory",
-                            "cancelled",
-                            "error",
-                            )
-                        for w in worker_list
                         )
 
                     if terminated_count == len(worker_list):
@@ -318,14 +282,12 @@ def create_slurm_header(
     header += f"#SBATCH --output={stdout_path}{os.linesep}"
     header += f"#SBATCH --error={stderr_path}{os.linesep}"
     header += f"#SBATCH --workdir={work_dir}{os.linesep}"
-    header += f"#SBATCH --time={time}{os.linesep}"
     return header
 
 
 def create_torque_header(
         job_name: FilePath = 'haddock3_slurm_job',
         work_dir: FilePath = '.',
-        time: int = 10,
         stdout_path: FilePath = 'haddock3_job.out',
         stderr_path: FilePath = 'haddock3_job.err',
         queue: Optional[str] = None,
@@ -360,18 +322,15 @@ def create_torque_header(
     header += f"#PBS -o {stdout_path}{os.linesep}"
     header += f"#PBS -e {stderr_path}{os.linesep}"
     header += f"#PBS -wd {work_dir}{os.linesep}"
-    header += f"#PBS -l walltime={to_torque_time(time)}{os.linesep}"
     return header
 
 
 def to_torque_time(time: int) -> str:
     """Convert time in minutes to the form hh:mm:ss.
-
     Parameters
     ----------
     time : int
         Time in minutes.
-
     Return
     ------
     hh_mm_ss : str
@@ -391,12 +350,10 @@ def to_torque_time(time: int) -> str:
 
 def extract_slurm_status(slurm_out: str) -> str:
     """Extract job status from slurm scontrol stdout.
-
     Parameters
     ----------
     slurm_out : str
         StdOut of `scontrol show jobid -dd {job_id}` command.
-
     Return
     ------
     status : str
@@ -407,7 +364,7 @@ def extract_slurm_status(slurm_out: str) -> str:
         # https://regex101.com/r/M2vbAc/1
         status = re.findall(STATE_REGEX, slurm_out)[0]
     except IndexError:
-        status = 'error'
+        status = 'FAILED'
     return status
 
 

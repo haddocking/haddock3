@@ -244,7 +244,6 @@ class HPCScheduler:
 def create_slurm_header(
         job_name: FilePath = 'haddock3_slurm_job',
         work_dir: FilePath = '.',
-        time: int = 10,
         stdout_path: FilePath = 'haddock3_job.out',
         stderr_path: FilePath = 'haddock3_job.err',
         queue: Optional[str] = None,

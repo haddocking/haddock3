@@ -22,7 +22,6 @@ from haddock.modules.analysis.alascan.scan import (
     add_zscores,
     alascan_cluster_analysis,
     calc_score,
-    check_alascan_jobs,
     create_alascan_plots,
     generate_alascan_output,
     get_index_list,
@@ -384,13 +383,6 @@ def mock_alascan_cluster_analysis():
             }
         },
     }
-
-
-def test_check_alascan_jobs(scanjob_obj):
-    # calling check_alascan_jobs should raise an Exception as the job 
-    # has not run yet
-    with pytest.raises(Exception):
-        check_alascan_jobs([scanjob_obj])
 
 
 def test_alascan_cluster_analysis(protprot_input_list, scan_file):

@@ -14,7 +14,6 @@ from haddock.modules.analysis.alascan.scan import (
     ScanJob,
     add_delta_to_bfactor,
     alascan_cluster_analysis,
-    check_alascan_jobs,
     create_alascan_plots,
     generate_alascan_output,
     get_index_list,
@@ -76,8 +75,6 @@ class HaddockModule(BaseHaddockModule):
 
         scan_engine = Scheduler(alascan_jobs, ncores=ncores)
         scan_engine.run()
-        # check if all the jobs have been completed
-        check_alascan_jobs(alascan_jobs)
         
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)

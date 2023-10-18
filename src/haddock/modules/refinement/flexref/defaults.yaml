@@ -1750,6 +1750,14 @@ mdsteps_cool3:
   long: Number of MD steps for the third cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains and backbone at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle_X and related parameters).
   group: 'sampling'
   explevel: expert
+randorien:
+  default: false
+  type: boolean
+  title: Randomize starting orientations
+  short: Randomize starting orientations
+  long: Randomize starting orientations by separating the molecules in space and randomly rotating those
+  group: 'sampling'
+  explevel: guru
 timestep:
   default: 0.002
   type: float

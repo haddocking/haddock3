@@ -232,7 +232,7 @@ class HPCScheduler:
 
     def terminate(self) -> None:
         """Terminate all jobs in the queue in a controlled way."""
-        log.info("Terminate signal recieved, removing jobs from the queue...")
+        log.info("Terminate signal received, removing jobs from the queue...")
         for worker in self.worker_list:
             worker.cancel()
 
@@ -275,7 +275,8 @@ def create_slurm_header(
     header += f"#SBATCH --tasks-per-node={str(ncores)}{os.linesep}"
     header += f"#SBATCH --output={stdout_path}{os.linesep}"
     header += f"#SBATCH --error={stderr_path}{os.linesep}"
-    header += f"#SBATCH --workdir={work_dir}{os.linesep}"
+    # commenting the workdir option (not supported by all versions of slurm)
+    # header += f"#SBATCH --workdir={work_dir}{os.linesep}"
     return header
 
 

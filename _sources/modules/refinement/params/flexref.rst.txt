@@ -2937,6 +2937,17 @@ log_level
 | *group*: module
 | *explevel*: guru
 
+randorien
+~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Randomize starting orientations
+| *short description*: Randomize starting orientations
+| *long description*: Randomize starting orientations by separating the molecules in space and randomly rotating those
+| *group*: sampling
+| *explevel*: guru
+
 sinter_cool2_final
 ~~~~~~~~~~~~~~~~~~
 

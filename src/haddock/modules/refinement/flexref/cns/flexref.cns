@@ -22,6 +22,7 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
+evaluate ($saprotocol.randorien=$randorien)
 evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.tadhigh_t=$temp_high)
 evaluate ($saprotocol.t1_init=$temp_cool1_init)
@@ -218,6 +219,11 @@ if ($select gt 0) then
     evaluate ($refine.keepwater = true)
 end if
 
+! random placement of molecules
+if ($SaProtocol.randorien eq true) then
+    @MODULE:separate.cns
+    @MODULE:random_rotations.cns
+end if
 
 {* Read and write random seed in case randremoval=true ===============*}
 

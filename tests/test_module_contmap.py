@@ -21,16 +21,20 @@ from haddock.modules.analysis.contactmap.contmap import (
     compute_distance_matrix,
     extract_pdb_coords,
     topX_models,
-    to_res_polarity,
     gen_contact_dt,
     )
 
 from . import golden_data
 
 
-########################
-# Test Scipy functions #
-########################
+##########################
+# Define pytest fixtures #
+##########################
+@pytest.fixture
+def pdbline():
+    return "ATOM     28  O   GLU A  21      11.097   3.208   5.136  1.00"
+
+
 @pytest.fixture
 def atoms_coordinates() -> list[list]:
     """List of 3 atom coordinates."""
@@ -55,6 +59,76 @@ def ref_dist_matrix():
         ])
 
 
+@pytest.fixture
+def contactmap():
+    """Return contmap module."""
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        yield ContactMapModule(
+            order=1,
+            path=Path(tmpdir),
+            initial_params=DEFAULT_CONFIG,
+            )
+
+
+@pytest.fixture
+def cluster_input_list() -> list:
+    """Prot-prot input."""
+    return [
+        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
+        ]
+
+
+@pytest.fixture
+def cluster_input_iter(cluster_input_list) -> iter:
+    """Generate an iterable of files path."""
+    return iter(cluster_input_list)
+
+
+@pytest.fixture
+def params() -> dict:
+    """Set of parameters."""
+    return {
+        "ca_ca_dist_threshold": 9.0,
+        "shortest_dist_threshold": 7.5,
+        "color_ramp": "Greys",
+        "single_model_analysis": False,
+        "generate_heatmap": True,
+        "topX": 10,
+        "cluster-heatmap-datatype": 'shortest-cont-ratio',
+        }
+
+
+@pytest.fixture
+def protprot_contactmap(cluster_input_list, params):
+    params["single_model_analysis"] = True
+    return ContactsMap(
+        Path(cluster_input_list[0].rel_path),
+        Path('./contmap_test'),
+        params,
+        )
+
+
+@pytest.fixture
+def clustercontactmap(cluster_input_list, params):
+    return ClusteredContactMap(
+        [Path(m.rel_path) for m in cluster_input_list],
+        Path('./clustcontmap_test'),
+        params,
+        )
+
+
+@pytest.fixture
+def res_res_contacts():
+    return [
+        {'res1': 'A-1-MET', 'res2': 'A-2-ALA', 'dist': 3.0},
+        {'res1': 'A-1-MET', 'res2': 'A-3-VAL', 'dist': 4.0},
+        ]
+
+
+########################
+# Test Scipy functions #
+########################
 def test_pdist(atoms_coordinates, ref_one_line_dist_half_matrix):
     """Test computation of distance matrix."""
     one_line_dist_half_matrix = pdist(atoms_coordinates)
@@ -64,8 +138,7 @@ def test_pdist(atoms_coordinates, ref_one_line_dist_half_matrix):
 def test_squareform(ref_one_line_dist_half_matrix, ref_dist_matrix):
     """Test scipy on line half matrix to squareform behavior."""
     dist_matrix = squareform(ref_one_line_dist_half_matrix)
-    eq = np.array_equal(dist_matrix, ref_dist_matrix)
-    assert eq is True
+    assert np.array_equal(dist_matrix, ref_dist_matrix)
 
 
 def test_numpy_set_diagonal(ref_dist_matrix):
@@ -79,17 +152,6 @@ def test_numpy_set_diagonal(ref_dist_matrix):
 ###################################
 # Testing of class in __init__.py #
 ###################################
-@pytest.fixture
-def contactmap():
-    """Return contmap module."""
-    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
-        yield ContactMapModule(
-            order=1,
-            path=Path(tmpdir),
-            initial_params=DEFAULT_CONFIG,
-            )
-
-
 def test_confirm_installation(contactmap):
     """Test confirm install."""
     assert contactmap.confirm_installation() is None
@@ -117,21 +179,15 @@ class MockPreviousIO:
     #  method that is being tested
     def retrieve_models(self, individualize: bool = False):
         """Provide a set of models."""
-        return [
+        models = [
             PDBFile(Path(golden_data, "protprot_complex_1.pdb"),
                     path=golden_data),
             PDBFile(Path(golden_data, "protprot_complex_2.pdb"),
                     path=golden_data),
             ]
-
-
-@pytest.fixture
-def cluster_input_list() -> list:
-    """Prot-prot input."""
-    return [
-        PDBFile(Path(golden_data, "protprot_complex_1.pdb"), path=golden_data),
-        PDBFile(Path(golden_data, "protprot_complex_2.pdb"), path=golden_data),
-        ]
+        models[0].cli_id = None
+        models[1].cli_id = 1
+        return models
 
 
 def test_contactmap_run(contactmap, mocker):
@@ -151,12 +207,6 @@ def test_contactmap_run(contactmap, mocker):
 #########################################
 # Testing of previous_io errors handles #
 #########################################
-@pytest.fixture
-def cluster_input_iter(cluster_input_list):
-    """Generate an iterable of files path."""
-    return iter(cluster_input_list)
-
-
 def test_contactmap_run_errors(contactmap, cluster_input_list, mocker):
     """Test content of _run() function from __init__.py HaddockModule class."""
     contactmap.previous_io = cluster_input_list
@@ -178,30 +228,6 @@ def test_contactmap_run_iter_errors(contactmap, cluster_input_iter, mocker):
 ######################################################
 # Testing of Classes and function withing contmap.py #
 ######################################################
-@pytest.fixture
-def params() -> dict:
-    """Set of parameters."""
-    return {
-        "ca_ca_dist_threshold": 9.0,
-        "shortest_dist_threshold": 7.5,
-        "color_ramp": "Greys",
-        "single_model_analysis": False,
-        "generate_heatmap": True,
-        "topX": 10,
-        "cluster-heatmap-datatype": 'shortest-cont-ratio',
-        }
-
-
-@pytest.fixture
-def protprot_contactmap(cluster_input_list, params):
-    params["single_model_analysis"] = True
-    return ContactsMap(
-        Path(cluster_input_list[0].rel_path),
-        Path('./contmap_test'),
-        params,
-        )
-
-
 def test_single_model(protprot_contactmap):
     """Test ContactsMap run function."""
     contacts_dt = protprot_contactmap.run()
@@ -210,18 +236,11 @@ def test_single_model(protprot_contactmap):
     # check generated output files
     output_bp = protprot_contactmap.output
     assert os.path.exists(f'{output_bp}_contacts.tsv') is True
+    assert Path(f'{output_bp}_contacts.tsv').stat().st_size != 0
     assert os.path.exists(f'{output_bp}_heatmap.html') is True
+    assert Path(f'{output_bp}_heatmap.html').stat().st_size != 0
     Path(f'{output_bp}_contacts.tsv').unlink(missing_ok=False)
     Path(f'{output_bp}_heatmap.html').unlink(missing_ok=False)
-
-
-@pytest.fixture
-def clustercontactmap(cluster_input_list, params):
-    return ClusteredContactMap(
-        [Path(m.rel_path) for m in cluster_input_list],
-        Path('./clustcontmap_test'),
-        params,
-        )
 
 
 def test_clustercontactmap_run(clustercontactmap):
@@ -233,22 +252,20 @@ def test_clustercontactmap_run(clustercontactmap):
     # check outputs
     output_bp = clustercontactmap.output
     assert os.path.exists(f'{output_bp}_contacts.tsv') is True
+    assert Path(f'{output_bp}_contacts.tsv').stat().st_size != 0
     assert os.path.exists(f'{output_bp}_heatmap.html') is True
+    assert Path(f'{output_bp}_heatmap.html').stat().st_size != 0
     Path(f'{output_bp}_contacts.tsv').unlink(missing_ok=False)
     Path(f'{output_bp}_heatmap.html').unlink(missing_ok=False)
 
 
-@pytest.fixture
-def res_res_contacts():
-    return [
-        {'res1': 'A-1-MET', 'res2': 'A-2-ALA', 'dist': 3.0},
-        {'res1': 'A-1-MET', 'res2': 'A-3-VAL', 'dist': 4.0},
-        ]
-
-
 def test_write_res_contacts(res_res_contacts):
     """Test list of dict to tsv generation."""
-    fpath = write_res_contacts(res_res_contacts, Path('./test-contacts.tsv'))
+    fpath = write_res_contacts(
+        res_res_contacts,
+        ['res1', 'res2', 'dist'],
+        Path('./test-contacts.tsv'),
+        )
     assert os.path.exists(fpath) is True
     with open(fpath, 'r') as filin:
         flines = filin.readlines()
@@ -256,12 +273,6 @@ def test_write_res_contacts(res_res_contacts):
     assert flines[1].strip().split('\t') == ['A-1-MET', 'A-2-ALA', '3.0']
     assert flines[2].strip().split('\t') == ['A-1-MET', 'A-3-VAL', '4.0']
     fpath.unlink(missing_ok=True)
-
-
-def test_res_to_polarity():
-    """Test residue name to polarity conversions."""
-    assert to_res_polarity('ALA') == "apolar"
-    assert to_res_polarity('ABC') == "unknow"
 
 
 def test_topx_models(cluster_input_list):
@@ -291,20 +302,13 @@ def test_compute_distance_matrix(atoms_coordinates, ref_dist_matrix):
 def test_extract_submatrix_symetric(ref_dist_matrix):
     """Test extraction of submatrix with symetrical indices."""
     submat = extract_submatrix(ref_dist_matrix, [1, 2])
-    eq = np.array_equal(submat, np.array([[0, np.sqrt(2)], [np.sqrt(2), 0]]))
-    assert eq is True
+    assert np.array_equal(submat, np.array([[0, np.sqrt(2)], [np.sqrt(2), 0]]))
 
 
 def test_extract_submatrix(ref_dist_matrix):
     """Test extraction of submatrix with non-symetrical indices."""
     submatrix = extract_submatrix(ref_dist_matrix, [1, 2], indices2=[0, 1])
-    eq = np.array_equal(submatrix, np.array([[1, 0], [1, np.sqrt(2)]]))
-    assert eq is True
-
-
-@pytest.fixture
-def pdbline():
-    return "ATOM     28  O   GLU A  21      11.097   3.208   5.136  1.00"
+    assert np.array_equal(submatrix, np.array([[1, 0], [1, np.sqrt(2)]]))
 
 
 def test_extract_pdb_coords(pdbline):

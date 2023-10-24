@@ -2,7 +2,7 @@
 from copy import deepcopy
 from pathlib import Path
 
-from haddock.core.typing import Any, FilePath
+from haddock.core.typing import Any, FilePath, Union
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.contactmap.contmap import (
@@ -50,7 +50,7 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(e)
 
         # Initiate holder of all jobs to be run by the `Scheduler`
-        contact_jobs: list[Any] = []
+        contact_jobs: list[Union[ContactsMap, ClusteredContactMap]] = []
         # Obtain clusters
         clusters_sets = get_clusters_sets(models)
         # Loop over clusters

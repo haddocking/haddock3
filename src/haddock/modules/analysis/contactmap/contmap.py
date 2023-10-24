@@ -4,7 +4,6 @@ from pathlib import Path
 
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
-import plotly.express as px
 
 from haddock import log
 from haddock.libs.libontology import PDBFile
@@ -17,7 +16,8 @@ from haddock.libs.libpdb import (
     slc_y,
     slc_z,
     )
-from haddock.core.typing import Any, NDFloat, Optional
+from haddock.core.typing import Any, NDFloat, Optional, Union
+from haddock.libs.libplots import heatmap_plotly
 
 
 ###############################
@@ -84,8 +84,14 @@ class ContactsMap():
         if self.params['single_model_analysis']:
 
             # write contacts
+            header = ['res1', 'res2']
+            header += [
+                v for v in sorted(res_res_contacts[0])
+                if v not in header
+                ]
             fpath = write_res_contacts(
                 res_res_contacts,
+                header,
                 f'{self.output}_contacts.tsv',
                 )
             log.info(f'Generated contacts file: {fpath}')
@@ -193,8 +199,14 @@ class ClusteredContactMap():
                 })
         
         # write contacts
+        header = ['res1', 'res2']
+        header += [
+            v for v in sorted(combined_clusters_list[0])
+            if v not in header
+            ]
         fpath = write_res_contacts(
             combined_clusters_list,
+            header,
             f'{self.output}_contacts.tsv',
             )
         log.info(f'Generated contacts file: {fpath}')
@@ -212,7 +224,7 @@ class ClusteredContactMap():
         self.terminated = True
 
 
-def get_clusters_sets(models: list[Any]) -> dict:
+def get_clusters_sets(models: list[PDBFile]) -> dict:
     """Split models by clusters ids.
 
     Parameters
@@ -233,7 +245,7 @@ def get_clusters_sets(models: list[Any]) -> dict:
     return clusters_sets
 
 
-def topX_models(models: list[Any], topX: int = 10) -> list[Any]:
+def topX_models(models: list[PDBFile], topX: int = 10) -> list[Any]:
     """Sort and return subset of top X best models.
 
     Parameters
@@ -516,22 +528,14 @@ def get_cont_type(resn1: str, resn2: str) -> str:
     pol_key : str
         Combined residues polarities
     """
-    pol_key = f'{to_res_polarity(resn1)}-{to_res_polarity(resn2)}'
+    pol_keys: list[str] = []
+    for resn in [resn1, resn2]:
+        if resn in RESIDUE_POLARITY.keys():
+            pol_keys.append(RESIDUE_POLARITY[resn])
+        else:
+            pol_keys.append('unknow')
+    pol_key = '-'.join(pol_keys)
     return pol_key
-
-
-def to_res_polarity(resn: str) -> str:
-    """Convert residue name into polarity.
-
-    Parameters
-    ----------
-    resn : str
-       3 letters code of a residue.
-    """
-    try:
-        return RESIDUE_POLARITY[resn]
-    except KeyError:
-        return 'unknow'
 
 
 def min_dist(matrix: NDFloat) -> float:
@@ -541,6 +545,7 @@ def min_dist(matrix: NDFloat) -> float:
 
 def write_res_contacts(
         res_res_contacts: list[dict],
+        header: list[str],
         path: Path,
         sep: str = '\t',
         ) -> Path:
@@ -550,6 +555,8 @@ def write_res_contacts(
     ----------
     res_res_contacts : list[dict]
         List of dict holding data for each residue-residue contacts.
+    header : list[str]
+        Ordered list of keys to access in the dicts.
     path : Path
         Path to the output file to generate.
     sep : str
@@ -577,60 +584,12 @@ def write_res_contacts(
     return path
 
 
-def heatmap_plotly(
-        matrix: NDFloat,
-        labels: Optional[dict] = None,
-        xlabels: Optional[list] = None,
-        ylabels: Optional[list] = None,
-        color_scale: str = 'Greys_r',  # Greys_r, gray
-        title: Optional[str] = None,
-        output_fname: Path = Path('contacts.html'),
-        ) -> Path:
-    """Generate a `plotly heatmap` based on matrix content.
-
-    Parameters
-    ----------
-    matrix : NDFloat
-        The 2D matrix containing data to be shown.
-    labels : dict
-        Labels of the horizontal (x), vertical (y) and colorscale (color) axis.
-    xlabels : list
-        List of columns names.
-    ylabels : list
-        List of row names.
-    color_scale : str
-        Color scale to use.
-    title : str
-        Title of the figure.
-    output_fname : Path
-        Path to the output filename to generate.
-
-    Return
-    ------
-    output_fname : Path
-        Path to the generated filename
-    """
-    fig = px.imshow(
-        matrix,
-        labels=labels,
-        x=xlabels,
-        y=ylabels,
-        color_continuous_scale=color_scale,
-        title=title,
-        )
-    # Place X axis on top
-    fig.update_xaxes(side="top")
-    # Save figure as html file
-    fig.write_html(output_fname)
-    return output_fname
-
-
 def tsv_to_heatmap(
         tsv_path: Path,
         sep: str = '\t',
         data_key: str = 'ca-ca-dist',
         contact_threshold: float = 7.5,
-        output_fname: Path = Path('contacts.html'),
+        output_fname: Union[Path, str] = 'contacts.html',
         ) -> None:
     """Read a tsv file and generate a heatmap from it.
 

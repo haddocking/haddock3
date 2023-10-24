@@ -132,7 +132,6 @@ def get_surface_resids(structure, cutoff=15):
     except ImportError as err:
         print('[!] The binding affinity prediction tools require the \'freesasa\' Python API', file=sys.stderr)
         raise ImportError(err)
-    import pkg_resources
 
     asa_data, rsa_data, rel_main_chain, rel_side_chain = {}, {}, {}, {}
     _rsa = rel_asa['total']
@@ -141,7 +140,6 @@ def get_surface_resids(structure, cutoff=15):
 
     #classifier = Classifier(config_path)
     classifier = Classifier()
-    pkg_resources.cleanup_resources()
 
     struct = structureFromBioPDB(structure, classifier, )
     result = calc(struct)

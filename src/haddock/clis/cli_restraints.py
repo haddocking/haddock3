@@ -1,9 +1,17 @@
 """
-HADDOCK 3.0 CLI for restraints-related tasks.
+HADDOCK3 CLI for restraints-related tasks.
 
 USAGE::
 
-    haddock3-restraints TASK NAME
+    haddock3-restraints <TASK_NAME> <TASK_ARGS>
+
+For the list of available tasks, run::
+
+    haddock3-restraints -h
+
+For the list of arguments for a given task, run::
+
+    haddock3-restraints <TASK_NAME> -h
 """
 import argparse
 import sys

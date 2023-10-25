@@ -4,8 +4,9 @@ The restrain_bodies subcommand creates distance restraints to lock several
 chains together. Useful to avoid unnatural flexibility or movement due to
  sequence/numbering gaps.
 
-Usage:
-    haddock3-restraints restrain_bodies <structure> [--exclude] [--verbose]
+Usage::
+	
+	haddock3-restraints restrain_bodies <structure> [--exclude] [--verbose]
 """
 
 import logging
@@ -44,8 +45,19 @@ def add_restrain_bodies_arguments(restraint_bodies_subcommand):
 
 
 def restrain_bodies(structure, exclude=None, verbose=0):  # noqa: E501
-	"""Rescore the CAPRI models."""
+	"""Create distance restraints to lock several chains together.
 	
+	Parameters
+	----------
+	structure : str
+		The PDB structure to be restrained.
+
+	exclude : str
+		Chains to exclude from the calculation.
+	
+	verbose : int
+		Tune verbosity of the output.
+	"""
 	if verbose== 1:
 		logging.basicConfig(level=logging.INFO)
 	elif verbose > 1:

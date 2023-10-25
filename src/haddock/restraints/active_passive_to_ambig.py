@@ -11,7 +11,6 @@ An example content for file_actpass_one is
     72 73 74 75 81 83 84 89 90 92 94 96 97 98 115 116 117
     3 24 46 47 48 50 66 76 77 79 80 82 86 87 88 91 93 95 118 119 120
 """
-from pathlib import Path
 from haddock.libs.librestraints import active_passive_to_ambig, parse_actpass_file
 
 
@@ -47,7 +46,7 @@ def add_actpass_to_ambig_arguments(actpass_to_ambig_subcommand):
 
 
 def actpass_to_ambig(actpass_one, actpass_two, segid_one, segid_two):
-    """generate ambig from two actpass files.
+    """Generate ambig from two actpass files.
     
     Parameters
     ----------
@@ -63,9 +62,8 @@ def actpass_to_ambig(actpass_one, actpass_two, segid_one, segid_two):
     segid_two : str
         segid to use for the second model
     """
-
     active1, passive1 = parse_actpass_file(actpass_one)
     active2, passive2 = parse_actpass_file(actpass_two)
     active_passive_to_ambig(active1, passive1, active2, passive2, segid_one, segid_two)
     
-    return 
+    return

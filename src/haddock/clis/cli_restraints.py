@@ -22,8 +22,6 @@ from haddock.restraints.validate_tbl import add_validate_tbl_arguments, validate
 from haddock.restraints.active_passive_to_ambig import add_actpass_to_ambig_arguments, actpass_to_ambig
 
 
-ANA_FOLDER = "interactive"  # name of the analysis folder
-
 # Command line interface parser
 ap = argparse.ArgumentParser(
     prog="haddock3-restraints",
@@ -35,7 +33,7 @@ subparsers = ap.add_subparsers(title='subcommands',
                                description='valid subcommands',
                                help='additional help')
 
-# score subcommand
+# restrain_bodies subcommand
 restrain_bodies_subcommand = subparsers.add_parser('restrain_bodies')
 restrain_bodies_subcommand.set_defaults(func=restrain_bodies)
 restrain_bodies_subcommand = add_restrain_bodies_arguments(restrain_bodies_subcommand)

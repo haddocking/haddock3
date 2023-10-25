@@ -1,6 +1,11 @@
-"""
-Creates distance restraints to lock several chains together. Useful to avoid unnatural
-flexibility or movement due to sequence/numbering gaps.
+"""haddock3-restraints restrain_bodies subcommand.
+
+The restrain_bodies subcommand creates distance restraints to lock several 
+chains together. Useful to avoid unnatural flexibility or movement due to
+ sequence/numbering gaps.
+
+Usage:
+    haddock3-restraints restrain_bodies <structure> [--exclude] [--verbose]
 """
 
 import logging
@@ -21,7 +26,8 @@ def add_restrain_bodies_arguments(restraint_bodies_subcommand):
 		"-e",
 		"--exclude",
 		help="Chains to exclude from the calculation.",
-		required=False
+		required=False,
+		type=str,
 		)
 	
 	restraint_bodies_subcommand.add_argument(
@@ -30,33 +36,10 @@ def add_restrain_bodies_arguments(restraint_bodies_subcommand):
 		help="Tune verbosity of the output.",
 		required=False,
 		default=0,
+		type=int,
 		)
 	
 	restraint_bodies_subcommand
-
-#def add_restrain_bodies_arguments(restraint_bodies_subcommand):
-#   """Add arguments to the score subcommand."""
-#	restraint_bodies_subcommand.add_argument(
-#		"structure",
-#		help="The PDB structure to be restrained.",
-#		)
-#
-#   restraint_bodies_subcommand.add_argument(
-#		"-e",
-#		"--exclude",
-#		help="Chains to exclude from the calculation.",
-#		required=False
-#		)
-#	
-#	restraint_bodies_subcommand.add_argument(
-#		"-v",
-#		"--verbose",
-#		help="Tune verbosity of the output.",
-#		required=False,
-#		default=0,
-#		)
-#
-#	return restraint_bodies_subcommand
 
 # Functions/Methods
 
@@ -218,7 +201,6 @@ def restrain_bodies(structure, exclude=None, verbose=0):  # noqa: E501
 		logging.basicConfig(level=logging.DEBUG)
 	else:
 		logging.basicConfig(level=logging.WARNING)
-	
 
 	# Main logic
 	atom_lst = read_structure(structure, exclude=exclude)

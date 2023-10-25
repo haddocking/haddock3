@@ -1,9 +1,9 @@
+"""Test the haddock3-restraints CLI."""
 from pathlib import Path
 import pytest
 import tempfile
-from haddock.clis.cli_restraints import maincli
 
-from haddock.restraints.active_passive_to_ambig import actpass_to_ambig, parse_actpass_file, active_passive_to_ambig
+from haddock.restraints.active_passive_to_ambig import actpass_to_ambig, parse_actpass_file
 from haddock.restraints.validate_tbl import validate_tbl
 from haddock.restraints.passive_from_active import passive_from_active
 from haddock.restraints.restrain_bodies import restrain_bodies
@@ -53,7 +53,7 @@ def test_actpass_to_ambig(capsys):
         # close it
         tmp.flush()
         
-        # capture stdout and stderr
+        # capture stdout and stderr
         actpass_to_ambig(tmp.name, tmp.name, "A", "B")
         captured = capsys.readouterr()
         assert captured.err == ""
@@ -70,6 +70,11 @@ def test_validate_tbl(example_tbl_file, capsys):
     captured = capsys.readouterr()
     assert captured.err == ""
     assert captured.out == ""
+    # now let's test the silent=False option
+    validate_tbl(example_tbl_file, pcs=False, quick=True, silent=False)
+    captured = capsys.readouterr()
+    assert captured.err == ""
+    assert captured.out.startswith("!\nassign")
 
 
 def test_validate_tbl_error(example_tbl_file, capsys):
@@ -107,7 +112,9 @@ def test_restrain_bodies_empty(example_pdb_file, capsys):
     assert captured.out == ""
 
 
-    
-
-
-            
+def test_restrain_bodies_exclude(protdna_input_list, capsys):
+    """Test restrain_bodies function."""
+    restrain_bodies(protdna_input_list[0].rel_path, exclude="A")
+    captured = capsys.readouterr()
+    out_lines = captured.out.split("\n")
+    assert out_lines[0] == "assign (segid B and resi 3 and name P) (segid B and resi 29 and name P) 31.170 0.0 0.0"

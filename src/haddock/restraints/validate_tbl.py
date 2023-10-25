@@ -1,13 +1,8 @@
-"""haddock3-restraints passive_from_active subcommand.
+"""haddock3-restraints validate_tbl subcommand.
 
-Given a list of active_residues and a PDB structure, it will return a list of
-surface exposed passive residues within a 6.5A radius from the active residues.
-
-When provided with a list of surface residues, it will filter the list for those
-that are within 6.5A from the active residues.
-
+The validate_tbl subcommand validates an input TBL file.
 Usage:
-    haddock3-restraints passive_from_active <pdb_file> <active_list> [-c <chain_id>] [-s <surface_list>]
+    haddock3-restraints validate_tbl <tbl_file> [--silent] [--quick]
 """
 from pathlib import Path
 
@@ -301,20 +296,19 @@ def validate_tbldata(restraints, pcs=False):
 
 def validate_tbl(tbl_file, pcs, quick=False, silent=False):
     """Get the passive residues."""
-
     if quick:
         tbldata = open(tbl_file).read()
         # Check the parenthesis and quotation marks opening/closure
         check_parenthesis(tbldata)
-
+    
     if Path(tbl_file).exists():
         tbldata = open(tbl_file).read()
         # Parse and process the restraints
         if silent:
             validate_tbldata(tbldata, pcs)
         else:
-            print(validate_tbl(tbldata, pcs))
+            print(validate_tbldata(tbldata, pcs))
     else:
         raise Exception(f"TBL file {tbl_file} does not exist, check the path")
     
-    return 
+    return

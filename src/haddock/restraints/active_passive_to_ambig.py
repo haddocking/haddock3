@@ -1,11 +1,11 @@
 """haddock3-restraints active_passive_to_ambig subcommand.
 
 Given two files containing active (in the first line) and passive (second line)
-to be used by HADDOCK, this command gives in output the corresponding ambig.tbl
- file.
+ residues to be used by HADDOCK, this command gives in output the corresponding
+ ambig.tbl file.
 
 Usage:
-    haddock3-restraints active_passive_to_ambig file_actpass_one 
+    haddock3-restraints active_passive_to_ambig file_actpass_one file_actpass_two [--segid-one] [--segid-two]
 
 An example content for file_actpass_one is
     72 73 74 75 81 83 84 89 90 92 94 96 97 98 115 116 117
@@ -128,7 +128,22 @@ def active_passive_to_ambig(active1, passive1, active2, passive2, segid1='A', se
         print(') 2.0 2.0 0.0\n')
 
 def actpass_to_ambig(actpass_one, actpass_two, segid_one, segid_two):
-    """generate ambig from two actpass files."""
+    """generate ambig from two actpass files.
+    
+    Parameters
+    ----------
+    actpass_one : str
+        path to first actpass file
+    
+    actpass_two : str
+        path to second actpass file
+    
+    segid_one : str
+        segid to use for the first model
+    
+    segid_two : str
+        segid to use for the second model
+    """
 
     active1, passive1 = parse_actpass_file(actpass_one)
     active2, passive2 = parse_actpass_file(actpass_two)

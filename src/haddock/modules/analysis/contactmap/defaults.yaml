@@ -41,7 +41,7 @@ color_ramp:
     - amp
   title: Color ramp used to color heatmap.
   short: Color ramp used to color heatmap.
-  long: Please refere to `plotly builtin-colorscales` to get hints of the style of accessible colors.
+  long: Color ramp used to color heatmap. Please refer to `plotly builtin-colorscales` for more information
   group: analysis
   explevel: easy
 

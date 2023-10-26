@@ -195,7 +195,7 @@ class ClusteredContactMap():
                 'shortest-dist': round(avg_shortest, 1),
                 'shortest-cont-ratio': round(shortest_cont_ratio, 2),
                 'contact-type': cont_t,
-                'contact-type-ratio': cont_t_ratio,
+                'contact-type-ratio': round(cont_t_ratio, 2),
                 })
         
         # write contacts
@@ -508,7 +508,6 @@ def gen_contact_dt(
         'ca-ca-dist': round(ca_ca_dist, 1),
         'shortest-dist': round(clostest_contact, 1),
         'contact-type': cont_type,
-        # add other types of data ??
         }
     return cont_dt
 

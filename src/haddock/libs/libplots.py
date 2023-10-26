@@ -987,7 +987,7 @@ def report_generator(boxes, scatters, tables, step):
         report_plots_handler(scatters, shared_xaxes="rows", shared_yaxes="columns")
     )
     # Combine boxes"
-    figures.append(report_plots_handler(boxes, shared_xaxes="all"))
+    figures.append(report_plots_handler(boxes))
 
     # Write everything to a html file
     html_report = _generate_html_report(step, figures)

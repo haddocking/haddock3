@@ -1,0 +1,236 @@
+! separate.cns
+! Distribute molecules in 3D space
+! Orient each molecule according to its principal axes
+! and restore them all at the end (after the while loop)
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+
+! first flag all fixed molecules
+do (store4 = 0) (all)
+evaluate ($ncount = 0)
+evaluate ($nfixed = 0)
+while ($ncount < $data.ncomponents) loop orientmol
+    evaluate ($ncount = $ncount + 1)
+    if ($mol_fix_origin_$ncount eq true) then
+        evaluate ($nfixed = $nfixed + 1)
+        do (store4 = 1) (segid $prot_segid_$ncount)
+    end if
+end loop orientmol
+ 
+if ($nfixed < $data.ncomponents) then
+
+    evaluate ($xc = 0.0)
+    evaluate ($yc = 0.0)
+    evaluate ($zc = 0.0)
+    ! then define the geometrical center of the fixed molecules if present
+    show sum (store4) (all)
+    if ($result > 0) then
+        show ave (x) (attribute store4 = 1)
+        evaluate ($xc = $result)
+        show ave (y) (attribute store4 = 1)
+        evaluate ($yc = $result)
+        show ave (z) (attribute store4 = 1)
+        evaluatee ($zc = $result)
+    end if
+
+    do (xcomp = x) (all)
+    do (ycomp = y) (all)
+    do (zcomp = z) (all)
+  
+    ! then orient each moving molecule separately at the origin
+    ! and translate it to the geometric center of the fixed molecules
+    evaluate ($ncount = 0)
+    while ($ncount < $data.ncomponents) loop orientmol
+        evaluate ($ncount = $ncount +1)
+        eval($watersegname_$ncount="WA" + encode($ncount))
+        if ($mol_fix_origin_$ncount eq false) then
+            coor orient sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) end
+            coor sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) translate vector = ($xc $yc $zc) end
+            do (xcomp = x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+            do (ycomp = y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+            do (zcomp = z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        end if
+    end loop orientmol
+  
+    do (x = xcomp) (not (resn ANI or resn XAN or resn DAN))
+    do (y = ycomp) (not (resn ANI or resn XAN or resn DAN))
+    do (z = zcomp) (not (resn ANI or resn XAN or resn DAN))
+  
+    ! Find the largest axis of all molecules
+    evaluate ($minispacing = 25.0)
+    evaluate ($mxdim = 0)
+    evaluate ($ncount = 0)
+  
+    while ($ncount < $data.ncomponents) loop findmax
+        evaluate ($ncount = $ncount +1)
+  
+        show max (x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($xdim = $result)
+        show min (x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($xdim = $xdim - $result)
+  
+        show max (y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($ydim = $result)
+        show min (y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($ydim = $ydim - $result)
+  
+        show max (z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($zdim = $result)
+        show min (z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($zdim = $zdim - $result)
+  
+        ! Check which dimension (x,y,z) is the largest = mxdim
+        evaluate ($mxdim = max($mxdim, $xdim, $ydim, $zdim))
+  
+    end loop findmax
+  
+    evaluate ($spacing = $minispacing + $mxdim )
+    display SPACING SET TO $spacing ANGSTROM
+  
+    ! This has to be manually coded because of the variable name
+    ! Should be fine since we support only a few types of symmetry
+    ! Maybe change the variable name later if these are expanded
+    ! to have the number at the end?
+
+    inline @MODULE:check-homomers.cns
+  
+    if ($homosymmetry eq true) then
+        ! In case of homosymmetry, place molecules in a plane
+        do (store4 = 0) (all)
+        evaluate ($ncount = 0)
+        while ($ncount < $data.ncomponents) loop orientmol
+            evaluate ($ncount = $ncount + 1)
+            if ($mol_fix_origin_$ncount eq false) then
+                do (store4 = 1) (segid $prot_segid_$ncount)
+            end if
+        end loop orientmol
+  
+        {* translate and generate symmetric positions by rotation around z *}
+        coor trans sele=(attr store4=1) vector=($spacing,0,0) end
+  
+        ! if one molecule is fixed (e.g. plane), move all others along z-axis
+        !if ($data.ncomponents > $n_moving_mol) then
+        !  coor trans sele=(attr store4=1) vector=(0,0,$spacing) end
+        !end if
+  
+        evaluate ($ncount = 2)
+        evaluate ($increment = 360/$n_moving_mol)
+        while ($ncount le $data.ncomponents) loop orientsym
+  
+            if ($mol_fix_origin_$ncount eq false) then
+                {* rotate around z axis *}
+                evaluate ($xr = $increment)
+                evaluate ($x1 = cos($xr))
+                evaluate ($x2 = -sin($xr))
+                evaluate ($x3 = 0 )
+                evaluate ($y1 = sin($xr))
+                evaluate ($y2 = cos($xr))
+                evaluate ($y3 = 0 )
+                evaluate ($z1 = 0 )
+                evaluate ($z2 = 0 )
+                evaluate ($z3 = 1 )
+                coor
+                    center=($xc $yc $zc)
+                    rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
+                    sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount)
+                end
+                evaluate ($increment = $xr + 360/$n_moving_mol)
+  
+            end if
+            evaluate ($ncount = $ncount + 1)
+  
+        end loop orientsym
+  
+    else
+        ! Do we need fix any molecule?
+        evaluate($n_moving_mol = 0)
+        evaluate ($ncount = 0)
+        while ($ncount < $data.ncomponents) loop centermol
+            evaluate ($ncount = $ncount + 1)
+            if ($mol_fix_origin_$ncount eq false) then
+                evaluate($n_moving_mol = $n_moving_mol + 1)
+            end if
+        end loop centermol
+  
+        ! Translate molecules to positions calculated using an algorithm
+        ! based on minimization of electrostatic potential of N equally charged particles.
+        ! See Thomson problem: http://en.wikipedia.org/wiki/Thomson_problem
+        evaluate ($filename = "TOPPAR:initial_positions/trans_vector_" + encode($n_moving_mol) )
+        inline @@$filename
+  
+        ! Logic:
+        ! Assign a random number larger than 0 to every molecule
+        ! Assign 0.0 to fixed molecules
+        ! For every i up to the number of molecules
+        ! pick the mol with the largest number and displace it
+        ! then zero its number.
+        ! This will place molecules in space sort of randomly
+        ! Stop when the sum of all numbers is zero
+  
+        ! Generate as many random numbers as the # of mols
+        evaluate ($ncount = 0)
+        while ($ncount < $data.ncomponents) loop genrandom
+            evaluate ($ncount = $ncount + 1)
+            if ($mol_fix_origin_$ncount eq true) then
+                evaluate ($random_$ncount = 0.0)
+            else
+                evaluate ($random_$ncount = random())
+            end if
+        end loop genrandom
+  
+        ! Randomly pick a molecule and place it
+        ! on the pre-defined position - iterate
+        evaluate ($sum_random = 999)
+        evaluate ($molcounter = 1)
+  
+        while ($sum_random > 0) loop placemol
+            evaluate ($maximum = 0)
+            evaluate ($maxid = 0)
+            evaluate ($ncount = 0)
+  
+            ! Select molecule with largest random number
+            while ($ncount < $data.ncomponents) loop selectmol
+                evaluate ($ncount = $ncount + 1)
+                if ($random_$ncount > $maximum) then
+                    evaluate ($maximum = $random_$ncount)
+                    evaluate ($maxid = $ncount)
+                end if
+            end loop selectmol
+  
+            if ($mol_fix_origin_$maxid eq false) then
+                coor trans 
+  	                 sele=(segid $prot_segid_$maxid or segid $watersegname_$maxid) 
+  	                 vector=($x_$molcounter, $y_$molcounter, $z_$molcounter)
+  	            end
+  
+                ! Reset random_ncount to 0 to avoid re-selecting
+                evaluate ($random_$maxid = 0)
+  
+                ! Increment molcounter to update new
+                evaluate ($molcounter = $molcounter + 1)
+  
+                ! Update sum_random
+                evaluate ($ncount = 0)
+                evaluate ($sum_random = 0)
+  
+                while ($ncount < $data.ncomponents) loop resetsumrandom
+                    evaluate ($ncount = $ncount + 1)
+                    evaluate( $sum_random = $sum_random + $random_$ncount)
+                end loop resetsumrandom
+  
+            end if
+       end loop placemol
+    end if
+  
+    do (x = refx) (resn ANI or resn DAN or resn XAN)
+    do (y = refy) (resn ANI or resn DAN or resn XAN)
+    do (z = refz) (resn ANI or resn DAN or resn XAN)
+  
+end if

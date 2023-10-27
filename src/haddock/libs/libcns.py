@@ -7,6 +7,7 @@ from pathlib import Path
 
 from haddock import EmptyPath, log
 from haddock.core import cns_paths
+from haddock.core.typing import Any, FilePath, FilePathT, Optional, Union
 from haddock.libs import libpdb
 from haddock.libs.libfunc import false, true
 from haddock.libs.libmath import RandomNumberGenerator
@@ -17,7 +18,9 @@ from haddock.libs.libutil import transform_to_list
 RND = RandomNumberGenerator()
 
 
-def generate_default_header(path=None):
+def generate_default_header(
+        path: Optional[FilePath] = None
+        ) -> tuple[str, str, str, str, str, str]:
     """Generate CNS default header."""
     if path is not None:
         axis = load_axis(**cns_paths.get_axis(path))
@@ -45,7 +48,7 @@ def generate_default_header(path=None):
         )
 
 
-def _is_nan(x):
+def _is_nan(x: Any) -> bool:
     """Inspect if is nan."""
     try:
         return math.isnan(x)
@@ -53,7 +56,7 @@ def _is_nan(x):
         return False
 
 
-def filter_empty_vars(v):
+def filter_empty_vars(v: Any) -> bool:
     """
     Filter empty variables.
 
@@ -91,9 +94,9 @@ def filter_empty_vars(v):
 
 
 def load_workflow_params(
-        param_header=f"{linesep}! Parameters{linesep}",
-        **params,
-        ):
+        param_header: str = f"{linesep}! Parameters{linesep}",
+        **params: Any,
+        ) -> str:
     """
     Write the values at the header section.
 
@@ -103,7 +106,7 @@ def load_workflow_params(
     Parameters
     ----------
     params : dict
-        Dictionary containing the key:value pars for the parameters to
+        Dictionary containing the key:value pairs for the parameters to
         be written to CNS. Values cannot be of dictionary type.
 
     Returns
@@ -123,7 +126,9 @@ def load_workflow_params(
     return param_header
 
 
-def write_eval_line(param, value, eval_line="eval (${}={})"):
+def write_eval_line(param: Any,
+                    value: Any,
+                    eval_line: str = "eval (${}={})") -> str:
     """Write the CNS eval line depending on the type of `value`."""
     eval_line += linesep
 
@@ -151,7 +156,7 @@ def write_eval_line(param, value, eval_line="eval (${}={})"):
         raise TypeError(emsg)
 
 
-def load_link(mol_link):
+def load_link(mol_link: Path) -> str:
     """Add the link header."""
     return load_workflow_params(
         param_header=f"{linesep}! Link file{linesep}",
@@ -170,14 +175,14 @@ load_dihe = partial(write_eval_line, "dihe_f")
 load_tensor_tbl = partial(write_eval_line, "tensor_tbl")
 
 
-def load_scatter(scatter_lib):
+def load_scatter(scatter_lib: Path) -> str:
     """Add scatter library."""
     return load_workflow_params(
         param_header=f"{linesep}! Scatter lib{linesep}",
         scatter_lib=scatter_lib)
 
 
-def load_boxtyp20(waterbox_param):
+def load_boxtyp20(waterbox_param: Path) -> str:
     """Add boxtyp20 eval line."""
     return load_workflow_params(
         param_header=f"{linesep}! Water box{linesep}",
@@ -185,7 +190,8 @@ def load_boxtyp20(waterbox_param):
 
 
 # This is used by docking
-def prepare_multiple_input(pdb_input_list, psf_input_list):
+def prepare_multiple_input(pdb_input_list: list[FilePath],
+                           psf_input_list: list[FilePath]) -> str:
     """Prepare multiple input files."""
     input_str = f"{linesep}! Input structure{linesep}"
     for psf in psf_input_list:
@@ -200,7 +206,7 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
         ncount += 1
 
     # check how many chains there are across all the PDBs
-    chain_l = []
+    chain_l: list[list[str]] = []
     for pdb in pdb_input_list:
         for element in libpdb.identify_chainseg(pdb):
             chain_l.append(element)
@@ -214,7 +220,9 @@ def prepare_multiple_input(pdb_input_list, psf_input_list):
 
 
 # This is used by Topology and Scoring
-def prepare_single_input(pdb_input, psf_input=None):
+def prepare_single_input(
+        pdb_input: FilePath,
+        psf_input: Union[None, FilePath, list[FilePathT]] = None) -> str:
     """Input of the CNS file.
 
     This section will be written for any recipe even if some CNS variables
@@ -252,16 +260,16 @@ def prepare_single_input(pdb_input, psf_input=None):
 
 
 def prepare_cns_input(
-        model_number,
-        input_element,
-        step_path,
-        recipe_str,
-        defaults,
-        identifier,
-        ambig_fname="",
-        native_segid=False,
-        default_params_path=None,
-        ):
+        model_number: int,
+        input_element: Union[PDBFile, list[PDBFile]],
+        step_path: FilePath,
+        recipe_str: str,
+        defaults: Any,
+        identifier: str,
+        ambig_fname: FilePath = "",
+        native_segid: bool = False,
+        default_params_path: Optional[Path] = None,
+        ) -> Path:
     """
     Generate the .inp file needed by the CNS engine.
 
@@ -283,7 +291,7 @@ def prepare_cns_input(
         ]
 
     # write the PSFs
-    psf_list = []
+    psf_list: list[Path] = []
     if isinstance(input_element, (list, tuple)):
         for pdb in input_element:
             if isinstance(pdb.topology, (list, tuple)):
@@ -314,7 +322,7 @@ def prepare_cns_input(
     # prepare chain/seg IDs
     segid_str = ""
     if native_segid:
-        chainid_list = []
+        chainid_list: list[str] = []
         if isinstance(input_element, (list, tuple)):
             for pdb in input_element:
 
@@ -351,7 +359,9 @@ def prepare_cns_input(
     return inp_file
 
 
-def prepare_expected_pdb(model_obj, model_nb, path, identifier):
+def prepare_expected_pdb(model_obj: Union[PDBFile, tuple[PDBFile,
+                                                         ...]], model_nb: int,
+                         path: FilePath, identifier: str) -> PDBFile:
     """Prepare a PDBobject."""
     expected_pdb_fname = Path(path, f"{identifier}_{model_nb}.pdb")
     pdb = PDBFile(expected_pdb_fname, path=path)

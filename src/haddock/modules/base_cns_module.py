@@ -6,6 +6,7 @@ from pathlib import Path
 from haddock import log
 from haddock import toppar_path as global_toppar
 from haddock.core.defaults import cns_exec as global_cns_exec
+from haddock.core.typing import Any, FilePath, Optional, Union
 from haddock.gear.expandable_parameters import populate_mol_parameters_in_module
 from haddock.libs.libio import working_directory
 from haddock.libs.libutil import sort_numbered_paths
@@ -19,7 +20,8 @@ class BaseCNSModule(BaseHaddockModule):
     Contains additional functionalities excusive for CNS modules.
     """
 
-    def __init__(self, order, path, initial_params, cns_script):
+    def __init__(self, order: int, path: Path, initial_params: FilePath,
+                 cns_script: FilePath) -> None:
         """
         Instantitate CNSModule.
 
@@ -30,12 +32,12 @@ class BaseCNSModule(BaseHaddockModule):
         """
         super().__init__(order, path, initial_params)
 
-        self.cns_folder_path = Path(cns_script.resolve().parent)
-        self.cns_protocol_path = cns_script
+        self.cns_folder_path = Path(Path(cns_script).resolve().parent)
+        self.cns_protocol_path = Path(cns_script)
         self.toppar_path = global_toppar
         self.recipe_str = self.cns_protocol_path.read_text()
 
-    def run(self, **params):
+    def run(self, **params: Any) -> None:
         """Execute the module."""
         log.info(f'Running [{self.name}] module')
 
@@ -60,7 +62,7 @@ class BaseCNSModule(BaseHaddockModule):
 
         log.info(f'Module [{self.name}] finished.')
 
-    def default_envvars(self):
+    def default_envvars(self) -> dict[str, str]:
         """Return default env vars updated to `envvars` (if given)."""
         default_envvars = {
             "MODULE": str(self.cns_folder_path),
@@ -70,7 +72,7 @@ class BaseCNSModule(BaseHaddockModule):
 
         return default_envvars
 
-    def save_envvars(self, filename="envvars"):
+    def save_envvars(self, filename: FilePath = "envvars") -> None:
         """Save envvars needed for CNS to a file in the module's folder."""
         # there are so few variables, best to handle them by hand
         lines = (
@@ -86,7 +88,7 @@ class BaseCNSModule(BaseHaddockModule):
         Path(self.path, filename).write_text(fstr)
         return
 
-    def make_self_contained(self):
+    def make_self_contained(self) -> None:
         """Create folders to make run self-contained."""
         _ = Path(self.path, "cns")
         shutil.copytree(self.cns_folder_path, _)
@@ -110,8 +112,10 @@ class BaseCNSModule(BaseHaddockModule):
             self.params["cns_exec"] = shutil.copyfile(_cns_exec, new_cns)
             shutil.copystat(_cns_exec, new_cns)
             self.params["cns_exec"] = Path("..", Path(_cns_exec).name)
-    
-    def get_ambig_fnames(self, prev_ambig_fnames):
+
+    def get_ambig_fnames(
+            self, prev_ambig_fnames: list[Union[None, FilePath]]
+            ) -> Union[list[FilePath], None]:
         """Get the correct ambiguous restraint names.
         
         Parameters
@@ -124,14 +128,14 @@ class BaseCNSModule(BaseHaddockModule):
         ambig_fnames : list or None
             list of ambig_fname files to be used by the CNS module
         """
-        ambig_fname = self.params["ambig_fname"]
+        ambig_fname: Optional[Path] = self.params["ambig_fname"]
         ambig_fnames = None
         if ambig_fname:
             if ambig_fname.name.endswith("tgz"):
                 exp_name = ambig_fname.name.split(".tbl.tgz")[0]
                 exp_dir = ambig_fname.parent
                 self.log(f"Searching for {exp_name}*tbl files in {exp_dir}")
-                path = self.params["ambig_fname"].parent
+                path = ambig_fname.parent
                 ambig_fnames = list(path.glob(f"{exp_name}*tbl"))
                 # abort execution if no files are found
                 if len(ambig_fnames) == 0:

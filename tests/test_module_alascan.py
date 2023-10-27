@@ -25,7 +25,6 @@ from haddock.modules.analysis.alascan.scan import (
     create_alascan_plots,
     generate_alascan_output,
     get_index_list,
-    #get_score_string,
     mutate
 )
 
@@ -191,30 +190,31 @@ def test_scan_obj(scan_obj, protprot_model_list):
 
 def test_mutate(protprot_model_list):
     """Test the mutate function."""
-    mut_fname = Path(golden_data, protprot_model_list[0].file_name)
-    mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
-    assert mut_pdb_fname == Path("protprot_complex_1-A_T19A.pdb")
-    assert os.path.exists(mut_pdb_fname)
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        mut_fname = Path(golden_data, protprot_model_list[0].file_name)
+        os.chdir(path=tmpdir)
+        mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
+        
+        assert mut_pdb_fname == Path("protprot_complex_1-A_T19A.pdb")
+        assert os.path.exists(mut_pdb_fname)
 
-    first_line = open(mut_pdb_fname).readline()
-    assert first_line[17:20] == "ALA"
-    # clean up
-    os.remove(mut_pdb_fname)
+        first_line = open(mut_pdb_fname).readline()
+        assert first_line[17:20] == "ALA"
+   
 
-    with pytest.raises(KeyError):
-        mutate(mut_fname, "A", 19, "HOH")
+        with pytest.raises(KeyError):
+            mutate(mut_fname, "A", 19, "HOH")
 
 
 def test_add_delta_to_bfactor(protprot_model_list, example_df_scan):
     """Test the add_delta_to_bfactor function."""
-    mut_fname = Path(golden_data, protprot_model_list[0].file_name)
-    mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
-    add_delta_to_bfactor(str(mut_pdb_fname), example_df_scan)
-    # ALA 19 should have beta = 100.0
-    assert np.isclose(100.0, float(open(mut_pdb_fname).readline()[60:66]))
-
-    # clean up
-    os.remove(mut_pdb_fname)
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        mut_fname = Path(golden_data, protprot_model_list[0].file_name)
+        os.chdir(path=tmpdir)
+        mut_pdb_fname = mutate(mut_fname, "A", 19, "ALA")
+        add_delta_to_bfactor(str(mut_pdb_fname), example_df_scan)
+        # ALA 19 should have beta = 100.0
+        assert np.isclose(100.0, float(open(mut_pdb_fname).readline()[60:66]))
 
 
 def test_add_zscores(example_df_scan_clt):

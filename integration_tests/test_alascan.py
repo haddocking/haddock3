@@ -3,37 +3,47 @@ from pathlib import Path
 
 import pytest
 import shutil
+import pandas as pd
+import numpy as np
 
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG
 from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.libs.libontology import PDBFile
 from . import CNS_EXEC, DATA_DIR, has_cns
+from tests import golden_data
 
 @pytest.fixture
 def alascan_module():
+    """Return a default alascan module."""
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         alascan = AlascanModule(
-            order=0, path=tmpdir, initial_params=DEFAULT_ALASCAN_CONFIG
+            order=0, path=".", initial_params=DEFAULT_ALASCAN_CONFIG
         )
         alascan.params["int_cutoff"] = 3.5
         alascan.params["output"] = True
         yield alascan
     
-class MockPreviousIO:
+class MockPreviousIO():
+    def __init__(self, path):
+        self.path = path
+
     def retrieve_models(self, individualize: bool = False):
-        shutil.copy(Path("..", "tests", "golden_data", "protprot_complex_1.pdb"), Path(".", "protprot_complex_1.pdb"))
-        shutil.copy(Path("..", "tests", "golden_data", "protprot_complex_2.pdb"), Path(".", "protprot_complex_2.pdb"))
+        shutil.copy(Path(golden_data, "protprot_complex_1.pdb"), Path(".", "protprot_complex_1.pdb"))
+        shutil.copy(Path(golden_data, "protprot_complex_2.pdb"), Path(".", "protprot_complex_2.pdb"))
         model_list = [
             PDBFile(file_name="protprot_complex_1.pdb", path="."),
             PDBFile(file_name="protprot_complex_2.pdb", path="."),
         ]
+
         return model_list
 
-@has_cns
+    def output(self):
+        return None
+
+#@has_cns
 def test_alascan_default(alascan_module, mocker):
-    """Test the topoaa module."""
-    alascan_module.previous_io = MockPreviousIO()
-    mocker.patch("haddock.modules.BaseHaddockModule.export_io_models", return_value = None)
+    """Test the alascan module."""
+    alascan_module.previous_io = MockPreviousIO(path=alascan_module.path)
     alascan_module.run()
 
     expected_csv1 = Path(alascan_module.path, "scan_protprot_complex_1.csv")
@@ -43,4 +53,22 @@ def test_alascan_default(alascan_module, mocker):
     assert expected_csv1.exists(), f"{expected_csv1} does not exist"
     assert expected_csv2.exists(), f"{expected_csv2} does not exist"
     assert expected_clt_csv.exists(), f"{expected_clt_csv} does not exist"
+    
+    # check single complex csv
+    df = pd.read_csv(expected_csv1, sep="\t", comment="#")
+    assert df.shape == (10, 16), f"{expected_csv1} has wrong shape"
+    # ARG 17 B should have a delta_score approximately equal to 28.53 
+    assert np.isclose(
+        df.loc[df["ori_resname"] == "ARG"].iloc[0,:]["delta_score"],
+        28.53,
+        atol=10)
+
+    # check clt csv
+    df_clt = pd.read_csv(expected_clt_csv, sep="\t", comment="#")
+    assert df_clt.shape == (18, 11), f"{expected_clt_csv} has wrong shape"
+    # average delta score of A-38-ASP should be around 8.18
+    assert np.isclose(
+        df_clt.loc[df_clt["full_resname"] == "A-38-ASP"]["delta_score"],
+        8.18,
+        atol=2)
     

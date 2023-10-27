@@ -20,7 +20,6 @@ def alascan_module():
             order=0, path=".", initial_params=DEFAULT_ALASCAN_CONFIG
         )
         alascan.params["int_cutoff"] = 3.5
-        alascan.params["output"] = True
         yield alascan
     
 class MockPreviousIO():

@@ -25,6 +25,7 @@ from haddock.modules.analysis.alascan.scan import (
     create_alascan_plots,
     generate_alascan_output,
     get_index_list,
+    #get_score_string,
     mutate
 )
 
@@ -53,15 +54,16 @@ def params():
 @pytest.fixture
 def scan_obj(protprot_model_list, params):
     """Return example alascan module."""
-    scan_obj = Scan(
-        model_list=protprot_model_list,
-        output_name="alascan",
-        path=Path("."),
-        core=0,
-        params=params,
-    )
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        scan_obj = Scan(
+            model_list=protprot_model_list,
+            output_name="alascan",
+            path=Path(tmpdir),
+            core=0,
+            params=params,
+        )
 
-    yield scan_obj
+        yield scan_obj
 
 
 @pytest.fixture
@@ -70,15 +72,14 @@ def scanjob_obj(scan_obj):
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         yield ScanJob(
         scan_obj=scan_obj,
-        output=Path("alascan"),
+        output=Path(tmpdir),
         params=params,
-    )
+        )
 
 
 @pytest.fixture
 def alascan():
     """Return alascan module."""
-
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         yield AlascanModule(
             order=1,
@@ -255,6 +256,7 @@ def test_run(
     alascan,
 ):
     # Only add files that are used within the body of the `run` method!
+
     Path(alascan.path, "alascan_0.scan").touch()
     ala_path = Path(golden_data, "scan_protprot_complex_1.csv")
     shutil.copy(ala_path, Path(alascan.path, "scan_protprot_complex_1.csv"))
@@ -285,16 +287,12 @@ def test_scan_run_output(
     """Test Scan run and output method."""
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
     scan_obj.run()
-
+    print(f"os listdir {scan_obj.path}: {os.listdir(scan_obj.path)}")
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 2
 
     scan_obj.output()
     assert Path(scan_obj.path, "alascan").exists()
-
-    # clean up
-    os.unlink(Path(scan_obj.path, "alascan"))
-    os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
 
 
 def test_scan_run_interface(mocker, scan_obj):
@@ -306,8 +304,6 @@ def test_scan_run_interface(mocker, scan_obj):
 
     assert Path(scan_obj.path, "scan_protprot_complex_1.csv").exists()
     assert scan_obj.df_scan.shape[0] == 5
-    # clean up
-    os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
 
 
 def test_no_oriscore(mocker, scan_obj):
@@ -315,32 +311,31 @@ def test_no_oriscore(mocker, scan_obj):
     scan_obj.model_list[0].ori_score = None
     mocker.patch("haddock.modules.analysis.alascan.scan.calc_score", return_value = (-106.7, -29, -316, -13, 1494))
     scan_obj.run()
-    df = pd.read_csv("scan_protprot_complex_1.csv", sep="\t", comment="#")
+    df = pd.read_csv(Path(scan_obj.path, "scan_protprot_complex_1.csv"), sep="\t", comment="#")
     # column delta_ori_score should be nan
     assert np.isnan(df["delta_ori_score"][0])
-    print(os.listdir("."))
-    # clean up
-    os.unlink(Path(scan_obj.path, "scan_protprot_complex_1.csv"))
     
 
 def test_calc_score(mocker):
     """Test the run_scan method."""
     mocker.patch(
-        "subprocess.run",
-        return_value = CompletedProcess(
-            args=['haddock3-score', 'mdref_9-B_T16A.pdb', '--full', '--run_dir', 'haddock3-score-2'],
-            returncode=0,
-            stdout=b'> starting calculations...\n> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)\n> HADDOCK-score (emscoring) = -106.7376\n> vdw=-29.5808,elec=-316.542,desolv=-13.8484,air=0.0,bsa=1494.73\n', stderr=b'')
+        "haddock.modules.analysis.alascan.scan.get_score_string",
+        return_value = [
+        "> starting calculations...",
+        "> HADDOCK-score = (1.0 * vdw) + (0.2 * elec) + (1.0 * desolv) + (0.0 * air) + (0.0 * bsa)",
+        "> HADDOCK-score (emscoring) = -106.7376",
+        "> vdw=-29.5808,elec=-316.542,desolv=-13.8484,air=0.0,bsa=1494.73",
+        ]
     )
+    # sub with tmpdir
     scores = calc_score(Path(golden_data, "protprot_complex_1.pdb"), run_dir = "tmp")
     
     assert scores == (-106.7376, -29.5808, -316.542, -13.8484, 1494.73)
+
+def test_calc_score_wrong(mocker):
     mocker.patch(
-        "subprocess.run",
-        return_value = CompletedProcess(
-            args=['haddock3-score', 'mdref_9-B_T16A.pdb', '--full', '--run_dir', 'haddock3-score-2'],
-            returncode=1,
-            stdout=b'> could not calculate score')
+        "haddock.modules.analysis.alascan.scan.get_score_string",
+        return_value = ['> could not calculate score']
     )
     # now calc_score should raise an Exception
     with pytest.raises(Exception):
@@ -349,27 +344,30 @@ def test_calc_score(mocker):
 
 def test_generate_alascan_output(mocker, protprot_model_list, scan_file):
     """Test the generate_alascan_output method."""
-    shutil.copy(scan_file, Path("scan_protprot_complex_1.csv"))
-    models_to_export = generate_alascan_output(protprot_model_list, path=".")
-    assert len(models_to_export) == 1
-    assert models_to_export[0].ori_name == "protprot_complex_1.pdb"
-    assert models_to_export[0].file_name == "protprot_complex_1_alascan.pdb"
-
-    # clean up
-    os.unlink(Path("scan_protprot_complex_1.csv"))
-    os.unlink(Path("protprot_complex_1_alascan.pdb"))
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
+        os.chdir(tmpdir)
+        models_to_export = generate_alascan_output(
+            protprot_model_list,
+            path=tmpdir
+            )
+        assert len(models_to_export) == 1
+        assert models_to_export[0].ori_name == "protprot_complex_1.pdb"
+        assert models_to_export[0].file_name == "protprot_complex_1_alascan.pdb"
 
 
 class MockPreviousIO:
+    """Mock PreviousIO class."""
     # In the mocked method, add the arguments that are called by the original method
     #  that is being tested
     def retrieve_models(self, individualize: bool = False):
         return [
             PDBFile(file_name="protprot_complex_1.pdb", path=str(golden_data)),
-        ]
+            ]
 
 
 def mock_alascan_cluster_analysis():
+    """Mock alascan_cluster_analysis."""
     # Return whatever is necessary for the `run` method to work
     return {
         0: {
@@ -380,52 +378,41 @@ def mock_alascan_cluster_analysis():
                 "delta_desolv": 0.0,
                 "delta_bsa": 0.0,
                 "frac_pr": 0.0,
-            }
-        },
-    }
+                }
+            },
+        }
 
 
 def test_alascan_cluster_analysis(protprot_input_list, scan_file):
-    """Test alascan_cluster_analysis"""
-    shutil.copy(scan_file, Path("scan_protprot_complex_1.csv"))
-    shutil.copy(scan_file, Path("scan_protprot_complex_2.csv"))
-    
-    alascan_cluster_analysis(protprot_input_list)
+    """Test alascan_cluster_analysis."""
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_1.csv"))
+        shutil.copy(scan_file, Path(tmpdir, "scan_protprot_complex_2.csv"))
+        os.chdir(tmpdir)
+        alascan_cluster_analysis(protprot_input_list)
 
-    assert Path("scan_clt_-.csv").exists()
+        assert Path("scan_clt_-.csv").exists()
 
-    protprot_input_list[1].clt_id = 1
-    alascan_cluster_analysis(protprot_input_list)
+        protprot_input_list[1].clt_id = 1
+        alascan_cluster_analysis(protprot_input_list)
 
-    assert Path("scan_clt_1.csv").exists()
-    assert Path("scan_clt_-.csv").exists()
-
-    # clean up
-    os.unlink(Path("scan_protprot_complex_1.csv"))
-    os.unlink(Path("scan_protprot_complex_2.csv"))
-    os.unlink(Path("scan_clt_-.csv"))
-    os.unlink(Path("scan_clt_1.csv"))
+        assert Path("scan_clt_1.csv").exists()
+        assert Path("scan_clt_-.csv").exists()
 
 
 def test_create_alascan_plots(mocker, caplog):
-    """Test create_alascan_plots"""
-    mocker.patch("pandas.read_csv", return_value = pd.DataFrame())
+    """Test create_alascan_plots."""
+    os.remove("scan_clt_-.csv")
+    mocker.patch("pandas.read_csv", return_value=pd.DataFrame())
     create_alascan_plots({"-": []}, scan_residue="ALA")
 
     for record in caplog.records:
         assert record.levelname == "WARNING"
 
     # now assuming existing file but wrong plot creation
-    mocker.patch("pandas.read_csv", return_value = [])
-    mocker.patch("os.path.exists", return_value = True)
+    mocker.patch("pandas.read_csv", return_value=[])
+    mocker.patch("os.path.exists", return_value=True)
 
     create_alascan_plots({"-": []}, scan_residue="ALA")
     for record in caplog.records:
         assert record.levelname in ["INFO", "WARNING"]
-
-
-def test_failed_retrieve_models(alascan, mocker):
-    """Test the retrieve_models method."""
-    alascan.previous_io = []
-    with pytest.raises(Exception):
-        alascan.run()

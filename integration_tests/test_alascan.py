@@ -40,7 +40,7 @@ class MockPreviousIO():
     def output(self):
         return None
 
-#@has_cns
+@has_cns
 def test_alascan_default(alascan_module, mocker):
     """Test the alascan module."""
     alascan_module.previous_io = MockPreviousIO(path=alascan_module.path)

@@ -197,10 +197,10 @@ def test_ilrmsdmatrix_run(ilrmsdmatrix, mocker, contact_obj):
     mocker.patch("haddock.modules.BaseHaddockModule.export_io_models", return_value = None)
     ilrmsdmatrix.run()
     assert Path(ilrmsdmatrix.path, "ilrmsd.matrix").exists()
-    assert Path("receptor_contacts.con").exists()
+    assert Path(ilrmsdmatrix.path, "receptor_contacts.con").exists()
     with open(Path(ilrmsdmatrix.path, "ilrmsd.matrix")) as f:
         assert f.readline() == "1 2 16.715\n"
-    with open("receptor_contacts.con") as f:
+    with open(Path(ilrmsdmatrix.path, "receptor_contacts.con")) as f:
         lines = f.readlines()
         assert lines[0] == "A 37 38 39 40 43 44 45 69 71 72 75 90 93 94 96 132\n"
         assert lines[1] == "B 10 11 12 16 17 48 51 52 53 54 56 57\n"

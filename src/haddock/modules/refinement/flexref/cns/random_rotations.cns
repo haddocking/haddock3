@@ -1,0 +1,180 @@
+! random_rotations.cns
+!    Perform a random rotation
+!
+! ***********************************************************************
+! * Copyright 2003-2022 Alexandre Bonvin, Utrecht University.           *
+! * All rights reserved.                                                *
+! * This code is part of the HADDOCK software and governed by its       *
+! * license. Please see the LICENSE file that should have been included *
+! * as part of this package.                                            *
+! ***********************************************************************
+!
+! check if homomer
+
+inline @MODULE:check-homomers.cns
+
+do (store4 = 0) (all)
+evaluate ($ncount = 0)
+while ($ncount < $data.ncomponents) loop fixed
+    evaluate ($ncount = $ncount + 1)
+    eval($watersegname_$ncount="WA" + encode($ncount))
+    if ($mol_fix_origin_$ncount eq true) then
+        do (store4 = 1) (segid $prot_segid_$ncount)
+    end if
+end loop fixed
+
+if ($homosymmetry eq false) then
+    ! Random translation within a 10A cube
+    evaluate ($ncount = 0)
+    while ($ncount < $data.ncomponents) loop randtrans
+        evaluate ($ncount = $ncount +1)
+        if ($mol_fix_origin_$ncount eq false) then
+            evaluate ($xd = 10.0 * (0.5 - ran()))
+            evaluate ($yd = 10.0 * (0.5 - ran()))
+            evaluate ($zd = 10.0 * (0.5 - ran()))
+            coor trans sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount) vector=($xd,$yd,$zd) end
+        end if
+    end loop randtrans
+end if
+
+! Random rotation of molecules
+evaluate ($ncount = 0)
+evaluate ($nrotset = 0)
+while ($ncount < $data.ncomponents) loop randrot
+    evaluate ($ncount = $ncount +1)
+    if ($mol_fix_origin_$ncount eq false) then
+        show ave (x) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($xc = $result)
+        show ave (y) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($yc = $result)
+        show ave (z) (segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        evaluate ($zc = $result)
+
+        ! Random rotation for each molecule except for symmtrical homomers for which
+        ! the same rotation is applied to all molecules to keep the symmetry
+        if ($nrotset = 0) then
+            !1. Generate random e1 e2 e3 and e4 in [-1, 1] so that e1^2 + e2^2 < 1 and e3^2+e4^2 < 1
+            evaluate ($RRM_e1 = ran () * 2 - 1)
+            evaluate ($RRM_e2 = ran () * 2 - 1)
+            evaluate ($RRM_s1 = ($RRM_e1)*($RRM_e1) + ($RRM_e2)*($RRM_e2))
+
+            while ( $RRM_s1  >= 1) loop s1loop
+                evaluate ($RRM_e1 = ran () * 2 - 1)
+                evaluate ($RRM_e2 = ran () * 2 - 1)
+                evaluate ($RRM_s1 = ($RRM_e1)*($RRM_e1) + ($RRM_e2)*($RRM_e2))
+            end loop s1loop
+
+            evaluate ($RRM_e3 = ran () * 2 - 1)
+            evaluate ($RRM_e4 = ran () * 2 - 1)
+            evaluate ($RRM_s2 = ($RRM_e3)*($RRM_e3) + ($RRM_e4)*($RRM_e4))
+            while ( $RRM_s2  >= 1) loop s2loop
+                evaluate ($RRM_e3 = ran () * 2 - 1)
+                evaluate ($RRM_e4 = ran () * 2 - 1)
+                evaluate ($RRM_s2 = ($RRM_e3)*($RRM_e3) + ($RRM_e4)*($RRM_e4))
+            end loop s2loop
+
+            !2. the quaternion q0 q1 q2 q3
+            evaluate($RRM_q0 = $RRM_e1)
+            evaluate($RRM_q1 = $RRM_e2)
+            evaluate($RRM_q2 = $RRM_e3 * sqrt((1 - $RRM_s1)/$RRM_s2) )
+            evaluate($RRM_q3 = $RRM_e4 * sqrt((1 - $RRM_s1)/$RRM_s2) )
+
+            !3. The rotation matrix from the quaternion
+            evaluate ($x1 = $RRM_q0 * $RRM_q0  +  $RRM_q1 * $RRM_q1  -  $RRM_q2 * $RRM_q2  -  $RRM_q3 * $RRM_q3)
+            evaluate ($x2 = 2 * ($RRM_q1 * $RRM_q2 - $RRM_q0 * $RRM_q3) )
+            evaluate ($x3 = 2 * ($RRM_q1 * $RRM_q3 + $RRM_q0 * $RRM_q2) )
+            evaluate ($y1 = 2 * ($RRM_q1 * $RRM_q2 + $RRM_q0 * $RRM_q3) )
+            evaluate ($y2 = $RRM_q0 * $RRM_q0  -  $RRM_q1 * $RRM_q1  +  $RRM_q2 * $RRM_q2  -  $RRM_q3 * $RRM_q3)
+            evaluate ($y3 = 2 * ($RRM_q2 * $RRM_q3 - $RRM_q0 * $RRM_q1) )
+            evaluate ($z1 = 2 * ($RRM_q1 * $RRM_q3 - $RRM_q0 * $RRM_q2) )
+            evaluate ($z2 = 2 * ($RRM_q2 * $RRM_q3 + $RRM_q0 * $RRM_q1) )
+            evaluate ($z3 = $RRM_q0 * $RRM_q0  -  $RRM_q1 * $RRM_q1  -  $RRM_q2 * $RRM_q2  +  $RRM_q3 * $RRM_q3)
+
+            if ($homosymmetry eq true) then
+                evaluate ($nrotset = 1)
+            end if
+        end if
+
+        !4. The rotation
+        coor 
+            center=($xc $yc $zc)
+            rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
+            sele=(segid $prot_segid_$ncount or segid $watersegname_$ncount)
+        end
+    end if
+end loop randrot
+
+
+! If there are fixed molecules, randomly rotate as one unit all non-fixed ones
+! around the geometric center of the fixed ones
+
+show sum (store4) (all)
+
+if ($result > 0) then
+
+    show ave (x) (attribute store4 = 1)
+    evaluate ($xc = $result)
+    show ave (y) (attribute store4 = 1)
+    evaluate ($yc = $result)
+    show ave (z) (attribute store4 = 1)
+    evaluate ($zc = $result)
+
+    ! Random rotation for each molecule except for symmtrical homomers for which
+    ! the same rotation is applied to all molecules to keep the symmetry
+    if ($nrotset = 0) then
+        !1. Generate random e1 e2 e3 and e4 in [-1, 1] so that e1^2 + e2^2 < 1 and e3^2+e4^2 < 1
+        evaluate ($RRM_e1 = ran () * 2 - 1)
+        evaluate ($RRM_e2 = ran () * 2 - 1)
+        evaluate ($RRM_s1 = ($RRM_e1)*($RRM_e1) + ($RRM_e2)*($RRM_e2))
+
+        while ( $RRM_s1  >= 1) loop s1loop
+            evaluate ($RRM_e1 = ran () * 2 - 1)
+            evaluate ($RRM_e2 = ran () * 2 - 1)
+            evaluate ($RRM_s1 = ($RRM_e1)*($RRM_e1) + ($RRM_e2)*($RRM_e2))
+        end loop s1loop
+
+        evaluate ($RRM_e3 = ran () * 2 - 1)
+        evaluate ($RRM_e4 = ran () * 2 - 1)
+        evaluate ($RRM_s2 = ($RRM_e3)*($RRM_e3) + ($RRM_e4)*($RRM_e4))
+        while ( $RRM_s2  >= 1) loop s2loop
+            evaluate ($RRM_e3 = ran () * 2 - 1)
+            evaluate ($RRM_e4 = ran () * 2 - 1)
+            evaluate ($RRM_s2 = ($RRM_e3)*($RRM_e3) + ($RRM_e4)*($RRM_e4))
+        end loop s2loop
+
+        !2. the quaternion q0 q1 q2 q3
+        evaluate($RRM_q0 = $RRM_e1)
+        evaluate($RRM_q1 = $RRM_e2)
+        evaluate($RRM_q2 = $RRM_e3 * sqrt((1 - $RRM_s1)/$RRM_s2) )
+        evaluate($RRM_q3 = $RRM_e4 * sqrt((1 - $RRM_s1)/$RRM_s2) )
+
+        !3. The rotation matrix from the quaternion
+        evaluate ($x1 = $RRM_q0 * $RRM_q0  +  $RRM_q1 * $RRM_q1  -  $RRM_q2 * $RRM_q2  -  $RRM_q3 * $RRM_q3)
+        evaluate ($x2 = 2 * ($RRM_q1 * $RRM_q2 - $RRM_q0 * $RRM_q3) )
+        evaluate ($x3 = 2 * ($RRM_q1 * $RRM_q3 + $RRM_q0 * $RRM_q2) )
+        evaluate ($y1 = 2 * ($RRM_q1 * $RRM_q2 + $RRM_q0 * $RRM_q3) )
+        evaluate ($y2 = $RRM_q0 * $RRM_q0  -  $RRM_q1 * $RRM_q1  +  $RRM_q2 * $RRM_q2  -  $RRM_q3 * $RRM_q3)
+        evaluate ($y3 = 2 * ($RRM_q2 * $RRM_q3 - $RRM_q0 * $RRM_q1) )
+        evaluate ($z1 = 2 * ($RRM_q1 * $RRM_q3 - $RRM_q0 * $RRM_q2) )
+        evaluate ($z2 = 2 * ($RRM_q2 * $RRM_q3 + $RRM_q0 * $RRM_q1) )
+        evaluate ($z3 = $RRM_q0 * $RRM_q0  -  $RRM_q1 * $RRM_q1  -  $RRM_q2 * $RRM_q2  +  $RRM_q3 * $RRM_q3)
+
+        if ($homosymmetry eq true) then
+            evaluate ($nrotset = 1)
+        end if
+    end if
+
+    !4. The rotation
+    coor 
+        center=($xc $yc $zc)
+        rotate matrix=($x1 $x2 $x3) ($y1 $y2 $y3) ($z1 $z2 $z3)
+        sele=(attribute store4 = 0)
+    end
+end if
+
+do (x = refx) (resn ANI or resn DAN or resn XAN or resn SHA)
+do (y = refy) (resn ANI or resn DAN or resn XAN or resn SHA)
+do (z = refz) (resn ANI or resn DAN or resn XAN or resn SHA)
+
+!evaluate ($outname = "MODULE:" + "begin/" + $Filenames.fileroot + "_init_" + encode($count) + ".pdb")
+!write coor format=pdbo output=$outname end

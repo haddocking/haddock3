@@ -10,3 +10,4 @@ tox==3.24.5
 pandas==1.5.1
 plotly==5.11.0
 kaleido==0.2.1
+freesasa==2.2.0.post3

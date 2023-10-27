@@ -58,6 +58,7 @@ TITLE_NAMES = {
     "elec": "Eelec",
     "air": "Eair",
     "fnat": "FCC",
+    "bsa": "BSA",
 }
 
 AXIS_NAMES = {
@@ -71,6 +72,7 @@ AXIS_NAMES = {
     "ilrmsd": "interface-ligand RMSD [A]",
     "fnat": "Fraction of Common Contacts",
     "dockq": "DOCKQ",
+    "bsa": "Buried Surface Area [A^2]",
 }
 
 ClRank = dict[int, int]

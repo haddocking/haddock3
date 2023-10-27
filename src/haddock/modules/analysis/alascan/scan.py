@@ -1,18 +1,18 @@
 """alascan module."""
 import os
-import shlex
-import subprocess
 from pathlib import Path
 import shutil
 
 import numpy as np
 import pandas as pd
+import io
+from contextlib import redirect_stdout
 
 from haddock import log
 from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libplots import make_alascan_plot
 from haddock.modules.analysis.caprieval.capri import CAPRI
-
+from haddock.clis import cli_score
 
 ATOMS_TO_BE_MUTATED = ['C', 'N', 'CA', 'O', 'CB']
 
@@ -186,6 +186,28 @@ def add_delta_to_bfactor(pdb_f, df_scan):
     os.rename(tmp_pdb_f, pdb_f)
     return pdb_f
 
+def get_score_string(pdb_f, run_dir):
+    """Get score output from cli_score.main.
+
+    Parameters
+    ----------
+    pdb_f : str
+        Path to the pdb file.
+    
+    run_dir : str
+        Path to the run directory.
+    
+    Returns
+    -------
+    out : list
+        List of strings with the score output.
+    """
+    f = io.StringIO()
+    with redirect_stdout(f):
+        cli_score.main(pdb_f, run_dir, full=True)
+    out = f.getvalue().split(os.linesep)
+    return out
+
 
 def calc_score(pdb_f, run_dir):
     """Calculate the score of a model.
@@ -208,18 +230,9 @@ def calc_score(pdb_f, run_dir):
     bsa : float
         Buried surface area.
     """
-    cmd = f"haddock3-score {pdb_f} --full --run_dir {run_dir}"
-    p = subprocess.run(
-        shlex.split(cmd),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-        )
+    out_string = get_score_string(pdb_f, run_dir)
 
-    # check if failed
-    out = p.stdout.decode("utf-8").split(os.linesep)
-    if p.returncode != 0:
-        raise Exception(f"calc_score failed with command {cmd}")
-    for ln in out:
+    for ln in out_string:
         if ln.startswith("> HADDOCK-score (emscoring)"):
             score = float(ln.split()[-1])
         if ln.startswith("> vdw"):
@@ -262,6 +275,9 @@ def alascan_cluster_analysis(models):
     ----------
     models : list
         List of models.
+    
+    path : str
+        Path to the run directory.
     """
     clt_scan = {}
     cl_pops = {}
@@ -277,6 +293,7 @@ def alascan_cluster_analysis(models):
             cl_pops[cl_id] += 1
         # read the scan file
         alascan_fname = f"scan_{native.file_name.rstrip('.pdb')}.csv"
+        #alascan_fname = Path(path, alascan_fname)
         df_scan = pd.read_csv(alascan_fname, sep="\t", comment="#")
         # loop over the scan file
         for row_idx in range(df_scan.shape[0]):
@@ -310,6 +327,7 @@ def alascan_cluster_analysis(models):
     # now average the data
     for cl_id in clt_scan:
         scan_clt_filename = f"scan_clt_{cl_id}.csv"
+        #scan_clt_filename = Path(path, f"scan_clt_{cl_id}.csv")
         log.info(f"Writing {scan_clt_filename}")
         clt_data = []
         for ident in clt_scan[cl_id]:
@@ -532,7 +550,7 @@ class Scan:
                           'delta_ori_score', 'delta_score', 'delta_vdw',
                           'delta_elec', 'delta_desolv', 'delta_bsa']
             self.df_scan = pd.DataFrame(scan_data, columns=df_columns)
-            alascan_fname = f"scan_{native.file_name.rstrip('.pdb')}.csv"
+            alascan_fname = Path(self.path, f"scan_{native.file_name.rstrip('.pdb')}.csv")
             # add zscore
             self.df_scan = add_zscores(self.df_scan, 'delta_score')
 

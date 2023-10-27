@@ -11,7 +11,7 @@ resdic_:
     resdic_B, resdic_C, etc, where the last capital letter is the chain
     identifier.
   group: analysis
-  explevel: easy
+  explevel: expert
 int_cutoff:
   default: 5.0
   type: float

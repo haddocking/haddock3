@@ -1,9 +1,5 @@
 """HADDOCK3 module for alanine scan."""
-import shutil
 from pathlib import Path
-
-import pandas as pd
-import os
 
 from haddock import log
 from haddock.libs.libparallel import Scheduler
@@ -12,7 +8,6 @@ from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.alascan.scan import (
     Scan,
     ScanJob,
-    add_delta_to_bfactor,
     alascan_cluster_analysis,
     create_alascan_plots,
     generate_alascan_output,

@@ -269,7 +269,6 @@ class ilRMSD:
             ilrmsd = calc_rmsd(P_l_int, Q_l_int)
             return ilrmsd
 
-
     def run(self):
         """Run calculations."""
         # initialising the number of pairs

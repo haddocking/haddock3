@@ -208,6 +208,7 @@ class HaddockModule(BaseHaddockModule):
             )
         
         tot_npairs = nmodels * (nmodels - 1) // 2
+        ncores = parse_ncores(n=self.params['ncores'], njobs=tot_npairs)
         log.info(f"total number of pairs {tot_npairs}")
         npairs, ref_structs, mod_structs = rmsd_dispatcher(
             nmodels,

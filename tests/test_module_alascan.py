@@ -24,7 +24,6 @@ from haddock.modules.analysis.alascan.scan import (
     calc_score,
     create_alascan_plots,
     generate_alascan_output,
-    get_index_list,
     mutate
 )
 
@@ -222,15 +221,6 @@ def test_add_zscores(example_df_scan_clt):
     obs_df_scan_clt = add_zscores(example_df_scan_clt)
     assert np.isclose(obs_df_scan_clt["z_score"].values[0], -1.0)
     assert np.isclose(obs_df_scan_clt["z_score"].values[1], 1.0)
-
-
-def test_get_index_list():
-    """Test the get_index_list function."""
-    obs_idx_list = get_index_list(10, 2)
-    assert obs_idx_list == [0, 5, 10]
-
-    obs_idx_list = get_index_list(10, 3)
-    assert obs_idx_list == [0, 4, 7, 10]
 
 
 def test_confirm_installation(alascan):

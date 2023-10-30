@@ -63,39 +63,9 @@ RES_CODES = dict([
     ])
 
 
-def get_index_list(nmodels, ncores):
-    """
-    Optimal distribution of models among cores
-    
-    Parameters
-    ----------
-    nmodels : int
-        Number of models to be distributed.
-    
-    ncores : int
-        Number of cores to be used.
-    
-    Returns
-    -------
-    index_list : list
-        List of model indexes to be used for the parallel scanning.
-    """
-    spc = nmodels // ncores
-    # now the remainder
-    rem = nmodels % ncores
-    # now the list of indexes to be used for the SCAN calculation
-    index_list = [0]
-    for core in range(ncores):
-        if core < rem:
-            index_list.append(index_list[-1] + spc + 1)
-        else:
-            index_list.append(index_list[-1] + spc)
-    return index_list
-
-
 def mutate(pdb_f, target_chain, target_resnum, mut_resname):
     """
-    Mutate a resnum to a resname.
+    Mutate a residue in a PDB file into a different residue.
     
     Parameters
     ----------

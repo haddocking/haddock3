@@ -12,6 +12,22 @@ from pathlib import Path
 
 from haddock import EmptyPath, log
 from haddock.core.exceptions import SetupError
+from haddock.core.typing import (
+    PT,
+    Any,
+    AnyT,
+    Callable,
+    Container,
+    FilePath,
+    FilePathT,
+    Generator,
+    Iterable,
+    Optional,
+    ParamDict,
+    ParamMap,
+    ParamMapT,
+    Union,
+)
 from haddock.gear.greetings import get_goodbye_help
 
 
@@ -20,10 +36,12 @@ check_subprocess = partial(
     shell=True,
     check=True,
     stdout=subprocess.DEVNULL,
-    )
+)
 
 
-def get_result_or_same_in_list(function, value):
+def get_result_or_same_in_list(
+    function: Callable[[PT], AnyT], value: PT
+) -> Union[AnyT, list[PT]]:
     """
     Return the result if True or the value within a list.
 
@@ -36,14 +54,16 @@ def get_result_or_same_in_list(function, value):
     return result if result else [value]
 
 
-def make_list_if_string(item):
+def make_list_if_string(item: Union[str, list[str]]) -> list[str]:
     """Put `item` into a list."""
     if isinstance(item, str):
         return [item]
     return item
 
 
-def transform_to_list(item):
+def transform_to_list(
+    item: Union[Iterable[AnyT], AnyT]
+) -> Union[list[AnyT], tuple[AnyT, ...]]:
     """
     Put `item` into a list if not a list already.
 
@@ -57,11 +77,8 @@ def transform_to_list(item):
 
     Everything else returns `item` inside a one element list.
     """
-    if isinstance(item, set):
+    if isinstance(item, (set, dict)):
         return list(item)
-
-    if isinstance(item, dict):
-        return list(item.keys())
 
     if isinstance(item, (list, tuple)):
         return item
@@ -69,7 +86,7 @@ def transform_to_list(item):
     return [item]
 
 
-def copy_files_to_dir(paths, directory):
+def copy_files_to_dir(paths: Iterable[FilePath], directory: FilePath) -> None:
     """
     Copy files to directory.
 
@@ -85,7 +102,7 @@ def copy_files_to_dir(paths, directory):
         shutil.copy(path, directory)
 
 
-def remove_folder(folder):
+def remove_folder(folder: FilePath) -> None:
     """
     Remove a folder if it exists.
 
@@ -95,11 +112,11 @@ def remove_folder(folder):
         Path to folder to remove.
     """
     if Path(folder).exists():
-        log.warning(f'{folder} exists and it will be REMOVED!')
+        log.warning(f"{folder} exists and it will be REMOVED!")
         shutil.rmtree(folder)
 
 
-def remove_dict_keys(d, keys):
+def remove_dict_keys(d: ParamMap, keys: Container[str]) -> ParamDict:
     """
     Remove `keys` from dictionary (`d`).
 
@@ -111,7 +128,11 @@ def remove_dict_keys(d, keys):
     return {k: deepcopy(v) for k, v in d.items() if k not in keys}
 
 
-def parse_ncores(n=None, njobs=None, max_cpus=None):
+def parse_ncores(
+    n: Optional[Union[int, str]] = None,
+    njobs: Optional[int] = None,
+    max_cpus: Optional[bool] = None,
+) -> int:
     """
     Check the number of cores according to HADDOCK3 architecture.
 
@@ -140,11 +161,11 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
         A correct number of cores according to specifications.
     """
     if max_cpus is None or max_cpus is False:
-        max_cpus = max(cpu_count() - 1, 1)
+        max_cpus = max(cpu_count() - 1, 1)  # type: ignore
     if max_cpus is True:
-        max_cpus = cpu_count()
+        max_cpus = cpu_count()  # type: ignore
     elif not isinstance(max_cpus, int):
-        raise TypeError(f'`max_cpus` not of valid type: {type(max_cpus)}')
+        raise TypeError(f"`max_cpus` not of valid type: {type(max_cpus)}")
 
     if n is None:
         return max_cpus
@@ -164,7 +185,7 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
         log.info(
             f"Selected {ncores} cores to process {njobs} jobs, with {max_cpus} "
             "maximum available cores."
-            )
+        )
         return ncores
 
     log.debug(f"`njobs` not specified, evaluating initial value {n}...")
@@ -174,10 +195,10 @@ def parse_ncores(n=None, njobs=None, max_cpus=None):
 
 
 def non_negative_int(
-        n,
-        exception=ValueError,
-        emsg="`n` do not satisfies",
-        ):
+    n: Any,
+    exception: type[Exception] = ValueError,
+    emsg: str = "`n` do not satisfies",
+) -> int:
     """
     Transform `n` in int and returns if `compare` evaluates to True.
 
@@ -198,15 +219,18 @@ def non_negative_int(
     ValueError, TypeError
         If `n` cannot be converted to `int`
     """
-    n1 = int(n)
-    if n1 >= 0:
-        return n1
+    try:
+        n1 = int(n)
+        if n1 >= 0:
+            return n1
+    except Exception as e:
+        raise e
+    else:
+        # don't change to f-strings, .format has a purpose
+        raise exception(emsg.format(n))
 
-    # don't change to f-strings, .format has a purpose
-    raise exception(emsg.format(n))
 
-
-def recursive_dict_update(d, u):
+def recursive_dict_update(d: ParamMapT, u: ParamMap) -> ParamMapT:
     """
     Update dictionary `d` according to `u` recursively.
 
@@ -218,7 +242,8 @@ def recursive_dict_update(d, u):
         A new dict object with updated key: values. The original dictionaries
         are not modified.
     """
-    def _recurse(d_, u_):
+
+    def _recurse(d_: ParamMapT, u_: ParamMap) -> ParamMapT:
         for k, v in u_.items():
             if isinstance(v, collections.abc.Mapping):
                 d_[k] = _recurse(d_.get(k, {}), v)
@@ -233,7 +258,7 @@ def recursive_dict_update(d, u):
     return new
 
 
-def get_number_from_path_stem(path):
+def get_number_from_path_stem(path: FilePath) -> int:
     """
     Extract tail number from path.
 
@@ -266,11 +291,11 @@ def get_number_from_path_stem(path):
         The tail integer of the path.
     """
     stem = Path(path).stem
-    number = re.findall(r'\d+', stem)[-1]
+    number = re.findall(r"\d+", stem)[-1]
     return int(number)
 
 
-def sort_numbered_paths(*paths):
+def sort_numbered_paths(*paths: FilePathT) -> list[FilePathT]:
     """
     Sort input paths to tail number.
 
@@ -297,14 +322,14 @@ def sort_numbered_paths(*paths):
         emsg = (
             "Mind the packing *argument, input should be strings or Paths, "
             "not a list."
-            )
+        )
         raise TypeError(emsg)
     except IndexError:
         return sorted(paths, key=lambda x: Path(x).stem)
 
 
 @contextlib.contextmanager
-def log_error_and_exit():
+def log_error_and_exit() -> Generator[None, None, None]:
     """Exit with exception."""
     try:
         yield
@@ -312,14 +337,14 @@ def log_error_and_exit():
         log.exception(err)
         log.error(err)
         log.error(
-            'An error has occurred, see log file. '
-            'And contact the developers if needed.'
-            )
+            "An error has occurred, see log file. "
+            "And contact the developers if needed."
+        )
         log.info(get_goodbye_help())
         sys.exit(1)
 
 
-def extract_keys_recursive(config):
+def extract_keys_recursive(config: ParamMap) -> Generator[str, None, None]:
     """Extract keys recursively for the needed modules."""
     for param_name, value in config.items():
         if isinstance(value, collections.abc.Mapping):
@@ -328,7 +353,7 @@ def extract_keys_recursive(config):
             yield param_name
 
 
-def recursive_convert_paths_to_strings(params):
+def recursive_convert_paths_to_strings(params: ParamMapT) -> ParamMapT:
     """
     Convert paths to strings recursively over a dictionary.
 

@@ -9,6 +9,14 @@ from pdbtools.pdb_splitmodel import run as split_model
 from pdbtools.pdb_tidy import run as tidy_pdbfile
 
 from haddock.core.supported_molecules import supported_residues
+from haddock.core.typing import (
+    Callable,
+    FilePath,
+    FilePathT,
+    Iterable,
+    Optional,
+    Union,
+    )
 from haddock.libs.libio import working_directory
 from haddock.libs.libutil import get_result_or_same_in_list, sort_numbered_paths
 
@@ -31,7 +39,7 @@ slc_element = slice(76, 78)
 slc_charge = slice(78, 80)
 
 
-def format_atom_name(atom, element):
+def format_atom_name(atom: str, element: str) -> str:
     """
     Format PDB atom name.
 
@@ -77,9 +85,9 @@ def format_atom_name(atom, element):
         raise KeyError(_) from err
 
 
-def get_supported_residues(haddock_topology):
+def get_supported_residues(haddock_topology: FilePath) -> list[str]:
     """Read the topology file and identify which data is supported."""
-    supported = []
+    supported: list[str] = []
     with open(haddock_topology) as input_handler:
         for line in input_handler:
             if "resi" in line[:4].casefold():
@@ -102,7 +110,8 @@ _to_rename = {
 _to_keep = list(supported_residues)
 
 
-def split_ensemble(pdb_file_path, dest=None):
+def split_ensemble(pdb_file_path: Path,
+                   dest: Optional[FilePath] = None) -> list[Path]:
     """
     Split a multimodel PDB file into different structures.
 
@@ -111,7 +120,8 @@ def split_ensemble(pdb_file_path, dest=None):
     dest : str or pathlib.Path
         Destination folder.
     """
-    dest = Path.cwd()
+    if dest is None:
+        dest = Path.cwd()
     assert pdb_file_path.is_file(), pdb_file_path
     with open(pdb_file_path) as input_handler:
         with working_directory(dest):
@@ -120,7 +130,7 @@ def split_ensemble(pdb_file_path, dest=None):
     return sort_numbered_paths(*get_new_models(pdb_file_path))
 
 
-def split_by_chain(pdb_file_path):
+def split_by_chain(pdb_file_path: FilePath) -> list[Path]:
     """Split a PDB file into multiple structures for each chain."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()
     with open(pdb_file_path) as input_handler:
@@ -130,7 +140,7 @@ def split_by_chain(pdb_file_path):
     return get_new_models(pdb_file_path)
 
 
-def tidy(pdb_file_path, new_pdb_file_path):
+def tidy(pdb_file_path: FilePath, new_pdb_file_path: FilePath) -> None:
     """Tidy PDB structure."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()
     with open(pdb_file_path) as input_handler:
@@ -140,7 +150,8 @@ def tidy(pdb_file_path, new_pdb_file_path):
                     output_handler.write(line)
 
 
-def swap_segid_chain(pdb_file_path, new_pdb_file_path):
+def swap_segid_chain(pdb_file_path: FilePath,
+                     new_pdb_file_path: FilePath) -> None:
     """Add to the Chain ID column the found Segid."""
     abs_path = Path(pdb_file_path).resolve().parent.absolute()
     with open(pdb_file_path) as input_handler:
@@ -150,13 +161,16 @@ def swap_segid_chain(pdb_file_path, new_pdb_file_path):
                     output_handler.write(line)
 
 
-def sanitize(pdb_file_path, overwrite=True, custom_topology=False):
+def sanitize(
+        pdb_file_path: FilePathT,
+        overwrite: bool = True,
+        custom_topology: Optional[FilePath] = None) -> Union[FilePathT, Path]:
     """Sanitize a PDB file."""
     if custom_topology:
         custom_res_to_keep = get_supported_residues(custom_topology)
         _to_keep.extend(custom_res_to_keep)
 
-    good_lines = []
+    good_lines: list[str] = []
     with open(pdb_file_path) as input_handler:
         for line in input_handler:
             line = line.rstrip(os.linesep)
@@ -183,10 +197,11 @@ def sanitize(pdb_file_path, overwrite=True, custom_topology=False):
     return new_pdb_file
 
 
-def identify_chainseg(pdb_file_path, sort=True):
+def identify_chainseg(pdb_file_path: FilePath,
+                      sort: bool = True) -> tuple[list[str], list[str]]:
     """Return segID OR chainID."""
-    segids = []
-    chains = []
+    segids: list[str] = []
+    chains: list[str] = []
     with open(pdb_file_path) as input_handler:
         for line in input_handler:
             if line.startswith(("ATOM  ", "HETATM")):
@@ -213,7 +228,7 @@ def identify_chainseg(pdb_file_path, sort=True):
     return segids, chains
 
 
-def get_new_models(pdb_file_path):
+def get_new_models(pdb_file_path: FilePath) -> list[Path]:
     """
     Get new PDB models if they exist.
 
@@ -226,7 +241,8 @@ def get_new_models(pdb_file_path):
     return new_models
 
 
-def get_pdb_file_suffix_variations(file_name, sep="_"):
+def get_pdb_file_suffix_variations(file_name: FilePath,
+                                   sep: str = "_") -> list[Path]:
     """
     List suffix variations of a PDB file in the current path.
 
@@ -252,7 +268,10 @@ def get_pdb_file_suffix_variations(file_name, sep="_"):
     return list(Path(".").glob(f"{basename.stem}{sep}*{basename.suffix}"))
 
 
-def read_RECORD_section(lines, section_slice, func=set):
+def read_RECORD_section(
+        lines: Iterable[str],
+        section_slice: slice,
+        func: Callable[[Iterable[str]], Iterable[str]] = set) -> Iterable[str]:
     """
     Create a set of observations from a section of the ATOM line.
 

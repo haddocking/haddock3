@@ -19,7 +19,7 @@ Four parameters can be defined in this context:
       clusters.
     * if `criterion` is ``distance``, it must be the value of
       distance that separates distinct clusters.
-      
+
   If not specified, the default is calculated either as the total number of
   models divided by four (`maxclust`) or as the average of the dendrogram height
   (`distance`)
@@ -53,7 +53,7 @@ from haddock.modules.analysis.clustrmsd.clustrmsd import (
     write_clusters,
     write_clustrmsd_file,
     )
-
+from typing import Union
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -64,29 +64,34 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(
+        self, order: int, path: Path, initial_params: Union[Path, str] = DEFAULT_CONFIG
+    ) -> None:
         super().__init__(order, path, initial_params)
 
         self.matrix_json = self._load_previous_io("rmsd_matrix.json")
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if contact executable is compiled."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
         models = self.previous_io.retrieve_models()
 
         # Cluster
-        rmsd_matrix = read_matrix(
-            self.matrix_json.input[0]
-            )
-                
+        rmsd_matrix = read_matrix(self.matrix_json.input[0])
+        # loading parameters
+        linkage_type = self.params["linkage"]
+        crit = self.params["criterion"]
+        threshold = self.params["threshold"]
+
         # getting clusters_list
         dendrogram = get_dendrogram(rmsd_matrix, self.params["linkage"])
         # setting tolerance
+        tol: Union[float, int]
         if np.isnan(self.params["tolerance"]):
             self.log("tolerance is not defined")
             if self.params['criterion'] == "maxclust":
@@ -143,9 +148,7 @@ class HaddockModule(BaseHaddockModule):
         self.output_models = add_cluster_info(sorted_score_dic, clt_dic)
         
         # Write unclustered structures
-        write_structure_list(models,
-                             self.output_models,
-                             out_fname="clustrmsd.tsv")
+        write_structure_list(models, self.output_models, out_fname="clustrmsd.tsv")  # type: ignore
 
         write_clustrmsd_file(
             clusters,

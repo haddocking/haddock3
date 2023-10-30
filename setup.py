@@ -14,7 +14,7 @@ warnings.filterwarnings("ignore", category=SetuptoolsDeprecationWarning)
 warnings.filterwarnings("ignore", category=EasyInstallDeprecationWarning)
 
 
-def read(*names, **kwargs):
+def read(*names, **kwargs) -> str:
     """Read description files."""
     path = join(dirname(__file__), *names)
     with open(path, encoding=kwargs.get('encoding', 'utf8')) as fh:
@@ -91,6 +91,7 @@ setup(
             'haddock3-analyse = haddock.clis.cli_analyse:maincli',
             'haddock3-traceback = haddock.clis.cli_traceback:maincli',
             'haddock3-re = haddock.clis.cli_re:maincli',
+	        'haddock3-restraints = haddock.clis.cli_restraints:maincli'
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

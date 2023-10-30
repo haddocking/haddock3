@@ -27,19 +27,30 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import (
+    Any,
+    ArgumentParser,
+    Callable,
+    FilePath,
+    ImgFormat,
+    Namespace,
+    Optional,
+    ParamDict,
+    ParamMap,
+)
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libcli import _ParamsToDict
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import (
+    ClRank,
     box_plot_handler,
     clt_table_handler,
     read_capri_table,
     report_generator,
     scatter_plot_handler,
-    )
+)
 from haddock.modules import get_module_steps_folders
-from haddock.modules.analysis.caprieval import \
-    DEFAULT_CONFIG as caprieval_params
+from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
@@ -47,7 +58,7 @@ ANA_FOLDER = "analysis"  # name of the analysis folder
 INTER_STR = "interactive"  # suffix of interactive analysis folders
 
 
-def get_cluster_ranking(capri_clt_filename, top_cluster):
+def get_cluster_ranking(capri_clt_filename: FilePath, top_cluster: int) -> ClRank:
     """
     Get capri cluster ranking.
 
@@ -63,14 +74,16 @@ def get_cluster_ranking(capri_clt_filename, top_cluster):
     cl_ranking : dict
         {cluster_id : cluster_rank} dictionary
     """
-    cl_ranking = {}
+    cl_ranking: ClRank = {}
     dfcl = read_capri_table(capri_clt_filename)
     for n in range(min(top_cluster, dfcl.shape[0])):
         cl_ranking[dfcl["cluster_id"].iloc[n]] = dfcl["caprieval_rank"].iloc[n]
     return cl_ranking
 
 
-def update_paths(capri_ss_filename, toch="../", toadd="../../"):
+def update_paths(
+    capri_ss_filename: FilePath, toch: str = "../", toadd: str = "../../"
+) -> None:
     """
     Update paths in capri_ss_filename.
 
@@ -83,7 +96,7 @@ def update_paths(capri_ss_filename, toch="../", toadd="../../"):
     toadd : str
         string to be added
     """
-    new_lines = []
+    new_lines: list[str] = []
     with open(capri_ss_filename, "r") as rfile:
         for ln in rfile:
             new_ln = ln.replace(toch, toadd)
@@ -100,14 +113,14 @@ ap = argparse.ArgumentParser(
     prog="haddock3-analyse",
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 ap.add_argument(
     "-r",
     "--run-dir",
     help="The input run directory.",
     required=True,
-    )
+)
 
 ap.add_argument(
     "-m",
@@ -116,7 +129,7 @@ ap.add_argument(
     help="The number of the steps to copy.",
     required=True,
     type=int,
-    )
+)
 
 ap.add_argument(
     "-t",
@@ -124,8 +137,8 @@ ap.add_argument(
     help="The number of clusters to show.",
     required=False,
     type=int,
-    default=10
-    )
+    default=10,
+)
 
 ap.add_argument(
     "--format",
@@ -133,16 +146,12 @@ ap.add_argument(
     required=False,
     type=str,
     default=None,
-    choices=["png", "pdf", "svg", "jpeg", "webp"]
-    )
+    choices=["png", "pdf", "svg", "jpeg", "webp"],
+)
 
 ap.add_argument(
-    "--scale",
-    help="scale for images",
-    required=False,
-    type=float,
-    default=1.0
-    )
+    "--scale", help="scale for images", required=False, type=float, default=1.0
+)
 
 ap.add_argument(
     "--inter",
@@ -160,35 +169,35 @@ ap.add_argument(
         "Any other parameter of the `caprieval` module."
         "For example: -p reference_fname target.pdb."
         "You can give any number of parameters."
-        ),
+    ),
     action=_ParamsToDict,
     default={},
     nargs="*",
-    )
+)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = vars(load_args(ap))
     kwargs = cmd.pop("other_params")
     main(**cmd, **kwargs)
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def run_capri_analysis(step, run_dir, capri_dict):
+def run_capri_analysis(step: str, run_dir: FilePath, capri_dict: ParamMap) -> None:
     """
     Run the caprieval analysis.
 
@@ -210,7 +219,7 @@ def run_capri_analysis(step, run_dir, capri_dict):
         order=1,
         path=Path(run_dir),
         initial_params=caprieval_params,
-        )
+    )
     caprieval_module.update_params(**capri_dict)
     # update model info
     caprieval_module.previous_io = io
@@ -218,7 +227,7 @@ def run_capri_analysis(step, run_dir, capri_dict):
     caprieval_module._run()
 
 
-def update_capri_dict(default_capri, kwargs):
+def update_capri_dict(default_capri: ParamDict, kwargs: ParamMap) -> ParamDict:
     """
     Update capri dictionary.
 
@@ -237,7 +246,9 @@ def update_capri_dict(default_capri, kwargs):
     capri_dict = default_capri.copy()
     for param in kwargs:
         if param not in default_capri:
-            sys.exit(f'* ERROR * Parameter {param!r} is not a valid `caprieval` parameter')  # noqa:E501
+            sys.exit(
+                f"* ERROR * Parameter {param!r} is not a valid `caprieval` parameter"
+            )  # noqa:E501
         else:
             if param.endswith("fname"):  # using full path for files
                 rel_path = Path(kwargs[param])
@@ -249,7 +260,9 @@ def update_capri_dict(default_capri, kwargs):
     return capri_dict
 
 
-def update_paths_in_capri_dict(capri_dict, target_path):
+def update_paths_in_capri_dict(
+    capri_dict: ParamDict, target_path: FilePath
+) -> ParamDict:
     """
     Make capri_dict specific to target_path.
 
@@ -267,17 +280,25 @@ def update_paths_in_capri_dict(capri_dict, target_path):
     """
     new_capri_dict = capri_dict.copy()
     for key in new_capri_dict:
-        if key.endswith("fname") and new_capri_dict[key] not in ['', None]:
+        if key.endswith("fname") and new_capri_dict[key] not in ["", None]:
             try:
                 ref_path = Path(target_path, "reference.pdb")
                 shutil.copy(new_capri_dict[key], ref_path)
                 new_capri_dict[key] = Path("reference.pdb")
             except FileNotFoundError:
-                sys.exit(f'file not found {new_capri_dict[key]}')
+                sys.exit(f"file not found {new_capri_dict[key]}")
     return new_capri_dict
 
 
-def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, scale):  # noqa:E501
+def analyse_step(
+    step: str,
+    run_dir: FilePath,
+    capri_dict: ParamDict,
+    target_path: Path,
+    top_cluster: int,
+    format: Optional[ImgFormat],
+    scale: Optional[float],
+) -> None:
     """
     Analyse a step.
 
@@ -335,7 +356,15 @@ def analyse_step(step, run_dir, capri_dict, target_path, top_cluster, format, sc
         report_generator(boxes, scatters, tables, step)
 
 
-def main(run_dir, modules, top_cluster, format, scale, inter, **kwargs):
+def main(
+    run_dir: FilePath,
+    modules: list[int],
+    top_cluster: int,
+    format: Optional[ImgFormat],
+    scale: Optional[float],
+    inter: bool(),
+    **kwargs: Any,
+) -> None:
     """
     Analyse CLI.
 
@@ -360,8 +389,10 @@ def main(run_dir, modules, top_cluster, format, scale, inter, **kwargs):
         analyse only steps labelled as 'interactive'
     """
     log.level = 20
-    log.info(f"Running haddock3-analyse on {run_dir}, modules {modules}, "
-             f"with top_cluster = {top_cluster}")
+    log.info(
+        f"Running haddock3-analyse on {run_dir}, modules {modules}, "
+        f"with top_cluster = {top_cluster}"
+    )
     ori_cwd = os.getcwd()
     # modifying the parameters
     default_capri = read_from_yaml_config(caprieval_params)
@@ -388,8 +419,14 @@ def main(run_dir, modules, top_cluster, format, scale, inter, **kwargs):
     log.info(f"selected steps: {', '.join(sel_steps)}")
 
     # analysis
+<<<<<<< HEAD
     good_folder_paths, bad_folder_paths = [], []
     for step in sel_steps:
+=======
+    good_folder_paths: list[Path] = []
+    bad_folder_paths: list[Path] = []
+    for step in selected_steps:
+>>>>>>> main
         subfolder_name = f"{step}_analysis"
         target_path = Path(Path("./"), subfolder_name)
 
@@ -397,8 +434,9 @@ def main(run_dir, modules, top_cluster, format, scale, inter, **kwargs):
         dest_path = Path(ANA_FOLDER, subfolder_name)
         if dest_path.exists():
             if len(os.listdir(dest_path)) != 0:
-                log.warning(f"{dest_path} exists and is not empty. "
-                            "Skipping analysis...")
+                log.warning(
+                    f"{dest_path} exists and is not empty. " "Skipping analysis..."
+                )
                 continue
             else:  # subfolder is empty, remove it.
                 log.info(f"Removing empty folder {dest_path}.")
@@ -407,19 +445,15 @@ def main(run_dir, modules, top_cluster, format, scale, inter, **kwargs):
         # run the analysis
         error = False
         try:
-            analyse_step(step,
-                         Path("./"),
-                         capri_dict,
-                         target_path,
-                         top_cluster,
-                         format,
-                         scale)
+            analyse_step(
+                step, Path("./"), capri_dict, target_path, top_cluster, format, scale
+            )
         except Exception as e:
             error = True
             log.warning(
                 f"""Could not execute the analysis for step {step}.
                 The following error occurred {e}"""
-                )
+            )
         if error:
             bad_folder_paths.append(target_path)
         else:
@@ -449,16 +483,18 @@ def main(run_dir, modules, top_cluster, format, scale, inter, **kwargs):
             update_paths(ss_file, "../", "../../")
         report_file = Path(outdir, directory, "report.html")
         log.info(f"View the results in {report_file}")
-        info_msg = ("To view structures or download the structure files, "
-                    f"in a terminal run the command "
-                    f"`python -m http.server --directory {rundir_cwd}`. "
-                    "By default, http server runs on `http://0.0.0.0:8000/`. "
-                    f"Open the link http://0.0.0.0:8000/{report_file} "
-                    "in a web browser.")
+        info_msg = (
+            "To view structures or download the structure files, "
+            f"in a terminal run the command "
+            f"`python -m http.server --directory {rundir_cwd}`. "
+            "By default, http server runs on `http://0.0.0.0:8000/`. "
+            f"Open the link http://0.0.0.0:8000/{report_file} "
+            "in a web browser."
+        )
         log.info(info_msg)
     os.chdir(ori_cwd)
     return
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

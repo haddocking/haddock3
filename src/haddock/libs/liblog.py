@@ -2,8 +2,12 @@
 import io
 import logging
 import sys
+from argparse import ArgumentParser
 from functools import partial
-from logging import FileHandler, StreamHandler
+from logging import FileHandler, Logger, StreamHandler
+from typing import TextIO, Union
+
+from haddock.core.typing import FilePath, StreamHandlerT
 
 
 log_file_name = 'log'
@@ -33,7 +37,7 @@ log_levels = {
     }
 
 
-def add_loglevel_arg(parser):
+def add_loglevel_arg(parser: ArgumentParser) -> None:
     """Add log level argument to CLI."""
     parser.add_argument(
         "--log-level",
@@ -44,12 +48,12 @@ def add_loglevel_arg(parser):
 
 
 def add_handler(
-        log_obj,
-        handler,
-        stream,
-        log_level='INFO',
-        formatter=info_formatter,
-        ):
+        log_obj: Logger,
+        handler: type[StreamHandlerT],
+        stream: Union[FilePath, TextIO],
+        log_level: str = 'INFO',
+        formatter: str = info_formatter,
+        ) -> StreamHandlerT:
     """Add a logging Handler to the log object."""
     ch = handler(stream)
     ch.setLevel(log_levels[log_level.upper()])
@@ -58,7 +62,7 @@ def add_handler(
     return ch
 
 
-def add_log_for_CLI(log, log_level, logfile):
+def add_log_for_CLI(log: Logger, log_level: str, logfile: FilePath) -> None:
     """Configure log for command-line clients."""
     llu = log_level.upper()
 

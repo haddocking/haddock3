@@ -13,6 +13,7 @@ from collections.abc import Mapping
 from pathlib import Path
 
 from haddock import haddock3_repository_path, haddock3_source_path
+from haddock.core.typing import ParamMap
 from haddock.libs.libio import read_from_yaml
 
 
@@ -30,25 +31,25 @@ class HeadingController:
     Read more at: https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html#headings
     """  # noqa: E501
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.title_headings = ['-', '`', '~', '*']
         self._idx = 0
 
     @property
-    def next(self):
+    def next(self) -> str:
         """Give the next heading char."""
         return self.title_headings[self._idx + 1]
 
     @property
-    def current(self):
+    def current(self) -> str:
         """Give the current heading char."""
         return self.title_headings[self._idx]
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset to the first heading."""
         self._idx = 0
 
-    def increase(self):
+    def increase(self) -> None:
         """Increase current heading."""
         self._idx += 1
 
@@ -57,7 +58,7 @@ HEADING = HeadingController()
 
 
 # prepare YAML markdown files
-def main():
+def main() -> None:
     """
     Prepare restructured text files from YAML default configs in modules.
 
@@ -69,7 +70,7 @@ def main():
     # from haddock.modules import modules_category
     # to avoid importing dependencies of the haddock modules packages
     pattern = Path('modules', '*', '*', '*.yaml')
-    configs = list(haddock3_source_path.glob(str(pattern)))
+    configs = haddock3_source_path.glob(str(pattern))
 
     # create RST pages for all modules' configuration files.
     for config in configs:
@@ -140,7 +141,7 @@ def main():
         fout.write(text)
 
 
-def do_text(name, param, level):
+def do_text(name: str, param: ParamMap, level: str) -> str:
     """Create text from parameter dictionary."""
     text = [
         f'{name}',
@@ -159,7 +160,8 @@ def do_text(name, param, level):
     return os.linesep.join(text)
 
 
-def loop_params(config, easy, expert, guru):
+def loop_params(config: ParamMap, easy: list[str], expert: list[str],
+                guru: list[str]) -> tuple[list[str], list[str], list[str]]:
     """
     Treat parameters for module.
 
@@ -248,7 +250,7 @@ def loop_params(config, easy, expert, guru):
     return easy, expert, guru
 
 
-def build_rst(module_params):
+def build_rst(module_params: ParamMap) -> str:
     """Build .rst text."""
     easy = ['Easy', HEADING.current * 4, '']
     expert = ["Expert", HEADING.current * 6, '']
@@ -257,7 +259,7 @@ def build_rst(module_params):
     HEADING.increase()
     easy, expert, guru = loop_params(module_params, easy, expert, guru)
 
-    doc = []
+    doc: list[str] = []
     for list_ in (easy, expert, guru):
         if len(list_) > 4:
             doc.extend(list_)

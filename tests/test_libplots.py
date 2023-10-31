@@ -4,9 +4,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from haddock.libs.libplots import find_best_struct
+from haddock.libs.libplots import find_best_struct, make_alascan_plot
 
 from . import data_folder, golden_data
+from .test_module_alascan import example_df_scan_clt
 
 
 @pytest.fixture
@@ -94,3 +95,10 @@ def test_find_best_struct_unclustered(example_capri_ss_dashcluster):
         )
     expected.columns.names = ["Structure"]
     pd.testing.assert_frame_equal(result, expected)
+
+
+def test_make_alascan_plot(example_df_scan_clt):
+    """Test make_alascan_plot."""
+    make_alascan_plot(example_df_scan_clt, clt_id="-")
+    # assert existence of plot
+    assert Path("scan_clt_-.html").exists()

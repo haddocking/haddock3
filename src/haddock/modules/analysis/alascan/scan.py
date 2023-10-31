@@ -536,6 +536,8 @@ class Scan:
                 f.write(f"##########################################################{os.linesep}")  # noqa E501
                 f.write(f"# `alascan` results for {native.file_name}{os.linesep}")  # noqa E501
                 f.write(f"#{os.linesep}")
+                f.write(f"# native score = {n_score}{os.linesep}")
+                f.write(f"#{os.linesep}")
                 f.write(f"# z_score is calculated with respect to the other residues")  # noqa E501
                 f.write(f"{os.linesep}")
                 f.write(f"##########################################################{os.linesep}")  # noqa E501

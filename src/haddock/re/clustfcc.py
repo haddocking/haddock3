@@ -33,7 +33,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
 
     clustfcc_subcommand.add_argument(
         "-f",
-        "--fraction_cutoff",
+        "--clust_cutoff",
         help="fraction of common contacts to not be considered a singleton model.",  # noqa: E501
         required=False,
         type=float,
@@ -49,8 +49,8 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     
     clustfcc_subcommand.add_argument(
         "-t",
-        "--threshold",
-        help="cluster population threshold.",
+        "--min_population",
+        help="minimum cluster population.",
         required=False,
         type=int,
         )
@@ -58,7 +58,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     return clustfcc_subcommand
 
 
-def reclustfcc(clustfcc_dir, fraction_cutoff=None, strictness=None, threshold=None):
+def reclustfcc(clustfcc_dir, clust_cutoff=None, strictness=None, min_population=None):
     """
     Recluster the models in the clustfcc directory.
     
@@ -67,15 +67,15 @@ def reclustfcc(clustfcc_dir, fraction_cutoff=None, strictness=None, threshold=No
     clustfcc_dir : str
         Path to the clustfcc directory.
     
-    fraction_cutoff : float
+    clust_cutoff : float
         Fraction of common contacts to not be considered a singleton model.
     
     strictness : float
         Fraction of common contacts to be considered to be part of the same
          cluster.
     
-    threshold : int
-        Cluster population threshold.
+    min_population : int
+        Minimum cluster population.
     
     caprieval_folder : str
         Path to the caprieval folder for quick analysis of the results.
@@ -106,26 +106,26 @@ def reclustfcc(clustfcc_dir, fraction_cutoff=None, strictness=None, threshold=No
     log.info(f"Previous clustering parameters: {clustfcc_params}")
 
     # adjust the parameters
-    if fraction_cutoff is not None:
-        clustfcc_params["fraction_cutoff"] = fraction_cutoff
+    if clust_cutoff is not None:
+        clustfcc_params["clust_cutoff"] = clust_cutoff
     if strictness is not None:
         clustfcc_params["strictness"] = strictness
-    if threshold is not None:
-        clustfcc_params["threshold"] = threshold
+    if min_population is not None:
+        clustfcc_params["min_population"] = min_population
     
     # load the fcc matrix
     pool = cluster_fcc.read_matrix(
         Path(clustfcc_dir, "fcc.matrix"),
-        clustfcc_params['fraction_cutoff'],
+        clustfcc_params['clust_cutoff'],
         clustfcc_params['strictness'],
         )
     
     # iterate clustering until at least one cluster is found
-    clusters, threshold = iterate_clustering(
+    clusters, min_population = iterate_clustering(
         pool,
-        clustfcc_params['threshold']
+        clustfcc_params['min_population']
         )
-    clustfcc_params['threshold'] = threshold
+    clustfcc_params['min_population'] = min_population
 
     # Prepare output and read the elements
     clt_dic = {}
@@ -135,7 +135,7 @@ def reclustfcc(clustfcc_dir, fraction_cutoff=None, strictness=None, threshold=No
         # Get the cluster centers
         clt_dic, clt_centers = get_cluster_centers(clusters, models)
 
-        score_dic, sorted_score_dic = rank_clusters(clt_dic, threshold)
+        score_dic, sorted_score_dic = rank_clusters(clt_dic, min_population)
 
         output_models = add_cluster_info(sorted_score_dic, clt_dic)
         

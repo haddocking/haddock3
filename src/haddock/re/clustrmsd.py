@@ -38,10 +38,10 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     
     clustrmsd_subcommand.add_argument(
         "-d",
-        "--distance",
-        help="cutoff distance.",
+        "--clust_cutoff",
+        help="clustering cutoff distance.",
         required=False,
-        type=int,
+        type=float,
         )
     
     clustrmsd_subcommand.add_argument(
@@ -55,7 +55,7 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     return clustrmsd_subcommand
 
 
-def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None, caprieval_folder=None):
+def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, threshold=None, caprieval_folder=None):
     """
     Recluster the models in the clustrmsd directory.
     
@@ -67,8 +67,8 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None, c
     n_clusters : int
         Number of clusters to generate.
     
-    distance : int
-        Cutoff distance.
+    clust_cutoff : int
+        Clustering cutoff distance.
     
     threshold : int
         Cluster population threshold.
@@ -106,8 +106,8 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None, c
         clustrmsd_params["tolerance"] = n_clusters
         clustrmsd_params["criterion"] = "maxclust"
     else:
-        if distance is not None:
-            clustrmsd_params["tolerance"] = distance
+        if clust_cutoff is not None:
+            clustrmsd_params["tolerance"] = clust_cutoff
             clustrmsd_params["criterion"] = "distance"
 
     if threshold is not None:

@@ -1,7 +1,8 @@
 """haddock3-re clustfcc subcommand."""
 
 from pathlib import Path
-
+import numpy as np
+import pandas as pd
 from fcc.scripts import cluster_fcc
 
 from haddock import log
@@ -12,7 +13,9 @@ from haddock.libs.libclust import (
     rank_clusters,
     write_structure_list,
     )
+from haddock.libs.libplots import read_capri_table
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.modules.analysis.clustfcc.clustfcc import (
     get_cluster_centers,
     iterate_clustering,
@@ -30,7 +33,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
 
     clustfcc_subcommand.add_argument(
         "-f",
-        "--fraction",
+        "--fraction_cutoff",
         help="fraction of common contacts to not be considered a singleton model.",  # noqa: E501
         required=False,
         type=float,
@@ -55,7 +58,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     return clustfcc_subcommand
 
 
-def reclustfcc(clustfcc_dir, fraction=None, strictness=None, threshold=None):
+def reclustfcc(clustfcc_dir, fraction_cutoff=None, strictness=None, threshold=None):
     """
     Recluster the models in the clustfcc directory.
     
@@ -64,7 +67,7 @@ def reclustfcc(clustfcc_dir, fraction=None, strictness=None, threshold=None):
     clustfcc_dir : str
         Path to the clustfcc directory.
     
-    fraction : float
+    fraction_cutoff : float
         Fraction of common contacts to not be considered a singleton model.
     
     strictness : float
@@ -73,6 +76,9 @@ def reclustfcc(clustfcc_dir, fraction=None, strictness=None, threshold=None):
     
     threshold : int
         Cluster population threshold.
+    
+    caprieval_folder : str
+        Path to the caprieval folder for quick analysis of the results.
     
     Returns
     -------
@@ -100,8 +106,8 @@ def reclustfcc(clustfcc_dir, fraction=None, strictness=None, threshold=None):
     log.info(f"Previous clustering parameters: {clustfcc_params}")
 
     # adjust the parameters
-    if fraction is not None:
-        clustfcc_params["fraction"] = fraction
+    if fraction_cutoff is not None:
+        clustfcc_params["fraction_cutoff"] = fraction_cutoff
     if strictness is not None:
         clustfcc_params["strictness"] = strictness
     if threshold is not None:
@@ -148,4 +154,12 @@ def reclustfcc(clustfcc_dir, fraction=None, strictness=None, threshold=None):
             )
 
         save_config(clustfcc_params, Path(outdir, "params.cfg"))
+
+        # analysis
+        clustfcc_id = int(clustfcc_dir.split("/")[-1].split("_")[0])
+        caprieval_folder = look_for_capri(run_dir, clustfcc_id)
+        if caprieval_folder:
+            log.info("Rewriting capri tables")
+            rewrite_capri_tables(caprieval_folder, clt_dic, outdir)
+            
     return outdir

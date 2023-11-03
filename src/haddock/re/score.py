@@ -1,10 +1,12 @@
 """haddock3-re score subcommand."""
 import json
 from pathlib import Path
-
+import shutil
 import numpy as np
+import sys
 
 from haddock import log
+from haddock.libs.libinteractive import handle_ss_file
 from haddock.libs.libplots import read_capri_table
 
 
@@ -82,6 +84,9 @@ def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air
 
     capri_ss = Path(capri_dir, "capri_ss.tsv")
     capri_clt = Path(capri_dir, "capri_clt.tsv")
+    if not capri_ss.exists() or not capri_clt.exists():
+        log.error("capri_ss.tsv or capri_clt.tsv not found. Exiting.")
+        sys.exit(1)
     # ss file
     df_ss = read_capri_table(capri_ss)
     # now we want to rewrite the score parameter
@@ -92,11 +97,6 @@ def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air
         scoring_pars["w_air"] * df_ss["air"]
 
     df_ss["score"] = new_scores
-    # sort the dataframe by score
-    df_ss.sort_values(by=["score"], inplace=True)
-    # assign to the column caprieval_rank the index of the dataframe
-    df_ss.index = range(1, len(df_ss) + 1)
-    df_ss["caprieval_rank"] = df_ss.index
     
     # now we want to write the new capri_ss.tsv file
     run_dir = Path(capri_dir).parent
@@ -105,36 +105,30 @@ def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air
     # create the interactive folder
     outdir = Path(run_dir, f"{capri_name}_interactive")
     outdir.mkdir(exist_ok=True)
-    df_ss.to_csv(Path(outdir, "capri_ss.tsv"), sep="\t", index=False)
 
-    # now we want to calculate mean and std dev of the scores on df_ss
-    # first groupby score
-    df_ss_grouped = df_ss.groupby("cluster-ranking")
-    # calculate the mean and standard deviation of the first 4 elements
-    # of each group
-    new_values = np.zeros((len(df_ss_grouped), 2))
-    # loop over df_ss_grouped with enumerate
-    for i, clt_id in enumerate(df_ss_grouped):
-        ave_score = np.mean(clt_id[1]["score"].iloc[:4])
-        std_score = np.std(clt_id[1]["score"].iloc[:4])
-        new_values[i] = [ave_score, std_score]
-    
-    # get the index that sorts the array by the first column
-    clt_ranks = np.argsort(new_values[:, 0])
+    # handle ss file first
+    df_ss, clt_ranks, new_values = handle_ss_file(df_ss)
+    capri_ss_file = Path(outdir, "capri_ss.tsv")
+    log.info(f"Saving capri_ss file to {capri_ss_file}")
+    df_ss.to_csv(capri_ss_file, sep="\t", index=False, float_format="%.3f")
 
     # CLT file
-    df_clt = read_capri_table(capri_clt)
-    # it may not be ordered by cluster_rank
-    df_clt.sort_values(by=["cluster_rank"], inplace=True)
-    df_clt["score"] = new_values[:, 0]
-    df_clt["score_std"] = new_values[:, 1]
-    if df_clt["cluster_rank"].iloc[0] != "-":
-        df_clt["cluster_rank"] = clt_ranks + 1
-        df_clt["caprieval_rank"] = clt_ranks + 1
-    df_clt.to_csv(Path(outdir, "capri_clt.tsv"),
-                  sep="\t",
-                  index=False,
-                  float_format="%.3f")
+    if clt_ranks is not None:
+        df_clt = read_capri_table(capri_clt)
+        # it may not be ordered by cluster_rank
+        df_clt.sort_values(by=["cluster_rank"], inplace=True)
+        df_clt["score"] = new_values[:, 0]
+        df_clt["score_std"] = new_values[:, 1]
+        if df_clt["cluster_rank"].iloc[0] != "-":
+            df_clt["cluster_rank"] = clt_ranks + 1
+            df_clt["caprieval_rank"] = clt_ranks + 1
+        df_clt.sort_values(by=["cluster_rank"], inplace=True)
+        capri_clt_file = Path(outdir, "capri_clt.tsv")
+        log.info(f"Saving capri_clt file to {capri_clt_file}")
+        df_clt.to_csv(capri_clt_file,
+                    sep="\t",
+                    index=False,
+                    float_format="%.3f")
 
     # Write the latest parameters file
     # define output fname

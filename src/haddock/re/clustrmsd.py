@@ -11,7 +11,9 @@ from haddock.libs.libclust import (
     rank_clusters,
     write_structure_list,
     )
+from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.libs.libontology import ModuleIO
+from haddock.libs.libplots import read_capri_table
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
     write_clusters,
@@ -53,7 +55,7 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     return clustrmsd_subcommand
 
 
-def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None):
+def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None, caprieval_folder=None):
     """
     Recluster the models in the clustrmsd directory.
     
@@ -70,6 +72,9 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None):
     
     threshold : int
         Cluster population threshold.
+    
+    caprieval_folder : str
+        Path to the caprieval folder for quick analysis of the results.
     
     Returns
     -------
@@ -132,7 +137,6 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None):
         centers=False
         )
 
-    # sorted_score_dic = rank_clusters(clt_dic, clustrmsd_params["threshold"])
     score_dic, sorted_score_dic = rank_clusters(
         clt_dic,
         clustrmsd_params["threshold"]
@@ -160,5 +164,14 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None):
 
     # save the updated parameters in a json file
     save_config(clustrmsd_params, Path(outdir, "params.cfg"))
+
+    # analysis
+    clustrmsd_id = int(clustrmsd_dir.split("/")[-1].split("_")[0])
+    caprieval_folder = look_for_capri(run_dir, clustrmsd_id)
+    if caprieval_folder:
+        log.info("Rewriting capri tables")
+        rewrite_capri_tables(caprieval_folder, clt_dic, outdir)
+    
+
 
     return outdir

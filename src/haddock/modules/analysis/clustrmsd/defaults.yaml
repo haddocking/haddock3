@@ -6,7 +6,7 @@ criterion:
   title: Criterion for fcluster
   short: Criterion to be used to cut the dendrogram
   long: if criterion is maxclust, the dendrogram is cut when a certain number of clusters is formed. If criterion is distance, the dendrogram will be cut based on the value of the cophenetic distance
-  group: ''
+  group: analysis
   explevel: expert
   choices:
   - distance
@@ -19,7 +19,7 @@ linkage:
   title: Linkage type
   short: How to lump together clusters in hierarchical clustering
   long: check out the full description at https://docs.scipy.org/doc/scipy/reference/generated/scipy.cluster.hierarchy.linkage.html
-  group: ''
+  group: analysis
   explevel: expert
   choices:
     - average
@@ -37,7 +37,7 @@ min_population:
   title: Minimum cluster population
   short: Threshold employed to exclude clusters with less than this number of members
   long: Threshold employed to exclude clusters with less than this number of members. When criterion is maxclust, this value is ignored.
-  group: ''
+  group: analysis
   explevel: easy
 clust_cutoff:
   default: 7.5
@@ -48,7 +48,7 @@ clust_cutoff:
   title: Clustering cutoff distance
   short: Value of cutoff cophenetic distance. 
   long: Value of cutoff cophenetic distance. When criterion is maxclust, this value is ignored.
-  group: ''
+  group: analysis
   explevel: easy
 n_clusters:
   default: 4
@@ -58,7 +58,7 @@ n_clusters:
   title: Number of clusters
   short: Number of clusters to be formed
   long: Number of clusters to be formed. When criterion is distance, this value is ignored.
-  group: 'analysis'
+  group: analysis
   explevel: easy
 
 

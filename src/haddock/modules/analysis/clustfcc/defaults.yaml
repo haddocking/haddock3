@@ -4,7 +4,7 @@ executable:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: analysis
   explevel: easy
 contact_distance_cutoff:
   default: 5.0
@@ -15,7 +15,7 @@ contact_distance_cutoff:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: analysis
   explevel: easy
 clust_cutoff:
   default: 0.6
@@ -26,7 +26,7 @@ clust_cutoff:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: analysis
   explevel: easy
 min_population:
   default: 4
@@ -36,7 +36,7 @@ min_population:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: analysis
   explevel: easy
 strictness:
   default: 0.75
@@ -47,5 +47,5 @@ strictness:
   title: No title yet
   short: No short description yet
   long: No long description yet
-  group: ''
+  group: analysis
   explevel: easy

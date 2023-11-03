@@ -29,6 +29,16 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
         )
     
     clustrmsd_subcommand.add_argument(
+        "-c",
+        "--criterion",
+        default="distance",
+        help="criterion to use for clustering",
+        required=False,
+        choices=["maxclust", "distance"],
+        type=str,
+        )
+    
+    clustrmsd_subcommand.add_argument(
         "-n",
         "--n_clusters",
         help="number of clusters to generate.",
@@ -46,8 +56,8 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     
     clustrmsd_subcommand.add_argument(
         "-t",
-        "--threshold",
-        help="cluster population threshold.",
+        "--min_population",
+        help="minimum cluster population.",
         required=False,
         type=int,
         )
@@ -55,12 +65,15 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     return clustrmsd_subcommand
 
 
-def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, threshold=None, caprieval_folder=None):
+def reclustrmsd(clustrmsd_dir, criterion=None, n_clusters=None, clust_cutoff=None, min_population=None):
     """
     Recluster the models in the clustrmsd directory.
     
     Parameters
     ----------
+    criterion : str
+        Criterion to use for clustering.
+    
     clustrmsd_dir : str
         Path to the clustrmsd directory.
     
@@ -70,11 +83,8 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, threshold=Non
     clust_cutoff : int
         Clustering cutoff distance.
     
-    threshold : int
-        Cluster population threshold.
-    
-    caprieval_folder : str
-        Path to the caprieval folder for quick analysis of the results.
+    min_population : int
+        Cluster population min_population.
     
     Returns
     -------
@@ -110,8 +120,8 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, threshold=Non
             clustrmsd_params["tolerance"] = clust_cutoff
             clustrmsd_params["criterion"] = "distance"
 
-    if threshold is not None:
-        clustrmsd_params["threshold"] = threshold
+    if min_population is not None:
+        clustrmsd_params["min_population"] = min_population
     
     # load the clustering dendrogram
     dendrogram = np.loadtxt(Path(clustrmsd_dir, "dendrogram.txt"))
@@ -139,7 +149,7 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, threshold=Non
 
     score_dic, sorted_score_dic = rank_clusters(
         clt_dic,
-        clustrmsd_params["threshold"]
+        clustrmsd_params["min_population"]
         )
     
     output_models = add_cluster_info(sorted_score_dic, clt_dic)

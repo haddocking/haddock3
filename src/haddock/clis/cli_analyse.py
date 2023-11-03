@@ -419,14 +419,9 @@ def main(
     log.info(f"selected steps: {', '.join(sel_steps)}")
 
     # analysis
-<<<<<<< HEAD
-    good_folder_paths, bad_folder_paths = [], []
-    for step in sel_steps:
-=======
     good_folder_paths: list[Path] = []
     bad_folder_paths: list[Path] = []
-    for step in selected_steps:
->>>>>>> main
+    for step in sel_steps:
         subfolder_name = f"{step}_analysis"
         target_path = Path(Path("./"), subfolder_name)
 

@@ -113,13 +113,13 @@ class HaddockModule(BaseHaddockModule):
         log.info("Clustering...")
         pool = cluster_fcc.read_matrix(
             fcc_matrix_f,
-            self.params["fraction_cutoff"],
+            self.params["clust_cutoff"],
             self.params["strictness"],
         )
 
         # iterate clustering until at least one cluster is found
-        clusters, threshold = iterate_clustering(pool, self.params['threshold'])
-        self.params['threshold'] = threshold
+        clusters, min_population = iterate_clustering(pool, self.params['min_population'])
+        self.params['min_population'] = min_population
 
         # Prepare output and read the elements
         if clusters:
@@ -133,7 +133,7 @@ class HaddockModule(BaseHaddockModule):
                 )
             
             # ranking clusters
-            score_dic, sorted_score_dic = rank_clusters(clt_dic, threshold)
+            score_dic, sorted_score_dic = rank_clusters(clt_dic, min_population)
 
             # Add this info to the models
             self.output_models = add_cluster_info(sorted_score_dic, clt_dic)

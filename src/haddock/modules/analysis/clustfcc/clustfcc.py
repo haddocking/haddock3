@@ -8,7 +8,7 @@ from fcc.scripts import cluster_fcc
 from haddock import log
 
 
-def iterate_clustering(pool, threshold_param):
+def iterate_clustering(pool, min_population_param):
     """
     Iterate over the clustering process until a cluster is found.
 
@@ -17,38 +17,38 @@ def iterate_clustering(pool, threshold_param):
     pool : fcc.Pool
         The pool object containing the fcc matrix.
     
-    threshold_param : int
-        The threshold parameter to start the clustering process.
+    min_population_param : int
+        The min_population parameter to start the clustering process.
     
     Returns
     -------
     clusters : list
         A list of clusters.
     
-    threshold : int
-        The threshold used to obtain the clusters.
+    min_population : int
+        The min_population used to obtain the clusters.
     """
     cluster_check = False
     while not cluster_check:
-        for threshold in range(threshold_param, 0, -1):
-            log.info(f'Clustering with threshold={threshold}')
+        for min_population in range(min_population_param, 0, -1):
+            log.info(f'Clustering with min_population={min_population}')
             _, clusters = cluster_fcc.cluster_elements(
                 pool,
-                threshold=threshold,
+                threshold=min_population,
                 )
             if not clusters:
                 log.info(
-                    "[WARNING] No cluster was found, decreasing threshold!"
+                    "[WARNING] No cluster was found, decreasing min_population!"
                     )
             else:
                 cluster_check = True
-                # pass the actual threshold back to the param dict
-                #  because it will be use in the detailed output
+                # pass the actual min_population back to the param dict
+                #  because it will be used in the detailed output
                 break
         if not cluster_check:
-            # No cluster was obtained in any threshold
+            # No cluster was obtained in any min_population
             cluster_check = True
-    return clusters, threshold
+    return clusters, min_population
 
 
 def write_clusters(clusters, out_filename="cluster.out"):
@@ -148,9 +148,9 @@ def write_clustfcc_file(clusters, clt_centers, clt_dic, params, sorted_score_dic
         f"{params['contact_distance_cutoff']}A"
         f"{os.linesep}")
     output_str += (
-        f"> fraction_cutoff={params['fraction_cutoff']}"
+        f"> clust_cutoff={params['clust_cutoff']}"
         f"{os.linesep}")
-    output_str += f"> threshold={params['threshold']}{os.linesep}"
+    output_str += f"> min_population={params['min_population']}{os.linesep}"
     output_str += (
         f"> strictness={params['strictness']}{os.linesep}")
     output_str += os.linesep
@@ -167,8 +167,8 @@ def write_clustfcc_file(clusters, clt_centers, clt_dic, params, sorted_score_dic
         center_pdb = clt_centers[cluster_id]
         model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
         model_score_l.sort()
-        # subset_score_l = [e[0] for e in model_score_l][:threshold]
-        subset_score_l = [e[0] for e in model_score_l][:params['threshold']]
+        # subset_score_l = [e[0] for e in model_score_l][:min_population]
+        subset_score_l = [e[0] for e in model_score_l][:params['min_population']]
         top_mean_score = np.mean(subset_score_l)
         top_std = np.std(subset_score_l)
         output_str += (
@@ -177,7 +177,7 @@ def write_clustfcc_file(clusters, clt_centers, clt_dic, params, sorted_score_dic
             f"{os.linesep}"
             f"Cluster {cluster_rank} (#{cluster_id}, "
             f"n={len(model_score_l)}, "
-            f"top{params['threshold']}_avg_score = {top_mean_score:.2f} "
+            f"top{params['min_population']}_avg_score = {top_mean_score:.2f} "
             f"+-{top_std:.2f})"
             f"{os.linesep}")
         output_str += os.linesep

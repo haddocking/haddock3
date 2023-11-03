@@ -17,7 +17,7 @@ contact_distance_cutoff:
   long: No long description yet
   group: ''
   explevel: easy
-fraction_cutoff:
+clust_cutoff:
   default: 0.6
   type: float
   min: -9999
@@ -28,7 +28,7 @@ fraction_cutoff:
   long: No long description yet
   group: ''
   explevel: easy
-threshold:
+min_population:
   default: 4
   type: integer
   min: -9999

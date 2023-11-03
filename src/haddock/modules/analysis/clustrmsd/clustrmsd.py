@@ -134,16 +134,16 @@ def get_clusters(dendrogram, tolerance, criterion):
     return cluster_arr
 
 
-def apply_threshold(cluster_arr: np.ndarray, threshold: int) -> np.ndarray:
+def apply_min_population(cluster_arr: np.ndarray, min_population: int) -> np.ndarray:
     """
-    Apply threshold to cluster list.
+    Apply min_population to cluster list.
 
     Parameters
     ----------
     cluster_arr : np.ndarray
         Array of clusters.
-    threshold : int
-        Threshold value on cluster population.
+    min_population : int
+        min_population value on cluster population.
 
     Returns
     -------
@@ -151,9 +151,9 @@ def apply_threshold(cluster_arr: np.ndarray, threshold: int) -> np.ndarray:
         Array of clusters (unclustered structures are labelled with -1)
     """
     new_cluster_arr = cluster_arr.copy()
-    log.info(f"Applying threshold {threshold} to cluster list")
+    log.info(f"Applying min_population {min_population} to cluster list")
     cluster_pops = np.unique(cluster_arr, return_counts=True)
-    uncl_idx = np.where(cluster_pops[1] < threshold)[0]
+    uncl_idx = np.where(cluster_pops[1] < min_population)[0]
     invalid_clusters = cluster_pops[0][uncl_idx]
     log.info(f"Invalid clusters: {invalid_clusters}")
     # replacing invalid clusters with -1
@@ -162,20 +162,20 @@ def apply_threshold(cluster_arr: np.ndarray, threshold: int) -> np.ndarray:
         if cl_id in invalid_clusters:
             new_cluster_arr[cl_idx] = -1
             uncl_models += 1
-    log.info(f"Threshold applied, {uncl_models} models left unclustered")
+    log.info(f"min_population applied, {uncl_models} models left unclustered")
     return new_cluster_arr
 
 
-def iterate_threshold(cluster_arr: np.ndarray, threshold: int) -> np.ndarray:
+def iterate_min_population(cluster_arr: np.ndarray, min_population: int) -> np.ndarray:
     """
-    Iterate over the threshold values until we find at least one valid cluster.
+    Iterate over the min_population values until we find at least one valid cluster.
 
     Parameters
     ----------
     cluster_arr : np.ndarray
         Array of clusters.
-    threshold : int
-        Threshold value on cluster population.
+    min_population : int
+        min_population value on cluster population.
 
     Returns
     -------
@@ -183,15 +183,15 @@ def iterate_threshold(cluster_arr: np.ndarray, threshold: int) -> np.ndarray:
         Array of clusters (unclustered structures are labelled with -1)
     """
     new_cluster_arr: np.ndarray = np.ndarray([])
-    for curr_thr in range(threshold, 0, -1):
-        log.info(f"Clustering with threshold={curr_thr}")
-        new_cluster_arr = apply_threshold(cluster_arr, curr_thr)
+    for curr_thr in range(min_population, 0, -1):
+        log.info(f"Clustering with min_population={curr_thr}")
+        new_cluster_arr = apply_min_population(cluster_arr, curr_thr)
         ncl = len(np.unique(new_cluster_arr))
         if -1 in new_cluster_arr:  # contains -1 (unclustered)
             ncl -= 1
-        # if no clusters found, try with a lower threshold
+        # if no clusters found, try with a lower min_population
         if ncl == 0:
-            log.warning(f'No clusters found with threshold={curr_thr}')
+            log.warning(f'No clusters found with min_population={curr_thr}')
         else:
             break
     return new_cluster_arr, curr_thr
@@ -277,8 +277,11 @@ def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_s
     output_str += f'Clustering parameters {os.linesep}'
     output_str += f"> linkage_type={params['linkage']}{os.linesep}"
     output_str += f"> criterion={params['criterion']}{os.linesep}"
-    output_str += f"> tolerance={params['tolerance']:.2f}{os.linesep}"
-    output_str += f"> threshold={params['threshold']}{os.linesep}"
+    if params['criterion'] == "distance":
+        output_str += f"> clust_cutoff={params['clust_cutoff']:.2f}{os.linesep}"
+    else:
+        output_str += f"> n_clusters={params['n_clusters']}{os.linesep}"
+    output_str += f"> min_population={params['min_population']}{os.linesep}"
     output_str += os.linesep
     
     output_str += (
@@ -298,7 +301,7 @@ def write_clustrmsd_file(clusters, clt_dic, cluster_centers, score_dic, sorted_s
             f"{os.linesep}"
             f"Cluster {cluster_rank} (#{cluster_id}, "
             f"n={len(model_score_l)}, "
-            f"top{params['threshold']}_avg_score = {top_score:.2f})"
+            f"top{params['min_population']}_avg_score = {top_score:.2f})"
             f"{os.linesep}")
         output_str += os.linesep
         output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'

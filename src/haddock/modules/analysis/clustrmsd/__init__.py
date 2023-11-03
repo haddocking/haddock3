@@ -23,7 +23,7 @@ Four parameters can be defined in this context:
   If not specified, the default is calculated either as the total number of
   models divided by four (`maxclust`) or as the average of the dendrogram height
   (`distance`)
-* `threshold` : analogously to the `clustfcc` module, it is the minimum number
+* `min_population` : analogously to the `clustfcc` module, it is the minimum number
   of models that should be present in a cluster to consider it
 
 This module passes the path to the RMSD matrix is to the next step of the
@@ -48,7 +48,7 @@ from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
     get_dendrogram,
-    iterate_threshold,
+    iterate_min_population,
     read_matrix,
     write_clusters,
     write_clustrmsd_file,
@@ -85,44 +85,32 @@ class HaddockModule(BaseHaddockModule):
         rmsd_matrix = read_matrix(self.matrix_json.input[0])
         # loading parameters
         linkage_type = self.params["linkage"]
-        crit = self.params["criterion"]
-        threshold = self.params["threshold"]
+        min_population = self.params["min_population"]
 
+        # adjust the parameters
+        if self.params["criterion"] == "maxclust":
+            tolerance = self.params["n_clusters"]
+        else:
+            tolerance = self.params["clust_cutoff"]
+        
         # getting clusters_list
         dendrogram = get_dendrogram(rmsd_matrix, self.params["linkage"])
-        # setting tolerance
-        tol: Union[float, int]
-        if np.isnan(self.params["tolerance"]):
-            self.log("tolerance is not defined")
-            if self.params['criterion'] == "maxclust":
-                tol = max(len(models) // 4 + 1, 2)
-            else:
-                tol = np.mean(dendrogram[:, 2])
-            self.log(f"Setting tolerance to {tol:.2f} for criterion {self.params['criterion']}")  # noqa: E501
-        else:
-            if self.params['criterion'] == "maxclust":
-                tol = int(self.params["tolerance"])
-            elif self.params['criterion'] == "distance":
-                tol = float(self.params["tolerance"])
-            else:
-                raise Exception(
-                    f"unknown criterion {self.params['criterion']}"
-                    )
-        log.info(f"tolerance {tol}")
-        self.params["tolerance"] = tol
+        
+        log.info(f"Clustering with tolerance {tolerance} and criterion {self.params['criterion']}")
+        
         cluster_arr = get_clusters(
             dendrogram,
-            self.params["tolerance"],
+            tolerance,
             self.params["criterion"]
             )
 
-        # when crit == distance, apply clustering threshold
+        # when crit == distance, apply clustering min_population
         if self.params['criterion'] == "distance":
-            cluster_arr, threshold = iterate_threshold(
+            cluster_arr, min_population = iterate_min_population(
                 cluster_arr,
-                self.params['threshold']
+                self.params['min_population']
                 )
-            self.params['threshold'] = threshold
+            self.params['min_population'] = min_population
 
         # print clusters
         unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
@@ -142,7 +130,7 @@ class HaddockModule(BaseHaddockModule):
         # ranking clusters
         score_dic, sorted_score_dic = rank_clusters(
             clt_dic,
-            self.params['threshold']
+            self.params['min_population']
             )
 
         self.output_models = add_cluster_info(sorted_score_dic, clt_dic)

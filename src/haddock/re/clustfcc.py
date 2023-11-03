@@ -156,7 +156,7 @@ def reclustfcc(clustfcc_dir, fraction_cutoff=None, strictness=None, threshold=No
         save_config(clustfcc_params, Path(outdir, "params.cfg"))
 
         # analysis
-        clustfcc_id = int(clustfcc_dir.split("/")[-1].split("_")[0])
+        clustfcc_id = int(clustfcc_name.split("_")[0])
         caprieval_folder = look_for_capri(run_dir, clustfcc_id)
         if caprieval_folder:
             log.info("Rewriting capri tables")

@@ -166,7 +166,7 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, distance=None, threshold=None, c
     save_config(clustrmsd_params, Path(outdir, "params.cfg"))
 
     # analysis
-    clustrmsd_id = int(clustrmsd_dir.split("/")[-1].split("_")[0])
+    clustrmsd_id = int(clustrmsd_name.split("_")[0])
     caprieval_folder = look_for_capri(run_dir, clustrmsd_id)
     if caprieval_folder:
         log.info("Rewriting capri tables")

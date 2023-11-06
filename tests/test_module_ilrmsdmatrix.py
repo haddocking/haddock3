@@ -199,11 +199,11 @@ def test_ilrmsdmatrix_run(ilrmsdmatrix, mocker, contact_obj):
     assert Path(ilrmsdmatrix.path, "ilrmsd.matrix").exists()
     assert Path(ilrmsdmatrix.path, "receptor_contacts.con").exists()
     with open(Path(ilrmsdmatrix.path, "ilrmsd.matrix")) as f:
-        assert f.readline() == "1 2 16.715\n"
+        assert f.readline() == f"1 2 16.715{os.linesep}"
     with open(Path(ilrmsdmatrix.path, "receptor_contacts.con")) as f:
         lines = f.readlines()
-        assert lines[0] == "A 37 38 39 40 43 44 45 69 71 72 75 90 93 94 96 132\n"
-        assert lines[1] == "B 10 11 12 16 17 48 51 52 53 54 56 57\n"
+        assert lines[0] == f"A 37 38 39 40 43 44 45 69 71 72 75 90 93 94 96 132{os.linesep}"
+        assert lines[1] == f"B 10 11 12 16 17 48 51 52 53 54 56 57{os.linesep}"
 
 
 class MockPreviousIO:

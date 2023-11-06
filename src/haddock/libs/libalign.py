@@ -402,8 +402,13 @@ def centroid(X: NDFloat) -> NDFloat:
 
 
 def load_coords(
-    pdb_f, atoms, filter_resdic=None, numbering_dic=None, model2ref_chain_dict=None
-):
+        pdb_f,
+        atoms,
+        filter_resdic=None,
+        numbering_dic=None,
+        model2ref_chain_dict=None,
+        add_resname=None,
+        ):
     """
     Load coordinates from PDB.
 
@@ -419,6 +424,9 @@ def load_coords(
 
     numbering_dic : dict
         dict of numbering dictionaries (one dictionary per chain)
+
+    add_resname : bool
+        use the residue name in the identifier
 
     Returns
     -------
@@ -460,8 +468,10 @@ def load_coords(
                         #     " was not matched!"
                         #     )
                         continue
-                # identifier = f"{chain}.{resnum}.{atom_name}"
-                identifier = (chain, resnum, atom_name)
+                if add_resname is True:
+                    identifier = (chain, resnum, atom_name, resname)
+                else:
+                    identifier = (chain, resnum, atom_name)
                 if atom_name not in atoms[resname]:
                     continue
                 if chain not in chain_dic:

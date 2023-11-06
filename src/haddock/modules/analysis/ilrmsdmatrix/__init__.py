@@ -25,7 +25,7 @@ import numpy as np
 
 from haddock import log
 from haddock.libs.libontology import ModuleIO, RMSDFile
-from haddock.libs.libparallel import Scheduler
+from haddock.libs.libparallel import Scheduler, get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
@@ -39,23 +39,7 @@ from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
-
-
-def get_index_list(nmodels, ncores):
-    """Optimal distribution of models among cores"""
-    if nmodels < 1 or ncores < 1:
-        raise ValueError("nmodels and ncores must be greater than 0")
-    spc = nmodels // ncores
-    # now the remainder
-    rem = nmodels % ncores
-    # now the list of indexes to be used for the SCAN calculation
-    index_list = [0]
-    for core in range(ncores):
-        if core < rem:
-            index_list.append(index_list[-1] + spc + 1)
-        else:
-            index_list.append(index_list[-1] + spc)
-    return index_list
+MAX_MODELS = 10000
 
 
 class HaddockModule(BaseHaddockModule):
@@ -72,10 +56,11 @@ class HaddockModule(BaseHaddockModule):
         """Confirm if contact executable is compiled."""
         return
 
-    def _rearrange_output(self, output_name, path, ncores):
+    @staticmethod
+    def _rearrange_output(output_name, path, ncores):
         """Combine different ilrmsd outputs in a single file."""
         output_fname = Path(path, output_name)
-        self.log(f"rearranging output files into {output_fname}")
+        log.info(f"rearranging output files into {output_fname}")
         # Combine files
         with open(output_fname, 'w') as out_file:
             for core in range(ncores):
@@ -87,7 +72,8 @@ class HaddockModule(BaseHaddockModule):
         log.info("Completed reconstruction of rmsd files.")
         log.info(f"{output_fname} created.")
 
-    def _rearrange_contact_output(self, output_name, path, ncores):
+    @staticmethod
+    def _rearrange_contact_output(output_name, path, ncores):
         """Combine different contact outputs in a single file.
         
         Parameters
@@ -105,7 +91,7 @@ class HaddockModule(BaseHaddockModule):
             Dictionary of the unique residues in the interfaces.
         """
         output_fname = Path(path, output_name)
-        self.log(f"rearranging contact files into {output_fname}")
+        log.info(f"rearranging contact files into {output_fname}")
         # Combine residues
         res_resdic = {}
         for core in range(ncores):
@@ -153,8 +139,8 @@ class HaddockModule(BaseHaddockModule):
         # Parallelisation : optimal dispatching of models
         nmodels = len(models)
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
-
-        if nmodels > self.params["max_models"]:
+        
+        if nmodels > MAX_MODELS:
             # too many input models : ilRMSD matrix would be too big => Abort!
             raise Exception("Too many models for ilRMSD matrix calculation")
 

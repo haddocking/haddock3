@@ -296,7 +296,8 @@ class ilRMSD:
             ):
         """Write down the RMSD matrix."""
         output_fname = Path(self.path, self.output_name)
-        # check if there are very low values in the RMSD vector
+        # check if there are very low values in the RMSD vector. This means
+        # that two (or more) almost identical models exist in the input.
         check_low_values = np.isclose(
             self.data[:, 2],
             np.zeros(self.npairs),

@@ -45,10 +45,16 @@ SCATTER_PAIRS = [
     ("ilrmsd", "vdw"),
     ("ilrmsd", "elec"),
     ("ilrmsd", "air"),
-]
+    ("fnat", "score"),
+    ("fnat", "desolv"),
+    ("fnat", "vdw"),
+    ("fnat", "elec"),
+    ("fnat", "air"),
+    ]
+
 
 # if SCATTER_PAIRS changes, SCATTER_MATRIX_SIZE should change too!
-SCATTER_MATRIX_SIZE = (4, 5)  # (number of rows, number of columns)
+SCATTER_MATRIX_SIZE = (5, 5)  # (number of rows, number of columns)
 
 TITLE_NAMES = {
     "score": "HADDOCK score",
@@ -61,6 +67,7 @@ TITLE_NAMES = {
     "elec": "Eelec",
     "air": "Eair",
     "fnat": "FCC",
+    "bsa": "BSA",
 }
 
 AXIS_NAMES = {
@@ -74,6 +81,7 @@ AXIS_NAMES = {
     "ilrmsd": "interface-ligand RMSD [A]",
     "fnat": "Fraction of Common Contacts",
     "dockq": "DOCKQ",
+    "bsa": "Buried Surface Area [A^2]",
 }
 
 ClRank = dict[int, int]
@@ -990,12 +998,13 @@ def report_generator(boxes, scatters, tables, step):
         report_plots_handler(scatters, shared_xaxes="rows", shared_yaxes="columns")
     )
     # Combine boxes"
-    figures.append(report_plots_handler(boxes, shared_xaxes="all"))
+    figures.append(report_plots_handler(boxes))
 
     # Write everything to a html file
     html_report = _generate_html_report(step, figures)
     with open("report.html", "w", encoding="utf-8") as report:
         report.write(html_report)
+
 
 
 def heatmap_plotly(
@@ -1044,3 +1053,87 @@ def heatmap_plotly(
     # Save figure as html file
     fig.write_html(output_fname)
     return output_fname
+
+  
+def make_alascan_plot(df, clt_id, scan_res="ALA"):
+    """
+    Make a plotly interactive plot.
+
+    Score components are here **weighted** by their respective
+    contribution to the total score.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing the results of the alanine scan.
+    clt_id : int
+        Cluster ID.
+    scan_res : str, optional
+        Residue name used for the scan, by default "ALA"
+    """
+    plot_name = f"scan_clt_{clt_id}"
+    log.info(f"Generating {scan_res} scanning plot {plot_name}")
+
+    # create figure
+    fig = go.Figure(layout={"width": 2000, "height": 1000})
+    # add traces
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=df["delta_score"],
+            name="delta_score",
+            )
+        )
+    
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=df["delta_vdw"],
+            name="delta_vdw",
+            )
+        )
+    # delta_elec is given its weight in the emscoring module
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=0.2 * df["delta_elec"],
+            name="delta_elec",
+            )
+        )
+
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=df["delta_desolv"],
+            name="delta_desolv",
+            )
+        )
+    # prettifying layout
+    fig.update_layout(
+        title=f"{scan_res} scanning cluster {clt_id}",
+        xaxis=dict(
+            title="Residue Name",
+            tickfont_size=14,
+            titlefont_size=16,
+            tick0=df["full_resname"],
+            # in case we want to show less residues
+            # dtick=10,
+            ),
+        yaxis=dict(
+            title="Weigted delta",
+            titlefont_size=16,
+            tickfont_size=14,
+            ),
+        legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
+        barmode="group",
+        bargap=0.05,
+        bargroupgap=0.05,
+        hovermode="x unified",
+        hoverlabel=dict(font_size=16, font_family="Helvetica"),
+        )
+    for n in range(df.shape[0] - 1):
+        fig.add_vline(x=0.5 + n, line_color="gray", opacity=0.2)
+    # save html
+    html_output_filename = f"{plot_name}.html"
+    fig.write_html(html_output_filename)
+

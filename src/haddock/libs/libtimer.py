@@ -1,12 +1,13 @@
 """Tools related to timing functions."""
 from contextlib import contextmanager
 from time import time
+from typing import Generator
 
 from haddock import log
 
 
 @contextmanager
-def log_time(pre_msg):
+def log_time(pre_msg: str) -> Generator[None, None, None]:
     """
     Log the time taken to execute the code under the context.
 
@@ -34,7 +35,7 @@ def log_time(pre_msg):
     log.info(f"{pre_msg} {elapsed}")
 
 
-def convert_seconds_to_min_sec(seconds):
+def convert_seconds_to_min_sec(seconds: float) -> str:
     """
     Convert seconds to min&sec.
 

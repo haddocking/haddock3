@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
-
+from typing import Any, Union
 from haddock import FCC_path, log
 from haddock.libs.libclust import write_structure_list
 from haddock.libs.libparallel import Scheduler
@@ -21,76 +21,79 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(
+        self, order: int, path: Path, initial_params: Union[Path, str] = DEFAULT_CONFIG
+    ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if FCC is installed and available."""
         dcfg = read_from_yaml_config(DEFAULT_CONFIG)
-        exec_path = Path(FCC_path, dcfg['executable'])
+        exec_path = Path(FCC_path, dcfg["executable"])
 
         if not os.access(exec_path, mode=os.F_OK):
-            raise Exception(f'Required {str(exec_path)} file does not exist.')
+            raise Exception(f"Required {str(exec_path)} file does not exist.")
 
         if not os.access(exec_path, mode=os.X_OK):
-            raise Exception(f'Required {str(exec_path)} file is not executable')
+            raise Exception(f"Required {str(exec_path)} file is not executable")
 
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
-        contact_executable = Path(FCC_path, self.params['executable'])
+        contact_executable = Path(FCC_path, self.params["executable"])
 
         # Get the models generated in previous step
-        models_to_cluster = self.previous_io.retrieve_models(
-            individualize=True
-            )
+        models_to_cluster = self.previous_io.retrieve_models(individualize=True)
 
         # Calculate the contacts for each model
-        log.info('Calculating contacts')
-        contact_jobs = []
+        log.info("Calculating contacts")
+        contact_jobs: list[JobInputFirst] = []
         for model in models_to_cluster:
-            pdb_f = Path(model.rel_path)
-            contact_f = Path(model.file_name.replace('.pdb', '.con'))
+            pdb_f = Path(model.rel_path)  # type: ignore
+            contact_f = Path(model.file_name.replace(".pdb", ".con"))  # type: ignore
             job = JobInputFirst(
                 pdb_f,
                 contact_f,
                 contact_executable,
-                self.params['contact_distance_cutoff'],
-                )
+                self.params["contact_distance_cutoff"],
+            )
             contact_jobs.append(job)
 
-        contact_engine = Scheduler(contact_jobs, ncores=self.params['ncores'])
+        contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
         contact_engine.run()
 
-        contact_file_l = []
-        not_found = []
+        contact_file_l: list[str] = []
+        not_found: list[str] = []
         for job in contact_jobs:
             if not job.output.exists():
                 # NOTE: If there is no output, most likely the models are not in
                 # contact there is no way of knowing how many models are not in
                 # contact, it can be only one, or could be all of them.
                 not_found.append(job.input.name)
-                log.warning(f'Contact was not calculated for {job.input.name}')
+                log.warning(f"Contact was not calculated for {job.input.name}")
             else:
                 contact_file_l.append(str(job.output))
 
         if not_found:
             # No contacts were calculated, we cannot cluster
-            self.finish_with_error("Several files were not generated:"
-                                   f" {not_found}")
+            self.finish_with_error("Several files were not generated:" f" {not_found}")
 
-        log.info('Calculating the FCC matrix')
-        parsed_contacts = calc_fcc_matrix.parse_contact_file(contact_file_l, False)  # noqa: E501
+        log.info("Calculating the FCC matrix")
+        parsed_contacts = calc_fcc_matrix.parse_contact_file(
+            contact_file_l, False
+        )  # noqa: E501
 
         # Imporant: matrix is a generator object, be careful with it
-        matrix = calc_fcc_matrix.calculate_pairwise_matrix(parsed_contacts, False)  # noqa: E501
+        matrix = calc_fcc_matrix.calculate_pairwise_matrix(
+            parsed_contacts, False
+        )  # noqa: E501
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
-        fcc_matrix_f = Path('fcc.matrix')
-        with open(fcc_matrix_f, 'w') as fh:
+        fcc_matrix_f = Path("fcc.matrix")
+        with open(fcc_matrix_f, "w") as fh:
             for data in list(matrix):
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
                 data_str += os.linesep
@@ -98,42 +101,40 @@ class HaddockModule(BaseHaddockModule):
         fh.close()
 
         # Cluster
-        log.info('Clustering...')
+        log.info("Clustering...")
         pool = cluster_fcc.read_matrix(
             fcc_matrix_f,
-            self.params['fraction_cutoff'],
-            self.params['strictness'],
-            )
+            self.params["fraction_cutoff"],
+            self.params["strictness"],
+        )
 
         cluster_check = False
         while not cluster_check:
-            for threshold in range(self.params['threshold'], 0, -1):
-                log.info(f'Clustering with threshold={threshold}')
+            for threshold in range(self.params["threshold"], 0, -1):
+                log.info(f"Clustering with threshold={threshold}")
                 _, clusters = cluster_fcc.cluster_elements(
                     pool,
                     threshold=threshold,
-                    )
+                )
                 if not clusters:
-                    log.info(
-                        "[WARNING] No cluster was found, decreasing threshold!"
-                        )
+                    log.info("[WARNING] No cluster was found, decreasing threshold!")
                 else:
                     cluster_check = True
                     # pass the actual threshold back to the param dict
                     #  because it will be use in the detailed output
-                    self.params['threshold'] = threshold
+                    self.params["threshold"] = threshold
                     break
             if not cluster_check:
                 # No cluster was obtained in any threshold
                 cluster_check = True
 
         # Prepare output and read the elements
-        clt_dic = {}
-        if clusters:
+        clt_dic: dict[Any, Any] = {}
+        if clusters:  # type: ignore
             # write the classic output file for compatibility reasons
-            log.info('Saving output to cluster.out')
-            cluster_out = Path('cluster.out')
-            with open(cluster_out, 'w') as fh:
+            log.info("Saving output to cluster.out")
+            cluster_out = Path("cluster.out")
+            with open(cluster_out, "w") as fh:
                 cluster_fcc.output_clusters(fh, clusters)
             fh.close()
 
@@ -158,8 +159,8 @@ class HaddockModule(BaseHaddockModule):
             for clt_id in clt_dic:
                 score_l = [p.score for p in clt_dic[clt_id]]
                 score_l.sort()
-                denom = float(min(threshold, len(score_l)))
-                top4_score = sum(score_l[:threshold]) / denom
+                denom = float(min(threshold, len(score_l)))  # type: ignore
+                top4_score = sum(score_l[:threshold]) / denom  # type: ignore
                 score_dic[clt_id] = top4_score
 
             sorted_score_dic = sorted(score_dic.items(), key=lambda k: k[1])
@@ -171,41 +172,40 @@ class HaddockModule(BaseHaddockModule):
                 # sort the models by score
                 clt_dic[cluster_id].sort()
                 # rank the models
-                for model_ranking, pdb in enumerate(clt_dic[cluster_id],
-                                                    start=1):
+                for model_ranking, pdb in enumerate(clt_dic[cluster_id], start=1):
                     pdb.clt_id = cluster_id
                     pdb.clt_rank = cluster_rank
                     pdb.clt_model_rank = model_ranking
                     self.output_models.append(pdb)
 
             # Write unclustered structures
-            write_structure_list(models_to_cluster,
-                                 self.output_models,
-                                 out_fname="clustfcc.tsv")
+            write_structure_list(
+                models_to_cluster, self.output_models, out_fname="clustfcc.tsv"  # type: ignore
+            )
 
             # Prepare clustfcc.txt
-            output_fname = Path('clustfcc.txt')
-            output_str = f'### clustfcc output ###{os.linesep}'
+            output_fname = Path("clustfcc.txt")
+            output_str = f"### clustfcc output ###{os.linesep}"
             output_str += os.linesep
-            output_str += f'Clustering parameters {os.linesep}'
+            output_str += f"Clustering parameters {os.linesep}"
             output_str += (
                 "> contact_distance_cutoff="
                 f"{self.params['contact_distance_cutoff']}A"
-                f"{os.linesep}")
+                f"{os.linesep}"
+            )
             output_str += (
-                f"> fraction_cutoff={self.params['fraction_cutoff']}"
-                f"{os.linesep}")
+                f"> fraction_cutoff={self.params['fraction_cutoff']}" f"{os.linesep}"
+            )
             output_str += f"> threshold={self.params['threshold']}{os.linesep}"
-            output_str += (
-                f"> strictness={self.params['strictness']}{os.linesep}")
+            output_str += f"> strictness={self.params['strictness']}{os.linesep}"
             output_str += os.linesep
             output_str += (
                 "Note: Models marked with * represent the center of the cluster"
-                f"{os.linesep}")
-            output_str += (
-                f"-----------------------------------------------{os.linesep}")
+                f"{os.linesep}"
+            )
+            output_str += f"-----------------------------------------------{os.linesep}"
             output_str += os.linesep
-            output_str += f'Total # of clusters: {len(clusters)}{os.linesep}'
+            output_str += f"Total # of clusters: {len(clusters)}{os.linesep}"
 
             for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
                 cluster_id, _ = _e
@@ -223,28 +223,31 @@ class HaddockModule(BaseHaddockModule):
                     f"n={len(model_score_l)}, "
                     f"top{threshold}_avg_score = {top_mean_score:.2f} "
                     f"+-{top_std:.2f})"
-                    f"{os.linesep}")
+                    f"{os.linesep}"
+                )
                 output_str += os.linesep
-                output_str += f'clt_rank\tmodel_name\tscore{os.linesep}'
+                output_str += f"clt_rank\tmodel_name\tscore{os.linesep}"
                 for model_ranking, element in enumerate(model_score_l, start=1):
                     score, pdb = element
                     if pdb.file_name == center_pdb.file_name:
                         output_str += (
                             f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
-                            f"{os.linesep}")
+                            f"{os.linesep}"
+                        )
                     else:
                         output_str += (
                             f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
-                            f"{os.linesep}")
+                            f"{os.linesep}"
+                        )
             output_str += (
-                "-----------------------------------------------"
-                f"{os.linesep}")
+                "-----------------------------------------------" f"{os.linesep}"
+            )
 
-            log.info('Saving detailed output to clustfcc.txt')
-            with open(output_fname, 'w') as out_fh:
+            log.info("Saving detailed output to clustfcc.txt")
+            with open(output_fname, "w") as out_fh:
                 out_fh.write(output_str)
         else:
-            log.warning('No clusters were found')
-            self.output_models = models_to_cluster
+            log.warning("No clusters were found")
+            self.output_models = models_to_cluster  # type: ignore
 
         self.export_io_models()

@@ -1,6 +1,7 @@
 """Calculate CAPRI metrics."""
 from pathlib import Path
 
+from haddock.core.typing import Any, FilePath
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.caprieval.capri import (
@@ -20,22 +21,26 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG,
-                 **everything):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 *ignore: Any,
+                 init_params: FilePath = DEFAULT_CONFIG,
+                 **everything: Any) -> None:
         super().__init__(order, path, init_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if contact executable is compiled."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
             self.finish_with_error(_e)
-        
+
         models = self.previous_io.retrieve_models(
             individualize=True
             )
@@ -55,11 +60,11 @@ class HaddockModule(BaseHaddockModule):
         #  but by assigning each model to an individual job
         #  we can handle scenarios in wich the models are hetergoneous
         #  for example during CAPRI scoring
-        capri_jobs = []
+        capri_jobs: list[CAPRI] = []
         for i, model_to_be_evaluated in enumerate(models, start=1):
             capri_jobs.append(
                 CAPRI(
-                    identificator=i,
+                    identificator=str(i),
                     model=model_to_be_evaluated,
                     path=Path("."),
                     reference=reference,

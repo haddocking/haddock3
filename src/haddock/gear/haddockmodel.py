@@ -1,24 +1,27 @@
 """Represent an Haddock model."""
 
 
+from haddock.core.typing import FilePath
+
+
 class HaddockModel:
     """Represent HADDOCK model."""
 
-    def __init__(self, pdb_f):
+    def __init__(self, pdb_f: FilePath) -> None:
         self.energies = self._load_energies(pdb_f)
 
     @staticmethod
-    def _load_energies(pdb_f):
-        energy_dic = {}
+    def _load_energies(pdb_f: FilePath) -> dict[str, float]:
+        energy_dic: dict[str, float] = {}
         with open(pdb_f) as fh:
             for line in fh.readlines():
                 if line.startswith('REMARK'):
                     # TODO: use regex to do this
                     if 'energies' in line:
-                        energy_values = list(map(
+                        energy_values = map(
                             float,
                             line.rstrip().split(':')[-1].split(',')
-                            ))
+                            )
                         total, bonds, angles, improper, dihe, vdw, elec, air, cdih, coup, rdcs, vean, dani, xpcs, rg = energy_values  # noqa: E501
                         energy_dic['total'] = total
                         energy_dic['bonds'] = bonds
@@ -47,12 +50,11 @@ class HaddockModel:
 
         return energy_dic
 
-    def calc_haddock_score(self, **weights):
+    def calc_haddock_score(self, **weights: float) -> float:
         """Calculate the haddock score based on the weights and energies."""
-        weighted_terms = []
-        for key in weights:
+        weighted_terms: list[float] = []
+        for key, weight in weights.items():
             component_id = key.split('_')[1]
-            weight = weights[key]
             value = self.energies[component_id]
             weighted_terms.append(value * weight)
 

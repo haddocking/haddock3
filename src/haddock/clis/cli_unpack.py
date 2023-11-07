@@ -29,6 +29,13 @@ Usage::
 import argparse
 import sys
 
+from haddock.core.typing import (
+    ArgumentParser,
+    Callable,
+    FilePath,
+    Namespace,
+    Optional,
+)
 from haddock.libs import libcli
 
 
@@ -36,43 +43,43 @@ from haddock.libs import libcli
 ap = argparse.ArgumentParser(
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 libcli.add_rundir_arg(ap)
 
 ap.add_argument(
-    '--all',
-    '-a',
-    dest='dec_all',
+    "--all",
+    "-a",
+    dest="dec_all",
     help="Unpack all files (includes `.inp` and `.out`).",
-    action='store_true',
-    )
+    action="store_true",
+)
 
 libcli.add_ncores_arg(ap)
 libcli.add_version_arg(ap)
 
 
-def _ap():
+def _ap() -> ArgumentParser:
     return ap
 
 
-def load_args(ap):
+def load_args(ap: ArgumentParser) -> Namespace:
     """Load argument parser args."""
     return ap.parse_args()
 
 
-def cli(ap, main):
+def cli(ap: ArgumentParser, main: Callable[..., None]) -> None:
     """Command-line interface entry point."""
     cmd = load_args(ap)
     main(**vars(cmd))
 
 
-def maincli():
+def maincli() -> None:
     """Execute main client."""
     cli(ap, main)
 
 
-def main(run_dir, ncores=1, dec_all=False):
+def main(run_dir: FilePath, ncores: Optional[int] = 1, dec_all: bool = False) -> None:
     """
     Unpack a HADDOCK3 run directory step folders.
 
@@ -113,22 +120,19 @@ def main(run_dir, ncores=1, dec_all=False):
                 [run_dir],
                 ncores,
                 dec_all=dec_all,
-                )
+            )
 
     else:
-        step_folders = [
-            Path(run_dir, p)
-            for p in get_module_steps_folders(run_dir)
-            ]
+        step_folders = [Path(run_dir, p) for p in get_module_steps_folders(run_dir)]
         with log_time("unpacking took"):
             unpack_compressed_and_archived_files(
                 step_folders,
                 ncores,
                 dec_all=dec_all,
-                )
+            )
 
     return
 
 
 if __name__ == "__main__":
-    sys.exit(maincli())
+    sys.exit(maincli())  # type: ignore

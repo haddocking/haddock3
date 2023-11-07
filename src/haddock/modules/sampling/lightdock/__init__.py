@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import Any, FilePath
 from haddock.libs import libpdb
 from haddock.libs.libio import working_directory
 from haddock.libs.libontology import Format, PDBFile
@@ -22,23 +23,23 @@ class HaddockModule(BaseHaddockModule):
 
     def __init__(
             self,
-            order,
-            path,
-            *ignore,
-            initial_params=DEFAULT_CONFIG,
-            **everything,
-            ):
+            order: int,
+            path: Path,
+            *ignore: Any,
+            initial_params: FilePath = DEFAULT_CONFIG,
+            **everything: Any,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm this module is installed."""
         check_subprocess('lightdock3.py -h')
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
-        models = [
+        models: list[PDBFile] = [
             p
             for p in self.previous_io.output
             if p.file_type == Format.PDB
@@ -144,7 +145,7 @@ class HaddockModule(BaseHaddockModule):
             subprocess.call(cmd, shell=True)
 
         # Tidy top files
-        expected = []
+        expected: list[PDBFile] = []
         top = self.params["top"]
         for i in range(top):
             file_name = f"top_{i+1}.{Format.PDB}"

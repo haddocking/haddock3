@@ -1,10 +1,12 @@
 """HADDOCK3 modules related to model analysis."""
 
+from typing import Iterable
 
-modules_using_resdic = ("caprieval", "rmsdmatrix")
+
+modules_using_resdic = ("caprieval", "rmsdmatrix", "alascan")
 
 
-def confirm_resdic_chainid_length(params):
+def confirm_resdic_chainid_length(params: Iterable[str]) -> None:
     """
     Confirm resdic params have chain IDs of length one.
 

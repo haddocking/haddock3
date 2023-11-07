@@ -628,9 +628,9 @@ def tsv_to_heatmap(
     output_fname : Path
         Path to the generated graph.
     """
-    half_matrix: list[list[float]] = []
+    half_matrix: list[float] = []
     labels: list[str] = []
-    header: list[str] = None
+    header: Union[bool, list[str]] = None
     with open(tsv_path, 'r') as f:
         for line in f:
             # skip commented lines

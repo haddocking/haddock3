@@ -42,10 +42,16 @@ SCATTER_PAIRS = [
     ("ilrmsd", "vdw"),
     ("ilrmsd", "elec"),
     ("ilrmsd", "air"),
-]
+    ("fnat", "score"),
+    ("fnat", "desolv"),
+    ("fnat", "vdw"),
+    ("fnat", "elec"),
+    ("fnat", "air"),
+    ]
+
 
 # if SCATTER_PAIRS changes, SCATTER_MATRIX_SIZE should change too!
-SCATTER_MATRIX_SIZE = (4, 5)  # (number of rows, number of columns)
+SCATTER_MATRIX_SIZE = (5, 5)  # (number of rows, number of columns)
 
 TITLE_NAMES = {
     "score": "HADDOCK score",

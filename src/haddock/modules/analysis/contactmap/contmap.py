@@ -102,6 +102,7 @@ class ContactsMap():
                     fpath,
                     data_key='ca-ca-dist',
                     contact_threshold=self.params['ca_ca_dist_threshold'],
+                    colorscale=self.params['color_ramp'],
                     output_fname=f'{self.output}_heatmap.html',
                     )
                 log.info(f'Generated single model heatmap file: {heatmap}')
@@ -215,8 +216,9 @@ class ClusteredContactMap():
         if self.params['generate_heatmap']:
             heatmap_path = tsv_to_heatmap(
                 fpath,
-                data_key=self.params['cluster-heatmap-datatype'],
+                data_key=self.params['cluster_heatmap_datatype'],
                 contact_threshold=1,
+                colorscale=self.params['color_ramp'],
                 output_fname=f'{self.output}_heatmap.html',
                 )
             log.info(f'Generated cluster contacts heatmap: {heatmap_path}')
@@ -566,9 +568,17 @@ def write_res_contacts(
     path : Path
         Path to the generated file.
     """
-    # initiate header
-    header = ['res1', 'res2']
-    header += [v for v in sorted(res_res_contacts[0]) if v not in header]
+    # define readme data type content
+    dttype_info = {
+        'res1': 'Chain-Resname-ResID key identifying first residue',
+        'res2': 'Chain-Resname-ResID key identifying second residue',
+        'ca-ca-dist': 'observed distances between the two Ca',
+        'ca-ca-cont-ratio': 'ratio of times the ca-ca-dist was observed under threshold',  # noqa : E501
+        'shortest-dist': 'observed shortest distance between the two residues',
+        'shortest-cont-ratio': 'ratio of times the shortest distance was observed under threshold',  # noqa : E501
+        'contact-type': 'type of contacts between the two residues',
+        'contact-type-ratio': 'ratio of times the type of contacts between the two residues is observed',  # noqa : E501
+        }
 
     # initiate file content
     tsvdt = [header]
@@ -576,8 +586,19 @@ def write_res_contacts(
         tsvdt.append([str(res_res_cont[h]) for h in header])
     tsv_str = '\n'.join([sep.join(_) for _ in tsvdt])
 
+    # generate commented lines to be placed on top of file
+    readme = [
+        '#' * 80,
+        '# This file contains extracted contacts half-matrix information',
+        '#' * 80,
+        '',
+        ]
+    for head in header[::-1]:
+        readme.insert(2, f'# {head}: {dttype_info[head]}')
+
     # Write file
     with open(path, 'w') as tsvout:
+        tsvout.write('\n'.join(readme))
         tsvout.write(tsv_str)
 
     return path
@@ -588,6 +609,7 @@ def tsv_to_heatmap(
         sep: str = '\t',
         data_key: str = 'ca-ca-dist',
         contact_threshold: float = 7.5,
+        colorscale: str = 'Greys',
         output_fname: Union[Path, str] = 'contacts.html',
         ) -> None:
     """Read a tsv file and generate a heatmap from it.
@@ -606,12 +628,20 @@ def tsv_to_heatmap(
     output_fname : Path
         Path to the generated graph.
     """
-    half_matrix = []
-    labels = []
+    half_matrix: list[list[float]] = []
+    labels: list[str] = []
+    header: list[str] = None
     with open(tsv_path, 'r') as f:
-        header = f.readline().strip().split(sep)
         for line in f:
+            # skip commented lines
+            if line.startswith('#'):
+                continue
+            # split line
             s_ = line.strip().split(sep)
+            # gather header
+            if not header:
+                header = s_
+                continue
             # point labels
             label1 = s_[header.index('res1')]
             label2 = s_[header.index('res2')]
@@ -632,7 +662,7 @@ def tsv_to_heatmap(
     matrix = squareform(half_matrix)
 
     # set data label
-    color_scale = datakey_to_colorscale(data_key, color_scale='Greys')
+    color_scale = datakey_to_colorscale(data_key, color_scale=colorscale)
     if 'ratio' in data_key:
         data_label = 'ratio'
         np.fill_diagonal(matrix, 1)

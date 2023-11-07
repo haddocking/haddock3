@@ -77,7 +77,7 @@ topX:
   group: sample
   explevel: expert
 
-cluster-heatmap-datatype:
+cluster_heatmap_datatype:
   default: 'shortest-cont-ratio'
   type: string
   minchars: 5

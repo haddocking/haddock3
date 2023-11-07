@@ -95,7 +95,7 @@ def params() -> dict:
         "single_model_analysis": False,
         "generate_heatmap": True,
         "topX": 10,
-        "cluster-heatmap-datatype": 'shortest-cont-ratio',
+        "cluster_heatmap_datatype": 'shortest-cont-ratio',
         }
 
 
@@ -121,8 +121,8 @@ def clustercontactmap(cluster_input_list, params):
 @pytest.fixture
 def res_res_contacts():
     return [
-        {'res1': 'A-1-MET', 'res2': 'A-2-ALA', 'dist': 3.0},
-        {'res1': 'A-1-MET', 'res2': 'A-3-VAL', 'dist': 4.0},
+        {'res1': 'A-1-MET', 'res2': 'A-2-ALA', 'ca-ca-dist': 3.0},
+        {'res1': 'A-1-MET', 'res2': 'A-3-VAL', 'ca-ca-dist': 4.0},
         ]
 
 
@@ -263,13 +263,13 @@ def test_write_res_contacts(res_res_contacts):
     """Test list of dict to tsv generation."""
     fpath = write_res_contacts(
         res_res_contacts,
-        ['res1', 'res2', 'dist'],
+        ['res1', 'res2', 'ca-ca-dist'],
         Path('./test-contacts.tsv'),
         )
     assert os.path.exists(fpath) is True
     with open(fpath, 'r') as filin:
-        flines = filin.readlines()
-    assert flines[0].strip().split('\t') == ['res1', 'res2', 'dist']
+        flines = [_ for _ in filin.readlines() if not _.startswith('#')]
+    assert flines[0].strip().split('\t') == ['res1', 'res2', 'ca-ca-dist']
     assert flines[1].strip().split('\t') == ['A-1-MET', 'A-2-ALA', '3.0']
     assert flines[2].strip().split('\t') == ['A-1-MET', 'A-3-VAL', '4.0']
     fpath.unlink(missing_ok=True)

@@ -185,8 +185,8 @@ class MockPreviousIO:
             PDBFile(Path(golden_data, "protprot_complex_2.pdb"),
                     path=golden_data),
             ]
-        models[0].cli_id = None
-        models[1].cli_id = 1
+        models[0].clt_id = None
+        models[1].clt_id = 1
         return models
 
 

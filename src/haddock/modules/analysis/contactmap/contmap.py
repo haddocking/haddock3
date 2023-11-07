@@ -640,7 +640,7 @@ def tsv_to_heatmap(
         data_label = 'distance'
 
     # Generate heatmap
-    heatmap_plotly(
+    output_filepath = heatmap_plotly(
         matrix,
         labels={'color': data_label},
         xlabels=labels,
@@ -648,6 +648,8 @@ def tsv_to_heatmap(
         color_scale=color_scale,
         output_fname=output_fname,
         )
+
+    return output_filepath
 
 
 def datakey_to_colorscale(data_key: str, color_scale: str = 'Greys') -> str:

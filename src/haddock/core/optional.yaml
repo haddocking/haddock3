@@ -11,3 +11,14 @@ preprocess:
     https://github.com/haddocking/haddock3/issues/143. If set to false, no
     checks are performed and HADDOCK3 directly uses the original input PDBs.
   explevel: easy
+postprocess:
+  default: true
+  type: boolean
+  title: Executes haddock3-analyse on the CAPRI folders at the end of the run
+  short: If true, executes haddock3-analyse on the CAPRI folders at the end of 
+    the workflow
+  long: haddock3-analyse is a cli (see https://github.com/haddocking/haddock3/blob/main/src/haddock/clis/cli_analyse.py)
+    used to plot the results of a HADDOCK3 workflow. If this option, this command
+    is automatically executed at the end of the workflow (on the caprieval folders).
+  explevel: easy
+

@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
+from haddock.core.typing import Any, AtomsDict, FilePath, ParamMap
 from haddock.libs.libalign import (
     calc_rmsd,
     centroid,
@@ -12,6 +13,7 @@ from haddock.libs.libalign import (
     kabsch,
     load_coords,
     )
+from haddock.libs.libontology import PDBFile
 
 
 class RMSDJob:
@@ -19,9 +21,9 @@ class RMSDJob:
 
     def __init__(
             self,
-            output,
-            params,
-            rmsd_obj):
+            output: Path,
+            params: ParamMap,
+            rmsd_obj: "RMSD") -> None:
 
         log.info(f"core {rmsd_obj.core}, initialising RMSD...")
         log.info(f"core {rmsd_obj.core}, # of pairs : {rmsd_obj.npairs}")
@@ -30,7 +32,7 @@ class RMSDJob:
         self.rmsd_obj = rmsd_obj
         log.info(f"core {rmsd_obj.core}, RMSD initialised")
 
-    def run(self):
+    def run(self) -> None:
         """Run this RMSDJob."""
         log.info(f"core {self.rmsd_obj.core}, running RMSD...")
         self.rmsd_obj.run()
@@ -43,15 +45,15 @@ class RMSD:
 
     def __init__(
             self,
-            model_list,
-            core,
-            npairs,
-            start_ref,
-            start_mod,
-            output_name,
-            path,
-            **params,
-            ):
+            model_list: list[PDBFile],
+            core: int,
+            npairs: int,
+            start_ref: int,
+            start_mod: int,
+            output_name: FilePath,
+            path: Path,
+            **params: Any,
+            ) -> None:
         """
         Initialise RMSD class.
 
@@ -103,13 +105,13 @@ class RMSD:
             log.info("No filtering dictionary, using all residues")
         self.output_name = output_name
         self.path = path
-        self.atoms = {}
+        self.atoms: AtomsDict = {}
         for m in model_list:
             self.atoms.update(get_atoms(m))
         # data array
         self.data = np.zeros((self.npairs, 3))
 
-    def run(self):
+    def run(self) -> None:
         """Run calculations."""
         # initialising the number of pairs
         ref = self.start_ref
@@ -149,9 +151,7 @@ class RMSD:
             else:
                 mod += 1
 
-    def output(
-            self,
-            ):
+    def output(self) -> None:
         """Write down the RMSD matrix."""
         output_fname = Path(self.path, self.output_name)
         # check if there are very low values in the RMSD vector
@@ -169,12 +169,12 @@ class RMSD:
                 out_fh.write(data_str)
 
 
-def get_pair(nmodels, idx):
+def get_pair(nmodels: int, idx: int) -> tuple[int, int]:
     """Get the pair of structures given the 1D matrix index."""
     if (nmodels < 0 or idx < 0):
         err = "get_pair cannot accept negative numbers"
         err += f"Input is {nmodels} , {idx}"
-        raise Exception(err)
+        raise ValueError(err)
     # solve the second degree equation
     b = 1 - (2 * nmodels)
     i = (-b - np.sqrt(b ** 2 - 8 * idx)) // 2
@@ -182,11 +182,12 @@ def get_pair(nmodels, idx):
     return (int(i), int(j))
 
 
-def rmsd_dispatcher(nmodels, tot_npairs, ncores):
+def rmsd_dispatcher(nmodels: int, tot_npairs: int,
+                    ncores: int) -> tuple[list[int], list[int], list[int]]:
     """Optimal dispatching of rmsd jobs."""
     base_pairs = tot_npairs // ncores
     modulo = tot_npairs % ncores
-    npairs = []
+    npairs: list[int] = []
     for core in range(ncores):
         if core < modulo:
             npairs.append(base_pairs + 1)

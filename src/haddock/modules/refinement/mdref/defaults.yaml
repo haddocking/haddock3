@@ -35,7 +35,7 @@ previous_ambig:
   type: boolean
   title: Boolean condition on the previous ambiguous distance restraints file
   short: Boolean condition on the previous ambiguous distance restraints file.
-    If true, use the the restraint information coming from the previous CNS module. If False, don't use previous information.
+    If true, use the the restraint information coming from the previous CNS module. If false, don't use previous information.
   long: Boolean condition on the ambiguous distance restraints file.
     If true, use the restraint information coming from the previous CNS module, as long as an ambig_fname is not defined for the current module.
     If False, don't use previous information.
@@ -1217,7 +1217,7 @@ w_elec:
 w_lcc:
   default: -10000.0
   type: float
-  min: -9999
+  min: -10000.0
   max: 0
   precision: 3
   title: Weight of the EM local correlation coefficient
@@ -1385,10 +1385,20 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 1
+  max: 200
   title: Sampling factor for each starting model
   short: This paramater control how many times a model will be refined.
   long: This paramater control how many times a model will be refined. 
+  group: 'sampling'
+  explevel: expert
+max_nmodels:
+  default: 10000
+  type: integer
+  min: 1
+  max: 50000
+  title: Maximum number of models to refine
+  short: This paramater controls the maximum number of models to refine.
+  long: This paramater controls the maximum number of models to refine.
   group: 'sampling'
   explevel: expert
 solvent:
@@ -1480,7 +1490,7 @@ keepwater:
   group: 'sampling'
   explevel: guru
 tolerance:
-  default: 0
+  default: 5
   type: integer
   min: 0
   max: 99

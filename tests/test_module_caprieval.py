@@ -12,6 +12,7 @@ from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     calc_stats,
     capri_cluster_analysis,
+    load_contacts,
     rearrange_ss_capri_output,
     )
 
@@ -49,6 +50,19 @@ def protprot_input_list():
 
 
 @pytest.fixture
+def protprot_1bkd_input_list():
+    """
+    Prot-prot input for target 1bkd.
+
+    Heterogeneous ensemble and big protein.
+    """
+    return [
+        PDBFile(Path(golden_data, "protprot_1bkd_1.pdb"), path=golden_data),
+        PDBFile(Path(golden_data, "protprot_1bkd_2.pdb"), path=golden_data)
+        ]
+
+
+@pytest.fixture
 def protdna_input_list():
     """Prot-DNA input."""
     return [
@@ -77,7 +91,7 @@ def protprot_onechain_list():
 @pytest.fixture
 def params():
     return {
-        "receptor_chain": "A", "ligand_chain": "B", "aln_method": "sequence"
+        "receptor_chain": "A", "ligand_chains": ["B"], "aln_method": "sequence"
         }
 
 
@@ -136,6 +150,24 @@ def protprot_caprimodule(protprot_input_list, params):
 
 
 @pytest.fixture
+def protprot_1bkd_caprimodule(protprot_1bkd_input_list, params):
+    """Protein-Protein CAPRI module for target 1BKD."""
+    reference = protprot_1bkd_input_list[0].rel_path
+    model = protprot_1bkd_input_list[1]
+    capri = CAPRI(
+        identificator=42,
+        reference=reference,
+        model=model,
+        path=golden_data,
+        params=params,
+        )
+
+    yield capri
+
+    remove_aln_files(capri)
+
+
+@pytest.fixture
 def protprot_caprimodule_parallel(protprot_input_list):
     """Protein-Protein CAPRI module."""
     reference = protprot_input_list[0].rel_path
@@ -144,7 +176,7 @@ def protprot_caprimodule_parallel(protprot_input_list):
         reference=reference,
         model=model,
         receptor_chain="A",
-        ligand_chain="B",
+        ligand_chains=["B"],
         aln_method="sequence",
         path=golden_data,
         identificator=0,
@@ -158,6 +190,10 @@ def protprot_caprimodule_parallel(protprot_input_list):
 
 def test_protprot_irmsd(protprot_caprimodule):
     """Test protein-protein i-rmsd calculation."""
+    # using standard cutoff
+    protprot_caprimodule.calc_irmsd(cutoff=10.0)
+    assert round_two_dec(protprot_caprimodule.irmsd) == 8.33
+    # using default cutoff = 5.0
     protprot_caprimodule.calc_irmsd()
     assert round_two_dec(protprot_caprimodule.irmsd) == 7.38
 
@@ -165,13 +201,13 @@ def test_protprot_irmsd(protprot_caprimodule):
 def test_protprot_lrmsd(protprot_caprimodule):
     """Test protein-protein l-rmsd calculation."""
     protprot_caprimodule.calc_lrmsd()
-    assert round_two_dec(protprot_caprimodule.lrmsd) == 15.9
+    assert round_two_dec(protprot_caprimodule.lrmsd) == 20.94
 
 
 def test_protprot_ilrmsd(protprot_caprimodule):
     """Test protein-protein i-l-rmsd calculation."""
     protprot_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protprot_caprimodule.ilrmsd) == 9.67
+    assert round_two_dec(protprot_caprimodule.ilrmsd) == 18.25
 
 
 def test_protprot_fnat(protprot_caprimodule):
@@ -189,6 +225,39 @@ def test_protprot_dockq(protprot_caprimodule):
     assert round_two_dec(protprot_caprimodule.dockq) == 0.10
 
 
+def test_protprot_1bkd_irmsd(protprot_1bkd_caprimodule):
+    """Test protein-protein i-rmsd calculation."""
+    protprot_1bkd_caprimodule.calc_irmsd(cutoff=10.0)
+    assert round_two_dec(protprot_1bkd_caprimodule.irmsd) == 8.16
+
+
+def test_protprot_1bkd_lrmsd(protprot_1bkd_caprimodule):
+    """Test protein-protein l-rmsd calculation."""
+    protprot_1bkd_caprimodule.calc_lrmsd()
+    assert round_two_dec(protprot_1bkd_caprimodule.lrmsd) == 28.47
+
+
+def test_protprot_1bkd_ilrmsd(protprot_1bkd_caprimodule):
+    """Test protein-protein i-l-rmsd calculation."""
+    protprot_1bkd_caprimodule.calc_ilrmsd()
+    assert round_two_dec(protprot_1bkd_caprimodule.ilrmsd) == 21.71
+
+
+def test_protprot_1bkd_fnat(protprot_1bkd_caprimodule):
+    """Test protein-protein fnat calculation."""
+    protprot_1bkd_caprimodule.calc_fnat()
+    assert round_two_dec(protprot_1bkd_caprimodule.fnat) == 0.07
+
+
+def test_protprot_1bkd_dockq(protprot_1bkd_caprimodule):
+    """Test protein-protein dockq calculation."""
+    protprot_1bkd_caprimodule.irmsd = 8.16
+    protprot_1bkd_caprimodule.fnat = 0.07
+    protprot_1bkd_caprimodule.lrmsd = 28.47
+    protprot_1bkd_caprimodule.calc_dockq()
+    assert round_two_dec(protprot_1bkd_caprimodule.dockq) == 0.06
+
+
 def test_protlig_irmsd(protlig_caprimodule):
     """Test protein-ligand i-rmsd calculation."""
     protlig_caprimodule.calc_irmsd()
@@ -198,13 +267,13 @@ def test_protlig_irmsd(protlig_caprimodule):
 def test_protlig_lrmsd(protlig_caprimodule):
     """Test protein-ligand l-rmsd calculation."""
     protlig_caprimodule.calc_lrmsd()
-    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.51
+    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.49
 
 
 def test_protlig_ilrmsd(protlig_caprimodule):
     """Test protein-ligand i-l-rmsd calculation."""
     protlig_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.5
+    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.49
 
 
 def test_protlig_fnat(protlig_caprimodule):
@@ -222,16 +291,16 @@ def test_protdna_irmsd(protdna_caprimodule):
 def test_protdna_lrmsd(protdna_caprimodule):
     """Test protein-dna l-rmsd calculation."""
     protdna_caprimodule.calc_lrmsd()
-    assert round_two_dec(protdna_caprimodule.lrmsd) == 4.19
+    assert round_two_dec(protdna_caprimodule.lrmsd) == 6.13
 
 
 def test_protdna_ilrmsd(protdna_caprimodule):
     """Test protein-dna i-l-rmsd calculation."""
     protdna_caprimodule.calc_ilrmsd()
-    assert round_two_dec(protdna_caprimodule.ilrmsd) == 1.89
+    assert round_two_dec(protdna_caprimodule.ilrmsd) == 5.97
 
 
-def test_protdna_fnat(protdna_caprimodule, protdna_input_list):
+def test_protdna_fnat(protdna_caprimodule):
     """Test protein-dna fnat calculation."""
     protdna_caprimodule.calc_fnat()
     assert round_two_dec(protdna_caprimodule.fnat) == 0.49
@@ -277,7 +346,8 @@ def test_identify_protprotinterface(protprot_caprimodule, protprot_input_list):
         "B": [52, 51, 16, 54, 53, 56, 11, 12, 17, 48],
         }
 
-    assert observed_interface == expected_interface
+    for ch in expected_interface.keys():
+        assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
 
 def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
@@ -292,7 +362,8 @@ def test_identify_protdnainterface(protdna_caprimodule, protdna_input_list):
         "B": [4, 3, 2, 33, 32, 5, 6, 34, 35, 31, 7, 30],
         }
 
-    assert observed_interface == expected_interface
+    for ch in expected_interface.keys():
+        assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
 
 def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
@@ -324,14 +395,15 @@ def test_identify_protliginterface(protlig_caprimodule, protlig_input_list):
             ],
         "B": [500],
         }
+    
+    for ch in expected_interface.keys():
+        assert sorted(observed_interface[ch]) == sorted(expected_interface[ch])
 
-    assert observed_interface == expected_interface
 
-
-def test_load_contacts(protprot_caprimodule, protprot_input_list):
+def test_load_contacts(protprot_input_list):
     """Test loading contacts."""
     protprot_complex = protprot_input_list[0]
-    observed_con_set = protprot_caprimodule.load_contacts(
+    observed_con_set = load_contacts(
         protprot_complex, cutoff=5.0
         )
     expected_con_set = {
@@ -462,13 +534,15 @@ def test_check_chains(protprot_caprimodule):
     obs_ch = [["A", "C"],
               ["A", "B"],
               ["S", "E", "B", "A"],
+              ["S", "E", "P", "A"],
               ["C", "D"]]
     
     # assuming exp chains are A and B
-    exp_ch = [["A", "C"],
-              ["A", "B"],
-              ["A", "B"],
-              ["C", "D"]]
+    exp_ch = [["A", ["C"]],
+              ["A", ["B"]],
+              ["A", ["B"]],  # S and E are ignored when B is present
+              ["A", ["S", "E", "P"]],
+              ["C", ["D"]]]
 
     for n in range(len(obs_ch)):
         obs_r_chain, obs_l_chain = protprot_caprimodule.check_chains(obs_ch[n])

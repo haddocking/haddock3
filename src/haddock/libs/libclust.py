@@ -1,4 +1,3 @@
-
 """
 Library of functions related to the clustering modules.
 
@@ -11,9 +10,13 @@ import os
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import FilePath
+from haddock.libs.libontology import PDBFile
 
 
-def write_structure_list(input_models, clustered_models, out_fname):
+def write_structure_list(input_models: list[PDBFile],
+                         clustered_models: list[PDBFile],
+                         out_fname: FilePath) -> None:
     """
     Get the list of unclustered structures.
     
@@ -26,7 +29,7 @@ def write_structure_list(input_models, clustered_models, out_fname):
     """
     output_fname = Path(out_fname)
     output_str = f'rank\tmodel_name\tscore\tcluster_id{os.linesep}'
-    structure_list = []
+    structure_list: list[PDBFile] = []
     # checking which input models have not been clustered
     for model in input_models:
         if model not in clustered_models:
@@ -42,6 +45,6 @@ def write_structure_list(input_models, clustered_models, out_fname):
             f'{os.linesep}'
             )
     output_str += os.linesep
-    log.info('Saving structure list to clustfcc.tsv')
+    log.info(f'Saving structure list to {out_fname}')
     with open(output_fname, 'w') as out_fh:
         out_fh.write(output_str)

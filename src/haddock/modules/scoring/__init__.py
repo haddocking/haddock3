@@ -1,27 +1,25 @@
-"""HADDOCK3 modules to score modules."""
-from os import linesep
+"""HADDOCK3 modules to score models."""
+import pandas as pd
 
+from haddock.core.typing import FilePath
 from haddock.modules.base_cns_module import BaseCNSModule
 
 
 class ScoringModule(BaseCNSModule):
     """Parent class for Scoring modules."""
 
-    def output(self, output_fname, sep="\t"):
+    def output(self, output_fname: FilePath, sep: str = "\t") -> None:
         """Save the output in comprehensive tables."""
-        # prepares header
-        header = sep.join(
-            ("structure", "original_name", "md5", "score")
-            ) + linesep
-
-        # prepares a text generator
-        text_generator = (
-            f"{pdb.file_name}\t{pdb.ori_name}\t{pdb.md5}\t{pdb.score}"
-            for pdb in self.output_models
-            )
-
-        # writes to disk only once
-        with open(output_fname, "w") as fh:
-            fh.write(header + linesep.join(text_generator))
+        # saves scoring data
+        sc_data = []
+        for pdb in self.output_models:
+            sc_data.append([pdb.file_name, pdb.ori_name, pdb.md5, pdb.score])
+        
+        # converts to pandas dataframe and sorts by score
+        df_columns = ["structure", "original_name", "md5", "score"]
+        df_sc = pd.DataFrame(sc_data, columns=df_columns)
+        df_sc_sorted = df_sc.sort_values(by="score", ascending=True)
+        # writes to disk
+        df_sc_sorted.to_csv(output_fname, sep=sep, index=False, na_rep="None")
 
         return

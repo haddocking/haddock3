@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 
 from haddock.libs.libalign import (
+    ALIGNError,
     align_seq,
     calc_rmsd,
     centroid,
@@ -188,7 +189,7 @@ def test_error_load_coords():
     filter_resdic = {'A': [1, 2, 3, 4, 5]}  # protein has only chain B
     pdb_f = Path(golden_data, "protein.pdb")
     atoms = get_atoms(pdb_f)
-    with pytest.raises(Exception):
+    with pytest.raises(ALIGNError):
         load_coords(pdb_f, atoms, filter_resdic)
 
 
@@ -295,6 +296,10 @@ def test_get_atoms():
             "C4",
             "O6",
             ],
+        "A": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
+        "G": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
+        "C": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
+        "U": ["P", "O5'", "C5'", "C4'", "C3'", "O3'"],
         "G39": [
             "C1",
             "O1A",
@@ -378,10 +383,12 @@ def test_align_seq():
 
     with tempfile.TemporaryDirectory() as tmpdirname:
 
-        observed_numb_dic = align_seq(ref, mod, tmpdirname)
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
         expected_numb_dic = {"B": {101: 1, 102: 2, 110: 3, 112: 5}}
+        expected_chm_dict = {"B": "B"}
 
         assert observed_numb_dic == expected_numb_dic
+        assert observed_chm_dict == expected_chm_dict
 
         expected_aln_f = Path(tmpdirname, "blosum62_B.aln")
 
@@ -395,6 +402,21 @@ def test_align_seq():
             ]
 
         assert observed_aln == expected_aln
+
+
+def test_align_seq_chm():
+    """Test the sequence alignment with chain matching."""
+    ref = Path(golden_data, "protein.pdb")
+    mod = Path(golden_data, "protein_segid.pdb")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+
+        observed_numb_dic, observed_chm_dict = align_seq(ref, mod, tmpdirname)
+        expected_numb_dic = {"B": {1: 1, 2: 2, 3: 3, 4: 4, 5: 5}}
+        expected_chm_dict = {"X": "B"}
+
+        assert observed_numb_dic == expected_numb_dic
+        assert observed_chm_dict == expected_chm_dict
 
 
 def test_make_range():
@@ -422,4 +444,21 @@ def test_dump_as_izone():
             f"ZONE B5:B112{os.linesep}",
             ]
 
+        assert observed_izone == expected_izone
+
+    chm_ref2model_dict = {"B": "X"}
+    with tempfile.NamedTemporaryFile() as fp:
+
+        dump_as_izone(fp.name, numb_dic, chm_ref2model_dict)
+
+        assert Path(fp.name).stat().st_size != 0
+
+        observed_izone = open(fp.name).readlines()
+        expected_izone = [
+            f"ZONE B1:X101{os.linesep}",
+            f"ZONE B2:X102{os.linesep}",
+            f"ZONE B3:X110{os.linesep}",
+            f"ZONE B5:X112{os.linesep}",
+            ]
+        
         assert observed_izone == expected_izone

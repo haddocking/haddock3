@@ -22,6 +22,7 @@ end if
 ! Initialisation of variables
 !==================================================================!
 
+evaluate ($saprotocol.randorien=$randorien)
 evaluate ($saprotocol.iniseed=$iniseed)
 evaluate ($saprotocol.tadhigh_t=$temp_high)
 evaluate ($saprotocol.t1_init=$temp_cool1_init)
@@ -218,6 +219,11 @@ if ($select gt 0) then
     evaluate ($refine.keepwater = true)
 end if
 
+! random placement of molecules
+if ($SaProtocol.randorien eq true) then
+    @MODULE:separate.cns
+    @MODULE:random_rotations.cns
+end if
 
 {* Read and write random seed in case randremoval=true ===============*}
 
@@ -366,7 +372,10 @@ fix sele=(resn SHA) end
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP*)) end
 
 ! energy minimization
-minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+end if
+
 fix sele=(not all) end
 
 ! get initial energy
@@ -444,7 +453,9 @@ end if
 fix sele=((attr store5 = 0 or name OO or resn SHA) and not name H* and not (resn WAT or resn HOH or resn TIP* or resn XAN)) end
 
 ! energy minimization
-minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+if ($nemsteps > 0) then
+    minimize powell nstep=$nemsteps drop=10.0 nprint=25 end
+end if
 
 ! final energy
 fix sele=(not all) end

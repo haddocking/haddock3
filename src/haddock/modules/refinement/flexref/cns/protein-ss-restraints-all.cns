@@ -20,7 +20,7 @@
 
 {- Dihedral restraints for the protein backbone -}
 restraint dihedral
-    nass = 10000
+    nass = 50000
 end
 do (store1 = 1) (all)
 evaluate ($group=1)

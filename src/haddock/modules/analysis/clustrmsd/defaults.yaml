@@ -12,7 +12,7 @@ criterion:
   - distance
   - maxclust
 linkage:
-  default: "single"
+  default: "average"
   type: "string"
   minchars: 0
   maxchars: 100
@@ -35,8 +35,8 @@ threshold:
   min: 1
   max: 9999
   title: Clustering population threshold
-  short: No short description yet
-  long: No long description yet
+  short: Threshold employed to exclude clusters with less than this number of members
+  long: Threshold employed to exclude clusters with less than this number of members. When criterion is maxclust, this value is ignored.
   group: ''
   explevel: easy
 tolerance:
@@ -46,7 +46,7 @@ tolerance:
   max: 9999
   precision: 3
   title: Numeric value for clustering
-  short: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cophenetic distance
-  long: No long description yet
+  short: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
+  long: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
   group: ''
   explevel: easy

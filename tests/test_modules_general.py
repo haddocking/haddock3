@@ -11,6 +11,7 @@ import pytest
 
 from haddock import modules_defaults_path
 from haddock.core.exceptions import ConfigurationError
+from haddock.gear.prepare_run import validate_param_range
 from haddock.gear.yaml2cfg import read_from_yaml_config
 from haddock.libs.libio import read_from_yaml
 from haddock.modules import (
@@ -91,8 +92,8 @@ def keys_inspect(keys, d, param, module):
 
 # global dictionaries helping functions below
 yaml_params_types = {
-    "integer": (int, float),
-    "float": (float,),
+    "integer": (int, float,),
+    "float": (float, int,),
     "boolean": (bool,),
     "string": (str,),
     "list": (list,),
@@ -144,6 +145,13 @@ def test_general_config():
     assert read_from_yaml_config(modules_defaults_path)
 
 
+def inspect_default_value(defaultval, param, paramname, module):
+    """Test if default value is acceptable."""
+    error_msg = validate_param_range(param, defaultval)
+    assert error_msg is None, \
+        f"In module {module} parameter {paramname}, the default {error_msg}"
+
+
 def test_yaml_keys(module_yaml_pure):
     """
     Test keys in each parameter.
@@ -169,6 +177,8 @@ def inspect_types(d, module):
                 module,
                 )
             yaml_types_to_keys[_type](value, param, module)
+            # Validate default value
+            inspect_default_value(value["default"], value, param, module)
 
         elif isinstance(value, dict):
             inspect_commons(value, param, module)
@@ -218,8 +228,11 @@ def test_get_module_steps_folders():
     Path(rd, '2_nothing').mkdir()
     Path(rd, 'data').mkdir()
     result = get_module_steps_folders(rd)
-    shutil.rmtree(rd)
     assert result == ['0_topoaa', '1_rigidbody', '150_flexref']
+    # what if we provide a list of modules (for ex. in postprocessing)
+    result_analysis = get_module_steps_folders(rd, [1, 150])
+    assert result_analysis == ['1_rigidbody', '150_flexref']
+    shutil.rmtree(rd)
 
 
 @pytest.mark.parametrize(

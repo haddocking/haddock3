@@ -1,6 +1,7 @@
 """MD scoring module."""
 from pathlib import Path
 
+from haddock.core.typing import FilePath
 from haddock.gear.haddockmodel import HaddockModel
 from haddock.libs.libcns import prepare_cns_input, prepare_expected_pdb
 from haddock.libs.libsubprocess import CNSJob
@@ -17,19 +18,22 @@ class HaddockModule(ScoringModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         cns_script = Path(RECIPE_PATH, "cns", "mdscoring.cns")
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm module is installed."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Pool of jobs to be executed by the CNS engine
-        jobs = []
+        jobs: list[CNSJob] = []
 
         try:
             models_to_score = self.previous_io.retrieve_models(
@@ -80,14 +84,14 @@ class HaddockModule(ScoringModule):
         # Check for generated output, fail it not all expected files are found
         for pdb in self.output_models:
             if pdb.is_present():
-                haddock_score = HaddockModel(pdb.file_name).calc_haddock_score(
-                    **weights
-                    )
+                haddock_model = HaddockModel(pdb.file_name)
+                pdb.unw_energies = haddock_model.energies
 
+                haddock_score = haddock_model.calc_haddock_score(**weights)
                 pdb.score = haddock_score
 
         output_fname = "mdscoring.tsv"
         self.log(f"Saving output to {output_fname}")
         self.output(output_fname)
 
-        self.export_output_models(faulty_tolerance=self.params["tolerance"])
+        self.export_io_models(faulty_tolerance=self.params["tolerance"])

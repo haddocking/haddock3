@@ -14,6 +14,7 @@ You should use restructureText syntax:
 """
 # Import here what you need
 from pathlib import Path
+from haddock.core.typing import FilePath, Any
 
 # In case you need to import a Python library that is a run-time dependency,
 # you should import it inside the `_run` method to avoid import errors for those
@@ -50,12 +51,12 @@ class HaddockModule(BaseHaddockModule):
     # *ignore and **everything can be edited to fit your needs.
     def __init__(
             self,
-            order,
-            path,
-            *ignore,
-            init_params=DEFAULT_CONFIG,
-            **everything,
-            ):
+            order: int,
+            path: Path,
+            *ignore: Any,
+            init_params: FilePath = DEFAULT_CONFIG,
+            **everything: Any,
+            ) -> None:
 
         # if your module uses CNS you might need to define where the main CNS
         # script is localted. See examples in `topoaa`, `emref`.
@@ -70,7 +71,7 @@ class HaddockModule(BaseHaddockModule):
         super().__init__(order, path, initial_params, cns_script=cns_script)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if the module is ready to use."""
         # here, you should write any code needed to confirm that all the
         # dependencies required by your module are installed.
@@ -81,7 +82,7 @@ class HaddockModule(BaseHaddockModule):
         return
 
     # here is where the module magic will happen
-    def _run(self):
+    def _run(self) -> None:
         # Import here any Python run-time dependencies that your module needs.
 
         # you can refer to other modules as examples to see how they perform.
@@ -128,10 +129,10 @@ class HaddockModule(BaseHaddockModule):
 
         # final section
         self.output_models = list_of_created_models
-        self.export_output_models()
+        self.export_io_models()
         # in case your module considers possible tolerance for generated models,
         # you can use:
-        # self.export_output_models(faulty_tolerance=self.params["tolerance"])
+        # self.export_io_models(faulty_tolerance=self.params["tolerance"])
 
 
 # Finally, the haddock module's class inherit from BaseHaddockModule. It is

@@ -5,6 +5,15 @@ from pathlib import Path
 from haddock import log
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import HaddockTermination
+from haddock.core.typing import (
+    Any,
+    ArgumentParser,
+    FilePath,
+    FilePathT,
+    Iterable,
+    ModuleParams,
+    Optional,
+    )
 from haddock.gear.clean_steps import UNPACK_FOLDERS, clean_output
 from haddock.gear.zerofill import zero_fill
 from haddock.libs.libontology import ModuleIO
@@ -19,7 +28,10 @@ EXTEND_RUN_DEFAULT = None
 class WorkflowManagerExtend(WorkflowManager):
     """Workflow to extend a run."""
 
-    def __init__(self, workflow_params, start=0, **other_params):
+    def __init__(self,
+                 workflow_params: ModuleParams,
+                 start: Optional[int] = 0,
+                 **other_params: Any) -> None:
         self.start = start
         self.recipe = Workflow(workflow_params, start=start, **other_params)
         # terminate is used to synchronize the `clean` option with the
@@ -27,7 +39,7 @@ class WorkflowManagerExtend(WorkflowManager):
         # you can also remove and clean the `terminate` part here.
         self._terminated = 0
 
-    def run(self):
+    def run(self) -> None:
         """High level workflow composer."""
         for i, step in enumerate(self.recipe.steps, start=0):
             try:
@@ -36,14 +48,14 @@ class WorkflowManagerExtend(WorkflowManager):
                 self._terminated = i
                 break
 
-    def clean(self):
+    def clean(self) -> None:
         """Clean the step output."""
         # return compression to the original state
         cwd = Path.cwd().name
 
         # because this WorkflowManagerExtended has no direct access to the
         # ncores parameters, it needs to take it from the steps.
-        ncores = max(s.config["ncores"] for s in self.recipe.steps)
+        ncores: int = max(s.config["ncores"] for s in self.recipe.steps)
 
         for folder in UNPACK_FOLDERS:
             # temporary hack to get the step folder name.
@@ -63,7 +75,7 @@ class WorkflowManagerExtend(WorkflowManager):
         super().clean(terminated=self._terminated)
 
 
-def add_extend_run(parser):
+def add_extend_run(parser: ArgumentParser) -> None:
     """Add option to ``--extend-run``."""
     parser.add_argument(
         '--extend-run',
@@ -77,7 +89,7 @@ def add_extend_run(parser):
         )
 
 
-def read_num_molecules_from_folder(folder):
+def read_num_molecules_from_folder(folder: FilePath) -> int:
     """
     Read the number of molecules from the first step folder.
 
@@ -106,7 +118,8 @@ def read_num_molecules_from_folder(folder):
     return len(io.output)
 
 
-def copy_renum_step_folders(indir, destdir, steps):
+def copy_renum_step_folders(indir: FilePath, destdir: FilePath,
+                            steps: list[FilePathT]) -> list[Path]:
     """
     Copy step folders renumbering them sequentially in the run directory.
 
@@ -153,7 +166,7 @@ def copy_renum_step_folders(indir, destdir, steps):
     list
         The new paths created.
     """
-    new_steps = []
+    new_steps: list[Path] = []
     step_names = (Path(step).name for step in steps)
     for i, step in enumerate(step_names):
         ori = Path(indir, step)
@@ -165,7 +178,7 @@ def copy_renum_step_folders(indir, destdir, steps):
     return new_steps
 
 
-def renum_step_folders(folder):
+def renum_step_folders(folder: FilePath) -> tuple[list[str], list[str]]:
     """
     Renumber the step folders sequentially in the run directory.
 
@@ -198,7 +211,7 @@ def renum_step_folders(folder):
     """
     # these come sorted already
     step_folders = get_module_steps_folders(folder)
-    new_names = []
+    new_names: list[str] = []
 
     # move folders
     for i, sf in enumerate(step_folders):
@@ -210,7 +223,8 @@ def renum_step_folders(folder):
     return step_folders, new_names
 
 
-def update_contents_of_new_steps(selected_steps, olddir, newdir):
+def update_contents_of_new_steps(selected_steps: Iterable[str],
+                                 olddir: FilePath, newdir: FilePath) -> None:
     """
     Find-replace run references in step folders files.
 
@@ -256,7 +270,11 @@ def update_contents_of_new_steps(selected_steps, olddir, newdir):
     for ns in new_steps:
         new_step = Path(newdir, ns)
         for file_ in new_step.iterdir():
-            text = file_.read_text()
+            try:
+                text = file_.read_text()
+            except UnicodeDecodeError as err:
+                log.warning(f"Failed to read file {file_}. Error is {err}")
+                continue
             for s1, s2 in zip(selected_steps, new_steps):
                 text = text.replace(s1, s2)
             text = text.replace(olddir.name, newdir.name)

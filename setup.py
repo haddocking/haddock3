@@ -1,12 +1,20 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 """Setup dot py."""
+import warnings
 from os.path import dirname, join
 
-from setuptools import find_packages, setup
+from setuptools import SetuptoolsDeprecationWarning, find_packages, setup
+# Import warnings object for later filtering out
+from setuptools.command.easy_install import EasyInstallDeprecationWarning
 
 
-def read(*names, **kwargs):
+# Add warnings filtering to the Setup Deprecation Warnings
+warnings.filterwarnings("ignore", category=SetuptoolsDeprecationWarning)
+warnings.filterwarnings("ignore", category=EasyInstallDeprecationWarning)
+
+
+def read(*names, **kwargs) -> str:
     """Read description files."""
     path = join(dirname(__file__), *names)
     with open(path, encoding=kwargs.get('encoding', 'utf8')) as fh:
@@ -80,6 +88,9 @@ setup(
             'haddock3-pp = haddock.clis.cli_pp:maincli',
             'haddock3-score = haddock.clis.cli_score:maincli',
             'haddock3-unpack = haddock.clis.cli_unpack:maincli',
+            'haddock3-analyse = haddock.clis.cli_analyse:maincli',
+            'haddock3-traceback = haddock.clis.cli_traceback:maincli',
+	    'haddock3-restraints = haddock.clis.cli_restraints:maincli'
             ]
         },
     # cmdclass={'build_ext': optional_build_ext},

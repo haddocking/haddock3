@@ -1,15 +1,16 @@
 """HADDOCK3 library."""
 import logging
+import sys
 from pathlib import Path
-
-from haddock.libs.liblog import add_syserr_handler, add_sysout_handler
 
 
 log = logging.getLogger(__name__)
 log.handlers.clear()
 log.setLevel(logging.DEBUG)
-add_sysout_handler(log)
-add_syserr_handler(log)
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(logging.Formatter(
+    "[%(asctime)s %(module)s %(levelname)s] %(message)s"))
+log.addHandler(handler)
 
 haddock3_source_path = Path(__file__).resolve().parent
 haddock3_repository_path = haddock3_source_path.parents[1]
@@ -27,13 +28,13 @@ _hidden_level = "hidden"
 class EmptyPath:
     """Define the type EmptyPath."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ""
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ""
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return False
 
 

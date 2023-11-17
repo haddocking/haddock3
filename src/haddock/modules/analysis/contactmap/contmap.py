@@ -940,8 +940,8 @@ def make_ribbon_ends(
 
     Returns
     -------
-    ribbon_boundary : list[list[tuple]]
-        _description_
+    ribbon_boundary : list[list[tuple[float, float]]]
+        Matrix of per residue ribbons start and end positions.
     """
     ribbon_boundary: list[list[tuple[float, float]]] = []
     for k, ideo_end in enumerate(ideo_ends):
@@ -1228,42 +1228,6 @@ def make_ribbon(
         'type': 'path',
         'fillcolor': fill_color,
         'layer': 'below',
-        }
-
-
-def make_self_rel(
-        side: list[float],
-        line_color: str,
-        fill_color: str,
-        radius: float,
-        ) -> dict:
-    """Generate data for self interacting ribbon.
-
-    Parameters
-    ----------
-    side : list[float]
-        List of angular variables of a ribbon arc ends defining
-         the ribbon starting (ending) arc.
-    line_color : str
-        Color of the shape boundary.
-    fill_color : str
-        Shape filling color fr the ribbon shape.
-    radius : float, optional
-        Circle radius size, by default 0.2.
-
-    Returns
-    -------
-    dict
-        Data for draw a self interacting ribbon in layout.
-    """
-    # radius is the radius of Bezier control point b_1
-    b = control_pts([side[0], (side[0] + side[1]) / 2, side[1]], radius)
-    return {
-        "line": {"color": line_color, "width": 0.5},
-        "path": make_q_bezier(b) + make_ribbon_arc(side[1], side[0]),
-        "type": 'path',
-        "fillcolor": fill_color,
-        "layer": 'below',
         }
 
 

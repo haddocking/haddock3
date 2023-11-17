@@ -22,6 +22,7 @@ from haddock.modules.analysis.contactmap.contmap import (
     extract_pdb_coords,
     topX_models,
     gen_contact_dt,
+    # chord chart functions
     moduloAB,
     PI,
     within_2PI,
@@ -31,6 +32,8 @@ from haddock.modules.analysis.contactmap.contmap import (
     make_chordchart,
     invPerm,
     ctrl_rib_chords,
+    control_pts,
+    make_ideogram_arc,
     )
 
 from . import golden_data
@@ -521,3 +524,23 @@ def test_ctrl_rib_chords_error():
     with pytest.raises(ValueError):
         noreturn = ctrl_rib_chords([1, 2, 3], [1, 2], 1.2)
         assert noreturn is None
+
+
+def test_control_pts_error():
+    """Test error raising in control_pts()."""
+    with pytest.raises(ValueError):
+        noreturn = control_pts([1, 0], 1.2)
+        assert noreturn is None
+
+
+def test_make_ideogram_arc_moduloAB():
+    """Test usage of moduloAB while providing outranged angle values."""
+    nb_points = 2
+    arc_positions = make_ideogram_arc(1.1, (1, -1), nb_points=nb_points)
+    excpected_output = np.array([
+        0.5943325364549538 + 0.9256180832886862j,
+        0.5943325364549535 - 0.9256180832886863j,
+        ])
+    assert arc_positions.shape == excpected_output.shape
+    for i in range(nb_points):
+        assert arc_positions[i] == excpected_output[i]

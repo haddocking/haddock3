@@ -22,6 +22,15 @@ from haddock.modules.analysis.contactmap.contmap import (
     extract_pdb_coords,
     topX_models,
     gen_contact_dt,
+    moduloAB,
+    PI,
+    within_2PI,
+    check_square_matrix,
+    make_q_bezier,
+    make_ribbon_arc,
+    make_chordchart,
+    invPerm,
+    ctrl_rib_chords,
     )
 
 from . import golden_data
@@ -93,9 +102,11 @@ def params() -> dict:
         "shortest_dist_threshold": 7.5,
         "color_ramp": "Greys",
         "single_model_analysis": False,
-        "generate_heatmap": True,
         "topX": 10,
+        "generate_heatmap": True,
         "cluster_heatmap_datatype": 'shortest-cont-ratio',
+        "generate_chordchart": True,
+        "chordchart_datatype": 'shortest-dist',
         }
 
 
@@ -123,6 +134,61 @@ def res_res_contacts():
     return [
         {'res1': 'A-1-MET', 'res2': 'A-2-ALA', 'ca-ca-dist': 3.0},
         {'res1': 'A-1-MET', 'res2': 'A-3-VAL', 'ca-ca-dist': 4.0},
+        ]
+
+
+@pytest.fixture
+def contact_matrix():
+    return np.array([
+        [1, 0, 0, 1, 0, 0],
+        [0, 1, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0],
+        [1, 0, 0, 1, 1, 0],
+        [0, 0, 0, 1, 1, 1],
+        [0, 0, 0, 0, 1, 1],
+        ])
+
+
+@pytest.fixture
+def dist_matrix():
+    return np.array([
+        [0.0, 18.4, 16.0, 5.1, 11.4, 14.7],
+        [18.4, 0.0, 18.0, 15.2, 11.7, 20.1],
+        [16.0, 18.0, 0.0, 9.2, 12.8, 10.0],
+        [5.1, 15.2, 9.2, 0.0, 6.2, 9.3],
+        [11.4, 11.7, 12.8, 6.2, 0.0, 6.9],
+        [14.7, 20.1, 10.0, 9.3, 6.9, 0.0],
+        ])
+
+
+@pytest.fixture
+def intertype_matrix():
+    return np.array([
+        ['self-self', 'polar-pos_charged', 'polar-apolar',
+         'polar-apolar', 'polar-apolar', 'polar-neg_charged'],
+        ['polar-pos_charged', 'self-self', 'pos_charged-apolar',
+         'pos_charged-apolar', 'pos_charged-apolar',
+         'pos_charged-neg_charged'],
+        ['polar-apolar', 'pos_charged-apolar', 'self-self',
+         'apolar-apolar', 'apolar-apolar', 'apolar-neg_charged'],
+        ['polar-apolar', 'pos_charged-apolar', 'apolar-apolar',
+         'self-self', 'apolar-apolar', 'apolar-neg_charged'],
+        ['polar-apolar', 'pos_charged-apolar', 'apolar-apolar',
+         'apolar-apolar', 'self-self', 'apolar-neg_charged'],
+        ['polar-neg_charged', 'pos_charged-neg_charged', 'apolar-neg_charged',
+         'apolar-neg_charged', 'apolar-neg_charged', 'self-self'],
+        ])
+
+
+@pytest.fixture
+def protein_labels():
+    return [
+        'A-69-THR',
+        'A-255-LYS',
+        'A-296-ILE',
+        'A-323-LEU',
+        'B-44-GLY',
+        'B-70-GLU',
         ]
 
 
@@ -225,9 +291,9 @@ def test_contactmap_run_iter_errors(contactmap, cluster_input_iter, mocker):
         assert module_sucess is None
 
 
-######################################################
-# Testing of Classes and function withing contmap.py #
-######################################################
+#####################################################
+# Testing of Classes and function within contmap.py #
+#####################################################
 def test_single_model(protprot_contactmap):
     """Test ContactsMap run function."""
     contacts_dt = protprot_contactmap.run()
@@ -349,3 +415,109 @@ def test_gen_contact_dt_ca_exception(ref_dist_matrix):
         'r2',
         )
     assert cont_dt['ca-ca-dist'] == 9999
+
+
+#################################
+# Testing chord chart functions #
+#################################
+def test_moduloAB_errors():
+    """Test argument error by moduloAB()."""
+    with pytest.raises(ValueError):
+        noreturn = moduloAB(1.0, 3.1, 2.6)
+        assert noreturn is None
+
+
+def test_moduloAB_execution():
+    """Test proper functioning of moduloAB()."""
+    moduloab = moduloAB(6.1035, 0, 2 * PI)
+    assert moduloab == 6.1035
+    moduloab2 = moduloAB(7, 0, 2 * PI)
+    assert round(moduloab2, 4) == 0.7168
+    moduloab3 = moduloAB(3, 0, 2)
+    assert moduloab3 == 1
+
+
+def test_within_2PI():
+    """Test of within [0, 2 * Pi) range test function."""
+    assert within_2PI(7) is False
+    assert within_2PI(2 * PI) is False
+    assert within_2PI(3)
+
+
+def test_check_square_matrix_shape():
+    """Test 2D array shape error."""
+    with pytest.raises(ValueError):
+        noreturn = check_square_matrix(np.array([[[1, 2]]]))
+        assert noreturn is None
+
+
+def test_check_square_matrix_error():
+    """Test square matrix error."""
+    with pytest.raises(ValueError):
+        noreturn = check_square_matrix(np.array([[1, 2], [1, 2], [1, 2]]))
+        assert noreturn is None
+
+
+def test_check_square_matrix(contact_matrix):
+    """Test square matrix."""
+    length = check_square_matrix(contact_matrix)
+    assert length == 6
+
+
+def test_make_q_bezier_error():
+    """Test error raising in make_q_bezier()."""
+    with pytest.raises(ValueError):
+        noreturn = make_q_bezier([1., 2.])
+        assert noreturn is None
+
+
+def test_make_ribbon_arc_angle_error():
+    """Test error raising in make_ribbon_arc()."""
+    with pytest.raises(ValueError):
+        noreturn = make_ribbon_arc(-1., 1.)
+        assert noreturn is None
+        noreturn2 = make_ribbon_arc(1., -1.)
+        assert noreturn2 is None
+
+
+def test_make_ribbon_arc_angle_baddef_error():
+    """Test error raising in make_ribbon_arc()."""
+    with pytest.raises(ValueError):
+        noreturn = make_ribbon_arc(1.1, 1.2)
+        assert noreturn is None
+
+
+def test_make_chordchart(
+        contact_matrix,
+        dist_matrix,
+        intertype_matrix,
+        protein_labels,
+        ):
+    """Test main function."""
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        outputpath = f"{tmpdir}chord.html"
+        graphpath = make_chordchart(
+            contact_matrix,
+            dist_matrix,
+            intertype_matrix,
+            protein_labels,
+            output_fpath=outputpath,
+            title="test",
+            )
+        assert graphpath == outputpath
+        assert os.path.exists(outputpath)
+        assert Path(outputpath).stat().st_size != 0
+        Path(outputpath).unlink(missing_ok=False)
+
+
+def test_invPerm():
+    """Test permutation inversion."""
+    inv = invPerm([1, 2, 3, 0])
+    assert inv == [3, 0, 1, 2]
+
+
+def test_ctrl_rib_chords_error():
+    """Test error raising in ctrl_rib_chords()."""
+    with pytest.raises(ValueError):
+        noreturn = ctrl_rib_chords([1, 2, 3], [1, 2], 1.2)
+        assert noreturn is None

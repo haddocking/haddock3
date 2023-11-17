@@ -54,6 +54,8 @@ examples = (
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
     ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),  # noqa: E203, E501

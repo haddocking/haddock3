@@ -192,7 +192,7 @@ class HPCScheduler:
                                 )
 
                     # Initiate count of terminated jobs
-                    terminated_count = 0
+                    terminated_count: int = 0
                     terminated_count += sum(
                         w.job_status == "finished" for w in worker_list
                         )
@@ -327,10 +327,12 @@ def create_torque_header(
 
 def to_torque_time(time: int) -> str:
     """Convert time in minutes to the form hh:mm:ss.
+
     Parameters
     ----------
     time : int
         Time in minutes.
+
     Return
     ------
     hh_mm_ss : str
@@ -350,6 +352,7 @@ def to_torque_time(time: int) -> str:
 
 def extract_slurm_status(slurm_out: str) -> str:
     """Extract job status from slurm scontrol stdout.
+
     Parameters
     ----------
     slurm_out : str

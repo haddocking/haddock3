@@ -237,34 +237,40 @@ class ClusteredContactMap():
                     clusters_contacts[combined_key][dtk].append(cont[dtk])
 
         combined_clusters_list = []
-        # Loop over keys
+        # Loop over ordered keys
         for combined_key in keys_list:
             # point data
             res1, res2 = combined_key.split('/')
             dt = clusters_contacts[combined_key]
 
-            # Compute averages and ratio
+            # Compute averages Ca-Ca distances
             avg_ca_ca_dist = np.mean(dt['ca-ca-dist'])
+            # Compute number of time the cluster members holds a value under threshold
             ca_ca_above_thresh = [
                 v for v in dt['ca-ca-dist']
                 if v <= self.params['ca_ca_dist_threshold']
                 ]
             ca_ca_cont_ratio = len(ca_ca_above_thresh) / len(dt['ca-ca-dist'])
 
+            # Compute averages for shortest distances
             avg_shortest = np.mean(dt['shortest-dist'])
+            # Generate list of shortest distances observed between two residues
             short_ab_t = [
                 v for v in dt['shortest-dist']
                 if v <= self.params['shortest_dist_threshold']
                 ]
+            # Compute number of time the cluster members holds a value under threshold
             shortest_cont_ratio = len(short_ab_t) / len(dt['shortest-dist'])
 
-            # most representative contact type
+            # Find most representative contact type
             cont_ts = list(set(dt['contact-type']))
+            # Decreasing sorting of cluster contact types and pick highest one
             cont_t = sorted(
                 cont_ts,
                 key=lambda k: cont_ts.count(k),
                 reverse=True,
                 )[0]
+            # Compute ratio for this contact type to be found
             cont_t_ratio = cont_ts.count(cont_t) / len(dt['contact-type'])
 
             # Hold summary data for cluster

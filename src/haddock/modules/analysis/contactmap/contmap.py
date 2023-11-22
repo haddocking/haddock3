@@ -267,7 +267,7 @@ class ClusteredContactMap():
                 )[0]
             cont_t_ratio = cont_ts.count(cont_t) / len(dt['contact-type'])
 
-            # Hold summery data for cluster
+            # Hold summary data for cluster
             combined_clusters_list.append({
                 'res1': res1,
                 'res2': res2,

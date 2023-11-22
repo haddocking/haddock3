@@ -11,7 +11,7 @@ ca_ca_dist_threshold:
   explevel: easy
 
 shortest_dist_threshold:
-  default: 7.5
+  default: 4.5
   type: float
   min: 2.0
   max: 1000.0

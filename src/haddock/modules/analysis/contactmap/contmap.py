@@ -1,6 +1,6 @@
 """Module computing contact maps of complexes, alone or grouped by cluster.
 
-Chord diargam functions were adapted from:
+Chord diagram functions were adapted from:
 https://plotly.com/python/v3/filled-chord-diagram/
 """
 

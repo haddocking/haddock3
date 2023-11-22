@@ -1,4 +1,4 @@
-"""Intergration-test of the CONTact MAP module."""
+"""Integration-test of the CONTact MAP module."""
 import os
 import pytest
 import pytest_mock  # noqa : F401

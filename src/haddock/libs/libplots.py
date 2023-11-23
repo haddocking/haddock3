@@ -9,12 +9,15 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from pathlib import Path
+
 from haddock import log
 from haddock.core.typing import (
     DataFrameGroupBy,
     Figure,
     FilePath,
     ImgFormat,
+    NDFloat,
     Optional,
     Union,
 )
@@ -1003,6 +1006,55 @@ def report_generator(boxes, scatters, tables, step):
         report.write(html_report)
 
 
+
+def heatmap_plotly(
+        matrix: NDFloat,
+        labels: Optional[dict] = None,
+        xlabels: Optional[list] = None,
+        ylabels: Optional[list] = None,
+        color_scale: str = 'Greys_r',  # Greys_r, gray
+        title: Optional[str] = None,
+        output_fname: Path = Path('contacts.html'),
+        ) -> Path:
+    """Generate a `plotly heatmap` based on matrix content.
+
+    Parameters
+    ----------
+    matrix : NDFloat
+        The 2D matrix containing data to be shown.
+    labels : dict
+        Labels of the horizontal (x), vertical (y) and colorscale (color) axis.
+    xlabels : list
+        List of columns names.
+    ylabels : list
+        List of row names.
+    color_scale : str
+        Color scale to use.
+    title : str
+        Title of the figure.
+    output_fname : Path
+        Path to the output filename to generate.
+
+    Return
+    ------
+    output_fname : Path
+        Path to the generated filename
+    """
+    fig = px.imshow(
+        matrix,
+        labels=labels,
+        x=xlabels,
+        y=ylabels,
+        color_continuous_scale=color_scale,
+        title=title,
+        )
+    # Place X axis on top
+    fig.update_xaxes(side="top")
+    # Save figure as html file
+    fig.write_html(output_fname)
+    return output_fname
+
+  
 def make_alascan_plot(df, clt_id, scan_res="ALA"):
     """
     Make a plotly interactive plot.
@@ -1084,3 +1136,4 @@ def make_alascan_plot(df, clt_id, scan_res="ALA"):
     # save html
     html_output_filename = f"{plot_name}.html"
     fig.write_html(html_output_filename)
+

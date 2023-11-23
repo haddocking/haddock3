@@ -1,0 +1,108 @@
+
+
+Easy
+````
+
+ca_ca_dist_threshold
+~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 9.0
+| *type*: float
+| *title*: Ca-Ca distance defining a contact.
+| *short description*: Distance between Ca atoms of two residues defining a contact.
+| *long description*: Distance between Ca atoms of two residues defining a contact.
+| *group*: analysis
+| *explevel*: easy
+
+chordchart_datatype
+~~~~~~~~~~~~~~~~~~~
+
+| *default*: 'shortest-dist'
+| *type*: string
+| *title*: Type of data to be used in the chordchart.
+| *short description*: Type of data to be used in the chordchart.
+| *long description*: ca-ca-dist and shortest-dist are averages distances observed in cluster.
+| *group*: analysis
+| *explevel*: easy
+
+cluster_heatmap_datatype
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 'shortest-cont-ratio'
+| *type*: string
+| *title*: Type of data to be used in the heatmap.
+| *short description*: Type of data to be used in the heatmap.
+| *long description*: ca-ca-dist and shortest-dist are averages distances observed in cluster. While ca-ca-cont-ratio and shortest-cont-ratio are ratio of the distances to be observed under their respective thresholds.
+| *group*: analysis
+| *explevel*: easy
+
+color_ramp
+~~~~~~~~~~
+
+| *default*: 'Greys'
+| *type*: string
+| *title*: Color ramp used to color heatmap.
+| *short description*: Color ramp used to color heatmap.
+| *long description*: Color ramp used to color heatmap. Please refer to `plotly builtin-colorscales` for more information
+| *group*: analysis
+| *explevel*: easy
+
+generate_chordchart
+~~~~~~~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Generate chordchart.
+| *short description*: Generate plotly chordchart representation of the contacts.
+| *long description*: Uses generated contact matrices files to generate chord chart.
+| *group*: analysis
+| *explevel*: easy
+
+generate_heatmap
+~~~~~~~~~~~~~~~~
+
+| *default*: True
+| *type*: boolean
+| *title*: Generate contact heatmap.
+| *short description*: Generate plotly heatmap matrix representation of the contacts.
+| *long description*: Uses generated contact matrices files to generate heatmap.
+| *group*: analysis
+| *explevel*: easy
+
+shortest_dist_threshold
+~~~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: 4.5
+| *type*: float
+| *title*: Distance defining a contact between two residues.
+| *short description*: Shortest distance between any atom of two residues defining a contact.
+| *long description*: Shortest distance between any atom of two residues defining a contact.
+| *group*: analysis
+| *explevel*: easy
+
+single_model_analysis
+~~~~~~~~~~~~~~~~~~~~~
+
+| *default*: False
+| *type*: boolean
+| *title*: Analyse contacts at single model level.
+| *short description*: Analyse contacts at single model level.
+| *long description*: In addition to cluster analysis, also perform single model analyses.
+| *group*: analysis
+| *explevel*: easy
+
+
+Expert
+``````
+
+topX
+~~~~
+
+| *default*: 10
+| *type*: integer
+| *title*: Number of unclustered models to analyse.
+| *short description*: Number of unclustered models to analyse.
+| *long description*: Top `X` unclustered models to analyse. Models are sorted based on their score (if accessible) and only a subset defined by this variable are analysed. If no score available, a random set of `topX` models are analysed.
+| *group*: sample
+| *explevel*: expert
+

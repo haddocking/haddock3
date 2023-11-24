@@ -6,6 +6,7 @@ stable beta version.
 [![unit tests](https://github.com/haddocking/haddock3/workflows/tests/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=tests)
 [![build](https://github.com/haddocking/haddock3/workflows/build/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=build)
 [![docs](https://github.com/haddocking/haddock3/workflows/pages/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=pages)
+[![Research Software Directory](https://img.shields.io/badge/rsd-RSD--as--a--service-00a3e3.svg)](https://research-software-directory.org/software/haddock3)
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
 
 * * *

@@ -45,26 +45,26 @@ RESIDUE_POLARITY = {
     "MET": "apolar",
     "PRO": "apolar",
     "LEU": "apolar",
-    "GLU": "neg_charged",
-    "ASP": "neg_charged",
-    "LYS": "pos_charged",
-    "ARG": "pos_charged",
+    "GLU": "negative",
+    "ASP": "negative",
+    "LYS": "positive",
+    "ARG": "positive",
     }
 
 PI = np.pi
 
 # Define interaction types colors
 CONNECT_COLORS = {
-    "polar-polar": (118, 194, 68),
-    "polar-apolar": (244, 109, 67),
-    "polar-neg_charged": (118, 194, 68),
-    "polar-pos_charged": (118, 194, 68),
-    "apolar-apolar": (89, 120, 120),
-    "apolar-neg_charged": (214, 105, 107),
-    "apolar-pos_charged": (214, 105, 107),
-    "neg_charged-neg_charged": (214, 105, 107),
-    "neg_charged-pos_charged": (89, 219, 75),
-    "pos_charged-pos_charged": (214, 105, 107),
+    "polar-polar": (153, 255, 153),
+    "polar-apolar": (255, 204, 204),
+    "polar-negative": (255, 204, 153),
+    "polar-positive": (153, 204, 255),
+    "apolar-apolar": (255, 255, 0),
+    "apolar-negative": (255, 229, 204),
+    "apolar-positive": (204, 229, 255),
+    "negative-negative": (255, 127, 0),
+    "negative-positive": (0, 204, 0),
+    "positive-positive": (255, 127, 0),
     }
 # Also add reversed keys order
 reversed_keys_dict = {'-'.join(k.split('-')[::-1]): v
@@ -72,40 +72,40 @@ reversed_keys_dict = {'-'.join(k.split('-')[::-1]): v
 CONNECT_COLORS.update(reversed_keys_dict)
 
 # Colors for each residue
-RESIUDES_COLORS = {
-    "CYS": "rgba(190, 196, 63, 0.75)",
-    "ASN": "rgba(196, 138, 63, 0.75)",
-    "GLN": "rgba(167, 196, 63, 0.75)",
-    "SER": "rgba(209, 135, 50, 0.75)",
-    "THR": "rgba(214, 135, 43, 0.75)",
-    "TYR": "rgba(212, 141, 59, 0.75)",
-    "TRP": "rgba(196, 105, 63, 0.75)",
-    "HIS": "rgba(196, 132, 63, 0.75)",
-    "ALA": "rgba(77, 75, 59, 0.75)",
-    "PHE": "rgba(77, 63, 59, 0.75)",
-    "GLY": "rgba(65, 77, 59, 0.75)",
-    "ILE": "rgba(59, 77, 74, 0.75)",
-    "VAL": "rgba(59, 62, 77, 0.75)",
-    "MET": "rgba(73, 59, 77, 0.75)",
-    "PRO": "rgba(77, 59, 64, 0.75)",
-    "LEU": "rgba(59, 77, 72, 0.75)",
-    "GLU": "rgba(72, 64, 214, 0.75)",
-    "ASP": "rgba(72, 42, 176, 0.75)",
-    "LYS": "rgba(255, 77, 77, 0.75)",
-    "ARG": "rgba(222, 55, 55, 0.75)",
+RESIDUES_COLORS = {
+    "CYS": "rgba(229, 255, 204, 0.80)",
+    "MET": "rgba(229, 255, 204, 0.80)",
+    "ASN": "rgba(128, 255, 0, 0.80)",
+    "GLN": "rgba(128, 255, 0, 0.80)",
+    "SER": "rgba(153, 255, 51, 0.80)",
+    "THR": "rgba(153, 255, 51, 0.80)",
+    "TYR": "rgba(204, 155, 53, 0.80)",
+    "TRP": "rgba(204, 155, 53, 0.80)",
+    "HIS": "rgba(204, 155, 53, 0.80)",
+    "PHE": "rgba(255, 255, 51, 0.80)",
+    "ALA": "rgba(255, 255, 0, 0.80)",
+    "ILE": "rgba(255, 255, 0, 0.80)",
+    "VAL": "rgba(255, 255, 0, 0.80)",
+    "PRO": "rgba(255, 255, 0 0.80)",
+    "LEU": "rgba(255, 255, 0, 0.80)",
+    "GLY": "rgba(255, 255, 255, 0.80)",
+    "GLU": "rgba(255, 0, 0, 0.80)",
+    "ASP": "rgba(255, 0, 0, 0.80)",
+    "LYS": "rgba(0, 0, 255, 0.80)",
+    "ARG": "rgba(0, 0, 255, 0.80)",
     }
 
 # Chain colors ( in +- pymol order )
 CHAIN_COLORS = [
-    'rgba(3, 252, 127, 0.85)',
-    'rgba(3, 252, 244, 0.85)',
-    'rgba(252, 3, 248, 0.85)',
-    'rgba(252, 173, 3, 0.85)',
-    'rgba(123, 3, 252, 0.85)',
-    'rgba(111, 111, 111, 0.85)',
-    'rgba(0, 111, 111, 0.85)',
-    'rgba(134, 140, 6, 0.85)',
-    'rgba(111, 0, 111, 0.85)',
+    'rgba(51, 255, 51, 0.85)',
+    'rgba(51, 153, 255, 0.85)',
+    'rgba(255, 153, 51, 0.85)',
+    'rgba(255, 255, 51, 0.85)',
+    'rgba(255, 0, 0, 0.85)',
+    'rgba(255, 0, 127, 0.85)',
+    'rgba(0, 255, 0, 0.85)',
+    'rgba(0, 0, 255, 0.85)',
+    'rgba(0, 153, 0, 0.85)',
     ]
 CHAIN_COLORS = CHAIN_COLORS[::-1]
 
@@ -1290,12 +1290,12 @@ def get_all_ideograms_ends(
         chains: dict,
         gap: float = 2 * PI * 0.005,
         ) -> tuple[list[tuple[float, float]], list[tuple[float, float]]]:
-    """Generate both chain and resiudes ideograms ends.
+    """Generate both chain and residues ideograms ends.
 
     Parameters
     ----------
     chains : dict
-        Dictionary mapping to list of resiudes labels.
+        Dictionary mapping to list of residues labels.
     gap : float, optional
         Gap distance used to separate two ideograms, by default 2*PI*0.005
 
@@ -1625,7 +1625,7 @@ def make_chordchart(
 
         # Point corresponding color
         try:
-            rescolor = RESIUDES_COLORS[resname]
+            rescolor = RESIDUES_COLORS[resname]
         except KeyError:
             rescolor = 'rgba(123, 123, 123, 0.7)'
 

@@ -21,8 +21,14 @@ JOB_STATUS_DIC = {
     "COMPLETING": "running",
     "COMPLETED": "finished",
     "FAILED": "failed",
-    "TIMEOUT": "failed",
+    "TIMEOUT": "timed-out",
     }
+
+TERMINATED_STATUS = (
+    "finished",
+    "failed",
+    "timed-out",
+    )
 
 # if you change these defaults, change also the values in the
 # modules/defaults.cfg file
@@ -181,27 +187,26 @@ class HPCScheduler:
                     worker.run()
 
                 # check if those finished
-                completed = False
+                completed: bool = False
                 while not completed:
+                    # Initiate count of terminated jobs
+                    terminated_count: int = 0
+                    # Loop over workers
                     for worker in worker_list:
                         worker.update_status()
+                        # Log status if not finished
                         if worker.job_status != "finished":
                             log.info(
                                 f">> {worker.job_fname.name}"
                                 f" {worker.job_status}"
                                 )
+                        # Increment number of terminated works
+                        if worker.job_status in TERMINATED_STATUS:
+                            terminated_count += 1
 
-                    # Initiate count of terminated jobs
-                    terminated_count: int = 0
-                    terminated_count += sum(
-                        w.job_status == "finished" for w in worker_list
-                        )
-
-                    terminated_count += sum(
-                        w.job_status == "failed" for w in worker_list
-                        )
-
+                    # Check if all terminated
                     if terminated_count == len(worker_list):
+                        # Set while loop condition
                         completed = True
                         end = time.time()
                         elapsed = end - start

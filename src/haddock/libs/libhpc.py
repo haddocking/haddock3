@@ -343,10 +343,7 @@ def to_torque_time(time: int) -> str:
     # Convert to hh:mm:ss string
     hh_mm_ss_l = [hours, remain_mins, 0]
     # Make sure hours contain at least 2 characters
-    hh_mm_ss_str = (f'0{val}' if len(str(val)) == 1 else str(val)
-                    for val in hh_mm_ss_l)
-    # Join as single string
-    hh_mm_ss = ':'.join(hh_mm_ss_str)
+    hh_mm_ss = '{0:02d}:{1:02d}:{2:02d}'.format(*hh_mm_ss_l)
     return hh_mm_ss
 
 

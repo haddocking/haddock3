@@ -701,11 +701,20 @@ def write_res_contacts(
 
     # initiate file content
     tsvdt: list[list[str]] = [header]
+
+    # Check for inter chain contacts
+    gen_interchain_tsv: bool = False
     if interchain_data and type(interchain_data) == dict:
-        interchain_tsvdt: list[list[str]] = [header]
+        expected_keys = ('path', 'contact_threshold', 'data_key', )
+        if all([k in interchain_data.keys() for k in expected_keys]):
+            gen_interchain_tsv = True
+            interchain_tsvdt: list[list[str]] = [header]
+        else:
+            raise KeyError
+
     for res_res_cont in res_res_contacts:
         tsvdt.append([str(res_res_cont[h]) for h in header])
-        if interchain_data != {}:
+        if gen_interchain_tsv:
             chain1 = res_res_cont['res1'].split('-')[0]
             chain2 = res_res_cont['res2'].split('-')[0]
             if chain1 != chain2:
@@ -730,7 +739,7 @@ def write_res_contacts(
         tsvout.write(tsv_str)
 
     # Write inter chain file
-    if interchain_data != {}:
+    if gen_interchain_tsv:
         # Modify readme
         readme[1] = readme[1].replace(
             'contacts half-matrix',

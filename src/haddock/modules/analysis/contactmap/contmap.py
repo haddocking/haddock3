@@ -67,9 +67,11 @@ CONNECT_COLORS = {
     "positive-positive": (255, 127, 0),
     }
 # Also add reversed keys order
-reversed_keys_dict = {'-'.join(k.split('-')[::-1]): v
-                      for k, v in CONNECT_COLORS.items()}
-CONNECT_COLORS.update(reversed_keys_dict)
+REVERSED_CONNECT_COLORS_KEYS = {
+    '-'.join(k.split('-')[::-1]): v
+    for k, v in CONNECT_COLORS.items()
+    }
+CONNECT_COLORS.update(REVERSED_CONNECT_COLORS_KEYS)
 
 # Colors for each residue
 RESIDUES_COLORS = {
@@ -95,7 +97,7 @@ RESIDUES_COLORS = {
     "ARG": "rgba(0, 0, 255, 0.80)",
     }
 
-# Chain colors ( in +- pymol order )
+# Chain colors
 CHAIN_COLORS = [
     'rgba(51, 255, 51, 0.85)',
     'rgba(51, 153, 255, 0.85)',
@@ -156,6 +158,11 @@ class ContactsMap():
                 res_res_contacts,
                 header,
                 f'{self.output}_contacts.tsv',
+                interchain_data={
+                    'path': f'{self.output}_interchains_contacts.tsv',
+                    'data_key': 'ca-ca-dist',
+                    'contact_threshold': self.params['ca_ca_dist_threshold'],
+                    }
                 )
             log.info(f'Generated contacts file: {fpath}')
 
@@ -219,14 +226,17 @@ class ClusteredContactMap():
                 )
             # Run it
             pdb_contacts = contact_map_obj.run()
+
             # Parse outputs
             for cont in pdb_contacts:
                 # Check key
-                combined_key = f'{cont["res2"]}/{cont["res1"]}'
+                combined_key = f'{cont["res2"]}/{cont["res1"]}'  # resversed
                 if combined_key not in clusters_contacts.keys():
-                    combined_key = f'{cont["res1"]}/{cont["res2"]}'
+                    combined_key = f'{cont["res1"]}/{cont["res2"]}'  # normal
                     if combined_key not in clusters_contacts.keys():
+                        # Add key order
                         keys_list.append(combined_key)
+                        # Initiate key
                         clusters_contacts[combined_key] = {
                             k: []
                             for k in cont.keys()
@@ -245,7 +255,7 @@ class ClusteredContactMap():
 
             # Compute averages Ca-Ca distances
             avg_ca_ca_dist = np.mean(dt['ca-ca-dist'])
-            # Compute number of time the cluster members holds a value under threshold
+            # Compute nb. times cluster members holds a value under threshold
             ca_ca_above_thresh = [
                 v for v in dt['ca-ca-dist']
                 if v <= self.params['ca_ca_dist_threshold']
@@ -259,7 +269,7 @@ class ClusteredContactMap():
                 v for v in dt['shortest-dist']
                 if v <= self.params['shortest_dist_threshold']
                 ]
-            # Compute number of time the cluster members holds a value under threshold
+            # Compute nb. time the cluster members holds a value under threshold
             shortest_cont_ratio = len(short_ab_t) / len(dt['shortest-dist'])
 
             # Find most representative contact type
@@ -295,6 +305,11 @@ class ClusteredContactMap():
             combined_clusters_list,
             header,
             f'{self.output}_contacts.tsv',
+            interchain_data={
+                'path': f'{self.output}_interchains_contacts.tsv',
+                'data_key': 'ca-ca-dist',
+                'contact_threshold': self.params['ca_ca_dist_threshold'],
+                }
             )
         log.info(f'Generated contacts file: {fpath}')
 
@@ -652,6 +667,7 @@ def write_res_contacts(
         header: list[str],
         path: Path,
         sep: str = '\t',
+        interchain_data: Union[bool, dict] = None,
         ) -> Path:
     """Write a tsv file based on residues-residues contacts data.
 
@@ -684,9 +700,18 @@ def write_res_contacts(
         }
 
     # initiate file content
-    tsvdt = [header]
+    tsvdt: list[list[str]] = [header]
+    if interchain_data and type(interchain_data) == dict:
+        interchain_tsvdt: list[list[str]] = [header]
     for res_res_cont in res_res_contacts:
         tsvdt.append([str(res_res_cont[h]) for h in header])
+        if interchain_data != {}:
+            chain1 = res_res_cont['res1'].split('-')[0]
+            chain2 = res_res_cont['res2'].split('-')[0]
+            if chain1 != chain2:
+                dist = res_res_cont[interchain_data['data_key']]
+                if dist < interchain_data['contact_threshold']:
+                    interchain_tsvdt.append(tsvdt[-1])
     tsv_str = '\n'.join([sep.join(_) for _ in tsvdt])
 
     # generate commented lines to be placed on top of file
@@ -703,6 +728,19 @@ def write_res_contacts(
     with open(path, 'w') as tsvout:
         tsvout.write('\n'.join(readme))
         tsvout.write(tsv_str)
+
+    # Write inter chain file
+    if interchain_data != {}:
+        # Modify readme
+        readme[1] = readme[1].replace(
+            'contacts half-matrix',
+            'interchain contacts',
+            )
+        # Write file
+        with open(interchain_data['path'], 'w') as f:
+            f.write('\n'.join(readme))
+            # Write data string
+            f.write('\n'.join([sep.join(_) for _ in interchain_tsvdt]))
 
     return path
 
@@ -863,7 +901,10 @@ def check_square_matrix(data_matrix: NDArray) -> int:
     return nb_rows
 
 
-def get_ideogram_ends(ideogram_len: NDFloat, gap: float) -> list[tuple[float, float]]:
+def get_ideogram_ends(
+        ideogram_len: NDFloat,
+        gap: float,
+        ) -> list[tuple[float, float]]:
     """Generate ideogram ends.
 
     Paramaters
@@ -1151,10 +1192,10 @@ def make_layout(
         title=title,
         xaxis=axis,
         yaxis=axis,
-        showlegend=False,
-        width=plot_size,
+        showlegend=True,
+        width=plot_size + 150,
         height=plot_size,
-        margin=dict(t=25, b=25, l=25, r=25),
+        margin={"t": 25, "b": 25, "l": 25, "r": 25},
         hovermode='closest',
         shapes=layout_shapes,
         )
@@ -1455,7 +1496,7 @@ def to_rgba_color_string(
 
     Returns
     -------
-    str
+    rgba_color : str
         The html like rgba colors. e.g.: 'rgba(123, 123, 123, 0.5)'
     """
     colors_str = ",".join([str(v) for v in connect_color])
@@ -1600,6 +1641,7 @@ def make_chordchart(
                         marker={"size": 0.5, "color": rgba_color},
                         text=text,
                         hoverinfo='text',
+                        showlegend=False,
                         )
                     )
             # Note: must reverse these arc ends to avoid twisted ribbon
@@ -1650,6 +1692,7 @@ def make_chordchart(
                     },
                 text=text_info,
                 hoverinfo='text',
+                showlegend=False,
                 )
             )
 
@@ -1689,6 +1732,7 @@ def make_chordchart(
                     },
                 text=f'Chain {chainid}',
                 hoverinfo='text',
+                showlegend=False,
                 )
             )
 
@@ -1721,9 +1765,40 @@ def make_chordchart(
     fig.update_layout(
         plot_bgcolor='white',
         )
+    # Add legend(s)
+    add_chordchart_legends(fig)
     # Write it as html file
     fig.write_html(output_fpath)
     return output_fpath
+
+
+def add_chordchart_legends(fig: go.Figure) -> None:
+    """Add custom legend to chordchart.
+
+    Parameters
+    ----------
+    fig : go.Figure
+        A plotly figure.
+    """
+    # Add connection types legends
+    for key_key, color in REVERSED_CONNECT_COLORS_KEYS.items():
+        # Create dummy traces
+        fig.add_trace(
+            go.Scatter(
+                x=[None],
+                y=[None],
+                legendgroup="connect_color",
+                legendgrouptitle_text="Interaction types",
+                showlegend=True,
+                name=" <-> ".join(key_key.split('-')),
+                mode="lines",
+                marker={
+                    "color": to_rgba_color_string(color, 0.75),
+                    "size": 10,
+                    "symbol": "line-ew-open",
+                    },
+                )
+            )
 
 
 def tsv_to_chordchart(

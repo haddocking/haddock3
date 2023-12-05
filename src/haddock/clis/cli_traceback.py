@@ -25,7 +25,7 @@ from haddock.modules import get_module_steps_folders
 
 TRACK_FOLDER = "traceback"  # name of the traceback folder
 
-ANA_MODULES = ["caprieval", "seletop", "topoaa", "rmsdmatrix", "clustrmsd", "clustfcc"]
+ANA_MODULES = ["caprieval", "seletop", "topoaa", "rmsdmatrix", "clustrmsd", "clustfcc", "contactmap"]
 
 
 def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int) -> tuple[list, int]:

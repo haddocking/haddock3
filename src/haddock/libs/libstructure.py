@@ -1,6 +1,7 @@
 """Molecular data structures."""
 from functools import partial
 from pathlib import Path
+from typing import Any, Iterable, Optional
 
 
 class Molecule:
@@ -22,7 +23,10 @@ class Molecule:
         as ``file_name``.
     """
 
-    def __init__(self, file_name, segid=None, no_parent=False):
+    def __init__(self,
+                 file_name: Path,
+                 segid: Optional[int] = None,
+                 no_parent: bool = False) -> None:
         # the rest of the code is too dependent on the Path API
         assert isinstance(file_name, Path), \
             f"`file_name` must be pathlib.Path: {type(file_name)} given"
@@ -35,6 +39,6 @@ class Molecule:
             self.with_parent = Path('..', file_name)
 
 
-def make_molecules(paths, **kwargs):
+def make_molecules(paths: Iterable[Path], **kwargs: Any) -> list[Molecule]:
     """Get input molecules from the data stream."""
     return list(map(partial(Molecule, **kwargs), paths))

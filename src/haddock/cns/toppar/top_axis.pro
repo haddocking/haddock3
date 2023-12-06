@@ -33,6 +33,8 @@ residue XAN
    bond X OO
    bond Y OO
    bond Z OO
+
+   improper   X Y OO Z
 end
 
 residue DAN

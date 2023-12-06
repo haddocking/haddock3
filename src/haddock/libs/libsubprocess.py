@@ -7,19 +7,22 @@ from pathlib import Path
 
 from haddock.core.defaults import cns_exec as global_cns_exec
 from haddock.core.exceptions import CNSRunningError, JobRunningError
+from haddock.core.typing import Any, FilePath, Optional, ParamDict
 from haddock.libs.libio import gzip_files
 
 
 class BaseJob:
     """Base class for a subprocess job."""
 
-    def __init__(self, input_, output, executable, *args):
+    def __init__(self, input_: Path, output: Path, executable: Path,
+                 *args: Any) -> None:
         self.input = input_
         self.output = output
         self.executable = executable
         self.args = args
+        self.cmd: str
 
-    def run(self):
+    def run(self) -> bytes:
         """Execute job in subprocess."""
         self.make_cmd()
 
@@ -38,8 +41,12 @@ class BaseJob:
 
         return out
 
+    def make_cmd(self) -> None:
+        """Execute subprocess job."""
+        raise NotImplementedError()
 
-def Job(BaseJob):
+
+class Job(BaseJob):
     """
     Instantiate a standard job.
 
@@ -47,7 +54,8 @@ def Job(BaseJob):
 
         $ cmd ARGS INPUT
     """
-    def make_cmd(self):
+
+    def make_cmd(self) -> None:
         """Execute subprocess job."""
         self.cmd = " ".join([
             os.fspath(self.executable),
@@ -66,7 +74,7 @@ class JobInputFirst(BaseJob):
         $ cmd INPUT ARGS
     """
 
-    def make_cmd(self):
+    def make_cmd(self) -> None:
         """Execute job in subprocess."""
         self.cmd = " ".join([
             os.fspath(self.executable),
@@ -81,11 +89,11 @@ class CNSJob:
 
     def __init__(
             self,
-            input_file,
-            output_file,
-            envvars=None,
-            cns_exec=None,
-            ):
+            input_file: FilePath,
+            output_file: FilePath,
+            envvars: Optional[ParamDict] = None,
+            cns_exec: Optional[FilePath] = None,
+            ) -> None:
         """
         CNS subprocess.
 
@@ -110,22 +118,22 @@ class CNSJob:
         self.envvars = envvars
         self.cns_exec = cns_exec
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"CNSJob({self.input_file}, {self.output_file}, "
             f"envvars={self.envvars}, cns_exec={self.cns_exec})"
             )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return repr(self)
 
     @property
-    def envvars(self):
+    def envvars(self) -> ParamDict:
         """CNS environment vars."""
         return self._envvars
 
     @envvars.setter
-    def envvars(self, envvars):
+    def envvars(self, envvars: Optional[ParamDict]) -> None:
         """CNS environment vars."""
         self._envvars = envvars or {}
         if not isinstance(self._envvars, dict):
@@ -136,12 +144,12 @@ class CNSJob:
                 self._envvars[k] = str(v)
 
     @property
-    def cns_exec(self):
+    def cns_exec(self) -> FilePath:
         """CNS executable path."""
         return self._cns_exec
 
     @cns_exec.setter
-    def cns_exec(self, cns_exec_path):
+    def cns_exec(self, cns_exec_path: Optional[FilePath]) -> None:
         if not cns_exec_path:
             cns_exec_path = global_cns_exec  # global cns_exec
 
@@ -155,10 +163,10 @@ class CNSJob:
 
     def run(
             self,
-            compress_inp=False,
-            compress_out=True,
-            compress_seed=False,
-            ):
+            compress_inp: bool = False,
+            compress_out: bool = True,
+            compress_seed: bool = False,
+            ) -> bytes:
         """
         Run this CNS job script.
 

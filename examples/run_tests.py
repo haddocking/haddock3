@@ -19,9 +19,9 @@ You should work towards solving that problem or contact the HADDOCK3 team.
 
 USAGE:
 
-    $ python run_examples.py -h
-    $ python run_examples.py     # runs all examples regardless of errors
-    $ python run_examples.py -b  # stops asap an error is found
+    $ python run_tests.py -h
+    $ python run_tests.py     # runs all examples regardless of errors
+    $ python run_tests.py -b  # stops asap an error is found
 """
 import argparse
 import os
@@ -42,7 +42,7 @@ except Exception:
     sys.exit(1)
 
 
-# edit this dictionary to add or remove examples.
+# edit this tuple to add or remove examples.
 # keys are the examples folder, and values are the configuration files
 # the whitespaces below are anti-pythonic but facilitate reading :-)
 examples = (
@@ -54,6 +54,8 @@ examples = (
     ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
     ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
     ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
     ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),  # noqa: E203, E501
@@ -61,6 +63,7 @@ examples = (
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-multiple-ambig"      , "docking-multiple-tbls-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
     ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
     ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
@@ -68,7 +71,7 @@ examples = (
     ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
     ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
-    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg")  # noqa: E203, E501
+    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
     )
 
 
@@ -106,8 +109,13 @@ def main(examples, break_on_errors=True):
 
         with working_directory(folder):
 
-            params = read_config(file_)
-            rmtree(params["run_dir"], ignore_errors=True)
+            # obtain run directory
+            all_params = read_config(file_)
+            rundir = all_params['final_cfg']["run_dir"]
+            # remove eventual previous run
+            rmtree(rundir, ignore_errors=True)
+
+            # run example
             subprocess.run(
                 f"haddock3 {file_}",
                 shell=True,

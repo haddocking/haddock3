@@ -4,9 +4,10 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from haddock.libs.libplots import find_best_struct
+from haddock.libs.libplots import find_best_struct, make_alascan_plot
 
 from . import data_folder, golden_data
+from .test_module_alascan import example_df_scan_clt
 
 
 @pytest.fixture
@@ -25,7 +26,7 @@ def test_find_best_struct_best1(example_capri_ss):
             "Cluster ID": {0: 1},
             "Cluster Rank": {0: 2},
             "Nr 01 best structure": {
-                0: "../1_rigidbody/rigidbody_383.pdb",
+                0: "../../1_rigidbody/rigidbody_383.pdb",
                 },
             }
         )
@@ -42,10 +43,10 @@ def test_find_best_struct_best20(example_capri_ss):
         {
             "Cluster ID": {0: 1},
             "Cluster Rank": {0: 2},
-            "Nr 01 best structure": {0: "../1_rigidbody/rigidbody_383.pdb"},
-            "Nr 02 best structure": {0: "../1_rigidbody/rigidbody_265.pdb"},
-            "Nr 03 best structure": {0: "../1_rigidbody/rigidbody_231.pdb"},
-            "Nr 04 best structure": {0: "../1_rigidbody/rigidbody_218.pdb"},
+            "Nr 01 best structure": {0: "../../1_rigidbody/rigidbody_383.pdb"},
+            "Nr 02 best structure": {0: "../../1_rigidbody/rigidbody_265.pdb"},
+            "Nr 03 best structure": {0: "../../1_rigidbody/rigidbody_231.pdb"},
+            "Nr 04 best structure": {0: "../../1_rigidbody/rigidbody_218.pdb"},
             }
         )
     expected.columns.names = ["Structure"]
@@ -61,10 +62,10 @@ def test_find_best_struct_best4(example_capri_ss):
         {
             "Cluster ID": {0: 1},
             "Cluster Rank": {0: 2},
-            "Nr 01 best structure": {0: "../1_rigidbody/rigidbody_383.pdb"},
-            "Nr 02 best structure": {0: "../1_rigidbody/rigidbody_265.pdb"},
-            "Nr 03 best structure": {0: "../1_rigidbody/rigidbody_231.pdb"},
-            "Nr 04 best structure": {0: "../1_rigidbody/rigidbody_218.pdb"},
+            "Nr 01 best structure": {0: "../../1_rigidbody/rigidbody_383.pdb"},
+            "Nr 02 best structure": {0: "../../1_rigidbody/rigidbody_265.pdb"},
+            "Nr 03 best structure": {0: "../../1_rigidbody/rigidbody_231.pdb"},
+            "Nr 04 best structure": {0: "../../1_rigidbody/rigidbody_218.pdb"},
             }
         )
     expected.columns.names = ["Structure"]
@@ -81,15 +82,23 @@ def test_find_best_struct_unclustered(example_capri_ss_dashcluster):
     """Finds 4 best structures when there unclustered."""
     result = find_best_struct(example_capri_ss_dashcluster, 4)
 
+    struct_dir = "../../../01_rigidbody"
     expected = pd.DataFrame(
         {
             "Cluster ID": {0: "-"},
             "Cluster Rank": {0: "Unclustered"},
-            "Nr 01 best structure": {0: "../../01_rigidbody/rigidbody_6.pdb"},
-            "Nr 02 best structure": {0: "../../01_rigidbody/rigidbody_16.pdb"},
-            "Nr 03 best structure": {0: "../../01_rigidbody/rigidbody_20.pdb"},
-            "Nr 04 best structure": {0: "../../01_rigidbody/rigidbody_14.pdb"},
+            "Nr 01 best structure": {0: f"{struct_dir}/rigidbody_6.pdb"},
+            "Nr 02 best structure": {0: f"{struct_dir}/rigidbody_16.pdb"},
+            "Nr 03 best structure": {0: f"{struct_dir}/rigidbody_20.pdb"},
+            "Nr 04 best structure": {0: f"{struct_dir}/rigidbody_14.pdb"},
             }
         )
     expected.columns.names = ["Structure"]
     pd.testing.assert_frame_equal(result, expected)
+
+
+def test_make_alascan_plot(example_df_scan_clt):
+    """Test make_alascan_plot."""
+    make_alascan_plot(example_df_scan_clt, clt_id="-")
+    # assert existence of plot
+    assert Path("scan_clt_-.html").exists()

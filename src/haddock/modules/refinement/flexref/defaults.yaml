@@ -1683,10 +1683,20 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 1
+  max: 500
   title: Sampling factor for each starting model
-  short: This paramater control how many times a model will be refined.
-  long: This paramater control how many times a model will be refined. 
+  short: This paramater controls how many times a model will be refined.
+  long: This paramater controls how many times a model will be refined. 
+  group: 'sampling'
+  explevel: expert
+max_nmodels:
+  default: 10000
+  type: integer
+  min: 1
+  max: 50000
+  title: Maximum number of models to refine
+  short: This paramater controls the maximum number of models to refine.
+  long: This paramater controls the maximum number of models to refine.
   group: 'sampling'
   explevel: expert
 nemsteps:
@@ -1740,6 +1750,14 @@ mdsteps_cool3:
   long: Number of MD steps for the third cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains and backbone at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle_X and related parameters).
   group: 'sampling'
   explevel: expert
+randorien:
+  default: false
+  type: boolean
+  title: Randomize starting orientations
+  short: Randomize starting orientations
+  long: Randomize starting orientations by separating the molecules in space and randomly rotating those
+  group: 'sampling'
+  explevel: guru
 timestep:
   default: 0.002
   type: float

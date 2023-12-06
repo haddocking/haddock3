@@ -9,6 +9,7 @@ from pathlib import Path
 from pdbtools import pdb_tidy
 
 from haddock import log
+from haddock.core.typing import FilePath
 from haddock.libs import libpdb
 from haddock.libs.libontology import PDBFile
 from haddock.modules import BaseHaddockModule
@@ -18,10 +19,10 @@ RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
 
 
-def ambig2dic(ambig_f):
+def ambig2dic(ambig_f: FilePath) -> dict[str, list[int]]:
     """Read an ambig.tbl file and convert it to a dictionary."""
     ambig_regex = r"resid\s*(\d*)\s*and\s*segid\s*(\w)"
-    ambig_dic = {}
+    ambig_dic: dict[str, list[int]] = {}
     with open(ambig_f) as fh:
         for line in fh.readlines():
             matches = re.finditer(ambig_regex, line)
@@ -40,11 +41,14 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm this module is installed."""
         gdock_path = os.environ['GDOCK_PATH']
         gdock_exec = Path(gdock_path, 'gdock.py')
@@ -58,7 +62,7 @@ class HaddockModule(BaseHaddockModule):
         else:
             raise Exception('gdock is not installed properly')
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         try:
             gdock_path = os.environ['GDOCK_PATH']
@@ -70,7 +74,7 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(f'{gdock_exec} not found')
 
         # Get the models generated in previous step
-        models_to_dock = self.previous_io.retrieve_models()[0]
+        models_to_dock: list[PDBFile] = self.previous_io.retrieve_models()[0]
         topologies = [e.topology for e in models_to_dock]
 
         input_a = models_to_dock[0].rel_path
@@ -126,7 +130,7 @@ class HaddockModule(BaseHaddockModule):
         subprocess.call(cmd, shell=True)
 
         # retrieve the structures
-        self.output_models = []
+        self.output_models: list[PDBFile] = []
         structure_folder = Path('gdock-integration/structures')
         for model in structure_folder.glob('*pdb'):
             # Make sure the output is tidy, this should be handled
@@ -144,4 +148,4 @@ class HaddockModule(BaseHaddockModule):
             pdb.topology = topologies
             self.output_models.append(pdb)
 
-        self.export_output_models()
+        self.export_io_models()

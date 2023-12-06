@@ -16,11 +16,22 @@ from pathlib import Path, PosixPath
 from haddock import EmptyPath, contact_us, haddock3_source_path, log
 from haddock.core.defaults import RUNDIR, max_molecules_allowed
 from haddock.core.exceptions import ConfigurationError, ModuleError
+from haddock.core.typing import (
+    Any,
+    Callable,
+    FilePath,
+    Generator,
+    Iterable,
+    Optional,
+    ParamDict,
+    ParamMap,
+    Union,
+)
 from haddock.gear.clean_steps import (
     UNPACK_FOLDERS,
     unpack_compressed_and_archived_files,
     update_unpacked_names,
-    )
+)
 from haddock.gear.config import get_module_name
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
@@ -35,17 +46,17 @@ from haddock.gear.expandable_parameters import (
     read_single_idx_groups_user_config,
     remove_trail_idx,
     type_simplest_ep,
-    )
+)
 from haddock.gear.extend_run import (
     read_num_molecules_from_folder,
     renum_step_folders,
-    )
+)
 from haddock.gear.greetings import get_goodbye_help
 from haddock.gear.parameters import (
     config_mandatory_general_parameters,
     config_optional_general_parameters,
     config_optional_general_parameters_dict,
-    )
+)
 from haddock.gear.preprocessing import process_pdbs, read_additional_residues
 from haddock.gear.restart_run import remove_folders_after_number
 from haddock.gear.validations import v_rundir
@@ -59,45 +70,67 @@ from haddock.libs.libutil import (
     recursive_dict_update,
     remove_dict_keys,
     transform_to_list,
-    )
+)
 from haddock.modules import (
     get_module_steps_folders,
     modules_category,
     modules_names,
     non_mandatory_general_parameters_defaults,
-    )
+)
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
     modules_using_resdic,
-    )
+)
 
 
 ALL_POSSIBLE_GENERAL_PARAMETERS = set.union(
     set(config_mandatory_general_parameters),
     set(non_mandatory_general_parameters_defaults),
     config_optional_general_parameters,
-    )
+)
 
 # Dict mapping string types (in default.yaml) into python3 objects types
 TYPES_MAPPER = {
-    'boolean': (bool,),
-    'bool': (bool,),
-    'integer': (int, float,),
-    'int': (int, float,),
-    'long': (float, int,),
-    'float': (float, int,),
-    'double': (float,),
-    'string': (str,),
-    'str': (str,),
-    'list': (list,),
-    'array': (list,),
-    'path': (str, Path, PosixPath, EmptyPath,),
-    'file': (str, Path, PosixPath, EmptyPath,),
-    }
+    "boolean": (bool,),
+    "bool": (bool,),
+    "integer": (
+        int,
+        float,
+    ),
+    "int": (
+        int,
+        float,
+    ),
+    "long": (
+        float,
+        int,
+    ),
+    "float": (
+        float,
+        int,
+    ),
+    "double": (float,),
+    "string": (str,),
+    "str": (str,),
+    "list": (list,),
+    "array": (list,),
+    "path": (
+        str,
+        Path,
+        PosixPath,
+        EmptyPath,
+    ),
+    "file": (
+        str,
+        Path,
+        PosixPath,
+        EmptyPath,
+    ),
+}
 
 
 @contextmanager
-def config_key_error():
+def config_key_error() -> Generator[None, None, None]:
     """Raise ConfigurationError on KeyError."""
     try:
         yield
@@ -106,19 +139,21 @@ def config_key_error():
         raise ConfigurationError(msg) from err
 
 
-def with_config_error(func):
+def with_config_error(func: Callable[..., Any]) -> Callable[..., Any]:
     """Add config error context."""
+
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Callable[..., Any]:
         with config_key_error():
             return func(*args, **kwargs)
+
     return wrapper
 
 
 @lru_cache
 def _read_defaults(module_name, default_only=True):
     """Read the defaults.yaml given a module name.
-    
+
     Parameters
     ----------
     module_name : str
@@ -138,20 +173,20 @@ def _read_defaults(module_name, default_only=True):
     module_name_ = get_module_name(module_name)
     pdef = Path(
         haddock3_source_path,
-        'modules',
+        "modules",
         modules_category[module_name_],
         module_name_,
-        'defaults.yaml',
-        ).resolve()
+        "defaults.yaml",
+    ).resolve()
     mod_default_config = read_from_yaml_config(pdef, default_only=default_only)
     return mod_default_config
 
 
 def setup_run(
-        workflow_path,
-        restart_from=None,
-        extend_run=None,
-        ):
+    workflow_path: FilePath,
+    restart_from: Optional[int] = None,
+    extend_run: Optional[FilePath] = None,
+) -> tuple[ParamDict, ParamDict]:
     """
     Set up an HADDOCK3 run.
 
@@ -214,13 +249,13 @@ def setup_run(
 
     # update default non-mandatory parameters with user params
     params = recursive_dict_update(
-        config_optional_general_parameters_dict,
-        config_files['final_cfg'])
+        config_optional_general_parameters_dict, config_files["final_cfg"]
+    )
 
     params = recursive_dict_update(
         non_mandatory_general_parameters_defaults,
         params,
-        )
+    )
 
     validate_module_names_are_not_misspelled(params)
 
@@ -232,7 +267,7 @@ def setup_run(
     validate_parameters_are_not_misspelled(
         general_params,
         reference_parameters=ALL_POSSIBLE_GENERAL_PARAMETERS,
-        )
+    )
 
     # --extend-run configs do not define the run directory
     # in the config file. So we take it from the argument.
@@ -269,16 +304,16 @@ def setup_run(
         step_folders = get_module_steps_folders(general_params[RUNDIR])
 
         log.info(
-            'Uncompressing previous output files for folders: '
+            "Uncompressing previous output files for folders: "
             f'{", ".join(step_folders)}'
-            )
+        )
         # unpack the possible compressed and archived files
         _step_folders = (Path(general_params[RUNDIR], p) for p in step_folders)
         unpack_compressed_and_archived_files(
             _step_folders,
             general_params["ncores"],
             dec_all=True,
-            )
+        )
 
     if starting_from_copy:
         num_steps = len(step_folders)
@@ -291,12 +326,14 @@ def setup_run(
 
     else:
         copy_molecules_to_topology(
-            general_params['molecules'],
-            modules_params['topoaa.1'],
-            )
+            general_params["molecules"],
+            modules_params["topoaa.1"],
+        )
 
         if len(modules_params["topoaa.1"]["molecules"]) > max_molecules_allowed:
-            raise ConfigurationError(f"Too many molecules defined, max is {max_molecules_allowed}.")  # noqa: E501
+            raise ConfigurationError(
+                f"Too many molecules defined, max is {max_molecules_allowed}."
+            )  # noqa: E501
 
         zero_fill.read(modules_params)
 
@@ -314,7 +351,7 @@ def setup_run(
             _prev,
             _new,
             general_params[RUNDIR],
-            )
+        )
 
     validate_modules_params(modules_params, max_mols)
 
@@ -324,7 +361,7 @@ def setup_run(
     # Add workflow configuration file in data directory
     enhanced_haddock_params = deepcopy(general_params)
     enhanced_haddock_params.update(modules_params)
-    config_files['enhanced_haddock_params'] = enhanced_haddock_params
+    config_files["enhanced_haddock_params"] = enhanced_haddock_params
     config_saves = save_configuration_files(config_files, data_dir)  # noqa : F841
 
     if scratch_rest0:
@@ -332,7 +369,7 @@ def setup_run(
             data_dir,
             modules_params["topoaa.1"],
             preprocess=general_params["preprocess"],
-            )
+        )
 
     if starting_from_copy:
         copy_input_files_to_data_dir(data_dir, modules_params, start=num_steps)
@@ -345,7 +382,7 @@ def setup_run(
             data_dir,
             _partial_params,
             start=restart_from,
-            )
+        )
 
     else:
         # copies everything
@@ -358,7 +395,7 @@ def setup_run(
     return modules_params, general_params
 
 
-def save_configuration_files(configs: dict, datadir: [str, Path]) -> dict:
+def save_configuration_files(configs: dict, datadir: Union[str, Path]) -> dict:
     """Write a copy of configuration files (GitHub issue #578).
 
     Parameters
@@ -376,28 +413,29 @@ def save_configuration_files(configs: dict, datadir: [str, Path]) -> dict:
         Dictionary of paths leading to saved configuration files.
     """
     # Create directory
-    confpaths = Path(datadir, 'configurations/')
+    confpaths = Path(datadir, "configurations/")
     confpaths.mkdir(parents=True, exist_ok=True)
     # Initiate files data
     infofile = {
-        'raw_input': (
-            'An untouched copy of the raw input file, '
-            'as provided by the user.'),
-        'cleaned_input': (
-            'Pre-parsed input file where (eventually) '
-            'some indexing and modifications were '
-            'applied to ensure further processing.'),
-        'enhanced_haddock_params': (
-            'Final input file with detailed default parameters.'
-            )
-        }
+        "raw_input": (
+            "An untouched copy of the raw input file, " "as provided by the user."
+        ),
+        "cleaned_input": (
+            "Pre-parsed input file where (eventually) "
+            "some indexing and modifications were "
+            "applied to ensure further processing."
+        ),
+        "enhanced_haddock_params": (
+            "Final input file with detailed default parameters."
+        ),
+    }
     added_files = {}
     # Set list of configurations that wish to be saved
     list_save_conf = [
-        'raw_input',
-        'cleaned_input',
-        'enhanced_haddock_params',
-        ]
+        "raw_input",
+        "cleaned_input",
+        "enhanced_haddock_params",
+    ]
 
     # Loop over configuration files
     for confname in list_save_conf:
@@ -406,31 +444,33 @@ def save_configuration_files(configs: dict, datadir: [str, Path]) -> dict:
         except KeyError:
             continue
 
-        toml_fpath = Path(confpaths, f'{confname}.toml')
+        toml_fpath = Path(confpaths, f"{confname}.toml")
         if isinstance(confdt, dict):
             # Save toml version
             save_config(confdt, toml_fpath)
             # Save json version
-            json_fpath = Path(confpaths, f'{confname}.json')
+            json_fpath = Path(confpaths, f"{confname}.json")
             jsonconf = recursive_convert_paths_to_strings(confdt)
-            with open(json_fpath, 'w', encoding='utf-8') as f:
+            with open(json_fpath, "w", encoding="utf-8") as f:
                 json.dump(jsonconf, f, indent=4)
         else:
-            with open(toml_fpath, 'w') as f:
+            with open(toml_fpath, "w") as f:
                 f.write(confdt)
 
         added_files[confname] = toml_fpath
 
     # Add README to help user
-    readmepath = Path(confpaths, 'README.txt')
-    with open(readmepath, 'w') as f:
-        f.write(f"{'#'*80}\n# Information about configuration "
-                f"files present in the same directory #\n{'#'*80}\n")
+    readmepath = Path(confpaths, "README.txt")
+    with open(readmepath, "w") as f:
+        f.write(
+            f"{'#'*80}\n# Information about configuration "
+            f"files present in the same directory #\n{'#'*80}\n"
+        )
         for confname in list_save_conf:
             if confname not in added_files.keys():
                 continue
             f.write(f'"{added_files[confname]}": {infofile[confname]}\n')
-    added_files['readme'] = readmepath
+    added_files["readme"] = readmepath
 
     # Return mapper to added files
     return added_files
@@ -447,25 +487,26 @@ def validate_params(params):
     validate_modules_names(params)
 
 
-def check_mandatory_argments_are_present(params):
+def check_mandatory_argments_are_present(params: Iterable[str]) -> None:
     """Confirm order key exists in config."""
     for arg in config_mandatory_general_parameters:
         if arg not in params:
             _msg = (
                 f"Parameter {arg!r} is not defined in the configuration file. "
                 "Please refer to DOCUMENTATION-LINK for more information."
-                )
+            )
             raise ConfigurationError(_msg)
     return
 
 
 @with_config_error
-def validate_modules_names(params):
+def validate_modules_names(params: Iterable[str]) -> None:
     """Validate all modules names are spelled correctly."""
-    keys = \
-        set(params) \
-        - set(config_mandatory_general_parameters) \
+    keys = (
+        set(params)
+        - set(config_mandatory_general_parameters)
         - set(non_mandatory_general_parameters_defaults)
+    )
 
     for module in keys:
         if get_module_name(module) not in modules_category.keys():
@@ -473,12 +514,12 @@ def validate_modules_names(params):
                 f"Module {module} not found in HADDOCK3 library. "
                 "Please refer to the list of available modules at: "
                 "DOCUMENTATION-LINK"
-                )
+            )
             raise ConfigurationError(_msg)
 
 
 @with_config_error
-def validate_modules_params(modules_params, max_mols):
+def validate_modules_params(modules_params: ParamMap, max_mols: int) -> None:
     """
     Validate individual parameters for each module.
 
@@ -502,27 +543,27 @@ def validate_modules_params(modules_params, max_mols):
             defaults,
             module_name,
             max_mols,
-            )
+        )
 
         all_parameters = set.union(
             set(extract_keys_recursive(defaults)),
             set(non_mandatory_general_parameters_defaults.keys()),
             expandable_params,
-            )
+        )
 
         diff = set(extract_keys_recursive(args)) - all_parameters
 
         if diff:
             matched = fuzzy_match(diff, all_parameters)
 
-            def pretty_print(match):
-                return f" * \'{match[0]}\' did you mean \'{match[1]}\'?"
+            def pretty_print(match: tuple[str, str]) -> str:
+                return f" * '{match[0]}' did you mean '{match[1]}'?"
 
             _msg = (
-                'The following parameters do not match any expected '
-                f'parameters for module {module_name!r}: {os.linesep}'
-                f'{os.linesep.join(map(pretty_print, matched))}.'
-                )
+                "The following parameters do not match any expected "
+                f"parameters for module {module_name!r}: {os.linesep}"
+                f"{os.linesep.join(map(pretty_print, matched))}."
+            )
             raise ConfigurationError(_msg)
 
         # Now that existence of the parameter was checked,
@@ -530,13 +571,15 @@ def validate_modules_params(modules_params, max_mols):
         validate_module_params_values(module_name, args)
 
         # Update parameters with defaults ones
-        _missing_defaults = {param: default
-                             for param, default in defaults.items()
-                             if param not in args.keys()}
+        _missing_defaults = {
+            param: default
+            for param, default in defaults.items()
+            if param not in args.keys()
+        }
         args.update(_missing_defaults)
 
 
-def validate_module_params_values(module_name, args: dict):
+def validate_module_params_values(module_name: str, args: dict) -> None:
     """Validate individual parameters for a module.
 
     Parameters
@@ -559,8 +602,7 @@ def validate_module_params_values(module_name, args: dict):
         validate_value(default_conf_params, key, val)
 
 
-def validate_value(default_yaml: dict, key: str,
-                   value: [bool, int, float, str, list]):
+def validate_value(default_yaml: dict, key: str, value: Any) -> None:
     """Validate queried value for a specific parameter of a module.
 
     Parameters
@@ -581,20 +623,19 @@ def validate_value(default_yaml: dict, key: str,
     # Special case for molecules...
     if key not in default_yaml.keys():
         return
-    if 'group' in default_yaml[key].keys():
-        if default_yaml[key]['group'] == 'molecules':
+    if "group" in default_yaml[key].keys():
+        if default_yaml[key]["group"] == "molecules":
             return
 
     # Series of checks
-    if (_msg := validate_param_type(default_yaml[key], value)):
+    if _msg := validate_param_type(default_yaml[key], value):
         raise ConfigurationError(f'Config error for parameter "{key}": {_msg}')
-    if (_msg := validate_param_range(default_yaml[key], value)):
+    if _msg := validate_param_range(default_yaml[key], value):
         raise ConfigurationError(f'Config error for parameter "{key}": {_msg}')
     # FIXME: add more checks here ?
 
 
-def validate_param_type(param: dict,
-                        val: [bool, int, float, str, list]) -> [str, None]:
+def validate_param_type(param: dict, val: Any) -> Optional[str]:
     """Check if provided parameter type is similar to defined defaults ones.
 
     Parameters
@@ -608,22 +649,23 @@ def validate_param_type(param: dict,
     ------
     May return a string explaining the issue with the provided value type
     """
-    if 'type' not in param.keys():
+    if "type" not in param.keys():
         return
     # Load type from string to python class
     try:
-        allowed_types = TYPES_MAPPER[param['type']]
+        allowed_types = TYPES_MAPPER[param["type"]]
     except KeyError as e:
         return f'Unrecognized default type "{e}"'
     # Check if both of the same type
     if (query_type := type(val)) not in allowed_types:
-        return (f'Wrong provided type "{query_type}" with value "{val}". '
-                f'It should be of type "{param["type"]}" '
-                f'(e.g: {param["default"]})')
+        return (
+            f'Wrong provided type "{query_type}" with value "{val}". '
+            f'It should be of type "{param["type"]}" '
+            f'(e.g: {param["default"]})'
+        )
 
 
-def validate_param_range(param: dict,
-                         val: [bool, int, float, str, list]) -> [str, None]:
+def validate_param_range(param: dict, val: Any) -> Optional[str]:
     """Check if provided value is in range/choices defined for this parameter.
 
     Parameters
@@ -638,53 +680,59 @@ def validate_param_range(param: dict,
     May return a string explaining the issue with the provided value range
     """
     # Case for choices
-    if 'choices' in param.keys():
-        if val not in (choices := param['choices']):
-            return f'Value "{val}" is not among the accepted choices: {choices}' # noqa : E501
+    if "choices" in param.keys():
+        if val not in (choices := param["choices"]):
+            return f'Value "{val}" is not among the accepted choices: {choices}'  # noqa : E501
     # Case for ranges
-    elif 'min' in param.keys() and 'max' in param.keys():
-        if val < param['min'] or val > param['max']:
-            return (f'Value "{val}" is not in the allowed boundaries '
-                    f'ranging from {param["min"]} to {param["max"]}')
+    elif "min" in param.keys() and "max" in param.keys():
+        if val < param["min"] or val > param["max"]:
+            return (
+                f'Value "{val}" is not in the allowed boundaries '
+                f'ranging from {param["min"]} to {param["max"]}'
+            )
     # Case for lists
-    elif 'minitems' in param.keys() and 'maxitems' in param.keys():
-        if ((nbitems := len(val)) < param['minitems']
-           or nbitems > param['maxitems']):
-            _desc = 'under' if nbitems < param['minitems'] else 'exceeding'
-            return (f'Number of items found in "{val}" is {_desc} the '
-                    'permitted limit. It should range from '
-                    f'{param["minitems"]} to {param["maxitems"]}')
+    elif "minitems" in param.keys() and "maxitems" in param.keys():
+        if (nbitems := len(val)) < param["minitems"] or nbitems > param["maxitems"]:
+            _desc = "under" if nbitems < param["minitems"] else "exceeding"
+            return (
+                f'Number of items found in "{val}" is {_desc} the '
+                "permitted limit. It should range from "
+                f'{param["minitems"]} to {param["maxitems"]}'
+            )
     # Case for strings
-    elif 'minchars' in param.keys() and 'maxchars' in param.keys():
-        if ((nbchars := len(val)) < param['minchars']
-           or nbchars > param['maxchars']):
-            _desc = 'under' if nbchars < param['minitems'] else 'exceeding'
-            return (f'Number of items found in "{val}" is {_desc} the '
-                    'permitted limit. It should range from '
-                    f'{param["minchars"]} to {param["maxchars"]}')
+    elif "minchars" in param.keys() and "maxchars" in param.keys():
+        if (nbchars := len(val)) < param["minchars"] or nbchars > param["maxchars"]:
+            _desc = "under" if nbchars < param["minitems"] else "exceeding"
+            return (
+                f'Number of items found in "{val}" is {_desc} the '
+                "permitted limit. It should range from "
+                f'{param["minchars"]} to {param["maxchars"]}'
+            )
 
 
-def check_if_modules_are_installed(params):
+def check_if_modules_are_installed(params: ParamMap) -> None:
     """Validate if third party-libraries are installed."""
     for module_name in params.keys():
-        module_import_name = '.'.join([
-            'haddock',
-            'modules',
-            modules_category[get_module_name(module_name)],
-            get_module_name(module_name),
-            ])
+        module_import_name = ".".join(
+            [
+                "haddock",
+                "modules",
+                modules_category[get_module_name(module_name)],
+                get_module_name(module_name),
+            ]
+        )
         module_lib = importlib.import_module(module_import_name)
         try:
             module_lib.HaddockModule.confirm_installation()
         except Exception as err:
             _msg = (
-                'A problem occurred while assessing if module '
-                f'{module_name!r} is installed in your system. Have you '
-                'installed the packages required to run this module? If '
-                f'yes, write us at {contact_us!r} describing your system '
-                'and the problems you are facing. If not, please install '
-                'the required packages to use the module.'
-                )
+                "A problem occurred while assessing if module "
+                f"{module_name!r} is installed in your system. Have you "
+                "installed the packages required to run this module? If "
+                f"yes, write us at {contact_us!r} describing your system "
+                "and the problems you are facing. If not, please install "
+                "the required packages to use the module."
+            )
             raise ModuleError(_msg) from err
 
 
@@ -718,7 +766,7 @@ def check_if_modules_are_installed(params):
 
 
 @with_config_error
-def create_data_dir(run_dir):
+def create_data_dir(run_dir: FilePath) -> Path:
     """
     Create initial files for HADDOCK3 run.
 
@@ -727,18 +775,22 @@ def create_data_dir(run_dir):
     pathlib.Path
         A path referring only to 'data'.
     """
-    data_dir = Path(run_dir, 'data')
+    data_dir = Path(run_dir, "data")
     data_dir.mkdir(parents=True, exist_ok=True)
     return data_dir
 
 
 @with_config_error
-def copy_molecules_to_topology(molecules, topoaa_params):
+def copy_molecules_to_topology(
+    molecules: Iterable[str], topoaa_params: ParamMap
+) -> None:
     """Copy molecules to mandatory topology module."""
-    topoaa_params['molecules'] = list(map(Path, transform_to_list(molecules)))
+    topoaa_params["molecules"] = list(map(Path, transform_to_list(molecules)))
 
 
-def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
+def copy_molecules_to_data_dir(
+    data_dir: Path, topoaa_params: ParamMap, preprocess: bool = True
+) -> None:
     """
     Copy molecules to data directory and to topoaa parameters.
 
@@ -755,7 +807,7 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
         Whether to preprocess input molecules. Defaults to ``True``.
         See :py:mod:`haddock.gear.preprocessing`.
     """
-    topoaa_dir = zero_fill.fill('topoaa', 0)
+    topoaa_dir = zero_fill.fill("topoaa", 0)
 
     # define paths
     data_topoaa_dir = Path(data_dir, topoaa_dir)
@@ -763,20 +815,17 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
     rel_data_topoaa_dir = Path(data_dir.name, topoaa_dir)
     original_mol_dir = Path(data_dir, "original_molecules")
 
-    new_molecules = []
-    for molecule in copy(topoaa_params['molecules']):
+    new_molecules: list[Path] = []
+    for molecule in copy(topoaa_params["molecules"]):
         check_if_path_exists(molecule)
 
         mol_name = Path(molecule).name
 
         if preprocess:  # preprocess PDB files
-
             top_fname = topoaa_params.get("ligand_top_fname", False)
-            new_residues = \
-                read_additional_residues(top_fname) if top_fname else None
+            new_residues = read_additional_residues(top_fname) if top_fname else None
 
-            new_pdbs = \
-                process_pdbs(molecule, user_supported_residues=new_residues)
+            new_pdbs = process_pdbs(molecule, user_supported_residues=new_residues)
 
             # copy the original molecule
             original_mol_dir.mkdir(parents=True, exist_ok=True)
@@ -792,10 +841,12 @@ def copy_molecules_to_data_dir(data_dir, topoaa_params, preprocess=True):
 
         new_molecules.append(Path(rel_data_topoaa_dir, mol_name))
 
-    topoaa_params['molecules'] = copy(new_molecules)
+    topoaa_params["molecules"] = copy(new_molecules)
 
 
-def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
+def copy_input_files_to_data_dir(
+    data_dir: Path, modules_params: ParamMap, start: int = 0
+) -> None:
     """
     Copy input files to data directory.
 
@@ -817,7 +868,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
     for i, (module, params) in enumerate(modules_params.items(), start=start):
         end_path = Path(zero_fill.fill(get_module_name(module), i))
         for parameter, value in params.items():
-            if parameter.endswith('_fname'):
+            if parameter.endswith("_fname"):
                 if value:
                     name = Path(value).name
                     # path is created here to avoid creating empty folders
@@ -836,7 +887,7 @@ def copy_input_files_to_data_dir(data_dir, modules_params, start=0):
                             fin.extractall(pf)
 
 
-def check_run_dir_exists(run_dir):
+def check_run_dir_exists(run_dir: FilePath) -> None:
     """Check whether the run directory exists."""
     _p = Path(run_dir)
     if _p.exists() and len(list(_p.iterdir())) > 0:
@@ -846,32 +897,27 @@ def check_run_dir_exists(run_dir):
             "option. If you want to start a run from scratch, "
             "indicate a new folder, or manually delete this one first, "
             "or use `--restart 0`."
-            )
+        )
         sys.exit(get_goodbye_help())
 
 
-def identify_modules(params):
+def identify_modules(params: Iterable[str]) -> list[str]:
     """Identify keys (headings) belonging to HADDOCK3 modules."""
-    modules_keys = [
-        k
-        for k in params.keys()
-        if get_module_name(k) in modules_category
-        ]
+    modules_keys = [k for k in params if get_module_name(k) in modules_category]
     return modules_keys
 
 
-def inject_in_modules(modules_params, key, value):
+def inject_in_modules(modules_params: ParamMap, key: Any, value: Any) -> None:
     """Inject a parameter in each module."""
     for params in modules_params.values():
         if key in params:
             raise ValueError(
-                "key {key!r} already in {module!r} parameters. "
-                "Can't inject."
-                )
+                "key {key!r} already in {module!r} parameters. " "Can't inject."
+            )
         params[key] = value
 
 
-def validate_module_names_are_not_misspelled(params):
+def validate_module_names_are_not_misspelled(params: ParamMap) -> None:
     """
     Validate module names are not misspelled in step definitions.
 
@@ -884,17 +930,19 @@ def validate_module_names_are_not_misspelled(params):
         get_module_name(param)
         for param, value in params.items()
         if isinstance(value, dict)
-        ]
+    ]
 
     validate_parameters_are_not_misspelled(
         params_to_check,
         reference_parameters=modules_names,
-        )
+    )
 
     return
 
 
-def validate_parameters_are_not_misspelled(params, reference_parameters):
+def validate_parameters_are_not_misspelled(
+    params: Iterable[str], reference_parameters: Iterable[str]
+) -> None:
     """Validate general parameters are not misspelled."""
     for param_name in params:
         if param_name not in reference_parameters:
@@ -902,18 +950,20 @@ def validate_parameters_are_not_misspelled(params, reference_parameters):
             emsg = (
                 f"Parameter {param_name!r} is not a valid general parameter,"
                 f" did you mean {matched[0][1]!r}?"
-                )
+            )
             raise ValueError(emsg)
 
 
 @with_config_error
-def check_specific_validations(params):
+def check_specific_validations(params: ParamMap) -> None:
     """Make specific validations."""
     # double check though this is confirmed already in the config reader
     v_rundir(params[RUNDIR])
 
 
-def get_expandable_parameters(user_config, defaults, module_name, max_mols):
+def get_expandable_parameters(
+    user_config: ParamMap, defaults: ParamMap, module_name: str, max_mols: int
+) -> set[str]:
     """
     Get configuration expandable blocks.
 
@@ -936,7 +986,7 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
     # function, I decided to add a simple if/else exception.
     # no other module should have subdictionaries has parameters
     if get_module_name(module_name) == "topoaa":
-        ap = set()  # allowed_parameters
+        ap: set[str] = set()  # allowed_parameters
         ap.update(_get_expandable(user_config, defaults, module_name, max_mols))
         for i in range(1, max_mols + 1):
             key = f"mol{i}"
@@ -947,8 +997,8 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
                         defaults["mol1"],
                         module_name,
                         max_mols,
-                        )
                     )
+                )
 
         return ap
 
@@ -964,14 +1014,20 @@ def get_expandable_parameters(user_config, defaults, module_name, max_mols):
 
 
 # reading parameter blocks
-def _get_expandable(user_config, defaults, module_name, max_mols):
+def _get_expandable(
+    user_config: ParamMap, defaults: ParamMap, module_name: str, max_mols: int
+) -> set[str]:
     type_1 = get_single_index_groups(defaults)
     type_2 = get_multiple_index_groups(defaults)
     type_4 = get_mol_parameters(defaults)
 
-    allowed_params = set()
-    allowed_params.update(read_single_idx_groups_user_config(user_config, type_1))  # noqa: E501
-    allowed_params.update(read_multiple_idx_groups_user_config(user_config, type_2))  # noqa: E501
+    allowed_params: set[str] = set()
+    allowed_params.update(
+        read_single_idx_groups_user_config(user_config, type_1)
+    )  # noqa: E501
+    allowed_params.update(
+        read_multiple_idx_groups_user_config(user_config, type_2)
+    )  # noqa: E501
 
     with suppress(KeyError):
         type_3 = type_simplest_ep[get_module_name(module_name)]
@@ -983,7 +1039,7 @@ def _get_expandable(user_config, defaults, module_name, max_mols):
     return allowed_params
 
 
-def populate_topology_molecule_params(topoaa):
+def populate_topology_molecule_params(topoaa: ParamMap) -> None:
     """Populate topoaa `molX` subdictionaries."""
     topoaa_dft = _read_defaults("topoaa.1")
 
@@ -1007,11 +1063,11 @@ def populate_topology_molecule_params(topoaa):
         topoaa[mol] = recursive_dict_update(
             topoaa_dft["mol1"],
             topoaa[mol] if mol in topoaa else {},
-            )
+        )
     return
 
 
-def populate_mol_parameters(modules_params):
+def populate_mol_parameters(modules_params: ParamMap) -> None:
     """
     Populate modules subdictionaries with the needed molecule `mol_` parameters.
 
@@ -1039,7 +1095,6 @@ def populate_mol_parameters(modules_params):
     # the starting number of the `mol_` parameters is 1 by CNS definition.
     num_mols = range(1, len(modules_params["topoaa.1"]["molecules"]) + 1)
     for module_name, _ in modules_params.items():
-
         # read the modules default parameters
         defaults = _read_defaults(module_name)
 
@@ -1056,11 +1111,11 @@ def populate_mol_parameters(modules_params):
             modules_params[module_name].setdefault(
                 f"{param_name}_{i}",
                 defaults[param],
-                )
+            )
     return
 
 
-def check_if_path_exists(path):
+def check_if_path_exists(path: FilePath) -> None:
     """
     Check if a path exists and raises an error if it does not exist.
 
@@ -1086,7 +1141,7 @@ def check_if_path_exists(path):
     if os.path.exists(path):
         return None
 
-    reconstituted_path = "./"
+    reconstituted_path: str = "./"
     error = ("", "", "")
     elements = Path(path).parts
     if elements[0] == ".":
@@ -1094,19 +1149,26 @@ def check_if_path_exists(path):
     for part in elements:
         next_folder = Path(reconstituted_path, part)
         if not next_folder.exists():
-            error = (reconstituted_path, fuzzy_match([part],
-                     os.listdir(reconstituted_path))[0][1], part)
+            error = (
+                reconstituted_path,
+                fuzzy_match([part], os.listdir(reconstituted_path))[0][1],
+                part,
+            )
             break
-        reconstituted_path = next_folder
+        reconstituted_path = str(next_folder)
 
-    msg = (f"The following file could not be found: \'{path}\'. "
-           f"In the folder \'{error[0]}\' the following \'{error[1]}\' "
-           f"is the closest match to the supplied \'{error[2]}\', did "
-           "you mean to open this?")
+    msg = (
+        f"The following file could not be found: '{path}'. "
+        f"In the folder '{error[0]}' the following '{error[1]}' "
+        f"is the closest match to the supplied '{error[2]}', did "
+        "you mean to open this?"
+    )
     raise ValueError(msg)
 
 
-def fuzzy_match(user_input, possibilities):
+def fuzzy_match(
+    user_input: Iterable[str], possibilities: Iterable[str]
+) -> list[tuple[str, str]]:
     """
     Find the closest possibility to the user supplied input.
 
@@ -1126,20 +1188,24 @@ def fuzzy_match(user_input, possibilities):
         `user_input`. With as first element of the tuple the user_input
         string, and as second element the matched possibility.
     """
-    results = list()
+    results: list[tuple[str, str]] = list()
 
     for user_word in transform_to_list(user_input):
-        best = (-1, "")
+        best: tuple[float, Any] = (-1, "")
         for possibility in possibilities:
-            distance = difflib.SequenceMatcher(a=user_word, b=possibility).ratio()  # noqa: E501
+            distance = difflib.SequenceMatcher(
+                a=user_word, b=possibility
+            ).ratio()  # noqa: E501
             if distance > best[0]:
                 best = (distance, possibility)
-        results += [(user_word, best[1])]
+        results.append((user_word, best[1]))
 
     return results
 
 
-def update_step_contents_to_step_names(prev_names, new_names, folder):
+def update_step_contents_to_step_names(
+    prev_names: Iterable[str], new_names: Iterable[str], folder: FilePath
+) -> None:
     """
     Update step folder names in files after the `--restart` option.
 
@@ -1167,7 +1233,6 @@ def update_step_contents_to_step_names(prev_names, new_names, folder):
     for new_step in new_names:
         new_step_p = Path(folder, new_step)
         for file_ in new_step_p.iterdir():
-
             # goes recursive into the next folder
             if file_.is_dir():
                 update_step_names_in_subfolders(file_, prev_names, new_names)
@@ -1176,7 +1241,9 @@ def update_step_contents_to_step_names(prev_names, new_names, folder):
                 update_step_names_in_file(file_, prev_names, new_names)
 
 
-def update_step_names_in_subfolders(folder, prev_names, new_names):
+def update_step_names_in_subfolders(
+    folder: Path, prev_names: Iterable[str], new_names: Iterable[str]
+) -> None:
     """
     Update step names in subfolders.
 
@@ -1191,7 +1258,9 @@ def update_step_names_in_subfolders(folder, prev_names, new_names):
     return
 
 
-def update_step_names_in_file(file_, prev_names, new_names):
+def update_step_names_in_file(
+    file_: Path, prev_names: Iterable[str], new_names: Iterable[str]
+) -> None:
     """Update step names in file following the `--restart` option."""
     try:
         text = file_.read_text()

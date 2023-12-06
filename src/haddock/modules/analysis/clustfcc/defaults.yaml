@@ -9,7 +9,7 @@ executable:
 contact_distance_cutoff:
   default: 5.0
   type: float
-  min: 0.000
+  min: 2.0
   max: 999.999
   precision: 3
   title: Cutoff distance (A) for contact detection.
@@ -23,9 +23,9 @@ fraction_cutoff:
   min: 0.000
   max: 1.000
   precision: 3
-  title: Fraction of common contacts to not be considered a singleton model.
-  short: Fraction of common contacts to not be considered a singleton model and therefore be excluded by further clustering. By default 0.6.
-  long: Minium fraction of common contacts (fcc) to cluster complexes together. Complexes not sharing fraction of common contacts above the `fraction_cutoff` parameter cannot belong to the same cluster.
+  title: Minimum fraction of common contacts to be considered in a cluster.
+  short: Minimum fraction of common contacts to be considered in a cluster. By default 0.6.
+  long: Minimum fraction of common contacts (fcc) to cluster complexes together. Complexes not sharing fraction of common contacts above the `fraction_cutoff` parameter cannot belong to the same cluster.
   group: analysis
   explevel: easy
 threshold:
@@ -35,7 +35,7 @@ threshold:
   max: 9999
   title: Clustering population threshold.
   short: Threshold employed to exclude clusters with less than this number of members. By default 4.
-  long: Minimum set of grouped complexes to define a cluster. If a potential cluster is composed of less than this number of members, it will be considered as `singloton` and discarded from final clusters. If set to 1, all complexes will be part of a cluster. By default 4.
+  long: Minimum set of grouped complexes to define a cluster. If a potential cluster is composed of less than this number of members, it will be considered as `singleton` and discarded from final clusters. If set to 1, all complexes will be part of a cluster. By default 4.
   group: analysis
   explevel: easy
 strictness:

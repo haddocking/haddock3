@@ -9,7 +9,7 @@ top_cluster:
   group: analysis
   explevel: easy
 top_models:
-  default: .nan
+  default: 10
   type: integer
   min: 1
   max: 99999

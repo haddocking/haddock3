@@ -29,6 +29,19 @@ TRACK_FOLDER = "traceback"  # name of the traceback folder
 def get_steps_without_pdbs(run_dir, all_steps):
     """
     Get the modules that do not produce PDB files.
+
+    Parameters
+    ----------
+    run_dir : str or pathlib.Path
+        Path to the run directory.
+    
+    all_steps : list
+        List of all the steps in the run directory.
+    
+    Returns
+    -------
+    steps_without_pdbs : list
+        List of steps that did not produce PDB files.
     """
     steps_without_pdbs = []
     for step in all_steps:

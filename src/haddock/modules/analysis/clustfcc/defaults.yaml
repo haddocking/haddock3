@@ -7,22 +7,22 @@ executable:
   group: executable
   explevel: expert
 contact_distance_cutoff:
-  default: 5.0
+  default: 5.00
   type: float
-  min: 2.0
-  max: 999.999
-  precision: 3
+  min: 2.00
+  max: 999.99
+  precision: 2
   title: Cutoff distance (A) for contact detection.
   short: Cutoff distance (A) for contact detection. By default 5.0 Angstroms.
   long: Cutoff distance between two atoms for contact detection. By default 5.0 Angstroms.
   group: analysis
   explevel: easy
 fraction_cutoff:
-  default: 0.600
+  default: 0.60
   type: float
-  min: 0.000
-  max: 1.000
-  precision: 3
+  min: 0.00
+  max: 1.00
+  precision: 2
   title: Minimum fraction of common contacts to be considered in a cluster.
   short: Minimum fraction of common contacts to be considered in a cluster. By default 0.6.
   long: Minimum fraction of common contacts (fcc) to cluster complexes together. Complexes not sharing fraction of common contacts above the `fraction_cutoff` parameter cannot belong to the same cluster.
@@ -39,11 +39,11 @@ threshold:
   group: analysis
   explevel: easy
 strictness:
-  default: 0.750
+  default: 0.75
   type: float
-  min: 0.000
-  max: 1.000
-  precision: 3
+  min: 0.00
+  max: 1.00
+  precision: 2
   title: Strictness factor.
   short: Strictness factor. It's multiplied by the fraction_cutoff to obtain a new cutoff for the second half of the matrix. By default 0.75.
   long: Strictness factor. It's multiplied by the fraction_cutoff to obtain a new cutoff for the second half of the matrix. Used to allow for some variability. By default 0.75.

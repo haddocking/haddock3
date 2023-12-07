@@ -67,8 +67,11 @@ class WorkflowManager:
                 capri_steps.append(step.order)  # type: ignore
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
         cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None)
-        # call cli_traceback
-        cli_traceback("./")
+        # call cli_traceback. If it fails, it's not a big deal
+        try:
+            cli_traceback("./")
+        except Exception as e:
+            log.warning(f"Error running traceback: {e}")
 
 
 class Workflow:

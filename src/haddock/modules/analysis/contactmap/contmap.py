@@ -50,6 +50,19 @@ RESIDUE_POLARITY = {
     "LYS": "positive",
     "ARG": "positive",
     }
+DNA_RNA_POLARITY = {
+    "A": "negative",
+    "DA": "negative",
+    "T": "negative",
+    "DT": "negative",
+    "U": "negative",
+    "DU": "negative",
+    "C": "negative",
+    "DC": "negative",
+    "G": "negative",
+    "DG": "negative",
+    }
+RESIDUE_POLARITY.update(DNA_RNA_POLARITY)
 
 PI = np.pi
 
@@ -73,7 +86,7 @@ REVERSED_CONNECT_COLORS_KEYS = {
     }
 CONNECT_COLORS.update(REVERSED_CONNECT_COLORS_KEYS)
 
-# Colors for each residue
+# Colors for each amino-acids
 RESIDUES_COLORS = {
     "CYS": "rgba(229, 255, 204, 0.80)",
     "MET": "rgba(229, 255, 204, 0.80)",
@@ -96,6 +109,23 @@ RESIDUES_COLORS = {
     "LYS": "rgba(0, 0, 255, 0.80)",
     "ARG": "rgba(0, 0, 255, 0.80)",
     }
+
+# Colors for DNA / RNA
+# Note: Based on WebLogo color scheme
+DNARNA_COLORS = {
+    "A": "rgba(51, 204, 51, 0.80)",
+    "T": "rgba(204, 0, 0, 0.80)",
+    "U": "rgba(204, 0, 0, 0.80)",
+    "C": "rgba(51, 102, 255, 0.80)",
+    "G": "rgba(255, 163, 26, 0.80)",
+    }
+FULL_DNARNA_COLORS = {f"D{k}": rgba for k, rgba in DNARNA_COLORS.items()}
+
+# Combine all of them
+AA_DNA_RNA_COLORS = {}
+AA_DNA_RNA_COLORS.update(RESIDUES_COLORS)
+AA_DNA_RNA_COLORS.update(DNARNA_COLORS)
+AA_DNA_RNA_COLORS.update(FULL_DNARNA_COLORS)
 
 # Chain colors
 CHAIN_COLORS = [
@@ -363,7 +393,7 @@ class ClusteredContactMap():
                 contact_threshold=threshold,
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
-                title=Path(self.output).stem.replace('_', ''),
+                title=Path(self.output).stem.replace('_', ' '),
                 )
             log.info(f'Generated cluster contacts chordchart file: {chordp}')
 
@@ -723,8 +753,8 @@ def get_cont_type(resn1: str, resn2: str) -> str:
     """
     pol_keys: list[str] = []
     for resn in [resn1, resn2]:
-        if resn in RESIDUE_POLARITY.keys():
-            pol_keys.append(RESIDUE_POLARITY[resn])
+        if resn.strip() in RESIDUE_POLARITY.keys():
+            pol_keys.append(RESIDUE_POLARITY[resn.strip()])
         else:
             pol_keys.append('unknow')
     pol_key = '-'.join(pol_keys)
@@ -1681,7 +1711,6 @@ def make_chordchart(
     ribbon_info: list[go.Scatter] = []
     # Loop over entries
     for k, label1 in enumerate(labels):
-
         sigma = idx_sort[k]
         sigma_inv = invPerm(sigma)
         # Half matrix loop to avoid duplicates
@@ -1695,8 +1724,8 @@ def make_chordchart(
                 connect_color = CONNECT_COLORS[interttype_matrix[k][j]]
             except KeyError:
                 connect_color = (123, 123, 123)
-            color_weith = to_color_weight(dist_matrix[k][j], 9.5)
-            rgba_color = to_rgba_color_string(connect_color, color_weith)
+            color_weight = to_color_weight(dist_matrix[k][j], 9.5)
+            rgba_color = to_rgba_color_string(connect_color, color_weight)
 
             # Point ribbons data
             side1 = ribbon_ends[k][sigma_inv[j]]
@@ -1754,7 +1783,7 @@ def make_chordchart(
 
         # Point corresponding color
         try:
-            rescolor = RESIDUES_COLORS[resname]
+            rescolor = AA_DNA_RNA_COLORS[resname.strip()]
         except KeyError:
             rescolor = 'rgba(123, 123, 123, 0.7)'
 
@@ -1877,7 +1906,7 @@ def add_chordchart_legends(fig: go.Figure) -> None:
                 legendgroup="connect_color",
                 legendgrouptitle_text="Interaction types",
                 showlegend=True,
-                name="&#8621;".join(key_key.split('-')),
+                name=key_key.replace('-', '&#8621;'),
                 mode="lines",
                 marker={
                     "color": to_rgba_color_string(color, 0.75),
@@ -1898,6 +1927,25 @@ def add_chordchart_legends(fig: go.Figure) -> None:
                 legendgrouptitle_text="Residues/Bases",
                 showlegend=True,
                 name=aa,
+                mode="lines",
+                marker={
+                    "color": rgba_color,
+                    "size": 10,
+                    "symbol": "line-ew-open",
+                    },
+                )
+            )
+    # Add nucleobases legend
+    for na, rgba_color in DNARNA_COLORS.items():
+        # Create dummy traces
+        fig.add_trace(
+            go.Scatter(
+                x=[None],
+                y=[None],
+                legendgroup="aa_color",
+                legendgrouptitle_text="Residues/Bases",
+                showlegend=True,
+                name=na,
                 mode="lines",
                 marker={
                     "color": rgba_color,

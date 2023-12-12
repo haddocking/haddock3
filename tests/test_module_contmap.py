@@ -167,19 +167,19 @@ def dist_matrix():
 @pytest.fixture
 def intertype_matrix():
     return np.array([
-        ['self-self', 'polar-pos_charged', 'polar-apolar',
-         'polar-apolar', 'polar-apolar', 'polar-neg_charged'],
-        ['polar-pos_charged', 'self-self', 'pos_charged-apolar',
-         'pos_charged-apolar', 'pos_charged-apolar',
-         'pos_charged-neg_charged'],
-        ['polar-apolar', 'pos_charged-apolar', 'self-self',
-         'apolar-apolar', 'apolar-apolar', 'apolar-neg_charged'],
-        ['polar-apolar', 'pos_charged-apolar', 'apolar-apolar',
-         'self-self', 'apolar-apolar', 'apolar-neg_charged'],
-        ['polar-apolar', 'pos_charged-apolar', 'apolar-apolar',
-         'apolar-apolar', 'self-self', 'apolar-neg_charged'],
-        ['polar-neg_charged', 'pos_charged-neg_charged', 'apolar-neg_charged',
-         'apolar-neg_charged', 'apolar-neg_charged', 'self-self'],
+        ['self-self', 'polar-positive', 'polar-apolar',
+         'polar-apolar', 'polar-apolar', 'polar-negative'],
+        ['polar-positive', 'self-self', 'positive-apolar',
+         'positive-apolar', 'positive-apolar',
+         'positive-negative'],
+        ['polar-apolar', 'positive-apolar', 'self-self',
+         'apolar-apolar', 'apolar-apolar', 'apolar-negative'],
+        ['polar-apolar', 'positive-apolar', 'apolar-apolar',
+         'self-self', 'apolar-apolar', 'apolar-negative'],
+        ['polar-apolar', 'positive-apolar', 'apolar-apolar',
+         'apolar-apolar', 'self-self', 'apolar-negative'],
+        ['polar-negative', 'positive-negative', 'apolar-negative',
+         'apolar-negative', 'apolar-negative', 'self-self'],
         ])
 
 
@@ -301,15 +301,16 @@ def test_single_model(protprot_contactmap):
     """Test ContactsMap run function."""
     contacts_dt = protprot_contactmap.run()
     # check return variable
-    assert type(contacts_dt) == list
+    assert type(contacts_dt) == tuple
+    assert type(contacts_dt[0]) == list
+    assert type(contacts_dt[1]) == list
     # check generated output files
     output_bp = protprot_contactmap.output
-    assert os.path.exists(f'{output_bp}_contacts.tsv') is True
-    assert Path(f'{output_bp}_contacts.tsv').stat().st_size != 0
-    assert os.path.exists(f'{output_bp}_heatmap.html') is True
-    assert Path(f'{output_bp}_heatmap.html').stat().st_size != 0
-    Path(f'{output_bp}_contacts.tsv').unlink(missing_ok=False)
-    Path(f'{output_bp}_heatmap.html').unlink(missing_ok=False)
+    for output_ext in ('_contacts.tsv', '_heatmap.html', '_chordchart.html', ):
+        fpath = f'{output_bp}{output_ext}'
+        assert os.path.exists(fpath) is True
+        assert Path(fpath).stat().st_size != 0
+        Path(fpath).unlink(missing_ok=False)
 
 
 def test_clustercontactmap_run(clustercontactmap):

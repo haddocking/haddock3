@@ -213,7 +213,7 @@ class ContactsMap():
                     contact_threshold=threshold,
                     output_fname=f'{self.output}_chordchart.html',
                     filter_intermolecular_contacts=True,
-                    title=Path(self.output).stem.replace('_contmap', ''),
+                    title=Path(self.output).stem.replace('_', ' '),
                     )
                 log.info(f'Generated single model chordchart file: {chordp}')
 
@@ -363,7 +363,7 @@ class ClusteredContactMap():
                 contact_threshold=threshold,
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
-                title=Path(self.output).stem.replace('_contmap', ''),
+                title=Path(self.output).stem.replace('_', ''),
                 )
             log.info(f'Generated cluster contacts chordchart file: {chordp}')
 
@@ -1279,6 +1279,7 @@ def make_layout(
         xaxis=axis,
         yaxis=axis,
         showlegend=True,  # Important to show legend
+        # legend={'font': {'size': 10}},  # Lower font size
         width=plot_size + 150,  # +150 to accomodate legend / keep circle round
         height=plot_size,
         margin={"t": 25, "b": 25, "l": 25, "r": 25},
@@ -1876,10 +1877,30 @@ def add_chordchart_legends(fig: go.Figure) -> None:
                 legendgroup="connect_color",
                 legendgrouptitle_text="Interaction types",
                 showlegend=True,
-                name=" <-> ".join(key_key.split('-')),
+                name="&#8621;".join(key_key.split('-')),
                 mode="lines",
                 marker={
                     "color": to_rgba_color_string(color, 0.75),
+                    "size": 10,
+                    "symbol": "line-ew-open",
+                    },
+                )
+            )
+
+    # Add aa types legend
+    for aa, rgba_color in RESIDUES_COLORS.items():
+        # Create dummy traces
+        fig.add_trace(
+            go.Scatter(
+                x=[None],
+                y=[None],
+                legendgroup="aa_color",
+                legendgrouptitle_text="Residues/Bases",
+                showlegend=True,
+                name=aa,
+                mode="lines",
+                marker={
+                    "color": rgba_color,
                     "size": 10,
                     "symbol": "line-ew-open",
                     },

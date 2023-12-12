@@ -132,11 +132,13 @@ class ContactsMap():
         # Compute distance matrix
         full_dist_matrix = compute_distance_matrix(all_coords)
 
-        res_res_contacts = []
+        res_res_contacts: list[dict] = []
+        all_heavy_interchain_contacts: list[dict] = []
         # First loop over residues
         for ri, reskey_1 in enumerate(resid_keys):
-            # Second loop over residues
+            # Second loop over residues (half matrix only)
             for _rj, reskey_2 in enumerate(resid_keys[ri + 1:], start=ri + 1):
+                # Extract data
                 contact_dt = gen_contact_dt(
                     full_dist_matrix,
                     resid_dt,
@@ -144,6 +146,18 @@ class ContactsMap():
                     reskey_2,
                     )
                 res_res_contacts.append(contact_dt)
+
+                # Extract interchain heavy atoms data
+                if reskey_2.split('-')[0] == reskey_1.split('-')[0]:
+                    continue
+                heavy_atoms_contacts = extract_heavyatom_contacts(
+                    full_dist_matrix,
+                    resid_dt,
+                    reskey_1,
+                    reskey_2,
+                    contact_distance=self.params['shortest_dist_threshold'],
+                    )
+                all_heavy_interchain_contacts += heavy_atoms_contacts
 
         # generate outputs for single models
         if self.params['single_model_analysis']:
@@ -165,6 +179,15 @@ class ContactsMap():
                     }
                 )
             log.info(f'Generated contacts file: {fpath}')
+
+            # Write interchain heavy atoms contacts
+            header2 = ['atom1', 'atom2', 'dist']
+            fpath2 = write_res_contacts(
+                all_heavy_interchain_contacts,
+                header2,
+                f'{self.output}_interchain_heavyatom_contacts.tsv',
+                )
+            log.info(f'Generated contacts file: {fpath2}')
 
             # Genreate corresponding heatmap
             if self.params['generate_heatmap']:
@@ -190,11 +213,11 @@ class ContactsMap():
                     contact_threshold=threshold,
                     output_fname=f'{self.output}_chordchart.html',
                     filter_intermolecular_contacts=True,
-                    title="",
+                    title=Path(self.output).stem.replace('_contmap', ''),
                     )
                 log.info(f'Generated single model chordchart file: {chordp}')
 
-        return res_res_contacts
+        return res_res_contacts, all_heavy_interchain_contacts
 
 
 class ClusteredContactMap():
@@ -215,7 +238,9 @@ class ClusteredContactMap():
         """Process analysis of contacts of a set of PDB structures."""
         # initiate holding variables
         clusters_contacts = {}
-        keys_list = []
+        clusters_heavyatm_contacts = {}
+        resres_keys_list = []
+        atat_keys_list = []
         # loop over models/structures
         for pdb_path in self.models:
             # initiate object
@@ -225,9 +250,9 @@ class ClusteredContactMap():
                 self.params,
                 )
             # Run it
-            pdb_contacts = contact_map_obj.run()
+            pdb_contacts, heavy_contacts = contact_map_obj.run()
 
-            # Parse outputs
+            # Parse outputs to aggregate contacts in `clusters_contacts`
             for cont in pdb_contacts:
                 # Check key
                 combined_key = f'{cont["res2"]}/{cont["res1"]}'  # resversed
@@ -235,7 +260,7 @@ class ClusteredContactMap():
                     combined_key = f'{cont["res1"]}/{cont["res2"]}'  # normal
                     if combined_key not in clusters_contacts.keys():
                         # Add key order
-                        keys_list.append(combined_key)
+                        resres_keys_list.append(combined_key)
                         # Initiate key
                         clusters_contacts[combined_key] = {
                             k: []
@@ -246,9 +271,10 @@ class ClusteredContactMap():
                 for dtk in clusters_contacts[combined_key].keys():
                     clusters_contacts[combined_key][dtk].append(cont[dtk])
 
+        # Initiate cluster aggregated data holder
         combined_clusters_list = []
         # Loop over ordered keys
-        for combined_key in keys_list:
+        for combined_key in resres_keys_list:
             # point data
             res1, res2 = combined_key.split('/')
             dt = clusters_contacts[combined_key]
@@ -337,7 +363,7 @@ class ClusteredContactMap():
                 contact_threshold=threshold,
                 output_fname=f'{self.output}_chordchart.html',
                 filter_intermolecular_contacts=True,
-                title="",
+                title=Path(self.output).stem.replace('_contmap', ''),
                 )
             log.info(f'Generated cluster contacts chordchart file: {chordp}')
 
@@ -514,6 +540,7 @@ def get_ordered_coords(
             resdt = {
                 'atoms_indices': [],
                 'resname': resname,
+                'atoms_order': pdb_chains[chainid][resid]['atoms_order'],
                 }
             # Loop over atoms of this residue
             for atname in pdb_chains[chainid][resid]['atoms_order']:
@@ -522,7 +549,7 @@ def get_ordered_coords(
                 # index of a CA
                 if atname == 'CA':
                     resdt['CA'] = i
-                # Point atome cooct_submatrixrdinate
+                # Point atome submatrix coordinates index
                 all_coords.append(pdb_chains[chainid][resid]['atoms'][atname])
                 # increment atom index
                 i += 1
@@ -632,6 +659,53 @@ def gen_contact_dt(
     return cont_dt
 
 
+def extract_heavyatom_contacts(
+        matrix: NDFloat,
+        resdt: dict,
+        res1_key: str,
+        res2_key: str,
+        contact_distance: float = 4.5,
+        ) -> list[dict[str, Union[float, str]]]:
+    """Generate contacts data.
+
+    Parameters
+    ----------
+    matrix : NDFloat
+        The distance matrix.
+    resdt : dict
+        Residues data with atom indices as returned by `get_ordered_coords()`.
+    res1_key : str
+        First residue of interest.
+    res2_key : str
+        Second residue of interest.
+    contact_distance : float
+        Distance defining a contact.
+
+    Return
+    ------
+    all_contacts : list[dict[str, Union[float, str]]]
+        List holding contact data
+    """
+    all_contacts: list[dict[str, Union[float, str]]] = []
+    # point data
+    res1_indices = resdt[res1_key]['atoms_indices']
+    res1_atnames = resdt[res1_key]['atoms_order']
+    res2_indices = resdt[res2_key]['atoms_indices']
+    res2_atnames = resdt[res2_key]['atoms_order']
+    # Loop over res1 atoms / indices
+    for r1_atname, r1_atindex in zip(res1_atnames, res1_indices):
+        # Loop over res2 atoms / indices
+        for r2_atname, r2_atindex in zip(res2_atnames, res2_indices):
+            r1_r2_dist = matrix[r1_atindex, r2_atindex]
+            if r1_r2_dist <= contact_distance:
+                contactdt = {
+                    'atom1': f'{res1_key}-{r1_atname}',
+                    'atom2': f'{res2_key}-{r2_atname}',
+                    'dist': r1_r2_dist,
+                    }
+                all_contacts.append(contactdt)
+    return all_contacts
+
 def get_cont_type(resn1: str, resn2: str) -> str:
     """Generate polarity key between two residues.
 
@@ -697,6 +771,9 @@ def write_res_contacts(
         'shortest-cont-ratio': 'ratio of times the shortest distance was observed under threshold',  # noqa : E501
         'contact-type': 'type of contacts between the two residues',
         'contact-type-ratio': 'ratio of times the type of contacts between the two residues is observed',  # noqa : E501
+        'atom1': 'Chain-Resname-ResID-Atome key identifying first atom',
+        'atom2': 'Chain-Resname-ResID-Atome key identifying second atom',
+        'dist': 'Observed distance between two atoms',
         }
 
     # initiate file content
@@ -1201,8 +1278,8 @@ def make_layout(
         title=title,
         xaxis=axis,
         yaxis=axis,
-        showlegend=True,
-        width=plot_size + 150,
+        showlegend=True,  # Important to show legend
+        width=plot_size + 150,  # +150 to accomodate legend / keep circle round
         height=plot_size,
         margin={"t": 25, "b": 25, "l": 25, "r": 25},
         hovermode='closest',
@@ -1834,6 +1911,8 @@ def tsv_to_chordchart(
          any value above it will be set to this value.
     output_fname : Union[Path, str]
         Path where to generate the graph.
+    title : str
+        Title to give to the Chord diagram
 
     Return
     ------

@@ -8,21 +8,10 @@ contact_distance_cutoff
 
 | *default*: 5.0
 | *type*: float
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
-| *group*: 
-| *explevel*: easy
-
-executable
-~~~~~~~~~~
-
-| *default*: 'src/contact_fcc'
-| *type*: file
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
-| *group*: 
+| *title*: Cutoff distance (A) for contact detection.
+| *short description*: Cutoff distance (A) for contact detection. By default 5.0 Angstroms.
+| *long description*: Cutoff distance between two atoms for contact detection. By default 5.0 Angstroms.
+| *group*: analysis
 | *explevel*: easy
 
 fraction_cutoff
@@ -30,10 +19,10 @@ fraction_cutoff
 
 | *default*: 0.6
 | *type*: float
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
-| *group*: 
+| *title*: Minimum fraction of common contacts to be considered in a cluster.
+| *short description*: Minimum fraction of common contacts to be considered in a cluster. By default 0.6.
+| *long description*: Minimum fraction of common contacts (fcc) to cluster complexes together. Complexes not sharing fraction of common contacts above the `fraction_cutoff` parameter cannot belong to the same cluster.
+| *group*: analysis
 | *explevel*: easy
 
 strictness
@@ -41,10 +30,10 @@ strictness
 
 | *default*: 0.75
 | *type*: float
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
-| *group*: 
+| *title*: Strictness factor.
+| *short description*: Strictness factor. It's multiplied by the fraction_cutoff to obtain a new cutoff for the second half of the matrix. By default 0.75.
+| *long description*: Strictness factor. It's multiplied by the fraction_cutoff to obtain a new cutoff for the second half of the matrix. Used to allow for some variability. By default 0.75.
+| *group*: analysis
 | *explevel*: easy
 
 threshold
@@ -52,9 +41,24 @@ threshold
 
 | *default*: 4
 | *type*: integer
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
-| *group*: 
+| *title*: Clustering population threshold.
+| *short description*: Threshold employed to exclude clusters with less than this number of members. By default 4.
+| *long description*: Minimum set of grouped complexes to define a cluster. If a potential cluster is composed of less than this number of members, it will be considered as `singleton` and discarded from final clusters. If set to 1, all complexes will be part of a cluster. By default 4.
+| *group*: analysis
 | *explevel*: easy
+
+
+Expert
+``````
+
+executable
+~~~~~~~~~~
+
+| *default*: 'src/contact_fcc'
+| *type*: file
+| *title*: Relative path to contact_fcc executable.
+| *short description*: Relative path to contact_fcc executable.
+| *long description*: As contact_fcc is an external tool, its path must be provided. Basically, this parameter should not be changed, as the tool is downloaded at the same time as haddock3. Nevertheless, one could try to have the contact_fcc tool written in another programming language or whatever.
+| *group*: executable
+| *explevel*: expert
 

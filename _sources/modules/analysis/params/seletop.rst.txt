@@ -8,9 +8,9 @@ select
 
 | *default*: 200
 | *type*: integer
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
-| *group*: 
+| *title*: Number of best-ranked models to select
+| *short description*: Number of best-ranked models to select for further steps of the workflow
+| *long description*: Number of best-ranked models to select for further steps of the workflow. Typically only 200 models produced at the rigid-body docking stage are selected for further refinement.
+| *group*: analysis
 | *explevel*: easy
 

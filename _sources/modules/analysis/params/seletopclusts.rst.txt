@@ -11,17 +11,17 @@ top_cluster
 | *title*: Number of clusters to consider
 | *short description*: Number of clusters to consider (ranked by score)
 | *long description*: Number of clusters to consider (ranked by score)
-| *group*: 
+| *group*: analysis
 | *explevel*: easy
 
 top_models
 ~~~~~~~~~~
 
-| *default*: nan
-| *type*: float
-| *title*: No title yet
-| *short description*: No short description yet
-| *long description*: No long description yet
-| *group*: 
+| *default*: 10
+| *type*: integer
+| *title*: Number of best-ranked models to select per cluster
+| *short description*: Number of best-ranked models to select per cluster. By default, 10 models are selected.
+| *long description*: Number of best-ranked models to select per cluster. By default, 10 models are selected. If one expects to find many clusters (e.g., in the case of vague restraints), this number can be reduced to speed up the protocol. Instead, if few clusters are expected (very specific and localized restraints) this number can be increased.
+| *group*: analysis
 | *explevel*: easy
 

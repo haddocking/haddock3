@@ -213,19 +213,19 @@
 <div class="line"><em>title</em>: Number of clusters to consider</div>
 <div class="line"><em>short description</em>: Number of clusters to consider (ranked by score)</div>
 <div class="line"><em>long description</em>: Number of clusters to consider (ranked by score)</div>
-<div class="line"><em>group</em>:</div>
+<div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
 <section id="top-models">
 <h4>top_models<a class="headerlink" href="#top-models" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: float</div>
-<div class="line"><em>title</em>: No title yet</div>
-<div class="line"><em>short description</em>: No short description yet</div>
-<div class="line"><em>long description</em>: No long description yet</div>
-<div class="line"><em>group</em>:</div>
+<div class="line"><em>default</em>: 10</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of best-ranked models to select per cluster</div>
+<div class="line"><em>short description</em>: Number of best-ranked models to select per cluster. By default, 10 models are selected.</div>
+<div class="line"><em>long description</em>: Number of best-ranked models to select per cluster. By default, 10 models are selected. If one expects to find many clusters (e.g., in the case of vague restraints), this number can be reduced to speed up the protocol. Instead, if few clusters are expected (very specific and localized restraints) this number can be increased.</div>
+<div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
@@ -263,7 +263,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Dec 08, 2023.
+        Last updated on Dec 12, 2023.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

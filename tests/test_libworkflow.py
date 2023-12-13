@@ -6,6 +6,7 @@ import os
 
 def test_WorkflowManager(caplog):
     """Test WorkflowManager."""
+    caplog.set_level("INFO")
     ParamDict = {
         'topoaa.1':
             {'autohis': True,

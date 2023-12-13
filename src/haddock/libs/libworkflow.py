@@ -30,7 +30,6 @@ class WorkflowManager:
         **other_params: Any,
     ) -> None:
         self.start = 0 if start is None else start
-        print(f"workflow_params: {workflow_params}")
         self.recipe = Workflow(workflow_params, start=0, **other_params)
         # terminate is used to synchronize the `clean` option with the
         # `exit` module. If the `exit` module is removed in the future,

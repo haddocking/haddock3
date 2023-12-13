@@ -153,6 +153,14 @@ ap.add_argument(
 )
 
 ap.add_argument(
+    "--is_cleaned",
+    help="is the directory going to be cleaned?",
+    required=False,
+    type=bool,
+    default=False
+)
+
+ap.add_argument(
     "-p",
     "--other-params",
     dest="other_params",

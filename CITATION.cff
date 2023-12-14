@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+title: HADDOCK3
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Alexandre
+    family-names: Bonvin
+    name-particle: A.M.J.J.
+    email: a.m.j.j.bonvin@uu.nl
+    affiliation: Utrecht University
+  - given-names: Victor
+    name-particle: V.G.P.
+    family-names: Reys
+    email: v.g.p.reys@uu.nl
+    affiliation: Utrecht University
+repository-code: 'https://github.com/haddocking/haddock3'
+url: 'https://www.bonvinlab.org/'
+abstract: >-
+  Third version of the well known and used HADDOCK (High
+  Ambiguity Driven Docking) series.
+
+  HADDOCK v3.0 is a bottom-up reimagination of the long
+  standing time-proven HADDOCK used for integrative modeling
+  of biomolecular complexes.
+keywords:
+  - protein-protein docking
+  - biomolecular complexes
+  - experimental restraints
+  - Bioexcel
+license: Apache-2.0

@@ -10,10 +10,21 @@ authors:
     name-particle: A.M.J.J.
     email: a.m.j.j.bonvin@uu.nl
     affiliation: Utrecht University
-  - given-names: Victor
-    name-particle: V.G.P.
-    family-names: Reys
-    email: v.g.p.reys@uu.nl
+  - given-names: João
+    family-names: Teixeira
+    affiliation: University of Padova, Italy
+  - given-names: Brian Jimenez Garcia
+    name-particle: B.J.
+    family-names: Garcia
+    affiliation: Senior Researcher and Tecniospring INDUSTRY fellow at ZYMVOL,Barcelona, Spain
+  - given-names: Rodrigo 
+    name-particle: R.V.
+    family-names: Honorato
+    email: r.v.honorato@uu.nl
+    affiliation: Utrecht University
+  - given-names: Marco
+    family-names: Giulini
+    email: m.giulini@uu.nl
     affiliation: Utrecht University
 repository-code: 'https://github.com/haddocking/haddock3'
 url: 'https://www.bonvinlab.org/'

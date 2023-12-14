@@ -808,7 +808,7 @@ def _pandas_df_to_json(df):
     return data_string, headers_string
 
 
-def clt_table_handler(clt_file, ss_file):
+def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     """
     Create a dataframe including data for tables.
 
@@ -821,6 +821,8 @@ def clt_table_handler(clt_file, ss_file):
         path to capri_clt.tsv file
     ss_file: str or Path
         path to capri_ss.tsv file
+    is_cleaned: bool
+        is the run going to be cleaned?
 
     Returns
     -------
@@ -834,6 +836,13 @@ def clt_table_handler(clt_file, ss_file):
     # table of structures
     structs_df = find_best_struct(ss_file, number_of_struct=10)
 
+    # if the run will be cleaned, the structures are going to be gzipped
+    if is_cleaned:
+        # substitute the values in the df by adding .gz at the end
+        structs_df = structs_df.replace(
+            to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True
+        )
+    
     # Order structs by best (lowest score) cluster on top
     structs_df = structs_df.set_index("Cluster ID")
     structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])

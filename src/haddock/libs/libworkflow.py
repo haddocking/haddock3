@@ -61,12 +61,15 @@ class WorkflowManager:
 
     def postprocess(self) -> None:
         """Postprocess the workflow."""
+        # is the workflow going to be cleaned?
+        is_cleaned = self.recipe.steps[0].config['clean']
+        
         capri_steps: list[int] = []
         for step in self.recipe.steps:
             if step.module_name == "caprieval":
                 capri_steps.append(step.order)  # type: ignore
         # call cli_analyse (no need for capri_dicts, it's all precalculated)
-        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None)
+        cli_analyse("./", capri_steps, top_cluster=10, format=None, scale=None, is_cleaned=is_cleaned)
         # call cli_traceback. If it fails, it's not a big deal
         try:
             cli_traceback("./")

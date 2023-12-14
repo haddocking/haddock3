@@ -39,11 +39,11 @@ If you are using sh/bash, edit `.cns_solve_env_sh`:
 ## 2 Add HADDOCK routines
 
 HADDOCK requires some adjustments in CNS to function properly.
-The set of routines to add is provided in the haddock3 repository under [`varia/cns1.3/`](/varia/cns1.3/README.md).
+The set of routines to add is provided in the haddock3 repository under [`extras/cns1.3/`](/extras/cns1.3/README.md).
 Copy all of these files into the CNS source directory (`/PATH/TO/cns_solve_1.3/source/`), for example:
 
 ```bash
-cp ~/software/haddock3/varia/cns1.3/* source/
+cp ~/software/haddock3/extras/cns1.3/* source/
 ```
 
 ## 3 Compile CNS

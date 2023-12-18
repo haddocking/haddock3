@@ -26,6 +26,10 @@ authors:
     family-names: Giulini
     email: m.giulini@uu.nl
     affiliation: Utrecht University
+  - given-names: Victor
+    name-particle: V.G.P.
+    family-names: Reys
+    email: v.g.p.reys@uu.nl
 repository-code: 'https://github.com/haddocking/haddock3'
 url: 'https://www.bonvinlab.org/'
 abstract: >-

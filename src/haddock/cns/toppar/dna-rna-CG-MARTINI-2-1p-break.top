@@ -1,7 +1,6 @@
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
 set message=off echo=off end
 
-
 PRESidue DNCG
    ! patch for deletion of nucleic acid linkage
    ! that are too long to exist

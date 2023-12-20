@@ -228,20 +228,6 @@ evaluate ($numnoe = 0)
 evaluate ($numnoe = 999)
 noe ? end
 if ($NUMNOE = 0) then
-    if ($Data.ncomponents > 1) then
-        if ($Data.contactairs eq FALSE) then
-            if ($Data.cmrest eq FALSE) then
-                evaluate ($errfile = "MODDIR:WARNING")
-                fileexist $errfile end
-                if ($result eq false) then
-                    set display=$errfile end
-                    display TOTAL NUMBER OF DISTANCE RESTRAINTS FOR FLEXIBLE REFINEMENT IS ZERO!
-                    display CONTROL YOUR PARAMETER SETTINGS AND RESTRAINT DEFINITIONS
-                    close $errfile end
-                end if
-            end if
-        end if
-    end if
     evaluate ($Data.npart = 1)
     evaluate ($Data.randremoval = FALSE)
 end if

@@ -1,4 +1,5 @@
 remark topology file for dipolar coupling calculations
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
 set message off echo off end
 
 autogenerate 
@@ -49,4 +50,5 @@ residue DAN
    bond Z OO
 end
 
-set message on echo on end
+
+set message=$old_message echo=$old_echo end

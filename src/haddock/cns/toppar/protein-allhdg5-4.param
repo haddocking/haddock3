@@ -247,7 +247,7 @@ checkversion 1.3
  BOND  PP    OHP     1000.0  1.610
  BOND  PP    OP1     1000.0  1.485
  BOND  SUF   OUF     1000.0  1.475
- BOND  OC    CA+2    1000.0  2.500
+ BOND  OC    "CA+2"  1000.0  2.500
 ! next ones added for iron-sulphur cluster
  BOND  SH1E  FS      1000.0  2.300
  BOND  FS    SF      1000.0  2.200

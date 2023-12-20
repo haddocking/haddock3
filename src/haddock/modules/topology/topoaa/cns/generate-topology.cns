@@ -64,9 +64,6 @@ define(
    structure has bad geometry it may be necessary to increase this distance *}
 {===>} dbreak_cutoff=4.5;
 
-{* file containing patches to delete peptide links *}
-{===>} prot_break_infile="TOPPAR:protein_break.top";
-
 {* file containing patches to delete nucleic acid links *}
 {===>} dna_break_infile="TOPPAR:dna_break.top";
 
@@ -260,9 +257,6 @@ topology
     end if
     if ( &BLANK%shape_topology_infile = false ) then
         @@&shape_topology_infile
-    end if
-    if ( &BLANK%prot_break_infile = false ) then
-        @@&prot_break_infile
     end if
     if ( &BLANK%dna_break_infile = false ) then
         @@&dna_break_infile

@@ -10,7 +10,7 @@ remarks   and multiple modifications for HADDOCK from A. Bonvin, Utrecht Univers
 remarks   Last modification 24-09-2014 
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message=off echo=off end
+set message off echo off end
 
 checkversion 1.3
 

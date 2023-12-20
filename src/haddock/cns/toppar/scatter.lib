@@ -11,13 +11,10 @@
 !(3) types of elements with ionic state (i.e., +/-) specifications have
 !    to be put in double quotes in selection statements.
 
-set message ? end
-evaluate ($message_old_sclib=$result)
-set echo ? end
-evaluate ($echo_old_sclib=$result)
-set echo=off message=off end
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message off echo off end
 
- checkversion 1.3
+checkversion 1.3
 
 
 SCATter ( chemical H* and not (
@@ -487,4 +484,5 @@ SCATter ( chemical "Bk" or chemical "BK" )
 SCATter ( chemical "Cff" or chemical "CFF" )
   36.9185 0.437533 25.1995 3.00775 18.3317 12.4044 4.24391 83.7881 13.2674
 
-set message=$message_old_sclib echo=$echo_old_sclib end
+
+set message=$old_message echo=$old_echo end

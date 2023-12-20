@@ -1,4 +1,6 @@
 remark parameter file for dipolar coupling calculations
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
 set message off echo off end
 
 bonds     OO  XX               1000.0      3.00
@@ -14,4 +16,4 @@ NONBonded  YY		0.01	0.01	0.01 	0.01
 NONBonded  ZZ		0.01	0.01	0.01 	0.01
 NONBonded  OO		0.01	0.01	0.01 	0.01
 
-set message on echo on end
+set message=$old_message echo=$old_echo end

@@ -9,7 +9,8 @@ remarks atom name is MG+2 and has charge +2.0).
 remarks NOTE: not all ionic species are represented
 remarks PDA 02/09/99
 
-set echo=false end
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message off echo off end
 
 ! checkversion 1.1
 
@@ -538,4 +539,5 @@ RESIdue WO4 {Tungstate}
 
 END {WO4}
 
-set echo=true end
+
+set message=$old_message echo=$old_echo end

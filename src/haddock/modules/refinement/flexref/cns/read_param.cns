@@ -36,6 +36,9 @@ eval ($heme_parameter_infile="TOPPAR:hemes-allhdg.param")
 {* shape parameter file *}
 eval ($shape_parameter_infile="TOPPAR:shape.param")
 
+{* additional parameter file *}
+eval ($add_parameter_infile="TOPPAR:additional-params.param")
+
 parameter
     @@$prot_parameter_infile
     @@$ion_parameter_infile
@@ -46,6 +49,7 @@ parameter
     @@$cofac_parameter_infile
     @@$heme_parameter_infile
     @@$shape_parameter_infile
+    @@$add_parameter_infile
     fileexist $ligand_param_fname end
     if ($result eq true) then
         @@$ligand_param_fname

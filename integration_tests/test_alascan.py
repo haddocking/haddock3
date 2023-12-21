@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG
+from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.libs.libontology import PDBFile
 from . import CNS_EXEC, DATA_DIR, has_cns
 from tests import golden_data

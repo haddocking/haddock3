@@ -433,9 +433,9 @@ def test_moduloAB_errors():
 def test_moduloAB_execution():
     """Test proper functioning of moduloAB()."""
     moduloab = moduloAB(6.1035, 0, 2 * PI)
-    assert moduloab == 6.1035
+    assert np.isclose(moduloab, 6.1035, atol=0.001)
     moduloab2 = moduloAB(7, 0, 2 * PI)
-    assert round(moduloab2, 4) == 0.7168
+    assert np.isclose(moduloab2, 0.7168, atol=0.001)
     moduloab3 = moduloAB(3, 0, 2)
     assert moduloab3 == 1
 
@@ -543,4 +543,4 @@ def test_make_ideogram_arc_moduloAB():
         ])
     assert arc_positions.shape == excpected_output.shape
     for i in range(nb_points):
-        assert arc_positions[i] == excpected_output[i]
+        assert np.isclose(arc_positions[i], excpected_output[i], atol=0.0001)

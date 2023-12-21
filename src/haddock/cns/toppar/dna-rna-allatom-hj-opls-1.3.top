@@ -11,7 +11,7 @@ remarks  all-hydrogen dna/rna topology using the OPLS force field
 !ADAPTED/CLEANED FOR HADDOCK - ALEXANDRE BONVIN
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 checkversion 1.3
 

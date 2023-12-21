@@ -12,7 +12,7 @@
 !    to be put in double quotes in selection statements.
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 checkversion 1.3
 

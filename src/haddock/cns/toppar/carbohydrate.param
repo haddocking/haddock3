@@ -28,7 +28,7 @@ REMARKS  New atom type CC6 for exocyclic 6 carbon
 REMARKS  Bill Weis 5/11/92
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 checkversion 1.3
 

@@ -1,5 +1,5 @@
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 PRESidue DNUC        ! patch for deletion of nucleic acid linkage
                      ! i.e. it deletes the link the previous RNA residue (-) with

@@ -7,7 +7,7 @@ remarks and termini to generate a protein sequence.
 !added links for CFE (6-5-2014, AB)
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 checkversion 1.3
 

@@ -1,5 +1,5 @@
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 NONBonded  SHA    0.01  0.01     0.01  0.01
 

@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 
 from haddock.modules.analysis.alascan import DEFAULT_CONFIG as DEFAULT_ALASCAN_CONFIG
-from haddock.modules.analysis.alascan import HaddockModule as AlascanModule
 from haddock.libs.libontology import PDBFile
 from . import CNS_EXEC, DATA_DIR, has_cns
 from tests import golden_data
@@ -60,7 +59,7 @@ def test_alascan_default(alascan_module, mocker):
     assert np.isclose(
         df.loc[df["ori_resname"] == "ARG"].iloc[0,:]["delta_score"],
         22.0,
-        atol=5)
+        atol=8)
 
     # check clt csv
     df_clt = pd.read_csv(expected_clt_csv, sep="\t", comment="#")

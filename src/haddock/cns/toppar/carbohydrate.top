@@ -93,7 +93,7 @@ REMARKS A1CL: alpha link from C1(L-) to Cys SG.
 ! added additional residues: FCA, FCB, A2G, ATB 12/07/09
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 checkversion 1.3
 

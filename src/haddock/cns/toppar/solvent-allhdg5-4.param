@@ -5,7 +5,7 @@ remarks   ===========
 remarks   available: TIPS3P and DMSO model
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 checkversion 1.3
 

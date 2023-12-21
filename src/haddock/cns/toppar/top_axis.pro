@@ -1,6 +1,7 @@
 remark topology file for dipolar coupling calculations
+
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 autogenerate 
   angles=true

@@ -2,7 +2,7 @@ Remarks Parameters for Fragment-based Ligand Binding Site Mapping
 Remarks created by acpype (Rev: 7268) on Mon Apr 13 10:01:53 2015
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 { Bonds: atomType1 atomType2 kb r0 }
 BOND    c__    n__    478.2   1.3450

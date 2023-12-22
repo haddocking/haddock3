@@ -1,10 +1,9 @@
 remarks file toppar/dna-rna.link
 remarks macro to define standard nucleic acid links and termini
 remarks this file has both 3' and 5' terminii without phosphate groups
-remarks
 
 set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
-set message off echo off end
+set message=off echo=off end
 
 checkversion 1.3
 

@@ -3,7 +3,8 @@ remarks nonbonded parameters for common ions
 remarks new parameters derived from literature for single atom species
 remarks PDA 02/09/99
 
-set echo=off end
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
 
 ! checkversion 1.1
 
@@ -119,4 +120,5 @@ NONBonded   OHF   0.01  2.729     0.01  2.729
 NONBonded     W   0.01  2.305     0.01  2.305
 NONBonded   OWF   0.01  2.729     0.01  2.729
 
-set echo=on end
+
+set message=$old_message echo=$old_echo end

@@ -129,7 +129,6 @@ BOND       C6C    HR          $kchbond    1.09
 
 !baseJ                        kq          x_eq  sigma
 BOND       C5T    C3J         1734.375    1.339 !0.008  B
-BOND       N3T    HN          1416.000    1.010
 BOND       OH     H4J         1350.000    0.9572
 
 !thymine
@@ -1055,7 +1054,6 @@ NONBonded  O2PH    0.170   3.070       0.021    3.070	! opls OH
 NONBonded  SD      0.250   3.550       0.031    3.550	! opls S
 
 !basej
-NONBonded  OH      0.210   3.066       0.105    3.066
 NONBonded  C3J     0.109   3.400       0.055    3.400
 NONBonded  OSJ     0.170   3.000       0.085    3.000
 NONBonded  CCJ     0.086   3.400       0.043    3.400
@@ -1063,7 +1061,6 @@ NONBonded  CJ      0.086   3.400       0.043    3.400
 NONBonded  NJ      0.170   3.250       0.085    3.250
 NONBonded  OJ      0.210   2.960       0.105    2.960
 NONBonded  CDJ     0.086   3.400       0.043    3.400
-NONBonded  P       0.200   3.742       0.100    3.742
 NONBonded  HO      0.000   0.000       0.000    0.000
 NONBonded  H1J     0.016   2.471       0.008    2.471
 NONBonded  H2J     0.016   2.293       0.008    2.293

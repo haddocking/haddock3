@@ -1,4 +1,11 @@
+! USE THIS FILE TO MAKE ANY NEW ADDITIONS TO THE FORCE FIELD PARAMETER
+
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
+
 ! New additions for covalent Serine (SEC)
+
 BOND  CH2E OH1C    1000.000 {sd=     0.001}      1.417
 BOND  H    OH1C    1000.000 {sd=     0.001}      0.960
 ANGLe  CH1E CH2E OH1C     500.00 {sd=     0.031}    111.0593
@@ -9,3 +16,7 @@ DIHEdral  NH1  CH1E CH2E OH1C   2.00     3  0.0000
 DIHEdral  NH3  CH1E CH2E OH1C   2.00     3  0.0000
 NONBonded  OH1C    0.0023   0.26406     0.0023   0.26406
 NONBonded  OH1C    0.017    0.307       0.0021   0.307
+
+
+set message=$old_message echo=$old_echo end
+

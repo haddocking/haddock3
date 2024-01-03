@@ -213,12 +213,12 @@ kcont:
 # Group dihedral restraints
 #
 ssdihed:
-  default: ""
+  default: none
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - ""
+    - none
     - all
     - alpha
     - alphabeta

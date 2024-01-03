@@ -96,7 +96,7 @@ def _yaml2cfg_text(
     exp_level_idx = exp_levels[explevel]
 
     # define set of undesired parameter keys
-    undesired = ("default", "explevel", "short", "type")
+    undesired = ("default", "explevel", "type")
     if not details:
         undesired = undesired + ("long",)  # type: ignore
 

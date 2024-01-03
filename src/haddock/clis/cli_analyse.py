@@ -162,6 +162,14 @@ ap.add_argument(
     )
 
 ap.add_argument(
+    "--is_cleaned",
+    help="is the directory going to be cleaned?",
+    required=False,
+    type=bool,
+    default=False
+)
+
+ap.add_argument(
     "-p",
     "--other-params",
     dest="other_params",
@@ -298,6 +306,7 @@ def analyse_step(
     top_cluster: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
+    is_cleaned: Optional[bool],
 ) -> None:
     """
     Analyse a step.
@@ -352,7 +361,7 @@ def analyse_step(
         log.info("Plotting results..")
         scatters = scatter_plot_handler(ss_file, cluster_ranking, format, scale)
         boxes = box_plot_handler(ss_file, cluster_ranking, format, scale)
-        tables = clt_table_handler(clt_file, ss_file)
+        tables = clt_table_handler(clt_file, ss_file, is_cleaned)
         report_generator(boxes, scatters, tables, step)
 
 
@@ -362,7 +371,11 @@ def main(
     top_cluster: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
+<<<<<<< HEAD
     inter: bool(),
+=======
+    is_cleaned: Optional[bool],
+>>>>>>> main
     **kwargs: Any,
 ) -> None:
     """
@@ -441,7 +454,7 @@ def main(
         error = False
         try:
             analyse_step(
-                step, Path("./"), capri_dict, target_path, top_cluster, format, scale
+                step, Path("./"), capri_dict, target_path, top_cluster, format, scale, is_cleaned
             )
         except Exception as e:
             error = True

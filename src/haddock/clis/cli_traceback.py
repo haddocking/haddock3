@@ -25,7 +25,35 @@ from haddock.modules import get_module_steps_folders
 
 TRACK_FOLDER = "traceback"  # name of the traceback folder
 
-ANA_MODULES = ["caprieval", "seletop", "topoaa", "rmsdmatrix", "clustrmsd", "clustfcc"]
+
+def get_steps_without_pdbs(run_dir, all_steps):
+    """
+    Get the modules that do not produce PDB files.
+
+    Parameters
+    ----------
+    run_dir : str or pathlib.Path
+        Path to the run directory.
+    
+    all_steps : list
+        List of all the steps in the run directory.
+    
+    Returns
+    -------
+    steps_without_pdbs : list
+        List of steps that did not produce PDB files.
+    """
+    steps_without_pdbs = []
+    for step in all_steps:
+        if step.endswith("topoaa"):
+            steps_without_pdbs.append(step)
+        else:
+            step_dir = Path(run_dir, step)
+            if step_dir.is_dir():
+                pdbs = list(step_dir.glob("*.pdb*"))
+                if len(pdbs) == 0:
+                    steps_without_pdbs.append(step)
+    return steps_without_pdbs
 
 
 def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int) -> tuple[list, int]:
@@ -155,7 +183,9 @@ def main(run_dir):
     # get the module folders from the run_dir input
     all_steps = get_module_steps_folders(Path(run_dir))
     log.info(f"All_steps: {', '.join(all_steps)}")
-    sel_step = [st for st in all_steps if st.split("_")[1] not in ANA_MODULES]
+    ana_modules = get_steps_without_pdbs(run_dir, all_steps)
+    log.info(f"Modules not to be analysed: {', '.join(ana_modules)}")
+    sel_step = [st for st in all_steps if st not in ana_modules]
     # check if there are steps to traceback
     if len(sel_step) == 0:
         log.info("No steps to trace back. Exiting.")

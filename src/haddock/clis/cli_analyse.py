@@ -371,11 +371,8 @@ def main(
     top_cluster: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
-<<<<<<< HEAD
     inter: bool(),
-=======
     is_cleaned: Optional[bool],
->>>>>>> main
     **kwargs: Any,
 ) -> None:
     """

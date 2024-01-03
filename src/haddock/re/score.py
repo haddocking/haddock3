@@ -67,7 +67,11 @@ def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air
     """Rescore the CAPRI models."""
     log.info(f"Rescoring {capri_dir}")
     # load the scoring pars via json
-    scoring_pars = json.load(open(Path(capri_dir, "weights_params.json"), "r"))
+    weights_filename = Path(capri_dir, "weights_params.json")
+    if not weights_filename.exists():
+        log.error(f"weights file {weights_filename} not found. Exiting.")
+        sys.exit(1)
+    scoring_pars = json.load(open(weights_filename, "r"))
     log.info(f"Previous scoring parameters: {scoring_pars}")
     if w_elec is not None:
         scoring_pars.update({"w_elec": w_elec})

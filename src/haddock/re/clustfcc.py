@@ -34,7 +34,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     clustfcc_subcommand.add_argument(
         "-f",
         "--clust_cutoff",
-        help="fraction of common contacts to not be considered a singleton model.",  # noqa: E501
+        help="Minimum fraction of common contacts to be considered in a cluster.",  # noqa: E501
         required=False,
         type=float,
         )
@@ -42,7 +42,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     clustfcc_subcommand.add_argument(
         "-s",
         "--strictness",
-        help="fraction of common contacts to be considered to be part of the same cluster.",  # noqa: E501
+        help="Strictness factor.",
         required=False,
         type=float,
         )
@@ -50,7 +50,7 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     clustfcc_subcommand.add_argument(
         "-t",
         "--min_population",
-        help="minimum cluster population.",
+        help="Clustering population threshold.",
         required=False,
         type=int,
         )

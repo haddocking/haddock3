@@ -1,12 +1,9 @@
 """
 HADDOCK 3.0 CLI for interactive tasks.
-
-USAGE::
-
-    haddock3-int_rescore <path_to_capri_dir> -e 0.5
 """
 import argparse
 import sys
+import os
 
 from haddock.re.clustfcc import add_clustfcc_arguments, reclustfcc
 from haddock.re.clustrmsd import add_clustrmsd_arguments, reclustrmsd
@@ -23,8 +20,8 @@ ap = argparse.ArgumentParser(
     )
 
 subparsers = ap.add_subparsers(title='subcommands',
-                               description='valid subcommands',
-                               help='additional help')
+                               help='valid subcommands',
+                              )
 
 # score subcommand
 rescore_subcommand = subparsers.add_parser('score')
@@ -34,7 +31,7 @@ rescore_subcommand = add_rescore_arguments(rescore_subcommand)
 clustrmsd_subcommand = subparsers.add_parser('clustrmsd')
 clustrmsd_subcommand.set_defaults(func=reclustrmsd)
 clustrmsd_subcommand = add_clustrmsd_arguments(clustrmsd_subcommand)
-# clustfcc
+# clustfcc subcommand
 clustfcc_subcommand = subparsers.add_parser('clustfcc')
 clustfcc_subcommand.set_defaults(func=reclustfcc)
 clustfcc_subcommand = add_clustfcc_arguments(clustfcc_subcommand)
@@ -53,7 +50,12 @@ def maincli():
     """Execute main client."""
     args = ap.parse_args()
     cmd = vars(load_args(ap))
-    cmd.pop("func")
+    if "func" not in cmd.keys():
+        sys.stderr.write(f"Error: no subcommand given.{os.linesep}")
+        ap.print_help()
+        sys.exit(1)
+    else:
+        cmd.pop("func")
     args.func(**cmd)
 
 

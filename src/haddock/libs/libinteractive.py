@@ -1,5 +1,5 @@
 from haddock import log
-from haddock.clis.cli_traceback import ANA_MODULES
+from haddock.clis.cli_traceback import get_steps_without_pdbs
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -86,6 +86,8 @@ def look_for_capri(run_dir, module_id):
     prev_modules = get_module_steps_folders(run_dir, prev_modules_id)
     # remove possible interactive modules
     prev_modules = [mod for mod in prev_modules if not mod.endswith("interactive")]
+    # analysis modules
+    ana_modules = get_steps_without_pdbs(run_dir, prev_modules)
     # loop over the reversed list of previous modules
     capri_folder = None
     for prev_module in reversed(prev_modules):
@@ -95,7 +97,7 @@ def look_for_capri(run_dir, module_id):
             # caprieval module found before any module that generates models
             capri_folder = Path(run_dir, prev_module)
             break
-        elif mod_name not in ANA_MODULES:
+        elif mod_name not in ana_modules:
             break
         else:
             continue

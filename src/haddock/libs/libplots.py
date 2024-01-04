@@ -9,12 +9,15 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from pathlib import Path
+
 from haddock import log
 from haddock.core.typing import (
     DataFrameGroupBy,
     Figure,
     FilePath,
     ImgFormat,
+    NDFloat,
     Optional,
     Union,
 )
@@ -805,7 +808,7 @@ def _pandas_df_to_json(df):
     return data_string, headers_string
 
 
-def clt_table_handler(clt_file, ss_file):
+def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     """
     Create a dataframe including data for tables.
 
@@ -818,6 +821,8 @@ def clt_table_handler(clt_file, ss_file):
         path to capri_clt.tsv file
     ss_file: str or Path
         path to capri_ss.tsv file
+    is_cleaned: bool
+        is the run going to be cleaned?
 
     Returns
     -------
@@ -831,6 +836,13 @@ def clt_table_handler(clt_file, ss_file):
     # table of structures
     structs_df = find_best_struct(ss_file, number_of_struct=10)
 
+    # if the run will be cleaned, the structures are going to be gzipped
+    if is_cleaned:
+        # substitute the values in the df by adding .gz at the end
+        structs_df = structs_df.replace(
+            to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True
+        )
+    
     # Order structs by best (lowest score) cluster on top
     structs_df = structs_df.set_index("Cluster ID")
     structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])
@@ -1003,6 +1015,55 @@ def report_generator(boxes, scatters, tables, step):
         report.write(html_report)
 
 
+
+def heatmap_plotly(
+        matrix: NDFloat,
+        labels: Optional[dict] = None,
+        xlabels: Optional[list] = None,
+        ylabels: Optional[list] = None,
+        color_scale: str = 'Greys_r',  # Greys_r, gray
+        title: Optional[str] = None,
+        output_fname: Path = Path('contacts.html'),
+        ) -> Path:
+    """Generate a `plotly heatmap` based on matrix content.
+
+    Parameters
+    ----------
+    matrix : NDFloat
+        The 2D matrix containing data to be shown.
+    labels : dict
+        Labels of the horizontal (x), vertical (y) and colorscale (color) axis.
+    xlabels : list
+        List of columns names.
+    ylabels : list
+        List of row names.
+    color_scale : str
+        Color scale to use.
+    title : str
+        Title of the figure.
+    output_fname : Path
+        Path to the output filename to generate.
+
+    Return
+    ------
+    output_fname : Path
+        Path to the generated filename
+    """
+    fig = px.imshow(
+        matrix,
+        labels=labels,
+        x=xlabels,
+        y=ylabels,
+        color_continuous_scale=color_scale,
+        title=title,
+        )
+    # Place X axis on top
+    fig.update_xaxes(side="top")
+    # Save figure as html file
+    fig.write_html(output_fname)
+    return output_fname
+
+  
 def make_alascan_plot(df, clt_id, scan_res="ALA"):
     """
     Make a plotly interactive plot.
@@ -1084,3 +1145,4 @@ def make_alascan_plot(df, clt_id, scan_res="ALA"):
     # save html
     html_output_filename = f"{plot_name}.html"
     fig.write_html(html_output_filename)
+

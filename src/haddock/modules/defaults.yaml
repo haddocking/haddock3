@@ -89,7 +89,7 @@ concat:
   precision: 0
   title: Number of models to produce per job.
   short: Multiple models can be calculated within one job
-  long: The defins the number of models that will be generated within on job script. 
+  long: This defines the number of models that will be generated within on job script. 
     This allows to concatenate the generation of models into one script. 
     In that way jobs might run longer in the batch system and reduce the load on the scheduler.
   group: 'execution'

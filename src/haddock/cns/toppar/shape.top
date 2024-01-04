@@ -1,3 +1,6 @@
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
+
 MASS  SHA   100.000   ! dummy atom for shapes
 
 
@@ -10,3 +13,4 @@ presidue CON     !
   add bond -SHA +SHA
 END {con}
 
+set message=$old_message echo=$old_echo end

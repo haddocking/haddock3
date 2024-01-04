@@ -126,6 +126,7 @@ def reclustfcc(clustfcc_dir, clust_cutoff=None, strictness=None, min_population=
         clustfcc_params['min_population']
         )
     clustfcc_params['min_population'] = min_population
+    log.info(f"Updated clustering parameters: {clustfcc_params}")
 
     # Prepare output and read the elements
     clt_dic = {}

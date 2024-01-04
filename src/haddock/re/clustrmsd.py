@@ -16,6 +16,7 @@ from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import read_capri_table
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
+    iterate_min_population,
     write_clusters,
     write_clustrmsd_file,
     )
@@ -26,16 +27,6 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     clustrmsd_subcommand.add_argument(
         "clustrmsd_dir",
         help="The clustrmsd directory to recluster.",
-        )
-    
-    clustrmsd_subcommand.add_argument(
-        "-c",
-        "--criterion",
-        default="distance",
-        help="criterion to use for clustering",
-        required=False,
-        choices=["maxclust", "distance"],
-        type=str,
         )
     
     clustrmsd_subcommand.add_argument(
@@ -65,15 +56,12 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     return clustrmsd_subcommand
 
 
-def reclustrmsd(clustrmsd_dir, criterion=None, n_clusters=None, clust_cutoff=None, min_population=None):
+def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_population=None):
     """
     Recluster the models in the clustrmsd directory.
     
     Parameters
     ----------
-    criterion : str
-        Criterion to use for clustering.
-    
     clustrmsd_dir : str
         Path to the clustrmsd directory.
     
@@ -103,7 +91,7 @@ def reclustrmsd(clustrmsd_dir, criterion=None, n_clusters=None, clust_cutoff=Non
     io = ModuleIO()
     filename = Path(clustrmsd_dir, "io.json")
     io.load(filename)
-    models = io.retrieve_models()
+    models = io.input
 
     # load the original clustering parameters via json
     clustrmsd_params = read_config(Path(clustrmsd_dir, "params.cfg"))
@@ -111,15 +99,23 @@ def reclustrmsd(clustrmsd_dir, criterion=None, n_clusters=None, clust_cutoff=Non
     clustrmsd_params = clustrmsd_params['final_cfg'][key]
     log.info(f"Previous clustering parameters: {clustrmsd_params}")
 
+    # setting previous tolerance, just in case no new parameters are given
+    if clustrmsd_params["criterion"] == "maxclust":
+        tolerance = clustrmsd_params["n_clusters"]
+    else:
+        tolerance = clustrmsd_params["clust_cutoff"]
+
     # adjust the parameters
     if n_clusters is not None:
-        clustrmsd_params["tolerance"] = n_clusters
+        clustrmsd_params["n_clusters"] = n_clusters
         clustrmsd_params["criterion"] = "maxclust"
+        tolerance = n_clusters
     else:
         if clust_cutoff is not None:
-            clustrmsd_params["tolerance"] = clust_cutoff
+            clustrmsd_params["clust_cutoff"] = clust_cutoff
             clustrmsd_params["criterion"] = "distance"
-
+            tolerance = clust_cutoff
+    
     if min_population is not None:
         clustrmsd_params["min_population"] = min_population
     
@@ -129,9 +125,17 @@ def reclustrmsd(clustrmsd_dir, criterion=None, n_clusters=None, clust_cutoff=Non
     # get the clusters
     cluster_arr = get_clusters(
         dendrogram,
-        clustrmsd_params["tolerance"],
+        tolerance,
         clustrmsd_params["criterion"])
     log.info(f"clusters {cluster_arr}")
+
+    if clustrmsd_params['criterion'] == "distance":
+        cluster_arr, min_population = iterate_min_population(
+            cluster_arr,
+            clustrmsd_params['min_population']
+            )
+        clustrmsd_params['min_population'] = min_population
+    log.info(f"Updated clustering parameters = {clustrmsd_params}")
     
     # processing the clusters
     unq_clusters = np.unique(cluster_arr)  # contains -1 (unclustered)
@@ -181,7 +185,5 @@ def reclustrmsd(clustrmsd_dir, criterion=None, n_clusters=None, clust_cutoff=Non
     if caprieval_folder:
         log.info("Rewriting capri tables")
         rewrite_capri_tables(caprieval_folder, clt_dic, outdir)
-    
-
 
     return outdir

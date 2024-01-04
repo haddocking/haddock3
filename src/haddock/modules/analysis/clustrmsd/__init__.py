@@ -14,17 +14,12 @@ Four parameters can be defined in this context:
   the dendrogram
 * `criterion`: defines the prescription to cut the dendrogram and obtain the
   desired clusters
-* `tolerance`:
-    * if `criterion` is ``maxclust``, this is the number of desired
-      clusters.
-    * if `criterion` is ``distance``, it must be the value of
-      distance that separates distinct clusters.
-
-  If not specified, the default is calculated either as the total number of
-  models divided by four (`maxclust`) or as the average of the dendrogram height
-  (`distance`)
+* `n_clusters`: number of desired clusters (if `criterion` is `maxclust`).
+* `clust_cutoff`: value of distance that separates distinct clusters (if `criterion` is
+  ``distance``)
 * `min_population` : analogously to the `clustfcc` module, it is the minimum number
-  of models that should be present in a cluster to consider it
+  of models that should be present in a cluster to consider it. If criterion is
+    `maxclust`, the value is ignored.
 
 This module passes the path to the RMSD matrix is to the next step of the
 workflow through the `rmsd_matrix.json` file, thus allowing to execute several
@@ -84,7 +79,6 @@ class HaddockModule(BaseHaddockModule):
         # Cluster
         rmsd_matrix = read_matrix(self.matrix_json.input[0])
         # loading parameters
-        linkage_type = self.params["linkage"]
         min_population = self.params["min_population"]
 
         # adjust the parameters
@@ -137,7 +131,7 @@ class HaddockModule(BaseHaddockModule):
         
         # Write unclustered structures
         write_structure_list(models, self.output_models, out_fname="clustrmsd.tsv")  # type: ignore
-
+        
         write_clustrmsd_file(
             clusters,
             clt_dic,

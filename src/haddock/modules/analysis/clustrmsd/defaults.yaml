@@ -60,6 +60,3 @@ n_clusters:
   long: Number of clusters to be formed. When criterion is distance, this value is ignored.
   group: analysis
   explevel: easy
-
-
-

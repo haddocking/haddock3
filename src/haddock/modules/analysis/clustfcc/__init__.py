@@ -9,6 +9,7 @@ from haddock import FCC_path, log
 from haddock.libs.libclust import write_structure_list
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
+from haddock.modules import get_engine
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
 
 
@@ -61,8 +62,12 @@ class HaddockModule(BaseHaddockModule):
             )
             contact_jobs.append(job)
 
-        contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
-        contact_engine.run()
+        #contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
+        #contact_engine.run()
+            
+        Engine = get_engine(self.params['mode'], self.params)
+        engine = Engine(contact_jobs)
+        engine.run()
 
         contact_file_l: list[str] = []
         not_found: list[str] = []

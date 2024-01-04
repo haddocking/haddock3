@@ -34,6 +34,7 @@ from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
+from haddock.modules import get_engine
 from haddock.modules.analysis import confirm_resdic_chainid_length
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSD,
@@ -135,8 +136,11 @@ class HaddockModule(BaseHaddockModule):
                 )
             rmsd_jobs.append(job)
 
-        rmsd_engine = Scheduler(rmsd_jobs, ncores=ncores)
-        rmsd_engine.run()
+        #rmsd_engine = Scheduler(rmsd_jobs, ncores=ncores)
+        #rmsd_engine.run()
+        Engine = get_engine(self.params['mode'], self.params)
+        engine = Engine(rmsd_jobs)
+        engine.run()
 
         rmsd_file_l: list[str] = []
         not_found: list[str] = []

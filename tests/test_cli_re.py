@@ -53,11 +53,12 @@ def test_cli_rescore(weights_dict):
             assert first_model["irmsd"] == 2.621
             assert first_model["score"] == -28.743
 
+
 def test_cli_reclustfcc():
     """Test haddock3-re clustfcc subcommand."""
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
-        os.mkdir(Path(tmpdir, "03_clustfcc"))
         nested_tmpdir = Path(tmpdir, "03_clustfcc")
+        os.mkdir(nested_tmpdir)
         # json file
         flexref_json = Path(golden_data, "io_flexref.json")
         shutil.copy(flexref_json, Path(nested_tmpdir, "io.json"))
@@ -67,7 +68,7 @@ def test_cli_reclustfcc():
         # fcc matrix
         fcc_matrix = Path(golden_data, "example_fcc.matrix")
         shutil.copy(fcc_matrix, Path(nested_tmpdir, "fcc.matrix"))
-        subprocess.run(["haddock3-re", "clustfcc", nested_tmpdir])
+        subprocess.run(["haddock3-re", "clustfcc", nested_tmpdir, "-f", "0.65"])
 
         # check if the interactive folders is created
         interactive_folder = [el for el in os.listdir(tmpdir) if el.endswith("interactive")]
@@ -78,11 +79,44 @@ def test_cli_reclustfcc():
         assert clustfcc_tsv.exists()
         lines = clustfcc_tsv.read_text().splitlines()
         assert len(lines) == 4
-        assert lines[1] == "1\tcluster_1_model_1.pdb\t6.20\t2"
+        assert lines[1] == "1\trigidbody_3.pdb\t4.53\t2"
 
-        
-
-
-            
-
+        # clustfcc.txt
+        clustfcc_txt = Path(interactive_folder, "clustfcc.txt")
+        assert clustfcc_txt.exists()
+        lines = clustfcc_txt.read_text().splitlines()
+        assert lines[4] == "> clust_cutoff=0.65"
     
+
+def test_cli_reclustrmsd():
+    """Test haddock3-re clustrmsd subcommand."""
+    with tempfile.TemporaryDirectory(dir=".") as tmpdir:
+        nested_tmpdir = Path(tmpdir, "04_clustrmsd")
+        os.mkdir(nested_tmpdir)
+        # json file
+        flexref_json = Path(golden_data, "io_clustrmsd.json")
+        shutil.copy(flexref_json, Path(nested_tmpdir, "io.json"))
+        # params.cfg
+        clustrmsd_params_cfg = Path(golden_data, "params_clustrmsd.cfg")
+        shutil.copy(clustrmsd_params_cfg, Path(nested_tmpdir, "params.cfg"))
+        # dendrogram
+        dendrogram = Path(golden_data, "example_dendrogram.txt")
+        shutil.copy(dendrogram, Path(nested_tmpdir, "dendrogram.txt"))
+        subprocess.run(["haddock3-re", "clustrmsd", nested_tmpdir, "-n", "2"])
+        # check if the interactive folders is created
+        interactive_folder = [el for el in os.listdir(tmpdir) if el.endswith("interactive")]
+        assert len(interactive_folder) == 1
+
+        # check that the clustrmsd.tsv file is correctly created
+        interactive_folder = Path(tmpdir, interactive_folder[0])
+        clustrmsd_tsv = Path(interactive_folder, "clustrmsd.tsv")
+        assert clustrmsd_tsv.exists()
+        lines = clustrmsd_tsv.read_text().splitlines()
+        assert lines[1] == "1\trigidbody_3.pdb\t4.53\t1"
+
+        # clustrmsd.txt
+        clustrmsd_txt = Path(interactive_folder, "clustrmsd.txt")
+        assert clustrmsd_txt.exists()
+        lines = clustrmsd_txt.read_text().splitlines()
+        assert lines[4] == "> criterion=maxclust"
+        assert lines[5] == "> n_clusters=2"

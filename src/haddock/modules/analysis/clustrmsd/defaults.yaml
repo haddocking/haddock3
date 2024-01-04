@@ -36,7 +36,7 @@ min_population:
   max: 9999
   title: Clustering population threshold
   short: Threshold employed to exclude clusters with less than this number of members. By default 4.
-  long: Threshold employed to exclude clusters with less than this number of members. By default 4.
+  long: Threshold employed to exclude clusters with less than this number of members. By default 4. When criterion is maxclust, this value is ignored.
   group: analysis
   explevel: easy
 clust_cutoff:

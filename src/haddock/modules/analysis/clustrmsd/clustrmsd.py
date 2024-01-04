@@ -22,10 +22,7 @@ def read_matrix(rmsd_matrix: RMSDFile) -> np.ndarray:
     matrix : :obj:`numpy.ndarray`
         Numpy array with the RMSD matrix.
     """
-    if not isinstance(rmsd_matrix, RMSDFile):
-        err = f"{type(rmsd_matrix)} is not a RMSDFile object."
-        raise TypeError(err)
-    filename = Path(rmsd_matrix.path, rmsd_matrix.file_name)
+    filename = get_matrix_path(rmsd_matrix)
     # count lines
     nlines = sum(1 for line in open(filename))
     log.info(f"input rmsd matrix has {nlines} entries")
@@ -48,7 +45,32 @@ def read_matrix(rmsd_matrix: RMSDFile) -> np.ndarray:
             else:
                 matrix[[c]] = float(data[2])
                 c += 1
-    return matrix
+    return np.array(matrix)
+
+
+def get_matrix_path(rmsd_matrix: RMSDFile) -> Path:
+    """From an RMSDFile object returns the rmsd matrix path.
+
+    Parameters
+    ----------
+    rmsd_matrix : :obj:`RMSDFile`
+        RMSDFile object with the path to the RMSD matrix.
+
+    Returns
+    -------
+    matrix_fpath : Path
+        Path to the RMSD matrix
+
+    Raises
+    ------
+    TypeError
+        If input rmsd_matrix is not of type RMSDFile
+    """
+    if not isinstance(rmsd_matrix, RMSDFile):
+        err = f"{type(rmsd_matrix)} is not a RMSDFile object."
+        raise TypeError(err)
+    matrix_fpath = Path(rmsd_matrix.path, rmsd_matrix.file_name)
+    return matrix_fpath
 
 
 def get_dendrogram(rmsd_matrix, linkage_type):
@@ -140,7 +162,11 @@ def cond_index(i: int, j: int, n: int) -> float:
     return n * (n - 1) / 2 - (n - i) * (n - i - 1) / 2 + j - i - 1
 
 
-def get_cluster_center(npw: np.ndarray, n_obs: int, rmsd_matrix: np.ndarray) -> int:
+def get_cluster_center(
+        npw: np.ndarray,
+        n_obs: int,
+        rmsd_matrix: np.ndarray,
+        ) -> int:
     """
     Get the cluster centers.
 
@@ -162,10 +188,10 @@ def get_cluster_center(npw: np.ndarray, n_obs: int, rmsd_matrix: np.ndarray) -> 
 
     # iterating over the elements of the cluster
     for m_idx in range(len(npw)):
-        npws = npw[m_idx + 1 :]
+        npws = npw[m_idx + 1:]
         pairs = [int(cond_index(npw[m_idx], npw_el, n_obs)) for npw_el in npws]
         for pair_idx in range(len(pairs)):
             intra_cl_distances[npw[m_idx]] += rmsd_matrix[pairs[pair_idx]]
             intra_cl_distances[npws[pair_idx]] += rmsd_matrix[pairs[pair_idx]]
-    cluster_center = min(intra_cl_distances, key=intra_cl_distances.get)  # type: ignore
+    cluster_center = min(intra_cl_distances, key=intra_cl_distances.get)  # type: ignore  # noqa : E501
     return cluster_center

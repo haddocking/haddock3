@@ -49,3 +49,11 @@ strictness:
   long: Strictness factor. It's multiplied by the fraction_cutoff to obtain a new cutoff for the second half of the matrix. Used to allow for some variability. By default 0.75.
   group: analysis
   explevel: easy
+plot_matrix:
+  default: false
+  type: boolean
+  title: Plot matrix of members
+  short: Plot matrix of members. By default is false.
+  long: Plot matrix of members. By default is false.
+  group: analysis
+  explevel: easy

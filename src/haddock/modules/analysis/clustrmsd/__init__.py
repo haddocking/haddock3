@@ -41,16 +41,17 @@ import numpy as np
 from haddock import log
 
 # from haddock.core.typing import FilePath
-from haddock.libs.libclust import write_structure_list
+from haddock.libs.libclust import write_structure_list, plot_cluster_matrix
 from haddock.libs.libontology import ModuleIO
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_cluster_center,
     get_clusters,
     get_dendrogram,
+    get_matrix_path,
     iterate_threshold,
     read_matrix,
-)
+    )
 from typing import Union
 
 
@@ -64,8 +65,11 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-        self, order: int, path: Path, initial_params: Union[Path, str] = DEFAULT_CONFIG
-    ) -> None:
+            self,
+            order: int,
+            path: Path,
+            initial_params: Union[Path, str] = DEFAULT_CONFIG,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
         self.matrix_json = self._load_previous_io("rmsd_matrix.json")
@@ -130,7 +134,7 @@ class HaddockModule(BaseHaddockModule):
                     clt_dic[cl_id] = [models[n] for n in npw]
                     fh.write(f"Cluster {cl_id} -> ")
                     clt_center = get_cluster_center(npw, n_obs, rmsd_matrix)
-                    cluster_centers[cl_id] = models[clt_center].file_name  # type: ignore
+                    cluster_centers[cl_id] = models[clt_center].file_name  # type: ignore  # noqa : E501
                     for el in npw[:-1]:
                         fh.write(f"{el + 1} ")
                     fh.write(f"{npw[-1] + 1}")
@@ -160,7 +164,7 @@ class HaddockModule(BaseHaddockModule):
                 self.output_models.append(pdb)
 
         # Write unclustered structures
-        write_structure_list(models, self.output_models, out_fname="clustrmsd.tsv")  # type: ignore
+        write_structure_list(models, self.output_models, out_fname="clustrmsd.tsv")  # type: ignore  # noqa : E501
 
         # Prepare clustrmsd.txt
         output_fname = Path("clustrmsd.txt")
@@ -173,7 +177,7 @@ class HaddockModule(BaseHaddockModule):
         output_str += f"> threshold={threshold}{os.linesep}"
         output_str += os.linesep
 
-        output_str += f"-----------------------------------------------{os.linesep}"
+        output_str += f"{'-' * 47}{os.linesep}"
         output_str += os.linesep
         output_str += f"Total # of clusters: {len(clusters)}{os.linesep}"
         for cluster_rank, _e in enumerate(sorted_score_dic, start=1):
@@ -185,13 +189,13 @@ class HaddockModule(BaseHaddockModule):
 
             output_str += (
                 f"{os.linesep}"
-                "-----------------------------------------------"
+                f"{'-' * 47}"
                 f"{os.linesep}"
                 f"Cluster {cluster_rank} (#{cluster_id}, "
                 f"n={len(model_score_l)}, "
                 f"top{threshold}_avg_score = {top_score:.2f})"
                 f"{os.linesep}"
-            )
+                )
             output_str += os.linesep
             output_str += f"clt_rank\tmodel_name\tscore{os.linesep}"
             for model_ranking, element in enumerate(model_score_l, start=1):
@@ -201,15 +205,37 @@ class HaddockModule(BaseHaddockModule):
                     output_str += (
                         f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
                         f"{os.linesep}"
-                    )
+                        )
                 else:
                     output_str += (
-                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}" f"{os.linesep}"
-                    )
-        output_str += "-----------------------------------------------" f"{os.linesep}"
+                        f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
+                        f"{os.linesep}"
+                        )
+        output_str += f"{'-' * 47}{os.linesep}"
         log.info("Saving detailed output to clustrmsd.txt")
         with open(output_fname, "w") as out_fh:
             out_fh.write(output_str)
+
+        # Draw the matrix
+        if self.params['plot_matrix']:
+            # Obtain final models indices
+            final_order_idx, labels = [], []
+            for pdb in self.output_models:
+                final_order_idx.append(models.index(pdb))
+                labels.append(pdb.file_name.replace('.pdb', ''))
+            # Define output filename
+            html_matrixpath = 'rmsd_matrix.html'
+            log.info(f"Plotting matrix in {html_matrixpath}")
+            # Plot matrix
+            plot_cluster_matrix(
+                get_matrix_path(self.matrix_json.input[0]),
+                final_order_idx,
+                labels,
+                dttype='RMSD',
+                reverse=True,
+                diag_fill=0,
+                output_fname=html_matrixpath,
+                )
 
         self.export_io_models()
         # sending matrix to next step of the workflow

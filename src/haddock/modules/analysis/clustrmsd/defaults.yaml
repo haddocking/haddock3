@@ -50,3 +50,11 @@ tolerance:
   long: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
   group: analysis
   explevel: easy
+plot_matrix:
+  default: false
+  type: boolean
+  title: Plot matrix of members
+  short: Plot matrix of members. By default is false.
+  long: Plot matrix of members. By default is false.
+  group: analysis
+  explevel: easy

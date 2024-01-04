@@ -6,7 +6,7 @@ import numpy as np
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
 from typing import Any, Union
 from haddock import FCC_path, log
-from haddock.libs.libclust import write_structure_list
+from haddock.libs.libclust import write_structure_list, plot_cluster_matrix
 from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
@@ -22,8 +22,11 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-        self, order: int, path: Path, initial_params: Union[Path, str] = DEFAULT_CONFIG
-    ) -> None:
+            self,
+            order: int,
+            path: Path,
+            initial_params: Union[Path, str] = DEFAULT_CONFIG,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
@@ -52,13 +55,13 @@ class HaddockModule(BaseHaddockModule):
         contact_jobs: list[JobInputFirst] = []
         for model in models_to_cluster:
             pdb_f = Path(model.rel_path)  # type: ignore
-            contact_f = Path(model.file_name.replace(".pdb", ".con"))  # type: ignore
+            contact_f = Path(model.file_name.replace(".pdb", ".con"))  # type: ignore  # noqa : E501
             job = JobInputFirst(
                 pdb_f,
                 contact_f,
                 contact_executable,
                 self.params["contact_distance_cutoff"],
-            )
+                )
             contact_jobs.append(job)
 
         contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
@@ -78,17 +81,22 @@ class HaddockModule(BaseHaddockModule):
 
         if not_found:
             # No contacts were calculated, we cannot cluster
-            self.finish_with_error("Several files were not generated:" f" {not_found}")
+            self.finish_with_error(
+                "Several files were not generated:"
+                f" {not_found}"
+                )
 
         log.info("Calculating the FCC matrix")
         parsed_contacts = calc_fcc_matrix.parse_contact_file(
-            contact_file_l, False
-        )  # noqa: E501
+            contact_file_l,
+            False,
+            )
 
         # Imporant: matrix is a generator object, be careful with it
         matrix = calc_fcc_matrix.calculate_pairwise_matrix(
-            parsed_contacts, False
-        )  # noqa: E501
+            parsed_contacts,
+            False,
+            )
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
@@ -98,7 +106,6 @@ class HaddockModule(BaseHaddockModule):
                 data_str = f"{data[0]} {data[1]} {data[2]:.2f} {data[3]:.3f}"
                 data_str += os.linesep
                 fh.write(data_str)
-        fh.close()
 
         # Cluster
         log.info("Clustering...")
@@ -106,7 +113,7 @@ class HaddockModule(BaseHaddockModule):
             fcc_matrix_f,
             self.params["fraction_cutoff"],
             self.params["strictness"],
-        )
+            )
 
         cluster_check = False
         while not cluster_check:
@@ -115,9 +122,12 @@ class HaddockModule(BaseHaddockModule):
                 _, clusters = cluster_fcc.cluster_elements(
                     pool,
                     threshold=threshold,
-                )
+                    )
                 if not clusters:
-                    log.info("[WARNING] No cluster was found, decreasing threshold!")
+                    log.info(
+                        "[WARNING] No cluster was found, "
+                        "decreasing threshold!"
+                        )
                 else:
                     cluster_check = True
                     # pass the actual threshold back to the param dict
@@ -136,7 +146,6 @@ class HaddockModule(BaseHaddockModule):
             cluster_out = Path("cluster.out")
             with open(cluster_out, "w") as fh:
                 cluster_fcc.output_clusters(fh, clusters)
-            fh.close()
 
             clt_centers = {}
             for clt in clusters:
@@ -172,16 +181,18 @@ class HaddockModule(BaseHaddockModule):
                 # sort the models by score
                 clt_dic[cluster_id].sort()
                 # rank the models
-                for model_ranking, pdb in enumerate(clt_dic[cluster_id], start=1):
+                for mdl_rank, pdb in enumerate(clt_dic[cluster_id], start=1):
                     pdb.clt_id = cluster_id
                     pdb.clt_rank = cluster_rank
-                    pdb.clt_model_rank = model_ranking
+                    pdb.clt_model_rank = mdl_rank
                     self.output_models.append(pdb)
 
             # Write unclustered structures
             write_structure_list(
-                models_to_cluster, self.output_models, out_fname="clustfcc.tsv"  # type: ignore
-            )
+                models_to_cluster,
+                self.output_models,
+                out_fname="clustfcc.tsv",  # type: ignore
+                )
 
             # Prepare clustfcc.txt
             output_fname = Path("clustfcc.txt")
@@ -192,18 +203,20 @@ class HaddockModule(BaseHaddockModule):
                 "> contact_distance_cutoff="
                 f"{self.params['contact_distance_cutoff']}A"
                 f"{os.linesep}"
-            )
+                )
             output_str += (
-                f"> fraction_cutoff={self.params['fraction_cutoff']}" f"{os.linesep}"
-            )
+                f"> fraction_cutoff={self.params['fraction_cutoff']}"
+                f"{os.linesep}"
+                )
             output_str += f"> threshold={self.params['threshold']}{os.linesep}"
-            output_str += f"> strictness={self.params['strictness']}{os.linesep}"
+            output_str += f"> strictness={self.params['strictness']}"
+            output_str += os.linesep
             output_str += os.linesep
             output_str += (
-                "Note: Models marked with * represent the center of the cluster"
-                f"{os.linesep}"
-            )
-            output_str += f"-----------------------------------------------{os.linesep}"
+                "Note: Models marked with * represent the center of "
+                f"the cluster{os.linesep}"
+                )
+            output_str += f"{'-' * 47}{os.linesep}"
             output_str += os.linesep
             output_str += f"Total # of clusters: {len(clusters)}{os.linesep}"
 
@@ -217,14 +230,14 @@ class HaddockModule(BaseHaddockModule):
                 top_std = np.std(subset_score_l)
                 output_str += (
                     f"{os.linesep}"
-                    "-----------------------------------------------"
+                    f"{'-' * 47}"
                     f"{os.linesep}"
                     f"Cluster {cluster_rank} (#{cluster_id}, "
                     f"n={len(model_score_l)}, "
                     f"top{threshold}_avg_score = {top_mean_score:.2f} "
                     f"+-{top_std:.2f})"
                     f"{os.linesep}"
-                )
+                    )
                 output_str += os.linesep
                 output_str += f"clt_rank\tmodel_name\tscore{os.linesep}"
                 for model_ranking, element in enumerate(model_score_l, start=1):
@@ -233,15 +246,15 @@ class HaddockModule(BaseHaddockModule):
                         output_str += (
                             f"{model_ranking}\t{pdb.file_name}\t{score:.2f}\t*"
                             f"{os.linesep}"
-                        )
+                            )
                     else:
                         output_str += (
                             f"{model_ranking}\t{pdb.file_name}\t{score:.2f}"
                             f"{os.linesep}"
-                        )
+                            )
             output_str += (
-                "-----------------------------------------------" f"{os.linesep}"
-            )
+                f"{'-' * 47}{os.linesep}"
+                )
 
             log.info("Saving detailed output to clustfcc.txt")
             with open(output_fname, "w") as out_fh:
@@ -250,4 +263,25 @@ class HaddockModule(BaseHaddockModule):
             log.warning("No clusters were found")
             self.output_models = models_to_cluster  # type: ignore
 
+        # Draw the matrix
+        if self.params['plot_matrix']:
+            # Obtain final models indices
+            final_order_idx, labels = [], []
+            for pdb in self.output_models:
+                final_order_idx.append(models_to_cluster.index(pdb))
+                labels.append(pdb.file_name.replace('.pdb', ''))
+            # Define output filename
+            html_matrixpath = 'fccmatrix.html'
+            log.info(f"Plotting matrix in {html_matrixpath}")
+            # Plot matrix
+            plot_cluster_matrix(
+                fcc_matrix_f,
+                final_order_idx,
+                labels,
+                dttype='FCC',
+                diag_fill=1,
+                output_fname=html_matrixpath,
+                )
+
+        # Export models for next module
         self.export_io_models()

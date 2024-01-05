@@ -1,8 +1,9 @@
+"""Testings of the score CLI."""
 from haddock.clis import cli_score
 from tests import golden_data
 from pathlib import Path
 import tempfile
-import pytest_mock
+import pytest_mock  # noqa : F401
 import os
 import shutil
 import io
@@ -18,14 +19,18 @@ def test_cli_score_main(mocker):
     os.mkdir(Path(tmpdir, "1_emscoring"))
     shutil.copy(pdb_f, Path(tmpdir, "1_emscoring", "emscoring_1.pdb"))
     # mocking
-    mocker.patch("haddock.libs.libworkflow.WorkflowManager.run", return_value=None)
+    mocker.patch(
+        "haddock.libs.libworkflow.WorkflowManager.run",
+        return_value=None,
+        )
     mocker.patch("shutil.rmtree", return_value=None)
     mocker.patch("pathlib.Path.mkdir", return_value=None)
     # parsing
     f = io.StringIO()
     with redirect_stdout(f):
         cli_score.main(pdb_f, tmpdir, full=True, keep_all=True)
-    out = f.getvalue().split(os.linesep)
+    _out = f.getvalue().split(os.linesep)
+    del _out
     # clean up
     os.unlink(Path(tmpdir, "1_emscoring", "emscoring_1.pdb"))
     os.rmdir(Path(tmpdir, "1_emscoring"))

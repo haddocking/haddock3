@@ -2,7 +2,7 @@
 
 from haddock import log
 from haddock.clis.cli_traceback import get_steps_without_pdbs
-from haddock.core.typing import Optional
+from haddock.core.typing import Union
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -106,7 +106,7 @@ def rewrite_capri_tables(
     return
 
 
-def look_for_capri(run_dir: str, module_id: int) -> Optional[Path, None]:
+def look_for_capri(run_dir: str, module_id: int) -> Union[Path, None]:
     """Look for capri evaluation files previous to clustfcc_dir.
 
     Parameters

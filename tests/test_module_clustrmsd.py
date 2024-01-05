@@ -289,8 +289,7 @@ def test_correct_output(input_protdna_models, output_list):
 
     assert expected_txt_filename in ls
 
-    expected_out_content = f"Cluster 1 -> 1 2"
-    expected_out_content += os.linesep
+    expected_out_content = f"Cluster 1 -> 1 2{os.linesep}"
 
     observed_out_content = open(expected_out_filename).read()
 
@@ -346,7 +345,10 @@ def test_apply_min_population():
 def test_iterate_min_population():
     """Test iterate_min_population function."""
     cluster_arr = np.array([1, 1, 2, 3, 4])
-    obs_cluster_arr, obs_min_population = iterate_min_population(cluster_arr, min_population=4)
+    obs_cluster_arr, obs_min_population = iterate_min_population(
+        cluster_arr,
+        min_population=4,
+        )
     exp_cluster_arr = np.array([1, 1, -1, -1, -1])
     assert obs_min_population == 2
     assert (obs_cluster_arr == exp_cluster_arr).all()

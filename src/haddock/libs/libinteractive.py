@@ -1,12 +1,32 @@
+"""Set of functions related to haddock3 interactive rescoring `haddock3-re`."""
+
 from haddock import log
 from haddock.clis.cli_traceback import get_steps_without_pdbs
+from haddock.core.typing import Optional
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from haddock.libs.libplots import read_capri_table
 
+def handle_ss_file(
+        df_ss: pd.DataFrame,
+        ) -> tuple[pd.DataFrame, pd.DataFrame, np.ndarray]:
+    """Manage a caprieval ss data focused on 4 first elements per cluster.
 
-def handle_ss_file(df_ss):
+    Parameters
+    ----------
+    df_ss : pd.DataFrame
+        The caprieval ss data.
+
+    Returns
+    -------
+    df_ss : pd.DataFrame
+        The input dataframe
+    clt_ranks : pd.DataFrame
+        New cluster ranking
+    new_values : np.ndarray
+        New cluster values focused on the first 4 elements per cluster.
+    """
     # now we want to calculate mean and std dev of the scores on df_ss
     # first groupby score
     df_ss_grouped = df_ss.groupby("cluster-ranking")
@@ -24,25 +44,44 @@ def handle_ss_file(df_ss):
     clt_ranks = np.argsort(new_values[:, 0])
     # adjust clustering values if there are clusters
     if list(np.unique(df_ss["cluster-id"])) != ["-"]:
-        df_ss['model-cluster-ranking'] = df_ss.groupby('cluster-id')['score'].rank(ascending=True).astype(int)
+        df_ss['model-cluster-ranking'] = df_ss.groupby('cluster-id')['score'].rank(ascending=True).astype(int)  # noqa : E501
         # assign to the values of cluster-ranking the corresponding clt_ranks
-        df_ss["cluster-ranking"] = df_ss["cluster-ranking"].apply(lambda x: clt_ranks[x-1] + 1)
+        df_ss["cluster-ranking"] = df_ss["cluster-ranking"].apply(lambda x: clt_ranks[x - 1] + 1)  # noqa : E501
     # assign to the column caprieval_rank the index of the dataframe
     df_ss.index = range(1, len(df_ss) + 1)
     df_ss["caprieval_rank"] = df_ss.index
     return df_ss, clt_ranks, new_values
 
-def rewrite_capri_tables(caprieval_folder, clt_dic, outdir):
+
+def rewrite_capri_tables(
+        caprieval_folder: str,
+        clt_dic: dict,
+        outdir: str,
+        ) -> None:
+    """Rewrite the capri tables with new values.
+
+    Parameters
+    ----------
+    caprieval_folder : str
+        Path to the capriveal folder to be changed
+    clt_dic : dict
+        Data for each cluster
+    outdir : str
+        Output directory
+    """
     capri_ss = Path(caprieval_folder, "capri_ss.tsv")
     capri_clt = Path(caprieval_folder, "capri_clt.tsv")
     if not capri_ss.exists() or not capri_clt.exists():
-        # raise warning and exit
+        # raise warning and exit
         log.warning("Capri evaluation files not found. Skipping...")
         return
     # ss file
     df_ss = read_capri_table(capri_ss)
     for cl in clt_dic:
-        models = [f"../{model.path.split('/')[-1]}/{model.file_name}" for model in clt_dic[cl]]
+        models = [
+            f"../{model.path.split('/')[-1]}/{model.file_name}"
+            for model in clt_dic[cl]
+            ]
         # all the models should now have the cluster-id field
         df_ss.loc[df_ss['model'].isin(models), 'cluster-id'] = cl
     
@@ -51,7 +90,7 @@ def rewrite_capri_tables(caprieval_folder, clt_dic, outdir):
     # assign cluster-ranking to cluster-id (aka random assignment)
     df_ss['cluster-ranking'] = df_ss['cluster-id']
     # handle ss file
-    df_ss, clt_ranks, new_values = handle_ss_file(df_ss)
+    df_ss, clt_ranks, _new_values = handle_ss_file(df_ss)
     
     # save capri_ss file
     capri_ss_file = Path(outdir, "capri_ss.tsv")
@@ -67,25 +106,29 @@ def rewrite_capri_tables(caprieval_folder, clt_dic, outdir):
     return
 
 
-def look_for_capri(run_dir, module_id):
-    """
-    Look for capri evaluation files previous to clustfcc_dir
+def look_for_capri(run_dir: str, module_id: int) -> Optional[Path, None]:
+    """Look for capri evaluation files previous to clustfcc_dir.
 
     Parameters
     ----------
-    clustfcc_dir : str
-        Path to the clustfcc directory
+    run_dir : str
+        Path to the haddock3 run directory
+    module_id : int
+        Id of the module.
     
     Returns
     -------
-    capri_eval : str
+    capri_eval : Path
         Path to the capri evaluation file
     """
     from haddock.modules import get_module_steps_folders
     prev_modules_id = range(1, module_id)
     prev_modules = get_module_steps_folders(run_dir, prev_modules_id)
     # remove possible interactive modules
-    prev_modules = [mod for mod in prev_modules if not mod.endswith("interactive")]
+    prev_modules = [
+        mod for mod in prev_modules
+        if not mod.endswith("interactive")
+        ]
     # analysis modules
     ana_modules = get_steps_without_pdbs(run_dir, prev_modules)
     # loop over the reversed list of previous modules
@@ -106,7 +149,7 @@ def look_for_capri(run_dir, module_id):
 
 
 def handle_clt_file(df_ss, clt_ranks):
-    """handle clt file.
+    """Handle clt file.
     
     Reclustering modifies the cluster data, so capri_clt.tsv must be updated.
     """
@@ -116,7 +159,7 @@ def handle_clt_file(df_ss, clt_ranks):
     # loop over df_ss_grouped
     cl_data = []
     for i, clt_id in enumerate(df_ss_grouped):
-        cl_rank = np.where(clt_ranks == i)[0][0] + 1 # adding 1 to start from 1
+        cl_rank = np.where(clt_ranks == i)[0][0] + 1  # add +1 to start from 1
         data = [cl_rank, clt_id[0], clt_id[1].shape[0], "-", ]
         for column in capri_keys:
             ave_score = np.mean(clt_id[1][column].iloc[:4])
@@ -136,7 +179,7 @@ def handle_clt_file(df_ss, clt_ranks):
     for column in model_keys:
         capri_clt_columns.append(f"{column}")
         capri_clt_columns.append(f"{column}_std")
-    #capri_clt_columns.append("caprieval_rank")
+    # capri_clt_columns.append("caprieval_rank")
     df_clt = pd.DataFrame(cl_data, columns=capri_clt_columns)
     df_clt.sort_values(by="score", inplace=True)
     df_clt.index = range(1, len(df_clt) + 1)

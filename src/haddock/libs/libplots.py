@@ -787,6 +787,9 @@ def _pandas_df_to_json(df):
         "Cluster Rank": "rank",
         "Cluster ID": "id",
         "Cluster size": "size",
+        # for unclustered stuff
+        "Rank": "rank",
+  
     }
 
     # Create a dictionary that contains the headers of the table
@@ -799,8 +802,12 @@ def _pandas_df_to_json(df):
         best = {}
         for column_name, value in row.items():
             if column_name in list(AXIS_NAMES.values()):
-                mean, std = value.split(", ")
-                stats[column_name] = {"mean": float(mean), "std": float(std)}
+                splt_val = value.split(", ")
+                if len(splt_val) == 2:
+                    mean, std = splt_val[0], splt_val[1]
+                    stats[column_name] = {"mean": float(mean), "std": float(std)}
+                elif len(splt_val) == 1:
+                    stats[column_name] = {"mean": float(splt_val[0]), "std": 0.0}
             elif "best" in column_name:
                 best[column_name] = value
             else:
@@ -836,10 +843,6 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     df_merged : pandas DataFrame
         a data frame including data for tables
     """
-    # table of statistics
-    dfcl = read_capri_table(clt_file)
-    statistics_df = clean_capri_table(dfcl)
-
     # table of structures
     structs_df = find_best_struct(ss_file, number_of_struct=10)
 
@@ -852,15 +855,37 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     
     # Order structs by best (lowest score) cluster on top
     structs_df = structs_df.set_index("Cluster ID")
-    structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])
-    structs_df = structs_df.reset_index()
+    # table of statistics
+    dfcl = read_capri_table(clt_file)
 
-    # Merge dataframes
-    df_merged = pd.merge(statistics_df, structs_df, on=["Cluster ID", "Cluster Rank"])
+    # check if only "-" is present in cluster_rank column
+    if dfcl["cluster_rank"].unique().tolist() == ["-"]:
+        df_ss = read_capri_table(ss_file)
+        df_merged_data = []
+        for i in range(1, structs_df.shape[1]):
+            pdb = structs_df.iloc[0, i]
+            #pdb_data = [pdb.split("/")[-1], i]
+            pdb_data = [i]
+            df_pdb = df_ss[df_ss["model"] == pdb[3:]]
+            # looping over the relevant quantities
+            for col in AXIS_NAMES.keys():
+                pdb_data.append(f"{df_pdb[col].iloc[0]}")
+            pdb_data.append(pdb)
+            df_merged_data.append(pdb_data)
+        df_merged = pd.DataFrame(df_merged_data)
+        df_merged.columns = ["Rank"] + [AXIS_NAMES[k] for k in AXIS_NAMES.keys()] + ["Nr 01 best structure"]
 
-    # The header of the table should be the cluster rank instead of id
-    df_merged = df_merged.set_index("Cluster Rank")
-    df_merged.reset_index(inplace=True)
+    else:
+        statistics_df = clean_capri_table(dfcl)
+
+        structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])
+        structs_df = structs_df.reset_index()
+        # Merge dataframes
+        df_merged = pd.merge(statistics_df, structs_df, on=["Cluster ID", "Cluster Rank"])
+
+        # The header of the table should be the cluster rank instead of id
+        df_merged = df_merged.set_index("Cluster Rank")
+        df_merged.reset_index(inplace=True)
     return df_merged
 
 

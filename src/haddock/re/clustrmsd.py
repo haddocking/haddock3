@@ -125,9 +125,9 @@ def reclustrmsd(
         clustrmsd_params["min_population"] = min_population
 
     log.info(
-            f"Clustering with {tolerance_param_name} = {tolerance}, "
-            f"and criterion {clustrmsd_params['criterion']}"
-            )
+        f"Clustering with {tolerance_param_name} = {tolerance}, "
+        f"and criterion {clustrmsd_params['criterion']}"
+        )
     
     # load the clustering dendrogram
     dendrogram = np.loadtxt(Path(clustrmsd_dir, "dendrogram.txt"))

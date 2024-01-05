@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 from haddock import log
-from haddock.core.typing import FilePath, Union
+from haddock.core.typing import FilePath, Union, ParamDictT
 from haddock.libs.libontology import PDBFile
 
 
@@ -118,13 +118,13 @@ def add_cluster_info(sorted_score_dic, clt_dic):
 
 
 def clustrmsd_tolerance_params(
-        parameters: dict,
+        parameters: ParamDictT,
         ) -> tuple[str, Union[int, float]]:
     """Provide parameters of interest for clust rmsd.
 
     Parameters
     ----------
-    parameters : dict
+    parameters : ParamDictT
         The clustrmsd module parameters
 
     Returns

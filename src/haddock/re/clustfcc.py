@@ -1,8 +1,6 @@
 """haddock3-re clustfcc subcommand."""
 
 from pathlib import Path
-import numpy as np
-import pandas as pd
 from fcc.scripts import cluster_fcc
 
 from haddock import log
@@ -13,7 +11,6 @@ from haddock.libs.libclust import (
     rank_clusters,
     write_structure_list,
     )
-from haddock.libs.libplots import read_capri_table
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.modules.analysis.clustfcc.clustfcc import (
@@ -58,7 +55,12 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     return clustfcc_subcommand
 
 
-def reclustfcc(clustfcc_dir, clust_cutoff=None, strictness=None, min_population=None):
+def reclustfcc(
+        clustfcc_dir,
+        clust_cutoff=None,
+        strictness=None,
+        min_population=None,
+        ):
     """
     Recluster the models in the clustfcc directory.
     

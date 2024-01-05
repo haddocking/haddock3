@@ -10,25 +10,27 @@ import shutil
 import os
 from haddock.libs.libplots import read_capri_table
 
+
 @pytest.fixture
 def weights_dict():
     """Provide example rigidbody parameters."""
     return {
-            "w_elec": 1.0,
-            "w_vdw": 0.01,
-            "w_desolv": 1.0,
-            "w_bsa": -0.01,
-            "w_air": 0.01,
+        "w_elec": 1.0,
+        "w_vdw": 0.01,
+        "w_desolv": 1.0,
+        "w_bsa": -0.01,
+        "w_air": 0.01,
         }
+
 
 def test_cli_re_empty():
     """Test haddock3-re with no arguments."""
     with pytest.raises(SystemExit):
         cli_re()
-    
+
+
 def test_cli_rescore(weights_dict):
     """Test haddock3-re rescore subcommand."""
-    print(f"weights_dict: {weights_dict}")
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         with tempfile.TemporaryDirectory(dir=tmpdir) as nested_tmpdir:
             # weights json file
@@ -43,10 +45,14 @@ def test_cli_rescore(weights_dict):
             subprocess.run(["haddock3-re", "score", nested_tmpdir, "-e", "0.1"])
 
             # check if the files are created
-            interactive_folder = [el for el in os.listdir(tmpdir) if el.endswith("interactive")]
+            interactive_folder = [
+                el for el in os.listdir(tmpdir)
+                if el.endswith("interactive")
+                ]
             assert len(interactive_folder) == 1
             interactive_folder = Path(tmpdir, interactive_folder[0])
-            rescored_ss = read_capri_table(Path(interactive_folder, "capri_ss.tsv"))
+            capritable_path = Path(interactive_folder, "capri_ss.tsv")
+            rescored_ss = read_capri_table(capritable_path)
             first_model = rescored_ss.iloc[0]
             assert first_model["dockq"] == 0.455
             assert first_model["model"] == "../1_rigidbody/rigidbody_645.pdb"
@@ -71,7 +77,10 @@ def test_cli_reclustfcc():
         subprocess.run(["haddock3-re", "clustfcc", nested_tmpdir, "-f", "0.65"])
 
         # check if the interactive folders is created
-        interactive_folder = [el for el in os.listdir(tmpdir) if el.endswith("interactive")]
+        interactive_folder = [
+            el for el in os.listdir(tmpdir)
+            if el.endswith("interactive")
+            ]
         assert len(interactive_folder) == 1
         # check that the clustfcc.tsv file is correctly created
         interactive_folder = Path(tmpdir, interactive_folder[0])
@@ -104,7 +113,10 @@ def test_cli_reclustrmsd():
         shutil.copy(dendrogram, Path(nested_tmpdir, "dendrogram.txt"))
         subprocess.run(["haddock3-re", "clustrmsd", nested_tmpdir, "-n", "2"])
         # check if the interactive folders is created
-        interactive_folder = [el for el in os.listdir(tmpdir) if el.endswith("interactive")]
+        interactive_folder = [
+            el for el in os.listdir(tmpdir)
+            if el.endswith("interactive")
+            ]
         assert len(interactive_folder) == 1
 
         # check that the clustrmsd.tsv file is correctly created

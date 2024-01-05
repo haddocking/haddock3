@@ -71,7 +71,15 @@ def test_main(example_capri_ss, example_capri_clt):
     shutil.copy(example_capri_clt, Path(step_dir, "capri_clt.tsv"))
 
     # run haddock3-analyse
-    main(run_dir, [2], 5, format=None, scale=None, is_cleaned=False, inter=False)
+    main(
+        run_dir,
+        [2],
+        5,
+        format=None,
+        scale=None,
+        is_cleaned=False,
+        inter=False,
+        )
 
     # check analysis directory exists
     ana_dir = Path(run_dir, "analysis/")

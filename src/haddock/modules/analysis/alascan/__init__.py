@@ -5,6 +5,7 @@ from haddock import log
 from haddock.libs.libparallel import Scheduler, get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
+from haddock.modules import get_engine
 from haddock.modules.analysis.alascan.scan import (
     Scan,
     ScanJob,
@@ -67,8 +68,9 @@ class HaddockModule(BaseHaddockModule):
                 )
             alascan_jobs.append(job)
 
-        scan_engine = Scheduler(alascan_jobs, ncores=ncores)
-        scan_engine.run()
+        Engine = get_engine(self.params['mode'], self.params)
+        engine = Engine(alascan_jobs)
+        engine.run()
         
         # cluster-based analysis
         clt_alascan = alascan_cluster_analysis(models)

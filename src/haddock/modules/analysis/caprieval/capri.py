@@ -611,9 +611,9 @@ class CAPRI:
             first_chain, first_resid, sec_chain, sec_resid = contact
 
             if first_chain not in interface_resdic:
-                interface_resdic[first_chain]: list[int] = []
+                interface_resdic[first_chain] = []
             if sec_chain not in interface_resdic:
-                interface_resdic[sec_chain]: list[int] = []
+                interface_resdic[sec_chain] = []
 
             if first_resid not in interface_resdic[first_chain]:
                 interface_resdic[first_chain].append(first_resid)
@@ -791,7 +791,7 @@ def calc_stats(data: list) -> tuple[float, float]:
     stdev = np.std(data)
     return mean, stdev
 
-
+# Define dict types
 CltData = dict[tuple[Optional[int], Union[int, str, None]], list[tuple[CAPRI, PDBFile]]]  # noqa : E501
 
 
@@ -799,7 +799,7 @@ def capri_cluster_analysis(
         capri_list: Iterable[CAPRI],
         model_list: Iterable[PDBFile],
         output_fname: FilePath,
-        clt_threshold: float,
+        clt_threshold: int,
         sort_key: str,
         sort_ascending: bool,
         path: FilePath,
@@ -834,7 +834,7 @@ def capri_cluster_analysis(
         try:
             score_array = [
                 e[1].score for e in clt_data[element][:clt_threshold]
-                ]  # type: ignore
+                ]
             data["score"], data["score_std"] = calc_stats(score_array)
         except KeyError:
             data["score"] = float("nan")
@@ -846,7 +846,7 @@ def capri_cluster_analysis(
             try:
                 key_array = [
                     vars(e[0])[key] for e in clt_data[element][:clt_threshold]
-                    ]  # type: ignore
+                    ]
                 data[key], data[std_key] = calc_stats(key_array)
             except KeyError:
                 data[key] = float("nan")
@@ -860,7 +860,7 @@ def capri_cluster_analysis(
                     key_array = [
                         vars(e[1])["unw_energies"][key]
                         for e in clt_data[element][:clt_threshold]
-                        ]  # type: ignore
+                        ]
                     data[key], data[std_key] = calc_stats(key_array)
                 except KeyError:
                     data[key] = float("nan")

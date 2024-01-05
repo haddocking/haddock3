@@ -4,6 +4,7 @@ from pathlib import Path
 from fcc.scripts import cluster_fcc
 
 from haddock import log
+from haddock.core.typing import Union
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (
@@ -56,11 +57,11 @@ def add_clustfcc_arguments(clustfcc_subcommand):
 
 
 def reclustfcc(
-        clustfcc_dir,
-        clust_cutoff=None,
-        strictness=None,
-        min_population=None,
-        ):
+        clustfcc_dir: str,
+        clust_cutoff: Union[bool, float] = None,
+        strictness: Union[bool, float] = None,
+        min_population: Union[bool, int] = None,
+        ) -> Path:
     """
     Recluster the models in the clustfcc directory.
     
@@ -69,22 +70,19 @@ def reclustfcc(
     clustfcc_dir : str
         Path to the clustfcc directory.
     
-    clust_cutoff : float
+    clust_cutoff : Union[bool, float]
         Fraction of common contacts to not be considered a singleton model.
     
-    strictness : float
+    strictness : Union[bool, float]
         Fraction of common contacts to be considered to be part of the same
          cluster.
     
-    min_population : int
+    min_population : Union[bool, int]
         Minimum cluster population.
-    
-    caprieval_folder : str
-        Path to the caprieval folder for quick analysis of the results.
     
     Returns
     -------
-    outdir : str
+    outdir : Path
         Path to the interactive directory.
     """
     log.info(f"Reclustering {clustfcc_dir}")
@@ -138,7 +136,7 @@ def reclustfcc(
         # Get the cluster centers
         clt_dic, clt_centers = get_cluster_centers(clusters, models)
 
-        score_dic, sorted_score_dic = rank_clusters(clt_dic, min_population)
+        _score_dic, sorted_score_dic = rank_clusters(clt_dic, min_population)
 
         output_models = add_cluster_info(sorted_score_dic, clt_dic)
         

@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 from haddock import log
-from haddock.core.typing import FilePath
+from haddock.core.typing import FilePath, Union
 from haddock.libs.libontology import PDBFile
 
 
@@ -115,3 +115,28 @@ def add_cluster_info(sorted_score_dic, clt_dic):
             pdb.clt_model_rank = model_ranking
             output_models.append(pdb)
     return output_models
+
+
+def clustrmsd_tolerance_params(
+        parameters: dict,
+        ) -> tuple[str, Union[int, float]]:
+    """Provide parameters of interest for clust rmsd.
+
+    Parameters
+    ----------
+    parameters : dict
+        The clustrmsd module parameters
+
+    Returns
+    -------
+    tuple[str, Union[int, float]]
+        Name of the tolerance parameter and its value.
+    """
+    # adjust the parameters
+    if parameters["criterion"] == "maxclust":
+        tolerance_param_name = "n_clusters"
+        tolerance = parameters[tolerance_param_name]
+    else:  # Expected to be parameters["criterion"] == "distance"
+        tolerance_param_name = "clust_cutoff"
+        tolerance = parameters[tolerance_param_name]
+    return tolerance_param_name, tolerance

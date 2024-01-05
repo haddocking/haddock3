@@ -9,6 +9,7 @@ from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (
     add_cluster_info,
+    clustrmsd_tolerance_params,
     rank_clusters,
     write_structure_list,
     )
@@ -105,10 +106,9 @@ def reclustrmsd(
     log.info(f"Previous clustering parameters: {clustrmsd_params}")
 
     # setting previous tolerance, just in case no new parameters are given
-    if clustrmsd_params["criterion"] == "maxclust":
-        tolerance = clustrmsd_params["n_clusters"]
-    else:
-        tolerance = clustrmsd_params["clust_cutoff"]
+    tolerance_param_name, tolerance = clustrmsd_tolerance_params(
+        clustrmsd_params,
+        )
 
     # adjust the parameters
     if n_clusters is not None:
@@ -123,6 +123,11 @@ def reclustrmsd(
     
     if min_population is not None:
         clustrmsd_params["min_population"] = min_population
+
+    log.info(
+            f"Clustering with {tolerance_param_name} = {tolerance}, "
+            f"and criterion {clustrmsd_params['criterion']}"
+            )
     
     # load the clustering dendrogram
     dendrogram = np.loadtxt(Path(clustrmsd_dir, "dendrogram.txt"))
@@ -131,7 +136,8 @@ def reclustrmsd(
     cluster_arr = get_clusters(
         dendrogram,
         tolerance,
-        clustrmsd_params["criterion"])
+        clustrmsd_params["criterion"],
+        )
     log.info(f"clusters {cluster_arr}")
 
     if clustrmsd_params['criterion'] == "distance":
@@ -163,10 +169,11 @@ def reclustrmsd(
     
     output_models = add_cluster_info(sorted_score_dic, clt_dic)
     
-    write_structure_list(models,
-                         output_models,
-                         out_fname=Path(outdir, "clustrmsd.tsv")
-                         )
+    write_structure_list(
+        models,
+        output_models,
+        out_fname=Path(outdir, "clustrmsd.tsv"),
+        )
     
     write_clustrmsd_file(
         clusters,
@@ -175,7 +182,7 @@ def reclustrmsd(
         score_dic,
         sorted_score_dic,
         clustrmsd_params,
-        output_fname=Path(outdir, "clustrmsd.txt")
+        output_fname=Path(outdir, "clustrmsd.txt"),
         )
 
     # save the io.json file

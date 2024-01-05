@@ -35,6 +35,7 @@ import numpy as np
 from haddock import log
 from haddock.libs.libclust import (
     add_cluster_info,
+    clustrmsd_tolerance_params,
     rank_clusters,
     write_structure_list,
     )
@@ -84,16 +85,13 @@ class HaddockModule(BaseHaddockModule):
         # loading parameters
         min_population = self.params["min_population"]
 
-        # adjust the parameters
-        if self.params["criterion"] == "maxclust":
-            tolerance_param_name = "n_clusters"
-            tolerance = self.params[tolerance_param_name]
-        else:  # Expected to be self.params["criterion"] == "distance"
-            tolerance_param_name = "clust_cutoff"
-            tolerance = self.params[tolerance_param_name]
-        
         # getting clusters_list
         dendrogram = get_dendrogram(rmsd_matrix, self.params["linkage"])
+
+        # adjust the parameters
+        tolerance_param_name, tolerance = clustrmsd_tolerance_params(
+            self.params,
+            )
         
         log.info(
             f"Clustering with {tolerance_param_name} = {tolerance}, "

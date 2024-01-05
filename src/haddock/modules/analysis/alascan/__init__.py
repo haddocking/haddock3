@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from haddock import log
-from haddock.libs.libparallel import Scheduler, get_index_list
+from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine

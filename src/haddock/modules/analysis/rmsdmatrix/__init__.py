@@ -31,7 +31,6 @@ from pathlib import Path
 from haddock import log
 from haddock.core.typing import Any, FilePath
 from haddock.libs.libontology import ModuleIO, RMSDFile
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
@@ -136,8 +135,6 @@ class HaddockModule(BaseHaddockModule):
                 )
             rmsd_jobs.append(job)
 
-        #rmsd_engine = Scheduler(rmsd_jobs, ncores=ncores)
-        #rmsd_engine.run()
         Engine = get_engine(self.params['mode'], self.params)
         engine = Engine(rmsd_jobs)
         engine.run()

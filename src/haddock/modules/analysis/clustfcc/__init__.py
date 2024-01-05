@@ -7,7 +7,6 @@ from fcc.scripts import calc_fcc_matrix, cluster_fcc
 from typing import Any, Union
 from haddock import FCC_path, log
 from haddock.libs.libclust import write_structure_list
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import get_engine
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
@@ -61,9 +60,6 @@ class HaddockModule(BaseHaddockModule):
                 self.params["contact_distance_cutoff"],
             )
             contact_jobs.append(job)
-
-        #contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
-        #contact_engine.run()
             
         Engine = get_engine(self.params['mode'], self.params)
         engine = Engine(contact_jobs)

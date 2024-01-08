@@ -335,7 +335,7 @@ class BaseHaddockModule(ABC):
         """Retrieve last step folder."""
         with_ind = [
             folder for folder in folders
-            if int(folder.split('_')) == index
+            if int(folder.split('_')[0]) == index
             ]
         nb_with_ind = len(with_ind)
         # No matching index

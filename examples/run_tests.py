@@ -47,32 +47,32 @@ except Exception:
 # keys are the examples folder, and values are the configuration files
 # the whitespaces below are anti-pythonic but facilitate reading :-)
 examples = (
-    # ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-test.cfg"),  # noqa: E203, E501
-    # ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
-    # ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
-    # ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
-    # ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-peptide"     , "docking-protein-peptide-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
+    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-peptide"     , "docking-protein-peptide-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
-    # ("docking-multiple-ambig"      , "docking-multiple-tbls-test.cfg"),  # noqa: E203, E501
-    # ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
-    # ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
-    # ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
-    # ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
-    # ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
-    # ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
-    # ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
-    # ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    ("docking-multiple-ambig"      , "docking-multiple-tbls-test.cfg"),  # noqa: E203, E501
+    ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
+    ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
+    ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
+    ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
+    ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
+    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
     )
 
 
@@ -134,20 +134,13 @@ def main(examples, break_on_errors=True):
         with working_directory(folder):
 
             # # obtain run directory
-            # all_params = read_config(file_)
-            # rundir = all_params['final_cfg']["run_dir"]
-            # # remove eventual previous run
-            # rmtree(rundir, ignore_errors=True)
+            all_params = read_config(file_)
+            rundir = all_params['final_cfg']["run_dir"]
+            # remove eventual previous run
+            rmtree(rundir, ignore_errors=True)
 
             # # run example
-            # run_subprocess_cmd(f"haddock3 {file_}")
-            # subprocess.run(
-            #     f"haddock3 {file_}",
-            #     shell=True,
-            #     check=break_on_errors,
-            #     stdout=sys.stdout,
-            #     stderr=sys.stderr,
-            #     )
+            run_subprocess_cmd(f"haddock3 {file_}")
 
             # test sub-commands / parameters on the prot-prot run
             if file_ == "docking-protein-protein-test.cfg":

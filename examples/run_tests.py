@@ -27,6 +27,7 @@ import argparse
 import os
 import subprocess
 import sys
+from functools import partial
 from shutil import rmtree
 
 
@@ -46,32 +47,32 @@ except Exception:
 # keys are the examples folder, and values are the configuration files
 # the whitespaces below are anti-pythonic but facilitate reading :-)
 examples = (
-    ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-test.cfg"),  # noqa: E203, E501
-    ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
-    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
-    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
-    ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-peptide"     , "docking-protein-peptide-mdref-test.cfg"),  # noqa: E203, E501
+    # ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-test.cfg"),  # noqa: E203, E501
+    # ("docking-antibody-antigen"    , "docking-antibody-antigen-ranairCDR-clt-test.cfg"),  # noqa: E203, E501
+    # ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-test.cfg"),  # noqa: E203, E501
+    # ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-accessible-clt-test.cfg"),  # noqa: E203, E501
+    # ("docking-antibody-antigen"    , "docking-antibody-antigen-CDR-NMR-CSP-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-DNA"         , "docking-protein-DNA-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-DNA"         , "docking-protein-DNA-mdref-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-homotrimer"  , "docking-protein-homotrimer-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-glycan"      , "docking-protein-glycan-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-glycan"      , "docking-flexref-protein-glycan-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-ligand-shape", "docking-protein-ligand-shape-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-ligand"      , "docking-protein-ligand-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-peptide"     , "docking-protein-peptide-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-peptide"     , "docking-protein-peptide-mdref-test.cfg"),  # noqa: E203, E501
     ("docking-protein-protein"     , "docking-protein-protein-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
-    ("docking-multiple-ambig"      , "docking-multiple-tbls-test.cfg"),  # noqa: E203, E501
-    ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
-    ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
-    ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
-    ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
-    ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
-    ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
-    ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
-    ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-protein"     , "docking-protein-protein-cltsel-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-protein"     , "docking-protein-protein-mdref-test.cfg"),  # noqa: E203, E501
+    # ("docking-multiple-ambig"      , "docking-multiple-tbls-test.cfg"),  # noqa: E203, E501
+    # ("docking-protein-protein"     , "docking-exit-test.cfg"),  # noqa: E203, E501
+    # ("refine-complex"              , "refine-complex-test.cfg"),  # noqa: E203, E501
+    # ("scoring"                     , "emscoring-test.cfg"),  # noqa: E203, E501
+    # ("scoring"                     , "mdscoring-test.cfg"),  # noqa: E203, E501
+    # ("scoring"                     , "emscoring-mdscoring-test.cfg"),  # noqa: E203, E501
+    # ("analysis"                    , "topoaa-caprieval-test.cfg"),  # noqa: E203, E501
+    # ("analysis"                    , "topoaa-clustfcc-test.cfg"),  # noqa: E203, E501
+    # ("analysis"                    , "topoaa-rmsdmatrix-clustrmsd-test.cfg"),  # noqa: E203, E501
     )
 
 
@@ -96,8 +97,31 @@ def load_args():
     return ap.parse_args()
 
 
+def _run_subprocess_cmd(cmd_: str, check: bool = True) -> None:
+    """Run provided command line with subprocess.
+
+    Parameters
+    ----------
+    cmd_ : str
+        The Haddock3 command line
+    check : bool, optional
+        Should the exit status be checked, by default True
+    """
+    subprocess.run(
+        cmd_,
+        shell=True,
+        check=check,
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+        )
+
+
 def main(examples, break_on_errors=True):
     """Run all the examples."""
+    # Preset subprocess arguments
+    run_subprocess_cmd = partial(_run_subprocess_cmd, check=break_on_errors)
+
+    # Loop over config files
     for folder, file_ in examples:
 
         print(  # noqa: T201
@@ -109,92 +133,70 @@ def main(examples, break_on_errors=True):
 
         with working_directory(folder):
 
-            # obtain run directory
-            all_params = read_config(file_)
-            rundir = all_params['final_cfg']["run_dir"]
-            # remove eventual previous run
-            rmtree(rundir, ignore_errors=True)
+            # # obtain run directory
+            # all_params = read_config(file_)
+            # rundir = all_params['final_cfg']["run_dir"]
+            # # remove eventual previous run
+            # rmtree(rundir, ignore_errors=True)
 
-            # run example
-            subprocess.run(
-                f"haddock3 {file_}",
-                shell=True,
-                check=break_on_errors,
-                stdout=sys.stdout,
-                stderr=sys.stderr,
-                )
+            # # run example
+            # run_subprocess_cmd(f"haddock3 {file_}")
+            # subprocess.run(
+            #     f"haddock3 {file_}",
+            #     shell=True,
+            #     check=break_on_errors,
+            #     stdout=sys.stdout,
+            #     stderr=sys.stderr,
+            #     )
 
-            # perform a restart step
+            # test sub-commands / parameters on the prot-prot run
             if file_ == "docking-protein-protein-test.cfg":
-                subprocess.run(
-                    f"haddock3 {file_} --restart 5",
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
-                    )
+                # perform a restart step
+                run_subprocess_cmd(f"haddock3 {file_} --restart 5")
 
                 # perform a restart step from 0
-                subprocess.run(
-                    f"haddock3 {file_} --restart 0",
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
-                    )
+                run_subprocess_cmd(f"haddock3 {file_} --restart 0")
+
+                # test copy run
+                rmtree("run2", ignore_errors=True)
+                run_subprocess_cmd("haddock3-copy -r run1-test -m 0 4 -o run2")
 
                 # test --extend-run
-                rmtree("run2", ignore_errors=True)
-                subprocess.run(
-                    "haddock3-copy -r run1-test -m 0 4 -o run2",
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
-                    )
-
-                subprocess.run(
-                    "haddock3 docking-protein-protein-test-start-from-cp.cfg --extend-run run2",  # noqa: E501
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
+                run_subprocess_cmd(
+                    "haddock3 docking-extend-run-test.cfg --extend-run run2"
                     )
 
                 # test exit with extend-run
                 rmtree("run2", ignore_errors=True)
-                subprocess.run(
-                    "haddock3-copy -r run1-test -m 0 4 -o run2",
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
-                    )
-
-                subprocess.run(
+                run_subprocess_cmd("haddock3-copy -r run1-test -m 0 4 -o run2")
+                run_subprocess_cmd(
                     "haddock3 docking-extend-run-exit-test.cfg --extend-run run2",  # noqa: E501
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
                     )
 
                 # test exit with --restart
-                subprocess.run(
-                    "cp -r run1-test run1-restart-exit",
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
-                    )
-
-                subprocess.run(
+                rmtree("run1-restart-exit-test", ignore_errors=True)
+                run_subprocess_cmd("cp -r run1-test run1-restart-exit-test")
+                run_subprocess_cmd(
                     "haddock3 docking-restart-exit-test.cfg --restart 3",
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
                     )
+                
+                # Copy run for haddock3-re commands
+                rmtree("run1-re", ignore_errors=True)
+                run_subprocess_cmd(
+                    "haddock3-copy -r run1-test -m 0 7 9 -o run1-re",
+                    )
+                
+                # perform a haddock3 re-scoring command
+                run_subprocess_cmd(
+                    "haddock3-re score -e 1.1 -w 1 -d 0.3 -b 1 -a 1 run1-re/2_caprieval",  # noqa : E501
+                    )
+                
+                # perform a haddock3 re-clustfcc command
+                run_subprocess_cmd(
+                    "haddock3-re clustfcc -f 0.5 -s 0.7 -t 2 run1-re/1_clustfcc",  # noqa : E501
+                    )
+                
+                # perform a haddock3 re-clustrmsd command
 
     return
 

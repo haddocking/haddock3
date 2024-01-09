@@ -859,14 +859,24 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     dfcl = read_capri_table(clt_file)
 
     # check if only "-" is present in cluster_rank column
+    # in that case we put structures side-by-side
     if dfcl["cluster_rank"].unique().tolist() == ["-"]:
         df_ss = read_capri_table(ss_file)
+        
+        # re-handle cleaning
+        if is_cleaned:
+            # substitute the values in the df by adding .gz at the end
+            df_ss = df_ss.replace(
+                to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True
+            )
+        
         df_merged_data = []
         for i in range(1, structs_df.shape[1]):
             pdb = structs_df.iloc[0, i]
-            #pdb_data = [pdb.split("/")[-1], i]
+            # processing pdb to take into account relative paths
+            proc_pdb = pdb[3:]
             pdb_data = [i]
-            df_pdb = df_ss[df_ss["model"] == pdb[3:]]
+            df_pdb = df_ss[df_ss["model"] == proc_pdb]
             # looping over the relevant quantities
             for col in AXIS_NAMES.keys():
                 pdb_data.append(f"{df_pdb[col].iloc[0]}")
@@ -1045,7 +1055,6 @@ def report_generator(boxes, scatters, tables, step):
     html_report = _generate_html_report(step, figures)
     with open("report.html", "w", encoding="utf-8") as report:
         report.write(html_report)
-
 
 
 def heatmap_plotly(

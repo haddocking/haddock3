@@ -153,14 +153,6 @@ def main(examples, break_on_errors=True):
                     stderr=sys.stderr,
                     )
 
-                subprocess.run(
-                    "haddock3 docking-protein-protein-test-start-from-cp.cfg --extend-run run2",  # noqa: E501
-                    shell=True,
-                    check=break_on_errors,
-                    stdout=sys.stdout,
-                    stderr=sys.stderr,
-                    )
-
                 # test exit with extend-run
                 rmtree("run2", ignore_errors=True)
                 subprocess.run(

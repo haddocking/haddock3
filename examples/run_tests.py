@@ -133,13 +133,13 @@ def main(examples, break_on_errors=True):
 
         with working_directory(folder):
 
-            # # obtain run directory
+            # obtain run directory
             all_params = read_config(file_)
             rundir = all_params['final_cfg']["run_dir"]
             # remove eventual previous run
             rmtree(rundir, ignore_errors=True)
 
-            # # run example
+            # run example
             run_subprocess_cmd(f"haddock3 {file_}")
 
             # test sub-commands / parameters on the prot-prot run
@@ -189,7 +189,18 @@ def main(examples, break_on_errors=True):
                     "haddock3-re clustfcc -f 0.5 -s 0.7 -t 2 run1-re/1_clustfcc",  # noqa : E501
                     )
                 
+                # FIXME: Make this runs properly function
                 # perform a haddock3 re-clustrmsd command
+
+                # perform haddock3 --extend-run on re-run
+                # run_subprocess_cmd(
+                #     "haddock3 docking-re-extend-run-test.cfg --extend-run run1-re",  # noqa : E501
+                #     )
+
+                # perform haddock3 --restart on re-run
+                # run_subprocess_cmd(
+                #     "haddock3 docking-re-restart-test.cfg --restart 5",
+                #     )
 
     return
 

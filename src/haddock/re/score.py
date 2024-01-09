@@ -5,6 +5,7 @@ import sys
 
 from haddock import log
 from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
+from haddock.core.typing import Union
 from haddock.libs.libinteractive import handle_ss_file
 from haddock.libs.libplots import read_capri_table
 
@@ -63,12 +64,12 @@ ANA_FOLDER = "interactive"  # name of the analysis folder
 
 
 def rescore(
-        capri_dir,
-        w_elec=None,
-        w_vdw=None,
-        w_desolv=None,
-        w_bsa=None,
-        w_air=None,
+        capri_dir: Union[str, Path],
+        w_elec: Union[bool, float] = None,
+        w_vdw: Union[bool, float] = None,
+        w_desolv: Union[bool, float] = None,
+        w_bsa: Union[bool, float] = None,
+        w_air: Union[bool, float] = None,
         ) -> Path:
     """Rescore the CAPRI models."""
     log.info(f"Rescoring {capri_dir}")

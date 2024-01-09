@@ -4,6 +4,7 @@ from pathlib import Path
 from fcc.scripts import cluster_fcc
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import Union
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
@@ -90,7 +91,7 @@ def reclustfcc(
     # create the interactive folder
     run_dir = Path(clustfcc_dir).parent
     clustfcc_name = Path(clustfcc_dir).name
-    outdir = Path(run_dir, f"{clustfcc_name}_interactive")
+    outdir = Path(run_dir, f"{clustfcc_name}_{INTERACTIVE_RE_SUFFIX}")
     outdir.mkdir(exist_ok=True)
 
     # create an io object

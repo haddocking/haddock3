@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import Union
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
@@ -90,7 +91,7 @@ def reclustrmsd(
     run_dir = Path(clustrmsd_dir).parent
     clustrmsd_name = Path(clustrmsd_dir).name
     # create the interactive folder
-    outdir = Path(run_dir, f"{clustrmsd_name}_interactive")
+    outdir = Path(run_dir, f"{clustrmsd_name}_{INTERACTIVE_RE_SUFFIX}")
     outdir.mkdir(exist_ok=True)
 
     # create an io object

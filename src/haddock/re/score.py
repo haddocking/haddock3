@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.libs.libinteractive import handle_ss_file
 from haddock.libs.libplots import read_capri_table
 
@@ -61,7 +62,14 @@ def add_rescore_arguments(rescore_subcommand):
 ANA_FOLDER = "interactive"  # name of the analysis folder
 
 
-def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air=None):  # noqa: E501
+def rescore(
+        capri_dir,
+        w_elec=None,
+        w_vdw=None,
+        w_desolv=None,
+        w_bsa=None,
+        w_air=None,
+        ) -> Path:
     """Rescore the CAPRI models."""
     log.info(f"Rescoring {capri_dir}")
     # load the scoring pars via json
@@ -105,7 +113,7 @@ def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air
     capri_name = Path(capri_dir).name
     
     # create the interactive folder
-    outdir = Path(run_dir, f"{capri_name}_interactive")
+    outdir = Path(run_dir, f"{capri_name}_{INTERACTIVE_RE_SUFFIX}")
     outdir.mkdir(exist_ok=True)
 
     # handle ss file first

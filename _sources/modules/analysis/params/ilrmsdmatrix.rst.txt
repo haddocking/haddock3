@@ -1,0 +1,42 @@
+
+
+Easy
+````
+
+ligand_chains
+~~~~~~~~~~~~~
+
+| *default*: ['B']
+| *type*: list
+| *title*: Ligand ChainIDs
+| *short description*: Ligand ChainIDs to be considered for the IL-RMSD calculations.
+| *long description*: Ligand ChainIDs to be considered for the IL-RMSD calculations. This determines which chains will be treated as the ligand for the IL-RMSD.
+| *group*: analysis
+| *explevel*: easy
+
+receptor_chain
+~~~~~~~~~~~~~~
+
+| *default*: 'A'
+| *type*: string
+| *title*: Receptor ChainID
+| *short description*: Receptor ChainID to be considered for the RMSD calculations.
+| *long description*: Receptor ChainID to be considered for the RMSD calculations. This determines which chain will be treated as the receptor for the L-RMSD and for I-L-RMSD.
+| *group*: analysis
+| *explevel*: easy
+
+
+Guru
+````
+
+max_models
+~~~~~~~~~~
+
+| *default*: 5000
+| *type*: integer
+| *title*: Maximum number of models
+| *short description*: Maximum number of models to be considered when calculating the matrix.
+| *long description*: Maximum number of models to be considered when calculating the matrix. If the number of models in the input file is larger than this number, the execution will be aborted.
+| *group*: analysis
+| *explevel*: guru
+

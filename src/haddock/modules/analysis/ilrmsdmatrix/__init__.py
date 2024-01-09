@@ -39,7 +39,6 @@ from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
-MAX_MODELS = 10000
 
 
 class HaddockModule(BaseHaddockModule):
@@ -140,9 +139,9 @@ class HaddockModule(BaseHaddockModule):
         nmodels = len(models)
         ncores = parse_ncores(n=self.params['ncores'], njobs=nmodels)
         
-        if nmodels > MAX_MODELS:
+        if nmodels > self.params['max_models']:
             # too many input models : ilRMSD matrix would be too big => Abort!
-            raise Exception("Too many models for ilRMSD matrix calculation")
+            raise Exception(f"Too many models ({nmodels} > {self.params['max_models']}) for ilRMSD matrix calculation")
 
         # Find the common residues making contacts for the receptor and ligand.
         index_list = get_index_list(nmodels, ncores)

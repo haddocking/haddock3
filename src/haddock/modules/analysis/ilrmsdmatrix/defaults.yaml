@@ -21,3 +21,15 @@ ligand_chains:
     treated as the ligand for the IL-RMSD.
   group: analysis
   explevel: easy
+
+max_models:
+  default: 5000
+  type: integer
+  min: 1
+  max: 20000
+  title: Maximum number of models
+  short: Maximum number of models to be considered when calculating the matrix.
+  long: Maximum number of models to be considered when calculating the matrix. If the number of models in the input file is larger than
+    this number, the execution will be aborted.
+  group: analysis
+  explevel: guru

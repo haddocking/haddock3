@@ -7,6 +7,7 @@ from functools import partial
 from pathlib import Path
 
 from haddock import EmptyPath, log, modules_defaults_path
+from haddock.clis.cli_re import ANA_FOLDER as INTERACTIVE_FOLDER
 from haddock.core.defaults import MODULE_IO_FILE
 from haddock.core.exceptions import ConfigurationError
 from haddock.core.typing import (
@@ -347,7 +348,7 @@ class BaseHaddockModule(ABC):
         # Case of multiple matching index
         else:
             for folder in with_ind:
-                if 'interactive' in folder.split('_'):
+                if folder.split('_')[-1] != INTERACTIVE_FOLDER:
                     return folder
             return with_ind[0]
 

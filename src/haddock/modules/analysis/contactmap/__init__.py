@@ -5,6 +5,7 @@ from pathlib import Path
 from haddock.core.typing import Any, FilePath, Union
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.contactmap.contmap import (
     ContactsMap,
     ClusteredContactMap,
@@ -83,7 +84,9 @@ class HaddockModule(BaseHaddockModule):
                     )
                 contact_jobs.append(contmap_object)
         
-        Engine = get_engine(self.params['mode'], self.params)
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+
+        Engine = get_engine(exec_mode, self.params)
         engine = Engine(contact_jobs)
         engine.run()
 

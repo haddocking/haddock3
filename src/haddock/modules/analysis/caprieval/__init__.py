@@ -2,9 +2,9 @@
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath
-from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
@@ -72,8 +72,10 @@ class HaddockModule(BaseHaddockModule):
                     params=self.params
                     )
                 )
+        
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        Engine = get_engine(self.params['mode'], self.params)
+        Engine = get_engine(exec_mode, self.params)
         engine = Engine(jobs)
         engine.run()
 

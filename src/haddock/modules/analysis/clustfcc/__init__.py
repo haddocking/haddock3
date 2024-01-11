@@ -10,6 +10,7 @@ from haddock.libs.libclust import write_structure_list
 from haddock.libs.libsubprocess import JobInputFirst
 from haddock.modules import get_engine
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
+from haddock.modules.analysis import get_analysis_exec_mode
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -61,7 +62,9 @@ class HaddockModule(BaseHaddockModule):
             )
             contact_jobs.append(job)
             
-        Engine = get_engine(self.params['mode'], self.params)
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+
+        Engine = get_engine(exec_mode, self.params)
         engine = Engine(contact_jobs)
         engine.run()
 

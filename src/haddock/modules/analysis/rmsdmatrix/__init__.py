@@ -34,7 +34,10 @@ from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
-from haddock.modules.analysis import confirm_resdic_chainid_length
+from haddock.modules.analysis import (
+    confirm_resdic_chainid_length,
+    get_analysis_exec_mode,
+    )
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSD,
     RMSDJob,
@@ -135,7 +138,9 @@ class HaddockModule(BaseHaddockModule):
                 )
             rmsd_jobs.append(job)
 
-        Engine = get_engine(self.params['mode'], self.params)
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+
+        Engine = get_engine(exec_mode, self.params)
         engine = Engine(rmsd_jobs)
         engine.run()
 

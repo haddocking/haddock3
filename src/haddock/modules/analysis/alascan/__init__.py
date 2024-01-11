@@ -6,6 +6,7 @@ from haddock.libs.libparallel import get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.alascan.scan import (
     Scan,
     ScanJob,
@@ -68,7 +69,9 @@ class HaddockModule(BaseHaddockModule):
                 )
             alascan_jobs.append(job)
 
-        Engine = get_engine(self.params['mode'], self.params)
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+
+        Engine = get_engine(exec_mode, self.params)
         engine = Engine(alascan_jobs)
         engine.run()
         

@@ -40,11 +40,11 @@ mode:
   maxchars: 20
   choices:
     - local
-    - hpc
+    - batch
   title: Mode of execution
   short: Mode of execution of the jobs, either local or using a batch system.
   long: Mode of execution of the jobs, either local or using a batch system. 
-    Currently slurm and torque are supported. For the HPC mode the queue command must be 
+    Currently slurm and torque are supported. For the batch mode the queue command must be 
     specified in the queue parameter.
   group: 'execution'
   explevel: easy

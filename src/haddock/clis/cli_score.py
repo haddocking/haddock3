@@ -195,7 +195,7 @@ def main(
     zero_fill.set_zerofill_number(2)
 
     # create temporary file
-    with tempfile.NamedTemporaryFile(suffix=".pdb") as tmp:
+    with tempfile.NamedTemporaryFile(prefix=input_pdb.stem, suffix=".pdb") as tmp:
 
         # create a copy of the input pdb
         input_pdb_copy = Path(tmp.name)

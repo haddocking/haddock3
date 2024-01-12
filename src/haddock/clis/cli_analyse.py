@@ -335,18 +335,26 @@ def analyse_step(
 
     target_path.mkdir(parents=True, exist_ok=False)
     step_name = step.split("_")[1]
+    ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
+    clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
     if step_name != "caprieval":
-        capri_dict = update_paths_in_capri_dict(capri_dict, target_path)
+        if ss_fname.exists() and clt_fname.exists():
+            log.info(f"step {step} has caprieval data, files are available")
+            run_capri = False
+        else:
+            capri_dict = update_paths_in_capri_dict(capri_dict, target_path)
+            run_capri = True
     else:
         log.info(f"step {step} is caprieval, files should be already available")
-        ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
+        run_capri = False
+
+    if run_capri == False:
         shutil.copy(ss_fname, target_path)
-        clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(clt_fname, target_path)
 
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
-    if step_name != "caprieval":
+    if run_capri == True:
         run_capri_analysis(step, run_dir, capri_dict)
 
     log.info("CAPRI files identified")

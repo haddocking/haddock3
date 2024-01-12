@@ -18,6 +18,7 @@ Usage::
 """
 import argparse
 import sys
+import tempfile
 
 from haddock.core.typing import (
     Any,
@@ -74,10 +75,10 @@ ap.add_argument(
     "--other-params",
     dest="other_params",
     help=(
-        "Any other parameter of the `emscoring` module."
-        "For example: -p nemsteps 1000. "
-        "You can give any number of parameters."
-        ),
+        "Any other parameter of the `emscoring` module. "
+        "For example: -p nemsteps 1000. You can give any number of "
+        "parameters."
+    ),
     action=_ParamsToDict,
     default={},
     nargs="*",
@@ -173,9 +174,12 @@ def main(
                 )
         if value != default_emscoring[param]:
             print(
-                f"* ATTENTION * Value ({value}) of parameter {param} "
-                f"different from default ({default_emscoring[param]})"
-                )
+                f"* ATTENTION * Value ({value}) of parameter {param} different from default ({default_emscoring[param]})"
+            )  # noqa:E501
+            # get the type of default value
+            default_type = type(default_emscoring[param])
+            # convert the value to the same type
+            value = default_type(value)
             ems_dict[param] = value
             n_warnings += 1
 
@@ -186,27 +190,36 @@ def main(
             "data are used for publication."
             )
 
-    params = {
-        "topoaa": {"molecules": [input_pdb]},
-        "emscoring": ems_dict,
-        }
-
-    print("> starting calculations...")
-
+    # create run directory
     run_dir = Path(run_dir)
     with suppress(FileNotFoundError):
         shutil.rmtree(run_dir)
     run_dir.mkdir()
     zero_fill.set_zerofill_number(2)
 
-    with working_directory(run_dir):
-        workflow = WorkflowManager(
-            workflow_params=params,
-            start=0,
-            run_dir=run_dir,
+    # create temporary file
+    with tempfile.NamedTemporaryFile(prefix=input_pdb.stem, suffix=".pdb") as tmp:
+
+        # create a copy of the input pdb
+        input_pdb_copy = Path(tmp.name)
+        shutil.copy(input_pdb, input_pdb_copy)
+    
+        params = {
+            "topoaa": {"molecules": [input_pdb_copy]},
+            "emscoring": ems_dict,
+        }
+
+        print("> starting calculations...")
+
+        # run workflow
+        with working_directory(run_dir):
+            workflow = WorkflowManager(
+                workflow_params=params,
+                start=0,
+                run_dir=run_dir,
             )
 
-        workflow.run()
+            workflow.run()
 
     minimized_mol = Path(run_dir, "1_emscoring", "emscoring_1.pdb")
     haddock_score_component_dic = HaddockModel(minimized_mol).energies

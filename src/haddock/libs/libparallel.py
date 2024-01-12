@@ -41,6 +41,10 @@ def get_index_list(nmodels, ncores):
     index_list : list
         List of model indexes to be used for the parallel scanning.
     """
+    if nmodels < 1:
+        raise ValueError(f"nmodels ({nmodels})) must be greater than 0")
+    if ncores < 1:
+        raise ValueError(f"ncores ({ncores}) must be greater than 0")
     spc = nmodels // ncores
     # now the remainder
     rem = nmodels % ncores

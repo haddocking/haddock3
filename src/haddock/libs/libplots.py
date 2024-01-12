@@ -380,8 +380,7 @@ def scatter_plot_plotly(
             else:
                 cl_name = f"Cluster {cl_rank[cl_id]}"  # use rank
             color_idx = (cl_rank[cl_id] - 1) % n_colors  # color index
-            x_mean = np.mean(cl_df[x_ax])
-            y_mean = np.mean(cl_df[y_ax])
+            
             traces.append(
                 go.Scatter(
                     x=cl_df[x_ax],
@@ -399,9 +398,17 @@ def scatter_plot_plotly(
                 )
             )
             clt_text = f"{cl_name}<br>"
+            
+            # mean and std deviations for the top 4 members
+            x_mean = np.mean(cl_df[x_ax].iloc[:4])
+            y_mean = np.mean(cl_df[y_ax].iloc[:4])
+            x_std = np.std(cl_df[x_ax].iloc[:4])
+            y_std = np.std(cl_df[y_ax].iloc[:4])
+
             if "score" not in [x_ax, y_ax]:
-                clt_text += f"Score: {np.mean(cl_df['score']):.3f}<br>"
+                clt_text += f"Score: {np.mean(cl_df['score'].iloc[:4]):.3f}<br>"
             clt_text += f"{x_ax}: {x_mean:.3f}<br>{y_ax}: {y_mean:.3f}"
+
             clt_text_list = [clt_text]
             traces.append(
                 go.Scatter(
@@ -409,10 +416,10 @@ def scatter_plot_plotly(
                     y=[y_mean],
                     # error bars
                     error_x=dict(
-                        type="data", array=[np.std(cl_df[x_ax])], visible=True
+                        type="data", array=[x_std], visible=True
                     ),
                     error_y=dict(
-                        type="data", array=[np.std(cl_df[y_ax])], visible=True
+                        type="data", array=[y_std], visible=True
                     ),
                     # color and text
                     marker_color=colors[color_idx],

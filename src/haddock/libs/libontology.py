@@ -221,9 +221,12 @@ class ModuleIO:
         idxs: list[int] = []
         for idx, element in enumerate(self.output):
             if isinstance(element, dict):
+                to_pop = []
                 for key2 in element:
                     if not element[key2].is_present():
-                        element.pop(key2)
+                        to_pop.append(key2)
+                for pop_me in to_pop:
+                    element.pop(pop_me)
             else:
                 if not element.is_present():
                     idxs.append(idx)

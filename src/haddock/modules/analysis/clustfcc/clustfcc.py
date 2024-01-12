@@ -168,7 +168,8 @@ def write_clustfcc_file(clusters, clt_centers, clt_dic, params, sorted_score_dic
         model_score_l = [(e.score, e) for e in clt_dic[cluster_id]]
         model_score_l.sort()
         # subset_score_l = [e[0] for e in model_score_l][:min_population]
-        subset_score_l = [e[0] for e in model_score_l][:params['min_population']]
+        subset_score_l = [e[0] for e in model_score_l]
+        subset_score_l = subset_score_l[:params['min_population']]
         top_mean_score = np.mean(subset_score_l)
         top_std = np.std(subset_score_l)
         output_str += (

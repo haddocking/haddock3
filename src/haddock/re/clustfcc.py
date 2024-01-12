@@ -1,11 +1,11 @@
 """haddock3-re clustfcc subcommand."""
 
 from pathlib import Path
-import numpy as np
-import pandas as pd
 from fcc.scripts import cluster_fcc
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
+from haddock.core.typing import Union
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (
@@ -13,7 +13,6 @@ from haddock.libs.libclust import (
     rank_clusters,
     write_structure_list,
     )
-from haddock.libs.libplots import read_capri_table
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.modules.analysis.clustfcc.clustfcc import (
@@ -58,7 +57,12 @@ def add_clustfcc_arguments(clustfcc_subcommand):
     return clustfcc_subcommand
 
 
-def reclustfcc(clustfcc_dir, clust_cutoff=None, strictness=None, min_population=None):
+def reclustfcc(
+        clustfcc_dir: str,
+        clust_cutoff: Union[bool, float] = None,
+        strictness: Union[bool, float] = None,
+        min_population: Union[bool, int] = None,
+        ) -> Path:
     """
     Recluster the models in the clustfcc directory.
     
@@ -67,22 +71,19 @@ def reclustfcc(clustfcc_dir, clust_cutoff=None, strictness=None, min_population=
     clustfcc_dir : str
         Path to the clustfcc directory.
     
-    clust_cutoff : float
+    clust_cutoff : Union[bool, float]
         Fraction of common contacts to not be considered a singleton model.
     
-    strictness : float
+    strictness : Union[bool, float]
         Fraction of common contacts to be considered to be part of the same
          cluster.
     
-    min_population : int
+    min_population : Union[bool, int]
         Minimum cluster population.
-    
-    caprieval_folder : str
-        Path to the caprieval folder for quick analysis of the results.
     
     Returns
     -------
-    outdir : str
+    outdir : Path
         Path to the interactive directory.
     """
     log.info(f"Reclustering {clustfcc_dir}")
@@ -90,7 +91,7 @@ def reclustfcc(clustfcc_dir, clust_cutoff=None, strictness=None, min_population=
     # create the interactive folder
     run_dir = Path(clustfcc_dir).parent
     clustfcc_name = Path(clustfcc_dir).name
-    outdir = Path(run_dir, f"{clustfcc_name}_interactive")
+    outdir = Path(run_dir, f"{clustfcc_name}_{INTERACTIVE_RE_SUFFIX}")
     outdir.mkdir(exist_ok=True)
 
     # create an io object
@@ -136,7 +137,7 @@ def reclustfcc(clustfcc_dir, clust_cutoff=None, strictness=None, min_population=
         # Get the cluster centers
         clt_dic, clt_centers = get_cluster_centers(clusters, models)
 
-        score_dic, sorted_score_dic = rank_clusters(clt_dic, min_population)
+        _score_dic, sorted_score_dic = rank_clusters(clt_dic, min_population)
 
         output_models = add_cluster_info(sorted_score_dic, clt_dic)
         

@@ -134,7 +134,10 @@ def get_clusters(dendrogram, tolerance, criterion):
     return cluster_arr
 
 
-def apply_min_population(cluster_arr: np.ndarray, min_population: int) -> np.ndarray:
+def apply_min_population(
+        cluster_arr: np.ndarray,
+        min_population: int,
+        ) -> np.ndarray:
     """
     Apply min_population to cluster list.
 
@@ -166,9 +169,15 @@ def apply_min_population(cluster_arr: np.ndarray, min_population: int) -> np.nda
     return new_cluster_arr
 
 
-def iterate_min_population(cluster_arr: np.ndarray, min_population: int) -> np.ndarray:
+def iterate_min_population(
+        cluster_arr: np.ndarray,
+        min_population: int,
+        ) -> np.ndarray:
     """
-    Iterate over the min_population values until we find at least one valid cluster.
+    Find one valid valuster satisfying the min_population parameter.
+
+    Logic: Iterate over the min_population values until we find
+    at least one valid cluster.
 
     Parameters
     ----------
@@ -213,7 +222,11 @@ def cond_index(i: int, j: int, n: int) -> float:
     return n * (n - 1) / 2 - (n - i) * (n - i - 1) / 2 + j - i - 1
 
 
-def get_cluster_center(npw: np.ndarray, n_obs: int, rmsd_matrix: np.ndarray) -> int:
+def get_cluster_center(
+        npw: np.ndarray,
+        n_obs: int,
+        rmsd_matrix: np.ndarray,
+        ) -> int:
     """
     Get the cluster centers.
 
@@ -235,12 +248,12 @@ def get_cluster_center(npw: np.ndarray, n_obs: int, rmsd_matrix: np.ndarray) -> 
 
     # iterating over the elements of the cluster
     for m_idx in range(len(npw)):
-        npws = npw[m_idx + 1 :]
+        npws = npw[m_idx + 1:]
         pairs = [int(cond_index(npw[m_idx], npw_el, n_obs)) for npw_el in npws]
         for pair_idx in range(len(pairs)):
             intra_cl_distances[npw[m_idx]] += rmsd_matrix[pairs[pair_idx]]
             intra_cl_distances[npws[pair_idx]] += rmsd_matrix[pairs[pair_idx]]
-    cluster_center = min(intra_cl_distances, key=intra_cl_distances.get)  # type: ignore
+    cluster_center = min(intra_cl_distances, key=intra_cl_distances.get)  # type: ignore  # noqa : E501
     return cluster_center
 
 

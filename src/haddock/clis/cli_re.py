@@ -8,9 +8,7 @@ import os
 from haddock.re.clustfcc import add_clustfcc_arguments, reclustfcc
 from haddock.re.clustrmsd import add_clustrmsd_arguments, reclustrmsd
 from haddock.re.score import add_rescore_arguments, rescore
-
-
-ANA_FOLDER = "interactive"  # name of the analysis folder
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX as ANA_FOLDER
 
 # Command line interface parser
 ap = argparse.ArgumentParser(

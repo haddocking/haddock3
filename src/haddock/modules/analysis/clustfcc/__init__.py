@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 
 from fcc.scripts import calc_fcc_matrix, cluster_fcc
-from typing import Any, Union
 from haddock import FCC_path, log
+from haddock.core.typing import Union
 from haddock.libs.libclust import (
     add_cluster_info,
     rank_clusters,
@@ -31,8 +31,11 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-        self, order: int, path: Path, initial_params: Union[Path, str] = DEFAULT_CONFIG
-    ) -> None:
+            self,
+            order: int,
+            path: Path,
+            initial_params: Union[Path, str] = DEFAULT_CONFIG,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
@@ -54,20 +57,20 @@ class HaddockModule(BaseHaddockModule):
         contact_executable = Path(FCC_path, self.params["executable"])
 
         # Get the models generated in previous step
-        models_to_cluster = self.previous_io.retrieve_models(individualize=True)
+        models_to_clust = self.previous_io.retrieve_models(individualize=True)
 
         # Calculate the contacts for each model
         log.info("Calculating contacts")
         contact_jobs: list[JobInputFirst] = []
-        for model in models_to_cluster:
+        for model in models_to_clust:
             pdb_f = Path(model.rel_path)  # type: ignore
-            contact_f = Path(model.file_name.replace(".pdb", ".con"))  # type: ignore
+            contact_f = Path(model.file_name.replace(".pdb", ".con"))
             job = JobInputFirst(
                 pdb_f,
                 contact_f,
                 contact_executable,
                 self.params["contact_distance_cutoff"],
-            )
+                )
             contact_jobs.append(job)
 
         contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
@@ -87,17 +90,20 @@ class HaddockModule(BaseHaddockModule):
 
         if not_found:
             # No contacts were calculated, we cannot cluster
-            self.finish_with_error("Several files were not generated:" f" {not_found}")
+            self.finish_with_error(
+                "Several files were not generated:"
+                f" {not_found}"
+                )
 
         log.info("Calculating the FCC matrix")
         parsed_contacts = calc_fcc_matrix.parse_contact_file(
             contact_file_l, False
-        )  # noqa: E501
+            )
 
         # Imporant: matrix is a generator object, be careful with it
         matrix = calc_fcc_matrix.calculate_pairwise_matrix(
             parsed_contacts, False
-        )  # noqa: E501
+            )
 
         # write the matrix to a file, so we can read it afterwards and don't
         #  need to reinvent the wheel handling this
@@ -115,10 +121,13 @@ class HaddockModule(BaseHaddockModule):
             fcc_matrix_f,
             self.params["clust_cutoff"],
             self.params["strictness"],
-        )
+            )
 
         # iterate clustering until at least one cluster is found
-        clusters, min_population = iterate_clustering(pool, self.params['min_population'])
+        clusters, min_population = iterate_clustering(
+            pool,
+            self.params['min_population'],
+            )
         self.params['min_population'] = min_population
 
         # Prepare output and read the elements
@@ -129,19 +138,21 @@ class HaddockModule(BaseHaddockModule):
             # Get the cluster centers
             clt_dic, clt_centers = get_cluster_centers(
                 clusters,
-                models_to_cluster
+                models_to_clust,
                 )
             
             # ranking clusters
-            score_dic, sorted_score_dic = rank_clusters(clt_dic, min_population)
+            _scores, sorted_score_dic = rank_clusters(clt_dic, min_population)
 
             # Add this info to the models
             self.output_models = add_cluster_info(sorted_score_dic, clt_dic)
 
             # Write unclustered structures
             write_structure_list(
-                models_to_cluster, self.output_models, out_fname="clustfcc.tsv"  # type: ignore
-            )
+                models_to_clust,
+                self.output_models,
+                out_fname="clustfcc.tsv",
+                )
 
             write_clustfcc_file(
                 clusters,
@@ -152,6 +163,6 @@ class HaddockModule(BaseHaddockModule):
                 )
         else:
             log.warning("No clusters were found")
-            self.output_models = models_to_cluster  # type: ignore
+            self.output_models = models_to_clust  # type: ignore
 
         self.export_io_models()

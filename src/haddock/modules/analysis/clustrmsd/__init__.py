@@ -35,6 +35,7 @@ import numpy as np
 from haddock import log
 from haddock.libs.libclust import (
     add_cluster_info,
+    clustrmsd_tolerance_params,
     rank_clusters,
     write_structure_list,
     )
@@ -60,8 +61,11 @@ class HaddockModule(BaseHaddockModule):
     name = RECIPE_PATH.name
 
     def __init__(
-        self, order: int, path: Path, initial_params: Union[Path, str] = DEFAULT_CONFIG
-    ) -> None:
+            self,
+            order: int,
+            path: Path,
+            initial_params: Union[Path, str] = DEFAULT_CONFIG,
+            ) -> None:
         super().__init__(order, path, initial_params)
 
         self.matrix_json = self._load_previous_io("rmsd_matrix.json")
@@ -81,16 +85,18 @@ class HaddockModule(BaseHaddockModule):
         # loading parameters
         min_population = self.params["min_population"]
 
-        # adjust the parameters
-        if self.params["criterion"] == "maxclust":
-            tolerance = self.params["n_clusters"]
-        else:
-            tolerance = self.params["clust_cutoff"]
-        
         # getting clusters_list
         dendrogram = get_dendrogram(rmsd_matrix, self.params["linkage"])
+
+        # adjust the parameters
+        tolerance_param_name, tolerance = clustrmsd_tolerance_params(
+            self.params,
+            )
         
-        log.info(f"Clustering with tolerance {tolerance} and criterion {self.params['criterion']}")
+        log.info(
+            f"Clustering with {tolerance_param_name} = {tolerance}, "
+            f"and criterion {self.params['criterion']}"
+            )
         
         cluster_arr = get_clusters(
             dendrogram,
@@ -130,7 +136,11 @@ class HaddockModule(BaseHaddockModule):
         self.output_models = add_cluster_info(sorted_score_dic, clt_dic)
         
         # Write unclustered structures
-        write_structure_list(models, self.output_models, out_fname="clustrmsd.tsv")  # type: ignore
+        write_structure_list(
+            models,
+            self.output_models,
+            out_fname="clustrmsd.tsv",
+            )  # type: ignore
         
         write_clustrmsd_file(
             clusters,

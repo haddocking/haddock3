@@ -4,16 +4,18 @@ from pathlib import Path
 import numpy as np
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
+from haddock.core.typing import Union
 from haddock.gear.config import load as read_config
 from haddock.gear.config import save as save_config
 from haddock.libs.libclust import (
     add_cluster_info,
+    clustrmsd_tolerance_params,
     rank_clusters,
     write_structure_list,
     )
 from haddock.libs.libinteractive import look_for_capri, rewrite_capri_tables
 from haddock.libs.libontology import ModuleIO
-from haddock.libs.libplots import read_capri_table
 from haddock.modules.analysis.clustrmsd.clustrmsd import (
     get_clusters,
     iterate_min_population,
@@ -56,7 +58,12 @@ def add_clustrmsd_arguments(clustrmsd_subcommand):
     return clustrmsd_subcommand
 
 
-def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_population=None):
+def reclustrmsd(
+        clustrmsd_dir: str,
+        n_clusters: Union[bool, int] = None,
+        clust_cutoff: Union[bool, float] = None,
+        min_population: Union[bool, int] = None,
+        ) -> Path:
     """
     Recluster the models in the clustrmsd directory.
     
@@ -65,18 +72,18 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_populatio
     clustrmsd_dir : str
         Path to the clustrmsd directory.
     
-    n_clusters : int
+    n_clusters : Union[bool, int]
         Number of clusters to generate.
     
-    clust_cutoff : int
+    clust_cutoff : Union[bool, float]
         Clustering cutoff distance.
     
-    min_population : int
+    min_population : Union[bool, int]
         Cluster population min_population.
     
     Returns
     -------
-    outdir : str
+    outdir : Path
         Path to the interactive directory.
     """
     log.info(f"Reclustering {clustrmsd_dir}")
@@ -84,7 +91,7 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_populatio
     run_dir = Path(clustrmsd_dir).parent
     clustrmsd_name = Path(clustrmsd_dir).name
     # create the interactive folder
-    outdir = Path(run_dir, f"{clustrmsd_name}_interactive")
+    outdir = Path(run_dir, f"{clustrmsd_name}_{INTERACTIVE_RE_SUFFIX}")
     outdir.mkdir(exist_ok=True)
 
     # create an io object
@@ -100,10 +107,9 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_populatio
     log.info(f"Previous clustering parameters: {clustrmsd_params}")
 
     # setting previous tolerance, just in case no new parameters are given
-    if clustrmsd_params["criterion"] == "maxclust":
-        tolerance = clustrmsd_params["n_clusters"]
-    else:
-        tolerance = clustrmsd_params["clust_cutoff"]
+    tolerance_param_name, tolerance = clustrmsd_tolerance_params(
+        clustrmsd_params,
+        )
 
     # adjust the parameters
     if n_clusters is not None:
@@ -118,6 +124,11 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_populatio
     
     if min_population is not None:
         clustrmsd_params["min_population"] = min_population
+
+    log.info(
+        f"Clustering with {tolerance_param_name} = {tolerance}, "
+        f"and criterion {clustrmsd_params['criterion']}"
+        )
     
     # load the clustering dendrogram
     dendrogram = np.loadtxt(Path(clustrmsd_dir, "dendrogram.txt"))
@@ -126,7 +137,8 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_populatio
     cluster_arr = get_clusters(
         dendrogram,
         tolerance,
-        clustrmsd_params["criterion"])
+        clustrmsd_params["criterion"],
+        )
     log.info(f"clusters {cluster_arr}")
 
     if clustrmsd_params['criterion'] == "distance":
@@ -158,10 +170,11 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_populatio
     
     output_models = add_cluster_info(sorted_score_dic, clt_dic)
     
-    write_structure_list(models,
-                         output_models,
-                         out_fname=Path(outdir, "clustrmsd.tsv")
-                         )
+    write_structure_list(
+        models,
+        output_models,
+        out_fname=Path(outdir, "clustrmsd.tsv"),
+        )
     
     write_clustrmsd_file(
         clusters,
@@ -170,7 +183,7 @@ def reclustrmsd(clustrmsd_dir, n_clusters=None, clust_cutoff=None, min_populatio
         score_dic,
         sorted_score_dic,
         clustrmsd_params,
-        output_fname=Path(outdir, "clustrmsd.txt")
+        output_fname=Path(outdir, "clustrmsd.txt"),
         )
 
     # save the io.json file

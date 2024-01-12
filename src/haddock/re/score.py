@@ -1,11 +1,11 @@
 """haddock3-re score subcommand."""
 import json
 from pathlib import Path
-import shutil
-import numpy as np
 import sys
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
+from haddock.core.typing import Union
 from haddock.libs.libinteractive import handle_ss_file
 from haddock.libs.libplots import read_capri_table
 
@@ -63,7 +63,14 @@ def add_rescore_arguments(rescore_subcommand):
 ANA_FOLDER = "interactive"  # name of the analysis folder
 
 
-def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air=None):  # noqa: E501
+def rescore(
+        capri_dir: Union[str, Path],
+        w_elec: Union[bool, float] = None,
+        w_vdw: Union[bool, float] = None,
+        w_desolv: Union[bool, float] = None,
+        w_bsa: Union[bool, float] = None,
+        w_air: Union[bool, float] = None,
+        ) -> Path:
     """Rescore the CAPRI models."""
     log.info(f"Rescoring {capri_dir}")
     # load the scoring pars via json
@@ -107,7 +114,7 @@ def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air
     capri_name = Path(capri_dir).name
     
     # create the interactive folder
-    outdir = Path(run_dir, f"{capri_name}_interactive")
+    outdir = Path(run_dir, f"{capri_name}_{INTERACTIVE_RE_SUFFIX}")
     outdir.mkdir(exist_ok=True)
 
     # handle ss file first
@@ -129,10 +136,12 @@ def rescore(capri_dir, w_elec=None, w_vdw=None, w_desolv=None, w_bsa=None, w_air
         df_clt.sort_values(by=["cluster_rank"], inplace=True)
         capri_clt_file = Path(outdir, "capri_clt.tsv")
         log.info(f"Saving capri_clt file to {capri_clt_file}")
-        df_clt.to_csv(capri_clt_file,
-                    sep="\t",
-                    index=False,
-                    float_format="%.3f")
+        df_clt.to_csv(
+            capri_clt_file,
+            sep="\t",
+            index=False,
+            float_format="%.3f",
+            )
 
     # Write the latest parameters file
     # define output fname

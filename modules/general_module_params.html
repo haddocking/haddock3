@@ -250,7 +250,7 @@
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Mode of execution</div>
 <div class="line"><em>short description</em>: Mode of execution of the jobs, either local or using a batch system.</div>
-<div class="line"><em>long description</em>: Mode of execution of the jobs, either local or using a batch system. Currently slurm and torque are supported. For the HPC mode the queue command must be specified in the queue parameter.</div>
+<div class="line"><em>long description</em>: Mode of execution of the jobs, either local or using a batch system. Currently slurm and torque are supported. For the batch mode the queue command must be specified in the queue parameter.</div>
 <div class="line"><em>group</em>: execution</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -258,7 +258,7 @@
 <section id="ncores">
 <h2>ncores<a class="headerlink" href="#ncores" title="Permalink to this heading">¶</a></h2>
 <div class="line-block">
-<div class="line"><em>default</em>: 8</div>
+<div class="line"><em>default</em>: 4</div>
 <div class="line"><em>type</em>: integer</div>
 <div class="line"><em>title</em>: Number of CPU cores</div>
 <div class="line"><em>short description</em>: Number of CPU cores to use for the CNS calculations. It is truncated to max available CPUs  minus 1.</div>

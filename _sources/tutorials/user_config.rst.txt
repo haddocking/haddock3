@@ -93,7 +93,7 @@ described inside a step will affect only that step. For example:
         ]
 
     # each .job will produce 5 (or less) models
-    mode = "hpc"
+    mode = "batch"
     concat = 5
 
     [topoaa]

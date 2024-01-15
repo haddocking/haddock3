@@ -240,7 +240,7 @@ def main(
         )
 
     print(
-        "> HADDOCK-score = "
+        "> HADDOCK-score ="
         f" ({ems_dict['w_vdw']} * vdw)"
         f" + ({ems_dict['w_elec']} * elec)"
         f" + ({ems_dict['w_desolv']} * desolv)"

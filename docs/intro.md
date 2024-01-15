@@ -107,7 +107,7 @@ You can find examples of HADDOCK3 workflows for the different biological
 systems in the `examples` [subfolder][examples] of the HADDOCK3 folder.
 
 HADDOCK3 will start running (different execution modes are available using
-either local resources (threads) or in HPC mode using a batch queuing system) -
+either local resources (threads) or in "batch" mode using a batch queuing system) -
 for details, see [here][queue]. See examples in the `examples` [subfolder][examples]
 for configuration files ending in `-full.cfg`.
 

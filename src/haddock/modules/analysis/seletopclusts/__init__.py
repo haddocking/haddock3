@@ -3,6 +3,7 @@ import math
 import os
 from pathlib import Path
 
+from haddock.core.typing import Any, FilePath
 from haddock.modules import BaseHaddockModule
 
 
@@ -15,16 +16,20 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, *ignore, init_params=DEFAULT_CONFIG,
-                 **everything):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 *ignore: Any,
+                 init_params: FilePath = DEFAULT_CONFIG,
+                 **everything: Any) -> None:
         super().__init__(order, path, init_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if module is installed."""
         return
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute the module's protocol."""
         if self.params["top_models"] <= 0:
             _msg = "top_models must be either > 0 or nan."
@@ -94,4 +99,4 @@ class HaddockModule(BaseHaddockModule):
                 model.path = str(Path(self.path).resolve())
 
         self.output_models = models_to_export
-        self.export_output_models()
+        self.export_io_models()

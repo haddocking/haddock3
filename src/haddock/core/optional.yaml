@@ -12,7 +12,7 @@ preprocess:
     checks are performed and HADDOCK3 directly uses the original input PDBs.
   explevel: easy
 postprocess:
-  default: false
+  default: true
   type: boolean
   title: Executes haddock3-analyse on the CAPRI folders at the end of the run
   short: If true, executes haddock3-analyse on the CAPRI folders at the end of 

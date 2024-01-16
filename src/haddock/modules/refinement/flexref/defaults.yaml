@@ -321,12 +321,12 @@ dihedrals_cool3:
   group: 'dihedral restraints'
   explevel: expert
 ssdihed:
-  default: ""
+  default: none
   type: string
   minchars: 0
   maxchars: 100
   choices:
-    - ""
+    - none
     - all
     - alpha
     - alphabeta
@@ -1683,7 +1683,7 @@ sampling_factor:
   default: 1
   type: integer
   min: 1
-  max: 200
+  max: 500
   title: Sampling factor for each starting model
   short: This paramater controls how many times a model will be refined.
   long: This paramater controls how many times a model will be refined. 
@@ -1750,6 +1750,14 @@ mdsteps_cool3:
   long: Number of MD steps for the third cooling phase of torsion angle dynamics of the simulated annealing protocol with flexible side-chains and backbone at the interface. Full flexibility is applied to the segments defined as fully flexible (see nfle_X and related parameters).
   group: 'sampling'
   explevel: expert
+randorien:
+  default: false
+  type: boolean
+  title: Randomize starting orientations
+  short: Randomize starting orientations
+  long: Randomize starting orientations by separating the molecules in space and randomly rotating those
+  group: 'sampling'
+  explevel: guru
 timestep:
   default: 0.002
   type: float

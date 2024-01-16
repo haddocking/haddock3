@@ -1,0 +1,10 @@
+##########################################################
+# `alascan` results for protprot_complex_1.pdb
+#
+# z_score is calculated with respect to the other residues
+##########################################################
+chain	res	ori_resname	end_resname	score	vdw	elec	desolv	bsa	delta_ori_score	delta_score	delta_vdw	delta_elec	delta_desolv	delta_bsa	z_score
+A	94	ASP	ALA	-106.700	-29	-316	-13	1494		0.000	0	0	0	0	0.000
+A	90	NEP	ALA	-106.700	-29	-316	-13	1494		0.000	0	0	0	0	0.000
+A	38	ASP	ALA	-106.700	-29	-316	-13	1494		0.000	0	0	0	0	0.000
+A	39	VAL	ALA	-106.700	-29	-316	-13	1494		0.000	0	0	0	0	0.000

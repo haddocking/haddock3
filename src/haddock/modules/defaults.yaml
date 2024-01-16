@@ -11,7 +11,7 @@ cns_exec:
   group: 'execution'
   explevel: easy
 ncores:
-  default: 8
+  default: 4
   type: integer
   min: 1
   max: 500
@@ -40,11 +40,11 @@ mode:
   maxchars: 20
   choices:
     - local
-    - hpc
+    - batch
   title: Mode of execution
   short: Mode of execution of the jobs, either local or using a batch system.
   long: Mode of execution of the jobs, either local or using a batch system. 
-    Currently slurm and torque are supported. For the HPC mode the queue command must be 
+    Currently slurm and torque are supported. For the batch mode the queue command must be 
     specified in the queue parameter.
   group: 'execution'
   explevel: easy
@@ -89,7 +89,7 @@ concat:
   precision: 0
   title: Number of models to produce per job.
   short: Multiple models can be calculated within one job
-  long: The defins the number of models that will be generated within on job script. 
+  long: This defines the number of models that will be generated within on job script. 
     This allows to concatenate the generation of models into one script. 
     In that way jobs might run longer in the batch system and reduce the load on the scheduler.
   group: 'execution'
@@ -105,7 +105,7 @@ self_contained:
   group: 'execution'
   explevel: guru
 clean:
-  default: false
+  default: true
   type: boolean
   title: Clean the module output files.
   short: Clean the module if run succeeds by compressing or removing output files.

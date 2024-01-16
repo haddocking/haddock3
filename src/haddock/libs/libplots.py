@@ -9,7 +9,19 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from pathlib import Path
+
 from haddock import log
+from haddock.core.typing import (
+    DataFrameGroupBy,
+    Figure,
+    FilePath,
+    ImgFormat,
+    NDFloat,
+    Optional,
+    Union,
+)
+from typing import Any
 
 
 SCATTER_PAIRS = [
@@ -33,10 +45,16 @@ SCATTER_PAIRS = [
     ("ilrmsd", "vdw"),
     ("ilrmsd", "elec"),
     ("ilrmsd", "air"),
+    ("fnat", "score"),
+    ("fnat", "desolv"),
+    ("fnat", "vdw"),
+    ("fnat", "elec"),
+    ("fnat", "air"),
     ]
 
+
 # if SCATTER_PAIRS changes, SCATTER_MATRIX_SIZE should change too!
-SCATTER_MATRIX_SIZE = (4, 5)  # (number of rows, number of columns)
+SCATTER_MATRIX_SIZE = (5, 5)  # (number of rows, number of columns)
 
 TITLE_NAMES = {
     "score": "HADDOCK score",
@@ -49,7 +67,8 @@ TITLE_NAMES = {
     "elec": "Eelec",
     "air": "Eair",
     "fnat": "FCC",
-    }
+    "bsa": "BSA",
+}
 
 AXIS_NAMES = {
     "score": "HADDOCK score [a.u.]",
@@ -62,10 +81,20 @@ AXIS_NAMES = {
     "ilrmsd": "interface-ligand RMSD [A]",
     "fnat": "Fraction of Common Contacts",
     "dockq": "DOCKQ",
-    }
+    "bsa": "Buried Surface Area [A^2]",
+}
+
+ClRank = dict[int, int]
+"""
+A dict representing clusters' rank.
+
+key  (int): cluster's id
+
+value(int): cluster's rank
+"""
 
 
-def read_capri_table(capri_filename, comment="#"):
+def read_capri_table(capri_filename: FilePath, comment: str = "#") -> pd.DataFrame:
     """
     Read capri table with pandas.
 
@@ -85,7 +114,7 @@ def read_capri_table(capri_filename, comment="#"):
     return capri_df
 
 
-def in_capri(column, df_columns):
+def in_capri(column: str, df_columns: pd.Index) -> bool:
     """
     Check if the selected column is in the set of available columns.
 
@@ -108,7 +137,9 @@ def in_capri(column, df_columns):
     return resp
 
 
-def update_layout_plotly(fig, x_label, y_label, title=None):
+def update_layout_plotly(
+    fig: Figure, x_label: str, y_label: str, title: Optional[str] = None
+) -> Figure:
     """
     Update layout of plotly plot.
 
@@ -129,20 +160,26 @@ def update_layout_plotly(fig, x_label, y_label, title=None):
             title=x_label,
             tickfont_size=14,
             titlefont_size=40,
-            ),
+        ),
         "yaxis": dict(
             title=y_label,
             tickfont_size=14,
             titlefont_size=40,
-            ),
+        ),
         "legend": dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
         "hoverlabel": dict(font_size=16, font_family="Helvetica"),
-        }
+    }
     fig.update_layout(px_dict)
     return fig
 
 
-def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
+def box_plot_plotly(
+    gb_full: pd.DataFrame,
+    y_ax: str,
+    cl_rank: dict[int, int],
+    format: Optional[ImgFormat],
+    scale: Optional[float],
+) -> Figure:
     """
     Create a scatter plot in plotly.
 
@@ -182,34 +219,33 @@ def box_plot_plotly(gb_full, y_ax, cl_rank, format, scale):
     gb_full_string = gb_full.astype({"cluster-ranking": "string"})
 
     # Rename for a better name in legend
-    gb_full_string.rename(
-        columns={"cluster-ranking": "Cluster Rank"}, inplace=True
-        )
+    gb_full_string.rename(columns={"cluster-ranking": "Cluster Rank"}, inplace=True)
 
     # "Cluster Rank" is equivalent to "capri_rank"!
-    fig = px.box(gb_full_string,
-                 x="capri_rank",
-                 y=f"{y_ax}",
-                 color="Cluster Rank",
-                 color_discrete_map=color_map,
-                 boxmode="overlay",
-                 points="outliers",
-                 width=1000,
-                 height=800,
-                 hover_data=["caprieval_rank"],
-                 )
+    fig = px.box(
+        gb_full_string,
+        x="capri_rank",
+        y=f"{y_ax}",
+        color="Cluster Rank",
+        color_discrete_map=color_map,
+        boxmode="overlay",
+        points="outliers",
+        width=1000,
+        height=800,
+        hover_data=["caprieval_rank"],
+    )
     # layout
     update_layout_plotly(fig, "Cluster Rank", AXIS_NAMES[y_ax])
     # save figure
     px_fname = f"{y_ax}_clt.html"
-    fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
+    fig.write_html(px_fname, full_html=False, include_plotlyjs="cdn")
     # create format boxplot if necessary
     if format:
         fig.write_image(f"{y_ax}_clt.{format}", scale=scale)
     return fig
 
 
-def box_plot_data(capri_df, cl_rank):
+def box_plot_data(capri_df: pd.DataFrame, cl_rank: ClRank) -> pd.DataFrame:
     """
     Retrieve box plot data.
 
@@ -232,7 +268,7 @@ def box_plot_data(capri_df, cl_rank):
         if cl_id not in cl_rank.keys():
             gb_other = pd.concat([gb_other, cl_df])
         else:
-            cl_df["capri_rank"] = cl_rank[cl_id]
+            cl_df["capri_rank"] = cl_rank[cl_id]  # type: ignore
             gb_good = pd.concat([gb_good, cl_df])
 
     gb_other["cluster-id"] = "Other"
@@ -245,7 +281,12 @@ def box_plot_data(capri_df, cl_rank):
     return gb_full
 
 
-def box_plot_handler(capri_filename, cl_rank, format, scale):
+def box_plot_handler(
+    capri_filename: FilePath,
+    cl_rank: ClRank,
+    format: Optional[ImgFormat],
+    scale: Optional[float],
+) -> list[Figure]:
     """
     Create box plots.
 
@@ -268,7 +309,7 @@ def box_plot_handler(capri_filename, cl_rank, format, scale):
     gb_full = box_plot_data(capri_df, cl_rank)
 
     # iterate over the variables
-    fig_list = []
+    fig_list: list[Figure] = []
     for y_ax in AXIS_NAMES.keys():
         if not in_capri(y_ax, capri_df.columns):
             continue
@@ -277,7 +318,16 @@ def box_plot_handler(capri_filename, cl_rank, format, scale):
     return fig_list
 
 
-def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, format, scale):  # noqa:E501
+def scatter_plot_plotly(
+    gb_cluster: DataFrameGroupBy,
+    gb_other: pd.DataFrame,
+    cl_rank: ClRank,
+    x_ax: str,
+    y_ax: str,
+    colors: list[str],
+    format: Optional[ImgFormat],
+    scale: Optional[float],
+) -> Figure:
     """
     Create a scatter plot in plotly.
 
@@ -305,6 +355,7 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
     fig :
         an instance of plotly.graph_objects.Figure
     """
+
     def _build_hover_text(df):
         """Build a nice text for hover text."""
         text_list = []
@@ -312,13 +363,11 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
             model_text = f"Model: {row['model'].split('/')[-1]}"
             score_text = f"Score: {row['score']}"
             caprieval_rank_text = f"Caprieval rank: {row['caprieval_rank']}"
-            text_list.append(
-                f"{model_text}<br>{score_text}<br>{caprieval_rank_text}"
-                )
+            text_list.append(f"{model_text}<br>{score_text}<br>{caprieval_rank_text}")
         return text_list
 
     fig = go.Figure(layout={"width": 1000, "height": 800})
-    traces = []
+    traces: list[go.Scatter] = []
     n_colors = len(colors)
     cl_rank_swap = {v: k for k, v in cl_rank.items()}
 
@@ -331,8 +380,7 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
             else:
                 cl_name = f"Cluster {cl_rank[cl_id]}"  # use rank
             color_idx = (cl_rank[cl_id] - 1) % n_colors  # color index
-            x_mean = np.mean(cl_df[x_ax])
-            y_mean = np.mean(cl_df[y_ax])
+            
             traces.append(
                 go.Scatter(
                     x=cl_df[x_ax],
@@ -346,13 +394,21 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
                         bgcolor=colors[color_idx],
                         font_size=16,
                         font_family="Helvetica",
-                        ),
-                    )
+                    ),
                 )
+            )
             clt_text = f"{cl_name}<br>"
+            
+            # mean and std deviations for the top 4 members
+            x_mean = np.mean(cl_df[x_ax].iloc[:4])
+            y_mean = np.mean(cl_df[y_ax].iloc[:4])
+            x_std = np.std(cl_df[x_ax].iloc[:4])
+            y_std = np.std(cl_df[y_ax].iloc[:4])
+
             if "score" not in [x_ax, y_ax]:
-                clt_text += f"Score: {np.mean(cl_df['score']):.3f}<br>"
+                clt_text += f"Score: {np.mean(cl_df['score'].iloc[:4]):.3f}<br>"
             clt_text += f"{x_ax}: {x_mean:.3f}<br>{y_ax}: {y_mean:.3f}"
+
             clt_text_list = [clt_text]
             traces.append(
                 go.Scatter(
@@ -360,11 +416,11 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
                     y=[y_mean],
                     # error bars
                     error_x=dict(
-                        type="data", array=[np.std(cl_df[x_ax])], visible=True
-                        ),
+                        type="data", array=[x_std], visible=True
+                    ),
                     error_y=dict(
-                        type="data", array=[np.std(cl_df[y_ax])], visible=True
-                        ),
+                        type="data", array=[y_std], visible=True
+                    ),
                     # color and text
                     marker_color=colors[color_idx],
                     text=clt_text_list,
@@ -377,9 +433,9 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
                         bgcolor=colors[color_idx],
                         font_size=16,
                         font_family="Helvetica",
-                        ),
-                    )
+                    ),
                 )
+            )
     # append trace other
     if not gb_other.empty:
         traces.append(
@@ -390,29 +446,33 @@ def scatter_plot_plotly(gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, forma
                 mode="markers",
                 text=_build_hover_text(gb_other),
                 legendgroup="Other",
-                marker=dict(
-                    color="white", line=dict(width=2, color="DarkSlateGrey")
-                    ),
+                marker=dict(color="white", line=dict(width=2, color="DarkSlateGrey")),
                 hoverlabel=dict(
-                    bgcolor="white", font_size=16, font_family="Helvetica",
-                    ),
-                )
+                    bgcolor="white",
+                    font_size=16,
+                    font_family="Helvetica",
+                ),
             )
+        )
     for trace in traces:
         fig.add_trace(trace)
     px_fname = f"{x_ax}_{y_ax}.html"
-    update_layout_plotly(fig,
-                         TITLE_NAMES[x_ax],
-                         TITLE_NAMES[y_ax],
-                         title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}")
-    fig.write_html(px_fname, full_html=False, include_plotlyjs='cdn')
+    update_layout_plotly(
+        fig,
+        TITLE_NAMES[x_ax],
+        TITLE_NAMES[y_ax],
+        title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}",
+    )
+    fig.write_html(px_fname, full_html=False, include_plotlyjs="cdn")
     # create format boxplot if necessary
     if format:
         fig.write_image(f"{x_ax}_{y_ax}.{format}", scale=scale)
     return fig
 
 
-def scatter_plot_data(capri_df, cl_rank):
+def scatter_plot_data(
+    capri_df: pd.DataFrame, cl_rank: ClRank
+) -> tuple[DataFrameGroupBy, pd.DataFrame]:
     """
     Retrieve scatter plot data.
 
@@ -438,7 +498,12 @@ def scatter_plot_data(capri_df, cl_rank):
     return gb_cluster, gb_other
 
 
-def scatter_plot_handler(capri_filename, cl_rank, format, scale):
+def scatter_plot_handler(
+    capri_filename: FilePath,
+    cl_rank: ClRank,
+    format: Optional[ImgFormat],
+    scale: Optional[float],
+) -> list[Figure]:
     """
     Create scatter plots.
 
@@ -473,19 +538,14 @@ def scatter_plot_handler(capri_filename, cl_rank, format, scale):
             continue
         if not in_capri(y_ax, capri_df.columns):
             continue
-        fig = scatter_plot_plotly(gb_cluster,
-                                  gb_other,
-                                  cl_rank,
-                                  x_ax,
-                                  y_ax,
-                                  colors,
-                                  format,
-                                  scale)
+        fig = scatter_plot_plotly(
+            gb_cluster, gb_other, cl_rank, x_ax, y_ax, colors, format, scale
+        )
         fig_list.append(fig)
     return fig_list
 
 
-def _report_grid_size(plot_list):
+def _report_grid_size(plot_list: list[Figure]) -> tuple[int, int, int, int]:
     """
     Calculate the size of the grid in the report.
 
@@ -524,11 +584,7 @@ def _report_grid_size(plot_list):
     return number_of_rows, number_of_cols, width, height
 
 
-def report_plots_handler(
-        plots,
-        shared_xaxes=False,
-        shared_yaxes=False
-        ):
+def report_plots_handler(plots, shared_xaxes=False, shared_yaxes=False):
     """
     Create a figure that holds subplots.
 
@@ -558,7 +614,7 @@ def report_plots_handler(
         shared_yaxes=shared_yaxes,
         vertical_spacing=(0.4 / number_of_rows),
         horizontal_spacing=(0.3 / number_of_cols),
-        )
+    )
     for i, sub_fig in enumerate(plots):
         col_index = int((i % number_of_cols) + 1)
         row_index = int(np.floor(i / number_of_cols) + 1)
@@ -572,7 +628,7 @@ def report_plots_handler(
             col=col_index,
             title_standoff=5,
             automargin=True,
-            )
+        )
         # x title only on the last row
         if shared_xaxes == "all":
             row_index = number_of_rows
@@ -582,13 +638,13 @@ def report_plots_handler(
             col=col_index,
             title_standoff=5,
             automargin=True,
-            )
+        )
         legend_title_text = sub_fig.layout.legend.title.text
     fig.update_layout(
         legend_title_text=legend_title_text,
         height=height * number_of_rows,
         width=width * number_of_cols,
-        )
+    )
     return fig
 
 
@@ -642,8 +698,8 @@ def find_best_struct(ss_file, number_of_struct=10):
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
     # zero pad number so after pivot columns are sorted correctly
     col_names = [
-        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)  # noqa: E501
-        ] * number_of_cluster
+        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)
+    ] * number_of_cluster
 
     # add a new column `Structure` to the dataframe
     best_struct_df = best_struct_df.assign(Structure=col_names)
@@ -655,7 +711,7 @@ def find_best_struct(ss_file, number_of_struct=10):
         columns=["Structure"],
         values="model",
         aggfunc=lambda x: x,
-        )
+    )
 
     best_struct_df.reset_index(inplace=True)
     # Rename columns
@@ -665,7 +721,7 @@ def find_best_struct(ss_file, number_of_struct=10):
     # unclustered id is "-", it is replaced by "Unclustered"
     best_struct_df["Cluster Rank"] = best_struct_df["Cluster Rank"].apply(
         _fix_uncluster_rank
-        )
+    )
 
     # Correct path because after running analyse files are moved to analysis
     # folder
@@ -701,17 +757,17 @@ def clean_capri_table(dfcl):
     for col_name in col_list:
         mean_value = dfcl[col_name].astype(str)
         std_value = dfcl[f"{col_name}_std"].astype(str)
-        dfcl[AXIS_NAMES[col_name]] = (mean_value + ", " + std_value)
+        dfcl[AXIS_NAMES[col_name]] = mean_value + ", " + std_value
         table_col.append(AXIS_NAMES[col_name])
     dfcl.drop(columns=col_list, inplace=True)
     dfcl.rename(
         columns={
             "cluster_id": "Cluster ID",
             "cluster_rank": "Cluster Rank",
-            "n": "Cluster size"
-            },
+            "n": "Cluster size",
+        },
         inplace=True,
-        )
+    )
 
     # unclustered id is "-", it is replaced by "Unclustered"
     dfcl["Cluster Rank"] = dfcl["Cluster Rank"].apply(_fix_uncluster_rank)
@@ -731,13 +787,13 @@ def _pandas_df_to_json(df):
         "Cluster Rank": "rank",
         "Cluster ID": "id",
         "Cluster size": "size",
-        }
+    }
 
     # Create a dictionary that contains the headers of the table
     headers = {json_plot_keys.get(name, name): name for name in df.columns}
 
     # Create a nested dictionary that contains the data of the table
-    data = {}
+    data: dict[Any, Any] = {}
     for index, row in df.iterrows():
         stats = {}
         best = {}
@@ -759,7 +815,7 @@ def _pandas_df_to_json(df):
     return data_string, headers_string
 
 
-def clt_table_handler(clt_file, ss_file):
+def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     """
     Create a dataframe including data for tables.
 
@@ -772,6 +828,8 @@ def clt_table_handler(clt_file, ss_file):
         path to capri_clt.tsv file
     ss_file: str or Path
         path to capri_ss.tsv file
+    is_cleaned: bool
+        is the run going to be cleaned?
 
     Returns
     -------
@@ -785,15 +843,20 @@ def clt_table_handler(clt_file, ss_file):
     # table of structures
     structs_df = find_best_struct(ss_file, number_of_struct=10)
 
+    # if the run will be cleaned, the structures are going to be gzipped
+    if is_cleaned:
+        # substitute the values in the df by adding .gz at the end
+        structs_df = structs_df.replace(
+            to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True
+        )
+    
     # Order structs by best (lowest score) cluster on top
     structs_df = structs_df.set_index("Cluster ID")
     structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])
     structs_df = structs_df.reset_index()
 
     # Merge dataframes
-    df_merged = pd.merge(
-        statistics_df, structs_df, on=["Cluster ID", "Cluster Rank"]
-        )
+    df_merged = pd.merge(statistics_df, structs_df, on=["Cluster ID", "Cluster Rank"])
 
     # The header of the table should be the cluster rank instead of id
     df_merged = df_merged.set_index("Cluster Rank")
@@ -809,17 +872,17 @@ def _css_styles_for_report():
     -------
     The CSS styles as a string.
     """
-    custom_css = '''
+    custom_css = """
     .title {
         font-family: Arial, sans-serif;
         font-size: 32px;
         font-weight: bold;
         }
 
-    '''
+    """
     css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components/dist/style.css"  # noqa:E501
     table_css = f' <link href={css_link} rel="stylesheet" />'
-    return f'{table_css}<style>{custom_css}</style>'
+    return f"{table_css}<style>{custom_css}</style>"
 
 
 def _generate_html_report(step, figures):
@@ -894,7 +957,7 @@ def _generate_html_body(figures):
             table_id = f"table{table_index}"
 
             data, headers = _pandas_df_to_json(figure)
-            inner_html = f'''
+            inner_html = f"""
             <div id="{table_id}"></div>
             <script type="importmap">
             {{
@@ -917,12 +980,12 @@ def _generate_html_body(figures):
                 createElement(ClusterTable, {{ clusters, headers, maxbest:10 }})
                 )
             </script>
-            '''  # noqa:E501
+            """  # noqa:E501
         else:  # plots
             inner_html = figure.to_html(
                 full_html=False, include_plotlyjs=include_plotlyjs
-                )
-            include_plotlyjs = False
+            )
+            include_plotlyjs = False  # type: ignore
         body += "<br>"  # add a break between tables and plots
         body += inner_html
     body += "</body>"
@@ -948,14 +1011,145 @@ def report_generator(boxes, scatters, tables, step):
     figures = [tables]
     # Combine scatters
     figures.append(
-        report_plots_handler(
-            scatters, shared_xaxes="rows", shared_yaxes="columns"
-            )
-        )
+        report_plots_handler(scatters, shared_xaxes="rows", shared_yaxes="columns")
+    )
     # Combine boxes"
-    figures.append(report_plots_handler(boxes, shared_xaxes="all"))
+    figures.append(report_plots_handler(boxes))
 
     # Write everything to a html file
     html_report = _generate_html_report(step, figures)
     with open("report.html", "w", encoding="utf-8") as report:
         report.write(html_report)
+
+
+
+def heatmap_plotly(
+        matrix: NDFloat,
+        labels: Optional[dict] = None,
+        xlabels: Optional[list] = None,
+        ylabels: Optional[list] = None,
+        color_scale: str = 'Greys_r',  # Greys_r, gray
+        title: Optional[str] = None,
+        output_fname: Path = Path('contacts.html'),
+        ) -> Path:
+    """Generate a `plotly heatmap` based on matrix content.
+
+    Parameters
+    ----------
+    matrix : NDFloat
+        The 2D matrix containing data to be shown.
+    labels : dict
+        Labels of the horizontal (x), vertical (y) and colorscale (color) axis.
+    xlabels : list
+        List of columns names.
+    ylabels : list
+        List of row names.
+    color_scale : str
+        Color scale to use.
+    title : str
+        Title of the figure.
+    output_fname : Path
+        Path to the output filename to generate.
+
+    Return
+    ------
+    output_fname : Path
+        Path to the generated filename
+    """
+    fig = px.imshow(
+        matrix,
+        labels=labels,
+        x=xlabels,
+        y=ylabels,
+        color_continuous_scale=color_scale,
+        title=title,
+        )
+    # Place X axis on top
+    fig.update_xaxes(side="top")
+    # Save figure as html file
+    fig.write_html(output_fname)
+    return output_fname
+
+  
+def make_alascan_plot(df, clt_id, scan_res="ALA"):
+    """
+    Make a plotly interactive plot.
+
+    Score components are here **weighted** by their respective
+    contribution to the total score.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing the results of the alanine scan.
+    clt_id : int
+        Cluster ID.
+    scan_res : str, optional
+        Residue name used for the scan, by default "ALA"
+    """
+    plot_name = f"scan_clt_{clt_id}"
+    log.info(f"Generating {scan_res} scanning plot {plot_name}")
+
+    # create figure
+    fig = go.Figure(layout={"width": 2000, "height": 1000})
+    # add traces
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=df["delta_score"],
+            name="delta_score",
+            )
+        )
+    
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=df["delta_vdw"],
+            name="delta_vdw",
+            )
+        )
+    # delta_elec is given its weight in the emscoring module
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=0.2 * df["delta_elec"],
+            name="delta_elec",
+            )
+        )
+
+    fig.add_trace(
+        go.Bar(
+            x=df["full_resname"],
+            y=df["delta_desolv"],
+            name="delta_desolv",
+            )
+        )
+    # prettifying layout
+    fig.update_layout(
+        title=f"{scan_res} scanning cluster {clt_id}",
+        xaxis=dict(
+            title="Residue Name",
+            tickfont_size=14,
+            titlefont_size=16,
+            tick0=df["full_resname"],
+            # in case we want to show less residues
+            # dtick=10,
+            ),
+        yaxis=dict(
+            title="Weigted delta",
+            titlefont_size=16,
+            tickfont_size=14,
+            ),
+        legend=dict(x=1.01, y=1.0, font_family="Helvetica", font_size=16),
+        barmode="group",
+        bargap=0.05,
+        bargroupgap=0.05,
+        hovermode="x unified",
+        hoverlabel=dict(font_size=16, font_family="Helvetica"),
+        )
+    for n in range(df.shape[0] - 1):
+        fig.add_vline(x=0.5 + n, line_color="gray", opacity=0.2)
+    # save html
+    html_output_filename = f"{plot_name}.html"
+    fig.write_html(html_output_filename)
+

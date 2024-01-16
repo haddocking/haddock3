@@ -29,11 +29,15 @@ import contextlib
 from pathlib import Path
 
 from haddock import log
+from haddock.core.typing import Any, FilePath
 from haddock.libs.libontology import ModuleIO, RMSDFile
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
-from haddock.modules.analysis import confirm_resdic_chainid_length
+from haddock.modules import get_engine
+from haddock.modules.analysis import (
+    confirm_resdic_chainid_length,
+    get_analysis_exec_mode,
+    )
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSD,
     RMSDJob,
@@ -50,15 +54,19 @@ class HaddockModule(BaseHaddockModule):
 
     name = RECIPE_PATH.name
 
-    def __init__(self, order, path, initial_params=DEFAULT_CONFIG):
+    def __init__(self,
+                 order: int,
+                 path: Path,
+                 initial_params: FilePath = DEFAULT_CONFIG) -> None:
         super().__init__(order, path, initial_params)
 
     @classmethod
-    def confirm_installation(cls):
+    def confirm_installation(cls) -> None:
         """Confirm if contact executable is compiled."""
         return
 
-    def _rearrange_output(self, output_name, path, ncores):
+    def _rearrange_output(self, output_name: FilePath, path: FilePath,
+                          ncores: int) -> None:
         """Combine different rmsd outputs in a single file."""
         output_fname = Path(path, output_name)
         self.log(f"rearranging output files into {output_fname}")
@@ -73,7 +81,7 @@ class HaddockModule(BaseHaddockModule):
         log.info("Completed reconstruction of rmsd files.")
         log.info(f"{output_fname} created.")
 
-    def update_params(self, *args, **kwargs):
+    def update_params(self, *args: Any, **kwargs: Any) -> None:
         """Update parameters."""
         super().update_params(*args, **kwargs)
         with contextlib.suppress(KeyError):
@@ -81,7 +89,7 @@ class HaddockModule(BaseHaddockModule):
 
         confirm_resdic_chainid_length(self._params)
 
-    def _run(self):
+    def _run(self) -> None:
         """Execute module."""
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
@@ -107,7 +115,7 @@ class HaddockModule(BaseHaddockModule):
             ncores)
 
         # Calculate the rmsd for each set of models
-        rmsd_jobs = []
+        rmsd_jobs: list[RMSDJob] = []
         self.log(f"running Rmsd Jobs with {ncores} cores")
         for core in range(ncores):
             output_name = "rmsd_" + str(core) + ".matrix"
@@ -130,11 +138,14 @@ class HaddockModule(BaseHaddockModule):
                 )
             rmsd_jobs.append(job)
 
-        rmsd_engine = Scheduler(rmsd_jobs, ncores=ncores)
-        rmsd_engine.run()
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        rmsd_file_l = []
-        not_found = []
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(rmsd_jobs)
+        engine.run()
+
+        rmsd_file_l: list[str] = []
+        not_found: list[str] = []
         for job in rmsd_jobs:
             if not job.output.exists():
                 # NOTE: If there is no output, most likely the RMSD calculation
@@ -160,7 +171,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Sending models to the next step of the workflow
         self.output_models = models
-        self.export_output_models()
+        self.export_io_models()
         # Sending matrix path to the next step of the workflow
         matrix_io = ModuleIO()
         rmsd_matrix_file = RMSDFile(

@@ -15,6 +15,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from typing import Any
 
 from haddock import log
 from haddock.libs import libcli
@@ -24,18 +25,41 @@ from haddock.modules import get_module_steps_folders
 
 TRACK_FOLDER = "traceback"  # name of the traceback folder
 
-ANA_MODULES = ["caprieval",
-               "seletop",
-               "topoaa",
-               "rmsdmatrix",
-               "clustrmsd",
-               "clustfcc"]
+
+def get_steps_without_pdbs(run_dir, all_steps):
+    """
+    Get the modules that do not produce PDB files.
+
+    Parameters
+    ----------
+    run_dir : str or pathlib.Path
+        Path to the run directory.
+    
+    all_steps : list
+        List of all the steps in the run directory.
+    
+    Returns
+    -------
+    steps_without_pdbs : list
+        List of steps that did not produce PDB files.
+    """
+    steps_without_pdbs = []
+    for step in all_steps:
+        if step.endswith("topoaa"):
+            steps_without_pdbs.append(step)
+        else:
+            step_dir = Path(run_dir, step)
+            if step_dir.is_dir():
+                pdbs = list(step_dir.glob("*.pdb*"))
+                if len(pdbs) == 0:
+                    steps_without_pdbs.append(step)
+    return steps_without_pdbs
 
 
-def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int):
+def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int) -> tuple[list, int]:
     """
     Get the original name(s) of the PDB file.
-    
+
     Parameters
     ----------
     n : int
@@ -44,7 +68,7 @@ def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int):
         PDBFile object.
     max_topo_len : int
         Maximum length of the topologies found so far.
-    
+
     Returns
     -------
     ori_names : list
@@ -62,15 +86,14 @@ def get_ori_names(n: int, pdbfile: PDBFile, max_topo_len: int):
             if len(pdbfile.topology) > max_topo_len:
                 max_topo_len = len(pdbfile.topology)
         else:
-            ori_names = [pdbfile.topology.file_name]
+            ori_names = [pdbfile.topology.file_name]  # type: ignore
             max_topo_len = 1
     return ori_names, max_topo_len
 
 
-def traceback_dataframe(data_dict: dict,
-                        rank_dict: dict,
-                        sel_step: list,
-                        max_topo_len: int):
+def traceback_dataframe(
+    data_dict: dict, rank_dict: dict, sel_step: list, max_topo_len: int
+) -> None:
     """
     Create traceback dataframe by combining together ranks and data.
 
@@ -84,7 +107,7 @@ def traceback_dataframe(data_dict: dict,
         List of selected steps.
     max_topo_len : int
         Maximum length of the topologies.
-    
+
     Returns
     -------
     df_ord : pandas.DataFrame
@@ -112,7 +135,7 @@ def traceback_dataframe(data_dict: dict,
     ordered_cols = sorted(df_merged.columns)
     df_ord = df_merged[ordered_cols]
     # last thing: substituting unk records with - in the last step
-    unk_records = df_ord[f'{last_step}'].str.startswith('unk')
+    unk_records = df_ord[f"{last_step}"].str.startswith("unk")
     df_ord.loc[unk_records, last_step] = "-"
     return df_ord
 
@@ -122,7 +145,7 @@ ap = argparse.ArgumentParser(
     prog="haddock3-traceback",
     description=__doc__,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+)
 
 libcli.add_rundir_arg(ap)
 
@@ -155,6 +178,22 @@ def main(run_dir):
     log.level = 20
     log.info(f"Running haddock3-traceback on {run_dir}")
 
+    # Reading steps
+    log.info("Reading input run directory")
+    # get the module folders from the run_dir input
+    all_steps = get_module_steps_folders(Path(run_dir))
+    log.info(f"All_steps: {', '.join(all_steps)}")
+    ana_modules = get_steps_without_pdbs(run_dir, all_steps)
+    log.info(f"Modules not to be analysed: {', '.join(ana_modules)}")
+    sel_step = [st for st in all_steps if st not in ana_modules]
+    # check if there are steps to traceback
+    if len(sel_step) == 0:
+        log.info("No steps to trace back. Exiting.")
+        return
+    else:
+        log.info(f"Steps to trace back: {', '.join(sel_step)}")
+
+    # creating traceback folder
     outdir = Path(run_dir, TRACK_FOLDER)
     try:
         outdir.mkdir(exist_ok=False)
@@ -162,15 +201,8 @@ def main(run_dir):
     except FileExistsError:
         log.warning(f"Directory {str(outdir.resolve())} already exists.")
 
-    # Reading steps
-    log.info("Reading input run directory")
-    # get the module folders from the run_dir input
-    all_steps = get_module_steps_folders(Path(run_dir))
-    log.info(f"All_steps: {', '.join(all_steps)}")
-    sel_step = [st for st in all_steps if st.split("_")[1] not in ANA_MODULES]
-    log.info(f"Steps to trace back: {', '.join(sel_step)}")
-    
-    data_dict, rank_dict = {}, {}
+    data_dict: dict[Any, Any] = {}
+    rank_dict: dict[Any, Any] = {}
     unk_idx, max_topo_len = 0, 0
     # this cycle goes through the steps in reverse order
     for n in range(len(sel_step) - 1, -1, -1):
@@ -211,7 +243,7 @@ def main(run_dir):
                     # we've already seen this pdb before.
                     idx = ls_values.index(str(pdbfile.rel_path))
                     key = list(data_dict.keys())[idx // delta]
-                 
+
                 # assignment
                 for el in ori_names:
                     data_dict[key].append(el)
@@ -219,7 +251,7 @@ def main(run_dir):
             else:  # last step of the workflow
                 data_dict[str(pdbfile.rel_path)] = [on for on in ori_names]
                 rank_dict[str(pdbfile.rel_path)] = [rank]
-                
+
         # print(f"rank_dict {rank_dict}")
         # print(f"data_dict {data_dict}, maxtopo {max_topo_len}")
 
@@ -233,14 +265,14 @@ def main(run_dir):
         new_key = key.split("/")[-1]
         final_rank_dict[new_key] = rank_dict[key]
     # dumping the data into a dataframe
-    df_output = traceback_dataframe(final_data_dict,
-                                    final_rank_dict,
-                                    sel_step,
-                                    max_topo_len)
+    df_output = traceback_dataframe(
+        final_data_dict, final_rank_dict, sel_step, max_topo_len
+    )
     # dumping the dataframe
     track_filename = Path(run_dir, TRACK_FOLDER, "traceback.tsv")
-    log.info(f"Output dataframe {track_filename} "
-             f"created with shape {df_output.shape}")
+    log.info(
+        f"Output dataframe {track_filename} " f"created with shape {df_output.shape}"
+    )
     df_output.to_csv(track_filename, sep="\t", index=False)
     return
 

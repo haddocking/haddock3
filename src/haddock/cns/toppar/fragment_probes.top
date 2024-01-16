@@ -1,7 +1,8 @@
 Remarks Parameters for Fragment-based Ligand Binding Site Mapping
 Remarks created by acpype (Rev: 7268) on Mon Apr 13 10:01:53 2015
 
-set echo=false end
+set message ? end eval ($old_message=$result) set echo ? end eval ($old_echo=$result)
+set message=off echo=off end
 
 MASS c1__     12.010
 MASS c3__     12.010
@@ -2203,4 +2204,5 @@ IMPRoper C15   C23   N2    C22
 
 END {RESIdue MIY}
 
-set echo=true end
+
+set message=$old_message echo=$old_echo end

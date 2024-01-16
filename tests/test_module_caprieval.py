@@ -350,6 +350,26 @@ def test_protlig_fnat(protlig_caprimodule):
     assert round_two_dec(protlig_caprimodule.fnat) == 1.0
 
 
+def test_protlig_allatoms(protlig_caprimodule):
+    """Test protein-protein all atoms calculations."""
+    # modify module allatoms parameter
+    protlig_caprimodule.allatoms = True
+    protlig_caprimodule.atoms = protlig_caprimodule._load_atoms(
+        protlig_caprimodule.model,
+        protlig_caprimodule.reference,
+        full=protlig_caprimodule.allatoms,
+        )
+    # Compute values with all atoms calculations
+    protlig_caprimodule.calc_fnat()
+    protlig_caprimodule.calc_lrmsd()
+    protlig_caprimodule.calc_irmsd()
+    protlig_caprimodule.calc_ilrmsd()
+    assert round_two_dec(protlig_caprimodule.irmsd) == 0.16
+    assert round_two_dec(protlig_caprimodule.lrmsd) == 0.49
+    assert round_two_dec(protlig_caprimodule.ilrmsd) == 0.49
+    assert round_two_dec(protlig_caprimodule.fnat) == 1.0
+
+
 def test_protdna_irmsd(protdna_caprimodule):
     """Test protein-dna i-rmsd calculation."""
     protdna_caprimodule.calc_irmsd()

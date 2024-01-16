@@ -74,9 +74,11 @@ if ( $tobuild > 0 ) then
  
         end loop bndto 
 
-        do (x=x+2*random(1.0)-1) (store9)
-        do (y=y+2*random(1.0)-1) (store9)
-        do (z=z+2*random(1.0)-1) (store9)
+        for $id in id (store9) loop radis
+            do (x=x+2*random(1.0)-1) (id $id)
+            do (y=y+2*random(1.0)-1) (id $id)
+            do (z=z+2*random(1.0)-1) (id $id)
+        end loop radis
 
         {- start parameter for the side chain building -}
         parameter
@@ -135,7 +137,7 @@ if ( $tobuild > 0 ) then
             nprint=$nstep
             cmremove=false
         end
-  
+
         parameter
             nbonds
                 rcon=2. nbxmod=-3 repel=0.75
@@ -170,12 +172,10 @@ if ( $tobuild > 0 ) then
 
         flags exclude * include bond angl impr dihe vdw elec end
 
+        minimize powell nstep=500 nprint=50 end
+
         {- return masses to something sensible -}
         do (mass=refy) (store9)
-
-        do (vx=maxwell($bath)) (store9)
-        do (vy=maxwell($bath)) (store9)
-        do (vz=maxwell($bath)) (store9)
 
         dynamics cartesian
             nstep=$nstep

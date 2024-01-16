@@ -582,15 +582,9 @@ class CAPRI:
         atom_dic : dict
             Dictionary containing atoms observed in model and reference
         """
-<<<<<<< HEAD
         model_atoms = get_atoms(model, full=full)
         reference_atoms = get_atoms(reference, full=full)
-        atoms_dict = {}
-=======
-        model_atoms = get_atoms(model)
-        reference_atoms = get_atoms(reference)
         atoms_dict: AtomsDict = {}
->>>>>>> main
         atoms_dict.update(model_atoms)
         atoms_dict.update(reference_atoms)
         return atoms_dict

@@ -131,7 +131,6 @@ def look_for_capri(run_dir: str, module_id: int) -> Union[Path, None]:
         ]
     # analysis modules
     ana_modules = get_steps_without_pdbs(run_dir, prev_modules)
-    print(f"ana_modules {ana_modules}")
     # loop over the reversed list of previous modules
     capri_folder = None
     for prev_module in reversed(prev_modules):

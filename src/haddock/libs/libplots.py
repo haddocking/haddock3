@@ -94,9 +94,28 @@ value(int): cluster's rank
 """
 
 
-def create_html(json_content: str, plot_id: int = 1, figure_height: int = 800, figure_width: int = 00) -> str:
+def create_html(json_content: str, plot_id: int = 1, figure_height: int = 800, figure_width: int = 1000) -> str:
     """
     create html content given a plotly json
+
+    Parameters
+    ----------
+    json_content : str
+        plotly json content
+    
+    plot_id : int
+        plot id to be used in the html content
+    
+    figure_height : int
+        figure height (in pixels)
+    
+    figure_width : int
+        figure width (in pixels)
+    
+    Returns
+    -------
+    html_content : str
+        html content
     """
     html_content = f"""
     <div>

@@ -95,7 +95,9 @@ def main(pickled_tasks: FilePath) -> None:
     results: list[FilePath] = []
     for job in jobs:
         job.run()
-        results.append(job.input_file)
+        # check if the job has an input file
+        if hasattr(job, "input_file"):
+            results.append(job.input_file)
 
     # COMM.Barrier()
     # results = MPI.COMM_WORLD.gather(results, root=0)

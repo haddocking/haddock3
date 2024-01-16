@@ -353,7 +353,7 @@ class BaseHaddockModule(ABC):
                 self._params[param] = EmptyPath()
 
 
-EngineMode = Literal["hpc", "local", "mpi"]
+EngineMode = Literal["batch", "local", "mpi"]
 
 
 def get_engine(
@@ -374,7 +374,7 @@ def get_engine(
     """
     # a bit of a factory pattern here
     # this might end up in another module but for now its fine here
-    if mode == "hpc":
+    if mode == "batch":
         return partial(  # type: ignore
             HPCScheduler,
             target_queue=params["queue"],
@@ -392,7 +392,7 @@ def get_engine(
         return partial(MPIScheduler, ncores=params["ncores"])  # type: ignore
 
     else:
-        available_engines = ("hpc", "local", "mpi")
+        available_engines = ("batch", "local", "mpi")
         raise ValueError(
             f"Scheduler `mode` {mode!r} not recognized. "
             f"Available options are {', '.join(available_engines)}"

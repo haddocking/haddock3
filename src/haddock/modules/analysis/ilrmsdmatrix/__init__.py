@@ -28,6 +28,8 @@ from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libparallel import Scheduler, get_index_list
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule
+from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
     Contact,
     ContactJob,
@@ -166,8 +168,12 @@ class HaddockModule(BaseHaddockModule):
                 )
             contact_jobs.append(job)
 
-        contact_engine = Scheduler(contact_jobs, ncores=ncores)
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+
+        Engine = get_engine(exec_mode, self.params)
+        contact_engine = Engine(contact_jobs)
         contact_engine.run()
+
         # check if all the jobs have been completed
         contact_file_l = []
         not_found = []
@@ -225,7 +231,8 @@ class HaddockModule(BaseHaddockModule):
                 )
             ilrmsd_jobs.append(job)
 
-        ilrmsd_engine = Scheduler(ilrmsd_jobs, ncores=ncores)
+        Engine = get_engine(exec_mode, self.params)
+        ilrmsd_engine = Engine(ilrmsd_jobs)
         ilrmsd_engine.run()
 
         ilrmsd_file_l = []

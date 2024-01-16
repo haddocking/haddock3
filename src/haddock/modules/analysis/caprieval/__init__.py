@@ -4,8 +4,10 @@ from pathlib import Path
 
 from haddock.gear.config import load as read_config
 from haddock.core.typing import Any, FilePath
-from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule, get_module_steps_folders
+from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
+
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
@@ -97,9 +99,9 @@ class HaddockModule(BaseHaddockModule):
         #  but by assigning each model to an individual job
         #  we can handle scenarios in wich the models are hetergoneous
         #  for example during CAPRI scoring
-        capri_jobs: list[CAPRI] = []
+        jobs: list[CAPRI] = []
         for i, model_to_be_evaluated in enumerate(models, start=1):
-            capri_jobs.append(
+            jobs.append(
                 CAPRI(
                     identificator=str(i),
                     model=model_to_be_evaluated,
@@ -108,27 +110,29 @@ class HaddockModule(BaseHaddockModule):
                     params=self.params
                     )
                 )
+        
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        ncores = self.params['ncores']
-        capri_engine = Scheduler(capri_jobs, ncores=ncores)
-        capri_engine.run()
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(jobs)
+        engine.run()
 
         # very ugly way of loading the capri metrics back into
         #  the CAPRI object, there's definitively a better way
         #  of doing this
-        capri_jobs = merge_data(capri_jobs)
+        jobs = merge_data(jobs)
 
         # Each job created one .tsv, unify them:
         rearrange_ss_capri_output(
             output_name="capri_ss.tsv",
-            output_count=len(capri_jobs),
+            output_count=len(jobs),
             sort_key=self.params["sortby"],
             sort_ascending=self.params["sort_ascending"],
             path=Path(".")
             )
 
         capri_cluster_analysis(
-            capri_list=capri_jobs,
+            capri_list=jobs,
             model_list=models,
             output_fname="capri_clt.tsv",
             clt_threshold=self.params["clt_threshold"],

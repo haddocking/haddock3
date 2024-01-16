@@ -30,3 +30,24 @@ def confirm_resdic_chainid_length(params: Iterable[str]) -> None:
                 "more than one character in the chain "
                 "identifier. Chain IDs should have only one character."
                 )
+
+def get_analysis_exec_mode(mode: str) -> str:
+    """
+    Get the execution mode for analysis modules.
+
+    Parameters
+    ----------
+    exec_mode : str
+        The execution mode to use.
+
+    Returns
+    -------
+    str
+        The execution mode to use for the analysis modules. 
+        If it's "batch", it will be changed to "local".
+    """
+    if mode != "batch":
+        exec_mode = mode
+    else:
+        exec_mode = "local"
+    return exec_mode

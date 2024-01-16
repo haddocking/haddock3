@@ -3,8 +3,9 @@ from copy import deepcopy
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath, Union
-from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
+from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.contactmap.contmap import (
     ContactsMap,
     ClusteredContactMap,
@@ -82,11 +83,12 @@ class HaddockModule(BaseHaddockModule):
                     self.params,
                     )
                 contact_jobs.append(contmap_object)
+        
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        # Initiate `Scheduler`
-        scheduled = Scheduler(contact_jobs, ncores=self.params['ncores'])
-        # Run all jobs
-        scheduled.run()
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(contact_jobs)
+        engine.run()
 
         # Send models to the next step, no operation is done on them
         self.output_models = models

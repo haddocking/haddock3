@@ -10,8 +10,8 @@ from haddock.libs.libclust import (
     rank_clusters,
     write_structure_list,
     )
-from haddock.libs.libparallel import Scheduler
 from haddock.libs.libsubprocess import JobInputFirst
+from haddock.modules import get_engine
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
 from haddock.modules.analysis.clustfcc.clustfcc import (
     get_cluster_centers,
@@ -19,7 +19,7 @@ from haddock.modules.analysis.clustfcc.clustfcc import (
     write_clusters,
     write_clustfcc_file,
     )
-
+from haddock.modules.analysis import get_analysis_exec_mode
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
@@ -72,9 +72,12 @@ class HaddockModule(BaseHaddockModule):
                 self.params["contact_distance_cutoff"],
                 )
             contact_jobs.append(job)
+            
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
 
-        contact_engine = Scheduler(contact_jobs, ncores=self.params["ncores"])
-        contact_engine.run()
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(contact_jobs)
+        engine.run()
 
         contact_file_l: list[str] = []
         not_found: list[str] = []

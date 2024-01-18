@@ -78,17 +78,6 @@ mol1.nhise
 | *group*: molecule
 | *explevel*: expert
 
-mol1.prot_segid
-***************
-
-| *default*: 'A'
-| *type*: string
-| *title*: Segment ID
-| *short description*: Segment ID assigned to this molecule
-| *long description*: Segment ID assigned to this molecule in CNS. Used to distinguish different molecules
-| *group*: molecule
-| *explevel*: easy
-
 
 Expert
 ``````

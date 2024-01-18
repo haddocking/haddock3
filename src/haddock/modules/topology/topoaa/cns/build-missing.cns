@@ -108,6 +108,8 @@ if ( $tobuild > 0 ) then
  
         minimize powell nstep=50  nprint=10 end
 
+        set seed=$iniseed end
+
         do (vx=maxwell($bath)) (store9)
         do (vy=maxwell($bath)) (store9)
         do (vz=maxwell($bath)) (store9)
@@ -125,6 +127,8 @@ if ( $tobuild > 0 ) then
         flags include vdw end
 
         minimize powell nstep=50 nprint=10 end
+
+        set seed=$iniseed end
 
         do (vx=maxwell($bath)) (store9)
         do (vy=maxwell($bath)) (store9)
@@ -145,6 +149,8 @@ if ( $tobuild > 0 ) then
         end
 
         minimize powell nstep=100 nprint=25 end
+
+        set seed=$iniseed end
 
         do (vx=maxwell($bath)) (store9)
         do (vy=maxwell($bath)) (store9)
@@ -176,6 +182,12 @@ if ( $tobuild > 0 ) then
 
         {- return masses to something sensible -}
         do (mass=refy) (store9)
+
+        set seed=$iniseed end
+
+        do (vx=maxwell($bath)) (store9)
+        do (vy=maxwell($bath)) (store9)
+        do (vz=maxwell($bath)) (store9)
 
         dynamics cartesian
             nstep=$nstep

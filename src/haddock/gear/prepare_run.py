@@ -1043,22 +1043,8 @@ def populate_topology_molecule_params(topoaa: ParamMap) -> None:
     """Populate topoaa `molX` subdictionaries."""
     topoaa_dft = _read_defaults("topoaa.1")
 
-    # list of possible prot_segids
-    uppers = list(string.ascii_uppercase)[::-1]
-
-    # removes from the list those prot_segids that are already defined
-    for param in topoaa:
-        if param.startswith("mol") and param[3:].isdigit():
-            with suppress(KeyError):
-                uppers.remove(topoaa[param]["prot_segid"])
-
-    # populates the prot_segids just for those that were not defined
-    # in the user configuration file. Other parameters are populated as
-    # well. `prot_segid` is the only one differing per molecule.
     for i in range(1, len(topoaa["molecules"]) + 1):
         mol = f"mol{i}"
-        if not (mol in topoaa and "prot_segid" in topoaa[mol]):
-            topoaa_dft["mol1"]["prot_segid"] = uppers.pop()
 
         topoaa[mol] = recursive_dict_update(
             topoaa_dft["mol1"],

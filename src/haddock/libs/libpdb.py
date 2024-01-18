@@ -218,6 +218,11 @@ def identify_chainseg(pdb_file_path: FilePath,
                     segids.append(segid)
                 if chainid:
                     chains.append(chainid)
+                
+                if not segid and not chainid:
+                    raise ValueError(
+                        f"Could not identify chainID or segID in pdb {pdb_file_path}, line {line}"
+                        )
 
     if sort:
         segids = sorted(list(set(segids)))

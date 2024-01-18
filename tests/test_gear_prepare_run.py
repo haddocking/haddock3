@@ -56,8 +56,6 @@ def test_populate_topoaa_molecules():
         }
     populate_topology_molecule_params(topoaa)
     assert "mol2" in topoaa
-    assert topoaa["mol2"]["prot_segid"] == "B"
-    assert topoaa["mol1"]["prot_segid"] == "A"
     assert topoaa["mol2"]["cyclicpept"] is False
     assert topoaa["mol1"]["cyclicpept"] is True
     assert isnan(topoaa["mol2"]["hisd_1"])

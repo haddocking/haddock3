@@ -34,7 +34,7 @@ def protprot_input_models():
 
 @pytest.fixture
 def big_distance_matrix_data():
-    """Data containined in a distance matrix."""
+    """Big distance matrix data."""
     bigmatrix = []
     for i in range(1, MAX_NB_ENTRY_HTML_MATRIX + 1):
         for j in range(i + 1, MAX_NB_ENTRY_HTML_MATRIX + 2):
@@ -44,11 +44,12 @@ def big_distance_matrix_data():
 
 @pytest.fixture
 def small_distance_matrix_data():
-    """Data containined in a distance matrix."""
-    bigmatrix = []
+    """Distance matrix data."""
+    matrix = []
     for i in range(1, 10):
         for j in range(i + 1, 10):
-            bigmatrix.append(f'{i}\t{j}\t{random.random():.2f}')
+            matrix.append(f'{i}\t{j}\t{random.random():.2f}')
+    return matrix
 
 
 def test_write_structure_list(protprot_input_models):
@@ -95,13 +96,13 @@ def test_plot_cluster_matrix_big(big_distance_matrix_data):
         Path(matrix_path).unlink(missing_ok=False)
 
 
-def test_plot_cluster_matrix(big_distance_matrix_data):
+def test_plot_cluster_matrix(small_distance_matrix_data):
     """Test test_plot_cluster_matrix_big function with small matrix."""
     with tempfile.TemporaryDirectory(dir=".") as tmpdir:
         # Write matrix
         matrix_path = f'{tmpdir}smallmatrix.mat'
         with open(matrix_path, 'w') as f:
-            f.write('\n'.join(big_distance_matrix_data))
+            f.write('\n'.join(small_distance_matrix_data))
         # Run function
         figure_path = plot_cluster_matrix(
             matrix_path,

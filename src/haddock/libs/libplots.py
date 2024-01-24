@@ -446,7 +446,10 @@ def scatter_plot_plotly(
                 mode="markers",
                 text=_build_hover_text(gb_other),
                 legendgroup="Other",
-                marker=dict(color="white", line=dict(width=2, color="DarkSlateGrey")),
+                marker=dict(
+                    color="white",
+                    line=dict(width=2, color="DarkSlateGrey"),
+                    ),
                 hoverlabel=dict(
                     bgcolor="white",
                     font_size=16,
@@ -463,7 +466,7 @@ def scatter_plot_plotly(
         TITLE_NAMES[y_ax],
         title=f"{TITLE_NAMES[x_ax]} vs {TITLE_NAMES[y_ax]}",
     )
-    fig.write_html(px_fname, full_html=False, include_plotlyjs="cdn")
+    export_plotly_figure(fig, px_fname)
     # create format boxplot if necessary
     if format:
         fig.write_image(f"{x_ax}_{y_ax}.{format}", scale=scale)
@@ -1028,7 +1031,7 @@ def heatmap_plotly(
         labels: Optional[dict] = None,
         xlabels: Optional[list] = None,
         ylabels: Optional[list] = None,
-        color_scale: str = 'Greys_r',  # Greys_r, gray
+        color_scale: str = 'Greys_r',
         title: Optional[str] = None,
         output_fname: Path = Path('contacts.html'),
         ) -> Path:
@@ -1067,9 +1070,26 @@ def heatmap_plotly(
     # Place X axis on top
     fig.update_xaxes(side="top")
     # Save figure as html file
-    fig.write_html(output_fname)
+    export_plotly_figure(fig, output_fname)
     return output_fname
 
+
+def export_plotly_figure(
+        fig: Figure,
+        output_fname: Union[str, Path],
+        ) -> None:
+    # Detect output file extension
+    suffix = Path(output_fname).suffix
+    # Check corresponding function
+    if 'html' in suffix:
+        fig.write_html(
+            output_fname,
+            full_html=False,
+            include_plotlyjs="cdn",  # NOTE: on-the-fly download of the plotly js
+            )
+    elif suffix in ('.png', '.jpeg', '.webp', '.svg', '.pdf', '.eps', ):
+        fig.write_image(output_fname)
+    
   
 def make_alascan_plot(df, clt_id, scan_res="ALA"):
     """
@@ -1151,5 +1171,5 @@ def make_alascan_plot(df, clt_id, scan_res="ALA"):
         fig.add_vline(x=0.5 + n, line_color="gray", opacity=0.2)
     # save html
     html_output_filename = f"{plot_name}.html"
-    fig.write_html(html_output_filename)
+    export_plotly_figure(fig, html_output_filename)
 

@@ -20,6 +20,9 @@ import numpy as np
 from scipy.spatial.distance import squareform
 
 
+MAX_NB_ENTRY_HTML_MATRIX = 5000
+
+
 def write_structure_list(input_models: list[PDBFile],
                          clustered_models: list[PDBFile],
                          out_fname: FilePath) -> None:
@@ -64,8 +67,8 @@ def plot_cluster_matrix(
         diag_fill: Union[int, float] = 1,
         color_scale: str = "Blues",
         reverse: bool = False,
-        output_fname: Union[str, Path, FilePath] = 'clust_matrix.html',
-        ) -> None:
+        output_fname: Union[str, Path, FilePath] = 'clust_matrix',
+        ) -> str:
     """Plot a plotly heatmap of a matrix file.
 
     Parameters
@@ -84,6 +87,11 @@ def plot_cluster_matrix(
         Should the color scale be reversed ?, by default False
     output_fname : Union[str, Path, FilePath], optional
         Name of the output file to generate, by default 'clust_matrix.html'
+
+    Return
+    ------
+    output_fname_ext : str
+        Path to the generated file containing the figure.
     """
     upper_diag, lower_diag = [], []
     # Read matrix
@@ -103,13 +111,13 @@ def plot_cluster_matrix(
     # Genereate full matrix from N*(N-1)/2 vector
     upper_matrix = squareform(upper_diag)
     lower_matrix = squareform(lower_diag)
-
     # Update diagonal with data
     np.fill_diagonal(upper_matrix, diag_fill)
+
     # Full matrix (lower triangle + upper triangle)
     full_matrix = np.tril(lower_matrix, k=-1) + np.triu(upper_matrix)
 
-    # Extract submatrix of selected models and re-order it
+    # Extract submatrix of selected models and re-order them
     submat = full_matrix[np.ix_(final_order_idx, final_order_idx)]
 
     # Check if must reverse the colorscale
@@ -119,6 +127,9 @@ def plot_cluster_matrix(
         else:
             color_scale += '_r'
 
+    # Generate file extension ~ matrix size
+    ext = 'html' if len(final_order_idx) <= MAX_NB_ENTRY_HTML_MATRIX else 'png'
+    output_fname_ext = f"{output_fname}.{ext}"
     # Draw heatmap
     heatmap_plotly(
         submat,
@@ -127,5 +138,7 @@ def plot_cluster_matrix(
         ylabels=labels,
         color_scale=color_scale,
         title=f"{dttype} clustering matrix",
-        output_fname=output_fname,
+        output_fname=output_fname_ext,
         )
+    # Return generated filepath
+    return output_fname_ext

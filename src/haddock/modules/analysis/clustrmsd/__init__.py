@@ -223,19 +223,20 @@ class HaddockModule(BaseHaddockModule):
             for pdb in self.output_models:
                 final_order_idx.append(models.index(pdb))
                 labels.append(pdb.file_name.replace('.pdb', ''))
+
             # Define output filename
-            html_matrixpath = 'rmsd_matrix.html'
-            log.info(f"Plotting matrix in {html_matrixpath}")
+            html_matrix_basepath = 'rmsd_matrix'
             # Plot matrix
-            plot_cluster_matrix(
+            html_matrixpath = plot_cluster_matrix(
                 get_matrix_path(self.matrix_json.input[0]),
                 final_order_idx,
                 labels,
                 dttype='RMSD (Å)',
                 reverse=True,
                 diag_fill=0,
-                output_fname=html_matrixpath,
+                output_fname=html_matrix_basepath,
                 )
+            log.info(f"Plotting matrix in {html_matrixpath}")
 
         self.export_io_models()
         # sending matrix to next step of the workflow

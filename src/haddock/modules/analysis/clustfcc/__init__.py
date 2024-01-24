@@ -276,17 +276,17 @@ class HaddockModule(BaseHaddockModule):
                 final_order_idx.append(models_to_cluster.index(pdb))
                 labels.append(pdb.file_name.replace('.pdb', ''))
             # Define output filename
-            html_matrixpath = 'fccmatrix.html'
-            log.info(f"Plotting matrix in {html_matrixpath}")
+            html_matrix_basepath = 'fccmatrix'
             # Plot matrix
-            plot_cluster_matrix(
+            html_matrixpath = plot_cluster_matrix(
                 fcc_matrix_f,
                 final_order_idx,
                 labels,
                 dttype='FCC',
                 diag_fill=1,
-                output_fname=html_matrixpath,
+                output_fname=html_matrix_basepath,
                 )
+            log.info(f"Plotting matrix in {html_matrixpath}")
 
         # Export models for next module
         self.export_io_models()

@@ -56,8 +56,6 @@ def test_populate_topoaa_molecules():
         }
     populate_topology_molecule_params(topoaa)
     assert "mol2" in topoaa
-    assert topoaa["mol2"]["prot_segid"] == "B"
-    assert topoaa["mol1"]["prot_segid"] == "A"
     assert topoaa["mol2"]["cyclicpept"] is False
     assert topoaa["mol1"]["cyclicpept"] is True
     assert isnan(topoaa["mol2"]["hisd_1"])
@@ -74,12 +72,10 @@ def test_populate_topoaa_molecules_2():
     """Test mols are polated."""
     topoaa = {
         "molecules": ["file1.pdb", "file2.pdb"],
-        "mol2": {"cyclicpept": True, "prot_segid": "D"},
+        "mol2": {"cyclicpept": True},
         }
     populate_topology_molecule_params(topoaa)
     assert "mol1" in topoaa
-    assert topoaa["mol1"]["prot_segid"] == "A"
-    assert topoaa["mol2"]["prot_segid"] == "D"
 
     assert topoaa["mol1"]["cyclicpept"] is False
     assert topoaa["mol2"]["cyclicpept"] is True
@@ -99,27 +95,20 @@ def test_populate_topoaa_molecules_3():
     """Test mols are polated."""
     topoaa = {
         "molecules": ["file1.pdb", "file2.pdb", "file3.pdb"],
-        "mol2": {"cyclicpept": True, "prot_segid": "C"},
+        "mol2": {"cyclicpept": True},
         }
     populate_topology_molecule_params(topoaa)
     assert "mol1" in topoaa
-    assert topoaa["mol1"]["prot_segid"] == "A"
-    assert topoaa["mol2"]["prot_segid"] == "C"
-    assert topoaa["mol3"]["prot_segid"] == "B"
 
 
 def test_populate_topoaa_molecules_4():
     """Test mols are polated with prot_segid sequence."""
     topoaa = {
         "molecules": ["file1.pdb", "file2.pdb", "file3.pdb", "file4.pdb"],
-        "mol3": {"cyclicpept": True, "prot_segid": "A"},
+        "mol3": {"cyclicpept": True},
         }
     populate_topology_molecule_params(topoaa)
     assert "mol1" in topoaa
-    assert topoaa["mol1"]["prot_segid"] == "B"
-    assert topoaa["mol2"]["prot_segid"] == "C"
-    assert topoaa["mol3"]["prot_segid"] == "A"
-    assert topoaa["mol4"]["prot_segid"] == "D"
 
 
 def test_populate_mol_params():

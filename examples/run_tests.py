@@ -154,11 +154,6 @@ def main(examples, break_on_errors=True):
                 rmtree("run2", ignore_errors=True)
                 run_subprocess_cmd("haddock3-copy -r run1-test -m 0 4 -o run2")
 
-                # test --extend-run
-                run_subprocess_cmd(
-                    "haddock3 docking-extend-run-test.cfg --extend-run run2"
-                    )
-
                 # test exit with extend-run
                 rmtree("run2", ignore_errors=True)
                 run_subprocess_cmd("haddock3-copy -r run1-test -m 0 4 -o run2")

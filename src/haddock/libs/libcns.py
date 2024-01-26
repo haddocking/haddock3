@@ -330,6 +330,12 @@ def prepare_cns_input(
                     libpdb.identify_chainseg(pdb.rel_path, sort=False)
 
                 chainsegs = sorted(list(set(segids) | set(chains)))
+                # check if any of chainsegs is already in chainid_list
+                if not identifier.endswith("scoring"):
+                    if any(chainseg in chainid_list for chainseg in chainsegs):
+                        raise ValueError(
+                            f"Chain/seg IDs are not unique for pdbs {input_element}."
+                            )
                 chainid_list.extend(chainsegs)
 
             for i, _chainseg in enumerate(chainid_list, start=1):

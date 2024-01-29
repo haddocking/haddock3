@@ -712,10 +712,7 @@ end if
 
 delete selection=( &atom_delete ) end
 
-inline @MODULE:build-missing.cns
-
 !check for histidine protonation state if auto mode on
-!but only for the first model
 if ($autohis = true) then
     inline @MODULE:auto-his.cns
 end if
@@ -803,9 +800,6 @@ buffer message
     dump
 end
 buffer message reset end
-
-!do (segid = "    ") (all)
-!do (segid = $prot_segid_1) (all)
 
 write structure output=$output_psf_filename end
 write coordinates format=pdbo output=$output_pdb_filename end

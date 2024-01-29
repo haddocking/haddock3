@@ -6,7 +6,7 @@ stable beta version.
 [![unit tests](https://github.com/haddocking/haddock3/workflows/tests/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=tests)
 [![build](https://github.com/haddocking/haddock3/workflows/build/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=build)
 [![docs](https://github.com/haddocking/haddock3/workflows/pages/badge.svg?branch=main)](https://github.com/haddocking/haddock3/actions?workflow=pages)
-
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10527751.svg)](https://doi.org/10.5281/zenodo.10527751)
 * * *
 
 # HADDOCK3

@@ -27,6 +27,7 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import (
     Any,
     ArgumentParser,
@@ -55,7 +56,7 @@ from haddock.modules.analysis.caprieval import HaddockModule
 
 
 ANA_FOLDER = "analysis"  # name of the analysis folder
-INTER_STR = "interactive"  # suffix of interactive analysis folders
+INTER_STR = INTERACTIVE_RE_SUFFIX  # suffix of interactive analysis folders
 
 
 def get_cluster_ranking(capri_clt_filename: FilePath, top_cluster: int) -> ClRank:

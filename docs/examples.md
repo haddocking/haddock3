@@ -17,7 +17,7 @@ corresponding to different types of complexes, scenarios and data.
 Each directory contains both:
 
 - __test__ runs config files (to test the various workflows, make sure the installation works and any changes to the code/scripts have not broken the machinery). Those are set up to run locally.
-- __full__ runs config files with recommended parameter settings. Those runs are set up to be executed in HPC mode using slurm (the `...full.cfg`) files. Examples making use of MPI are also provided in some cases, together with an associated job file that should be submitted to the slurm batch system (`...full-mpi.cfg` and `...full-mpi.job`). Make sure to adapt the full config files to your own system.
+- __full__ runs config files with recommended parameter settings. Those runs are set up to be executed in "batch" mode using slurm (the `...full.cfg`) files. Examples making use of MPI are also provided in some cases, together with an associated job file that should be submitted to the slurm batch system (`...full-mpi.cfg` and `...full-mpi.job`). Make sure to adapt the full config files to your own system.
 
 The following examples are currently provided:
 

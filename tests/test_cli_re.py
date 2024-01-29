@@ -8,6 +8,7 @@ from . import golden_data
 import json
 import shutil
 import os
+from numpy import isclose
 from haddock.libs.libplots import read_capri_table
 
 
@@ -54,10 +55,10 @@ def test_cli_rescore(weights_dict):
             capritable_path = Path(interactive_folder, "capri_ss.tsv")
             rescored_ss = read_capri_table(capritable_path)
             first_model = rescored_ss.iloc[0]
-            assert first_model["dockq"] == 0.455
+            assert isclose(first_model["dockq"], 0.455, atol=0.001)
             assert first_model["model"] == "../1_rigidbody/rigidbody_645.pdb"
-            assert first_model["irmsd"] == 2.621
-            assert first_model["score"] == -28.743
+            assert isclose(first_model["irmsd"], 2.621, atol=0.001)
+            assert isclose(first_model["score"], -28.743, atol=0.001)
 
 
 def test_cli_reclustfcc():

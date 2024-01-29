@@ -7,6 +7,7 @@ import pandas as pd
 import plotly.colors as px_colors
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.io._utils import plotly_cdn_url
 from plotly.subplots import make_subplots
 
 from pathlib import Path
@@ -94,7 +95,12 @@ value(int): cluster's rank
 """
 
 
-def create_html(json_content: str, plot_id: int = 1, figure_height: int = 800, figure_width: int = 1000) -> str:
+def create_html(
+        json_content: str,
+        plot_id: int = 1,
+        figure_height: int = 800,
+        figure_width: int = 1000,
+        ) -> str:
     """
     create html content given a plotly json
 
@@ -120,7 +126,7 @@ def create_html(json_content: str, plot_id: int = 1, figure_height: int = 800, f
     html_content = f"""
     <div>
     <script type="text/javascript">window.PlotlyConfig = {{ MathJaxConfig: 'local' }};</script>
-    <script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+    <script src="{plotly_cdn_url()}"></script>
     <div id="plot{plot_id}" class="plotly-graph-div" style="height:{figure_height}px; width:{figure_width}px;">
     </div>
     <script id="data{plot_id}" type="application/json">

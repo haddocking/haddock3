@@ -45,9 +45,10 @@ def big_distance_matrix_data():
 @pytest.fixture
 def small_distance_matrix_data():
     """Distance matrix data."""
+    small = 10
     matrix = []
-    for i in range(1, 10):
-        for j in range(i + 1, 10):
+    for i in range(1, small):
+        for j in range(i + 1, small + 1):
             matrix.append(f'{i}\t{j}\t{random.random():.2f}')
     return matrix
 

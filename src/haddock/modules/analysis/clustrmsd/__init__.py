@@ -231,7 +231,6 @@ class HaddockModule(BaseHaddockModule):
                 get_matrix_path(self.matrix_json.input[0]),
                 final_order_idx,
                 labels,
-                dttype='RMSD (Å)',
                 dttype='RMSD(Å)',
                 reverse=True,
                 diag_fill=0,

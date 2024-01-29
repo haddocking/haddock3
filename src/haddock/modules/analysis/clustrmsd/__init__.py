@@ -232,6 +232,7 @@ class HaddockModule(BaseHaddockModule):
                 final_order_idx,
                 labels,
                 dttype='RMSD (Å)',
+                dttype='RMSD(Å)',
                 reverse=True,
                 diag_fill=0,
                 output_fname=html_matrix_basepath,

@@ -447,13 +447,13 @@ def main(
         # check if subfolder is already present
         dest_path = Path(ANA_FOLDER, subfolder_name)
         if dest_path.exists():
-            if len(os.listdir(dest_path)) != 0:
+            if len(os.listdir(dest_path)) != 0 and not inter:
                 log.warning(
                     f"{dest_path} exists and is not empty. " "Skipping analysis..."
                 )
                 continue
-            else:  # subfolder is empty, remove it.
-                log.info(f"Removing empty folder {dest_path}.")
+            else:  # subfolder is empty or is interactive, remove it.
+                log.info(f"Removing folder {dest_path}.")
                 shutil.rmtree(dest_path)
 
         # run the analysis

@@ -229,67 +229,75 @@ class ContactsMap():
 
         # generate outputs for single models
         if self.params['single_model_analysis']:
-
-            # write contacts
-            header = ['res1', 'res2']
-            header += [
-                v for v in sorted(res_res_contacts[0])
-                if v not in header
-                ]
-            fpath = write_res_contacts(
-                res_res_contacts,
-                header,
-                f'{self.output}_contacts.tsv',
-                interchain_data={
-                    'path': f'{self.output}_interchains_contacts.tsv',
-                    'data_key': 'ca-ca-dist',
-                    'contact_threshold': self.params['ca_ca_dist_threshold'],
-                    }
+            self.generate_output(
+                res_res_contacts, all_heavy_interchain_contacts,
                 )
-            log.info(f'Generated contacts file: {fpath}')
-            self.files['res-res-contacts'] = fpath
-
-            # Write interchain heavy atoms contacts
-            header2 = ['atom1', 'atom2', 'dist']
-            fpath2 = write_res_contacts(
-                all_heavy_interchain_contacts,
-                header2,
-                f'{self.output}_interchain_heavyatom_contacts.tsv',
-                )
-            log.info(f'Generated contacts file: {fpath2}')
-            self.files['atom-atom-interchain-contacts'] = fpath2
-
-            # Genreate corresponding heatmap
-            if self.params['generate_heatmap']:
-                heatmap = tsv_to_heatmap(
-                    fpath,
-                    data_key='ca-ca-dist',
-                    contact_threshold=self.params['ca_ca_dist_threshold'],
-                    colorscale=self.params['color_ramp'],
-                    output_fname=f'{self.output}_heatmap.html',
-                    )
-                log.info(f'Generated single model heatmap file: {heatmap}')
-                self.files['res-res-contactmap'] = heatmap
-
-            # Generate corresponding chord chart
-            if self.params['generate_chordchart']:
-                # find theshold type
-                if self.params['chordchart_datatype'] == 'ca-ca-dist':
-                    threshold = self.params['ca_ca_dist_threshold']
-                else:
-                    threshold = self.params['shortest_dist_threshold']
-                chordp = tsv_to_chordchart(
-                    fpath,
-                    data_key=self.params['chordchart_datatype'],
-                    contact_threshold=threshold,
-                    output_fname=f'{self.output}_chordchart.html',
-                    filter_intermolecular_contacts=True,
-                    title=Path(self.output).stem.replace('_', ' '),
-                    )
-                log.info(f'Generated single model chordchart file: {chordp}')
-                self.files['res-res-chordchart'] = chordp
 
         return res_res_contacts, all_heavy_interchain_contacts
+    
+    def generate_output(
+            self,
+            res_res_contacts: list[dict],
+            all_heavy_interchain_contacts: list[dict],
+            ) -> None:
+        # write contacts
+        header = ['res1', 'res2']
+        header += [
+            v for v in sorted(res_res_contacts[0])
+            if v not in header
+            ]
+        fpath = write_res_contacts(
+            res_res_contacts,
+            header,
+            f'{self.output}_contacts.tsv',
+            interchain_data={
+                'path': f'{self.output}_interchains_contacts.tsv',
+                'data_key': 'ca-ca-dist',
+                'contact_threshold': self.params['ca_ca_dist_threshold'],
+                }
+            )
+        log.info(f'Generated contacts file: {fpath}')
+        self.files['res-res-contacts'] = fpath
+
+        # Genreate corresponding heatmap
+        if self.params['generate_heatmap']:
+            heatmap = tsv_to_heatmap(
+                fpath,
+                data_key='ca-ca-dist',
+                contact_threshold=self.params['ca_ca_dist_threshold'],
+                colorscale=self.params['color_ramp'],
+                output_fname=f'{self.output}_heatmap.html',
+                )
+            log.info(f'Generated single model heatmap file: {heatmap}')
+            self.files['res-res-contactmap'] = heatmap
+
+        # Generate corresponding chord chart
+        if self.params['generate_chordchart']:
+            # find theshold type
+            if self.params['chordchart_datatype'] == 'ca-ca-dist':
+                threshold = self.params['ca_ca_dist_threshold']
+            else:
+                threshold = self.params['shortest_dist_threshold']
+            chordp = tsv_to_chordchart(
+                fpath,
+                data_key=self.params['chordchart_datatype'],
+                contact_threshold=threshold,
+                output_fname=f'{self.output}_chordchart.html',
+                filter_intermolecular_contacts=True,
+                title=Path(self.output).stem.replace('_', ' '),
+                )
+            log.info(f'Generated single model chordchart file: {chordp}')
+            self.files['res-res-chordchart'] = chordp
+
+        # Write interchain heavy atoms contacts
+        header2 = ['atom1', 'atom2', 'dist']
+        fpath2 = write_res_contacts(
+            all_heavy_interchain_contacts,
+            header2,
+            f'{self.output}_interchain_heavyatom_contacts.tsv',
+            )
+        log.info(f'Generated contacts file: {fpath2}')
+        self.files['atom-atom-interchain-contacts'] = fpath2
 
 
 class ClusteredContactMap():
@@ -307,6 +315,48 @@ class ClusteredContactMap():
         self.files: dict[str, Union[str, Path]] = {}
         self.terminated = False
 
+    @staticmethod
+    def aggregate_contacts(
+            contacts_holder: dict,
+            contact_keys: list[str],
+            contacts: list[dict],
+            key1: str,
+            key2: str,
+            ) -> None:
+        """Aggregate single models data belonging to a cluster.
+
+        Parameters
+        ----------
+        contacts_holder : dict
+            Dictionnary holding list of contact data
+        contact_keys : list[str]
+            Order of the keys to access the dictionnary
+        contacts : list[dict]
+            Singel model contact data.
+        key1 : str
+            Name of the key to access first entry in data.
+        key2 : str
+            Name of the key to access second entry in data.
+        """
+        # Parse outputs to aggregate contacts in `clusters_contacts`
+        for cont in contacts:
+            # Check key
+            combined_key = f'{cont[key2]}/{cont[key1]}'  # resversed
+            if combined_key not in contacts_holder.keys():
+                combined_key = f'{cont[key1]}/{cont[key2]}'  # normal
+                if combined_key not in contacts_holder.keys():
+                    # Add key order
+                    contact_keys.append(combined_key)
+                    # Initiate key
+                    contacts_holder[combined_key] = {
+                        k: []
+                        for k in cont.keys()
+                        if k not in [key1, key2]
+                        }
+            # Add data
+            for dtk in contacts_holder[combined_key].keys():
+                contacts_holder[combined_key][dtk].append(cont[dtk])
+
     def run(self):
         """Process analysis of contacts of a set of PDB structures."""
         # initiate holding variables
@@ -314,6 +364,7 @@ class ClusteredContactMap():
         resres_keys_list = []  # Ordered residue-residue contacts keys
         clusters_heavyatm_contacts = {}  # Interchain atom-atom contacts
         atat_keys_list = []  # Ordered interchain atom-atom contacts keys
+
         # loop over models/structures
         for pdb_path in self.models:
             # initiate object
@@ -323,33 +374,54 @@ class ClusteredContactMap():
                 self.params,
                 )
             # Run it
-            pdb_contacts, heavy_contacts = contact_map_obj.run()
+            pdb_contacts, interchain_heavy_contacts = contact_map_obj.run()
 
             # Parse outputs to aggregate contacts in `clusters_contacts`
-            for cont in pdb_contacts:
-                # Check key
-                combined_key = f'{cont["res2"]}/{cont["res1"]}'  # resversed
-                if combined_key not in clusters_contacts.keys():
-                    combined_key = f'{cont["res1"]}/{cont["res2"]}'  # normal
-                    if combined_key not in clusters_contacts.keys():
-                        # Add key order
-                        resres_keys_list.append(combined_key)
-                        # Initiate key
-                        clusters_contacts[combined_key] = {
-                            k: []
-                            for k in cont.keys()
-                            if k not in ["res1", "res2"]
-                            }
-                # Add data
-                for dtk in clusters_contacts[combined_key].keys():
-                    clusters_contacts[combined_key][dtk].append(cont[dtk])
+            self.aggregate_contacts(
+                clusters_contacts, resres_keys_list,
+                pdb_contacts,
+                "res1", "res2",
+                )
 
+            # Parse outputs for heavy atoms contacts
+            self.aggregate_contacts(
+                clusters_heavyatm_contacts, atat_keys_list,
+                interchain_heavy_contacts,
+                "atom1", "atom2",
+                )
+            
+        # Initiate heavy atoms contact cluster aggrated data
+        heavy_atm_clust_list: list[dict] = []
+        for atatk in atat_keys_list:
+            at1, at2 = atatk.split('/')
+            # point corresponding list of distances
+            h_dists = clusters_heavyatm_contacts[atatk]['dist']
+            # Summerize it
+            heavy_atm_clust_list.append({
+                    "atom1": at1,
+                    "atom2": at2,
+                    "nb_dists": len(h_dists),
+                    "avg_dist": round(np.mean(h_dists), 2),
+                    "std_dist": round(np.std(h_dists), 2),
+                })
+        # write contacts
+        header = ['atom1', 'atom2']
+        header += [
+            v for v in sorted(heavy_atm_clust_list[0])
+            if v not in header
+            ]
+        hfpath = write_res_contacts(
+            heavy_atm_clust_list,
+            header,
+            f'{self.output}_heavyatoms_interchain_contacts.tsv',
+            )
+        log.info(f'Generated heavy atoms interchain contacts file: {hfpath}')
+        
         # Initiate cluster aggregated data holder
         combined_clusters_list = []
         # Loop over ordered keys
         for combined_key in resres_keys_list:
             # point data
-            res1, res2 = combined_key.split('/')
             dt = clusters_contacts[combined_key]
 
             # Compute averages Ca-Ca distances
@@ -384,6 +456,9 @@ class ClusteredContactMap():
                 )[0]
             # Compute probability for this contact type to be found
             cont_t_probability = cont_ts.count(cont_t) / len(dt['contact-type'])
+
+            # Split key to recover resiudes names
+            res1, res2 = combined_key.split('/')
 
             # Hold summary data for cluster
             combined_clusters_list.append({
@@ -848,17 +923,21 @@ def extract_heavyatom_contacts(
         List holding contact data
     """
     all_contacts: list[dict[str, Union[float, str]]] = []
-    # point data
+    # point data for first residue
     res1_indices = resdt[res1_key]['atoms_indices']
     res1_atnames = resdt[res1_key]['atoms_order']
+    # point data for second residue
     res2_indices = resdt[res2_key]['atoms_indices']
     res2_atnames = resdt[res2_key]['atoms_order']
     # Loop over res1 atoms / indices
     for r1_atname, r1_atindex in zip(res1_atnames, res1_indices):
         # Loop over res2 atoms / indices
         for r2_atname, r2_atindex in zip(res2_atnames, res2_indices):
+            # Point corresponding distance in matrix
             r1_r2_dist = matrix[r1_atindex, r2_atindex]
+            # Check if distance <= threshold
             if r1_r2_dist <= contact_distance:
+                # Hold data
                 contactdt = {
                     'atom1': f'{res1_key}-{r1_atname}',
                     'atom2': f'{res2_key}-{r2_atname}',
@@ -928,14 +1007,17 @@ def write_res_contacts(
         'res1': 'Chain-Resname-ResID key identifying first residue',
         'res2': 'Chain-Resname-ResID key identifying second residue',
         'ca-ca-dist': 'observed distances between the two Ca',
-        'ca-ca-cont-probability': 'probability of times the ca-ca-dist was observed under threshold',  # noqa : E501
+        'ca-ca-cont-probability': 'probability to observe ca-ca-dist under threshold in cluster',  # noqa : E501
         'shortest-dist': 'observed shortest distance between the two residues',
-        'shortest-cont-probability': 'probability of times the shortest distance was observed under threshold',  # noqa : E501
+        'shortest-cont-probability': 'probability to observe the shortest distance under threshold in cluster',  # noqa : E501
         'contact-type': 'type of contacts between the two residues',
         'contact-type-probability': 'probability of times the type of contacts between the two residues is observed',  # noqa : E501
         'atom1': 'Chain-Resname-ResID-Atome key identifying first atom',
         'atom2': 'Chain-Resname-ResID-Atome key identifying second atom',
         'dist': 'Observed distance between two atoms',
+        'nb_dists': "Total number of observed distances",
+        'avg_dist': "Cluster average distance",
+        'std_dist': "Cluster standard deviation distance",
         }
 
     # Check for inter chain contacts

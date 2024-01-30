@@ -400,7 +400,7 @@ class ClusteredContactMap():
                 )
 
         # Initiate heavy atoms contact cluster aggrated data
-        heavy_atm_clust_list: list[dict] = []
+        heavy_atm_clust_list = []
         for atatk in atat_keys_list:
             at1, at2 = atatk.split('/')
             # point corresponding list of distances
@@ -560,7 +560,7 @@ def make_contactmap_report(
         job_files = glob.glob(f"{basepath}*")
 
         # Sort them by file extension
-        ext_names = {}
+        ext_names: dict[str, Union[str, Path]] = {}
         for fpath in job_files:
             _fname, ext = os.path.splitext(fpath)
             if ext not in ext_names.keys():
@@ -989,7 +989,7 @@ def min_dist(matrix: NDFloat) -> float:
 def write_res_contacts(
         res_res_contacts: list[dict],
         header: list[str],
-        path: Path,
+        path: Union[Path, str],
         sep: str = '\t',
         interchain_data: Union[bool, dict] = None,
         ) -> Path:
@@ -1090,7 +1090,7 @@ def tsv_to_heatmap(
         contact_threshold: float = 7.5,
         colorscale: str = 'Greys',
         output_fname: Union[Path, str] = 'contacts.html',
-        ) -> None:
+        ) -> Union[Path, str]:
     """Read a tsv file and generate a heatmap from it.
 
     Paramters
@@ -1106,6 +1106,11 @@ def tsv_to_heatmap(
          any value above it will be set to this value.
     output_fname : Path
         Path to the generated graph.
+
+    Return
+    ------
+    output_filepath : Union[Path, str]
+        Path to the generated file.
     """
     half_matrix: list[float] = []
     labels: list[str] = []
@@ -2186,7 +2191,7 @@ def tsv_to_chordchart(
         filter_intermolecular_contacts: bool = True,
         output_fname: Union[Path, str] = 'contacts_chordchart.html',
         title: str = 'Chord diagram',
-        ) -> None:
+        ) -> Union[Path, str]:
     """Read a tsv file and generate a chord diagram from it.
 
     Paramters

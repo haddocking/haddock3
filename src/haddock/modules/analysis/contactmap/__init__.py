@@ -2,13 +2,15 @@
 from copy import deepcopy
 from pathlib import Path
 
-from haddock.core.typing import Any, FilePath, Union
+from haddock.core.typing import Any, FilePath, Union, SupportsRunT
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.contactmap.contmap import (
     ContactsMap,
+    ContactsMapJob,
     ClusteredContactMap,
     get_clusters_sets,
+    make_contactmap_report,
     topX_models,
     )
 
@@ -50,7 +52,7 @@ class HaddockModule(BaseHaddockModule):
             self.finish_with_error(e)
 
         # Initiate holder of all jobs to be run by the `Scheduler`
-        contact_jobs: list[Union[ContactsMap, ClusteredContactMap]] = []
+        contact_jobs: list[SupportsRunT] = []
         # Obtain clusters
         clusters_sets = get_clusters_sets(models)
         # Loop over clusters
@@ -67,26 +69,47 @@ class HaddockModule(BaseHaddockModule):
                 # Loop over models to analyse
                 for model in top_models:
                     modelfname = Path(model.file_name).stem
-                    contmap_object = ContactsMap(
-                        Path(model.rel_path),
+                    # Create a job object
+                    contmap_job = ContactsMapJob(
                         Path(f"Unclustered_contmap_{modelfname}"),
                         single_models_params,
+                        modelfname,
+                        # Create a contact map object
+                        ContactsMap(
+                            Path(model.rel_path),
+                            Path(f"Unclustered_contmap_{modelfname}"),
+                            modelfname,
+                            single_models_params,
+                            ),
                         )
-                    contact_jobs.append(contmap_object)
+                    contact_jobs.append(contmap_job)
 
             # For clustered models
             else:
-                contmap_object = ClusteredContactMap(
-                    [Path(model.rel_path) for model in clt_models],
+                # Create a job object
+                contmap_job = ContactsMapJob(
                     Path(f"cluster{clustid}_contmap"),
                     self.params,
+                    f"Cluster_{clustid}",
+                    # Create a contact map object
+                    ClusteredContactMap(
+                        [Path(model.rel_path) for model in clt_models],
+                        Path(f"cluster{clustid}_contmap"),
+                        self.params,
+                        ),
                     )
-                contact_jobs.append(contmap_object)
+                contact_jobs.append(contmap_job)
 
         # Initiate `Scheduler`
         scheduled = Scheduler(contact_jobs, ncores=self.params['ncores'])
         # Run all jobs
         scheduled.run()
+
+        # Generate report
+        _reportpat = make_contactmap_report(
+            contact_jobs,
+            "ContactMapReport.html",
+            )
 
         # Send models to the next step, no operation is done on them
         self.output_models = models

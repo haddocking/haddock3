@@ -4,6 +4,8 @@ Chord diagram functions were adapted from:
 https://plotly.com/python/v3/filled-chord-diagram/
 """
 
+
+import glob
 from pathlib import Path
 
 import numpy as np
@@ -21,7 +23,14 @@ from haddock.libs.libpdb import (
     slc_y,
     slc_z,
     )
-from haddock.core.typing import Any, NDFloat, NDArray, Optional, Union
+from haddock.core.typing import (
+    Any,
+    NDFloat,
+    NDArray,
+    Optional,
+    Union,
+    SupportsRun,
+    )
 from haddock.libs.libplots import heatmap_plotly
 
 
@@ -145,10 +154,37 @@ CHAIN_COLORS = CHAIN_COLORS[::-1]
 ##################
 # Define classes #
 ##################
+class ContactsMapJob(SupportsRun):
+    """A Job dedicated to the running of contact maps objects."""
+    def __init__(
+            self,
+            output,
+            params,
+            name,
+            contact_obj,
+            ):
+        super(ContactsMapJob, self).__init__()
+        self.params = params
+        self.output = output
+        self.name = name
+        self.contact_obj = contact_obj
+        self.contact_obj.files = {}
+
+    def run(self):
+        """Run this ContactMap Object Job."""
+        self.contact_obj.run()
+        return
+
+
 class ContactsMap():
     """ContactMap analysis for single structure."""
 
-    def __init__(self, model: Path, output: Path, params: dict) -> None:
+    def __init__(
+            self,
+            model: Path,
+            output: Path,
+            params: dict,
+            ) -> None:
         self.model = model
         self.output = output
         self.params = params
@@ -209,6 +245,7 @@ class ContactsMap():
                     }
                 )
             log.info(f'Generated contacts file: {fpath}')
+            self.files['res-res-contacts'] = fpath
 
             # Write interchain heavy atoms contacts
             header2 = ['atom1', 'atom2', 'dist']
@@ -218,6 +255,7 @@ class ContactsMap():
                 f'{self.output}_interchain_heavyatom_contacts.tsv',
                 )
             log.info(f'Generated contacts file: {fpath2}')
+            self.files['atom-atom-interchain-contacts'] = fpath2
 
             # Genreate corresponding heatmap
             if self.params['generate_heatmap']:
@@ -229,6 +267,7 @@ class ContactsMap():
                     output_fname=f'{self.output}_heatmap.html',
                     )
                 log.info(f'Generated single model heatmap file: {heatmap}')
+                self.files['res-res-contactmap'] = heatmap
 
             # Generate corresponding chord chart
             if self.params['generate_chordchart']:
@@ -246,6 +285,7 @@ class ContactsMap():
                     title=Path(self.output).stem.replace('_', ' '),
                     )
                 log.info(f'Generated single model chordchart file: {chordp}')
+                self.files['res-res-chordchart'] = chordp
 
         return res_res_contacts, all_heavy_interchain_contacts
 
@@ -267,10 +307,10 @@ class ClusteredContactMap():
     def run(self):
         """Process analysis of contacts of a set of PDB structures."""
         # initiate holding variables
-        clusters_contacts = {}
-        clusters_heavyatm_contacts = {}
-        resres_keys_list = []
-        atat_keys_list = []
+        clusters_contacts = {}  # Residue-residue contacts
+        resres_keys_list = []  # Ordered residue-residue contacts keys
+        clusters_heavyatm_contacts = {}  # Interchain atom-atom contacts
+        atat_keys_list = []  # Ordered interchain atom-atom contacts keys
         # loop over models/structures
         for pdb_path in self.models:
             # initiate object
@@ -316,7 +356,7 @@ class ClusteredContactMap():
                 v for v in dt['ca-ca-dist']
                 if v <= self.params['ca_ca_dist_threshold']
                 ]
-            ca_ca_cont_ratio = len(ca_ca_above_thresh) / len(dt['ca-ca-dist'])
+            ca_ca_cont_probability = len(ca_ca_above_thresh) / len(dt['ca-ca-dist'])
 
             # Compute averages for shortest distances
             avg_shortest = np.mean(dt['shortest-dist'])
@@ -326,7 +366,7 @@ class ClusteredContactMap():
                 if v <= self.params['shortest_dist_threshold']
                 ]
             # Compute nb. time the cluster members holds a value under threshold
-            shortest_cont_ratio = len(short_ab_t) / len(dt['shortest-dist'])
+            shortest_cont_probability = len(short_ab_t) / len(dt['shortest-dist'])
 
             # Find most representative contact type
             cont_ts = list(set(dt['contact-type']))
@@ -336,19 +376,19 @@ class ClusteredContactMap():
                 key=lambda k: cont_ts.count(k),
                 reverse=True,
                 )[0]
-            # Compute ratio for this contact type to be found
-            cont_t_ratio = cont_ts.count(cont_t) / len(dt['contact-type'])
+            # Compute probability for this contact type to be found
+            cont_t_probability = cont_ts.count(cont_t) / len(dt['contact-type'])
 
             # Hold summary data for cluster
             combined_clusters_list.append({
                 'res1': res1,
                 'res2': res2,
                 'ca-ca-dist': round(avg_ca_ca_dist, 1),
-                'ca-ca-cont-ratio': round(ca_ca_cont_ratio, 2),
+                'ca-ca-cont-probability': round(ca_ca_cont_probability, 2),
                 'shortest-dist': round(avg_shortest, 1),
-                'shortest-cont-ratio': round(shortest_cont_ratio, 2),
+                'shortest-cont-probability': round(shortest_cont_probability, 2),
                 'contact-type': cont_t,
-                'contact-type-ratio': round(cont_t_ratio, 2),
+                'contact-type-probability': round(cont_t_probability, 2),
                 })
         
         # write contacts
@@ -368,6 +408,8 @@ class ClusteredContactMap():
                 }
             )
         log.info(f'Generated contacts file: {fpath}')
+        self.files['res-res-contacts'] = fpath
+        self.files['atom-atom-interchain-contacts'] = f'{self.output}_interchains_contacts.tsv'  # noqa : E501
 
         # Generate corresponding heatmap
         if self.params['generate_heatmap']:
@@ -379,6 +421,7 @@ class ClusteredContactMap():
                 output_fname=f'{self.output}_heatmap.html',
                 )
             log.info(f'Generated cluster contacts heatmap: {heatmap_path}')
+            self.files['res-res-contactmap'] = heatmap_path
 
         # Generate corresponding chord chart
         if self.params['generate_chordchart']:
@@ -396,8 +439,70 @@ class ClusteredContactMap():
                 title=Path(self.output).stem.replace('_', ' '),
                 )
             log.info(f'Generated cluster contacts chordchart file: {chordp}')
+            self.files['res-res-chordchart'] = chordp
 
         self.terminated = True
+
+
+def make_contactmap_report(
+        contactmap_jobs: list[ContactsMapJob],
+        outputpath: Union[str, Path],
+        ) -> Union[str, Path]:
+    """Generate a html navigation page holding all generated files.
+
+    Parameters
+    ----------
+    contact_jobs : list[Union[ClusteredContactMap, ContactsMap]]
+        All the terminated jobs
+    outputpath : Union[str, Path]
+        Output filepath where to write the report.
+
+    Returns
+    -------
+    outputpath: Union[str, Path]
+        Path to the generated report.
+    """
+    ordered_files = []
+    # Loop over terminated jobs
+    for job in contactmap_jobs:
+        basepath = f"{job.output}_"
+        # Gather all files generated by this job
+        job_files = glob.glob(f"{basepath}*")
+        # Sort them
+        job_files = sorted(job_files, key=lambda k: k.replace(basepath, ""))
+        # Initiate holding list
+        job_list: list[str] = []
+        # Loop over generated files
+        for fpath in job_files:
+            # Generate html link
+            shortname = fpath.replace(basepath, "")
+            html_string = f'<a href="{fpath}" target="_blank">{shortname}</a>'
+            job_list.append(html_string)
+        # Combine all links in one string
+        job_list_combined = ', '.join(job_list)
+        # Create final string
+        job_access = f"<b>{job.name}:</b> {job_list_combined}"
+        # Hold that guy
+        ordered_files.append(job_access)
+
+    # Combine all jobs outputs as a list
+    all_access = '</li>\n            <li>'.join(ordered_files)
+    # Generate small html file
+    htmldt = f"""
+    <div id="contactmap_report">
+        <ul>
+            <li>
+            {all_access}
+            </li>
+        </ul>
+    </div>
+"""
+
+    # Write it
+    with open(outputpath, 'w') as reportout:
+        reportout.write(htmldt)
+    # Return generate outputfilepath
+    return outputpath
 
 
 def get_clusters_sets(models: list[PDBFile]) -> dict:
@@ -736,6 +841,7 @@ def extract_heavyatom_contacts(
                 all_contacts.append(contactdt)
     return all_contacts
 
+
 def get_cont_type(resn1: str, resn2: str) -> str:
     """Generate polarity key between two residues.
 
@@ -791,23 +897,20 @@ def write_res_contacts(
     path : Path
         Path to the generated file.
     """
-    # define readme data type content
+    # define README data type content
     dttype_info = {
         'res1': 'Chain-Resname-ResID key identifying first residue',
         'res2': 'Chain-Resname-ResID key identifying second residue',
         'ca-ca-dist': 'observed distances between the two Ca',
-        'ca-ca-cont-ratio': 'ratio of times the ca-ca-dist was observed under threshold',  # noqa : E501
+        'ca-ca-cont-probability': 'probability of times the ca-ca-dist was observed under threshold',  # noqa : E501
         'shortest-dist': 'observed shortest distance between the two residues',
-        'shortest-cont-ratio': 'ratio of times the shortest distance was observed under threshold',  # noqa : E501
+        'shortest-cont-probability': 'probability of times the shortest distance was observed under threshold',  # noqa : E501
         'contact-type': 'type of contacts between the two residues',
-        'contact-type-ratio': 'ratio of times the type of contacts between the two residues is observed',  # noqa : E501
+        'contact-type-probability': 'probability of times the type of contacts between the two residues is observed',  # noqa : E501
         'atom1': 'Chain-Resname-ResID-Atome key identifying first atom',
         'atom2': 'Chain-Resname-ResID-Atome key identifying second atom',
         'dist': 'Observed distance between two atoms',
         }
-
-    # initiate file content
-    tsvdt: list[list[str]] = [header]
 
     # Check for inter chain contacts
     gen_interchain_tsv: bool = False
@@ -819,6 +922,8 @@ def write_res_contacts(
         else:
             raise KeyError
 
+    # initiate file content
+    tsvdt: list[list[str]] = [header]
     for res_res_cont in res_res_contacts:
         tsvdt.append([str(res_res_cont[h]) for h in header])
         if gen_interchain_tsv:
@@ -920,8 +1025,8 @@ def tsv_to_heatmap(
 
     # set data label
     color_scale = datakey_to_colorscale(data_key, color_scale=colorscale)
-    if 'ratio' in data_key:
-        data_label = 'ratio'
+    if 'probability' in data_key:
+        data_label = 'probability'
         np.fill_diagonal(matrix, 1)
     else:
         data_label = 'distance'
@@ -952,12 +1057,12 @@ def datakey_to_colorscale(data_key: str, color_scale: str = 'Greys') -> str:
     color_scale : str
         Possibly the reverse name of the color_scale.
     """
-    return f'{color_scale}_r' if 'ratio' not in data_key else color_scale
+    return f'{color_scale}_r' if 'probability' not in data_key else color_scale
 
 
-#############
-# Start of the chord chart functions
-#############
+######################################
+# Start of the chord chart functions #
+######################################
 def moduloAB(val: float, lb: float, ub: float) -> float:
     """Map a real number onto the unit circle.
 
@@ -1590,10 +1695,10 @@ def to_color_weight(
     """
     # Scale dist into minimum
     dist = max(distance, min_dist)
-    # Compute ratio
-    ratio_dist = (dist - min_dist) / (max_dist - min_dist)
+    # Compute probability
+    probability_dist = (dist - min_dist) / (max_dist - min_dist)
     # Obtain corresponding weight
-    weight = ((min_weight - max_weight) * ratio_dist) + max_weight
+    weight = ((min_weight - max_weight) * probability_dist) + max_weight
     # Return rounded value of weight
     return round(weight, 2)
 

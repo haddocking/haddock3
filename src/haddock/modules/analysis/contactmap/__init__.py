@@ -2,7 +2,7 @@
 from copy import deepcopy
 from pathlib import Path
 
-from haddock.core.typing import Any, FilePath, Union, SupportsRunT
+from haddock.core.typing import Any, FilePath, SupportsRunT
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
 from haddock.modules.analysis.contactmap.contmap import (
@@ -106,10 +106,7 @@ class HaddockModule(BaseHaddockModule):
         scheduled.run()
 
         # Generate report
-        _reportpat = make_contactmap_report(
-            contact_jobs,
-            "ContactMapReport.html",
-            )
+        make_contactmap_report(contact_jobs, "ContactMapReport.html")
 
         # Send models to the next step, no operation is done on them
         self.output_models = models

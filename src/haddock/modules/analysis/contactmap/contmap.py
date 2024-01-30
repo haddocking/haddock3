@@ -240,6 +240,15 @@ class ContactsMap():
             res_res_contacts: list[dict],
             all_heavy_interchain_contacts: list[dict],
             ) -> None:
+        """Generate several outputs based on contacts.
+
+        Parameters
+        ----------
+        res_res_contacts : list[dict]
+            List of residue-residue contacts
+        all_heavy_interchain_contacts : list[dict]
+            List of heavy atoms interchain contacts
+        """
         # write contacts
         header = ['res1', 'res2']
         header += [
@@ -389,7 +398,7 @@ class ClusteredContactMap():
                 interchain_heavy_contacts,
                 "atom1", "atom2",
                 )
-            
+
         # Initiate heavy atoms contact cluster aggrated data
         heavy_atm_clust_list: list[dict] = []
         for atatk in atat_keys_list:
@@ -398,11 +407,11 @@ class ClusteredContactMap():
             h_dists = clusters_heavyatm_contacts[atatk]['dist']
             # Summerize it
             heavy_atm_clust_list.append({
-                    "atom1": at1,
-                    "atom2": at2,
-                    "nb_dists": len(h_dists),
-                    "avg_dist": round(np.mean(h_dists), 2),
-                    "std_dist": round(np.std(h_dists), 2),
+                "atom1": at1,
+                "atom2": at2,
+                "nb_dists": len(h_dists),
+                "avg_dist": round(np.mean(h_dists), 2),
+                "std_dist": round(np.std(h_dists), 2),
                 })
         # write contacts
         header = ['atom1', 'atom2']

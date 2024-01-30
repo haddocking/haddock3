@@ -5,6 +5,7 @@ import tempfile
 from itertools import combinations
 from pathlib import Path
 
+os.environ['OPENBLAS_NUM_THREADS'] = '1'
 import numpy as np
 from pdbtools import pdb_segxchain
 from scipy.spatial.distance import cdist

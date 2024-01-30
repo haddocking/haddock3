@@ -252,13 +252,12 @@ set message=on echo=on end
 set remarks=reset end
 set remarks=accumulate end
 remarks ===============================================================
-remarks HADDOCK run for $output_pdb_filename
+remarks HADDOCK stats for $output_pdb_filename
 
 !list input molecules
 evaluate ($nmol=1)
 while ($nmol <=$data.ncomponents) loop mol
-    fileexist $input_pdb_filename_$nmol end
-    if ( $result = true ) then
+    if ( $exist_input_pdb_filename_$nmol = true) then
         remarks initial structure $nmol - $input_pdb_filename_$nmol
     end if
     evaluate ($nmol = $nmol + 1)

@@ -5,6 +5,8 @@ from pathlib import Path
 from haddock.core.typing import Any, FilePath, SupportsRunT
 from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
+from haddock.modules import get_engine
+from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.contactmap.contmap import (
     ContactsMap,
     ContactsMapJob,
@@ -100,10 +102,11 @@ class HaddockModule(BaseHaddockModule):
                     )
                 contact_jobs.append(contmap_job)
 
-        # Initiate `Scheduler`
-        scheduled = Scheduler(contact_jobs, ncores=self.params['ncores'])
-        # Run all jobs
-        scheduled.run()
+        # Find appropriate multiprocessing engine
+        exec_mode = get_analysis_exec_mode(self.params["mode"])
+        Engine = get_engine(exec_mode, self.params)
+        engine = Engine(contact_jobs)
+        engine.run()
 
         # Generate report
         make_contactmap_report(contact_jobs, "ContactMapReport.html")

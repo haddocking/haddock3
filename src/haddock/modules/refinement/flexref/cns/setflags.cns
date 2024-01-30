@@ -15,8 +15,6 @@ if ($Data.cdih.on eq true) then
 end if
 if ($Data.flags.noe  =  TRUE) then
     flags include noe end
-elseif ($Data.flags.centroids = true) then
-    flags include noe end
 end if 
 if ($Data.flags.cdih =  TRUE) then
     flags include cdih end

@@ -380,8 +380,7 @@ def scatter_plot_plotly(
             else:
                 cl_name = f"Cluster {cl_rank[cl_id]}"  # use rank
             color_idx = (cl_rank[cl_id] - 1) % n_colors  # color index
-            x_mean = np.mean(cl_df[x_ax])
-            y_mean = np.mean(cl_df[y_ax])
+            
             traces.append(
                 go.Scatter(
                     x=cl_df[x_ax],
@@ -399,9 +398,17 @@ def scatter_plot_plotly(
                 )
             )
             clt_text = f"{cl_name}<br>"
+            
+            # mean and std deviations for the top 4 members
+            x_mean = np.mean(cl_df[x_ax].iloc[:4])
+            y_mean = np.mean(cl_df[y_ax].iloc[:4])
+            x_std = np.std(cl_df[x_ax].iloc[:4])
+            y_std = np.std(cl_df[y_ax].iloc[:4])
+
             if "score" not in [x_ax, y_ax]:
-                clt_text += f"Score: {np.mean(cl_df['score']):.3f}<br>"
+                clt_text += f"Score: {np.mean(cl_df['score'].iloc[:4]):.3f}<br>"
             clt_text += f"{x_ax}: {x_mean:.3f}<br>{y_ax}: {y_mean:.3f}"
+
             clt_text_list = [clt_text]
             traces.append(
                 go.Scatter(
@@ -409,10 +416,10 @@ def scatter_plot_plotly(
                     y=[y_mean],
                     # error bars
                     error_x=dict(
-                        type="data", array=[np.std(cl_df[x_ax])], visible=True
+                        type="data", array=[x_std], visible=True
                     ),
                     error_y=dict(
-                        type="data", array=[np.std(cl_df[y_ax])], visible=True
+                        type="data", array=[y_std], visible=True
                     ),
                     # color and text
                     marker_color=colors[color_idx],
@@ -808,7 +815,7 @@ def _pandas_df_to_json(df):
     return data_string, headers_string
 
 
-def clt_table_handler(clt_file, ss_file):
+def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     """
     Create a dataframe including data for tables.
 
@@ -821,6 +828,8 @@ def clt_table_handler(clt_file, ss_file):
         path to capri_clt.tsv file
     ss_file: str or Path
         path to capri_ss.tsv file
+    is_cleaned: bool
+        is the run going to be cleaned?
 
     Returns
     -------
@@ -834,6 +843,13 @@ def clt_table_handler(clt_file, ss_file):
     # table of structures
     structs_df = find_best_struct(ss_file, number_of_struct=10)
 
+    # if the run will be cleaned, the structures are going to be gzipped
+    if is_cleaned:
+        # substitute the values in the df by adding .gz at the end
+        structs_df = structs_df.replace(
+            to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True
+        )
+    
     # Order structs by best (lowest score) cluster on top
     structs_df = structs_df.set_index("Cluster ID")
     structs_df = structs_df.reindex(index=statistics_df["Cluster ID"])

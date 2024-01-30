@@ -176,6 +176,7 @@ checkversion 1.3
  BOND  CH2E NH1     1000.000 {sd=     0.001}      1.460
  BOND  CH2E NH3     1000.000 {sd=     0.001}      1.489
  BOND  CH2E OH1     1000.000 {sd=     0.001}      1.417
+ BOND  CH2E OH1C    1000.000 {sd=     0.001}      1.417 ! for covalent Serine (SEC)
  BOND  CH2E OHP     1000.000 {sd=     0.001}      1.417
  BOND  CH2E S       1000.000 {sd=     0.001}      1.822
  BOND  CH2E SH1E    1000.000 {sd=     0.001}      1.808
@@ -229,6 +230,7 @@ checkversion 1.3
  BOND  H    NH1     1000.000 {sd=     0.001}      0.980
  BOND  H    NH2     1000.000 {sd=     0.001}      0.980
  BOND  H    OH1     1000.000 {sd=     0.001}      0.960
+ BOND  H    OH1C    1000.000 {sd=     0.001}      0.960 ! for covalent Serine (SEC)
  BOND  H    SH1E    1000.000 {sd=     0.001}      1.325 ! from CHARMM22
  BOND  HC   NH3     1000.000 {sd=     0.001}      1.040
  BOND  S    S       1000.000 {sd=     0.001}      2.030
@@ -247,7 +249,7 @@ checkversion 1.3
  BOND  PP    OHP     1000.0  1.610
  BOND  PP    OP1     1000.0  1.485
  BOND  SUF   OUF     1000.0  1.475
- BOND  OC    CA+2    1000.0  2.500
+ BOND  OC    "CA+2"  1000.0  2.500
 ! next ones added for iron-sulphur cluster
  BOND  SH1E  FS      1000.0  2.300
  BOND  FS    SF      1000.0  2.200
@@ -401,6 +403,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH1E CH2E CY       500.00 {sd=     0.031}    113.8748
  ANGLe  CH1E CH2E HA       500.00 {sd=     0.031}    109.2833
  ANGLe  CH1E CH2E OH1      500.00 {sd=     0.031}    111.0593
+ ANGLe  CH1E CH2E OH1C     500.00 {sd=     0.031}    111.0593 ! for covalent Serine (SEC)
  ANGLe  CH1E CH2E OHP      500.00 {sd=     0.031}    111.0593
  ANGLe  CH1E CH2E S        500.00 {sd=     0.031}    114.3551
  ANGLe  CH1E CH2E SH1E     500.00 {sd=     0.031}    114.3558
@@ -423,7 +426,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH2  OHP  PP       500.00 {sd=     0.031}    120.0000
  ANGLe  CH1E OHP  PP       500.00 {sd=     0.031}    120.0000
  ANGLe  CH2E OHP  PP       500.00 {sd=     0.031}    120.0000
- ANGLe  CH2E C    NH1      500.00 {sd=     0.031}    116.1998
+!!! ANGLe  CH2E C    NH1      500.00 {sd=     0.031}    116.1998 ! duplication
  ANGLe  CH2E C    NH2      500.00 {sd=     0.031}    116.4617
  ANGLe  CH2E C    O        500.00 {sd=     0.031}    120.9106
  ANGLe  CH2E C    OH1      500.00 {sd=     0.031}    120.9106
@@ -472,6 +475,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CH2E NH1  H        500.00 {sd=     0.031}    118.0987
  ANGLe  CH2E NH3  HC       500.00 {sd=     0.031}    109.4693
  ANGLe  CH2E OH1  H        500.00 {sd=     0.031}    109.4969
+ ANGLe  CH2E OH1C H        500.00 {sd=     0.031}    109.4969 ! for covalent Serine (SEC)
  ANGLe  CH2E S    S        500.00 {sd=     0.031}    103.7998
  ANGLe  CH2E SH1E H        500.00 {sd=     0.031}    107.9769
  ANGLe  CH2E SM   CH3E     500.00 {sd=     0.031}    100.8987
@@ -515,7 +519,6 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  CR1E CR1E CY       500.00 {sd=     0.031}    121.1348
  ANGLe  CR1E CR1E CY2      500.00 {sd=     0.031}    119.6224
  ANGLe  CR1E CR1W CY2      500.00 {sd=     0.031}    119.6224
- ANGLe  CR1E CR1E CY2      500.00 {sd=     0.031}    119.6224
  ANGLe  CR1E CR1E HA       500.00 {sd=     0.031}    119.9433
  ANGLe  CR1E CR1W CR1W     500.00 {sd=     0.031}    121.4832
  ANGLe  CR1E CR1W HA       500.00 {sd=     0.031}    118.7598
@@ -567,6 +570,7 @@ eval ($pd_v=$pd_x* 17900.0) BOND  NH_Y  HHAB $pd_v   1.000
  ANGLe  HA   CH2E NH1      500.00 {sd=     0.031}    108.9030
  ANGLe  HA   CH2E NH3      500.00 {sd=     0.031}    108.9390
  ANGLe  HA   CH2E OH1      500.00 {sd=     0.031}    108.6930
+ ANGLe  HA   CH2E OH1C     500.00 {sd=     0.031}    108.6930 ! for covalent Serine (SEC)
  ANGLe  HA   CH2E OHP      500.00 {sd=     0.031}    108.6930
  ANGLe  HA   CH2E S        500.00 {sd=     0.031}    107.9228
  ANGLe  HA   CH2E SH1E     500.00 {sd=     0.031}    107.9185
@@ -976,6 +980,7 @@ eval ($pd_v=$pd_x*   640.0) ANGLE  HHAD  NH_Y  HHAB $pd_v 109.500
  IMPRoper  HA   NH1  HA   HA        500.00 {sd=     0.031}    0    -66.5692  ! added for NME CA improper, 6/8/23 Alexandre Bonvin
  IMPRoper  HA   CH2E HA   HA        500.00 {sd=     0.031}    0    -66.5934
  IMPRoper  HA   HA   CH1E OH1       500.00 {sd=     0.031}    0    -69.8494
+ IMPRoper  HA   HA   CH1E OH1C      500.00 {sd=     0.031}    0    -69.8494 ! for covalent Serine (SEC)
  IMPRoper  HA   HA   CH1P OH1       500.00 {sd=     0.031}    0    -69.8494
  IMPRoper  HA   HA   CH1P OHP       500.00 {sd=     0.031}    0    -69.8494
  IMPRoper  HA   HA   CH1E OHP       500.00 {sd=     0.031}    0    -69.8494
@@ -1139,6 +1144,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  NH1  CH1E CH2E CH2E   2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E CY     2.00     3  0.0000
  DIHEdral  NH1  CH1E CH2E OH1    2.00     3  0.0000
+ DIHEdral  NH1  CH1E CH2E OH1C   2.00     3  0.0000 ! for covalent Serine (SEC)
  DIHEdral  NH1  CH1E CH1E OH1    2.00     3  0.0000 !added 14-APR-99
  DIHEdral  NH1  CH1E CH2E OHP    2.00     3  0.0000
  DIHEdral  NH1  CH1E CH1E OHP    2.00     3  0.0000 
@@ -1158,6 +1164,7 @@ eval ($pd_v=$pd_x*   400.0) IMPR  NH_Y  CHA   HHAD  HHAC $pd_v 0  35.264
  DIHEdral  NH3  CH1E CH2E CH2E   2.00     3  0.0000
  DIHEdral  NH3  CH1E CH2E CY     2.00     3  0.0000
  DIHEdral  NH3  CH1E CH2E OH1    2.00     3  0.0000
+ DIHEdral  NH3  CH1E CH2E OH1C   2.00     3  0.0000 ! for covalent Serine (SEC)
  DIHEdral  NH3  CH1E CH1E OH1    2.00     3  0.0000
  DIHEdral  NH3  CH1E CH2E OHP    2.00     3  0.0000
  DIHEdral  NH3  CH1E CH1E OHP    2.00     3  0.0000
@@ -1524,6 +1531,7 @@ evaluate ($VES=0.01)
  NONBonded  O       $VE $VR_O    $VE $VR14_O
  NONBonded  OC      $VE $VR_O    $VE $VR14_O
  NONBonded  OH1     $VE $VR_O    $VE $VR14_O
+ NONBonded  OH1C    $VES $VR_O   $VES $VR14_O
  NONBonded  OHP     $VE $VR_O    $VE $VR14_O
  NONBonded  OUF     $VE $VR_O    $VE $VR14_O
  !
@@ -1656,6 +1664,7 @@ evaluate ($VES=0.1)
  NONBonded  OR3     $VE $VR_O    $VE $VR14_O
  NONBonded  OC      $VE $VR_O    $VE $VR14_O
  NONBonded  OH1     $VE $VR_O    $VE $VR14_O
+ NONBonded  OH1C    $VES $VR_O   $VES $VR14_O
  NONBonded  OHP     $VE $VR_O    $VE $VR14_O
  NONBonded  OUF     $VE $VR_O    $VE $VR14_O
  !
@@ -1732,6 +1741,7 @@ END
  NONBonded  O       0.2342   2.6406      0.2342   2.6406
  NONBonded  OC      1.0244   2.6406      1.0244   2.6406
  NONBonded  OH1     0.2342   2.6406      0.2342   2.6406
+ NONBonded  OH1C    0.0023   0.26406     0.0023   0.26406 ! for covalent Serine (SEC)
  NONBonded  OHP     0.2342   2.6406      0.2342   2.6406
  NONBonded  OUF     0.2342   2.6406      0.2342   2.6406
  NONBonded  S       0.0239   3.3854      0.0239   3.3854
@@ -1775,18 +1785,14 @@ END
  NONBonded  C       0.105   3.750       0.013    3.750  {OPLS C}!
  NONBonded  CYAA    0.105   3.750       0.013    3.750  {OPLS C}!
  NONBonded  CCIS    0.105   3.750       0.013    3.750  {OPLS C}!
-! NONBonded  C       0.110   3.750       0.014    3.750  {OPLS CAJ}!
  NONBonded  CY2     0.105   3.750       0.013    3.750  {OPLS C}
  NONBonded  CF      0.110   3.750       0.014    3.750  {OPLS CA}
  NONBonded  CY      0.110   3.750       0.014    3.750  {OPLS CA}
  NONBonded  CW      0.145   3.750       0.018    3.750  {OPLS CB}
-! NONBonded  CW      0.130   3.750       0.016    3.750  {OPLS CN}
  NONBonded  CR1E    0.110   3.750       0.014    3.750  {OPLS CD}!
-! NONBonded  CR1E    0.130   3.750       0.016    3.750  {OPLS CG}!
  NONBonded  CR1H    0.145   3.750       0.018    3.750  {OPLS CGJ}
  NONBonded  CR1W    0.110   3.750       0.014    3.750  {OPLS CD}!
  NONBonded  CH1E    0.080   3.800       0.010    3.800  {OPLS CH}
-! NONBonded  CH1E    0.080   3.850       0.010    3.850  {OPLS CHJ}
  NONBonded  CRHH    0.145   3.750       0.018    3.750  {OPLS CP}
  NONBonded  C5W     0.145   3.750       0.018    3.750  {OPLS CS}
  NONBonded  CH2G    0.118   3.800       0.015    3.800  {OPLS C2} 
@@ -1822,6 +1828,7 @@ END
  NONBonded  OP1     0.210    2.960       0.021    2.960
  NONBonded  OR3     0.210    2.960       0.021    2.960
  NONBonded  OH1     0.170    3.070       0.021    3.070
+ NONBonded  OH1C    0.017    0.307       0.0021   0.307 ! for covalent Serine (SEC)
  NONBonded  OHP     0.170    3.070       0.021    3.070
  NONBonded  OUF     0.170    3.070       0.021    3.070
  NONBonded  PP      0.2000   3.738       0.085    3.738

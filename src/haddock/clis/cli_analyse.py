@@ -342,8 +342,12 @@ def zip_top_ranked(capri_filename: FilePath, cluster_ranking: ClRank, summary_na
     for file in Path(".").glob("*.pdb"):
         file.unlink()
     # move archive to summary
-    shutil.move("pdb.tgz", summary_name)
-    log.info(f"Summary archive {summary_name} created!")
+    expected_archive = Path(".", "pdb.tgz")
+    if expected_archive.exists():
+        shutil.move("pdb.tgz", summary_name)
+        log.info(f"Summary archive {summary_name} created!")
+    else:
+        log.warning(f"Summary archive {summary_name} not created!")
 
 
 def analyse_step(

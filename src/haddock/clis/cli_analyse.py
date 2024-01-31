@@ -56,7 +56,6 @@ from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_param
 from haddock.modules.analysis.caprieval import HaddockModule
 
 
-
 ANA_FOLDER = "analysis"  # name of the analysis folder
 
 
@@ -413,7 +412,7 @@ def analyse_step(
         tables = clt_table_handler(clt_file, ss_file, is_cleaned)
         report_generator(boxes, scatters, tables, step)
         # provide a zipped archive of the top ranked structures
-        zip_top_ranked(ss_file, cluster_ranking, "summary.tgz")
+        zip_top_ranked(ss_file, cluster_ranking, Path("summary.tgz"))
 
 
 def main(

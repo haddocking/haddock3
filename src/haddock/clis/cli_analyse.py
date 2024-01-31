@@ -39,7 +39,9 @@ from haddock.core.typing import (
     ParamMap,
 )
 from haddock.gear.yaml2cfg import read_from_yaml_config
+from haddock.gear.clean_steps import _unpack_gz
 from haddock.libs.libcli import _ParamsToDict
+from haddock.libs.libio import archive_files_ext
 from haddock.libs.libontology import ModuleIO
 from haddock.libs.libplots import (
     ClRank,
@@ -52,6 +54,7 @@ from haddock.libs.libplots import (
 from haddock.modules import get_module_steps_folders
 from haddock.modules.analysis.caprieval import DEFAULT_CONFIG as caprieval_params
 from haddock.modules.analysis.caprieval import HaddockModule
+
 
 
 ANA_FOLDER = "analysis"  # name of the analysis folder
@@ -289,6 +292,61 @@ def update_paths_in_capri_dict(
     return new_capri_dict
 
 
+def zip_top_ranked(capri_filename: FilePath, cluster_ranking: ClRank, summary_name: FilePath):
+    """
+    Zip the top ranked structures.
+
+    Parameters
+    ----------
+    cluster_ranking : dict
+        {cluster_id : cluster_rank} dictionary
+    ss_file : str or Path
+        capri ss filename
+
+    Returns
+    -------
+    output_zipfile : str or Path
+        path to the zipped file
+    """
+    capri_df = read_capri_table(capri_filename, comment="#")
+    gb_cluster = capri_df.groupby("cluster-id")
+    for cl_id, cl_df in gb_cluster:
+        if cl_id in cluster_ranking.keys():
+            if cl_id != "-":
+                structs = cl_df.loc[cl_df["model-cluster-ranking"] <= 4][["model", "model-cluster-ranking"]]
+            else:
+                structs = cl_df.loc[cl_df["caprieval_rank"] <= 10][["model", "caprieval_rank"]]
+            structs.columns = ["model", "rank"]
+            # iterate over the structures
+            for _, row in structs.iterrows():
+                struct = Path(row["model"])
+                struct_gz = Path(f"{struct}.gz")
+                rank = row["rank"]
+                # set target name
+                if cl_id != "-":
+                    target_name = f"cluster_{cluster_ranking[cl_id]}_model_{rank}.pdb"
+                else:
+                    target_name = f"model_{rank}.pdb"
+                # copy the structure
+                if Path(struct).exists():
+                    shutil.copy(struct, Path(target_name))
+                elif struct_gz.exists():
+                    shutil.copy(struct_gz, ".")
+                    # unpack the file
+                    _unpack_gz(Path(".", struct_gz.name))
+                    shutil.move(struct.name, Path(target_name))
+                else:
+                    log.warning(f"structure {struct} not found")
+
+    # now make the archive and delete the pdb files
+    archive_files_ext(".", "pdb")
+    for file in Path(".").glob("*.pdb"):
+        file.unlink()
+    # move archive to summary
+    shutil.move("pdb.tgz", summary_name)
+    log.info(f"Summary archive {summary_name} created!")
+
+
 def analyse_step(
     step: str,
     run_dir: FilePath,
@@ -354,6 +412,8 @@ def analyse_step(
         boxes = box_plot_handler(ss_file, cluster_ranking, format, scale)
         tables = clt_table_handler(clt_file, ss_file, is_cleaned)
         report_generator(boxes, scatters, tables, step)
+        # provide a zipped archive of the top ranked structures
+        zip_top_ranked(ss_file, cluster_ranking, "summary.tgz")
 
 
 def main(

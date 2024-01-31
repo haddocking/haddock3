@@ -7,3 +7,4 @@ Model Refinement Modules
    flexref
    emref
    mdref
+   openmm

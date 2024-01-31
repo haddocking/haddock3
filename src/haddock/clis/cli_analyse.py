@@ -291,7 +291,7 @@ def update_paths_in_capri_dict(
     return new_capri_dict
 
 
-def zip_top_ranked(capri_filename: FilePath, cluster_ranking: ClRank, summary_name: FilePath):
+def zip_top_ranked(capri_filename: FilePath, cluster_ranking: ClRank, summary_name: FilePath) -> None:
     """
     Zip the top ranked structures.
 

@@ -3,7 +3,6 @@ from copy import deepcopy
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath, SupportsRunT
-from haddock.libs.libparallel import Scheduler
 from haddock.modules import BaseHaddockModule
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
@@ -80,7 +79,6 @@ class HaddockModule(BaseHaddockModule):
                         ContactsMap(
                             Path(model.rel_path),
                             Path(f"Unclustered_contmap_{modelfname}"),
-                            modelfname,
                             single_models_params,
                             ),
                         )
@@ -102,7 +100,7 @@ class HaddockModule(BaseHaddockModule):
                     )
                 contact_jobs.append(contmap_job)
 
-        # Find appropriate multiprocessing engine
+        # Find execution engine
         exec_mode = get_analysis_exec_mode(self.params["mode"])
         Engine = get_engine(exec_mode, self.params)
         engine = Engine(contact_jobs)

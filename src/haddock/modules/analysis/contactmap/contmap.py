@@ -249,7 +249,7 @@ class ContactsMap():
         all_heavy_interchain_contacts : list[dict]
             List of heavy atoms interchain contacts
         """
-        # write contacts
+        # write contacts tsv files
         header = ['res1', 'res2']
         header += [
             v for v in sorted(res_res_contacts[0])
@@ -260,7 +260,7 @@ class ContactsMap():
             header,
             f'{self.output}_contacts.tsv',
             interchain_data={
-                'path': f'{self.output}_interchains_contacts.tsv',
+                'path': f'{self.output}_interchain_contacts.tsv',
                 'data_key': 'ca-ca-dist',
                 'contact_threshold': self.params['ca_ca_dist_threshold'],
                 }
@@ -298,12 +298,12 @@ class ContactsMap():
             log.info(f'Generated single model chordchart file: {chordp}')
             self.files['res-res-chordchart'] = chordp
 
-        # Write interchain heavy atoms contacts
+        # Write interchain heavy atoms contacts tsv file
         header2 = ['atom1', 'atom2', 'dist']
         fpath2 = write_res_contacts(
             all_heavy_interchain_contacts,
             header2,
-            f'{self.output}_interchain_heavyatom_contacts.tsv',
+            f'{self.output}_heavyatoms_interchain_contacts.tsv',
             )
         log.info(f'Generated contacts file: {fpath2}')
         self.files['atom-atom-interchain-contacts'] = fpath2
@@ -492,14 +492,14 @@ class ClusteredContactMap():
             header,
             f'{self.output}_contacts.tsv',
             interchain_data={
-                'path': f'{self.output}_interchains_contacts.tsv',
+                'path': f'{self.output}_interchain_contacts.tsv',
                 'data_key': 'ca-ca-dist',
                 'contact_threshold': self.params['ca_ca_dist_threshold'],
                 }
             )
         log.info(f'Generated contacts file: {fpath}')
         self.files['res-res-contacts'] = fpath
-        self.files['atom-atom-interchain-contacts'] = f'{self.output}_interchains_contacts.tsv'  # noqa : E501
+        self.files['atom-atom-interchain-contacts'] = f'{self.output}_interchain_contacts.tsv'  # noqa : E501
 
         # Generate corresponding heatmap
         if self.params['generate_heatmap']:

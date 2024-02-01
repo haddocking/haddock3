@@ -31,6 +31,7 @@ import os
 
 from haddock import log, RMSD_path
 from haddock.core.typing import Any, FilePath
+from haddock.libs.libalign import get_atoms, load_coords
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libutil import parse_ncores
 from haddock.modules import BaseHaddockModule, read_from_yaml_config
@@ -125,7 +126,6 @@ class HaddockModule(BaseHaddockModule):
             tot_npairs,
             ncores)
         if self.params['fast']:
-            from haddock.libs.libalign import get_atoms, load_coords
             rmsdmatrix_executable = Path(RMSD_path, self.params["executable"])
             # create prev_keys to check if the keys of the ref_coord_dic
             # are the same for all the models

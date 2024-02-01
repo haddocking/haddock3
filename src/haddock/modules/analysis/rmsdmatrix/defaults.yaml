@@ -23,3 +23,21 @@ resdic_:
     identifier.
   group: ''
   explevel: easy
+fast:
+  default: false
+  type: boolean
+  title: Fast mode
+  short: If true, the RMSD matrix is calculated in the fast mode
+  long: If true, the RMSD matrix is calculated in the fast mode using a custom C
+    code in place of the standard python code. This option is recommended for
+    large number of models.
+  group: ''
+  explevel: easy
+executable:
+  default: src/fast-rmsdmatrix
+  type: string
+  title: Path to the executable
+  short: Path to the executable
+  long: Path to the executable
+  group: ''
+  explevel: expert

@@ -14,7 +14,27 @@ from haddock.libs.libalign import (
     load_coords,
     )
 from haddock.libs.libontology import PDBFile
+from haddock.libs.libsubprocess import BaseJob
 
+
+class RMSDJobFast(BaseJob):
+    """
+    Instantiate a subprocess job with inverted args and input.
+
+    Runs with the following scheme, INPUT comes first:
+
+        $ cmd INPUT ARGS
+    """
+
+    def make_cmd(self) -> None:
+        """Execute job in subprocess."""
+        self.cmd = " ".join([
+            os.fspath(self.executable),
+            os.fspath(self.input),
+            ' '.join(map(str, self.args)),  # empty string if no args
+            ])
+        return
+    
 
 class RMSDJob:
     """A Job dedicated to the fast rmsd calculation."""

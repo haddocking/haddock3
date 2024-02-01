@@ -27,12 +27,13 @@ to 4 of chain B for the alignment and RMSD calculation.
 """
 import contextlib
 from pathlib import Path
+import os
 
-from haddock import log
+from haddock import log, RMSD_path
 from haddock.core.typing import Any, FilePath
 from haddock.libs.libontology import ModuleIO, RMSDFile
 from haddock.libs.libutil import parse_ncores
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, read_from_yaml_config
 from haddock.modules import get_engine
 from haddock.modules.analysis import (
     confirm_resdic_chainid_length,
@@ -41,6 +42,7 @@ from haddock.modules.analysis import (
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSD,
     RMSDJob,
+    RMSDJobFast,
     rmsd_dispatcher,
     )
 
@@ -62,7 +64,16 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls) -> None:
-        """Confirm if contact executable is compiled."""
+        """Confirm if FCC is installed and available."""
+        dcfg = read_from_yaml_config(DEFAULT_CONFIG)
+        exec_path = Path(RMSD_path, dcfg["executable"])
+
+        if not os.access(exec_path, mode=os.F_OK):
+            raise Exception(f"Required {str(exec_path)} file does not exist.")
+
+        if not os.access(exec_path, mode=os.X_OK):
+            raise Exception(f"Required {str(exec_path)} file is not executable")
+
         return
 
     def _rearrange_output(self, output_name: FilePath, path: FilePath,
@@ -113,30 +124,83 @@ class HaddockModule(BaseHaddockModule):
             nmodels,
             tot_npairs,
             ncores)
-
-        # Calculate the rmsd for each set of models
-        rmsd_jobs: list[RMSDJob] = []
-        self.log(f"running Rmsd Jobs with {ncores} cores")
-        for core in range(ncores):
-            output_name = "rmsd_" + str(core) + ".matrix"
-            rmsd_obj = RMSD(
-                models,
-                core,
-                npairs[core],
-                ref_structs[core],
-                mod_structs[core],
-                output_name,
-                path=Path("."),
-                params=self.params
-                )
-            job_f = Path(output_name)
-            # init RMSDJob
-            job = RMSDJob(
-                job_f,
-                self.params,
-                rmsd_obj
-                )
-            rmsd_jobs.append(job)
+        if self.params['fast']:
+            from haddock.libs.libalign import get_atoms, load_coords
+            rmsdmatrix_executable = Path(RMSD_path, self.params["executable"])
+            # create prev_keys to check if the keys of the ref_coord_dic
+            # are the same for all the models
+            prev_keys = []
+            with open("traj.xyz", "w") as traj_xyz:
+                for mod in models:
+                    atoms = {}
+                    atoms.update(get_atoms(mod))
+                    
+                    filter_resdic = {
+                        key[-1]: value for key, value
+                        in self.params.items()
+                        if key.startswith("resdic")
+                    }
+                    ref_coord_dic, _ = load_coords(
+                    mod, atoms, filter_resdic
+                    )
+                    if prev_keys != []:
+                        if ref_coord_dic.keys() != prev_keys:
+                            self.finish_with_error(
+                                "The keys of the ref_coord_dic are not the "
+                                "same for all the models. Please check the "
+                                "input models."
+                                )
+                    n_atoms = len(ref_coord_dic)
+                    # write xyz coords
+                    traj_xyz.write(f"{n_atoms}{os.linesep}{os.linesep}")
+                    for k, v in ref_coord_dic.items():
+                        traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                    
+                    prev_keys = ref_coord_dic.keys()
+            
+            # Calculate the rmsd for each set of models
+            rmsd_jobs: list[RMSDJobFast] = []
+            self.log(f"running RmsdFast Jobs with {ncores} cores")
+            for core in range(ncores):
+                output_name = Path("rmsd_" + str(core) + ".out")
+                job_f = Path(output_name)
+                # init RMSDJobFast
+                job = RMSDJobFast(
+                    "traj.xyz",
+                    output_name,
+                    rmsdmatrix_executable,
+                    f"{core}",
+                    f"{npairs[core]}",
+                    f"{ref_structs[core]}",
+                    f"{mod_structs[core]}",
+                    f"{len(models)}",
+                    f"{n_atoms}",
+                    )
+                rmsd_jobs.append(job)
+        else:
+            # Calculate the rmsd for each set of models
+            rmsd_jobs: list[RMSDJob] = []
+            self.log(f"running Rmsd Jobs with {ncores} cores")
+            for core in range(ncores):
+                output_name = "rmsd_" + str(core) + ".matrix"
+                rmsd_obj = RMSD(
+                    models,
+                    core,
+                    npairs[core],
+                    ref_structs[core],
+                    mod_structs[core],
+                    output_name,
+                    path=Path("."),
+                    params=self.params
+                    )
+                job_f = Path(output_name)
+                # init RMSDJob
+                job = RMSDJob(
+                    job_f,
+                    self.params,
+                    rmsd_obj
+                    )
+                rmsd_jobs.append(job)
 
         exec_mode = get_analysis_exec_mode(self.params["mode"])
 
@@ -165,7 +229,7 @@ class HaddockModule(BaseHaddockModule):
         output_name = "rmsd.matrix"
         self._rearrange_output(
             output_name,
-            path=rmsd_obj.path,
+            path=Path("."),
             ncores=ncores
             )
 

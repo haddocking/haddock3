@@ -205,8 +205,20 @@
 <h2>Default parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading">¶</a></h2>
 <section id="easy">
 <h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading">¶</a></h3>
-<section id="threshold">
-<h4>threshold<a class="headerlink" href="#threshold" title="Permalink to this heading">¶</a></h4>
+<section id="clust-cutoff">
+<h4>clust_cutoff<a class="headerlink" href="#clust-cutoff" title="Permalink to this heading">¶</a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 7.5</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Clustering cutoff distance</div>
+<div class="line"><em>short description</em>: Value of cutoff cophenetic distance.</div>
+<div class="line"><em>long description</em>: Value of cutoff cophenetic distance. When criterion is maxclust, this value is ignored.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
+<section id="min-population">
+<h4>min_population<a class="headerlink" href="#min-population" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
 <div class="line"><em>default</em>: 4</div>
 <div class="line"><em>type</em>: integer</div>
@@ -217,14 +229,14 @@
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
-<section id="tolerance">
-<h4>tolerance<a class="headerlink" href="#tolerance" title="Permalink to this heading">¶</a></h4>
+<section id="n-clusters">
+<h4>n_clusters<a class="headerlink" href="#n-clusters" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
-<div class="line"><em>default</em>: nan</div>
-<div class="line"><em>type</em>: float</div>
-<div class="line"><em>title</em>: Numeric value for clustering</div>
-<div class="line"><em>short description</em>: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance</div>
-<div class="line"><em>long description</em>: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance</div>
+<div class="line"><em>default</em>: 4</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Number of clusters</div>
+<div class="line"><em>short description</em>: Number of clusters to be formed</div>
+<div class="line"><em>long description</em>: Number of clusters to be formed. When criterion is distance, this value is ignored.</div>
 <div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -235,7 +247,7 @@
 <section id="criterion">
 <h4>criterion<a class="headerlink" href="#criterion" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
-<div class="line"><em>default</em>: ‘maxclust’</div>
+<div class="line"><em>default</em>: ‘distance’</div>
 <div class="line"><em>type</em>: string</div>
 <div class="line"><em>title</em>: Criterion for fcluster</div>
 <div class="line"><em>short description</em>: Criterion to be used to cut the dendrogram</div>
@@ -290,7 +302,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Jan 31, 2024.
+        Last updated on Feb 01, 2024.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

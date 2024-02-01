@@ -3,8 +3,19 @@
 Easy
 ````
 
-threshold
-~~~~~~~~~
+clust_cutoff
+~~~~~~~~~~~~
+
+| *default*: 7.5
+| *type*: float
+| *title*: Clustering cutoff distance
+| *short description*: Value of cutoff cophenetic distance.
+| *long description*: Value of cutoff cophenetic distance. When criterion is maxclust, this value is ignored.
+| *group*: analysis
+| *explevel*: easy
+
+min_population
+~~~~~~~~~~~~~~
 
 | *default*: 4
 | *type*: integer
@@ -14,14 +25,14 @@ threshold
 | *group*: analysis
 | *explevel*: easy
 
-tolerance
-~~~~~~~~~
+n_clusters
+~~~~~~~~~~
 
-| *default*: nan
-| *type*: float
-| *title*: Numeric value for clustering
-| *short description*: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
-| *long description*: if criterion is maxclust, the number of desired clusters. if criterion is distance, the value of cutoff cophenetic distance
+| *default*: 4
+| *type*: integer
+| *title*: Number of clusters
+| *short description*: Number of clusters to be formed
+| *long description*: Number of clusters to be formed. When criterion is distance, this value is ignored.
 | *group*: analysis
 | *explevel*: easy
 
@@ -32,7 +43,7 @@ Expert
 criterion
 ~~~~~~~~~
 
-| *default*: 'maxclust'
+| *default*: 'distance'
 | *type*: string
 | *title*: Criterion for fcluster
 | *short description*: Criterion to be used to cut the dendrogram

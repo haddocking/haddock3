@@ -205,6 +205,18 @@
 <h2>Default parameters<a class="headerlink" href="#default-parameters" title="Permalink to this heading">¶</a></h2>
 <section id="easy">
 <h3>Easy<a class="headerlink" href="#easy" title="Permalink to this heading">¶</a></h3>
+<section id="clust-cutoff">
+<h4>clust_cutoff<a class="headerlink" href="#clust-cutoff" title="Permalink to this heading">¶</a></h4>
+<div class="line-block">
+<div class="line"><em>default</em>: 0.6</div>
+<div class="line"><em>type</em>: float</div>
+<div class="line"><em>title</em>: Minimum fraction of common contacts to be considered in a cluster.</div>
+<div class="line"><em>short description</em>: Minimum fraction of common contacts to be considered in a cluster. By default 0.6.</div>
+<div class="line"><em>long description</em>: Minimum fraction of common contacts (fcc) to cluster complexes together. Complexes not sharing fraction of common contacts above the <cite>fraction_cutoff</cite> parameter cannot belong to the same cluster.</div>
+<div class="line"><em>group</em>: analysis</div>
+<div class="line"><em>explevel</em>: easy</div>
+</div>
+</section>
 <section id="contact-distance-cutoff">
 <h4>contact_distance_cutoff<a class="headerlink" href="#contact-distance-cutoff" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
@@ -217,14 +229,14 @@
 <div class="line"><em>explevel</em>: easy</div>
 </div>
 </section>
-<section id="fraction-cutoff">
-<h4>fraction_cutoff<a class="headerlink" href="#fraction-cutoff" title="Permalink to this heading">¶</a></h4>
+<section id="min-population">
+<h4>min_population<a class="headerlink" href="#min-population" title="Permalink to this heading">¶</a></h4>
 <div class="line-block">
-<div class="line"><em>default</em>: 0.6</div>
-<div class="line"><em>type</em>: float</div>
-<div class="line"><em>title</em>: Minimum fraction of common contacts to be considered in a cluster.</div>
-<div class="line"><em>short description</em>: Minimum fraction of common contacts to be considered in a cluster. By default 0.6.</div>
-<div class="line"><em>long description</em>: Minimum fraction of common contacts (fcc) to cluster complexes together. Complexes not sharing fraction of common contacts above the <cite>fraction_cutoff</cite> parameter cannot belong to the same cluster.</div>
+<div class="line"><em>default</em>: 4</div>
+<div class="line"><em>type</em>: integer</div>
+<div class="line"><em>title</em>: Clustering population threshold.</div>
+<div class="line"><em>short description</em>: Threshold employed to exclude clusters with less than this number of members. By default 4.</div>
+<div class="line"><em>long description</em>: Minimum set of grouped complexes to define a cluster. If a potential cluster is composed of less than this number of members, it will be considered as <cite>singleton</cite> and discarded from final clusters. If set to 1, all complexes will be part of a cluster. By default 4.</div>
 <div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -237,18 +249,6 @@
 <div class="line"><em>title</em>: Strictness factor.</div>
 <div class="line"><em>short description</em>: Strictness factor. It’s multiplied by the fraction_cutoff to obtain a new cutoff for the second half of the matrix. By default 0.75.</div>
 <div class="line"><em>long description</em>: Strictness factor. It’s multiplied by the fraction_cutoff to obtain a new cutoff for the second half of the matrix. Used to allow for some variability. By default 0.75.</div>
-<div class="line"><em>group</em>: analysis</div>
-<div class="line"><em>explevel</em>: easy</div>
-</div>
-</section>
-<section id="threshold">
-<h4>threshold<a class="headerlink" href="#threshold" title="Permalink to this heading">¶</a></h4>
-<div class="line-block">
-<div class="line"><em>default</em>: 4</div>
-<div class="line"><em>type</em>: integer</div>
-<div class="line"><em>title</em>: Clustering population threshold.</div>
-<div class="line"><em>short description</em>: Threshold employed to exclude clusters with less than this number of members. By default 4.</div>
-<div class="line"><em>long description</em>: Minimum set of grouped complexes to define a cluster. If a potential cluster is composed of less than this number of members, it will be considered as <cite>singleton</cite> and discarded from final clusters. If set to 1, all complexes will be part of a cluster. By default 4.</div>
 <div class="line"><em>group</em>: analysis</div>
 <div class="line"><em>explevel</em>: easy</div>
 </div>
@@ -302,7 +302,7 @@
     <div class="footer" role="contentinfo">
         <div class="container">
             &#169; Copyright 2022, BonvinLab.
-        Last updated on Jan 31, 2024.
+        Last updated on Feb 01, 2024.
         Created using <a href="http://sphinx-doc.org/">Sphinx</a> 6.2.1.
         </div>
     </div>  

@@ -2,19 +2,28 @@
 from pathlib import Path
 
 from haddock.core.typing import Any, FilePath
-from haddock.modules import BaseHaddockModule
+from haddock.modules import BaseHaddockModule, get_module_steps_folders
 from haddock.modules import get_engine
 from haddock.modules.analysis import get_analysis_exec_mode
+
 from haddock.modules.analysis.caprieval.capri import (
     CAPRI,
     capri_cluster_analysis,
     merge_data,
     rearrange_ss_capri_output,
+    save_scoring_weights,
     )
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
 DEFAULT_CONFIG = Path(RECIPE_PATH, "defaults.yaml")
+
+CNS_MODULES = ["rigidbody",
+               "flexref",
+               "emscoring",
+               "mdscoring",
+               "mdref",
+               "emref"]
 
 
 class HaddockModule(BaseHaddockModule):
@@ -45,6 +54,27 @@ class HaddockModule(BaseHaddockModule):
         models = self.previous_io.retrieve_models(
             individualize=True
             )
+        
+        # dump previously used weights
+        sel_steps = get_module_steps_folders(Path(".."))
+
+        # get the previous CNS step
+        cns_step = None
+        mod = len(sel_steps) - 2
+        while mod > -1:
+            st_name = sel_steps[mod].split("_")[1]
+            if st_name in CNS_MODULES:
+                cns_step = sel_steps[mod]
+                break
+            mod -= 1
+        
+        if cns_step:
+            self.log(f"Found previous CNS step: {cns_step}")
+            scoring_params_fname = save_scoring_weights(cns_step)
+            self.log(f"Saved scoring weights to: {scoring_params_fname}")
+        else:
+            self.log("No previous CNS step found. Cannot save scoring weights.")
+
         # Sort by score to find the "best"
         models.sort()
         best_model_fname = Path(models[0].rel_path)
@@ -59,7 +89,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
-        #  we can handle scenarios in wich the models are hetergoneous
+        #  we can handle scenarios in which the models are hetergoneous
         #  for example during CAPRI scoring
         jobs: list[CAPRI] = []
         for i, model_to_be_evaluated in enumerate(models, start=1):

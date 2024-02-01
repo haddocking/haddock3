@@ -27,6 +27,7 @@ import sys
 from pathlib import Path
 
 from haddock import log
+from haddock.core.defaults import INTERACTIVE_RE_SUFFIX
 from haddock.core.typing import (
     Any,
     ArgumentParser,
@@ -55,6 +56,7 @@ from haddock.modules.analysis.caprieval import HaddockModule
 
 
 ANA_FOLDER = "analysis"  # name of the analysis folder
+INTER_STR = INTERACTIVE_RE_SUFFIX  # suffix of interactive analysis folders
 
 
 def get_cluster_ranking(capri_clt_filename: FilePath, top_cluster: int) -> ClRank:
@@ -151,6 +153,14 @@ ap.add_argument(
 ap.add_argument(
     "--scale", help="scale for images", required=False, type=float, default=1.0
 )
+
+ap.add_argument(
+    "--inter",
+    help="interactive analysis",
+    required=False,
+    type=bool,
+    default=False
+    )
 
 ap.add_argument(
     "--is_cleaned",
@@ -326,18 +336,26 @@ def analyse_step(
 
     target_path.mkdir(parents=True, exist_ok=False)
     step_name = step.split("_")[1]
+    ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
+    clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
     if step_name != "caprieval":
-        capri_dict = update_paths_in_capri_dict(capri_dict, target_path)
+        if ss_fname.exists() and clt_fname.exists():
+            log.info(f"step {step} has caprieval data, files are available")
+            run_capri = False
+        else:
+            capri_dict = update_paths_in_capri_dict(capri_dict, target_path)
+            run_capri = True
     else:
         log.info(f"step {step} is caprieval, files should be already available")
-        ss_fname = Path(run_dir, f"{step}/capri_ss.tsv")
+        run_capri = False
+
+    if run_capri == False:
         shutil.copy(ss_fname, target_path)
-        clt_fname = Path(run_dir, f"{step}/capri_clt.tsv")
         shutil.copy(clt_fname, target_path)
 
     os.chdir(target_path)
     # if the step is not caprieval, caprieval must be run
-    if step_name != "caprieval":
+    if run_capri == True:
         run_capri_analysis(step, run_dir, capri_dict)
 
     log.info("CAPRI files identified")
@@ -362,6 +380,7 @@ def main(
     top_cluster: int,
     format: Optional[ImgFormat],
     scale: Optional[float],
+    inter: Optional[bool],
     is_cleaned: Optional[bool],
     **kwargs: Any,
 ) -> None:
@@ -384,6 +403,9 @@ def main(
 
     scale : int
         scale for images.
+
+    inter: bool
+        analyse only steps labelled as 'interactive'
     """
     log.level = 20
     log.info(
@@ -408,26 +430,30 @@ def main(
     # Reading steps
     log.info("Reading input run directory")
     # get the module folders from the run_dir input
-    selected_steps = get_module_steps_folders(Path("./"), modules)
-    log.info(f"selected steps: {', '.join(selected_steps)}")
+    sel_steps = get_module_steps_folders(Path("./"), modules)
+    if inter:
+        sel_steps = [st for st in sel_steps if st.endswith(INTER_STR)]
+    else:
+        sel_steps = [st for st in sel_steps if not st.endswith(INTER_STR)]
+    log.info(f"selected steps: {', '.join(sel_steps)}")
 
     # analysis
     good_folder_paths: list[Path] = []
     bad_folder_paths: list[Path] = []
-    for step in selected_steps:
+    for step in sel_steps:
         subfolder_name = f"{step}_analysis"
         target_path = Path(Path("./"), subfolder_name)
 
         # check if subfolder is already present
         dest_path = Path(ANA_FOLDER, subfolder_name)
         if dest_path.exists():
-            if len(os.listdir(dest_path)) != 0:
+            if len(os.listdir(dest_path)) != 0 and not inter:
                 log.warning(
                     f"{dest_path} exists and is not empty. " "Skipping analysis..."
                 )
                 continue
-            else:  # subfolder is empty, remove it.
-                log.info(f"Removing empty folder {dest_path}.")
+            else:  # subfolder is empty or is interactive, remove it.
+                log.info(f"Removing folder {dest_path}.")
                 shutil.rmtree(dest_path)
 
         # run the analysis

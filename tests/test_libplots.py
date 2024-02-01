@@ -102,3 +102,10 @@ def test_make_alascan_plot(example_df_scan_clt):
     make_alascan_plot(example_df_scan_clt, clt_id="-")
     # assert existence of plot
     assert Path("scan_clt_-.html").exists()
+
+
+def test_plotly_cdn_url():
+    """Test to obtain plotly cdn url function."""
+    from plotly.io._utils import plotly_cdn_url
+    plotly_cdn_full_url = plotly_cdn_url()
+    assert type(plotly_cdn_full_url) == str

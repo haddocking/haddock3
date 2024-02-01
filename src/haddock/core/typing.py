@@ -145,7 +145,7 @@ LineIterSource = Union[Iterable[str], FilePath]
 
 ParamMap = MutableMapping[str, Any]
 """
-A mutable mapping object contains paramters generated from config
+A mutable mapping object contains parameters generated from config
 files or functions.
 
 The keys are always `str`.
@@ -158,7 +158,7 @@ Generic type of `MutableMapping[str, Any]` for generic function sigunature.
 
 ParamDict = dict[str, Any]
 """
-A dict contains paramters generated from config files or functions.
+A dict contains parameters generated from config files or functions.
 
 The keys are always `str`.
 

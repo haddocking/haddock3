@@ -35,6 +35,38 @@ from haddock.libs.libalign import (
 from haddock.libs.libio import write_dic_to_file, write_nested_dic_to_file
 from haddock.libs.libontology import PDBFile, PDBPath
 
+WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
+import json
+from haddock.gear.config import load as read_config
+
+
+def save_scoring_weights(cns_step: str) -> None:
+    """Save the scoring weights in a json file.
+
+    Parameters
+    ----------
+    cns_step : str
+        Name of the CNS step.
+    
+    Returns
+    -------
+    scoring_params_fname : Path
+        Path to the json file.
+    """
+    cns_params = read_config(Path("..", cns_step, "params.cfg"))
+    key = list(cns_params['final_cfg'].keys())[0]
+    scoring_pars = {kv: cns_params['final_cfg'][key][kv] for kv in WEIGHTS}
+
+    scoring_params_fname = Path("weights_params.json")
+    # write json file
+    with open(scoring_params_fname, 'w', encoding='utf-8') as jsonf:
+        json.dump(
+            scoring_pars,
+            jsonf,
+            indent=4,
+            )
+    return scoring_params_fname
+
 
 def load_contacts(
         pdb_f,

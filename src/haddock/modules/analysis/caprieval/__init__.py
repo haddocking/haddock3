@@ -1,8 +1,6 @@
 """Calculate CAPRI metrics."""
-import json
 from pathlib import Path
 
-from haddock.gear.config import load as read_config
 from haddock.core.typing import Any, FilePath
 from haddock.modules import BaseHaddockModule, get_module_steps_folders
 from haddock.modules import get_engine
@@ -13,6 +11,7 @@ from haddock.modules.analysis.caprieval.capri import (
     capri_cluster_analysis,
     merge_data,
     rearrange_ss_capri_output,
+    save_scoring_weights,
     )
 
 
@@ -25,7 +24,6 @@ CNS_MODULES = ["rigidbody",
                "mdscoring",
                "mdref",
                "emref"]
-WEIGHTS = ["w_elec", "w_vdw", "w_desolv", "w_bsa", "w_air"]
 
 
 class HaddockModule(BaseHaddockModule):
@@ -61,6 +59,7 @@ class HaddockModule(BaseHaddockModule):
         sel_steps = get_module_steps_folders(Path(".."))
 
         # get the previous CNS step
+        cns_step = None
         mod = len(sel_steps) - 2
         while mod > -1:
             st_name = sel_steps[mod].split("_")[1]
@@ -69,19 +68,12 @@ class HaddockModule(BaseHaddockModule):
                 break
             mod -= 1
         
-        cns_params = read_config(Path("..", cns_step, "params.cfg"))
-        key = list(cns_params['final_cfg'].keys())[0]
-        scoring_pars = {kv: cns_params['final_cfg'][key][kv] for kv in WEIGHTS}
-        
-        scoring_params_fname = Path("weights_params.json")
-        # write json file
-        with open(scoring_params_fname, 'w', encoding='utf-8') as jsonf:
-            json.dump(
-                scoring_pars,
-                jsonf,
-                indent=4,
-                )
-        self.log(f"scoring parameters written in: {scoring_params_fname}")
+        if cns_step:
+            self.log(f"Found previous CNS step: {cns_step}")
+            scoring_params_fname = save_scoring_weights(cns_step)
+            self.log(f"Saved scoring weights to: {scoring_params_fname}")
+        else:
+            self.log("No previous CNS step found. Cannot save scoring weights.")
 
         # Sort by score to find the "best"
         models.sort()
@@ -97,7 +89,7 @@ class HaddockModule(BaseHaddockModule):
 
         # Each model is a job; this is not the most efficient way
         #  but by assigning each model to an individual job
-        #  we can handle scenarios in wich the models are hetergoneous
+        #  we can handle scenarios in which the models are hetergoneous
         #  for example during CAPRI scoring
         jobs: list[CAPRI] = []
         for i, model_to_be_evaluated in enumerate(models, start=1):

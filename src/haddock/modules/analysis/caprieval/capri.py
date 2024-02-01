@@ -40,7 +40,7 @@ import json
 from haddock.gear.config import load as read_config
 
 
-def save_scoring_weights(cns_step: str) -> None:
+def save_scoring_weights(cns_step: str) -> Path:
     """Save the scoring weights in a json file.
 
     Parameters

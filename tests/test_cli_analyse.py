@@ -2,6 +2,7 @@
 import os
 import shutil
 from pathlib import Path
+import tempfile
 
 import pytest
 
@@ -88,9 +89,8 @@ def test_main(example_capri_ss, example_capri_clt):
 
 def test_zip_top_ranked(example_capri_ss):
     """Test cli_analyse zip_top_ranked function."""
-    import tempfile
+    cwd = os.getcwd()
     with tempfile.TemporaryDirectory() as tmpdir:
-        print(tmpdir)
         os.chdir(tmpdir)
         # build fake run_dir
         rigid_dir = "1_rigidbody"
@@ -104,4 +104,5 @@ def test_zip_top_ranked(example_capri_ss):
         exp_cl_ranking = {1: 2}
         zip_top_ranked(example_capri_ss, exp_cl_ranking, "summary.tgz")
         assert os.path.isfile("summary.tgz") is True
+    os.chdir(cwd)
     

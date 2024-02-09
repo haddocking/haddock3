@@ -1,0 +1,20 @@
+name: build
+
+on: 
+  push:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Git Repo Sync
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: 'master'
+        fetch-depth: 0
+    - uses: deGrootLab/pmx@master
+      with:
+        target-url: 'https://codehub.hlrs.de/coes/bioexcel/haddock3.git'
+        target-username: ${{ secrets.ACCESS_TOKEN_NAME }}
+        target-token: ${{ secrets.ACCESS_TOKEN }}
+        

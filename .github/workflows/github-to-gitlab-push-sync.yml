@@ -12,7 +12,7 @@ jobs:
       with:
         ref: 'main'
         fetch-depth: 0
-    - uses: haddocking/haddock3@master
+    - uses: haddocking/haddock3@amjjbonvin-patch-1
       with:
         target-url: 'https://codehub.hlrs.de/coes/bioexcel/haddock3.git'
         target-username: ${{ secrets.ACCESS_TOKEN_NAME }}

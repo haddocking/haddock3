@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: 'master'
+        ref: 'main'
         fetch-depth: 0
-    - uses: deGrootLab/pmx@master
+    - uses: haddocking/haddock3@main
       with:
         target-url: 'https://codehub.hlrs.de/coes/bioexcel/haddock3.git'
         target-username: ${{ secrets.ACCESS_TOKEN_NAME }}

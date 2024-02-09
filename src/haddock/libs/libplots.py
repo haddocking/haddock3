@@ -992,6 +992,75 @@ def _generate_html_head(step):
     head += "</head>"
     return head
 
+def _generate_unclustered_table_html(
+    table_id: str, df: pd.DataFrame
+):
+    headers = {
+        "rank": "Structure Rank",
+        "model": "Structure Name",
+    } + TITLE_NAMES
+    # TODO get capri_ss df as argument 
+    # instead of reading it again,
+    fn = "capri_ss.tsv"
+    # code below does not work as fn is incorrect
+    df = pd.read_csv(fn, sep='\t')
+    df = df.rename({'caprieval_rank': 'rank'}, axis=1)
+    max_best_structures = 10  
+    data = df[:max_best_structures].filter(items=headers.keys()).to_json(orient='records')
+    return f"""
+            <div id="{table_id}"></div>
+            </script>
+            <script type="importmap">
+            {{
+                "imports": {{
+                "react": "https://esm.sh/react@^18.2.0",
+                "react-dom": "https://esm.sh/react-dom@^18.2.0",
+                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.3.3-next.0?bundle"
+                }}
+            }}
+            </script>
+            <script type="module">
+            import {{createRoot}} from "react-dom"
+            import {{createElement}} from "react"
+            import {{StructureTable}} from "@i-vresse/haddock3-analysis-components"
+
+            const props = {{
+                structures: {data},
+                headers: {headers}
+            }}
+
+            createRoot(document.getElementById('{table_id}')).render(
+                createElement(StructureTable, props)
+                )
+            </script>"""
+
+def _generate_clustered_table_html(
+    table_id: str, df: pd.DataFrame
+):
+    data, headers = _pandas_df_to_json(df)
+    return f"""
+            <div id="{table_id}"></div>
+            <script type="importmap">
+            {{
+                "imports": {{
+                "react": "https://esm.sh/react@^18.2.0",
+                "react-dom": "https://esm.sh/react-dom@^18.2.0",
+                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.3.3-next.0?bundle"
+                }}
+            }}
+            </script>
+            <script type="module">
+            import {{createRoot}} from "react-dom"
+            import {{createElement}} from "react"
+            import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
+
+            const clusters = {data}
+            const headers = {headers}
+
+            createRoot(document.getElementById('{table_id}')).render(
+                createElement(ClusterTable, {{ clusters, headers, maxbest:10 }})
+                )
+            </script>"""
 
 def _generate_html_body(figures):
     """
@@ -1014,34 +1083,18 @@ def _generate_html_body(figures):
     fig_index = 1
     for figure in figures:
         if isinstance(figure, pd.DataFrame):  # tables
+            is_unclustered = figure["cluster_rank"].unique().tolist() == ["-"]
+            
             table_index += 1
             table_id = f"table{table_index}"
-
-            data, headers = _pandas_df_to_json(figure)
-            inner_html = f"""
-            <div id="{table_id}"></div>
-            <script type="importmap">
-            {{
-                "imports": {{
-                "react": "https://esm.sh/react@^18.2.0",
-                "react-dom": "https://esm.sh/react-dom@^18.2.0",
-                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.3.0?bundle"
-                }}
-            }}
-            </script>
-            <script type="module">
-            import {{createRoot}} from "react-dom"
-            import {{createElement}} from "react"
-            import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
-
-            const clusters = {data}
-            const headers = {headers}
-
-            createRoot(document.getElementById('{table_id}')).render(
-                createElement(ClusterTable, {{ clusters, headers, maxbest:10 }})
+            if is_unclustered:
+                inner_html = _generate_unclustered_table_html(
+                    table_id, figure
                 )
-            </script>
-            """  # noqa:E501
+            else:
+                inner_html = _generate_clustered_table_html(
+                    table_id, figure
+                )
         else:  # plots
             inner_json = figure.to_json()
             inner_html = create_html(inner_json, fig_index, figure.layout.height, figure.layout.width)

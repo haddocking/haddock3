@@ -1,7 +1,9 @@
 name: build
 
-on: 
+on:
   push:
+    # run only against tags
+    tags:
 
 jobs:
   sync:

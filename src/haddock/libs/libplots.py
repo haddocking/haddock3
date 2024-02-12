@@ -709,13 +709,6 @@ def report_plots_handler(plots, shared_xaxes=False, shared_yaxes=False):
     return fig
 
 
-def _fix_uncluster_rank(row):
-    rank = row
-    if rank == "-":
-        rank = "Unclustered"
-    return rank
-
-
 def find_best_struct(ss_file, number_of_struct=10):
     """
     Find best structures.
@@ -738,7 +731,9 @@ def find_best_struct(ss_file, number_of_struct=10):
     """
     dfss = read_capri_table(ss_file)
     dfss = dfss.sort_values(by=["cluster-id", "model-cluster-ranking"])
-    # TODO need a check for "Unclustered"
+    # Correct path because after running analyse files are moved to analysis
+    # folder
+    dfss['model'] = '../' + dfss['model']
 
     # count values within each cluster
     # and select the column model-cluster-ranking
@@ -759,7 +754,7 @@ def find_best_struct(ss_file, number_of_struct=10):
     number_of_cluster = len(best_struct_df["cluster-id"].unique())
     # zero pad number so after pivot columns are sorted correctly
     col_names = [
-        f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)
+        f"best{(number + 1):02d}" for number in range(number_of_struct)
     ] * number_of_cluster
 
     # add a new column `Structure` to the dataframe
@@ -775,20 +770,6 @@ def find_best_struct(ss_file, number_of_struct=10):
     )
 
     best_struct_df.reset_index(inplace=True)
-    # Rename columns
-    columns = {"cluster-id": "Cluster ID", "cluster-ranking": "Cluster Rank"}
-    best_struct_df.rename(columns=columns, inplace=True)
-
-    # unclustered id is "-", it is replaced by "Unclustered"
-    best_struct_df["Cluster Rank"] = best_struct_df["Cluster Rank"].apply(
-        _fix_uncluster_rank
-    )
-
-    # Correct path because after running analyse files are moved to analysis
-    # folder
-    df = best_struct_df.copy()
-    for col_name in best_struct_df.columns[2:]:
-        best_struct_df[col_name] = "../" + df[col_name]
 
     return best_struct_df
 
@@ -818,7 +799,7 @@ def clean_capri_table(dfcl):
     for col_name in col_list:
         mean_value = dfcl[col_name].astype(str)
         std_value = dfcl[f"{col_name}_std"].astype(str)
-        dfcl[AXIS_NAMES[col_name]] = mean_value + ", " + std_value
+        dfcl[AXIS_NAMES[col_name]] = {'mean': mean_value , 'std': std_value}
         table_col.append(AXIS_NAMES[col_name])
     dfcl.drop(columns=col_list, inplace=True)
     dfcl.rename(
@@ -829,13 +810,10 @@ def clean_capri_table(dfcl):
         },
         inplace=True,
     )
-
-    # unclustered id is "-", it is replaced by "Unclustered"
-    dfcl["Cluster Rank"] = dfcl["Cluster Rank"].apply(_fix_uncluster_rank)
     return dfcl[table_col]
 
 
-def _pandas_df_to_json(df):
+def _pandas_df_to_json(df: pd.DataFrame):
     """
     Return data and headers of a data frame as Json strings.
 
@@ -852,6 +830,11 @@ def _pandas_df_to_json(df):
 
     # Create a dictionary that contains the headers of the table
     headers = {json_plot_keys.get(name, name): name for name in df.columns}
+
+    reverse_headers = {v:k for k,v in AXIS_NAMES.items()}
+
+    data_string = df.rename(columns=reverse_headers).to_json(orient='records', indent=2)
+    print(data_string)
 
     # Create a nested dictionary that contains the data of the table
     data: dict[Any, Any] = {}
@@ -871,7 +854,7 @@ def _pandas_df_to_json(df):
         data.setdefault(index, {})["best"] = best
 
     # Convert dictionary to json strings
-    data_string = json.dumps(data, indent=2)
+    # data_string = json.dumps(data, indent=2)
     headers_string = json.dumps(headers, indent=2)
     return data_string, headers_string
 
@@ -899,10 +882,19 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     """
     # table of statistics
     dfcl = read_capri_table(clt_file)
+    structs_df = read_capri_table(ss_file)
+    is_unclustered = dfcl["cluster_rank"].unique().tolist() == ["-"]
+    if is_unclustered:
+        max_unstructured_structures = 10
+        structs_df = structs_df[:max_unstructured_structures]
+        # TODO drop columns not used in the report
+        structs_df['id'] = structs_df.reset_index()['index'] + 1
+        return structs_df
+
     statistics_df = clean_capri_table(dfcl)
 
     # table of structures
-    structs_df = find_best_struct(ss_file, number_of_struct=10)
+    structs_df = find_best_struct(ss_file, number_of_struct=4)
 
     # if the run will be cleaned, the structures are going to be gzipped
     if is_cleaned:
@@ -941,7 +933,7 @@ def _css_styles_for_report():
         }
 
     """
-    css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components/dist/style.css"  # noqa:E501
+    css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.0-next.0/dist/style.css"  # noqa:E501
     table_css = f' <link href={css_link} rel="stylesheet" />'
     return f"{table_css}<style>{custom_css}</style>"
 
@@ -989,36 +981,32 @@ def _generate_html_head(step):
     head += f"<title>Analysis report of step {step}</title>"
     head += f"<p class='title'>Analysis report of step {step}</p>"
     head += _css_styles_for_report()
+    head += """
+            <script type="importmap">
+            {
+                "imports": {
+                    "react": "https://esm.sh/react@^18.2.0",
+                    "react-dom": "https://esm.sh/react-dom@^18.2.0",
+                    "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.0-next.0?bundle"
+                }
+            }
+            </script>"""
     head += "</head>"
     return head
 
 def _generate_unclustered_table_html(
     table_id: str, df: pd.DataFrame
 ):
-    headers = {
-        "rank": "Structure Rank",
-        "model": "Structure Name",
-    } + TITLE_NAMES
-    # TODO get capri_ss df as argument 
-    # instead of reading it again,
-    fn = "capri_ss.tsv"
-    # code below does not work as fn is incorrect
-    df = pd.read_csv(fn, sep='\t')
-    df = df.rename({'caprieval_rank': 'rank'}, axis=1)
-    max_best_structures = 10  
-    data = df[:max_best_structures].filter(items=headers.keys()).to_json(orient='records')
+    data = df.to_json(orient='records')
+    headers = [
+        { 'key': "id", 'label': "Structure ID" },
+        { 'key': "rank", 'label': "Structure Rank", 'sorted': "asc" },
+        { 'key': "model", 'label': "Structure", 'sortable': False, 'type': "structure" },
+    ] + [
+        {'key': k, 'label': v, 'type': 'stats'} for k,v in AXIS_NAMES.items()
+    ]
     return f"""
             <div id="{table_id}"></div>
-            </script>
-            <script type="importmap">
-            {{
-                "imports": {{
-                "react": "https://esm.sh/react@^18.2.0",
-                "react-dom": "https://esm.sh/react-dom@^18.2.0",
-                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.3.3-next.0?bundle"
-                }}
-            }}
-            </script>
             <script type="module">
             import {{createRoot}} from "react-dom"
             import {{createElement}} from "react"
@@ -1031,7 +1019,7 @@ def _generate_unclustered_table_html(
 
             createRoot(document.getElementById('{table_id}')).render(
                 createElement(StructureTable, props)
-                )
+            )
             </script>"""
 
 def _generate_clustered_table_html(
@@ -1040,15 +1028,6 @@ def _generate_clustered_table_html(
     data, headers = _pandas_df_to_json(df)
     return f"""
             <div id="{table_id}"></div>
-            <script type="importmap">
-            {{
-                "imports": {{
-                "react": "https://esm.sh/react@^18.2.0",
-                "react-dom": "https://esm.sh/react-dom@^18.2.0",
-                "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.3.3-next.0?bundle"
-                }}
-            }}
-            </script>
             <script type="module">
             import {{createRoot}} from "react-dom"
             import {{createElement}} from "react"
@@ -1058,8 +1037,8 @@ def _generate_clustered_table_html(
             const headers = {headers}
 
             createRoot(document.getElementById('{table_id}')).render(
-                createElement(ClusterTable, {{ clusters, headers, maxbest:10 }})
-                )
+                createElement(ClusterTable, {{ clusters, headers }})
+            )
             </script>"""
 
 def _generate_html_body(figures):
@@ -1083,10 +1062,10 @@ def _generate_html_body(figures):
     fig_index = 1
     for figure in figures:
         if isinstance(figure, pd.DataFrame):  # tables
-            is_unclustered = figure["cluster_rank"].unique().tolist() == ["-"]
-            
             table_index += 1
             table_id = f"table{table_index}"
+
+            is_unclustered = 'cluster_rank' not in figure
             if is_unclustered:
                 inner_html = _generate_unclustered_table_html(
                     table_id, figure

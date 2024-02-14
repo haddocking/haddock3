@@ -709,7 +709,7 @@ def report_plots_handler(plots, shared_xaxes=False, shared_yaxes=False):
     return fig
 
 
-def find_best_struct(df: pd.DataFrame, max_best_structs = 4) -> pd.DataFrame:
+def find_best_struct(df: pd.DataFrame, max_best_structs: int = 4) -> pd.DataFrame:
     """Find best structures for each cluster.
 
     Args:
@@ -902,7 +902,7 @@ def _generate_html_head(step):
 
 def _generate_unclustered_table_html(
     table_id: str, df: pd.DataFrame
-):
+) -> str:
     data = df.to_json(orient='records')
     headers = [
         { 'key': "caprieval_rank", 'label': "Structure Rank", 'sorted': "asc" },
@@ -931,7 +931,7 @@ def _generate_unclustered_table_html(
 
 def _generate_clustered_table_html(
     table_id: str, df: pd.DataFrame
-):
+) -> str:
     data = df.to_json(orient='records')
     nr_best_columns = df.filter(like="best").shape[1]
     headers = [

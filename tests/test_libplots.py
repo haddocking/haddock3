@@ -99,6 +99,31 @@ def example_capri_ss_dashcluster():
     """Provide example capri_ss.tsv filename."""
     return Path(data_folder, "capri_ss_-cluster.tsv")
 
+# TODO find a way to not duplicate this fixture from test_module_alascan.py
+# maybe move to conftest.py file?
+@pytest.fixture
+def example_df_scan_clt():
+    """Return example alascan clt DataFrame."""
+    example_clt_data = [
+        ["A", 38, "ASP", "A-38-ASP", -2.0, -1.0, -0.4, -2.3, -0.5, -7.2, 1.0],
+        ["A", 69, "LYS", "A-38-ASP", -0.0, 1.0, -0.4, 0.8, 0.5, -7.2, 1.0],
+    ]
+    columns = [
+        "chain",
+        "resnum",
+        "resname",
+        "full_resname",
+        "score",
+        "delta_score",
+        "delta_vdw",
+        "delta_elec",
+        "delta_desolv",
+        "delta_bsa",
+        "frac_pres",
+    ]
+
+    example_df_scan_clt = pd.DataFrame(example_clt_data, columns=columns)
+    yield example_df_scan_clt
 
 def test_make_alascan_plot(example_df_scan_clt):
     """Test make_alascan_plot."""

@@ -531,8 +531,6 @@ def main(
                 f"""Could not execute the analysis for step {step}.
                 The following error occurred {e}"""
             )
-            # TODO remove stack trace, used for debugging not for normal use
-            log.warning(e, exc_info=True)
         if error:
             bad_folder_paths.append(target_path)
         else:

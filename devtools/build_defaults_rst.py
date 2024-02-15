@@ -11,11 +11,42 @@ temporary just to create the HTML files for the documentation.
 import os
 from collections.abc import Mapping
 from pathlib import Path
+import shutil
 
 from haddock import haddock3_repository_path, haddock3_source_path
 from haddock.core.typing import ParamMap
 from haddock.libs.libio import read_from_yaml
 
+MODULE_TITLE_DICT = {
+    "topoaa": "All-atom topology module",
+    "rigidbody": "Rigid body docking sampling module",
+    "lightdock": "LightDock sampling module",
+    "gdock": "Gdock sampling module",
+    "flexref": "Flexible refinement module",
+    "mdref": "Water refinement module",
+    "emref": "Energy Minimization refinement module",
+    "mdscoring": "Molecular Dynamics scoring module",
+    "emscoring": "Energy Minimization scoring module",
+    "clustfcc": "FCC Clustering module",
+    "caprieval": "CAPRI Evaluation module",
+    "contactmap": "Contact Map module",
+    "clustrmsd": "RMSD Clustering module",
+    "rmsdmatrix": "RMSD Matrix calculation module",
+    "seletop": "Selection of top models module",
+    "seletopclusts": "Selection of top clusters module",
+    "alascan": "Alanine Scanning module",
+    "ilrmsdmatrix": "Interface Ligand RMSD Matrix calculation module",
+    "exit": "Exit module",
+}
+
+CATEGORY_TITLE_DICT = {
+    "analysis": "Analysis Modules",
+    "extras": "Extra Modules",
+    "refinement": "Refinement Modules",
+    "sampling": "Sampling Modules",
+    "scoring": "Scoring Modules",
+    "topology": "Topology Modules",
+}
 
 class HeadingController:
     """
@@ -72,6 +103,7 @@ def main() -> None:
     pattern = Path('modules', '*', '*', '*.yaml')
     configs = haddock3_source_path.glob(str(pattern))
 
+    processed_categories = []
     # create RST pages for all modules' configuration files.
     for config in configs:
         if "_template" in str(config):
@@ -84,6 +116,44 @@ def main() -> None:
         # ignore empty modules - currently topocg for example
         if len(params) == 0:
             continue
+
+        # if the category has not been processed yet, copy the category file
+        if category not in processed_categories:
+            category_rst = Path(
+                haddock3_repository_path,
+                'docs',
+                f"haddock.modules.{category}.rst"
+                )
+            target_rst = Path(
+                haddock3_repository_path,
+                'docs',
+                'modules',
+                f"{category}",
+                "index.rst"
+                )
+            shutil.move(category_rst, target_rst)
+            # change title
+            with open(target_rst, 'r') as fin:
+                lines = fin.readlines()
+            with open(target_rst, 'w') as fout:
+                for ln, line in enumerate(lines):
+                    if ln == 0:
+                        if category in CATEGORY_TITLE_DICT:
+                            title = CATEGORY_TITLE_DICT[category]
+                            line = title + os.linesep
+                        else:
+                            line = line
+                    else:
+                        line = line
+                    fout.write(line)
+            
+            processed_categories.append(category)
+
+
+
+        print(f'Creating RST for {module_name} in {category} category')
+
+        
 
         HEADING.reset()
         HEADING.increase()
@@ -100,6 +170,69 @@ def main() -> None:
 
         with open(Path(params_folder, f'{module_name}.rst'), 'w') as fout:
             fout.write(text)
+
+        # copy the RST file to the new_docs/source/params folder
+        module_rst = Path(
+        haddock3_repository_path,
+        'docs',
+        f"haddock.modules.{category}.{module_name}.rst"
+        )
+        target_rst = Path(
+            haddock3_repository_path,
+            'docs',
+            'modules',
+            category,
+            module_rst.name
+            )
+        shutil.move(module_rst, target_rst)
+        # does the submodule exist?
+        submodule_gen = Path(haddock3_repository_path, 'docs').glob(f"haddock.modules.{category}.{module_name}.*.rst")
+        submodule_list = list(submodule_gen)
+        if len(submodule_list) != 0:
+            
+            submodule_name = submodule_list[0]
+        
+            print(f"submodule_name: {submodule_name}")
+
+            submodule_rst = Path(
+                haddock3_repository_path,
+                'docs',
+                submodule_name
+            )
+        
+            submodule_target_rst = Path(
+                haddock3_repository_path,
+                'docs',
+                'modules',
+                category,
+                submodule_rst.name
+                )
+            shutil.move(submodule_rst, submodule_target_rst)
+        
+        with open(target_rst, 'a') as fout:
+            fout.write(
+                f"{os.linesep}Default Parameters{os.linesep}"
+                f"---------------{os.linesep}"
+                f'.. include:: params/{module_name}.rst'
+                + os.linesep
+                + os.linesep
+                )
+        # change title
+        with open(target_rst, 'r') as fin:
+            lines = fin.readlines()
+        with open(target_rst, 'w') as fout:
+            for ln, line in enumerate(lines):
+                if ln == 0:
+                    if module_name in MODULE_TITLE_DICT:
+                        title = MODULE_TITLE_DICT[module_name]
+                        line = title + os.linesep
+                    else:
+                        line = line
+                elif line.startswith('Submodules'):
+                    line = 'Module functions' + os.linesep
+                else:
+                    line = line
+                fout.write(line)
 
     # Generate general default parameters RST page
     HEADING.reset()

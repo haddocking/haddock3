@@ -8,6 +8,7 @@ import sys
 import subprocess
 from pathlib import Path
 
+sys.path.insert(0, os.path.abspath('..'))
 
 mock_modules = [
     'Bio',
@@ -18,14 +19,14 @@ mock_modules = [
     'fccpy.contacts',
     'jsonpickle',
     'mpi4py',
-    'numpy',
+#    'numpy',
     'pdbtools',
     'pdbtools.pdb_segxchain',
     'pdbtools.pdb_splitchain',
     'pdbtools.pdb_splitmodel',
     'pdbtools.pdb_tidy',
     'pyyaml',
-    'scipy',
+#    'scipy',
     'scipy.cluster',
     'scipy.cluster.hierarchy',
     'toml',
@@ -48,6 +49,7 @@ extensions = [
     'sphinxarg.ext',
     'sphinx.ext.autosectionlabel',
     'myst_parser',
+    "sphinx_rtd_theme"
     ]
 
 source_suffix = {
@@ -80,7 +82,7 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 linkcheck_ignore = [r'https://codecov.io/*']
 
 if not on_rtd:  # only set the theme if we're building docs locally
-    html_theme = 'karma_sphinx_theme'
+    html_theme = 'sphinx_rtd_theme'
 
 # html_logo = 'img/taurenmd_logo_black.png'
 html_use_smartypants = True

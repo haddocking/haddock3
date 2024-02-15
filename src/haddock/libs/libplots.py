@@ -794,9 +794,13 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     clusters_df = read_capri_table(clt_file)
     structs_df = read_capri_table(ss_file)
 
+    # Round all numbers to 2 decimal places
+    clusters_df = clusters_df.round(2)
+    structs_df = structs_df.round(2)
+
     # if the run will be cleaned, the structures are going to be gzipped
     if is_cleaned:
-        # substitute the values in the df by adding .gz at the end
+        # substitute the values in the df by adding .gz at the end
         structs_df['model'] = structs_df['model'].replace(
             to_replace=r"(\.pdb)$", value=r".pdb.gz", regex=True
         )

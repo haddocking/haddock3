@@ -974,7 +974,7 @@ def _generate_clustered_table_html(
         { 'key': "cluster_id", 'label': "Cluster ID" },
         { 'key': "n", 'label': "Cluster size" },
     ] + [
-        {'key': k, 'label': v, 'type': 'stats'} for k, v in AXIS_NAMES.items()
+        {'key': k, 'label': v, 'type': 'stats'} for k, v in AXIS_NAMES.items()  if k in df.columns
     ] + [
         { 'key': f"best{i}", 'label': f"Nr {i} best structure", 'sortable': False, 'type': "structure" } for i in range(1, nr_best_columns + 1)
     ]

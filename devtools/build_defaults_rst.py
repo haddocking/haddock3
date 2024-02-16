@@ -375,6 +375,9 @@ def main() -> None:
                 change_title(target_rst, title)
     
     # now the command-line interfaces
+    clients_folder = Path(haddock3_repository_path, 'docs', 'clients')
+    clients_folder.mkdir(exist_ok=True)
+
     cli_rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.clis.*rst")
     for cli_rst_file in cli_rst_files:
         target_rst = Path(

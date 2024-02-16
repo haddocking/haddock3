@@ -769,6 +769,52 @@ def clean_capri_table(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def create_other_cluster(clusters_df: pd.DataFrame, structs_df: pd.DataFrame, max_clusters: int) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Combine all clusters with rank >= max_clusters into an "Other" cluster.
+
+    Parameters
+    ----------
+    clusters_df : pandas DataFrame
+        DataFrame of clusters
+    structs_df : pandas DataFrame
+        DataFrame of structures
+    max_clusters : int
+        From which cluster rank to consider as "Other"
+
+    Returns
+    -------
+        tuple with clusters_df and structs_df
+    """
+    if len(clusters_df) <= max_clusters:
+        return clusters_df, structs_df
+
+    other_structs_df = structs_df[structs_df['cluster-ranking'] >= max_clusters]
+    structs_df = structs_df[structs_df['cluster-ranking'] < max_clusters]
+    other_structs_df['cluster-id'] = 'Other'
+    other_structs_df['cluster-ranking'] = max_clusters
+    inner_rank = other_structs_df['caprieval_rank'].rank(method='first').astype(int)
+    other_structs_df['model-cluster-ranking'] = inner_rank
+    structs_df = structs_df.append(other_structs_df)
+
+    clusters_df = clusters_df[clusters_df['cluster_rank'] < max_clusters]
+    other_cluster = {
+        'cluster_id': 'Other',
+        'cluster_rank': max_clusters,
+        'n': len(other_structs_df),
+        'caprieval_rank': max_clusters
+    }
+    for col in AXIS_NAMES.keys():
+        if col not in other_structs_df.columns:
+            continue
+        other_cluster[col] = other_structs_df[col].mean()
+        other_cluster[col + '_std'] = other_structs_df[col].std()
+    clusters_df = clusters_df.append(other_cluster, ignore_index=True)
+
+    return clusters_df, structs_df
+
+
+
 def clt_table_handler(clt_file, ss_file, is_cleaned=False):
     """
     Create a dataframe including data for tables.
@@ -821,6 +867,8 @@ def clt_table_handler(clt_file, ss_file, is_cleaned=False):
         structs_df['id'] = structs_df['model'].str.extract(r'(\d+).pdb')
         return structs_df
 
+    clusters_df, structs_df = create_other_cluster(clusters_df, structs_df, max_clusters=10)
+
     clusters_df = clean_capri_table(clusters_df)
     structs_df = find_best_struct(structs_df, max_best_structs=4)
     df_merged = pd.merge(clusters_df, structs_df, on="cluster_id")
@@ -871,7 +919,7 @@ def _css_styles_for_report():
     }
 
     """
-    css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.0/dist/style.css"  # noqa:E501
+    css_link = "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1/dist/style.css"  # noqa:E501
     table_css = f' <link href={css_link} rel="stylesheet" />'
     return f"{table_css}<style>{custom_css}</style>"
 
@@ -925,7 +973,7 @@ def _generate_html_head(step):
                 "imports": {
                     "react": "https://esm.sh/react@^18.2.0",
                     "react-dom": "https://esm.sh/react-dom@^18.2.0",
-                    "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.0?bundle"
+                    "@i-vresse/haddock3-analysis-components": "https://esm.sh/@i-vresse/haddock3-analysis-components@~0.4.1?bundle"
                 }
             }
             </script>"""
@@ -978,8 +1026,14 @@ def _generate_clustered_table_html(
     ] + [
         { 'key': f"best{i}", 'label': f"Nr {i} best structure", 'sortable': False, 'type': "structure" } for i in range(1, nr_best_columns + 1)
     ]
+
+    caption = ''
+    if df['cluster_id'].isin(['Other']).any():
+        caption = 'The "Other" cluster is not a real cluster it contains all structures that are not in the top 9 clusters.'
+
     return f"""
             <div id="{table_id}"></div>
+            <div>{caption}</div>
             <script id="data{table_id}" type="application/json">
             {{
                 "clusters": {data},

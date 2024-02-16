@@ -94,6 +94,25 @@ REFERENCE_TITLE_DICT = {
     "mandatory_parameters.rst": "Mandatory Parameters",
 }
 
+CLI_TITLE_DICT = {
+    "clis": "Command-line interfaces",
+    "clis.cli": "Run HADDOCK3",
+    "clis.cli_analyse": "Analysis client",
+    "clis.cli_bm": "Benchmark Client",
+    "clis.cli_cfg": "Retrieve config",
+    "clis.cli_clean": "Clean HADDOCK3 runs",
+    "clis.cli_cp": "Copy steps to new run",
+    "clis.cli_dmn": "Benchmark Daemon",
+    "clis.cli_mpi": "HADDOCK3 MPI Run",
+    "clis.cli_pp": "PDB preprocessing client",
+    "clis.cli_re": "Interactive run client",
+    "clis.cli_restraints": "Generate restraints",
+    "clis.cli_score": "Calculate score",
+    "clis.cli_traceback": "PDB Traceback client",
+    "clis.cli_unpack": "Unpack HADDOCK3 run",
+    "clis.re": "Interactive sucommands",
+    "clis.restraints": "Restraints-related subcommands",
+}
 
 class HeadingController:
     """
@@ -354,6 +373,21 @@ def main() -> None:
             if title_key in REFERENCE_TITLE_DICT:
                 title = REFERENCE_TITLE_DICT[title_key]
                 change_title(target_rst, title)
+    
+    # now the command-line interfaces
+    cli_rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.clis.*rst")
+    for cli_rst_file in cli_rst_files:
+        target_rst = Path(
+            haddock3_repository_path,
+            'docs',
+            'clients',
+            cli_rst_file.name
+            )
+        shutil.move(cli_rst_file, target_rst)
+        title_key = ".".join(cli_rst_file.name.split(".")[1:-1])
+        if title_key in CLI_TITLE_DICT:
+            title = CLI_TITLE_DICT[title_key]
+            change_title(target_rst, title)
 
 
 def do_text(name: str, param: ParamMap, level: str) -> str:

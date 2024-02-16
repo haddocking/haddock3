@@ -145,7 +145,11 @@ examples/*/capriscoring-test/*
 examples/thirdparty/*/run*
 
 # ignore generated data for docs
-docs/modules/*/params/*.rst
-docs/modules/general_module_params.rst
-docs/reference/core/mandatory_parameters.rst
 haddock3-docs/
+docs/modules/**/*.rst
+docs/reference/**/*rst
+docs/modules.rst
+docs/haddock.rst
+docs/haddock.modules.rst
+docs/haddock.modules.base_cns_module.rst
+docs/setup.rst

@@ -946,15 +946,18 @@ def _generate_unclustered_table_html(
     ]
     return f"""
             <div id="{table_id}"></div>
+            <script id="data{table_id}" type="application/json">
+            {{
+                "structures": {data},
+                "headers": {json.dumps(headers)}
+            }}
+            </script>
             <script type="module">
             import {{createRoot}} from "react-dom"
             import {{createElement}} from "react"
             import {{StructureTable}} from "@i-vresse/haddock3-analysis-components"
 
-            const props = {{
-                structures: {data},
-                headers: {json.dumps(headers)}
-            }}
+            const props = JSON.parse(document.getElementById("data{table_id}").text)
 
             createRoot(document.getElementById('{table_id}')).render(
                 createElement(StructureTable, props)
@@ -971,22 +974,27 @@ def _generate_clustered_table_html(
         { 'key': "cluster_id", 'label': "Cluster ID" },
         { 'key': "n", 'label': "Cluster size" },
     ] + [
-        {'key': k, 'label': v, 'type': 'stats'} for k, v in AXIS_NAMES.items() if k in df.columns
+        {'key': k, 'label': v, 'type': 'stats'} for k, v in AXIS_NAMES.items()
     ] + [
         { 'key': f"best{i}", 'label': f"Nr {i} best structure", 'sortable': False, 'type': "structure" } for i in range(1, nr_best_columns + 1)
     ]
     return f"""
             <div id="{table_id}"></div>
+            <script id="data{table_id}" type="application/json">
+            {{
+                "clusters": {data},
+                "headers": {json.dumps(headers)}
+            }}
+            </script>
             <script type="module">
             import {{createRoot}} from "react-dom"
             import {{createElement}} from "react"
             import {{ClusterTable}} from "@i-vresse/haddock3-analysis-components"
 
-            const clusters = {data}
-            const headers = {json.dumps(headers)}
+            const props = JSON.parse(document.getElementById("data{table_id}").text)
 
             createRoot(document.getElementById('{table_id}')).render(
-                createElement(ClusterTable, {{ clusters, headers }})
+                createElement(ClusterTable, props)
             )
             </script>"""
 

@@ -258,7 +258,7 @@ def main(
         print(f"> vdw={vdw},elec={elec},desolv={desolv},air={air},bsa={bsa}")
 
     if outputpdb:
-        outputpdb_name = Path(f"{input_pdb.name}_hs.pdb")
+        outputpdb_name = Path(f"{input_pdb.stem}_hs.pdb")
         print(f"> writing {outputpdb_name}")
         shutil.copy(
             Path(run_dir, "1_emscoring", "emscoring_1.pdb"),
@@ -266,10 +266,10 @@ def main(
             )
 
     if outputpsf:
-        outputpsf_name = Path(f"{input_pdb.name}_hs.psf")
+        outputpsf_name = Path(f"{input_pdb.stem}_hs.psf")
         print(f"> writing {outputpsf_name}")
         shutil.copy(
-            Path(run_dir, "0_topoaa", f"{input_pdb.name}_haddock.psf"),
+            Path(run_dir, "0_topoaa", f"{input_pdb_copy.stem}_haddock.psf"),
             outputpsf_name,
             )
 

@@ -179,16 +179,21 @@ def main(
             # get the type of default value
             default_type = type(default_emscoring[param])
             # convert the value to the same type
-            value = default_type(value)
+            if default_type == bool:
+                if value.lower() not in ["true", "false"]:
+                    sys.exit(f"* ERROR * Boolean parameter {param} should be True or False")
+                value = value == "true"
+            else:
+                value = default_type(value)
             ems_dict[param] = value
             n_warnings += 1
-
     if n_warnings != 0:
         print(
             "* ATTENTION * Non-default parameter values were used. "
             "They should be properly reported if the output "
             "data are used for publication."
             )
+        print(f"used emscoring parameters: {ems_dict}")
 
     # create run directory
     run_dir = Path(run_dir)
@@ -272,7 +277,7 @@ def main(
         shutil.rmtree(run_dir)
     else:
         print(
-            'The folder where the calculations where performed was kept.'
+            'The folder where the calculations were performed was kept.'
             f' See folder: {run_dir}'
             )
 

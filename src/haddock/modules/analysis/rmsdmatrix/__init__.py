@@ -41,9 +41,7 @@ from haddock.modules.analysis import (
     get_analysis_exec_mode,
     )
 from haddock.modules.analysis.rmsdmatrix.rmsd import (
-    RMSD,
     RMSDJob,
-    RMSDJobFast,
     rmsd_dispatcher,
     )
 
@@ -65,7 +63,7 @@ class HaddockModule(BaseHaddockModule):
 
     @classmethod
     def confirm_installation(cls) -> None:
-        """Confirm if FCC is installed and available."""
+        """Confirm if fast-rmsdmatrix is installed and available."""
         dcfg = read_from_yaml_config(DEFAULT_CONFIG)
         exec_path = Path(RMSD_path, dcfg["executable"])
 
@@ -103,6 +101,8 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self) -> None:
         """Execute module."""
+        rmsdmatrix_executable = Path(RMSD_path, self.params["executable"])
+
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
@@ -125,82 +125,56 @@ class HaddockModule(BaseHaddockModule):
             nmodels,
             tot_npairs,
             ncores)
-        if self.params['fast']:
-            rmsdmatrix_executable = Path(RMSD_path, self.params["executable"])
-            # create prev_keys to check if the keys of the ref_coord_dic
-            # are the same for all the models
-            prev_keys = []
-            with open("traj.xyz", "w") as traj_xyz:
-                for mod in models:
-                    atoms = {}
-                    atoms.update(get_atoms(mod))
-                    
-                    filter_resdic = {
-                        key[-1]: value for key, value
-                        in self.params.items()
-                        if key.startswith("resdic")
-                    }
-                    ref_coord_dic, _ = load_coords(
-                    mod, atoms, filter_resdic
-                    )
-                    if prev_keys != []:
-                        if ref_coord_dic.keys() != prev_keys:
-                            self.finish_with_error(
-                                "The keys of the ref_coord_dic are not the "
-                                "same for all the models. Please check the "
-                                "input models."
-                                )
-                    n_atoms = len(ref_coord_dic)
-                    # write xyz coords
-                    traj_xyz.write(f"{n_atoms}{os.linesep}{os.linesep}")
-                    for k, v in ref_coord_dic.items():
-                        traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
-                    
-                    prev_keys = ref_coord_dic.keys()
             
-            # Calculate the rmsd for each set of models
-            rmsd_jobs: list[RMSDJobFast] = []
-            self.log(f"running RmsdFast Jobs with {ncores} cores")
-            for core in range(ncores):
-                output_name = Path("rmsd_" + str(core) + ".out")
-                job_f = Path(output_name)
-                # init RMSDJobFast
-                job = RMSDJobFast(
-                    "traj.xyz",
-                    output_name,
-                    rmsdmatrix_executable,
-                    f"{core}",
-                    f"{npairs[core]}",
-                    f"{ref_structs[core]}",
-                    f"{mod_structs[core]}",
-                    f"{len(models)}",
-                    f"{n_atoms}",
-                    )
-                rmsd_jobs.append(job)
-        else:
-            # Calculate the rmsd for each set of models
-            rmsd_jobs: list[RMSDJob] = []
-            self.log(f"running Rmsd Jobs with {ncores} cores")
-            for core in range(ncores):
-                output_name = "rmsd_" + str(core) + ".matrix"
-                rmsd_obj = RMSD(
-                    models,
-                    core,
-                    npairs[core],
-                    ref_structs[core],
-                    mod_structs[core],
-                    output_name,
-                    path=Path("."),
-                    params=self.params
-                    )
-                job_f = Path(output_name)
-                # init RMSDJob
-                job = RMSDJob(
-                    job_f,
-                    self.params,
-                    rmsd_obj
-                    )
-                rmsd_jobs.append(job)
+        # create prev_keys to check if the keys of the ref_coord_dic
+        # are the same for all the models
+        prev_keys = []
+        with open("traj.xyz", "w") as traj_xyz:
+            for mod in models:
+                atoms = {}
+                atoms.update(get_atoms(mod))
+                
+                filter_resdic = {
+                    key[-1]: value for key, value
+                    in self.params.items()
+                    if key.startswith("resdic")
+                }
+                ref_coord_dic, _ = load_coords(
+                mod, atoms, filter_resdic
+                )
+                if prev_keys != []:
+                    if ref_coord_dic.keys() != prev_keys:
+                        self.finish_with_error(
+                            "The keys of the ref_coord_dic are not the "
+                            "same for all the models. Please check the "
+                            "input models."
+                            )
+                n_atoms = len(ref_coord_dic)
+                # write xyz coords
+                traj_xyz.write(f"{n_atoms}{os.linesep}{os.linesep}")
+                for k, v in ref_coord_dic.items():
+                    traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                
+                prev_keys = ref_coord_dic.keys()
+        
+        # Calculate the rmsd for each set of models
+        rmsd_jobs: list[RMSDJob] = []
+        self.log(f"running RmsdFast Jobs with {ncores} cores")
+        for core in range(ncores):
+            output_name = Path("rmsd_" + str(core) + ".out")
+            # init RMSDJobFast
+            job = RMSDJob(
+                "traj.xyz",
+                output_name,
+                rmsdmatrix_executable,
+                f"{core}",
+                f"{npairs[core]}",
+                f"{ref_structs[core]}",
+                f"{mod_structs[core]}",
+                f"{len(models)}",
+                f"{n_atoms}",
+                )
+            rmsd_jobs.append(job)
 
         exec_mode = get_analysis_exec_mode(self.params["mode"])
 

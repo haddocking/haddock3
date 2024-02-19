@@ -1,23 +1,12 @@
 """RMSD calculations."""
 import os
-from pathlib import Path
-
 import numpy as np
 
 from haddock import log
-from haddock.core.typing import Any, AtomsDict, FilePath, ParamMap
-from haddock.libs.libalign import (
-    calc_rmsd,
-    centroid,
-    get_atoms,
-    kabsch,
-    load_coords,
-    )
-from haddock.libs.libontology import PDBFile
 from haddock.libs.libsubprocess import BaseJob
 
 
-class RMSDJobFast(BaseJob):
+class RMSDJob(BaseJob):
     """
     Instantiate a subprocess job with inverted args and input.
 
@@ -34,159 +23,6 @@ class RMSDJobFast(BaseJob):
             ' '.join(map(str, self.args)),  # empty string if no args
             ])
         return
-    
-
-class RMSDJob:
-    """A Job dedicated to the fast rmsd calculation."""
-
-    def __init__(
-            self,
-            output: Path,
-            params: ParamMap,
-            rmsd_obj: "RMSD") -> None:
-
-        log.info(f"core {rmsd_obj.core}, initialising RMSD...")
-        log.info(f"core {rmsd_obj.core}, # of pairs : {rmsd_obj.npairs}")
-        self.output = output
-        self.params = params
-        self.rmsd_obj = rmsd_obj
-        log.info(f"core {rmsd_obj.core}, RMSD initialised")
-
-    def run(self) -> None:
-        """Run this RMSDJob."""
-        log.info(f"core {self.rmsd_obj.core}, running RMSD...")
-        self.rmsd_obj.run()
-        self.rmsd_obj.output()
-        return
-
-
-class RMSD:
-    """RMSD class."""
-
-    def __init__(
-            self,
-            model_list: list[PDBFile],
-            core: int,
-            npairs: int,
-            start_ref: int,
-            start_mod: int,
-            output_name: FilePath,
-            path: Path,
-            **params: Any,
-            ) -> None:
-        """
-        Initialise RMSD class.
-
-        Parameters
-        ----------
-
-        model_list : list
-            List of models
-
-        core : int
-            index of the current core
-
-        npairs : int
-            the number of pairs of structures
-
-        start_ref : int
-            the index of the first reference structure
-
-        start_mod : int
-            the index of the first mobile structure. The class performs npairs
-            RMSD calculations starting from the pair (start_ref, start_mod)
-
-        output_name : str
-            name of the core-specific output file
-
-        path : pathlib.Path
-            path to the current directory
-
-        **params : dict
-            additional parameters
-        """
-        self.model_list = model_list
-        self.core = core
-        self.npairs = npairs
-        self.start_ref = start_ref
-        self.start_mod = start_mod
-        # choice of atoms
-        if "params" in params.keys():
-            self.filter_resdic = {
-                key[-1]: value for key, value
-                in params["params"].items()
-                if key.startswith("resdic")
-                }
-        else:
-            self.filter_resdic = {}
-        if self.filter_resdic:
-            log.info(f"Using filtering dictionary {self.filter_resdic}")
-        else:
-            log.info("No filtering dictionary, using all residues")
-        self.output_name = output_name
-        self.path = path
-        self.atoms: AtomsDict = {}
-        for m in model_list:
-            self.atoms.update(get_atoms(m))
-        # data array
-        self.data = np.zeros((self.npairs, 3))
-
-    def run(self) -> None:
-        """Run calculations."""
-        # initialising the number of pairs
-        ref = self.start_ref
-        mod = self.start_mod
-        nmodels = len(self.model_list)
-        for n in range(self.npairs):
-
-            ref_coord_dic, _ = load_coords(
-                self.model_list[ref], self.atoms, self.filter_resdic
-                )
-
-            mod_coord_dic, _ = load_coords(
-                self.model_list[mod], self.atoms, self.filter_resdic
-                )
-            P = []
-            Q = []
-            for k in ref_coord_dic.keys() & mod_coord_dic.keys():
-                ref_xyz = ref_coord_dic[k]
-                mod_xyz = mod_coord_dic[k]
-                Q.append(ref_xyz)
-                P.append(mod_xyz)
-            Q = np.asarray(Q)
-            P = np.asarray(P)
-            Q = Q - centroid(Q)
-            P = P - centroid(P)
-            U = kabsch(P, Q)
-            P = np.dot(P, U)
-            rmsd = calc_rmsd(P, Q)
-            # saving output (adding one for consistency with clusterfcc)
-            self.data[n, 0] = ref + 1
-            self.data[n, 1] = mod + 1
-            self.data[n, 2] = rmsd
-            # updating indices
-            if mod == (nmodels - 1):
-                ref += 1
-                mod = ref + 1
-            else:
-                mod += 1
-
-    def output(self) -> None:
-        """Write down the RMSD matrix."""
-        output_fname = Path(self.path, self.output_name)
-        # check if there are very low values in the RMSD vector
-        check_low_values = np.isclose(
-            self.data[:, 2],
-            np.zeros(self.npairs),
-            atol=0.1
-            ).any()
-        if check_low_values:
-            log.warning(f"core {self.core}: low values of RMSD detected.")
-        with open(output_fname, "w") as out_fh:
-            for data in list(self.data):
-                data_str = f"{data[0]:.0f} {data[1]:.0f} {data[2]:.3f}"
-                data_str += os.linesep
-                out_fh.write(data_str)
 
 
 def get_pair(nmodels: int, idx: int) -> tuple[int, int]:

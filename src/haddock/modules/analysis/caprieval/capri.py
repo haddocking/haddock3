@@ -492,13 +492,13 @@ class CAPRI:
         data["dockq"] = self.dockq
 
         if self.has_cluster_info():
-            data["cluster-id"] = self.model.clt_id
-            data["cluster-ranking"] = self.model.clt_rank
-            data["model-cluster-ranking"] = self.model.clt_model_rank
+            data["cluster_id"] = self.model.clt_id
+            data["cluster_ranking"] = self.model.clt_rank
+            data["model-cluster_ranking"] = self.model.clt_model_rank
         else:
-            data["cluster-id"] = None
-            data["cluster-ranking"] = None
-            data["model-cluster-ranking"] = None
+            data["cluster_id"] = None
+            data["cluster_ranking"] = None
+            data["model-cluster_ranking"] = None
 
         # energies
         if self.model.unw_energies:
@@ -736,7 +736,7 @@ def rearrange_ss_capri_output(
     log.info(f"Rearranging output files into {output_fname}")
     keyword = output_name.split(".")[0]
     split_dict = {
-        "capri_ss": "model-cluster-ranking",
+        "capri_ss": "model-cluster_ranking",
         "capri_clt": "caprieval_rank",
         }
     if keyword not in split_dict.keys():

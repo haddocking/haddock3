@@ -262,19 +262,19 @@ def box_plot_plotly(
         color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
 
         # Note: the rank format (float/int) in "cl_rank" is different from
-        # gb_full["cluster-ranking"]
-        rns = gb_full[gb_full["cluster-id"] == cl_id]["cluster-ranking"]
+        # gb_full["cluster_ranking"]
+        rns = gb_full[gb_full["cluster_id"] == cl_id]["cluster_ranking"]
         rn = rns.unique()[0]
         color_map[f"{rn}"] = colors[color_idx]
 
         # Choose a different color for "Other" like in scatter plots
         color_map["Other"] = "#DDDBDA"
 
-    # to use color_discrete_map, cluster-ranking column should be str not int
-    gb_full_string = gb_full.astype({"cluster-ranking": "string"})
+    # to use color_discrete_map, cluster_ranking column should be str not int
+    gb_full_string = gb_full.astype({"cluster_ranking": "string"})
 
     # Rename for a better name in legend
-    gb_full_string.rename(columns={"cluster-ranking": "Cluster Rank"}, inplace=True)
+    gb_full_string.rename(columns={"cluster_ranking": "Cluster Rank"}, inplace=True)
 
     # "Cluster Rank" is equivalent to "capri_rank"!
     fig = px.box(
@@ -319,7 +319,7 @@ def box_plot_data(capri_df: pd.DataFrame, cl_rank: ClRank) -> pd.DataFrame:
     gb_full : pandas DataFrame
         DataFrame of all the clusters to be plotted
     """
-    gb_cluster = capri_df.groupby("cluster-id")
+    gb_cluster = capri_df.groupby("cluster_id")
     gb_other = pd.DataFrame([])
     gb_good = pd.DataFrame([])
     for cl_id, cl_df in gb_cluster:
@@ -329,9 +329,9 @@ def box_plot_data(capri_df: pd.DataFrame, cl_rank: ClRank) -> pd.DataFrame:
             cl_df["capri_rank"] = cl_rank[cl_id]  # type: ignore
             gb_good = pd.concat([gb_good, cl_df])
 
-    gb_other["cluster-id"] = "Other"
+    gb_other["cluster_id"] = "Other"
     gb_other["capri_rank"] = len(cl_rank.keys()) + 1
-    gb_other["cluster-ranking"] = "Other"
+    gb_other["cluster_ranking"] = "Other"
     gb_full = pd.concat([gb_good, gb_other])
 
     # Sort based on "capri_rank"
@@ -392,7 +392,7 @@ def scatter_plot_plotly(
     Parameters
     ----------
     gb_cluster : pandas DataFrameGroupBy
-        capri DataFrame grouped by cluster-id
+        capri DataFrame grouped by cluster_id
     gb_other : pandas DataFrame
         DataFrame of clusters not in the top cluster ranking
     cl_rank : dict
@@ -547,11 +547,11 @@ def scatter_plot_data(
     Returns
     -------
     gb_cluster : pandas DataFrameGroupBy
-        capri DataFrame grouped by cluster-id
+        capri DataFrame grouped by cluster_id
     gb_other : pandas DataFrame
         DataFrame of clusters not in the top cluster ranking
     """
-    gb_cluster = capri_df.groupby("cluster-id")
+    gb_cluster = capri_df.groupby("cluster_id")
     gb_other = pd.DataFrame([])
     for cl_id, cl_df in gb_cluster:
         if cl_id not in cl_rank.keys():
@@ -720,7 +720,7 @@ def find_best_struct(ss_file, number_of_struct=10):
     """
     Find best structures.
 
-    It inspects model-cluster-ranking recorded in capri_ss.tsv file and finds
+    It inspects model-cluster_ranking recorded in capri_ss.tsv file and finds
     the best models (models with lower ranks).
     By default, it selects the 10 best models.
 
@@ -729,7 +729,7 @@ def find_best_struct(ss_file, number_of_struct=10):
     ss_file : path
         path to capri_ss.tsv
     number_of_struct: int
-        number of models with lower model-cluster-ranking
+        number of models with lower model-cluster_ranking
 
     Returns
     -------
@@ -737,12 +737,12 @@ def find_best_struct(ss_file, number_of_struct=10):
         DataFrame of best structures
     """
     dfss = read_capri_table(ss_file)
-    dfss = dfss.sort_values(by=["cluster-id", "model-cluster-ranking"])
+    dfss = dfss.sort_values(by=["cluster_id", "model-cluster_ranking"])
     # TODO need a check for "Unclustered"
 
     # count values within each cluster
-    # and select the column model-cluster-ranking
-    dfss_grouped = dfss.groupby("cluster-id").count()["model-cluster-ranking"]
+    # and select the column model-cluster_ranking
+    dfss_grouped = dfss.groupby("cluster_id").count()["model-cluster_ranking"]
 
     # number of structs can be different per each cluster,
     # so min value is picked here
@@ -752,11 +752,11 @@ def find_best_struct(ss_file, number_of_struct=10):
     number_of_struct = min(number_of_struct, max_number_of_struct)
 
     # select the best `number_of_struct` e.g. 4 structures for each cluster
-    best_struct_df = dfss.groupby("cluster-id").head(number_of_struct).copy()
+    best_struct_df = dfss.groupby("cluster_id").head(number_of_struct).copy()
 
     # define names for best structures, e.g.
     # Nr 1 best structure, Nr 2 best structure, ...
-    number_of_cluster = len(best_struct_df["cluster-id"].unique())
+    number_of_cluster = len(best_struct_df["cluster_id"].unique())
     # zero pad number so after pivot columns are sorted correctly
     col_names = [
         f"Nr {(number + 1):02d} best structure" for number in range(number_of_struct)
@@ -765,10 +765,10 @@ def find_best_struct(ss_file, number_of_struct=10):
     # add a new column `Structure` to the dataframe
     best_struct_df = best_struct_df.assign(Structure=col_names)
 
-    # reshape data frame where columns are cluster-id, cluster-ranking,
+    # reshape data frame where columns are cluster_id, cluster_ranking,
     # model,.., Nr 1 best structure, Nr 2 best structure, ...
     best_struct_df = best_struct_df.pivot_table(
-        index=["cluster-id", "cluster-ranking"],
+        index=["cluster_id", "cluster_ranking"],
         columns=["Structure"],
         values="model",
         aggfunc=lambda x: x,
@@ -776,7 +776,7 @@ def find_best_struct(ss_file, number_of_struct=10):
 
     best_struct_df.reset_index(inplace=True)
     # Rename columns
-    columns = {"cluster-id": "Cluster ID", "cluster-ranking": "Cluster Rank"}
+    columns = {"cluster_id": "Cluster ID", "cluster_ranking": "Cluster Rank"}
     best_struct_df.rename(columns=columns, inplace=True)
 
     # unclustered id is "-", it is replaced by "Unclustered"

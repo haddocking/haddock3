@@ -34,10 +34,8 @@ from haddock.modules.analysis import get_analysis_exec_mode
 from haddock.modules.analysis.ilrmsdmatrix.ilrmsd import (
     Contact,
     ContactJob,
-    ilRMSD,
-    ilRMSDJob,
     )
-from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher, RMSDJobFast
+from haddock.modules.analysis.rmsdmatrix import rmsd_dispatcher, RMSDJob
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -137,6 +135,7 @@ class HaddockModule(BaseHaddockModule):
 
     def _run(self):
         """Execute module."""
+        rmsdmatrix_executable = Path(RMSD_path, self.params["executable"])
         # Get the models generated in previous step
         if type(self.previous_io) == iter:
             _e = "This module cannot come after one that produced an iterable."
@@ -216,84 +215,58 @@ class HaddockModule(BaseHaddockModule):
             tot_npairs,
             ncores)
         
-        if self.params['fast']:
-            rmsdmatrix_executable = Path(RMSD_path, self.params["executable"])
-            prev_keys = []
-            with open("traj_rec.xyz", "w") as rec_traj_xyz:
-                with open("traj_lig.xyz", "w") as lig_traj_xyz:
-                    for mod in models:
-                        atoms = {}
-                        atoms.update(get_atoms(mod))
-                        ref_coord_dic, _ = load_coords(
-                        mod, atoms, res_resdic
-                        )
-                        if prev_keys != []:
-                            if ref_coord_dic.keys() != prev_keys:
-                                self.finish_with_error(
-                                    "The keys of the ref_coord_dic are not the "
-                                    "same for all the models. Please check the "
-                                    "input models."
-                                    )
-                        # write receptor coords
-                        rec_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] == self.params["receptor_chain"]}
-                        lig_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] in self.params["ligand_chains"]}
-                        n_rec_atoms = len(rec_coords)
-                        n_lig_atoms = len(lig_coords)
-                        rec_traj_xyz.write(f"{n_rec_atoms}{os.linesep}{os.linesep}")
-                        lig_traj_xyz.write(f"{n_lig_atoms}{os.linesep}{os.linesep}")
-                        for k, v in rec_coords.items():
-                            rec_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
-                        for k, v in lig_coords.items():
-                            lig_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
-                        
-                        prev_keys = ref_coord_dic.keys()
-
-            # Calculate the rmsd for each set of models
-            ilrmsd_jobs: list[RMSDJobFast] = []
-            self.log(f"running RmsdFast Jobs with {ncores} cores")
-            for core in range(ncores):
-                output_name = Path("ilrmsd_" + str(core) + ".out")
-                job_f = Path(output_name)
-                # init RMSDJobFast
-                job = RMSDJobFast(
-                    "traj_rec.xyz",
-                    output_name,
-                    rmsdmatrix_executable,
-                    f"{core} ",
-                    f"{npairs[core]}",
-                    f"{ref_structs[core]}",
-                    f"{mod_structs[core]}",
-                    f"{len(models)}",
-                    f"{n_rec_atoms}",
-                    "traj_lig.xyz",
-                    f"{n_lig_atoms}",
+            
+        prev_keys = []
+        with open("traj_rec.xyz", "w") as rec_traj_xyz:
+            with open("traj_lig.xyz", "w") as lig_traj_xyz:
+                for mod in models:
+                    atoms = {}
+                    atoms.update(get_atoms(mod))
+                    ref_coord_dic, _ = load_coords(
+                    mod, atoms, res_resdic
                     )
-                ilrmsd_jobs.append(job)
-        else:
-            # Calculate the ilrmsd for each set of models
-            ilrmsd_jobs = []
-            self.log(f"running ilRmsd Jobs with {ncores} cores")
-            for core in range(ncores):
-                output_name = "ilrmsd_" + str(core) + ".matrix"
-                ilrmsd_obj = ilRMSD(
-                    models,
-                    core,
-                    npairs[core],
-                    ref_structs[core],
-                    mod_structs[core],
-                    res_resdic,
-                    output_name,
-                    path=Path("."),
-                    params=self.params
-                    )
-                job_f = Path(output_name)
-                # init RMSDJob
-                job = ilRMSDJob(
-                    job_f,
-                    self.params,
-                    ilrmsd_obj
-                    )
-                ilrmsd_jobs.append(job)
+                    if prev_keys != []:
+                        if ref_coord_dic.keys() != prev_keys:
+                            self.finish_with_error(
+                                "The keys of the ref_coord_dic are not the "
+                                "same for all the models. Please check the "
+                                "input models."
+                                )
+                    # write receptor coords
+                    rec_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] == self.params["receptor_chain"]}
+                    lig_coords = {k:ref_coord_dic[k] for k in ref_coord_dic if k[0] in self.params["ligand_chains"]}
+                    n_rec_atoms = len(rec_coords)
+                    n_lig_atoms = len(lig_coords)
+                    rec_traj_xyz.write(f"{n_rec_atoms}{os.linesep}{os.linesep}")
+                    lig_traj_xyz.write(f"{n_lig_atoms}{os.linesep}{os.linesep}")
+                    for k, v in rec_coords.items():
+                        rec_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                    for k, v in lig_coords.items():
+                        lig_traj_xyz.write(f"x {v[0]} {v[1]} {v[2]}{os.linesep}")
+                    
+                    prev_keys = ref_coord_dic.keys()
+        
+        # Calculate the rmsd for each set of models
+        ilrmsd_jobs: list[RMSDJob] = []
+        self.log(f"running RmsdFast Jobs with {ncores} cores")
+        for core in range(ncores):
+            output_name = Path("ilrmsd_" + str(core) + ".out")
+            job_f = Path(output_name)
+            # init RMSDJob
+            job = RMSDJob(
+                "traj_rec.xyz",
+                output_name,
+                rmsdmatrix_executable,
+                f"{core} ",
+                f"{npairs[core]}",
+                f"{ref_structs[core]}",
+                f"{mod_structs[core]}",
+                f"{len(models)}",
+                f"{n_rec_atoms}",
+                "traj_lig.xyz",
+                f"{n_lig_atoms}",
+                )
+            ilrmsd_jobs.append(job)
 
         Engine = get_engine(exec_mode, self.params)
         ilrmsd_engine = Engine(ilrmsd_jobs)

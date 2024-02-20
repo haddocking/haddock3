@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from haddock.libs.libplots import find_best_struct, make_alascan_plot, read_capri_table
+from haddock.libs.libplots import create_other_cluster, find_best_struct, make_alascan_plot, read_capri_table
 
 from . import data_folder, golden_data
 
@@ -71,13 +71,13 @@ def test_find_best_struct_bestdefault(example_capri_ss):
 def test_find_best_struct_empty_column():
     ss_df = pd.DataFrame(
         {
-            "cluster-id": [1, 1, 1],
+            "cluster_id": [1, 1, 1],
             "model": [
                 "../1_rigidbody/rigidbody_383.pdb",
                 "../1_rigidbody/rigidbody_265.pdb",
                 "../1_rigidbody/rigidbody_231.pdb",
             ],
-            "model-cluster-ranking": [1, 2, 3],
+            "model-cluster_ranking": [1, 2, 3],
             # Dont care about the rest of the columns, they are ignored by the function
         }
     )
@@ -92,6 +92,102 @@ def test_find_best_struct_empty_column():
         }
     )
     pd.testing.assert_frame_equal(result, expected)
+
+
+def test_create_other_cluster_nochange():
+    clusters_df = pd.DataFrame(
+        {
+            "cluster_id": [1],
+            "cluster_rank": [1],
+            "n": [1],
+            "caprieval_rank": [1],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    structs_df = pd.DataFrame(
+        {
+            "caprieval_rank": [1],
+            "cluster_ranking": [1],
+            "cluster_id": [1],
+            "model-cluster_ranking": [1],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    new_clusters_df, new_structs_df = create_other_cluster(clusters_df, structs_df, 2)
+    pd.testing.assert_frame_equal(new_structs_df, structs_df)
+    pd.testing.assert_frame_equal(new_clusters_df, clusters_df)
+
+
+def test_create_other_cluster_maxsamelen():
+    clusters_df = pd.DataFrame(
+        {
+            "cluster_id": [1, 2],
+            "cluster_rank": [1, 2],
+            "n": [1, 1],
+            "caprieval_rank": [1, 2],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    structs_df = pd.DataFrame(
+        {
+            "caprieval_rank": [1, 2],
+            "cluster_ranking": [1, 2],
+            "cluster_id": [1, 2],
+            "model-cluster_ranking": [1, 2],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    new_clusters_df, new_structs_df = create_other_cluster(clusters_df, structs_df, 2)
+    pd.testing.assert_frame_equal(new_structs_df, structs_df)
+    pd.testing.assert_frame_equal(new_clusters_df, clusters_df)
+
+
+def test_create_other_cluster_maxover():
+    clusters_df = pd.DataFrame(
+        {
+            "cluster_id": [1, 2, 3],
+            "cluster_rank": [1, 2, 3],
+            "n": [1, 1, 2],
+            "caprieval_rank": [1, 2, 3],
+            "score": [1.0, 2.0, 3.0],
+            "score_std": [0.0, 0.0, 0.0],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    structs_df = pd.DataFrame(
+        {
+            "caprieval_rank": [1, 2, 3, 4],
+            "cluster_ranking": [1, 2, 3, 3],
+            "cluster_id": [1, 2, 3, 3],
+            "model-cluster_ranking": [1, 1, 1, 2],
+            "score": [1.0, 2.0, 3.0, 4.0],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    new_clusters_df, new_structs_df = create_other_cluster(clusters_df, structs_df, 2)
+    expected_clusters_df = pd.DataFrame(
+        {
+            "cluster_id": [1, "Other"],
+            "cluster_rank": [1, 2],
+            "n": [1, 3],
+            "caprieval_rank": [1, 2],
+            "score": [1.0, 3.0],
+            "score_std": [0.0, 1.0],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    expected_structs_df = pd.DataFrame(
+        {
+            "caprieval_rank": [1, 2, 3, 4],
+            "cluster_ranking": [1, 2, 2, 2],
+            "cluster_id": [1, "Other", "Other", "Other"],
+            "model-cluster_ranking": [1, 1, 2, 3],
+            "score": [1.0, 2.0, 3.0, 4.0],
+            # Dont care about the rest of the columns, they are ignored by the function
+        }
+    )
+    pd.testing.assert_frame_equal(new_structs_df, expected_structs_df)
+    pd.testing.assert_frame_equal(new_clusters_df, expected_clusters_df)
 
 
 @pytest.fixture

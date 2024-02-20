@@ -44,7 +44,7 @@ jobs:
           cd -
           cd src/fast-rmsdmatrix/src
           chmod u+x Makefile
-          ./Makefile 2>%1 >/dev/null || true
+          make
           cd -
 
 
@@ -90,7 +90,7 @@ jobs:
           touch bin/cns
           cd src/fcc/src
           chmod u+x Makefile
-          make
+          ./Makefile 2>%1 >/dev/null || true
           cd -
 
       - name: install integration dependencies

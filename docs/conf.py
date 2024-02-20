@@ -7,6 +7,7 @@ import mock
 import sys
 import subprocess
 from pathlib import Path
+import datetime
 
 sys.path.insert(0, os.path.abspath('..'))
 
@@ -60,7 +61,7 @@ source_suffix = {
 
 master_doc = 'index'
 project = 'haddock3'
-year = '2022'
+year = datetime.date.today().year
 author = 'BonvinLab'
 copyright = '{0}, {1}'.format(year, author)
 version = release = '3.0.0'

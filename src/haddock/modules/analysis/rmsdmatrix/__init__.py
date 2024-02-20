@@ -44,7 +44,6 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSDJob,
     rmsd_dispatcher,
     )
-from haddock.core.typing import List
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -129,7 +128,7 @@ class HaddockModule(BaseHaddockModule):
             
         # create prev_keys to check if the keys of the ref_coord_dic
         # are the same for all the models
-        prev_keys : List[str] = []
+        prev_keys : list[str] = []
         with open("traj.xyz", "w") as traj_xyz:
             for mod in models:
                 atoms = {}
@@ -146,9 +145,8 @@ class HaddockModule(BaseHaddockModule):
                 if prev_keys != []:
                     if ref_coord_dic.keys() != prev_keys:
                         self.finish_with_error(
-                            "The keys of the ref_coord_dic are not the "
-                            "same for all the models. Please check the "
-                            "input models."
+                            "The atoms are not the same for all the models."
+                            "Please check the input models."
                             )
                 n_atoms = len(ref_coord_dic)
                 # write xyz coords

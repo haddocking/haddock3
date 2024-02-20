@@ -262,19 +262,19 @@ def box_plot_plotly(
         color_idx = (cl_rank[cl_id] - 1) % len(colors)  # color index
 
         # Note: the rank format (float/int) in "cl_rank" is different from
-        # gb_full["cluster-ranking"]
-        rns = gb_full[gb_full["cluster-id"] == cl_id]["cluster-ranking"]
+        # gb_full["cluster_ranking"]
+        rns = gb_full[gb_full["cluster_id"] == cl_id]["cluster_ranking"]
         rn = rns.unique()[0]
         color_map[f"{rn}"] = colors[color_idx]
 
         # Choose a different color for "Other" like in scatter plots
         color_map["Other"] = "#DDDBDA"
 
-    # to use color_discrete_map, cluster-ranking column should be str not int
-    gb_full_string = gb_full.astype({"cluster-ranking": "string"})
+    # to use color_discrete_map, cluster_ranking column should be str not int
+    gb_full_string = gb_full.astype({"cluster_ranking": "string"})
 
     # Rename for a better name in legend
-    gb_full_string.rename(columns={"cluster-ranking": "Cluster Rank"}, inplace=True)
+    gb_full_string.rename(columns={"cluster_ranking": "Cluster Rank"}, inplace=True)
 
     # "Cluster Rank" is equivalent to "capri_rank"!
     fig = px.box(
@@ -319,7 +319,7 @@ def box_plot_data(capri_df: pd.DataFrame, cl_rank: ClRank) -> pd.DataFrame:
     gb_full : pandas DataFrame
         DataFrame of all the clusters to be plotted
     """
-    gb_cluster = capri_df.groupby("cluster-id")
+    gb_cluster = capri_df.groupby("cluster_id")
     gb_other = pd.DataFrame([])
     gb_good = pd.DataFrame([])
     for cl_id, cl_df in gb_cluster:
@@ -329,9 +329,9 @@ def box_plot_data(capri_df: pd.DataFrame, cl_rank: ClRank) -> pd.DataFrame:
             cl_df["capri_rank"] = cl_rank[cl_id]  # type: ignore
             gb_good = pd.concat([gb_good, cl_df])
 
-    gb_other["cluster-id"] = "Other"
+    gb_other["cluster_id"] = "Other"
     gb_other["capri_rank"] = len(cl_rank.keys()) + 1
-    gb_other["cluster-ranking"] = "Other"
+    gb_other["cluster_ranking"] = "Other"
     gb_full = pd.concat([gb_good, gb_other])
 
     # Sort based on "capri_rank"
@@ -392,7 +392,7 @@ def scatter_plot_plotly(
     Parameters
     ----------
     gb_cluster : pandas DataFrameGroupBy
-        capri DataFrame grouped by cluster-id
+        capri DataFrame grouped by cluster_id
     gb_other : pandas DataFrame
         DataFrame of clusters not in the top cluster ranking
     cl_rank : dict
@@ -547,11 +547,11 @@ def scatter_plot_data(
     Returns
     -------
     gb_cluster : pandas DataFrameGroupBy
-        capri DataFrame grouped by cluster-id
+        capri DataFrame grouped by cluster_id
     gb_other : pandas DataFrame
         DataFrame of clusters not in the top cluster ranking
     """
-    gb_cluster = capri_df.groupby("cluster-id")
+    gb_cluster = capri_df.groupby("cluster_id")
     gb_other = pd.DataFrame([])
     for cl_id, cl_df in gb_cluster:
         if cl_id not in cl_rank.keys():
@@ -718,18 +718,13 @@ def find_best_struct(df: pd.DataFrame, max_best_structs: int = 4) -> pd.DataFram
 
     Returns:
         DataFrame of best structures with
-        `cluster_id` and `best<model-cluster-ranking>` columns
+        `cluster_id` and `best<model-cluster_ranking>` columns
         and empty strings for missing values.
     """
-    # capri_ss.tsv has a column named "cluster-id" 
-    # capri_clt.tsv has a column named "cluster_id"
-    # rename here to make the merge easier
-    df.rename(columns={"cluster-id": "cluster_id"}, inplace=True)
+    df = df[["cluster_id", "model-cluster_ranking", "model"]]
+    df = df[df["model-cluster_ranking"] <= max_best_structs]
 
-    df = df[["cluster_id", "model-cluster-ranking", "model"]]
-    df = df[df["model-cluster-ranking"] <= max_best_structs]
-
-    best_df = df.pivot(index="cluster_id", columns="model-cluster-ranking", values="model")
+    best_df = df.pivot(index="cluster_id", columns="model-cluster_ranking", values="model")
 
     best_df = best_df.fillna('').reset_index()
     best_df.columns = [f"best{col}" if col != "cluster_id" else col for col in best_df.columns]
@@ -789,12 +784,12 @@ def create_other_cluster(clusters_df: pd.DataFrame, structs_df: pd.DataFrame, ma
     if len(clusters_df) <= max_clusters:
         return clusters_df, structs_df
 
-    other_structs_df = structs_df[structs_df['cluster-ranking'] >= max_clusters]
-    structs_df = structs_df[structs_df['cluster-ranking'] < max_clusters]
-    other_structs_df['cluster-id'] = 'Other'
-    other_structs_df['cluster-ranking'] = max_clusters
+    other_structs_df = structs_df[structs_df['cluster_ranking'] >= max_clusters]
+    structs_df = structs_df[structs_df['cluster_ranking'] < max_clusters]
+    other_structs_df['cluster_id'] = 'Other'
+    other_structs_df['cluster_ranking'] = max_clusters
     inner_rank = other_structs_df['caprieval_rank'].rank(method='first').astype(int)
-    other_structs_df['model-cluster-ranking'] = inner_rank
+    other_structs_df['model-cluster_ranking'] = inner_rank
     structs_df = structs_df.append(other_structs_df)
 
     clusters_df = clusters_df[clusters_df['cluster_rank'] < max_clusters]

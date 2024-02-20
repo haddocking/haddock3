@@ -44,6 +44,7 @@ from haddock.modules.analysis.rmsdmatrix.rmsd import (
     RMSDJob,
     rmsd_dispatcher,
     )
+from haddock.core.typing import List
 
 
 RECIPE_PATH = Path(__file__).resolve().parent
@@ -128,7 +129,7 @@ class HaddockModule(BaseHaddockModule):
             
         # create prev_keys to check if the keys of the ref_coord_dic
         # are the same for all the models
-        prev_keys = []
+        prev_keys : List[str] = []
         with open("traj.xyz", "w") as traj_xyz:
             for mod in models:
                 atoms = {}
@@ -200,9 +201,9 @@ class HaddockModule(BaseHaddockModule):
                                    f" {not_found}")
 
         # Post-processing : single file
-        output_name = "rmsd.matrix"
+        final_output_name = "rmsd.matrix"
         self._rearrange_output(
-            output_name,
+            final_output_name,
             path=Path("."),
             ncores=ncores
             )
@@ -213,7 +214,7 @@ class HaddockModule(BaseHaddockModule):
         # Sending matrix path to the next step of the workflow
         matrix_io = ModuleIO()
         rmsd_matrix_file = RMSDFile(
-            output_name,
+            final_output_name,
             npairs=tot_npairs
             )
         matrix_io.add(rmsd_matrix_file)

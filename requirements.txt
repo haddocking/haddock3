@@ -1,7 +1,6 @@
 pdb-tools==2.5.0
 biopython==1.79
 git+https://github.com/joaorodrigues/fcc@fcc2
-git+https://github.com/mgiulini/fast-rmsdmatrix
 jsonpickle==2.1.0
 numpy==1.22.2
 pyyaml==6.0

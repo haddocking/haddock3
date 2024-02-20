@@ -143,6 +143,7 @@ def main(
         Any additional arguments that will be passed to the ``emscoring``
         module.
     """
+    import os
     import logging
     import shutil
     from contextlib import suppress
@@ -170,7 +171,8 @@ def main(
         if param not in default_emscoring:
             sys.exit(
                 f"* ERROR * Parameter {param!r} is not a "
-                "valid `emscoring` parameter"
+                f"valid `emscoring` parameter.{os.linesep}"
+                f"Valid emscoring parameters are: {list(default_emscoring.keys())}"
                 )
         if value != default_emscoring[param]:
             print(
@@ -182,7 +184,7 @@ def main(
             if default_type == bool:
                 if value.lower() not in ["true", "false"]:
                     sys.exit(f"* ERROR * Boolean parameter {param} should be True or False")
-                value = value == "true"
+                value = value.lower() == "true"
             else:
                 value = default_type(value)
             ems_dict[param] = value

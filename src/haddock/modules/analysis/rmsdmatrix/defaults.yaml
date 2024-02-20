@@ -8,7 +8,7 @@ max_models:
   long: If the number of models exceeds the few thousands, the calculation of
     the RMSD matrix is computationally demanding, especially in terms of CPU
     and disk space.
-  group: ''
+  group: analysis
   explevel: easy
 resdic_:
   default: []
@@ -21,13 +21,15 @@ resdic_:
   long: resdic_* is an expandable parameter. You can provide resdic_A,
     resdic_B, resdic_C, etc, where the last capital letter is the chain
     identifier.
-  group: ''
+  group: analysis
   explevel: easy
 executable:
   default: src/fast-rmsdmatrix
   type: string
+  minchars: 1
+  maxchars: 100
   title: Path to the executable
   short: Path to the executable
   long: Path to the executable
-  group: ''
+  group: analysis
   explevel: expert

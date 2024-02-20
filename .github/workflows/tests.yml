@@ -42,6 +42,11 @@ jobs:
           chmod u+x Makefile
           ./Makefile 2>%1 >/dev/null || true
           cd -
+          cd src/fast-rmsdmatrix/src
+          chmod u+x Makefile
+          ./Makefile 2>%1 >/dev/null || true
+          cd -
+
 
       - name: types
         run: tox -e types

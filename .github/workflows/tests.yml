@@ -22,9 +22,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Update submodule
-        run: git submodule update --remote
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:

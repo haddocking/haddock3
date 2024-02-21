@@ -44,7 +44,7 @@ jobs:
           cd -
           cd src/fast-rmsdmatrix/src
           chmod u+x Makefile
-          gcc -Wall -O3 -march=native -std=c99 fast-rmsdmatrix.c -o fast-rmsdmatrix -lm
+          make fast-rmsdmatrix
           cd -
 
 

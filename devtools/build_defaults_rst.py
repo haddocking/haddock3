@@ -189,13 +189,15 @@ def process_category_file(category: str) -> None:
                 'docs',
                 f"haddock.modules.{category}.rst"
                 )
-    target_rst = Path(
+    target_path = Path(
         haddock3_repository_path,
         'docs',
         'modules',
-        f"{category}",
-        "index.rst"
+        category
         )
+    # make category folder if it does not exist
+    target_path.mkdir(exist_ok=True)
+    target_rst = Path(target_path, "index.rst")
     shutil.move(category_rst, target_rst)
     # change title
     if category in CATEGORY_TITLE_DICT:
@@ -334,6 +336,21 @@ def main() -> None:
     with open(params_file, 'w') as fout:
         fout.write(text)
 
+    # now libs, gear and core
+    for folder in ("libs", "gear", "core"):
+        # make directory if it does not exist
+        target_path = Path(haddock3_repository_path, 'docs', 'reference', folder)
+        target_path.mkdir(exist_ok=True)
+        # collect rst files
+        rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.{folder}.*rst")
+        for rst_file in rst_files:
+            target_rst = Path(target_path, rst_file.name)
+            shutil.move(rst_file, target_rst)
+            title_key = ".".join(rst_file.name.split(".")[1:-1])
+            if title_key in REFERENCE_TITLE_DICT:
+                title = REFERENCE_TITLE_DICT[title_key]
+                change_title(target_rst, title)
+    
     # Generate mandatory parameters RST page
     HEADING.reset()
     mandatory_defaults = Path(haddock3_source_path, 'core', 'mandatory.yaml')
@@ -357,23 +374,6 @@ def main() -> None:
         fout.write('====================' + os.linesep)
         fout.write(text)
 
-    # now libs, gear and core
-    for folder in ("libs", "gear", "core"):
-        rst_files = Path(haddock3_repository_path, 'docs').glob(f"haddock.{folder}.*rst")
-        for rst_file in rst_files:
-            target_rst = Path(
-                haddock3_repository_path,
-                'docs',
-                'reference',
-                folder,
-                rst_file.name
-                )
-            shutil.move(rst_file, target_rst)
-            title_key = ".".join(rst_file.name.split(".")[1:-1])
-            if title_key in REFERENCE_TITLE_DICT:
-                title = REFERENCE_TITLE_DICT[title_key]
-                change_title(target_rst, title)
-    
     # now the command-line interfaces
     clients_folder = Path(haddock3_repository_path, 'docs', 'clients')
     clients_folder.mkdir(exist_ok=True)

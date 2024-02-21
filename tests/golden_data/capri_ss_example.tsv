@@ -1,4 +1,4 @@
-model	md5	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	dockq	cluster-id	cluster-ranking	model-cluster-ranking	air	angles	bonds	bsa	cdih	coup	dani	desolv	dihe	elec	improper	rdcs	rg	total	vdw	vean	xpcs
+model	md5	caprieval_rank	score	irmsd	fnat	lrmsd	ilrmsd	dockq	cluster_id	cluster_ranking	model-cluster_ranking	air	angles	bonds	bsa	cdih	coup	dani	desolv	dihe	elec	improper	rdcs	rg	total	vdw	vean	xpcs
 ../1_rigidbody/rigidbody_373.pdb	-	1	-37.710	3.031	0.333	5.487	4.130	0.412	16	1	1	147.270	0.000	0.000	1209.810	0.000	0.000	0.000	-15.058	0.000	-12.018	0.000	0.000	0.000	134.324	-0.929	0.000	0.000
 ../1_rigidbody/rigidbody_339.pdb	-	2	-37.537	3.109	0.333	5.581	4.111	0.407	16	1	2	112.421	0.000	0.000	1188.850	0.000	0.000	0.000	-14.864	0.000	-11.884	0.000	0.000	0.000	98.101	-2.435	0.000	0.000
 ../1_rigidbody/rigidbody_383.pdb	-	3	-36.098	2.747	0.306	4.787	3.680	0.431	1	2	1	117.214	0.000	0.000	977.829	0.000	0.000	0.000	-16.870	0.000	-10.470	0.000	0.000	0.000	91.558	-15.187	0.000	0.000

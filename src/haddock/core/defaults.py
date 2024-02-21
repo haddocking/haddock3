@@ -32,6 +32,11 @@ MAX_NUM_MODULES = 10000
 valid_run_dir_chars = string.ascii_letters + string.digits + "._-/\\"
 
 RUNDIR = "run_dir"
+"""Default run directory name."""
+
+INTERACTIVE_RE_SUFFIX = "interactive"
+"""Suffix added to interactive haddock3-re runs."""
+
 
 with open(Path(core_path, "mandatory.yaml"), 'r') as fin:
     _ycfg = yaml.safe_load(fin)

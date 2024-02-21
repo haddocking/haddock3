@@ -4,4 +4,4 @@
 
 [submodule "src/fast-rmsdmatrix"]
 	path = src/fast-rmsdmatrix
-	url = https://github.com/mgiulini/fast-rmsdmatrix@v0.1.0
+	url = https://github.com/mgiulini/fast-rmsdmatrix

@@ -22,9 +22,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: install gcc
-        uses: egor-tensin/setup-gcc@v1.3
-
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
@@ -47,7 +44,7 @@ jobs:
           cd -
           cd src/fast-rmsdmatrix/src
           chmod u+x Makefile
-          make
+          gcc -Wall -O3 -march=native -std=c99 fast-rmsdmatrix.c -o fast-rmsdmatrix -lm
           cd -
 
 

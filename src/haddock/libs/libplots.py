@@ -800,11 +800,11 @@ def create_other_cluster(clusters_df: pd.DataFrame, structs_df: pd.DataFrame, ma
         'caprieval_rank': max_clusters
     }
     for col in AXIS_NAMES.keys():
-        if col not in other_structs_df.columns:
+        if col not in other_structs_df.columns or col not in clusters_df.columns:
             continue
         other_cluster[col] = other_structs_df[col].mean()
         other_cluster[col + '_std'] = other_structs_df[col].std()
-    clusters_df = clusters_df.append(other_cluster, ignore_index=True)
+    clusters_df = clusters_df.append(other_cluster, ignore_index=True).round(2)
 
     return clusters_df, structs_df
 
